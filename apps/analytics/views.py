@@ -1,6 +1,7 @@
 from zoneinfo import ZoneInfo
 
 from django.db.models import Count, Sum
+from django.db.models.functions import TruncDate
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
@@ -128,7 +129,9 @@ def owner_dashboard(request):
         "new_leads": new_leads_count,
         "total_leads": total_leads,
         "leads_by_source": leads_by_source,
-        "appointments_today": appointments.filter(start_at__date=today).count(),
+        "appointments_today": appointments.alias(
+            business_date=TruncDate("start_at", tzinfo=ZoneInfo(business.timezone)),
+        ).filter(business_date=today).count(),
         "appointments_completed": completed_appointments.count(),
         "no_show_count": appointments.filter(status=Appointment.Statuses.NO_SHOW).count(),
         "conversion_lead_to_appointment": conversion,

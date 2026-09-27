@@ -27,6 +27,41 @@
   any implementation impact recorded before its fix. Logs: output/pilot-20260928/.
 - Next: reconcile existing pilot plan and authority routes, then execute internal
   evidence map and smallest reproduced CRM defect. No readiness percentage asserted.
+- Documentation published: da44338, remote main SHA matched; 15 authority files,
+  new-link/diff checks PASS, closed table and historical pilot body unchanged.
+- First reproduced code defect: owner dashboard compares business-local today
+  with start_at__date evaluated in active Django timezone. New fixed-date tests
+  show 8 failed boundary assertions across Almaty/Los Angeles/New York DST days.
+  Original real-metrics fixture also used application-local today; corrected to
+  business-local today without weakening expectations. Query fix uses explicit
+  business timezone, same scoped queryset/API field. No lifecycle/permission/
+  notification/BusinessEvent/AI/migration/environment changes.
+- Required fix gate: isolated analytics and dependent CRM/access suites, Django
+  checks/drift, reachable dashboard/browser/internal journey evidence and diff.
+  Prior branding CI 36345732566: frontend success, backend test stage failure;
+  no overall green claim. Documentation CI 36346709554 observed in progress.
+- First fix verification: `focused.py apps.analytics apps.core.tests_business_flows_e2e
+  apps.core.tests_crm_projection_access apps.clients.tests_archive_dependencies
+  apps.businesses.tests_member_deactivation` — 73 PASS (47.336s), isolated SQLite,
+  locmem/eager/synthetic, no working DB. Includes lead/client/deal outcomes,
+  appointment reschedule/cancel/no-show, task/activity, merge/archive/access flows.
+- Browser: isolated existing FC-J06 import/duplicates persistence and FC-J07 team
+  role change/readback/restore — 2 PASS; added ZD-015 real analytics API → rendered
+  dashboard count — 1 PASS. Canonical source, dedicated ports, safe Vite/provider
+  env; test-owned servers terminate with runner. No merchant credentials used.
+- Static runner against real task base 69b62c99 PASS (checks/drift/diff). Runtime
+  frontend unchanged, prior 69b62c9 build retained; browser test compiled/executed.
+  Full release/FC-003/008, real worker, live AI/deployment, screen-reader not run;
+  this is the first bounded correction and evidence slice, not pilot certification.
+- Remaining reproduced frontend diagnostics: `node --test
+  scripts/tests/daily-workspaces-policy.test.mjs scripts/tests/fallback-inventory.test.mjs
+  scripts/tests/failure-certification-registry.test.mjs` — 5 PASS / 4 FAIL.
+  Two old source regex assumptions (owner clients query, sourceIds→sourceLabels);
+  scanner cannot resolve payments.ts constant `path` in three API calls, which also
+  blocks generated report freshness. Do not rewrite working UI to satisfy regex
+  or suppress unresolved operations. Next bounded package: repair verification
+  against current behavior, then extend semantic internal-cycle evidence.
+- Publication/readback and actual CI: output/pilot-20260928/result.json.
 
 ## Exact UI brand PlatformaCRM — VERIFIED; publication in receipt, 2026-09-28
 

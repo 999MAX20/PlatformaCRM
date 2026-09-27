@@ -50,6 +50,22 @@ async function getBusinessId(
 }
 
 test.describe("FC-006 pilot merchant journeys", () => {
+  test("ZD-015 owner dashboard displays the persisted appointment count from analytics", async ({ page }) => {
+    const metricsResponse = page.waitForResponse(
+      (response) => response.request().method() === "GET"
+        && response.url().includes("/api/analytics/owner-dashboard/"),
+    );
+    await login(page);
+    const response = await metricsResponse;
+    expect(response.ok()).toBeTruthy();
+    const metrics = await response.json();
+    expect(Number.isInteger(metrics.appointments_today)).toBeTruthy();
+    const card = page.locator('main a[href="/app/calendar"]').filter({
+      hasText: /Записи сегодня|Bookings today|Бүгінгі жазбалар/,
+    });
+    await expect(card.locator(".tabular-nums")).toHaveText(String(metrics.appointments_today));
+  });
+
   test("FC-J06 import validation, duplicates and visible records persist through the Leads UI", async ({
     page,
   }) => {

@@ -629,6 +629,27 @@ Copy this section for every new confirmed precedent:
 - Derived rule: test live, unavailable, no-data, malformed source and queued paths
   separately; changing a requested entity must invalidate the old selection.
 
+### ZD-015 — Owner dashboard day used mixed timezones
+
+- Recorded: 2026-09-28. Type: FUNCTIONAL / analytics. Status: VERIFIED_LOCAL;
+  publication and CI receipt: output/pilot-20260928/result.json.
+- Symptom: owner dashboard's appointments-today count includes a neighbouring
+  business day or omits appointments close to local midnight.
+- Cause: `today` used Business.timezone, but Django `start_at__date` used the
+  active application timezone. Original real-metrics fixture also generated
+  its date from the application timezone and was time-of-day dependent.
+- Reproduction: fixed UTC clock with Almaty/Los Angeles and New York spring/fall
+  DST business dates; individual before/start/end-minus-one-second/end boundaries.
+  Before fix: 8 wrong boundary assertions. Foreign-business rows excluded.
+- Correction: explicit timezone in TruncDate on the existing permission-scoped
+  appointment queryset; fixture uses the same business-calendar definition.
+  API shape, lifecycle, permissions, events, notifications and schema unchanged.
+- Verification: 73 isolated analytics/CRM/access/archive/deactivation tests PASS;
+  no working DB or external providers. This is not complete FC-003/008 acceptance.
+- Derived rule: test boundary inclusion separately so equal counts cannot mask
+  simultaneous false inclusions/exclusions; test business vs application timezone
+  and DST dates with a fixed clock. Never remove tenant/role query scoping.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

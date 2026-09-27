@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 from django.test import TestCase
@@ -48,7 +49,7 @@ class OwnerDashboardAnalyticsTests(TestCase):
         Lead.objects.create(business=self.business, client=self.client, source=Lead.Sources.WEBSITE, status=Lead.Statuses.NEW)
         Lead.objects.create(business=self.business, client=self.client, source=Lead.Sources.WEBSITE, status=Lead.Statuses.APPOINTMENT_CREATED)
         Lead.objects.create(business=self.business, client=self.client, source=Lead.Sources.TELEGRAM, status=Lead.Statuses.CLOSED)
-        today = timezone.localdate()
+        today = timezone.localdate(timezone=ZoneInfo(self.business.timezone))
         start_at = datetime(today.year, today.month, today.day, 10, 0, tzinfo=ZoneInfo("Asia/Almaty"))
         Appointment.objects.create(
             business=self.business,
@@ -103,6 +104,44 @@ class OwnerDashboardAnalyticsTests(TestCase):
         self.assertEqual(response.data["business_pulse"]["tone"], "setup")
         self.assertTrue(any(item["key"] == "upload_sales" for item in response.data["recommendations"]))
         self.assertEqual(response.data["quick_connect"][0]["key"], "whatsapp")
+
+    def test_today_appointments_follow_business_day_boundaries(self):
+        # The application timezone and the business calendar can have different dates.
+        cases = [
+            ("Asia/Almaty", "2026-09-27T20:30:00+00:00", "2026-09-28"),
+            ("America/Los_Angeles", "2026-09-28T02:30:00+00:00", "2026-09-27"),
+            ("America/New_York", "2026-03-08T16:00:00+00:00", "2026-03-08"),
+            ("America/New_York", "2026-11-01T16:00:00+00:00", "2026-11-01"),
+        ]
+        for business_timezone, now_iso, day_iso in cases:
+            with self.subTest(timezone=business_timezone, day=day_iso):
+                Appointment.objects.all().delete()
+                self.business.timezone = business_timezone
+                self.business.save(update_fields=["timezone"])
+                start = datetime.fromisoformat(day_iso).replace(tzinfo=ZoneInfo(business_timezone))
+                end = start + timedelta(days=1)
+                Appointment.objects.create(
+                    business=self.other_business,
+                    client=Client.objects.create(business=self.other_business, full_name="Other client"),
+                    service=Service.objects.create(business=self.other_business, name="Other service", duration_minutes=1),
+                    start_at=start, end_at=start + timedelta(minutes=1),
+                )
+                for instant, expected in [
+                    (start - timedelta(seconds=1), 0), (start, 1),
+                    (end - timedelta(seconds=1), 1), (end, 0),
+                ]:
+                    with self.subTest(instant=instant):
+                        Appointment.objects.filter(business=self.business).delete()
+                        Appointment.objects.create(
+                            business=self.business, client=self.client, service=self.service,
+                            start_at=instant, end_at=instant + timedelta(minutes=1),
+                        )
+                        with timezone.override("UTC"), patch(
+                            "django.utils.timezone.now", return_value=datetime.fromisoformat(now_iso),
+                        ):
+                            response = self.api.get("/api/analytics/owner-dashboard/", {"business": self.business.id})
+                        self.assertEqual(response.status_code, 200)
+                        self.assertEqual(response.data["appointments_today"], expected)
 
     def test_owner_dashboard_returns_phase_12_crm_metrics_and_blocks_tenant_leakage(self):
         lead = Lead.objects.create(business=self.business, client=self.client, source=Lead.Sources.WEBSITE, status=Lead.Statuses.NEW, responsible_user=self.owner)
