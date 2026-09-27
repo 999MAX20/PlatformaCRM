@@ -54,10 +54,10 @@ export function CrmPagination({
       data-testid="crm-pagination"
       data-pagination-variant={variant}
       className={cn(
-        "flex text-sm font-semibold text-zani-subtle",
+        "flex text-sm font-semibold text-platforma-subtle",
         isToolbar
           ? "min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
-          : "flex-wrap items-center justify-between gap-3 border-t border-zani-border px-4 py-3",
+          : "flex-wrap items-center justify-between gap-3 border-t border-platforma-border px-4 py-3",
         className,
       )}
     >
@@ -75,7 +75,7 @@ export function CrmPagination({
           onClick={onPrev}
           disabled={page <= 1}
           className={cn(
-            "zani-focus-ring rounded-control border border-zani-border bg-surface-card px-3 py-2 text-sm font-semibold text-zani-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50",
+            "platforma-focus-ring rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-semibold text-platforma-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50",
             isToolbar && "min-h-11 w-11 shrink-0 px-0 sm:min-h-9 sm:w-auto sm:px-3",
           )}
         >
@@ -85,7 +85,7 @@ export function CrmPagination({
         <span
           aria-current="page"
           className={cn(
-            "rounded-control bg-surface-muted px-3 py-2 text-zani-text tabular-nums",
+            "rounded-control bg-surface-muted px-3 py-2 text-platforma-text tabular-nums",
             isToolbar && "inline-flex min-h-11 shrink-0 items-center sm:min-h-9",
           )}
         >
@@ -96,7 +96,7 @@ export function CrmPagination({
           onClick={onNext}
           disabled={page >= totalPages}
           className={cn(
-            "zani-focus-ring rounded-control border border-zani-border bg-surface-card px-3 py-2 text-sm font-semibold text-zani-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50",
+            "platforma-focus-ring rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-semibold text-platforma-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50",
             isToolbar && "min-h-11 w-11 shrink-0 px-0 sm:min-h-9 sm:w-auto sm:px-3",
           )}
         >

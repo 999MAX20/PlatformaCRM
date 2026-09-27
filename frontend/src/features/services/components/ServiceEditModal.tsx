@@ -71,7 +71,7 @@ export function ServiceEditModal({
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <ServiceStatusBadge service={service} size="sm" />
-            <p className="text-sm text-zani-subtle">{t("services.inspectorSubtitle")}</p>
+            <p className="text-sm text-platforma-subtle">{t("services.inspectorSubtitle")}</p>
           </div>
           {errorMessage ? <ErrorState message={errorMessage} /> : null}
           {!canEdit ? (
@@ -94,14 +94,14 @@ export function ServiceEditModal({
           />
         </div>
 
-        <aside className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm lg:self-start">
+        <aside className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm lg:self-start">
           <div className="flex items-start gap-3">
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-brand-50 text-brand-700">
               <CalendarCheck2 aria-hidden="true" size={19} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-zani-ink">{t("services.usageTitle")}</h3>
-              <p className="mt-1 text-sm leading-5 text-zani-subtle">
+              <h3 className="text-sm font-semibold text-platforma-ink">{t("services.usageTitle")}</h3>
+              <p className="mt-1 text-sm leading-5 text-platforma-subtle">
                 {t("services.usageText", { count: appointmentCount })}
               </p>
             </div>
@@ -109,7 +109,7 @@ export function ServiceEditModal({
         </aside>
       </div>
 
-      <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-zani-border bg-surface-card px-4 py-3 sm:px-5">
+      <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-platforma-border bg-surface-card px-4 py-3 sm:px-5">
         {canEdit ? (
           <>
             <Button type="button" variant="secondary" disabled={!isDirty || isSaving} onClick={resetForm}>

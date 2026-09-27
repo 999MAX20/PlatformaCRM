@@ -80,7 +80,7 @@ export function UnsavedAgentChangesModal({
 
   return (
     <Modal title={t("aiAgents.unsavedTitle")} open={open} onClose={onClose}>
-      <p className="text-sm font-medium leading-6 text-zani-subtle">{t("aiAgents.unsavedText")}</p>
+      <p className="text-sm font-medium leading-6 text-platforma-subtle">{t("aiAgents.unsavedText")}</p>
       <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button type="button" variant="secondary" onClick={onClose}>
           {t("common.cancel")}

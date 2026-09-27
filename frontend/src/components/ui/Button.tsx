@@ -17,14 +17,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 ) {
   const { t } = useI18n();
   const variants = {
-    primary: "bg-brand-500 text-zani-ink shadow-sm ring-1 ring-brand-600/20 hover:bg-brand-600 active:bg-[var(--zani-brand-strong)]",
-    secondary: "border border-zani-border bg-surface-card text-zani-text shadow-sm hover:bg-surface-muted",
-    ghost: "text-zani-subtle hover:bg-surface-muted hover:text-zani-text",
-    outline: "border border-zani-border bg-surface-card text-zani-text shadow-sm hover:bg-surface-muted",
-    warning: "bg-[var(--zani-warning-bold)] text-zani-ink shadow-sm ring-1 ring-[rgba(151,90,22,0.18)] hover:bg-[var(--zani-warning-bold-hover)] active:bg-[var(--zani-warning-bold-pressed)]",
-    danger: "bg-zani-danger text-white shadow-sm hover:bg-[var(--zani-danger-hover)] active:bg-[var(--zani-danger-pressed)]",
+    primary: "bg-brand-500 text-platforma-ink shadow-sm ring-1 ring-brand-600/20 hover:bg-brand-600 active:bg-[var(--platforma-brand-strong)]",
+    secondary: "border border-platforma-border bg-surface-card text-platforma-text shadow-sm hover:bg-surface-muted",
+    ghost: "text-platforma-subtle hover:bg-surface-muted hover:text-platforma-text",
+    outline: "border border-platforma-border bg-surface-card text-platforma-text shadow-sm hover:bg-surface-muted",
+    warning: "bg-[var(--platforma-warning-bold)] text-platforma-ink shadow-sm ring-1 ring-[rgba(151,90,22,0.18)] hover:bg-[var(--platforma-warning-bold-hover)] active:bg-[var(--platforma-warning-bold-pressed)]",
+    danger: "bg-platforma-danger text-white shadow-sm hover:bg-[var(--platforma-danger-hover)] active:bg-[var(--platforma-danger-pressed)]",
     ai: "bg-ai-600 text-white shadow-sm hover:bg-ai-700 active:bg-ai-700",
-    icon: "border border-zani-border bg-surface-card text-zani-subtle shadow-sm hover:bg-surface-muted hover:text-zani-text",
+    icon: "border border-platforma-border bg-surface-card text-platforma-subtle shadow-sm hover:bg-surface-muted hover:text-platforma-text",
   };
   const sizes = {
     sm: "min-h-9 rounded-control px-3 py-1.5 text-[13px]",
@@ -38,7 +38,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       className={cn(
         "inline-flex max-w-full items-center justify-center gap-2 whitespace-normal text-center font-semibold transition duration-150 active:scale-[0.99] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60",
-        "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--zani-focus-ring)] focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--platforma-focus-ring)] focus-visible:ring-offset-2",
         "disabled:shadow-none",
         variants[variant],
         sizes[size],

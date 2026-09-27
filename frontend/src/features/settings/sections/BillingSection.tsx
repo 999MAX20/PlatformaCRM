@@ -76,12 +76,12 @@ export function BillingSection({
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
               {t("settings.currentPlan")}
             </p>
-            <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+            <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
               {subscriptionIsLoading
                 ? t("settings.loading")
                 : currentPlan?.name || t("settings.noPlan")}
             </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
               {hasSubscription
                 ? `${formatPrice(currentPlan?.monthly_price, t, locale)} · ${t("settings.status")}: ${subscription?.status}`
                 : t("settings.billingNoSubscription")}
@@ -143,13 +143,13 @@ export function BillingSection({
         ) : null}
         <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_0.8fr]">
           <form
-            className="rounded-card border border-zani-border bg-surface-muted p-4"
+            className="rounded-card border border-platforma-border bg-surface-muted p-4"
             onSubmit={(event) => {
               event.preventDefault();
               onSaveBillingSettings();
             }}
           >
-            <h3 className="font-bold text-zani-text">
+            <h3 className="font-bold text-platforma-text">
               {t("settings.billingPaymentsTitle")}
             </h3>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -227,11 +227,11 @@ export function BillingSection({
               </Button>
             </div>
           </form>
-          <div className="rounded-card border border-zani-border bg-surface-card p-4">
-            <h3 className="font-bold text-zani-text">
+          <div className="rounded-card border border-platforma-border bg-surface-card p-4">
+            <h3 className="font-bold text-platforma-text">
               {t("settings.planTitle")}
             </h3>
-            <p className="mt-1 text-sm leading-6 text-zani-subtle">
+            <p className="mt-1 text-sm leading-6 text-platforma-subtle">
               {t("settings.planChangeText")}
             </p>
             <div className="mt-4 grid gap-3">

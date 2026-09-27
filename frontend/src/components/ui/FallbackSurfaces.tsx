@@ -87,14 +87,14 @@ export function PageFallbackLayout({
     <section
       data-testid={testId}
       role="alert"
-      className="grid min-h-[280px] place-items-center rounded-card border border-zani-border bg-surface-card p-6 shadow-card"
+      className="grid min-h-[280px] place-items-center rounded-card border border-platforma-border bg-surface-card p-6 shadow-card"
     >
       <div className="w-full max-w-xl text-center">
         <div className={`mx-auto grid h-12 w-12 place-items-center rounded-control border ${toneDefinition.container} ${toneDefinition.icon}`}>
           <Icon aria-hidden="true" size={24} />
         </div>
-        <h2 className="mt-4 text-xl font-semibold text-zani-ink">{title}</h2>
-        <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-zani-subtle">{message}</p>
+        <h2 className="mt-4 text-xl font-semibold text-platforma-ink">{title}</h2>
+        <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-platforma-subtle">{message}</p>
         {actions ? <div className="mt-5 flex flex-wrap justify-center gap-2">{actions}</div> : null}
         {details}
       </div>
@@ -131,7 +131,7 @@ export function PermissionFallback({ error, title }: Pick<SharedFallbackProps, "
       description={t(error.messageKey)}
       details={(
         <>
-          <p className="rounded-control bg-surface-card px-3 py-2 text-xs font-semibold text-zani-warning">
+          <p className="rounded-control bg-surface-card px-3 py-2 text-xs font-semibold text-platforma-warning">
             {t("fallback.permission.guidance")}
           </p>
           <RecoveryDetails error={error} className="mt-3" />

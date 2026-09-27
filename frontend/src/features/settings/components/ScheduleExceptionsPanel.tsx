@@ -66,8 +66,8 @@ export function ScheduleExceptionsPanel({ resource, timeZone, canManage }: {
     .sort((left, right) => Date.parse(left.start_at) - Date.parse(right.start_at) || left.id - right.id);
   const error = exceptions.error || mutation.error || appointments.error;
   return (
-    <section className="space-y-3 border-t border-zani-border pt-4" data-testid="schedule-exceptions">
-      <h3 className="font-semibold text-zani-ink">{t("workingHours.dateExceptions")}</h3>
+    <section className="space-y-3 border-t border-platforma-border pt-4" data-testid="schedule-exceptions">
+      <h3 className="font-semibold text-platforma-ink">{t("workingHours.dateExceptions")}</h3>
       {exceptions.isLoading ? <LoadingState /> : null}
       {error ? <ErrorState message={getApiErrorMessage(error)} /> : null}
       <div className="flex flex-wrap gap-2">
@@ -96,8 +96,8 @@ export function ScheduleExceptionsPanel({ resource, timeZone, canManage }: {
         <h4 className="text-sm font-semibold">{t("workingHours.appointmentsToReview")}</h4>
         <Button variant="secondary" type="button" disabled={!date} onClick={() => setReviewOpen(true)}>{t("workingHours.reviewAppointments")}</Button>
         {appointments.isLoading ? <LoadingState /> : null}
-        {!appointments.isLoading && !appointments.error && !activeAppointments.length ? <p className="text-sm text-zani-subtle">{t("workingHours.noAppointmentsOnDate")}</p> : null}
-        {activeAppointments.map((item) => <Link key={item.id} className="zani-focus-ring block rounded-control text-sm text-brand-700 underline"
+        {!appointments.isLoading && !appointments.error && !activeAppointments.length ? <p className="text-sm text-platforma-subtle">{t("workingHours.noAppointmentsOnDate")}</p> : null}
+        {activeAppointments.map((item) => <Link key={item.id} className="platforma-focus-ring block rounded-control text-sm text-brand-700 underline"
           to={`/app/calendar?date=${date}&resource=${resource.id}&appointment=${item.id}`}>
           {new Date(item.start_at).toLocaleTimeString(language, { hour: "2-digit", minute: "2-digit", timeZone })} · {item.client_name} · {item.service_name}
         </Link>)}

@@ -63,7 +63,7 @@ export function ServiceTableExample({ state = "populated" }: { state?: "populate
               </div>
             </div>
             <CrmPagination variant="toolbar" shown={rows.length} total={filtered.length} page={page} pageSize={pageSize}
-              className="w-full border-t border-zani-border pt-3 xl:w-auto xl:border-t-0 xl:pt-0"
+              className="w-full border-t border-platforma-border pt-3 xl:w-auto xl:border-t-0 xl:pt-0"
               rangeLabel={t("pagination.range", { from: filtered.length ? (page - 1) * pageSize + 1 : 0, to: Math.min(filtered.length, page * pageSize), total: filtered.length })}
               previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")}
               pageSizeLabel={(size) => t("pagination.pageSize", { size })} pageSizeAriaLabel={t("pagination.pageSizeAriaLabel")}
@@ -71,7 +71,7 @@ export function ServiceTableExample({ state = "populated" }: { state?: "populate
           </div>
         )}
         columns={[
-          { header: t("services.name"), className: "max-w-[320px]", cell: (row) => <span className="block truncate font-semibold text-zani-ink">{row.name}</span> },
+          { header: t("services.name"), className: "max-w-[320px]", cell: (row) => <span className="block truncate font-semibold text-platforma-ink">{row.name}</span> },
           { header: t("services.duration"), cell: (row) => `${row.duration_minutes} ${t("appointment.minutes")}` },
           { header: t("services.priceFrom"), cell: (row) => formatMoney(row.price_from) },
           { header: t("appointment.status"), cell: (row) => <ServiceStatusBadge service={row} /> },

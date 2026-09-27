@@ -33,10 +33,10 @@ export function LeadsPagination({
     <div className={CRM_TABLE_PAGINATION_CLASS}>
       <span>{label}</span>
       <div className="flex flex-wrap items-center gap-2">
-        <label className="flex items-center gap-2 rounded-control border border-zani-border bg-surface-card px-2 py-1.5 text-xs font-bold text-zani-muted">
+        <label className="flex items-center gap-2 rounded-control border border-platforma-border bg-surface-card px-2 py-1.5 text-xs font-bold text-platforma-muted">
           <span>{pageSizeLabel}</span>
           <select
-            className="bg-transparent text-xs font-bold text-zani-text outline-none"
+            className="bg-transparent text-xs font-bold text-platforma-text outline-none"
             value={pageSize}
             onChange={(event) => onPageSizeChange(Number(event.target.value))}
             aria-label={pageSizeLabel}
@@ -67,7 +67,7 @@ export function LeadsPagination({
               "grid h-8 w-8 place-items-center rounded-control border text-sm font-bold",
               itemPage === page
                 ? "border-brand-100 bg-brand-50 text-brand-700"
-                : "border-zani-border text-zani-muted hover:bg-surface-warm hover:text-zani-text",
+                : "border-platforma-border text-platforma-muted hover:bg-surface-warm hover:text-platforma-text",
             )}
           >
             {itemPage}

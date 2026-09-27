@@ -61,7 +61,7 @@ export function captureFrontendError(error: unknown, context?: MonitoringContext
     void sentryPromise.then((module) => module.captureException(error, context ? { extra: context } : undefined));
     return;
   }
-  console.error("Zani frontend error", error, context);
+  console.error("Платформа CRM frontend error", error, context);
 }
 
 export function trackFrontendEvent(event: string, properties?: MonitoringContext) {

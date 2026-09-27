@@ -84,7 +84,7 @@ function Fixture() {
   return (
     <I18nProvider>
       <NotificationProvider>
-        <main className="min-h-screen bg-zani-bg p-4 text-zani-text sm:p-6">
+        <main className="min-h-screen bg-platforma-bg p-4 text-platforma-text sm:p-6">
           <div className="mx-auto max-w-5xl space-y-5">
             <ConnectivityBanner error={offlineError} onRetry={() => undefined} />
             <InlineFallback error={temporaryError} onRetry={() => undefined} />

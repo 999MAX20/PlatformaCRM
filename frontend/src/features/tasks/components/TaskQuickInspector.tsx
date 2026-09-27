@@ -64,8 +64,8 @@ export function TaskQuickInspector({
     return (
       <div className="grid min-h-[260px] place-items-center p-4 text-center">
         <div>
-          <p className="text-sm font-bold text-zani-text">{t("tasks.emptyTitle")}</p>
-          <p className="mt-1 text-sm font-semibold text-zani-muted">{t("tasks.emptyText")}</p>
+          <p className="text-sm font-bold text-platforma-text">{t("tasks.emptyTitle")}</p>
+          <p className="mt-1 text-sm font-semibold text-platforma-muted">{t("tasks.emptyText")}</p>
         </div>
       </div>
     );
@@ -83,29 +83,29 @@ export function TaskQuickInspector({
           : t("tasks.statusCancelledHint");
 
   return (
-    <aside className="flex h-full min-h-0 flex-col overflow-hidden rounded-card border border-zani-border bg-zani-card shadow-zani-card">
-      <div className="border-b border-zani-border p-4">
+    <aside className="flex h-full min-h-0 flex-col overflow-hidden rounded-card border border-platforma-border bg-platforma-card shadow-platforma-card">
+      <div className="border-b border-platforma-border p-4">
         <div className="flex min-w-0 items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-semibold text-zani-muted">{t("tasks.task")}</p>
-            <h2 className="mt-1 truncate text-base font-bold text-zani-text">{task.title}</h2>
+            <p className="text-xs font-semibold text-platforma-muted">{t("tasks.task")}</p>
+            <h2 className="mt-1 truncate text-base font-bold text-platforma-text">{task.title}</h2>
           </div>
           <StatusBadge status={task.status} />
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <StatusBadge status={task.priority} />
-          <span className="inline-flex items-center rounded-control bg-surface-muted px-2 py-1 text-xs font-bold text-zani-muted ring-1 ring-zani-border">
+          <span className="inline-flex items-center rounded-control bg-surface-muted px-2 py-1 text-xs font-bold text-platforma-muted ring-1 ring-platforma-border">
             {task.assignee_name || task.assignee_email || t("tasks.noAssignee")}
           </span>
         </div>
       </div>
 
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
-        <section className="rounded-card border border-zani-border bg-surface-muted p-3">
-          <p className="text-xs font-semibold text-zani-muted">{t("tasks.taskSummary")}</p>
-          <p className="mt-1 text-sm font-bold leading-5 text-zani-text">{statusHint}</p>
+        <section className="rounded-card border border-platforma-border bg-surface-muted p-3">
+          <p className="text-xs font-semibold text-platforma-muted">{t("tasks.taskSummary")}</p>
+          <p className="mt-1 text-sm font-bold leading-5 text-platforma-text">{statusHint}</p>
           {task.description ? (
-            <p className="mt-2 line-clamp-3 text-sm font-medium leading-5 text-zani-muted">{task.description}</p>
+            <p className="mt-2 line-clamp-3 text-sm font-medium leading-5 text-platforma-muted">{task.description}</p>
           ) : null}
         </section>
 
@@ -127,8 +127,8 @@ export function TaskQuickInspector({
           />
         </div>
 
-        <section className="rounded-card border border-zani-border bg-surface-card p-3">
-          <p className="mb-2 flex items-center gap-2 text-xs font-semibold text-zani-muted">
+        <section className="rounded-card border border-platforma-border bg-surface-card p-3">
+          <p className="mb-2 flex items-center gap-2 text-xs font-semibold text-platforma-muted">
             <Link2 size={14} />
             {t("tasks.links")}
           </p>
@@ -137,14 +137,14 @@ export function TaskQuickInspector({
               <button
                 key={`${entity.type}-${entity.id}`}
                 type="button"
-                className="max-w-full truncate rounded-full bg-surface-muted px-3 py-1.5 text-xs font-bold text-zani-muted transition hover:bg-brand-50 hover:text-brand-700"
+                className="max-w-full truncate rounded-full bg-surface-muted px-3 py-1.5 text-xs font-bold text-platforma-muted transition hover:bg-brand-50 hover:text-brand-700"
                 onClick={() => onOpenRelated(entity.path)}
               >
                 {entity.label}
               </button>
             ))}
             {!relatedEntities.length ? (
-              <p className="text-sm font-semibold text-zani-muted">{t("tasks.noLinkedEntities")}</p>
+              <p className="text-sm font-semibold text-platforma-muted">{t("tasks.noLinkedEntities")}</p>
             ) : null}
           </div>
         </section>
@@ -170,7 +170,7 @@ export function TaskQuickInspector({
         ) : null}
       </div>
 
-      <div className="grid gap-2 border-t border-zani-border p-4">
+      <div className="grid gap-2 border-t border-platforma-border p-4">
         <Button type="button" onClick={() => onOpen(task)}>
           <SquareArrowOutUpRight size={16} />
           {t("tasks.details")}
@@ -239,11 +239,11 @@ function MetaRow({
   value: string;
 }) {
   return (
-    <div className="flex min-w-0 items-center gap-3 rounded-control border border-zani-border bg-surface-card px-3 py-2">
-      <Icon size={16} className="shrink-0 text-zani-muted" />
+    <div className="flex min-w-0 items-center gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-2">
+      <Icon size={16} className="shrink-0 text-platforma-muted" />
       <div className="min-w-0">
-        <p className="text-xs font-semibold text-zani-muted">{label}</p>
-        <p className="truncate text-sm font-bold text-zani-text">{value}</p>
+        <p className="text-xs font-semibold text-platforma-muted">{label}</p>
+        <p className="truncate text-sm font-bold text-platforma-text">{value}</p>
       </div>
     </div>
   );
@@ -260,9 +260,9 @@ function RelatedStat({
 }) {
   return (
     <div className="min-w-0 rounded-control bg-surface-muted p-2">
-      <Icon size={15} className="text-zani-muted" />
-      <p className="mt-2 text-base font-bold text-zani-text">{value}</p>
-      <p className="truncate text-[11px] font-semibold text-zani-muted">{label}</p>
+      <Icon size={15} className="text-platforma-muted" />
+      <p className="mt-2 text-base font-bold text-platforma-text">{value}</p>
+      <p className="truncate text-[11px] font-semibold text-platforma-muted">{label}</p>
     </div>
   );
 }

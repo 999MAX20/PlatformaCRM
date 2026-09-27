@@ -12,14 +12,14 @@ function CatalogLocale({ language, children }: { language: Language; children: R
     if (language !== current) setLanguage(language);
   }, [current, language, setLanguage]);
   if (current !== language) return null;
-  return <main data-catalog-ready={language} className="min-h-screen bg-zani-bg p-4 text-zani-text">{children}</main>;
+  return <main data-catalog-ready={language} className="min-h-screen bg-platforma-bg p-4 text-platforma-text">{children}</main>;
 }
 
 const preview: Preview = {
   initialGlobals: { locale: "ru" },
   globalTypes: {
     locale: {
-      description: "Zani locale",
+      description: "Платформа CRM locale",
       toolbar: { icon: "globe", items: ["ru", "kk", "en"], dynamicTitle: true },
     },
   },

@@ -24,10 +24,10 @@ export function UsageSection({
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
             {t("settings.usageEyebrow")}
           </p>
-          <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+          <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
             {t("settings.usageTitle")}
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
             {t("settings.usageText")}
           </p>
         </div>
@@ -41,12 +41,12 @@ export function UsageSection({
                 key={item.metric}
                 className="rounded-card bg-surface-muted p-4"
               >
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-zani-faint">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">
                   {formatMetric(item.metric, t)}
                 </p>
-                <p className="mt-2 text-2xl font-bold text-zani-text">
+                <p className="mt-2 text-2xl font-bold text-platforma-text">
                   {item.value}
-                  <span className="text-sm font-semibold text-zani-faint">
+                  <span className="text-sm font-semibold text-platforma-faint">
                     {" "}
                     / {item.limit ?? "в€ћ"}
                   </span>
@@ -63,7 +63,7 @@ export function UsageSection({
                   </p>
                 ) : null}
                 {"remaining" in item && item.remaining !== null ? (
-                  <p className="mt-2 text-xs font-semibold text-zani-subtle">
+                  <p className="mt-2 text-xs font-semibold text-platforma-subtle">
                     {t("settings.remaining", { count: item.remaining })}
                   </p>
                 ) : null}
@@ -71,7 +71,7 @@ export function UsageSection({
             );
           })}
           {!isLoading && !items.length ? (
-            <p className="text-sm text-zani-subtle">{t("settings.noUsage")}</p>
+            <p className="text-sm text-platforma-subtle">{t("settings.noUsage")}</p>
           ) : null}
         </div>
       </CardBody>

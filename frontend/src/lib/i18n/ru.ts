@@ -265,7 +265,7 @@ export const ru: Record<string, string> = {
   "account.changePassword": "Изменить пароль",
   "account.passwordMismatch": "Пароли не совпадают.",
   "account.passwordSaved": "Пароль обновлён.",
-  "sidebar.product": "Zani",
+  "sidebar.product": "Платформа CRM",
   "sidebar.subtitle": "Панель управления бизнесом",
   "sidebar.commandCenter": "Бизнес под контролем",
   "sidebar.commandCenterText":
@@ -300,7 +300,7 @@ export const ru: Record<string, string> = {
   "auth.ownerControlText": "Выручка, заявки и команда",
   "auth.aiBubble": "ИИ нашёл горячие заявки и подготовил подсказки.",
   "auth.welcome": "С возвращением",
-  "auth.signIn": "Войти в Zani",
+  "auth.signIn": "Войти в «Платформа CRM»",
   "auth.signInCopy":
     "Откройте рабочий кабинет и продолжите работу с клиентами.",
   "auth.email": "Email",
@@ -319,7 +319,7 @@ export const ru: Record<string, string> = {
   "mfa.hero": "Два шага — и доступ к бизнесу защищён",
   "mfa.title": "Подтверждение входа",
   "mfa.text": "Введите код из приложения-аутентификатора или один резервный код.",
-  "mfa.addAuthenticator": "Добавьте Zani в аутентификатор",
+  "mfa.addAuthenticator": "Добавьте Платформа CRM в аутентификатор",
   "mfa.addAuthenticatorText": "Откройте Google Authenticator, Microsoft Authenticator, 1Password или другое TOTP-приложение и добавьте ключ ниже.",
   "mfa.openAuthenticator": "Открыть в приложении-аутентификаторе",
   "mfa.codeLabel": "Код подтверждения",
@@ -327,7 +327,7 @@ export const ru: Record<string, string> = {
   "mfa.recoveryHint": "Резервный код можно использовать вместо шестизначного кода только один раз.",
   "mfa.enable": "Подключить защиту",
   "mfa.verify": "Подтвердить вход",
-  "mfa.recoveryWarning": "Сохраните эти резервные коды в надёжном месте. После закрытия страницы Zani больше не покажет их повторно.",
+  "mfa.recoveryWarning": "Сохраните эти резервные коды в надёжном месте. После закрытия страницы Платформа CRM больше не покажет их повторно.",
   "mfa.copyCodes": "Скопировать коды",
   "mfa.continue": "Я сохранил коды — продолжить",
   "mfa.sessionExpiredTitle": "Подтверждение устарело",
@@ -349,12 +349,12 @@ export const ru: Record<string, string> = {
   "mfa.disableReason": "Причина отключения",
   "auth.forgotPassword": "Забыли пароль?",
   "auth.registerBusiness": "Зарегистрировать бизнес",
-  "auth.backToSite": "На сайт Zani",
+  "auth.backToSite": "На сайт Платформа CRM",
   "auth.brandTagline": "Рабочая CRM для бизнеса",
   "auth.alreadyHaveAccount": "Уже есть аккаунт?",
   "auth.noAccount": "Нет аккаунта?",
   "auth.create": "Создать аккаунт",
-  "auth.heroAria": "Возможности Zani",
+  "auth.heroAria": "Возможности Платформа CRM",
   "auth.signupHeroPrefix": "Запустите рабочую CRM за",
   "auth.signupHeroTime": "несколько минут",
   "auth.loginHeroPrefix": "Вернитесь к клиентам за",
@@ -425,9 +425,9 @@ export const ru: Record<string, string> = {
   "passwordReset.sendEmail": "Отправить email",
   "passwordReset.sendWhatsApp": "Отправить в WhatsApp",
   "passwordReset.sendTelegram": "Отправить в Telegram",
-  "passwordReset.shareTitle": "Восстановление пароля Zani",
+  "passwordReset.shareTitle": "Восстановление пароля Платформа CRM",
   "passwordReset.remembered": "Вспомнили пароль?",
-  "passwordReset.shareBody": "Ссылка для восстановления пароля Zani: {url}",
+  "passwordReset.shareBody": "Ссылка для восстановления пароля Платформа CRM: {url}",
   "passwordReset.repeatPasswordRequired": "Повторите пароль",
   "passwordReset.passwordMismatch": "Пароли не совпадают",
   "passwordReset.doneTitle": "Пароль обновлён",
@@ -437,7 +437,7 @@ export const ru: Record<string, string> = {
   "passwordReset.repeatPassword": "Повторите пароль",
   "passwordReset.savePassword": "Сохранить пароль",
   "passwordReset.backToLogin": "Вернуться ко входу",
-  "signup.badge": "Zani для малого бизнеса",
+  "signup.badge": "Платформа CRM для малого бизнеса",
   "signup.headline": "Запустите CRM без длинной настройки.",
   "signup.copy":
     "Создаём владельца, бизнес и базовые роли за один шаг. Сотрудников потом пригласите из настроек команды.",
@@ -456,7 +456,7 @@ export const ru: Record<string, string> = {
   "signup.city": "Город",
   "signup.cityOptional": "Город (необязательно)",
   "signup.nextText":
-    "После входа Zani предложит быстрый старт: услуги, график, сотрудников и первый канал заявок.",
+    "После входа Платформа CRM предложит быстрый старт: услуги, график, сотрудников и первый канал заявок.",
   "signup.startNote":
     "Создаём только владельца и рабочее пространство. Сотрудников, роли, интеграции и график можно спокойно настроить после входа.",
   "signup.submit": "Создать кабинет",
@@ -515,18 +515,18 @@ export const ru: Record<string, string> = {
   "dashboard.aiNavigator": "ИИ-навигатор",
   "dashboard.aiNavigatorScope": "Данные текущего кабинета",
   "dashboard.channels": "Каналы",
-  "dashboard.chatBots": "Чат-боты ZANI",
+  "dashboard.chatBots": "Чат-боты Платформа CRM",
   "dashboard.dataSources": "Данные",
   "dashboard.connectionWhatsappText": "Канал заявок и сообщений",
-  "dashboard.connectionTelegramText": "Диалоги и бот ZANI",
+  "dashboard.connectionTelegramText": "Диалоги и бот Платформа CRM",
   "dashboard.connectionInstagramText": "Обращения из Instagram",
   "dashboard.connectionImportText": "Продажи, клиенты, остатки",
   "dashboard.connectionWarehouseText": "Товары, остатки, продажи",
   "dashboard.connectionActive": "Активно",
   "dashboard.connectionConnect": "Подключить",
-  "dashboard.whatsappBot": "WhatsApp-бот ZANI",
-  "dashboard.telegramBot": "Telegram-бот ZANI",
-  "dashboard.instagramBot": "Instagram-бот ZANI",
+  "dashboard.whatsappBot": "WhatsApp-бот Платформа CRM",
+  "dashboard.telegramBot": "Telegram-бот Платформа CRM",
+  "dashboard.instagramBot": "Instagram-бот Платформа CRM",
   "dashboard.botWhatsappText": "Ответы, заявки и передача менеджеру",
   "dashboard.botTelegramText": "Ответы, заявки и передача менеджеру",
   "dashboard.botInstagramText": "Ответы и заявки после подключения канала",
@@ -570,7 +570,7 @@ export const ru: Record<string, string> = {
     "Ваш рабочий экран: заявки, задачи и записи, которые двигают клиентов к покупке.",
   "dashboard.setupScore": "Оценка настройки бизнеса",
   "dashboard.setupScoreText":
-    "Zani видит ваш бизнес на {score}%. Чем больше источников и справочников подключено, тем точнее CRM подсказывает следующие действия.",
+    "Платформа CRM видит ваш бизнес на {score}%. Чем больше источников и справочников подключено, тем точнее CRM подсказывает следующие действия.",
   "dashboard.quickLead": "Новая заявка",
   "dashboard.quickBooking": "Запись",
   "dashboard.quickDialogs": "Диалоги",
@@ -600,12 +600,12 @@ export const ru: Record<string, string> = {
   "dashboard.demandSource": "Источник спроса",
   "dashboard.checkChannels": "{source} · проверьте каналы.",
   "dashboard.notEnoughData": "Данных пока мало",
-  "dashboard.aiPulse": "Пульс бизнеса от ZANI",
+  "dashboard.aiPulse": "Пульс бизнеса от Платформа CRM",
   "aiHints.eyebrow": "Навигатор",
   "aiHints.title": "Что важно сейчас",
-  "dashboard.zaniRecommendations": "Рекомендации ZANI",
+  "dashboard.zaniRecommendations": "Рекомендации Платформа CRM",
   "dashboard.businessActivated": "Ваш лендинг активирован",
-  "dashboard.acceptsLeads": "{business} уже принимает заявки в ZANI",
+  "dashboard.acceptsLeads": "{business} уже принимает заявки в Платформа CRM",
   "dashboard.trialCopy":
     "У вас открыт подарочный месяц расширенного доступа. Доплачивать сейчас не нужно.",
   "dashboard.activeUntil": "Доступ активен до {date}.",
@@ -732,10 +732,10 @@ export const ru: Record<string, string> = {
     "Оценка по завершённым записям; загрузите продажи для точной картины.",
   "dashboard.revenueMissingValue": "Нет данных",
   "dashboard.revenueMissingHint":
-    "Подключите продажи или импортируйте Excel/CSV, чтобы ZANI показывал реальные деньги.",
+    "Подключите продажи или импортируйте Excel/CSV, чтобы Платформа CRM показывал реальные деньги.",
   "dashboard.revenueMissingShort": "Подключите продажи для точной картины.",
   "dashboard.aiBrief.eyebrow": "AI-сводка",
-  "dashboard.aiBrief.title": "Что ZANI видит сегодня",
+  "dashboard.aiBrief.title": "Что Платформа CRM видит сегодня",
   "dashboard.aiBrief.source": "Только данные этого кабинета",
   "dashboard.aiBrief.overdueTitle": "Есть просроченные задачи",
   "dashboard.aiBrief.overdueText": "{count} задач требуют решения сегодня.",
@@ -749,11 +749,11 @@ export const ru: Record<string, string> = {
   "dashboard.aiBrief.openCalendar": "Открыть календарь",
   "dashboard.aiBrief.salesTitle": "Нет данных по деньгам",
   "dashboard.aiBrief.salesText":
-    "Подключите продажи или импортируйте Excel/CSV, чтобы ZANI объяснял выручку.",
+    "Подключите продажи или импортируйте Excel/CSV, чтобы Платформа CRM объяснял выручку.",
   "dashboard.aiBrief.connectSales": "Подключить данные",
   "dashboard.aiBrief.setupTitle": "Бизнес настроен не полностью",
   "dashboard.aiBrief.setupText":
-    "ZANI видит бизнес на {score}%. Завершите быстрый старт для точных подсказок.",
+    "Платформа CRM видит бизнес на {score}%. Завершите быстрый старт для точных подсказок.",
   "dashboard.aiBrief.openSetup": "Быстрый старт",
   "dashboard.aiBrief.missingTitle": "Недостаточно данных",
   "dashboard.aiBrief.missingText":
@@ -764,9 +764,9 @@ export const ru: Record<string, string> = {
   "dashboard.ownerReadinessLine":
     "Готовность бизнеса {setup}% · конверсия {conversion}%",
   "dashboard.stitchSubtitle": "Вот состояние вашего бизнеса.",
-  "dashboard.smartTitle": "ZANI SMART ИНТЕЛЛЕКТ",
+  "dashboard.smartTitle": "Платформа CRM SMART ИНТЕЛЛЕКТ",
   "dashboard.smartSummary":
-    "ZANI заметил важные сигналы: лиды требуют реакции, часть диалогов ждёт ответа, а сделки без движения нужно проверить сегодня.",
+    "Платформа CRM заметил важные сигналы: лиды требуют реакции, часть диалогов ждёт ответа, а сделки без движения нужно проверить сегодня.",
   "dashboard.smartPrimaryAction": "Исправить время ответа",
   "dashboard.smartSecondaryAction": "Обзор сделок",
   "dashboard.integrationStatus": "Интеграции",
@@ -837,7 +837,7 @@ export const ru: Record<string, string> = {
   "dashboard.openAiAnalyst": "Открыть AI Analyst",
   "dashboard.openTeamSettings": "Открыть настройки команды",
   "dashboard.aiProviderUnavailable":
-    "Live AI-провайдер не готов или не настроен. ZANI не будет выдавать неподтверждённые AI-ответы; source-grounded CRM-состояния остаются видимыми.",
+    "Live AI-провайдер не готов или не настроен. Платформа CRM не будет выдавать неподтверждённые AI-ответы; source-grounded CRM-состояния остаются видимыми.",
   "dashboard.aiProviderStatus": "AI-провайдер: {provider} · {mode}",
   "header.notifications": "Уведомления",
   "header.notificationsSummary":
@@ -949,7 +949,7 @@ export const ru: Record<string, string> = {
   "pricing.stopAgent": "Остановить агента",
   "pricing.catalogTitle": "Товары из интеграций",
   "pricing.catalogText":
-    "ZANI собирает товары из Kaspi, МойСклад, 1C, Excel/CSV, Ozon и Wildberries.",
+    "Платформа CRM собирает товары из Kaspi, МойСклад, 1C, Excel/CSV, Ozon и Wildberries.",
   "pricing.refreshCatalog": "Обновить товары",
   "pricing.bulkMinPrice": "Общий порог",
   "pricing.step": "Шаг",
@@ -1001,9 +1001,9 @@ export const ru: Record<string, string> = {
     "Рекомендация: {price} · {reason} · статус {status}",
   "pricing.autopilot": "Автопилот",
   "pricing.autopilotEnabledText":
-    "Включен. ZANI может применять безопасные рекомендации в плановом цикле.",
+    "Включен. Платформа CRM может применять безопасные рекомендации в плановом цикле.",
   "pricing.autopilotCheckText":
-    "Перед включением ZANI проверяет порог, дневной лимит и наличие мониторинга.",
+    "Перед включением Платформа CRM проверяет порог, дневной лимит и наличие мониторинга.",
   "pricing.stop": "Остановить",
   "pricing.enableAutopilot": "Включить автопилот",
   "pricing.minPriceValue": "Порог: {price}",
@@ -1210,7 +1210,7 @@ export const ru: Record<string, string> = {
   "developers.advanced": "Расширенно",
   "developers.title": "Ключи интеграций и события",
   "developers.description":
-    "Расширенный слой для технических подключений. Используйте его только вместе с разработчиком или поддержкой ZANI.",
+    "Расширенный слой для технических подключений. Используйте его только вместе с разработчиком или поддержкой Платформа CRM.",
   "developers.summary": "{tokens} ключей · {webhooks} событий",
   "developers.defaultTokenName": "Ключ CRM-интеграции",
   "developers.defaultWebhookName": "Рабочий webhook",
@@ -1342,7 +1342,7 @@ export const ru: Record<string, string> = {
     "Сначала добавьте канал сайта. После этого здесь появится форма сообщения.",
   "botDetail.previewResultTitle": "Результат проверки",
   "botDetail.previewResultDescription":
-    "Если в сообщении указан телефон или email, ZANI создаёт клиента и заявку. После отправки откройте сообщения: диалог должен быть виден менеджеру.",
+    "Если в сообщении указан телефон или email, Платформа CRM создаёт клиента и заявку. После отправки откройте сообщения: диалог должен быть виден менеджеру.",
   "botDetail.noPreviewMessages": "Сообщений пока не было.",
   "botDetail.aiReplyTitle": "Черновик ответа",
   "botDetail.aiReplyDescription":
@@ -1361,7 +1361,7 @@ export const ru: Record<string, string> = {
   "whatsappSetup.savedNotice": "Пилот WhatsApp подготовлен. Статус: {status}.",
   "whatsappSetup.title": "WhatsApp подключение",
   "whatsappSetup.description":
-    "Подключение готовится через поддержку ZANI. Владелец видит только статус и понятные действия.",
+    "Подключение готовится через поддержку Платформа CRM. Владелец видит только статус и понятные действия.",
   "whatsappSetup.supportTitle": "Безопасное подключение через поддержку",
   "whatsappSetup.supportText":
     "Мы проверим номер, сценарий сообщений и включим канал без показа технических ключей в кабинете.",
@@ -1380,7 +1380,7 @@ export const ru: Record<string, string> = {
   "whatsappSetup.emptyHistory":
     "История пока пустая. Первые входящие и исходящие сообщения появятся здесь.",
   "whatsappSetup.noChannel":
-    "WhatsApp ещё не добавлен. Оставьте запрос в интеграциях или обратитесь в поддержку ZANI.",
+    "WhatsApp ещё не добавлен. Оставьте запрос в интеграциях или обратитесь в поддержку Платформа CRM.",
   "pilot.status.ready": "Готово",
   "pilot.status.needsAttention": "Требует внимания",
   "pilot.status.missing": "Не настроено",
@@ -1390,7 +1390,7 @@ export const ru: Record<string, string> = {
     "Не удалось загрузить чеклист. Проверьте доступ к бизнесу.",
   "pilot.title": "Готовность к пилоту",
   "pilot.description":
-    "Контрольная страница перед показом Zani пилотным клиентам: бизнес, данные, бот, сообщения, оплата, ассистент, импорт и интеграции.",
+    "Контрольная страница перед показом Платформа CRM пилотным клиентам: бизнес, данные, бот, сообщения, оплата, ассистент, импорт и интеграции.",
   "pilot.refresh": "Обновить чеклист",
   "pilot.noBusiness": "Бизнес не выбран",
   "pilot.scoreTitle": "Пилотная готовность:",
@@ -1788,7 +1788,7 @@ export const ru: Record<string, string> = {
   "services.editTitle": "Редактировать услугу",
   "services.formHintTitle": "Услуга влияет на календарь",
   "services.formHintText":
-    "Чем точнее длительность, тем точнее Zani покажет свободные окна и загрузку специалистов.",
+    "Чем точнее длительность, тем точнее Платформа CRM покажет свободные окна и загрузку специалистов.",
   "services.templatesTitle": "Быстрый старт услуги",
   "services.templatesText":
     "Выберите шаблон, а затем поправьте название, цену или длительность под свой бизнес.",
@@ -1971,7 +1971,7 @@ export const ru: Record<string, string> = {
     "{count} клиентов пока не связаны с заявками или записями. Их можно сегментировать для повторного контакта.",
   "clients.aiLinkedTitle": "Клиентская база связана с событиями",
   "clients.aiLinkedDesc":
-    "У клиентов есть заявки или записи, поэтому ZANI может точнее объяснять историю взаимодействий.",
+    "У клиентов есть заявки или записи, поэтому Платформа CRM может точнее объяснять историю взаимодействий.",
   "clients.aiTagsTitle": "Добавьте теги клиентам",
   "clients.aiTagsDesc":
     "Теги помогут отделять постоянных, горячих и рискованных клиентов без сложной CRM-логики.",
@@ -2737,7 +2737,7 @@ export const ru: Record<string, string> = {
   "analytics.smartReportText":
     "{source} сейчас самый заметный источник заявок. Конверсия лидов в запись: {conversion}%. Проверьте связку канала и заявок перед оптимизацией расходов.",
   "analytics.smartReportNoSource":
-    "Источник заявок пока не определен. Подключите каналы и дождитесь первых событий, чтобы ZANI показал приоритет.",
+    "Источник заявок пока не определен. Подключите каналы и дождитесь первых событий, чтобы Платформа CRM показал приоритет.",
   "analytics.smartReportAction": "Оптимизировать",
   "analytics.noBusiness":
     "Создайте бизнес в настройках, чтобы видеть аналитику.",
@@ -2774,7 +2774,7 @@ export const ru: Record<string, string> = {
     "{source} дал {count} заявок. Проверьте качество обработки этого канала.",
   "analytics.aiMissingSourcesTitle": "Источники пока не видны",
   "analytics.aiMissingSourcesDesc":
-    "Недостаточно заявок с источниками. Подключите каналы или импорт, чтобы ZANI объяснял спрос.",
+    "Недостаточно заявок с источниками. Подключите каналы или импорт, чтобы Платформа CRM объяснял спрос.",
   "analytics.aiNoShowTitle": "Есть неявки",
   "analytics.aiNoShowDesc":
     "{count} клиентов не пришли. Проверьте напоминания и подтверждение записей.",
@@ -2784,7 +2784,7 @@ export const ru: Record<string, string> = {
   "analytics.aiDataQualityTitle": "Качество данных",
   "analytics.aiSalesDataTitle": "Продажи не подключены",
   "analytics.aiSalesDataDesc":
-    "Без продаж ZANI не будет делать выводы о выручке и LTV.",
+    "Без продаж Платформа CRM не будет делать выводы о выручке и LTV.",
   "analytics.aiConnectData": "Подключить данные",
   "analytics.sourceRoi": "Источники и оценка услуг",
   "analytics.teamCsv": "CSV команды",
@@ -2825,7 +2825,7 @@ export const ru: Record<string, string> = {
   "analytics.noTeams": "Команды появятся после настройки отделов.",
   "settings.title": "Настройки",
   "settings.description":
-    "Бизнес, команда, доступы и системные настройки Zani.",
+    "Бизнес, команда, доступы и системные настройки Платформа CRM.",
   "settings.navigationTitle": "Разделы настроек",
   "settings.navigationText":
     "Откройте группу и перейдите к нужному блоку без прокрутки всей страницы.",
@@ -2949,9 +2949,9 @@ export const ru: Record<string, string> = {
   "settings.copied": "Скопировано",
   "settings.revoke": "Отозвать",
   "settings.noInvites": "Активных приглашений пока нет.",
-  "settings.inviteSubject": "Приглашение в Zani CRM",
+  "settings.inviteSubject": "Приглашение в Платформа CRM CRM",
   "settings.inviteMessage":
-    "Вас пригласили в Zani CRM. Откройте ссылку и задайте пароль: {url}",
+    "Вас пригласили в Платформа CRM CRM. Откройте ссылку и задайте пароль: {url}",
   "settings.role.owner": "Владелец",
   "settings.role.admin": "Администратор",
   "settings.role.manager": "Менеджер",
@@ -3395,7 +3395,7 @@ export const ru: Record<string, string> = {
     "По доступным данным нет явных рисков. Продолжайте отслеживать заявки, задачи и диалоги.",
   "aiNavigator.dataPolicyTitle": "Только данные этого бизнеса",
   "aiNavigator.dataPolicyText":
-    "ZANI AI не использует данные других компаний, не ищет информацию в интернете и не делает выводы без фактической базы.",
+    "Платформа CRM AI не использует данные других компаний, не ищет информацию в интернете и не делает выводы без фактической базы.",
   "aiNavigator.roleHelpTitle": "Подсказки по роли",
   "aiNavigator.roleHelpText":
     "Владелец видит контроль бизнеса, менеджер — следующие рабочие действия.",
@@ -3411,7 +3411,7 @@ export const ru: Record<string, string> = {
   "aiNavigator.noSourceDataState":
     "Для этой роли пока не видно исходных записей. Подключите канал, импортируйте данные или дождитесь CRM-активности.",
   "aiNavigator.suggestedActions": "Предлагаемые действия",
-  "aiNavigator.prompt.dailySummary": "Сформируй короткую бизнес-сводку ZANI.",
+  "aiNavigator.prompt.dailySummary": "Сформируй короткую бизнес-сводку Платформа CRM.",
   "aiNavigator.prompt.factOnly":
     "Используй только факты ниже. Не добавляй внешние данные, рынок, конкурентов или неподтвержденные причины.",
   "aiNavigator.prompt.insufficientData":
@@ -3500,7 +3500,7 @@ export const ru: Record<string, string> = {
   "aiAssistant.memory.category.operations": "Операции",
   "aiAssistant.memory.category.tone": "Тон общения",
   "aiAssistant.memory.category.policy": "Правила",
-  "aiAgents.defaultName": "Zani assistant",
+  "aiAgents.defaultName": "Платформа CRM assistant",
   "aiAgents.defaultRoleDescription":
     "Квалифицировать заявки и помогать менеджерам отвечать быстрее.",
   "aiAgents.defaultSystemPrompt":
@@ -4147,7 +4147,7 @@ export const ru: Record<string, string> = {
   "leads.aiReviewPipeline": "Проверить",
   "leads.aiDataTitle": "Добавьте источники заявок",
   "leads.aiDataDesc":
-    "Когда подключены WhatsApp, Telegram или сайт, ZANI точнее показывает узкие места.",
+    "Когда подключены WhatsApp, Telegram или сайт, Платформа CRM точнее показывает узкие места.",
   "leads.aiConnectSources": "Подключить",
   "leads.nextActionContactClient": "Связаться с клиентом",
   "leads.nextActionQualifyNeed": "Квалифицировать потребность",
@@ -4413,7 +4413,7 @@ export const ru: Record<string, string> = {
     "Сделки, клиенты, переписки и ближайшие шаги в одном рабочем экране.",
   "deals.aiPriorityTitle": "Приоритет AI Интеллекта",
   "deals.aiPriorityText":
-    "Проверьте сделку {deal}: клиент {client}, сумма {amount}. ZANI видит риск остановки и рекомендует назначить следующий шаг.",
+    "Проверьте сделку {deal}: клиент {client}, сумма {amount}. Платформа CRM видит риск остановки и рекомендует назначить следующий шаг.",
   "deals.aiPriorityEmpty":
     "Критичных сделок сейчас нет. Pipeline можно вести по ближайшим задачам.",
   "deals.takeAction": "Принять меры",
@@ -4621,7 +4621,7 @@ export const ru: Record<string, string> = {
   "platform.overview.loading": "Загружаем метрики платформы...",
   "platform.overview.error": "Не удалось загрузить dashboard платформы.",
   "platform.overview.eyebrow": "Управление платформой",
-  "platform.overview.title": "Обзор Zani",
+  "platform.overview.title": "Обзор Платформа CRM",
   "platform.overview.description":
     "Реальные продуктовые метрики платформы без merchant CRM sidebar и без internal dev tools.",
   "platform.overview.totalMerchants": "Всего мерчантов",
@@ -4942,7 +4942,7 @@ export const ru: Record<string, string> = {
     "Создаёт услуги и события каталога или остатков.",
   "integrations.import.chooseFile": "Выберите CSV или XLSX файл.",
   "integrations.import.panelDescription":
-    "Загрузите файл с клиентами, заявками, продажами или каталогом. ZANI сначала проверит файл и покажет предпросмотр.",
+    "Загрузите файл с клиентами, заявками, продажами или каталогом. Платформа CRM сначала проверит файл и покажет предпросмотр.",
   "integrations.import.eyebrow": "Excel / CSV коннектор",
   "integrations.import.title": "Импорт реальных данных",
   "integrations.import.description":
@@ -4970,7 +4970,7 @@ export const ru: Record<string, string> = {
   "integrations.import.duplicates": "Дубли",
   "integrations.import.duplicatesFound": "Найдены возможные дубли",
   "integrations.import.duplicatesDescription":
-    "ZANI не создаст вторую карточку, если клиент уже найден по телефону или email.",
+    "Платформа CRM не создаст вторую карточку, если клиент уже найден по телефону или email.",
   "integrations.import.duplicatesCount": "{count} возможных дублей",
   "integrations.import.summaryRows": "Строк",
   "integrations.import.summaryCreated": "Создано",
@@ -5041,7 +5041,7 @@ export const ru: Record<string, string> = {
     "Первый внешний канал для пилота: сообщения из Telegram попадают во входящие. Подключение выполняется безопасно через поддержку, без показа секретных данных в ежедневной работе.",
   "integrations.telegram.ownerGuide": "Понятная настройка для владельца",
   "integrations.telegram.step1":
-    "1. Нажмите проверку статуса и убедитесь, что канал создан в ZANI.",
+    "1. Нажмите проверку статуса и убедитесь, что канал создан в Платформа CRM.",
   "integrations.telegram.step2":
     "2. Передайте подключение поддержке, если внешний Telegram ещё не связан.",
   "integrations.telegram.step3":
@@ -5052,7 +5052,7 @@ export const ru: Record<string, string> = {
   "integrations.telegram.tokenSaved": "Переданы поддержке",
   "integrations.telegram.tokenMissing": "Ожидают настройки",
   "integrations.telegram.messageIntake": "Приём сообщений",
-  "integrations.telegram.intakeConfigured": "Настроен внутри ZANI",
+  "integrations.telegram.intakeConfigured": "Настроен внутри Платформа CRM",
   "integrations.telegram.intakePending": "Будет настроен после сохранения",
   "integrations.telegram.webhook": "Подготовка канала",
   "integrations.telegram.webhookConfigured": "Канал подготовлен",
@@ -5067,7 +5067,7 @@ export const ru: Record<string, string> = {
     "Владелец видит статус и проверку канала. Секретные данные подключения не показываются после сохранения и не нужны для ежедневной работы.",
   "integrations.telegram.advancedSetup": "Расширенная пилотная настройка",
   "integrations.telegram.advancedSetupHelp":
-    "Используйте только если поддержка попросила передать код подключения. ZANI сохранит его безопасно и больше не покажет в интерфейсе.",
+    "Используйте только если поддержка попросила передать код подключения. Платформа CRM сохранит его безопасно и больше не покажет в интерфейсе.",
   "integrations.telegram.botFatherToken": "Код подключения Telegram",
   "integrations.telegram.tokenReplacePlaceholder":
     "Код уже сохранён. Введите новый только для замены.",
@@ -5088,7 +5088,7 @@ export const ru: Record<string, string> = {
     "Не удалось подключить входящие сообщения.",
   "integrations.telegram.createChannel": "Создать канал Telegram",
   "integrations.telegram.inlineDescription":
-    "Подключите бота, чтобы ZANI принимал сообщения клиентов и отправлял ответы от имени вашей компании.",
+    "Подключите бота, чтобы Платформа CRM принимал сообщения клиентов и отправлял ответы от имени вашей компании.",
   "integrations.telegram.botKey": "Ключ бота",
   "integrations.telegram.tokenSavedPrivate":
     "Ключ сохранён приватно. Вставьте новый только для замены.",
@@ -5147,7 +5147,7 @@ export const ru: Record<string, string> = {
   "integrations.instagram.accessSaved":
     "Доступ Instagram сохранён приватно. Теперь проверьте подключение.",
   "integrations.instagram.metaOpenFailed":
-    "Не удалось открыть подключение через Meta. Обратитесь в поддержку ZANI.",
+    "Не удалось открыть подключение через Meta. Обратитесь в поддержку Платформа CRM.",
   "integrations.instagram.connectedNotice": "Instagram подключен.",
   "integrations.instagram.connectionChecked":
     "Instagram подключение проверено.",
@@ -5156,7 +5156,7 @@ export const ru: Record<string, string> = {
   "integrations.instagram.finishConnection": "Завершите подключение",
   "integrations.instagram.createChannel": "Создать канал Instagram",
   "integrations.instagram.inlineDescription":
-    "Подключите Instagram Direct через Meta, чтобы ZANI принимал сообщения и передавал диалоги менеджерам.",
+    "Подключите Instagram Direct через Meta, чтобы Платформа CRM принимал сообщения и передавал диалоги менеджерам.",
   "integrations.instagram.accountId": "ID аккаунта Instagram",
   "integrations.instagram.idSaved": "ID уже сохранён",
   "integrations.instagram.facebookPageId": "ID страницы Facebook",
@@ -5179,18 +5179,18 @@ export const ru: Record<string, string> = {
   "integrations.whatsapp.connectionCheckFailed":
     "WhatsApp доступ не прошёл проверку.",
   "integrations.whatsapp.metaOpenFailed":
-    "Не удалось открыть подключение через Meta. Обратитесь в поддержку ZANI.",
+    "Не удалось открыть подключение через Meta. Обратитесь в поддержку Платформа CRM.",
   "integrations.whatsapp.metaAccessDenied":
     "Meta не подтвердила доступ. Попробуйте подключить WhatsApp ещё раз.",
   "integrations.whatsapp.metaConfirmed":
     "Meta подтвердила доступ. Завершите подключение.",
   "integrations.whatsapp.metaFallbackOpened":
-    "Открылось резервное окно подключения Meta. Завершите вход и вернитесь в ZANI.",
+    "Открылось резервное окно подключения Meta. Завершите вход и вернитесь в Платформа CRM.",
   "integrations.whatsapp.connectedNotice": "WhatsApp подключен.",
   "integrations.whatsapp.finishConnection": "Завершите подключение",
   "integrations.whatsapp.createChannel": "Создать канал WhatsApp",
   "integrations.whatsapp.inlineDescription":
-    "Подтвердите доступ в Meta, чтобы ZANI принимал и отправлял сообщения через WhatsApp Business.",
+    "Подтвердите доступ в Meta, чтобы Платформа CRM принимал и отправлял сообщения через WhatsApp Business.",
   "integrations.whatsapp.phoneNumberId": "ID номера WhatsApp",
   "integrations.whatsapp.phoneNumberIdSaved": "ID номера уже сохранён",
   "integrations.whatsapp.businessAccountId": "ID бизнес-аккаунта",
@@ -5246,7 +5246,7 @@ export const ru: Record<string, string> = {
   "integrations.kaspi.connect": "Подключить Kaspi",
   "integrations.kaspi.loadOrders": "Загрузить заказы",
   "integrations.kaspi.readOnlyNotice":
-    "ZANI только читает заказы для аналитики. Изменение цен, принятие и отмена заказов в Kaspi здесь отключены.",
+    "Платформа CRM только читает заказы для аналитики. Изменение цен, принятие и отмена заказов в Kaspi здесь отключены.",
   "integrations.moysklad.accessSaved":
     "МойСклад подключен. Доступ сохранён приватно, можно проверить подключение.",
   "integrations.moysklad.connectionChecked":
@@ -5260,7 +5260,7 @@ export const ru: Record<string, string> = {
   "integrations.moysklad.loadedBefore": "Загружался",
   "integrations.moysklad.connectionTitle": "Подключение МойСклад",
   "integrations.moysklad.connectionDescription":
-    "Введите ключ доступа из МойСклад. ZANI сохранит его приватно и будет использовать только для загрузки данных.",
+    "Введите ключ доступа из МойСклад. Платформа CRM сохранит его приватно и будет использовать только для загрузки данных.",
   "integrations.moysklad.accessKey": "Ключ доступа МойСклад",
   "integrations.moysklad.accessKeyPlaceholder":
     "Вставьте ключ доступа из МойСклад",
@@ -5272,7 +5272,7 @@ export const ru: Record<string, string> = {
   "integrations.moysklad.connect": "Подключить МойСклад",
   "integrations.moysklad.loadData": "Загрузить данные",
   "integrations.moysklad.readOnlyNotice":
-    "ZANI только читает товары, остатки, продажи и контрагентов. Изменение документов, цен и остатков в МойСклад отключено.",
+    "Платформа CRM только читает товары, остатки, продажи и контрагентов. Изменение документов, цен и остатков в МойСклад отключено.",
   "integrations.ozon.accessSaved":
     "Ozon подключен. Доступ сохранён приватно, можно проверить подключение.",
   "integrations.ozon.connectionChecked": "Подключение к Ozon проверено.",
@@ -5283,7 +5283,7 @@ export const ru: Record<string, string> = {
   "integrations.ozon.data": "Данные",
   "integrations.ozon.connectionTitle": "Подключение Ozon",
   "integrations.ozon.connectionDescription":
-    "Введите данные доступа из кабинета продавца Ozon. ZANI использует их только для чтения отправлений и остатков.",
+    "Введите данные доступа из кабинета продавца Ozon. Платформа CRM использует их только для чтения отправлений и остатков.",
   "integrations.ozon.enterAccess": "Ввести доступ",
   "integrations.ozon.sellerId": "ID продавца Ozon",
   "integrations.ozon.sellerIdReplacePlaceholder":
@@ -5296,7 +5296,7 @@ export const ru: Record<string, string> = {
   "integrations.ozon.connect": "Подключить Ozon",
   "integrations.ozon.loadData": "Загрузить данные",
   "integrations.ozon.readOnlyNotice":
-    "ZANI не обновляет цены, остатки, карточки, сборку и отмену заказов Ozon. Подключение только загружает данные для отчётов.",
+    "Платформа CRM не обновляет цены, остатки, карточки, сборку и отмену заказов Ozon. Подключение только загружает данные для отчётов.",
   "integrations.wildberries.accessSaved":
     "Wildberries подключен. Доступ сохранён приватно, можно проверить подключение.",
   "integrations.wildberries.connectionChecked":
@@ -5311,7 +5311,7 @@ export const ru: Record<string, string> = {
   "integrations.wildberries.updateWindowValue": "~30 минут",
   "integrations.wildberries.connectionTitle": "Подключение Wildberries",
   "integrations.wildberries.connectionDescription":
-    "Введите ключ доступа из кабинета продавца Wildberries. ZANI только читает заказы и продажи для аналитики.",
+    "Введите ключ доступа из кабинета продавца Wildberries. Платформа CRM только читает заказы и продажи для аналитики.",
   "integrations.wildberries.accessKey": "Ключ доступа Wildberries",
   "integrations.wildberries.accessKeyPlaceholder":
     "Вставьте ключ доступа из Wildberries",
@@ -5323,11 +5323,11 @@ export const ru: Record<string, string> = {
   "integrations.wildberries.connect": "Подключить Wildberries",
   "integrations.wildberries.loadData": "Загрузить данные",
   "integrations.wildberries.readOnlyNotice":
-    "ZANI не меняет цены, карточки, поставки и заказы Wildberries. Подключение только загружает данные для отчётов.",
+    "Платформа CRM не меняет цены, карточки, поставки и заказы Wildberries. Подключение только загружает данные для отчётов.",
   "integrations.kaspiPricing.stoppedNotice":
     "Ценовой агент остановлен. Применение цен заблокировано.",
   "integrations.kaspiPricing.resumedNotice": "Ценовой агент снова активен.",
-  "integrations.kaspiPricing.productTitle": "Отдельный продукт ZANI для цен",
+  "integrations.kaspiPricing.productTitle": "Отдельный продукт Платформа CRM для цен",
   "integrations.kaspiPricing.productDescription":
     "Обычный Kaspi-коннектор только читает заказы и бизнес-данные. Kaspi Pricing управляет правилами цены, порогами, мониторингом конкурентов и автопилотом.",
   "integrations.kaspiPricing.openAgent": "Открыть агент",
@@ -5360,7 +5360,7 @@ export const ru: Record<string, string> = {
     "Создайте бизнес, чтобы подключать каналы и внешние сервисы.",
   "integrations.page.title": "Подключения бизнеса",
   "integrations.page.description":
-    "Пилотная карта коннекторов ZANI: self-service каналы, request-подключения, тарифные upsell-модули и roadmap без кнопок в тупик.",
+    "Пилотная карта коннекторов Платформа CRM: self-service каналы, request-подключения, тарифные upsell-модули и roadmap без кнопок в тупик.",
   "integrations.page.safeTokenNotice": "Без технических токенов в CRM",
   "integrations.page.includedTitle": "В тарифе",
   "integrations.page.includedText":
@@ -5395,7 +5395,7 @@ export const ru: Record<string, string> = {
   "integrations.overview.openAgentChannels": "Открыть каналы агента",
   "integrations.overview.recommendedTitle": "Рекомендуемая интеграция",
   "integrations.overview.recommendedText":
-    "Начните с {provider}: это даст ZANI больше контекста по обращениям и сократит ручную обработку.",
+    "Начните с {provider}: это даст Платформа CRM больше контекста по обращениям и сократит ручную обработку.",
   "integrations.overview.connectNow": "Показать подключение",
   "integrations.overview.searchPlaceholder": "Поиск: сайт, Telegram, Kaspi...",
   "integrations.overview.allGroups": "Все направления",
@@ -5442,7 +5442,7 @@ export const ru: Record<string, string> = {
   "integrations.connectorHint.selfService":
     "Можно включить в пилоте без внешнего провайдера. Это безопасный self-service коннектор.",
   "integrations.connectorHint.request":
-    "Кнопка создаёт заявку подключения внутри ZANI. Реальное подключение выполняет команда ZANI вручную.",
+    "Кнопка создаёт заявку подключения внутри Платформа CRM. Реальное подключение выполняет команда Платформа CRM вручную.",
   "integrations.connectorHint.upgrade":
     "Доступно на тарифе {plan} или выше. Сейчас показываем честный upsell без сломанной кнопки.",
   "integrations.connectorHint.roadmap":
@@ -5469,18 +5469,18 @@ export const ru: Record<string, string> = {
   "integrations.group.website.eyebrow": "Сайт",
   "integrations.group.website.title": "Сайт и виджеты",
   "integrations.group.website.text":
-    "Виджет, формы и обращения с сайта в единый кабинет ZANI.",
+    "Виджет, формы и обращения с сайта в единый кабинет Платформа CRM.",
   "integrations.group.accounting.eyebrow": "Учёт",
   "integrations.group.accounting.title": "Финансы, склад и учёт",
   "integrations.group.accounting.text":
     "Лёгкая видимость данных из 1C, МойСклад и складских источников.",
   "integrations.bots.eyebrow": "Автоматизация ответов",
-  "integrations.bots.title": "Чат-боты ZANI",
+  "integrations.bots.title": "Чат-боты Платформа CRM",
   "integrations.bots.description":
-    "Каналы принимают сообщения и заявки. Чат-боты ZANI помогают отвечать на частые вопросы, принимать заявки и передавать диалоги менеджерам.",
+    "Каналы принимают сообщения и заявки. Чат-боты Платформа CRM помогают отвечать на частые вопросы, принимать заявки и передавать диалоги менеджерам.",
   "integrations.bots.safeNotice":
     "Без API-ключей, webhook и технических настроек для мерчанта",
-  "integrations.bots.cardTitle": "{channel}-бот ZANI",
+  "integrations.bots.cardTitle": "{channel}-бот Платформа CRM",
   "integrations.bots.whatsappText":
     "Автоматически отвечает клиентам, принимает заявки и передаёт WhatsApp-диалоги менеджерам.",
   "integrations.bots.telegramText":
@@ -5509,7 +5509,7 @@ export const ru: Record<string, string> = {
   "integrations.setupMessage.connected":
     "Канал активен. Новые обращения и события будут попадать в Inbox, CRM, аналитику и автоматизации.",
   "integrations.setupMessage.needsAttention":
-    "Подключение создано и ожидает настройки или ручной проверки команды ZANI.",
+    "Подключение создано и ожидает настройки или ручной проверки команды Платформа CRM.",
   "integrations.setupMessage.disabled":
     "Канал отключён. Его можно вернуть после повторной настройки или обращения в поддержку.",
   "integrations.card.businessValue": "Что даёт бизнесу",
@@ -5542,7 +5542,7 @@ export const ru: Record<string, string> = {
   "integrations.card.websiteFlipTitle":
     "Не теряйте заявки с сайта после первого клика.",
   "integrations.card.websiteFlipText":
-    "ZANI принимает заявки с формы и сразу передаёт их в сообщения.",
+    "Платформа CRM принимает заявки с формы и сразу передаёт их в сообщения.",
   "integrations.card.websiteFlow": "Сайт → Сообщения → Заявки",
   "integrations.card.connectionTitle": "Подключение: {title}",
   "integrations.card.websiteNoExtraData":
@@ -5562,7 +5562,7 @@ export const ru: Record<string, string> = {
   "integrations.error.actionRequired":
     "Подключение требует внимания. Проверьте статус настройки или попросите владельца переподключить его.",
   "integrations.error.webhookSetup":
-    "Входящие сообщения ещё не готовы. Владелец или поддержка ZANI должны завершить проверку webhook/setup.",
+    "Входящие сообщения ещё не готовы. Владелец или поддержка Платформа CRM должны завершить проверку webhook/setup.",
   "integrations.error.permission":
     "Ваша роль может просматривать подключение, но не менять его настройку.",
   "integrations.error.rateLimit":

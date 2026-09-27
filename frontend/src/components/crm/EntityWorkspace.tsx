@@ -49,12 +49,12 @@ export function EntityWorkspaceHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="rounded-card border border-zani-border bg-surface-warm p-4 shadow-card">
+    <header className="rounded-card border border-platforma-border bg-surface-warm p-4 shadow-card">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <button
             type="button"
-            className="zani-focus-ring mb-3 inline-flex items-center gap-2 rounded-control text-sm font-semibold text-zani-subtle transition hover:text-zani-text"
+            className="platforma-focus-ring mb-3 inline-flex items-center gap-2 rounded-control text-sm font-semibold text-platforma-subtle transition hover:text-platforma-text"
             onClick={onBack}
           >
             <ArrowLeft size={16} />
@@ -64,13 +64,13 @@ export function EntityWorkspaceHeader({
             {avatar}
             <div className="min-w-0">
               <div className="flex min-w-0 flex-wrap items-center gap-2">
-                <h1 className="truncate text-[22px] font-semibold leading-[30px] text-zani-text">
+                <h1 className="truncate text-[22px] font-semibold leading-[30px] text-platforma-text">
                   {title}
                 </h1>
                 {status ? <StatusBadge status={status} /> : null}
               </div>
               {subtitle ? (
-                <p className="mt-1 truncate text-sm font-semibold text-zani-subtle">
+                <p className="mt-1 truncate text-sm font-semibold text-platforma-subtle">
                   {subtitle}
                 </p>
               ) : null}
@@ -105,9 +105,9 @@ export function EntityWorkspaceMetric({
   value: number | string;
 }) {
   return (
-    <div className="rounded-card border border-zani-border bg-surface-card px-4 py-3 shadow-card">
-      <p className="text-xs font-semibold text-zani-faint">{label}</p>
-      <p className="mt-1 truncate text-2xl font-semibold tabular-nums text-zani-text">
+    <div className="rounded-card border border-platforma-border bg-surface-card px-4 py-3 shadow-card">
+      <p className="text-xs font-semibold text-platforma-faint">{label}</p>
+      <p className="mt-1 truncate text-2xl font-semibold tabular-nums text-platforma-text">
         {value}
       </p>
     </div>
@@ -144,13 +144,13 @@ export function EntityWorkspaceSection({
   return (
     <section
       className={cn(
-        "rounded-card border border-zani-border bg-surface-card shadow-card",
+        "rounded-card border border-platforma-border bg-surface-card shadow-card",
         className,
       )}
     >
-      <div className="flex min-h-12 items-center gap-2 border-b border-zani-border px-4">
-        <Icon size={17} className="text-zani-faint" />
-        <h2 className="text-sm font-semibold text-zani-text">{title}</h2>
+      <div className="flex min-h-12 items-center gap-2 border-b border-platforma-border px-4">
+        <Icon size={17} className="text-platforma-faint" />
+        <h2 className="text-sm font-semibold text-platforma-text">{title}</h2>
       </div>
       <div className="p-4">{children}</div>
     </section>
@@ -165,7 +165,7 @@ export function EntityWorkspaceLinkButton({
   return (
     <a
       className={cn(
-        "zani-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-control border border-zani-border bg-surface-card px-4 py-2 text-sm font-semibold text-zani-text shadow-sm transition duration-150 hover:border-brand-100 hover:bg-surface-warm",
+        "platforma-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-control border border-platforma-border bg-surface-card px-4 py-2 text-sm font-semibold text-platforma-text shadow-sm transition duration-150 hover:border-brand-100 hover:bg-surface-warm",
         className,
       )}
       {...props}

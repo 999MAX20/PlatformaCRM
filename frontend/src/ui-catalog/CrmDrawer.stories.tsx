@@ -37,7 +37,7 @@ function DrawerExample({ loading = false }: { loading?: boolean }) {
   );
 }
 
-const meta = { title: "Zani/CrmDrawer", component: DrawerExample } satisfies Meta<typeof DrawerExample>;
+const meta = { title: "PlatformaCRM/CrmDrawer", component: DrawerExample } satisfies Meta<typeof DrawerExample>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const EmptyRelated: Story = {};

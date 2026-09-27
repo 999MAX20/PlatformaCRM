@@ -79,7 +79,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
     return (
       <div ref={wrapperRef} className="relative block">
-        {label ? <span id={labelId} className="mb-2 block text-sm font-semibold text-zani-subtle">{label}</span> : null}
+        {label ? <span id={labelId} className="mb-2 block text-sm font-semibold text-platforma-subtle">{label}</span> : null}
         <select
           ref={ref}
           className="sr-only"
@@ -105,8 +105,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           role="combobox"
           disabled={disabled}
           className={cn(
-            "zani-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-zani-border bg-surface-card px-3 py-2 text-left text-sm font-semibold text-zani-text shadow-sm transition hover:border-brand-100 hover:bg-surface-warm disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-zani-faint",
-            error && "border-zani-danger focus-visible:border-zani-danger focus-visible:ring-[rgba(194,65,12,0.18)]",
+            "platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-sm transition hover:border-brand-100 hover:bg-surface-warm disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-platforma-faint",
+            error && "border-platforma-danger focus-visible:border-platforma-danger focus-visible:ring-[rgba(194,65,12,0.18)]",
             className,
           )}
           aria-label={
@@ -174,7 +174,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           }}
         >
           <span id={valueId} className="min-w-0 truncate">{selectedOption?.label || t("common.select")}</span>
-          <ChevronDown aria-hidden="true" size={17} className={cn("shrink-0 text-zani-faint transition", open && "rotate-180 text-brand-700")} />
+          <ChevronDown aria-hidden="true" size={17} className={cn("shrink-0 text-platforma-faint transition", open && "rotate-180 text-brand-700")} />
         </button>
         {open ? (
           <PopoverSurface
@@ -196,13 +196,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                   aria-selected={isSelected}
                   tabIndex={-1}
                   className={cn(
-                    "zani-focus-ring flex w-full items-center justify-between gap-3 rounded-control px-3 text-left text-sm font-semibold transition",
+                    "platforma-focus-ring flex w-full items-center justify-between gap-3 rounded-control px-3 text-left text-sm font-semibold transition",
                     placement === "top" ? "py-2" : "py-2.5",
                     isSelected
                       ? "bg-brand-50 text-brand-700 ring-1 ring-brand-100"
                       : activeIndex === optionIndex
-                        ? "bg-surface-muted text-zani-text"
-                        : "text-zani-subtle hover:bg-surface-muted hover:text-zani-text",
+                        ? "bg-surface-muted text-platforma-text"
+                        : "text-platforma-subtle hover:bg-surface-muted hover:text-platforma-text",
                   )}
                   onClick={() => selectValue(option.value)}
                   onMouseEnter={() => setActiveIndex(optionIndex)}
@@ -214,7 +214,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             })}
           </PopoverSurface>
         ) : null}
-        {error ? <span id={errorId} role="alert" className="mt-1.5 block text-xs font-semibold text-zani-danger">{error}</span> : null}
+        {error ? <span id={errorId} role="alert" className="mt-1.5 block text-xs font-semibold text-platforma-danger">{error}</span> : null}
       </div>
     );
   },

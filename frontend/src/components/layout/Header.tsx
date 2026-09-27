@@ -100,10 +100,10 @@ export function Header({
     tasks: t("notification.category.tasks"),
   };
   const priorityClass: Record<string, string> = {
-    low: "bg-surface-muted text-zani-faint",
+    low: "bg-surface-muted text-platforma-faint",
     normal: "bg-brand-50 text-brand-700",
-    high: "bg-[var(--zani-warning-soft)] text-zani-warning",
-    urgent: "bg-[var(--zani-danger-soft)] text-zani-danger",
+    high: "bg-[var(--platforma-warning-soft)] text-platforma-warning",
+    urgent: "bg-[var(--platforma-danger-soft)] text-platforma-danger",
   };
   const priorityLabels: Record<string, string> = {
     low: t("notification.priority.low"),
@@ -190,11 +190,11 @@ export function Header({
   }, [showNotifications]);
 
   return (
-    <header className={`fixed left-0 right-0 top-0 z-50 border-b border-zani-border bg-surface/92 shadow-soft backdrop-blur-xl transition-transform duration-200 ease-out lg:left-16 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
+    <header className={`fixed left-0 right-0 top-0 z-50 border-b border-platforma-border bg-surface/92 shadow-soft backdrop-blur-xl transition-transform duration-200 ease-out lg:left-16 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
       <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-5 lg:grid-cols-[220px_minmax(320px,560px)_auto]">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Button
-            className="h-10 w-10 min-h-10 min-w-10 px-0 text-zani-ink lg:hidden"
+            className="h-10 w-10 min-h-10 min-w-10 px-0 text-platforma-ink lg:hidden"
             variant="ghost"
             onClick={onMenuClick}
             aria-label={t("sidebar.expand")}
@@ -205,7 +205,7 @@ export function Header({
             <Menu aria-hidden="true" size={22} strokeWidth={2.2} />
           </Button>
           <div className="hidden min-w-0 items-center gap-4 lg:flex">
-            <span className="max-w-[220px] truncate text-[21px] font-semibold leading-7 text-zani-text">{currentPageTitle}</span>
+            <span className="max-w-[220px] truncate text-[21px] font-semibold leading-7 text-platforma-text">{currentPageTitle}</span>
           </div>
           <div className={pageHeader ? "min-w-0 flex-1 lg:hidden" : "lg:hidden"}>
             <GlobalSearch />
@@ -248,17 +248,17 @@ export function Header({
                     backdropClassName="bg-[rgba(23,18,15,0.28)] backdrop-blur-[1px]"
                     className="max-w-[min(420px,calc(100vw-1rem))] rounded-none border-y-0 border-r-0 shadow-premium"
                   >
-                    <div className="flex h-14 items-center justify-between gap-3 border-b border-zani-border px-5">
+                    <div className="flex h-14 items-center justify-between gap-3 border-b border-platforma-border px-5">
                       <div
                         id={filterDrawerTitleId}
-                        className="flex items-center gap-2 text-xs font-semibold text-zani-subtle"
+                        className="flex items-center gap-2 text-xs font-semibold text-platforma-subtle"
                       >
                         <SlidersHorizontal aria-hidden="true" size={15} />
                         <span>{pageHeader.filterLabel || t("calendar.filters")}</span>
                       </div>
                       <button
                         type="button"
-                        className="zani-focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-control text-zani-faint transition hover:bg-surface-muted hover:text-zani-text"
+                        className="platforma-focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
                         onClick={() => setShowFilters(false)}
                         aria-label={t("common.close")}
                       >
@@ -333,17 +333,17 @@ export function Header({
             >
               <Bell aria-hidden="true" size={24} strokeWidth={2.1} />
               {unreadCount ? (
-                <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold text-zani-ink ring-2 ring-surface">
+                <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold text-platforma-ink ring-2 ring-surface">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               ) : null}
             </Button>
             {showNotifications ? (
-              <div className="fixed inset-x-3 top-16 max-h-[76vh] overflow-y-auto rounded-card border border-zani-border bg-surface-card p-4 text-sm shadow-premium sm:absolute sm:inset-auto sm:right-0 sm:top-11 sm:w-[26rem]">
+              <div className="fixed inset-x-3 top-16 max-h-[76vh] overflow-y-auto rounded-card border border-platforma-border bg-surface-card p-4 text-sm shadow-premium sm:absolute sm:inset-auto sm:right-0 sm:top-11 sm:w-[26rem]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-zani-ink">{t("header.notifications")}</p>
-                    <p className="mt-0.5 text-xs text-zani-faint">
+                    <p className="font-semibold text-platforma-ink">{t("header.notifications")}</p>
+                    <p className="mt-0.5 text-xs text-platforma-faint">
                       {t("header.notificationsSummary", {
                         due: notificationSummary.data?.due || 0,
                         urgent: notificationSummary.data?.urgent || 0,
@@ -357,9 +357,9 @@ export function Header({
                 <div className="mt-4 space-y-4">
                   {Object.entries(groupedNotifications).map(([category, items]) => (
                     <div key={category} className="space-y-2">
-                      <p className="text-xs font-semibold text-zani-faint">{categoryLabels[category] || category}</p>
+                      <p className="text-xs font-semibold text-platforma-faint">{categoryLabels[category] || category}</p>
                       {items.map((notification) => (
-                        <div key={notification.id} className={`rounded-card border p-3 ${notification.read_at ? "border-zani-border bg-surface-card" : "border-brand-100 bg-brand-50/45"}`}>
+                        <div key={notification.id} className={`rounded-card border p-3 ${notification.read_at ? "border-platforma-border bg-surface-card" : "border-brand-100 bg-brand-50/45"}`}>
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
                               <div className="mb-1 flex flex-wrap items-center gap-2">
@@ -368,8 +368,8 @@ export function Header({
                                   {priorityLabels[notification.priority] || notification.priority}
                                 </span>
                               </div>
-                              <p className="line-clamp-2 font-semibold text-zani-ink">{notification.text}</p>
-                              <p className="mt-1 text-xs text-zani-faint">
+                              <p className="line-clamp-2 font-semibold text-platforma-ink">{notification.text}</p>
+                              <p className="mt-1 text-xs text-platforma-faint">
                                 {notificationAudienceLabel(notification)} · {notification.client_name || "CRM"} · {formatDateTime(notification.send_at)}
                               </p>
                             </div>
@@ -402,7 +402,7 @@ export function Header({
                     </div>
                   ))}
                   {!latestNotifications.length ? (
-                    <p className="rounded-card bg-surface-muted p-4 leading-6 text-zani-subtle">
+                    <p className="rounded-card bg-surface-muted p-4 leading-6 text-platforma-subtle">
                       {t("header.noNotifications")}
                     </p>
                   ) : null}
@@ -410,7 +410,7 @@ export function Header({
                 <Link
                   to="/app/tasks"
                   onClick={() => setShowNotifications(false)}
-                  className="zani-focus-ring mt-4 block rounded-control bg-brand-500 px-4 py-3 text-center text-sm font-semibold text-zani-ink ring-1 ring-brand-600/10 transition hover:bg-brand-600"
+                  className="platforma-focus-ring mt-4 block rounded-control bg-brand-500 px-4 py-3 text-center text-sm font-semibold text-platforma-ink ring-1 ring-brand-600/10 transition hover:bg-brand-600"
                 >
                   {t("header.openTasks")}
                 </Link>
@@ -419,19 +419,19 @@ export function Header({
           </div>
           <HeaderAccountLink user={user} membership={activeMembership} />
           {chatToastOpen ? (
-            <div className="fixed right-4 top-20 z-[90] w-[min(360px,calc(100vw-2rem))] rounded-card border border-zani-border bg-surface-card p-4 shadow-premium ring-1 ring-[rgba(194,65,12,0.16)]">
+            <div className="fixed right-4 top-20 z-[90] w-[min(360px,calc(100vw-2rem))] rounded-card border border-platforma-border bg-surface-card p-4 shadow-premium ring-1 ring-[rgba(194,65,12,0.16)]">
               <div className="flex items-start gap-3">
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-card bg-[var(--zani-danger-soft)] text-zani-danger">
+                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-card bg-[var(--platforma-danger-soft)] text-platforma-danger">
                   <MessageSquareText size={21} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-zani-ink">{t("header.chatToastTitle")}</p>
-                  <p className="mt-1 text-sm font-semibold leading-5 text-zani-subtle">
+                  <p className="font-semibold text-platforma-ink">{t("header.chatToastTitle")}</p>
+                  <p className="mt-1 text-sm font-semibold leading-5 text-platforma-subtle">
                     {t("header.chatToastText", { count: unreadChatMessages > 99 ? "99+" : unreadChatMessages })}
                   </p>
                   <button
                     type="button"
-                    className="zani-focus-ring mt-3 rounded-control bg-brand-500 px-3 py-2 text-xs font-semibold text-zani-ink ring-1 ring-brand-600/10 transition hover:bg-brand-600"
+                    className="platforma-focus-ring mt-3 rounded-control bg-brand-500 px-3 py-2 text-xs font-semibold text-platforma-ink ring-1 ring-brand-600/10 transition hover:bg-brand-600"
                     onClick={() => {
                       setChatToastOpen(false);
                       navigate("/app/conversations?unread=true");
@@ -442,7 +442,7 @@ export function Header({
                 </div>
                 <button
                   type="button"
-                  className="zani-focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-control text-zani-faint transition hover:bg-surface-muted hover:text-zani-text"
+                  className="platforma-focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
                   onClick={() => setChatToastOpen(false)}
                   aria-label={t("common.close")}
                 >
@@ -454,7 +454,7 @@ export function Header({
         </div>
       </div>
       {pageHeader?.activeFilters ? (
-        <div className="border-t border-zani-border bg-surface/92 px-4 py-1.5 sm:px-6">
+        <div className="border-t border-platforma-border bg-surface/92 px-4 py-1.5 sm:px-6">
           <div className="flex min-w-0 items-center gap-2 overflow-x-auto pb-1">{pageHeader.activeFilters}</div>
         </div>
       ) : null}

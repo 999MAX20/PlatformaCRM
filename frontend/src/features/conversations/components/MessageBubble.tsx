@@ -19,9 +19,9 @@ export function MessageBubble({ message, t }: { message: InboxMessage; t: Transl
   if (system) {
     return (
       <div className="flex justify-center">
-        <div className="max-w-[80%] rounded-full bg-surface-muted px-3 py-1.5 text-center text-xs font-bold text-zani-muted">
+        <div className="max-w-[80%] rounded-full bg-surface-muted px-3 py-1.5 text-center text-xs font-bold text-platforma-muted">
           {message.text || t("conversations.emptyMessage")}
-          {time ? <span className="ml-2 text-zani-muted">{time}</span> : null}
+          {time ? <span className="ml-2 text-platforma-muted">{time}</span> : null}
         </div>
       </div>
     );
@@ -37,12 +37,12 @@ export function MessageBubble({ message, t }: { message: InboxMessage; t: Transl
     >
       <div
         className={cn(
-          "max-w-[78%] rounded-card border border-zani-border bg-zani-card px-4 py-3 text-sm leading-6 text-zani-text shadow-sm",
+          "max-w-[78%] rounded-card border border-platforma-border bg-platforma-card px-4 py-3 text-sm leading-6 text-platforma-text shadow-sm",
           inbound ? "rounded-tl-md" : "rounded-tr-md",
         )}
         data-testid="conversation-message-bubble"
       >
-        <div className="mb-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-zani-text">
+        <div className="mb-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-platforma-text">
           {ai ? <Sparkles size={13} /> : null}
           {author}
         </div>
@@ -50,14 +50,14 @@ export function MessageBubble({ message, t }: { message: InboxMessage; t: Transl
           {message.text || t("conversations.emptyMessage")}
         </p>
         {message.attachments?.length ? (
-          <div className="mt-3 space-y-2 text-zani-text">
+          <div className="mt-3 space-y-2 text-platforma-text">
             {message.attachments.map((attachment) => (
               <a
                 key={attachment.id}
                 href={attachment.download_url}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 rounded-control bg-surface-muted px-3 py-2 text-xs font-bold ring-1 ring-zani-border"
+                className="flex items-center gap-2 rounded-control bg-surface-muted px-3 py-2 text-xs font-bold ring-1 ring-platforma-border"
               >
                 <Paperclip size={14} />
                 <span className="min-w-0 flex-1 truncate">
@@ -67,7 +67,7 @@ export function MessageBubble({ message, t }: { message: InboxMessage; t: Transl
             ))}
           </div>
         ) : null}
-        <div className="mt-2 flex items-center justify-end text-[11px] font-bold text-zani-muted">
+        <div className="mt-2 flex items-center justify-end text-[11px] font-bold text-platforma-muted">
           {time ? <span>{time}</span> : null}
         </div>
       </div>

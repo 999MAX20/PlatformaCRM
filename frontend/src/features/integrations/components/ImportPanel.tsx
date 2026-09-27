@@ -29,9 +29,9 @@ function ImportMetric({ label, value, tone = "default" }: { label: string; value
   return (
     <div className={cn(
       "rounded-control px-3 py-2",
-      tone === "danger" ? "bg-[var(--zani-danger-soft)] text-zani-danger" : tone === "success" ? "bg-[var(--zani-success-soft)] text-zani-success" : "bg-surface-card text-zani-subtle",
+      tone === "danger" ? "bg-[var(--platforma-danger-soft)] text-platforma-danger" : tone === "success" ? "bg-[var(--platforma-success-soft)] text-platforma-success" : "bg-surface-card text-platforma-subtle",
     )}>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zani-faint">{label}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-platforma-faint">{label}</p>
       <p className="mt-1 text-lg font-semibold">{value ?? 0}</p>
     </div>
   );
@@ -113,16 +113,16 @@ export function ImportPanel({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
-        <p className="text-sm font-semibold text-zani-ink">Excel / CSV</p>
-        <p className="mt-1 text-sm font-medium leading-6 text-zani-muted">
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+        <p className="text-sm font-semibold text-platforma-ink">Excel / CSV</p>
+        <p className="mt-1 text-sm font-medium leading-6 text-platforma-muted">
           {t("integrations.import.panelDescription")}
         </p>
       </div>
 
       {importError ? <ErrorState message={getApiErrorMessage(importError)} /> : null}
 
-      <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
         <div className="grid gap-3 lg:grid-cols-[180px_1fr_auto_auto]">
           <Select
             data-testid="import-entity"
@@ -152,11 +152,11 @@ export function ImportPanel({
         </div>
       </div>
 
-      <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="font-semibold text-zani-ink">{selected?.original_filename || t("integrations.import.noFileSelected")}</p>
-            <p className="mt-1 text-sm text-zani-muted">
+            <p className="font-semibold text-platforma-ink">{selected?.original_filename || t("integrations.import.noFileSelected")}</p>
+            <p className="mt-1 text-sm text-platforma-muted">
               {selected
                 ? t("integrations.import.fileMeta", {
                     entity: selected.entity_type,
@@ -193,7 +193,7 @@ export function ImportPanel({
             tone="danger"
             title={t("integrations.import.fixFileShort")}
             details={(
-              <ul className="space-y-1 text-xs font-semibold text-zani-danger">
+              <ul className="space-y-1 text-xs font-semibold text-platforma-danger">
                 {errors.slice(0, 5).map((item, index) => (
                   <li key={`${item.row}-${item.field}-${index}`}>
                     {item.row > 0
@@ -217,18 +217,18 @@ export function ImportPanel({
           />
         ) : null}
 
-        <div className="mt-4 overflow-hidden rounded-card border border-zani-border bg-surface-card">
+        <div className="mt-4 overflow-hidden rounded-card border border-platforma-border bg-surface-card">
           {previewRows.slice(0, 5).map((row, index) => (
-            <div key={index} className="border-b border-zani-border px-3 py-2 text-xs text-zani-subtle last:border-b-0">
+            <div key={index} className="border-b border-platforma-border px-3 py-2 text-xs text-platforma-subtle last:border-b-0">
               {Object.entries(row).slice(0, 6).map(([key, value]) => `${key}: ${value || "-"}`).join(" · ")}
             </div>
           ))}
-          {!previewRows.length ? <p className="px-3 py-4 text-sm text-zani-muted">{t("integrations.import.previewAfterCheck")}</p> : null}
+          {!previewRows.length ? <p className="px-3 py-4 text-sm text-platforma-muted">{t("integrations.import.previewAfterCheck")}</p> : null}
         </div>
       </div>
 
-      <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
-        <p className="font-semibold text-zani-ink">{t("integrations.import.history")}</p>
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+        <p className="font-semibold text-platforma-ink">{t("integrations.import.history")}</p>
         <div className="mt-3 space-y-2">
           {jobs.slice(0, 8).map((job) => (
             <button
@@ -237,11 +237,11 @@ export function ImportPanel({
               onClick={() => setActiveJob(job)}
               className="w-full rounded-control bg-surface-muted px-3 py-2 text-left text-sm transition hover:bg-surface-warm"
             >
-              <span className="font-semibold text-zani-ink">#{job.id} {job.entity_type}</span>
-              <span className="ml-2 text-zani-muted">{importStatusLabel(job.status, t)} · {job.imported_count}/{job.total_rows}</span>
+              <span className="font-semibold text-platforma-ink">#{job.id} {job.entity_type}</span>
+              <span className="ml-2 text-platforma-muted">{importStatusLabel(job.status, t)} · {job.imported_count}/{job.total_rows}</span>
             </button>
           ))}
-          {!jobsQuery.isLoading && !jobs.length ? <p className="text-sm text-zani-muted">{t("integrations.import.noImports")}</p> : null}
+          {!jobsQuery.isLoading && !jobs.length ? <p className="text-sm text-platforma-muted">{t("integrations.import.noImports")}</p> : null}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 # Backend Apps Map
 
-Текущие Django apps соответствуют public product core Zani.
+Текущие Django apps соответствуют public product core Платформа CRM.
 
 ## Implemented
 

@@ -150,9 +150,9 @@ class PasswordResetRequestView(APIView):
             reset_path = f"/reset-password/{uid}/{token}"
             reset_url = self._build_reset_url(request, reset_path)
             send_mail(
-                subject="Reset your Zani password",
+                subject="Reset your Платформа CRM password",
                 message=(
-                    "We received a request to reset your Zani password.\n\n"
+                    "We received a request to reset your Платформа CRM password.\n\n"
                     f"Open this link to set a new password: {reset_url}\n\n"
                     "If you did not request this, ignore this email."
                 ),

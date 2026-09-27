@@ -1,4 +1,4 @@
-.zani-auth-experience {
+.platforma-auth-experience {
   position: relative;
   min-height: 100dvh;
   overflow: hidden;
@@ -11,7 +11,7 @@
   isolation: isolate;
 }
 
-.zani-auth-experience::before {
+.platforma-auth-experience::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -23,7 +23,7 @@
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 86%);
 }
 
-.zani-auth-noise {
+.platforma-auth-noise {
   pointer-events: none;
   position: absolute;
   inset: 0;
@@ -35,7 +35,7 @@
   opacity: 0.55;
 }
 
-.zani-auth-topbar {
+.platforma-auth-topbar {
   position: relative;
   z-index: 5;
   display: grid;
@@ -47,14 +47,14 @@
   padding: 24px 0 8px;
 }
 
-.zani-auth-back,
-.zani-auth-brand,
-.zani-auth-switch,
-.zani-auth-switch a {
+.platforma-auth-back,
+.platforma-auth-brand,
+.platforma-auth-switch,
+.platforma-auth-switch a {
   color: rgba(248, 250, 252, 0.9);
 }
 
-.zani-auth-back {
+.platforma-auth-back {
   display: inline-flex;
   width: fit-content;
   align-items: center;
@@ -64,12 +64,12 @@
   transition: color 160ms ease, transform 160ms ease;
 }
 
-.zani-auth-back:hover {
+.platforma-auth-back:hover {
   color: #ffffff;
   transform: translateX(-2px);
 }
 
-.zani-auth-brand {
+.platforma-auth-brand {
   display: inline-flex;
   align-items: center;
   justify-self: center;
@@ -77,7 +77,7 @@
   text-decoration: none;
 }
 
-.zani-auth-brand span {
+.platforma-auth-brand span {
   background: linear-gradient(100deg, #8b5cf6 0%, #ffffff 34%, #ffffff 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -88,20 +88,20 @@
   line-height: 1;
 }
 
-.zani-auth-brand i {
+.platforma-auth-brand i {
   width: 1px;
   height: 28px;
   background: rgba(255, 255, 255, 0.2);
 }
 
-.zani-auth-brand em {
+.platforma-auth-brand em {
   color: rgba(248, 250, 252, 0.74);
   font-size: 15px;
   font-style: normal;
   white-space: nowrap;
 }
 
-.zani-auth-switch {
+.platforma-auth-switch {
   display: flex;
   align-items: center;
   justify-self: end;
@@ -109,11 +109,11 @@
   font-size: 15px;
 }
 
-.zani-auth-switch span {
+.platforma-auth-switch span {
   color: rgba(248, 250, 252, 0.84);
 }
 
-.zani-auth-switch a {
+.platforma-auth-switch a {
   min-width: 86px;
   position: relative;
   z-index: 6;
@@ -126,13 +126,13 @@
   transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
-.zani-auth-switch a:hover {
+.platforma-auth-switch a:hover {
   border-color: rgba(255, 255, 255, 0.32);
   background: rgba(255, 255, 255, 0.08);
   transform: translateY(-1px);
 }
 
-.zani-auth-language {
+.platforma-auth-language {
   height: 46px !important;
   border-color: rgba(255, 255, 255, 0.16) !important;
   background: rgba(255, 255, 255, 0.05) !important;
@@ -140,16 +140,16 @@
   box-shadow: none !important;
 }
 
-.zani-auth-language svg,
-.zani-auth-language select {
+.platforma-auth-language svg,
+.platforma-auth-language select {
   color: #ffffff !important;
 }
 
-.zani-auth-language select {
+.platforma-auth-language select {
   min-width: 46px;
 }
 
-.zani-auth-grid {
+.platforma-auth-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(420px, 532px);
   align-items: center;
@@ -160,13 +160,13 @@
   padding: 8px 0 34px;
 }
 
-.zani-auth-hero {
+.platforma-auth-hero {
   position: relative;
   min-height: min(720px, calc(100dvh - 116px));
   padding: 56px 0 44px;
 }
 
-.zani-auth-kicker {
+.platforma-auth-kicker {
   width: fit-content;
   margin: 0 0 22px;
   border: 1px solid rgba(126, 87, 255, 0.34);
@@ -180,7 +180,7 @@
   text-transform: uppercase;
 }
 
-.zani-auth-hero h1 {
+.platforma-auth-hero h1 {
   max-width: 610px;
   margin: 0;
   color: #ffffff;
@@ -190,7 +190,7 @@
   line-height: 1.02;
 }
 
-.zani-auth-hero h1 strong {
+.platforma-auth-hero h1 strong {
   background: linear-gradient(95deg, #8b5cf6 0%, #4f7bff 48%, #70f5b6 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -199,7 +199,7 @@
   white-space: nowrap;
 }
 
-.zani-auth-lead {
+.platforma-auth-lead {
   max-width: 610px;
   margin: 20px 0 0;
   color: rgba(226, 232, 240, 0.76);
@@ -207,21 +207,21 @@
   line-height: 1.65;
 }
 
-.zani-auth-feature-list {
+.platforma-auth-feature-list {
   display: grid;
   gap: 18px;
   max-width: 520px;
   margin-top: 28px;
 }
 
-.zani-auth-feature {
+.platforma-auth-feature {
   display: grid;
   grid-template-columns: 58px minmax(0, 1fr);
   align-items: center;
   gap: 18px;
 }
 
-.zani-auth-feature > span {
+.platforma-auth-feature > span {
   display: grid;
   width: 56px;
   height: 56px;
@@ -235,34 +235,34 @@
   box-shadow: 0 0 34px rgba(126, 87, 255, 0.22);
 }
 
-.zani-auth-feature h2 {
+.platforma-auth-feature h2 {
   margin: 0;
   color: #ffffff;
   font-size: 16px;
   font-weight: 800;
 }
 
-.zani-auth-feature p {
+.platforma-auth-feature p {
   margin: 7px 0 0;
   color: rgba(226, 232, 240, 0.66);
   font-size: 14px;
   line-height: 1.35;
 }
 
-.zani-auth-proof {
+.platforma-auth-proof {
   display: flex;
   align-items: center;
   gap: 18px;
   margin-top: 30px;
 }
 
-.zani-auth-avatars {
+.platforma-auth-avatars {
   display: flex;
   align-items: center;
 }
 
-.zani-auth-avatars span,
-.zani-auth-avatars b {
+.platforma-auth-avatars span,
+.platforma-auth-avatars b {
   display: grid;
   width: 38px;
   height: 38px;
@@ -276,16 +276,16 @@
   font-weight: 900;
 }
 
-.zani-auth-avatars span:first-child {
+.platforma-auth-avatars span:first-child {
   margin-left: 0;
 }
 
-.zani-auth-avatars b {
+.platforma-auth-avatars b {
   background: linear-gradient(145deg, #8b5cf6, #111827);
   color: #ffffff;
 }
 
-.zani-auth-proof p {
+.platforma-auth-proof p {
   max-width: 230px;
   margin: 0;
   color: rgba(226, 232, 240, 0.62);
@@ -293,7 +293,7 @@
   line-height: 1.45;
 }
 
-.zani-auth-trust {
+.platforma-auth-trust {
   position: absolute;
   bottom: 6px;
   left: 0;
@@ -304,17 +304,17 @@
   font-size: 14px;
 }
 
-.zani-auth-trust span {
+.platforma-auth-trust span {
   display: inline-flex;
   align-items: center;
   gap: 9px;
 }
 
-.zani-auth-trust svg {
+.platforma-auth-trust svg {
   color: #c4b5fd;
 }
 
-.zani-auth-dashboard {
+.platforma-auth-dashboard {
   position: absolute;
   right: auto;
   left: 340px;
@@ -334,7 +334,7 @@
   transform-origin: right bottom;
 }
 
-.zani-auth-dashboard-sidebar {
+.platforma-auth-dashboard-sidebar {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -342,13 +342,13 @@
   padding: 24px 16px;
 }
 
-.zani-auth-dashboard-sidebar b {
+.platforma-auth-dashboard-sidebar b {
   margin-bottom: 10px;
   color: #ffffff;
   font-size: 17px;
 }
 
-.zani-auth-dashboard-sidebar span {
+.platforma-auth-dashboard-sidebar span {
   border-radius: 8px;
   padding: 9px 10px;
   background: rgba(255, 255, 255, 0.04);
@@ -356,11 +356,11 @@
   font-size: 11px;
 }
 
-.zani-auth-dashboard-main {
+.platforma-auth-dashboard-main {
   padding: 22px 18px;
 }
 
-.zani-auth-dashboard-title {
+.platforma-auth-dashboard-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -368,49 +368,49 @@
   color: #ffffff;
 }
 
-.zani-auth-dashboard-title p {
+.platforma-auth-dashboard-title p {
   margin: 0;
   font-size: 15px;
   font-weight: 800;
 }
 
-.zani-auth-dashboard-title small {
+.platforma-auth-dashboard-title small {
   color: rgba(226, 232, 240, 0.58);
 }
 
-.zani-auth-metrics {
+.platforma-auth-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-top: 22px;
 }
 
-.zani-auth-metrics div,
-.zani-auth-pipeline,
-.zani-auth-dashboard-bottom div {
+.platforma-auth-metrics div,
+.platforma-auth-pipeline,
+.platforma-auth-dashboard-bottom div {
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 13px;
   background: rgba(255, 255, 255, 0.04);
 }
 
-.zani-auth-metrics div {
+.platforma-auth-metrics div {
   padding: 13px;
 }
 
-.zani-auth-metrics span {
+.platforma-auth-metrics span {
   display: block;
   color: rgba(226, 232, 240, 0.56);
   font-size: 11px;
 }
 
-.zani-auth-metrics strong {
+.platforma-auth-metrics strong {
   display: block;
   margin-top: 7px;
   color: #ffffff;
   font-size: 20px;
 }
 
-.zani-auth-metrics i {
+.platforma-auth-metrics i {
   display: block;
   margin-top: 8px;
   color: #70f5b6;
@@ -418,12 +418,12 @@
   font-style: normal;
 }
 
-.zani-auth-pipeline {
+.platforma-auth-pipeline {
   margin-top: 14px;
   padding: 14px;
 }
 
-.zani-auth-pipeline div {
+.platforma-auth-pipeline div {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -432,7 +432,7 @@
   font-weight: 800;
 }
 
-.zani-auth-pipeline span {
+.platforma-auth-pipeline span {
   display: block;
   height: 9px;
   margin-top: 14px;
@@ -440,22 +440,22 @@
   background: linear-gradient(90deg, rgba(79, 123, 255, 0.72), rgba(112, 245, 182, 0.52));
 }
 
-.zani-auth-pipeline span:nth-child(3) {
+.platforma-auth-pipeline span:nth-child(3) {
   width: 72%;
 }
 
-.zani-auth-pipeline span:nth-child(4) {
+.platforma-auth-pipeline span:nth-child(4) {
   width: 46%;
 }
 
-.zani-auth-dashboard-bottom {
+.platforma-auth-dashboard-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-top: 14px;
 }
 
-.zani-auth-dashboard-bottom div {
+.platforma-auth-dashboard-bottom div {
   display: flex;
   align-items: flex-start;
   gap: 9px;
@@ -465,12 +465,12 @@
   line-height: 1.35;
 }
 
-.zani-auth-card-wrap {
+.platforma-auth-card-wrap {
   position: relative;
   z-index: 4;
 }
 
-.zani-auth-card {
+.platforma-auth-card {
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 28px;
   background:
@@ -481,7 +481,7 @@
   backdrop-filter: blur(24px);
 }
 
-.zani-auth-card-icon {
+.platforma-auth-card-icon {
   display: grid;
   width: 64px;
   height: 64px;
@@ -495,7 +495,7 @@
   box-shadow: 0 0 44px rgba(126, 87, 255, 0.23);
 }
 
-.zani-auth-card h2 {
+.platforma-auth-card h2 {
   margin: 18px 0 0;
   color: #ffffff;
   font-size: clamp(28px, 2.4vw, 34px);
@@ -503,33 +503,33 @@
   letter-spacing: -0.035em;
 }
 
-.zani-auth-card > p {
+.platforma-auth-card > p {
   margin: 8px 0 20px;
   color: rgba(226, 232, 240, 0.68);
   font-size: 15px;
   line-height: 1.55;
 }
 
-.zani-auth-card form {
+.platforma-auth-card form {
   display: grid;
   gap: 12px;
 }
 
-.zani-auth-field-grid {
+.platforma-auth-field-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
-.zani-auth-card label > span:first-child {
+.platforma-auth-card label > span:first-child {
   color: rgba(248, 250, 252, 0.9) !important;
   font-size: 13px !important;
   font-weight: 800 !important;
   margin-bottom: 6px !important;
 }
 
-.zani-auth-card input,
-.zani-auth-card button[class*="rounded-control"] {
+.platforma-auth-card input,
+.platforma-auth-card button[class*="rounded-control"] {
   min-height: 44px;
   border-color: rgba(255, 255, 255, 0.16) !important;
   border-radius: 11px !important;
@@ -538,28 +538,28 @@
   box-shadow: none !important;
 }
 
-.zani-auth-card input::placeholder {
+.platforma-auth-card input::placeholder {
   color: rgba(226, 232, 240, 0.46);
 }
 
-.zani-auth-card input:focus,
-.zani-auth-card button[class*="rounded-control"]:focus {
+.platforma-auth-card input:focus,
+.platforma-auth-card button[class*="rounded-control"]:focus {
   border-color: rgba(139, 92, 246, 0.74) !important;
   box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.18) !important;
 }
 
-.zani-auth-card label span:last-child:not(:first-child) {
+.platforma-auth-card label span:last-child:not(:first-child) {
   color: #fca5a5 !important;
 }
 
-.zani-auth-helper {
+.platforma-auth-helper {
   margin: -3px 0 0;
   color: rgba(226, 232, 240, 0.56);
   font-size: 13px;
   line-height: 1.45;
 }
 
-.zani-auth-error {
+.platforma-auth-error {
   border: 1px solid rgba(248, 113, 113, 0.28);
   border-radius: 16px;
   background: rgba(127, 29, 29, 0.28);
@@ -569,14 +569,14 @@
   line-height: 1.45;
 }
 
-.zani-auth-password-checks {
+.platforma-auth-password-checks {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   margin-top: -8px;
 }
 
-.zani-auth-password-checks span {
+.platforma-auth-password-checks span {
   display: inline-flex;
   min-height: 32px;
   align-items: center;
@@ -589,11 +589,11 @@
   font-weight: 700;
 }
 
-.zani-auth-password-checks span[data-active="true"] {
+.platforma-auth-password-checks span[data-active="true"] {
   color: #70f5b6;
 }
 
-.zani-auth-primary {
+.platforma-auth-primary {
   min-height: 48px !important;
   width: 100%;
   border: 0 !important;
@@ -603,20 +603,20 @@
   box-shadow: 0 18px 42px rgba(79, 123, 255, 0.26) !important;
 }
 
-.zani-auth-secondary-row {
+.platforma-auth-secondary-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
-.zani-auth-social {
+.platforma-auth-social {
   min-height: 48px !important;
   border-color: rgba(255, 255, 255, 0.16) !important;
   background: rgba(255, 255, 255, 0.045) !important;
   color: #ffffff !important;
 }
 
-.zani-auth-social mark {
+.platforma-auth-social mark {
   display: grid;
   width: 22px;
   height: 22px;
@@ -628,7 +628,7 @@
   font-weight: 900;
 }
 
-.zani-auth-divider {
+.platforma-auth-divider {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -638,35 +638,35 @@
   font-size: 13px;
 }
 
-.zani-auth-divider::before,
-.zani-auth-divider::after {
+.platforma-auth-divider::before,
+.platforma-auth-divider::after {
   content: "";
   height: 1px;
   background: rgba(255, 255, 255, 0.14);
 }
 
-.zani-auth-terms,
-.zani-auth-links {
+.platforma-auth-terms,
+.platforma-auth-links {
   color: rgba(226, 232, 240, 0.54);
   font-size: 12px;
   line-height: 1.55;
 }
 
-.zani-auth-terms {
+.platforma-auth-terms {
   margin: 14px 0 0;
 }
 
-.zani-auth-links {
+.platforma-auth-links {
   margin-top: 16px;
 }
 
-.zani-auth-terms a,
-.zani-auth-links a {
+.platforma-auth-terms a,
+.platforma-auth-links a {
   color: #9db7ff;
   text-decoration: none;
 }
 
-.zani-auth-links {
+.platforma-auth-links {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -675,68 +675,68 @@
 }
 
 @media (min-width: 1181px) {
-  .zani-auth-experience.is-login .zani-auth-topbar {
+  .platforma-auth-experience.is-login .platforma-auth-topbar {
     padding: 18px 0 4px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-grid {
+  .platforma-auth-experience.is-login .platforma-auth-grid {
     grid-template-columns: minmax(0, 1.18fr) minmax(390px, 520px);
     min-height: calc(100dvh - 76px);
     gap: clamp(28px, 4vw, 64px);
     padding: 0 0 10px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-hero {
+  .platforma-auth-experience.is-login .platforma-auth-hero {
     min-height: calc(100dvh - 90px);
     padding: 24px 0 18px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-hero h1 {
+  .platforma-auth-experience.is-login .platforma-auth-hero h1 {
     max-width: 560px;
     font-size: clamp(44px, 4.35vw, 64px);
     line-height: 0.98;
   }
 
-  .zani-auth-experience.is-login .zani-auth-lead {
+  .platforma-auth-experience.is-login .platforma-auth-lead {
     max-width: 580px;
     margin-top: 16px;
     font-size: 16px;
     line-height: 1.5;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature-list {
+  .platforma-auth-experience.is-login .platforma-auth-feature-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px 18px;
     max-width: 610px;
     margin-top: 22px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature {
+  .platforma-auth-experience.is-login .platforma-auth-feature {
     grid-template-columns: 48px minmax(0, 1fr);
     gap: 12px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature > span {
+  .platforma-auth-experience.is-login .platforma-auth-feature > span {
     width: 46px;
     height: 46px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature h2 {
+  .platforma-auth-experience.is-login .platforma-auth-feature h2 {
     font-size: 14px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature p {
+  .platforma-auth-experience.is-login .platforma-auth-feature p {
     margin-top: 4px;
     font-size: 12px;
     line-height: 1.28;
   }
 
-  .zani-auth-experience.is-login .zani-auth-proof,
-  .zani-auth-experience.is-login .zani-auth-trust {
+  .platforma-auth-experience.is-login .platforma-auth-proof,
+  .platforma-auth-experience.is-login .platforma-auth-trust {
     display: none;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard {
     left: 300px;
     bottom: 2px;
     width: min(560px, 48vw);
@@ -746,130 +746,130 @@
     transform: perspective(1050px) rotateY(-8deg) rotateX(2deg) rotateZ(-1.4deg) scale(0.92);
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-sidebar {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-sidebar {
     gap: 8px;
     padding: 18px 13px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-sidebar b {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-sidebar b {
     margin-bottom: 6px;
     font-size: 14px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-sidebar span {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-sidebar span {
     padding: 7px 8px;
     font-size: 9.5px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-main {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-main {
     padding: 16px 14px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-title p {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-title p {
     font-size: 13px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-title small {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-title small {
     font-size: 10.5px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-metrics {
+  .platforma-auth-experience.is-login .platforma-auth-metrics {
     gap: 9px;
     margin-top: 14px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-metrics div {
+  .platforma-auth-experience.is-login .platforma-auth-metrics div {
     padding: 10px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-metrics strong {
+  .platforma-auth-experience.is-login .platforma-auth-metrics strong {
     font-size: 17px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-pipeline {
+  .platforma-auth-experience.is-login .platforma-auth-pipeline {
     margin-top: 10px;
     padding: 11px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-pipeline span {
+  .platforma-auth-experience.is-login .platforma-auth-pipeline span {
     height: 7px;
     margin-top: 10px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-bottom {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-bottom {
     display: none;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card {
+  .platforma-auth-experience.is-login .platforma-auth-card {
     border-radius: 24px;
     padding: 24px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card-icon {
+  .platforma-auth-experience.is-login .platforma-auth-card-icon {
     width: 56px;
     height: 56px;
     border-radius: 18px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card h2 {
+  .platforma-auth-experience.is-login .platforma-auth-card h2 {
     margin-top: 14px;
     font-size: clamp(27px, 2.1vw, 32px);
   }
 
-  .zani-auth-experience.is-login .zani-auth-card > p {
+  .platforma-auth-experience.is-login .platforma-auth-card > p {
     margin: 6px 0 16px;
     font-size: 14px;
     line-height: 1.45;
   }
 
-  .zani-auth-experience.is-login .zani-auth-social,
-  .zani-auth-experience.is-login .zani-auth-primary {
+  .platforma-auth-experience.is-login .platforma-auth-social,
+  .platforma-auth-experience.is-login .platforma-auth-primary {
     min-height: 44px !important;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card input,
-  .zani-auth-experience.is-login .zani-auth-card button[class*="rounded-control"] {
+  .platforma-auth-experience.is-login .platforma-auth-card input,
+  .platforma-auth-experience.is-login .platforma-auth-card button[class*="rounded-control"] {
     min-height: 42px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-divider {
+  .platforma-auth-experience.is-login .platforma-auth-divider {
     margin: 2px 0;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card form {
+  .platforma-auth-experience.is-login .platforma-auth-card form {
     gap: 10px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-links {
+  .platforma-auth-experience.is-login .platforma-auth-links {
     margin-top: 8px;
   }
 }
 
 @media (max-width: 1180px) {
-  .zani-auth-grid {
+  .platforma-auth-grid {
     grid-template-columns: 1fr;
     width: min(760px, calc(100% - 40px));
   }
 
-  .zani-auth-hero {
+  .platforma-auth-hero {
     display: none;
   }
 
-  .zani-auth-topbar {
+  .platforma-auth-topbar {
     width: min(760px, calc(100% - 40px));
   }
 
-  .zani-auth-card-wrap {
+  .platforma-auth-card-wrap {
     width: 100%;
   }
 }
 
 @media (max-width: 720px) {
-  .zani-auth-experience {
+  .platforma-auth-experience {
     overflow: auto;
   }
 
-  .zani-auth-topbar {
+  .platforma-auth-topbar {
     grid-template-columns: 1fr;
     justify-items: start;
     gap: 12px;
@@ -877,97 +877,97 @@
     padding-top: 16px;
   }
 
-  .zani-auth-brand {
+  .platforma-auth-brand {
     justify-self: start;
     gap: 10px;
   }
 
-  .zani-auth-brand span {
+  .platforma-auth-brand span {
     font-size: 28px;
   }
 
-  .zani-auth-brand em,
-  .zani-auth-back,
-  .zani-auth-switch span {
+  .platforma-auth-brand em,
+  .platforma-auth-back,
+  .platforma-auth-switch span {
     font-size: 13px;
   }
 
-  .zani-auth-brand i {
+  .platforma-auth-brand i {
     height: 22px;
   }
 
-  .zani-auth-brand em {
+  .platforma-auth-brand em {
     max-width: 145px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .zani-auth-switch {
+  .platforma-auth-switch {
     justify-self: stretch;
     justify-content: space-between;
     width: 100%;
     gap: 8px;
   }
 
-  .zani-auth-switch a {
+  .platforma-auth-switch a {
     min-width: 78px;
     padding: 11px 14px;
   }
 
-  .zani-auth-language {
+  .platforma-auth-language {
     height: 42px !important;
   }
 
-  .zani-auth-grid {
+  .platforma-auth-grid {
     width: calc(100% - 32px);
     min-height: auto;
     padding: 10px 0 26px;
   }
 
-  .zani-auth-card {
+  .platforma-auth-card {
     border-radius: 22px;
     padding: 20px;
   }
 
-  .zani-auth-card h2 {
+  .platforma-auth-card h2 {
     font-size: 27px;
   }
 
-  .zani-auth-card-icon {
+  .platforma-auth-card-icon {
     width: 54px;
     height: 54px;
     border-radius: 18px;
   }
 
-  .zani-auth-field-grid,
-  .zani-auth-password-checks,
-  .zani-auth-secondary-row {
+  .platforma-auth-field-grid,
+  .platforma-auth-password-checks,
+  .platforma-auth-secondary-row {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 430px) {
-  .zani-auth-topbar,
-  .zani-auth-grid {
+  .platforma-auth-topbar,
+  .platforma-auth-grid {
     width: calc(100% - 24px);
   }
 
-  .zani-auth-back {
+  .platforma-auth-back {
     gap: 8px;
   }
 
-  .zani-auth-switch {
+  .platforma-auth-switch {
     display: grid;
     grid-template-columns: 1fr auto auto;
     align-items: center;
   }
 
-  .zani-auth-card {
+  .platforma-auth-card {
     padding: 18px;
   }
 
-  .zani-auth-card input,
-  .zani-auth-card button[class*="rounded-control"] {
+  .platforma-auth-card input,
+  .platforma-auth-card button[class*="rounded-control"] {
     min-height: 46px;
   }
 }
@@ -1006,30 +1006,30 @@
 }
 
 @media (min-width: 1181px) {
-  .zani-auth-experience.is-login {
+  .platforma-auth-experience.is-login {
     height: 100dvh;
     max-height: 100dvh;
     overflow: hidden;
   }
 
-  .zani-auth-experience.is-login .zani-auth-topbar {
+  .platforma-auth-experience.is-login .platforma-auth-topbar {
     width: min(1480px, calc(100% - 56px));
     padding: 14px 0 0;
   }
 
-  .zani-auth-experience.is-login .zani-auth-brand span {
+  .platforma-auth-experience.is-login .platforma-auth-brand span {
     font-size: 30px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-switch a,
-  .zani-auth-experience.is-login .zani-auth-language {
+  .platforma-auth-experience.is-login .platforma-auth-switch a,
+  .platforma-auth-experience.is-login .platforma-auth-language {
     height: 42px !important;
     min-height: 42px;
     padding-top: 0;
     padding-bottom: 0;
   }
 
-  .zani-auth-experience.is-login .zani-auth-grid {
+  .platforma-auth-experience.is-login .platforma-auth-grid {
     width: min(1480px, calc(100% - 56px));
     height: calc(100dvh - 62px);
     min-height: 0;
@@ -1039,7 +1039,7 @@
     overflow: hidden;
   }
 
-  .zani-auth-experience.is-login .zani-auth-hero {
+  .platforma-auth-experience.is-login .platforma-auth-hero {
     min-height: 0;
     height: 100%;
     padding: 34px 0 0;
@@ -1047,53 +1047,53 @@
     animation: authPanelIn 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  .zani-auth-experience.is-login .zani-auth-hero h1 {
+  .platforma-auth-experience.is-login .platforma-auth-hero h1 {
     max-width: 520px;
     font-size: clamp(42px, 4.25vw, 66px);
     line-height: 0.96;
   }
 
-  .zani-auth-experience.is-login .zani-auth-lead {
+  .platforma-auth-experience.is-login .platforma-auth-lead {
     max-width: 520px;
     margin-top: 14px;
     font-size: 15px;
     line-height: 1.42;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature-list {
+  .platforma-auth-experience.is-login .platforma-auth-feature-list {
     grid-template-columns: 1fr;
     gap: 10px;
     max-width: 460px;
     margin-top: 18px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature {
+  .platforma-auth-experience.is-login .platforma-auth-feature {
     grid-template-columns: 44px minmax(0, 1fr);
     gap: 12px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature > span {
+  .platforma-auth-experience.is-login .platforma-auth-feature > span {
     width: 42px;
     height: 42px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature h2 {
+  .platforma-auth-experience.is-login .platforma-auth-feature h2 {
     font-size: 14px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature p {
+  .platforma-auth-experience.is-login .platforma-auth-feature p {
     margin-top: 3px;
     font-size: 12px;
     line-height: 1.22;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature:nth-child(n + 4),
-  .zani-auth-experience.is-login .zani-auth-proof,
-  .zani-auth-experience.is-login .zani-auth-trust {
+  .platforma-auth-experience.is-login .platforma-auth-feature:nth-child(n + 4),
+  .platforma-auth-experience.is-login .platforma-auth-proof,
+  .platforma-auth-experience.is-login .platforma-auth-trust {
     display: none;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard {
     left: clamp(300px, 31vw, 500px);
     bottom: -4px;
     width: min(500px, 43vw);
@@ -1103,201 +1103,201 @@
     animation: authDashboardFloat 7s ease-in-out infinite;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-sidebar {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-sidebar {
     gap: 7px;
     padding: 15px 11px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-sidebar b {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-sidebar b {
     margin-bottom: 4px;
     font-size: 13px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-sidebar span {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-sidebar span {
     padding: 6px 7px;
     font-size: 9px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-main {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-main {
     padding: 14px 12px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-title p {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-title p {
     font-size: 12px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-title small {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-title small {
     font-size: 9.5px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-metrics {
+  .platforma-auth-experience.is-login .platforma-auth-metrics {
     gap: 7px;
     margin-top: 12px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-metrics div {
+  .platforma-auth-experience.is-login .platforma-auth-metrics div {
     padding: 8px;
     animation: authMetricPulse 3.8s ease-in-out infinite;
   }
 
-  .zani-auth-experience.is-login .zani-auth-metrics span {
+  .platforma-auth-experience.is-login .platforma-auth-metrics span {
     font-size: 9px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-metrics strong {
+  .platforma-auth-experience.is-login .platforma-auth-metrics strong {
     margin-top: 5px;
     font-size: 15px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-metrics i {
+  .platforma-auth-experience.is-login .platforma-auth-metrics i {
     margin-top: 5px;
     font-size: 9px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-pipeline {
+  .platforma-auth-experience.is-login .platforma-auth-pipeline {
     margin-top: 9px;
     padding: 9px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-pipeline div {
+  .platforma-auth-experience.is-login .platforma-auth-pipeline div {
     font-size: 11px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-pipeline span {
+  .platforma-auth-experience.is-login .platforma-auth-pipeline span {
     height: 6px;
     margin-top: 8px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard-bottom {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard-bottom {
     display: none;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card-wrap {
+  .platforma-auth-experience.is-login .platforma-auth-card-wrap {
     align-self: center;
     max-height: 100%;
     animation: authPanelIn 680ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card {
+  .platforma-auth-experience.is-login .platforma-auth-card {
     border-radius: 24px;
     padding: 22px 24px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card-icon {
+  .platforma-auth-experience.is-login .platforma-auth-card-icon {
     width: 48px;
     height: 48px;
     border-radius: 16px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card h2 {
+  .platforma-auth-experience.is-login .platforma-auth-card h2 {
     margin-top: 12px;
     font-size: clamp(26px, 2vw, 31px);
   }
 
-  .zani-auth-experience.is-login .zani-auth-card > p {
+  .platforma-auth-experience.is-login .platforma-auth-card > p {
     margin: 6px 0 14px;
     font-size: 13px;
     line-height: 1.36;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card form {
+  .platforma-auth-experience.is-login .platforma-auth-card form {
     gap: 9px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-secondary-row {
+  .platforma-auth-experience.is-login .platforma-auth-secondary-row {
     gap: 10px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-social,
-  .zani-auth-experience.is-login .zani-auth-primary {
+  .platforma-auth-experience.is-login .platforma-auth-social,
+  .platforma-auth-experience.is-login .platforma-auth-primary {
     min-height: 42px !important;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card input,
-  .zani-auth-experience.is-login .zani-auth-card button[class*="rounded-control"] {
+  .platforma-auth-experience.is-login .platforma-auth-card input,
+  .platforma-auth-experience.is-login .platforma-auth-card button[class*="rounded-control"] {
     min-height: 40px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card label > span:first-child {
+  .platforma-auth-experience.is-login .platforma-auth-card label > span:first-child {
     margin-bottom: 5px !important;
     font-size: 12px !important;
   }
 
-  .zani-auth-experience.is-login .zani-auth-divider {
+  .platforma-auth-experience.is-login .platforma-auth-divider {
     gap: 12px;
     margin: 0;
     font-size: 12px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-links {
+  .platforma-auth-experience.is-login .platforma-auth-links {
     margin-top: 8px;
     font-size: 13px;
   }
 }
 
 @media (min-width: 1181px) and (max-height: 760px) {
-  .zani-auth-experience.is-login .zani-auth-topbar {
+  .platforma-auth-experience.is-login .platforma-auth-topbar {
     padding-top: 10px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-grid {
+  .platforma-auth-experience.is-login .platforma-auth-grid {
     height: calc(100dvh - 54px);
     padding-bottom: 8px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-hero {
+  .platforma-auth-experience.is-login .platforma-auth-hero {
     padding-top: 24px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-hero h1 {
+  .platforma-auth-experience.is-login .platforma-auth-hero h1 {
     max-width: 480px;
     font-size: clamp(36px, 3.9vw, 56px);
   }
 
-  .zani-auth-experience.is-login .zani-auth-lead {
+  .platforma-auth-experience.is-login .platforma-auth-lead {
     max-width: 470px;
     margin-top: 10px;
     font-size: 13px;
     line-height: 1.32;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature-list {
+  .platforma-auth-experience.is-login .platforma-auth-feature-list {
     gap: 8px;
     margin-top: 14px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-feature:nth-child(n + 3) {
+  .platforma-auth-experience.is-login .platforma-auth-feature:nth-child(n + 3) {
     display: none;
   }
 
-  .zani-auth-experience.is-login .zani-auth-dashboard {
+  .platforma-auth-experience.is-login .platforma-auth-dashboard {
     left: clamp(260px, 30vw, 430px);
     width: min(450px, 40vw);
     min-height: 220px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card {
+  .platforma-auth-experience.is-login .platforma-auth-card {
     padding: 18px 22px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card-icon {
+  .platforma-auth-experience.is-login .platforma-auth-card-icon {
     width: 42px;
     height: 42px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card h2 {
+  .platforma-auth-experience.is-login .platforma-auth-card h2 {
     margin-top: 10px;
     font-size: 26px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-card > p {
+  .platforma-auth-experience.is-login .platforma-auth-card > p {
     margin-bottom: 10px;
   }
 
-  .zani-auth-experience.is-login .zani-auth-social,
-  .zani-auth-experience.is-login .zani-auth-primary,
-  .zani-auth-experience.is-login .zani-auth-card input,
-  .zani-auth-experience.is-login .zani-auth-card button[class*="rounded-control"] {
+  .platforma-auth-experience.is-login .platforma-auth-social,
+  .platforma-auth-experience.is-login .platforma-auth-primary,
+  .platforma-auth-experience.is-login .platforma-auth-card input,
+  .platforma-auth-experience.is-login .platforma-auth-card button[class*="rounded-control"] {
     min-height: 38px !important;
   }
 }

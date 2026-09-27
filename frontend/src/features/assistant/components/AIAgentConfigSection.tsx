@@ -44,7 +44,7 @@ export function ProfileManagerSection({
               <h3 className="text-lg font-black text-midnight">{t("aiSetup.advanced")}</h3>
               <p className="mt-1 text-sm font-semibold text-slate-500">{t("aiSetup.advancedText")}</p>
             </div>
-            <ChevronRight size={18} className={cn("shrink-0 text-zani-faint transition", showQuality && "rotate-90 text-ai-700")} />
+            <ChevronRight size={18} className={cn("shrink-0 text-platforma-faint transition", showQuality && "rotate-90 text-ai-700")} />
           </button>
         </CardBody>
       </Card>

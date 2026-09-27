@@ -83,7 +83,7 @@ export function LeadForm({
   }, [businessId, clientId, initial?.id]);
 
   return (
-    <form data-testid="lead-action-form" className="grid gap-4 rounded-card border border-zani-border bg-surface-card p-4 shadow-card sm:p-5" onSubmit={form.handleSubmit(async (values) => {
+    <form data-testid="lead-action-form" className="grid gap-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-card sm:p-5" onSubmit={form.handleSubmit(async (values) => {
       try {
         await onSubmit({ ...values, business: businessId, source: values.source as Lead["source"], service: values.service || null, responsible_user: values.responsible_user || null });
       } catch {
@@ -95,7 +95,7 @@ export function LeadForm({
           tone="warning"
           title={t("leadForm.needClientTitle")}
           description={t("leadForm.needClientText")}
-          action={<Link className="zani-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-zani-warning underline-offset-4 hover:underline" to="/app/clients?create=1">
+          action={<Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-platforma-warning underline-offset-4 hover:underline" to="/app/clients?create=1">
             {t("clients.create")}
           </Link>}
         />
@@ -105,7 +105,7 @@ export function LeadForm({
           tone="info"
           title={t("leadForm.serviceLaterTitle")}
           description={t("leadForm.serviceLaterText")}
-          action={<Link className="zani-focus-ring inline-flex rounded-control px-2 py-1 font-bold text-zani-info underline-offset-4 hover:underline" to="/app/business/services">
+          action={<Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-bold text-platforma-info underline-offset-4 hover:underline" to="/app/business/services">
             {t("services.title")}
           </Link>}
         />

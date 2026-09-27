@@ -15,23 +15,23 @@ type ToneDefinition = {
 export const statusNoticeTones: Record<StatusNoticeTone, ToneDefinition> = {
   success: {
     Icon: CheckCircle2,
-    container: "border-[rgba(21,128,61,0.18)] bg-[var(--zani-success-soft)]",
-    icon: "text-zani-success",
+    container: "border-[rgba(21,128,61,0.18)] bg-[var(--platforma-success-soft)]",
+    icon: "text-platforma-success",
   },
   info: {
     Icon: Info,
-    container: "border-[rgba(14,116,144,0.18)] bg-[var(--zani-info-soft)]",
-    icon: "text-zani-info",
+    container: "border-[rgba(14,116,144,0.18)] bg-[var(--platforma-info-soft)]",
+    icon: "text-platforma-info",
   },
   warning: {
     Icon: AlertTriangle,
-    container: "border-[rgba(183,121,31,0.22)] bg-[var(--zani-warning-soft)]",
-    icon: "text-zani-warning",
+    container: "border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)]",
+    icon: "text-platforma-warning",
   },
   danger: {
     Icon: AlertCircle,
-    container: "border-[rgba(194,65,12,0.2)] bg-[var(--zani-danger-soft)]",
-    icon: "text-zani-danger",
+    container: "border-[rgba(194,65,12,0.2)] bg-[var(--platforma-danger-soft)]",
+    icon: "text-platforma-danger",
   },
 };
 
@@ -80,7 +80,7 @@ export function StatusNotice({
       role={resolvedRole}
       aria-live={resolvedLive}
       className={cn(
-        "rounded-card border text-zani-text shadow-sm",
+        "rounded-card border text-platforma-text shadow-sm",
         compact ? "p-3" : "p-4",
         definition.container,
         className,
@@ -94,8 +94,8 @@ export function StatusNotice({
             size={18}
           />
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-zani-ink">{title}</p>
-            {description ? <div className="mt-1 text-sm leading-6 text-zani-subtle">{description}</div> : null}
+            <p className="text-sm font-semibold text-platforma-ink">{title}</p>
+            {description ? <div className="mt-1 text-sm leading-6 text-platforma-subtle">{description}</div> : null}
           </div>
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}

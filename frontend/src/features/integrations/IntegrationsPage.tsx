@@ -201,7 +201,7 @@ export function IntegrationsPage() {
     >
       <div className="space-y-5 p-3 sm:p-4">
         {pageError ? <ErrorState message={getApiErrorMessage(pageError)} /> : null}
-        <Surface padding="sm" variant="muted" className="text-sm font-semibold text-zani-subtle">
+        <Surface padding="sm" variant="muted" className="text-sm font-semibold text-platforma-subtle">
           {t("integrations.page.merchantResultsMeta", {
             found: visibleData.length,
             total: data.length,
@@ -215,7 +215,7 @@ export function IntegrationsPage() {
               <div>
                 <div className="mb-3">
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-700">{t(groupLabels[groupKey].titleKey)}</p>
-                  <p className="mt-1 text-sm font-semibold text-zani-subtle">{t(groupLabels[groupKey].textKey)}</p>
+                  <p className="mt-1 text-sm font-semibold text-platforma-subtle">{t(groupLabels[groupKey].textKey)}</p>
                 </div>
                 <div className="grid gap-3 lg:grid-cols-2">
                   {items.map((item) => (

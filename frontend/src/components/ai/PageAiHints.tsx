@@ -34,7 +34,7 @@ export function PageAiHints({ items, className }: PageAiHintsProps) {
           </span>
           <div>
             <p className="text-xs font-semibold text-ai-700">{t("aiHints.eyebrow")}</p>
-            <h2 className="text-lg font-semibold text-zani-ink">{t("aiHints.title")}</h2>
+            <h2 className="text-lg font-semibold text-platforma-ink">{t("aiHints.title")}</h2>
           </div>
         </div>
         <div className="grid gap-3">

@@ -360,7 +360,7 @@ export function OutreachPage() {
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-xs font-bold uppercase text-brand-700">{t("outreach.appointmentAutoEyebrow")}</p>
-              <h2 className="mt-1 text-lg font-semibold text-zani-ink">{t("outreach.appointmentAutoTitle")}</h2>
+              <h2 className="mt-1 text-lg font-semibold text-platforma-ink">{t("outreach.appointmentAutoTitle")}</h2>
             </div>
             <Badge variant={appointmentAutomation.data.enabled ? "success" : "neutral"} className="w-fit">
               {appointmentAutomation.data.enabled ? t("settings.enabled") : t("settings.disabled")}
@@ -371,12 +371,12 @@ export function OutreachPage() {
               <Surface key={scenario.key} variant="muted" padding="sm">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-zani-ink">{scenario.label}</p>
-                    <p className="mt-1 text-xs font-bold uppercase text-zani-muted">{scenario.trigger}</p>
+                    <p className="text-sm font-semibold text-platforma-ink">{scenario.label}</p>
+                    <p className="mt-1 text-xs font-bold uppercase text-platforma-muted">{scenario.trigger}</p>
                   </div>
                   <Badge variant="success" size="sm">{t("outreach.auto")}</Badge>
                 </div>
-                <p className="mt-3 text-sm font-medium leading-5 text-zani-subtle">{scenario.description}</p>
+                <p className="mt-3 text-sm font-medium leading-5 text-platforma-subtle">{scenario.description}</p>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                   <MiniCount label={t("outreach.count.pending")} value={scenario.counts.pending} />
                   <MiniCount label={t("outreach.count.sent")} value={scenario.counts.sent} />
@@ -386,20 +386,20 @@ export function OutreachPage() {
             ))}
           </div>
           {appointmentAutomation.data.failed_notifications.length ? (
-            <Surface className="mt-4 border-[rgba(183,121,31,0.22)] bg-[var(--zani-warning-soft)]" padding="sm">
+            <Surface className="mt-4 border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)]" padding="sm">
               <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-zani-warning">{t("outreach.deliveryErrorsTitle")}</p>
-                  <p className="text-sm font-medium text-zani-warning">{t("outreach.deliveryErrorsText")}</p>
+                  <p className="text-sm font-semibold text-platforma-warning">{t("outreach.deliveryErrorsTitle")}</p>
+                  <p className="text-sm font-medium text-platforma-warning">{t("outreach.deliveryErrorsText")}</p>
                 </div>
                 <Badge variant="warning">{t("outreach.failedCount", { count: appointmentAutomation.data.total_failed })}</Badge>
               </div>
               <div className="mt-3 space-y-2">
                 {appointmentAutomation.data.failed_notifications.map((notification) => (
-                  <div key={notification.id} className="flex flex-col gap-3 rounded-card border border-zani-border bg-surface-card px-3 py-3 md:flex-row md:items-center md:justify-between">
+                  <div key={notification.id} className="flex flex-col gap-3 rounded-card border border-platforma-border bg-surface-card px-3 py-3 md:flex-row md:items-center md:justify-between">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-zani-ink">{notification.label} · {notification.client_name || notification.client_phone || t("common.client")}</p>
-                      <p className="mt-0.5 text-xs font-semibold uppercase text-zani-muted">{notification.channel} · {formatDateTime(notification.send_at)}</p>
+                      <p className="truncate text-sm font-semibold text-platforma-ink">{notification.label} · {notification.client_name || notification.client_phone || t("common.client")}</p>
+                      <p className="mt-0.5 text-xs font-semibold uppercase text-platforma-muted">{notification.channel} · {formatDateTime(notification.send_at)}</p>
                     </div>
                     <Button type="button" variant="secondary" disabled={!canManageOutreach} isLoading={retryNotification.isPending} onClick={() => retryNotification.mutate(Number(notification.id))}>
                       <RefreshCw size={15} /> {t("common.retry")}
@@ -415,7 +415,7 @@ export function OutreachPage() {
       <section className="grid gap-5 xl:grid-cols-[420px_1fr]">
         <Surface padding="sm">
           <div className="flex items-center justify-between px-2 py-2">
-            <h2 className="text-lg font-semibold text-zani-ink">{t("outreach.campaigns")}</h2>
+            <h2 className="text-lg font-semibold text-platforma-ink">{t("outreach.campaigns")}</h2>
             <Badge variant="neutral">{campaignList.length}</Badge>
           </div>
           <div className="mt-2 space-y-2">
@@ -425,13 +425,13 @@ export function OutreachPage() {
                 <button
                   key={campaign.id}
                   type="button"
-                  className={`w-full rounded-card border p-4 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 ${active ? "border-brand-200 bg-brand-50 shadow-sm" : "border-zani-border bg-surface-card hover:border-brand-100 hover:bg-surface-warm"}`}
+                  className={`w-full rounded-card border p-4 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 ${active ? "border-brand-200 bg-brand-50 shadow-sm" : "border-platforma-border bg-surface-card hover:border-brand-100 hover:bg-surface-warm"}`}
                   onClick={() => setSelectedId(campaign.id)}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-base font-semibold text-zani-ink">{campaign.name}</p>
-                      <p className="mt-1 text-sm font-medium text-zani-subtle">{channelLabels[campaign.channel]} · {t(`outreach.campaignType.${campaign.campaign_type}`)}</p>
+                      <p className="truncate text-base font-semibold text-platforma-ink">{campaign.name}</p>
+                      <p className="mt-1 text-sm font-medium text-platforma-subtle">{channelLabels[campaign.channel]} · {t(`outreach.campaignType.${campaign.campaign_type}`)}</p>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-2">
                       <Badge variant={campaignStatusVariant[campaign.status]}>{t(`outreach.status.${campaign.status}`)}</Badge>
@@ -451,8 +451,8 @@ export function OutreachPage() {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase text-brand-700">{t("outreach.channelCampaign", { channel: channelLabels[selectedCampaign.channel] })}</p>
-                  <h2 className="mt-1 text-2xl font-semibold text-zani-ink">{selectedCampaign.name}</h2>
-                  <p className="mt-2 text-sm font-medium text-zani-subtle">
+                  <h2 className="mt-1 text-2xl font-semibold text-platforma-ink">{selectedCampaign.name}</h2>
+                  <p className="mt-2 text-sm font-medium text-platforma-subtle">
                     {t("outreach.statusLine", { status: t(`outreach.status.${selectedCampaign.status}`) })}
                     {selectedCampaign.scheduled_at ? t("outreach.startLine", { date: formatDateTime(selectedCampaign.scheduled_at) }) : ""}
                   </p>
@@ -480,7 +480,7 @@ export function OutreachPage() {
               </div>
 
               {!canManageOutreach ? (
-                <Surface variant="danger" className="mt-4 text-sm font-medium leading-6 text-zani-danger">
+                <Surface variant="danger" className="mt-4 text-sm font-medium leading-6 text-platforma-danger">
                   {t("outreach.readOnlyNotice")}
                 </Surface>
               ) : null}
@@ -500,16 +500,16 @@ export function OutreachPage() {
               </div>
 
               {launchChecklist.data ? (
-                <Surface className={`mt-4 ${launchChecklist.data.can_launch ? "border-[rgba(21,128,61,0.18)] bg-[var(--zani-success-soft)]" : "border-[rgba(183,121,31,0.22)] bg-[var(--zani-warning-soft)]"}`}>
+                <Surface className={`mt-4 ${launchChecklist.data.can_launch ? "border-[rgba(21,128,61,0.18)] bg-[var(--platforma-success-soft)]" : "border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)]"}`}>
                   <div className="flex items-center justify-between gap-3">
-                    <h3 className={`text-sm font-semibold ${launchChecklist.data.can_launch ? "text-zani-success" : "text-zani-warning"}`}>{t("outreach.prelaunchCheck")}</h3>
+                    <h3 className={`text-sm font-semibold ${launchChecklist.data.can_launch ? "text-platforma-success" : "text-platforma-warning"}`}>{t("outreach.prelaunchCheck")}</h3>
                     <Badge variant={launchChecklist.data.can_launch ? "success" : "warning"}>
                       {launchChecklist.data.can_launch ? t("outreach.ready") : t("outreach.needsCheck")}
                     </Badge>
                   </div>
                   <div className="mt-3 grid gap-2 md:grid-cols-2">
                     {launchChecklist.data.checks.map((check) => (
-                      <div key={check.key} className="flex items-center gap-2 text-sm font-semibold text-zani-subtle">
+                      <div key={check.key} className="flex items-center gap-2 text-sm font-semibold text-platforma-subtle">
                         <span className={`h-2.5 w-2.5 rounded-full ${check.ok ? "bg-emerald-500" : "bg-amber-500"}`} />
                         {check.label}
                       </div>
@@ -519,8 +519,8 @@ export function OutreachPage() {
               ) : null}
 
               {stats.data?.errors?.length ? (
-                <Surface className="mt-4 border-[rgba(183,121,31,0.22)] bg-[var(--zani-warning-soft)]">
-                  <h3 className="text-sm font-semibold text-zani-warning">{t("outreach.errorReasons")}</h3>
+                <Surface className="mt-4 border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)]">
+                  <h3 className="text-sm font-semibold text-platforma-warning">{t("outreach.errorReasons")}</h3>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {stats.data.errors.map((error) => (
                       <Badge key={error.code} variant="warning">
@@ -544,10 +544,10 @@ export function OutreachPage() {
               </div>
 
               <Surface variant="muted" className="mt-5">
-                <div className="flex items-center gap-2 text-sm font-semibold text-zani-ink">
+                <div className="flex items-center gap-2 text-sm font-semibold text-platforma-ink">
                   <MessageSquareText size={17} /> {t("outreach.messageText")}
                 </div>
-                <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-6 text-zani-subtle">{selectedCampaign.message_text}</p>
+                <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-6 text-platforma-subtle">{selectedCampaign.message_text}</p>
               </Surface>
 
               {selectedCampaign.audience_type === "manual" ? (
@@ -565,13 +565,13 @@ export function OutreachPage() {
 
               <div className="mt-5 grid gap-4 lg:grid-cols-2">
                 <Surface variant="outlined">
-                  <h3 className="font-semibold text-zani-ink">{t("outreach.audience")}</h3>
-                  <p className="mt-1 text-sm font-medium text-zani-subtle">
+                  <h3 className="font-semibold text-platforma-ink">{t("outreach.audience")}</h3>
+                  <p className="mt-1 text-sm font-medium text-platforma-subtle">
                     {t("outreach.audiencePreview", { total: audiencePreview.data?.count ?? "...", eligible: audiencePreview.data?.eligible_count ?? "...", suppressed: audiencePreview.data?.suppressed_count ?? "..." })}
                   </p>
                   <div className="mt-3 space-y-2">
                     {(audiencePreview.data?.clients || []).map((client) => (
-                      <div key={client.id} className={`rounded-card px-3 py-2 text-sm font-medium ${client.eligible ? "bg-surface-muted text-zani-subtle" : "bg-[var(--zani-warning-soft)] text-zani-warning"}`}>
+                      <div key={client.id} className={`rounded-card px-3 py-2 text-sm font-medium ${client.eligible ? "bg-surface-muted text-platforma-subtle" : "bg-[var(--platforma-warning-soft)] text-platforma-warning"}`}>
                         {client.full_name} · {client.recipient_id}
                         {!client.eligible ? <span className="ml-2 text-xs font-semibold">({client.suppression_reason})</span> : null}
                       </div>
@@ -580,19 +580,19 @@ export function OutreachPage() {
                 </Surface>
 
                 <Surface variant="outlined">
-                  <h3 className="font-semibold text-zani-ink">{t("outreach.latestRecipients")}</h3>
+                  <h3 className="font-semibold text-platforma-ink">{t("outreach.latestRecipients")}</h3>
                   <div className="mt-3 space-y-2">
                     {(recipients.data || []).slice(0, 6).map((recipient) => (
                       <div key={recipient.id} className="flex items-center justify-between gap-3 rounded-card bg-surface-muted px-3 py-2 text-sm">
-                        <span className="min-w-0 truncate font-medium text-zani-subtle">{recipient.client_name || recipient.recipient_id}</span>
+                        <span className="min-w-0 truncate font-medium text-platforma-subtle">{recipient.client_name || recipient.recipient_id}</span>
                         <Badge variant={recipient.status === "sent" ? "success" : recipient.status === "failed" ? "danger" : recipient.status === "skipped" ? "warning" : "neutral"} size="sm">
                           {recipient.status}
                         </Badge>
-                        {recipient.skipped_reason ? <span className="text-xs font-semibold text-zani-warning">{t("outreach.recipientSkipped")}</span> : null}
+                        {recipient.skipped_reason ? <span className="text-xs font-semibold text-platforma-warning">{t("outreach.recipientSkipped")}</span> : null}
                         {recipient.error_code ? <span className="text-xs font-semibold text-rose-700">{t("outreach.recipientDeliveryFailed")}</span> : null}
                       </div>
                     ))}
-                    {!recipients.isLoading && !(recipients.data || []).length ? <p className="text-sm font-medium text-zani-subtle">{t("outreach.queueEmpty")}</p> : null}
+                    {!recipients.isLoading && !(recipients.data || []).length ? <p className="text-sm font-medium text-platforma-subtle">{t("outreach.queueEmpty")}</p> : null}
                   </div>
                 </Surface>
               </div>
@@ -607,7 +607,7 @@ export function OutreachPage() {
         <div className="space-y-4">
           <Surface className="border-brand-100 bg-brand-50">
             <p className="text-sm font-semibold text-brand-900">{t("outreach.launchOrderTitle")}</p>
-            <p className="mt-1 text-sm font-medium leading-6 text-zani-subtle">
+            <p className="mt-1 text-sm font-medium leading-6 text-platforma-subtle">
               {t("outreach.launchOrderText")}
             </p>
           </Surface>
@@ -713,10 +713,10 @@ export function OutreachPage() {
           </div>
           <Input label={t("outreach.scheduledAt")} type="datetime-local" value={form.scheduled_at} onChange={(event) => setForm((state) => ({ ...state, scheduled_at: event.target.value }))} />
           <Textarea label={t("outreach.message")} value={form.message_text} onChange={(event) => setForm((state) => ({ ...state, message_text: event.target.value }))} rows={6} />
-          <div className="rounded-card bg-surface-muted px-3 py-2 text-sm font-medium leading-6 text-zani-subtle">
+          <div className="rounded-card bg-surface-muted px-3 py-2 text-sm font-medium leading-6 text-platforma-subtle">
             {t("outreach.templateVariables")}
           </div>
-          <div className="rounded-card bg-[var(--zani-warning-soft)] px-3 py-2 text-sm font-medium leading-6 text-zani-warning">
+          <div className="rounded-card bg-[var(--platforma-warning-soft)] px-3 py-2 text-sm font-medium leading-6 text-platforma-warning">
             {t("outreach.productionModeNotice")}
           </div>
           <Button type="button" disabled={!canManageOutreach || !form.message_text.trim() || (form.audience_type === "segment" && !form.segment)} isLoading={createCampaign.isPending} onClick={() => createCampaign.mutate()}>
@@ -757,7 +757,7 @@ export function OutreachPage() {
             placeholder={t("outreach.consentRowsPlaceholder")}
           />
           <Input type="file" accept=".csv,.xlsx" onChange={(event) => setConsentFile(event.target.files?.[0] || null)} />
-          <div className="rounded-card bg-surface-muted px-3 py-2 text-sm font-medium leading-6 text-zani-subtle">
+          <div className="rounded-card bg-surface-muted px-3 py-2 text-sm font-medium leading-6 text-platforma-subtle">
             {t("outreach.consentImportNotice")}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -794,8 +794,8 @@ function ManualAudiencePicker({
     <Surface className="mt-5">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h3 className="font-semibold text-zani-ink">{t("outreach.manualAudience")}</h3>
-          <p className="mt-1 text-sm font-medium text-zani-subtle">{t("outreach.manualAudienceText", { count: selectedIds.length })}</p>
+          <h3 className="font-semibold text-platforma-ink">{t("outreach.manualAudience")}</h3>
+          <p className="mt-1 text-sm font-medium text-platforma-subtle">{t("outreach.manualAudienceText", { count: selectedIds.length })}</p>
         </div>
         <Input data-testid="outreach-search-input" className="md:max-w-xs" placeholder={t("outreach.clientSearch")} value={search} onChange={(event) => onSearch(event.target.value)} />
       </div>
@@ -810,7 +810,7 @@ function ManualAudiencePicker({
               type="button"
               disabled={disabled}
               onClick={() => onToggle(Number(client.id))}
-              className={`rounded-card border px-3 py-2 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 ${selected ? "border-brand-200 bg-brand-50 text-brand-900" : "border-zani-border bg-surface-muted text-zani-subtle"} ${disabled ? "cursor-not-allowed opacity-50" : "hover:border-brand-100 hover:bg-surface-card"}`}
+              className={`rounded-card border px-3 py-2 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 ${selected ? "border-brand-200 bg-brand-50 text-brand-900" : "border-platforma-border bg-surface-muted text-platforma-subtle"} ${disabled ? "cursor-not-allowed opacity-50" : "hover:border-brand-100 hover:bg-surface-card"}`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
@@ -823,7 +823,7 @@ function ManualAudiencePicker({
           );
         })}
       </div>
-      {!clients.length ? <p className="mt-3 text-sm font-medium text-zani-subtle">{t("outreach.clientsNotFound")}</p> : null}
+      {!clients.length ? <p className="mt-3 text-sm font-medium text-platforma-subtle">{t("outreach.clientsNotFound")}</p> : null}
     </Surface>
   );
 }
@@ -831,12 +831,12 @@ function ManualAudiencePicker({
 function SafetyCard({ icon: Icon, label, value, tone = "slate" }: { icon: LucideIcon; label: string; value: string; tone?: "green" | "amber" | "slate" }) {
   return (
     <Surface variant="muted" padding="sm" className="flex items-center gap-3">
-      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-card ${tone === "green" ? "bg-[var(--zani-success-soft)] text-zani-success" : tone === "amber" ? "bg-[var(--zani-warning-soft)] text-zani-warning" : "bg-surface-card text-zani-subtle"}`}>
+      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-card ${tone === "green" ? "bg-[var(--platforma-success-soft)] text-platforma-success" : tone === "amber" ? "bg-[var(--platforma-warning-soft)] text-platforma-warning" : "bg-surface-card text-platforma-subtle"}`}>
         <Icon size={18} />
       </span>
       <div>
-        <p className="text-xs font-bold uppercase text-zani-muted">{label}</p>
-        <p className="mt-0.5 text-sm font-semibold text-zani-ink">{value}</p>
+        <p className="text-xs font-bold uppercase text-platforma-muted">{label}</p>
+        <p className="mt-0.5 text-sm font-semibold text-platforma-ink">{value}</p>
       </div>
     </Surface>
   );
@@ -855,7 +855,7 @@ function ReadinessCard({
   description: string;
   tone?: "green" | "amber" | "slate";
 }) {
-  const iconClass = tone === "green" ? "bg-[var(--zani-success-soft)] text-zani-success" : tone === "amber" ? "bg-[var(--zani-warning-soft)] text-zani-warning" : "bg-brand-50 text-brand-700";
+  const iconClass = tone === "green" ? "bg-[var(--platforma-success-soft)] text-platforma-success" : tone === "amber" ? "bg-[var(--platforma-warning-soft)] text-platforma-warning" : "bg-brand-50 text-brand-700";
   return (
     <Surface>
       <div className="flex items-start gap-3">
@@ -863,9 +863,9 @@ function ReadinessCard({
           <Icon size={20} />
         </div>
         <div className="min-w-0">
-          <p className="text-xs font-bold uppercase text-zani-muted">{title}</p>
-          <p className="mt-1 text-sm font-semibold text-zani-ink">{value}</p>
-          <p className="mt-1 text-sm font-medium leading-5 text-zani-subtle">{description}</p>
+          <p className="text-xs font-bold uppercase text-platforma-muted">{title}</p>
+          <p className="mt-1 text-sm font-semibold text-platforma-ink">{value}</p>
+          <p className="mt-1 text-sm font-medium leading-5 text-platforma-subtle">{description}</p>
         </div>
       </div>
     </Surface>
@@ -875,16 +875,16 @@ function ReadinessCard({
 function MiniStat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-card bg-surface-muted px-4 py-3">
-      <p className="text-xs font-bold uppercase text-zani-muted">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-zani-ink">{value}</p>
+      <p className="text-xs font-bold uppercase text-platforma-muted">{label}</p>
+      <p className="mt-1 text-2xl font-semibold text-platforma-ink">{value}</p>
     </div>
   );
 }
 
 function MiniCount({ label, value, tone = "slate" }: { label: string; value: number; tone?: "slate" | "amber" }) {
   return (
-    <div className={`rounded-card bg-surface-card px-2 py-2 ${tone === "amber" ? "text-zani-warning" : "text-zani-subtle"}`}>
-      <p className="text-[10px] font-bold uppercase text-zani-muted">{label}</p>
+    <div className={`rounded-card bg-surface-card px-2 py-2 ${tone === "amber" ? "text-platforma-warning" : "text-platforma-subtle"}`}>
+      <p className="text-[10px] font-bold uppercase text-platforma-muted">{label}</p>
       <p className="mt-0.5 text-base font-semibold">{value}</p>
     </div>
   );

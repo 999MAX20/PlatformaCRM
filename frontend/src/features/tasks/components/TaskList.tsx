@@ -78,15 +78,15 @@ export function TaskList({
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.key} className="min-h-[84px] rounded-card border border-zani-border bg-surface-card p-3 shadow-soft">
+            <div key={stat.key} className="min-h-[84px] rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft">
               <div className="flex items-center justify-between gap-3">
                 <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-control ${stat.iconClass}`}>
                   <Icon size={18} />
                 </div>
-                <span className="text-xl font-semibold text-zani-text">{stat.count}</span>
+                <span className="text-xl font-semibold text-platforma-text">{stat.count}</span>
               </div>
-              <p className="mt-2 text-sm font-semibold text-zani-text">{stat.title}</p>
-              <p className="mt-1 line-clamp-1 text-xs font-semibold text-zani-muted">{stat.description}</p>
+              <p className="mt-2 text-sm font-semibold text-platforma-text">{stat.title}</p>
+              <p className="mt-1 line-clamp-1 text-xs font-semibold text-platforma-muted">{stat.description}</p>
             </div>
           );
         })}
@@ -119,7 +119,7 @@ export function TaskList({
       />
 
       {!tasks.length ? (
-        <div className="overflow-hidden rounded-card border border-zani-border bg-surface-card shadow-card">
+        <div className="overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-card">
           <EmptyState
             title={emptyTitle || t("tasks.emptyTitle")}
             description={emptyDescription || t("tasks.emptyText")}
@@ -184,18 +184,18 @@ function TaskTableSection({
         />
       }
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zani-border px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-platforma-border px-5 py-4">
         <div>
-          <h2 className="text-sm font-bold text-zani-text">{title}</h2>
-          <p className="mt-1 text-sm font-semibold text-zani-muted">{description}</p>
+          <h2 className="text-sm font-bold text-platforma-text">{title}</h2>
+          <p className="mt-1 text-sm font-semibold text-platforma-muted">{description}</p>
         </div>
         <div className="flex items-center rounded-control bg-surface-muted p-1">
-          <span className="inline-flex h-8 items-center gap-2 rounded-control bg-zani-card px-3 text-sm font-bold text-brand-700 shadow-sm">
+          <span className="inline-flex h-8 items-center gap-2 rounded-control bg-platforma-card px-3 text-sm font-bold text-brand-700 shadow-sm">
             <span className="rounded-control bg-brand-50 px-1.5 py-0.5 text-xs text-brand-700 ring-1 ring-brand-100">{totalCount ?? tasks.length}</span>
             {t("tasks.all")}
           </span>
-          <span className="inline-flex h-8 items-center gap-2 rounded-control px-3 text-sm font-bold text-zani-muted">
-            <span className="rounded-control bg-zani-card px-1.5 py-0.5 text-xs text-zani-text">{tasks.filter((task) => task.status === "in_progress").length}</span>
+          <span className="inline-flex h-8 items-center gap-2 rounded-control px-3 text-sm font-bold text-platforma-muted">
+            <span className="rounded-control bg-platforma-card px-1.5 py-0.5 text-xs text-platforma-text">{tasks.filter((task) => task.status === "in_progress").length}</span>
             {t("tasks.inProgress")}
           </span>
         </div>
@@ -204,8 +204,8 @@ function TaskTableSection({
       {tasks.length ? (
         <div className="overflow-x-auto">
           <table className="min-w-[980px] w-full border-collapse text-left">
-            <thead className="sticky top-0 z-10 bg-zani-card">
-              <tr className="h-10 border-b border-zani-border text-xs font-semibold text-zani-muted">
+            <thead className="sticky top-0 z-10 bg-platforma-card">
+              <tr className="h-10 border-b border-platforma-border text-xs font-semibold text-platforma-muted">
                 <th className="w-[34%] px-3 py-2">{t("tasks.tableTask")}</th>
                 <th className="w-[13%] px-3 py-2">{t("tasks.tableStatus")}</th>
                 <th className="w-[13%] px-3 py-2">{t("tasks.tableDue")}</th>
@@ -284,7 +284,7 @@ function TaskTableFilters({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder={t("search.placeholder.tasks")}
             leftIcon={<Search size={15} />}
-            rightIcon={searchQuery ? <button type="button" onClick={() => onSearchChange("")} className="rounded-full p-1 text-zani-muted hover:bg-surface-muted" aria-label={t("search.close")}><X size={13} /></button> : null}
+            rightIcon={searchQuery ? <button type="button" onClick={() => onSearchChange("")} className="rounded-full p-1 text-platforma-muted hover:bg-surface-muted" aria-label={t("search.close")}><X size={13} /></button> : null}
             aria-label={t("common.search")}
           />
           {showTeamControls ? <Select
@@ -391,7 +391,7 @@ function TaskTableRow({
   const StatusIcon = task.status === "in_progress" ? Pause : Play;
   return (
     <tr
-      className={`group cursor-pointer border-b border-zani-border transition hover:bg-surface-hover focus-within:bg-surface-hover ${selected ? "bg-brand-50/70 ring-1 ring-inset ring-brand-200" : ""}`}
+      className={`group cursor-pointer border-b border-platforma-border transition hover:bg-surface-hover focus-within:bg-surface-hover ${selected ? "bg-brand-50/70 ring-1 ring-inset ring-brand-200" : ""}`}
       style={{ minHeight: CRM_TABLE_ROW_HEIGHT }}
       onClick={() => onSelectTask(task)}
       tabIndex={0}
@@ -405,19 +405,19 @@ function TaskTableRow({
     >
       <td className="px-3 py-2 align-middle">
         <div className="flex min-w-0 items-center gap-3">
-          <div className={`grid h-9 w-9 shrink-0 place-items-center rounded-control ${task.status === "in_progress" ? "bg-[var(--zani-info)] text-white" : "bg-brand-50 text-brand-700"}`}>
+          <div className={`grid h-9 w-9 shrink-0 place-items-center rounded-control ${task.status === "in_progress" ? "bg-[var(--platforma-info)] text-white" : "bg-brand-50 text-brand-700"}`}>
             <StatusIcon size={15} fill="currentColor" />
           </div>
           <div className="min-w-0">
-            <p className="line-clamp-1 font-bold text-zani-text">{task.title}</p>
-            {task.description ? <p className="mt-1 line-clamp-1 text-sm font-medium text-zani-muted">{task.description}</p> : null}
+            <p className="line-clamp-1 font-bold text-platforma-text">{task.title}</p>
+            {task.description ? <p className="mt-1 line-clamp-1 text-sm font-medium text-platforma-muted">{task.description}</p> : null}
           </div>
         </div>
       </td>
       <td className="px-3 py-2 align-middle">
         <StatusBadge status={task.status} />
       </td>
-      <td className="px-3 py-2 align-middle text-sm font-semibold text-zani-muted">{task.due_at ? formatDateTime(task.due_at) : t("tasks.groupNoDue")}</td>
+      <td className="px-3 py-2 align-middle text-sm font-semibold text-platforma-muted">{task.due_at ? formatDateTime(task.due_at) : t("tasks.groupNoDue")}</td>
       <td className="px-3 py-2 align-middle">
         <DotLabel colorClass={priorityDotClass(task.priority)}>{priorityLabel(task.priority, t)}</DotLabel>
       </td>
@@ -426,9 +426,9 @@ function TaskTableRow({
           <RelatedEntities task={task} onOpenEntity={onOpenEntity} />
         </div>
       </td>
-      <td className="max-w-[190px] truncate px-3 py-2 align-middle text-sm font-semibold text-zani-muted">{task.assignee_name || task.assignee_email || t("tasks.noAssignee")}</td>
+      <td className="max-w-[190px] truncate px-3 py-2 align-middle text-sm font-semibold text-platforma-muted">{task.assignee_name || task.assignee_email || t("tasks.noAssignee")}</td>
       <td className="px-3 py-2 align-middle">
-        <div className="flex items-center justify-between gap-2 text-xs font-bold text-zani-muted">
+        <div className="flex items-center justify-between gap-2 text-xs font-bold text-platforma-muted">
           <span className="min-w-0">
             <span className="block truncate">{t("tasks.commentsCount", { count: task.comments_count || 0 })}</span>
             <span className="block truncate">{t("tasks.watchersCount", { count: task.watchers_count || 0 })}</span>
@@ -456,7 +456,7 @@ function TaskTableRow({
 
 function DotLabel({ colorClass, children }: { colorClass: string; children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 text-sm font-semibold text-zani-text">
+    <span className="inline-flex items-center gap-2 text-sm font-semibold text-platforma-text">
       <span className={`h-1.5 w-1.5 rounded-full ${colorClass}`} />
       {children}
     </span>
@@ -485,7 +485,7 @@ function RelatedEntities({ task, onOpenEntity }: { task: Task; onOpenEntity: (en
       : null,
   ].filter(Boolean) as Array<{ key: string; label: string; entity?: CrmDrawerEntity; href?: string }>;
 
-  if (!entities.length) return <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold text-zani-muted">{t("tasks.noClient")}</span>;
+  if (!entities.length) return <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold text-platforma-muted">{t("tasks.noClient")}</span>;
 
   const visibleEntities = entities.slice(0, 1);
   const hiddenCount = entities.length - visibleEntities.length;
@@ -496,7 +496,7 @@ function RelatedEntities({ task, onOpenEntity }: { task: Task; onOpenEntity: (en
           {item.label}
         </RelatedAction>
       ))}
-      {hiddenCount > 0 ? <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold text-zani-muted">+{hiddenCount}</span> : null}
+      {hiddenCount > 0 ? <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold text-platforma-muted">+{hiddenCount}</span> : null}
     </>
   );
 }
@@ -506,7 +506,7 @@ function RelatedAction({ href, onClick, children }: { href?: string; onClick?: (
     return (
       <a
         href={href}
-        className="max-w-full truncate rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold text-zani-muted transition hover:bg-brand-50 hover:text-brand-700"
+        className="max-w-full truncate rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold text-platforma-muted transition hover:bg-brand-50 hover:text-brand-700"
         onClick={(event) => event.stopPropagation()}
       >
         {children}
@@ -517,7 +517,7 @@ function RelatedAction({ href, onClick, children }: { href?: string; onClick?: (
   return (
     <button
       type="button"
-      className="max-w-full truncate rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold text-zani-muted transition hover:bg-brand-50 hover:text-brand-700"
+      className="max-w-full truncate rounded-full bg-surface-muted px-2 py-0.5 text-xs font-semibold text-platforma-muted transition hover:bg-brand-50 hover:text-brand-700"
       onClick={(event) => {
         event.stopPropagation();
         onClick?.();
@@ -540,9 +540,9 @@ type TaskStat = {
 function getTaskStats(summary: TaskSummary | undefined, t: (key: string) => string): TaskStat[] {
   return [
     createStat("todo", t("tasks.statTodo"), t("tasks.statTodoText"), summary?.open || 0, "bg-brand-50 text-brand-700", CircleDashed),
-    createStat("completed", t("tasks.statCompleted"), t("tasks.statCompletedText"), summary?.closed || 0, "bg-[var(--zani-success-soft)] text-zani-success", CheckCircle2),
-    createStat("review", t("tasks.statInReview"), t("tasks.statInReviewText"), summary?.inProgress || 0, "bg-[var(--zani-warning-soft)] text-zani-warning", Clock3),
-    createStat("blocker", t("tasks.statBlocker"), t("tasks.statBlockerText"), summary?.overdue || 0, "bg-[var(--zani-danger-soft)] text-zani-danger", CircleAlert),
+    createStat("completed", t("tasks.statCompleted"), t("tasks.statCompletedText"), summary?.closed || 0, "bg-[var(--platforma-success-soft)] text-platforma-success", CheckCircle2),
+    createStat("review", t("tasks.statInReview"), t("tasks.statInReviewText"), summary?.inProgress || 0, "bg-[var(--platforma-warning-soft)] text-platforma-warning", Clock3),
+    createStat("blocker", t("tasks.statBlocker"), t("tasks.statBlockerText"), summary?.overdue || 0, "bg-[var(--platforma-danger-soft)] text-platforma-danger", CircleAlert),
   ];
 }
 
@@ -557,8 +557,8 @@ function priorityLabel(priority: Task["priority"], t: (key: string) => string) {
 }
 
 function priorityDotClass(priority: Task["priority"]) {
-  if (priority === "urgent") return "bg-zani-danger";
-  if (priority === "high") return "bg-zani-danger";
+  if (priority === "urgent") return "bg-platforma-danger";
+  if (priority === "high") return "bg-platforma-danger";
   if (priority === "low") return "bg-purple-500";
-  return "bg-zani-warning";
+  return "bg-platforma-warning";
 }

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Execution rules for Codex/AI agents in Platforma.CRM / Zani.
+Execution rules for Codex/AI agents in Платформа CRM (PlatformaCRM).
 These rules govern work; live status and test counts belong in task evidence.
 
 ## 1. Start and restore context
@@ -70,7 +70,7 @@ Working-DB migrations and removal of old trees need their own agreed scope/check
 
 ## 3. Product and engineering invariants
 
-Zani is an AI-first CRM/business control layer for SMB. The first paid release
+Платформа CRM is an AI-first CRM/business control layer for SMB. The first paid release
 serves dental administrators under [V1 rules](docs/product/V1_PRODUCT_RULES.md).
 Keep daily work simple, fast, role-aware and action-oriented. Do not introduce
 clinical records, a new permission framework or vertical-mode rewrite implicitly.
@@ -163,7 +163,7 @@ If `.git` is absent, say branch/publication operations cannot be proven locally.
 
 Standing owner authorization (2026-09-21): after an approved implementation/docs
 change passes its required gates, commit and promptly normal-push to `origin`
-(`https://github.com/999MAX20/ZANI.git`), target `main`. Read-only/no-push requests
+(`https://github.com/999MAX20/PlatformaCRM.git`), target `main`. Read-only/no-push requests
 and unresolved target/safety questions override it. This is not an automatic hook.
 
 1. Verify canonical root, single owner, branch/HEAD, task-owned diff, pre-existing
@@ -206,7 +206,7 @@ No background autosave is promised; abrupt closure may leave unsaved progress.
 
 An explicit user command «Передай работу новому чату» invokes the managed handoff
 in [SESSION_ROLLOVER](docs/testing/SESSION_ROLLOVER.md). It authorizes one successor
-named Platforma.CRM in the same saved project/local canonical folder, its prepared
+named Платформа CRM in the same saved project/local canonical folder, its prepared
 read-only context prompt, verified ownership transfer and archival of this source.
 Follow the protocol without asking again for already-authorized steps. A quotation,
 discussion/setup of this command, compaction, window closure or archive-button click
@@ -239,7 +239,7 @@ old "continue" messages do not authorize multiple new phases.
 Every visible block must serve navigation, a metric, real business data, an action,
 form, list/entity card, chart, integration status, meaningful empty-state action or
 system alert. Do not invent decorative/marketing/demo/motivational/explanatory blocks
-unless explicitly requested. Dashboard pages show business state, not explain Zani.
+unless explicitly requested. Dashboard pages show business state, not explain Платформа CRM.
 
 Copy comes from the prompt, existing page structure, approved content map,
 i18n/constants or real API/model fields; do not invent static Russian page text.

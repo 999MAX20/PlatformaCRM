@@ -92,7 +92,7 @@ export function ResourceEditModal({
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <ResourceStatusBadge resource={resource} size="sm" />
-            <p className="text-sm text-zani-subtle">{t("resources.inspectorSubtitle")}</p>
+            <p className="text-sm text-platforma-subtle">{t("resources.inspectorSubtitle")}</p>
           </div>
           {errorMessage ? <ErrorState message={errorMessage} /> : null}
           {!canManage ? (
@@ -113,27 +113,27 @@ export function ResourceEditModal({
         </div>
 
         <div className="space-y-4">
-          <section className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+          <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
             <div className="flex items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-brand-50 text-brand-700">
                 <CalendarCheck2 aria-hidden="true" size={19} />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-zani-ink">{t("resources.usageTitle")}</h3>
-                <p className="mt-1 text-sm leading-5 text-zani-subtle">
+                <h3 className="text-sm font-semibold text-platforma-ink">{t("resources.usageTitle")}</h3>
+                <p className="mt-1 text-sm leading-5 text-platforma-subtle">
                   {t("resources.usageText", { count: resource.appointment_count || 0 })}
                 </p>
               </div>
             </div>
           </section>
 
-          <section className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+          <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
             <div className="flex items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-brand-50 text-brand-700">
                 <CalendarClock aria-hidden="true" size={19} />
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="text-sm font-semibold text-zani-ink">{t("resources.scheduleTitle")}</h3>
+                <h3 className="text-sm font-semibold text-platforma-ink">{t("resources.scheduleTitle")}</h3>
                 {scheduleLoading ? (
                   <div className="mt-3 space-y-2" aria-busy="true">
                     <SkeletonBlock className="h-8" />
@@ -142,13 +142,13 @@ export function ResourceEditModal({
                 ) : scheduleError ? (
                   <div className="mt-3"><ErrorState message={scheduleError} /></div>
                 ) : workingHours.length ? (
-                  <div className="mt-3 grid grid-cols-7 overflow-hidden rounded-control border border-zani-border">
+                  <div className="mt-3 grid grid-cols-7 overflow-hidden rounded-control border border-platforma-border">
                     {weekdayKeys.map((key, weekday) => {
                       const schedule = scheduleByDay.get(weekday);
                       return (
-                        <div key={key} className="min-w-0 border-r border-zani-border px-1.5 py-2 text-center last:border-r-0">
-                          <p className="text-[10px] font-semibold text-zani-faint">{t(key)}</p>
-                          <p className="mt-1 text-[10px] font-semibold leading-3 text-zani-text">
+                        <div key={key} className="min-w-0 border-r border-platforma-border px-1.5 py-2 text-center last:border-r-0">
+                          <p className="text-[10px] font-semibold text-platforma-faint">{t(key)}</p>
+                          <p className="mt-1 text-[10px] font-semibold leading-3 text-platforma-text">
                             {!schedule || schedule.is_day_off ? t("workingHours.dayOff") : (
                               <><span className="block">{compactTime(schedule.start_time)}</span><span className="block">{compactTime(schedule.end_time)}</span></>
                             )}
@@ -158,12 +158,12 @@ export function ResourceEditModal({
                     })}
                   </div>
                 ) : (
-                  <p className="mt-2 text-sm leading-5 text-zani-subtle">{t("workingHours.usesBusinessSchedule")}</p>
+                  <p className="mt-2 text-sm leading-5 text-platforma-subtle">{t("workingHours.usesBusinessSchedule")}</p>
                 )}
                 <button
                   type="button"
                   onClick={onOpenSchedule}
-                  className="zani-focus-ring mt-3 inline-flex rounded-control text-sm font-semibold text-brand-700 hover:text-brand-800"
+                  className="platforma-focus-ring mt-3 inline-flex rounded-control text-sm font-semibold text-brand-700 hover:text-brand-800"
                 >
                   {t("resources.openSchedule")}
                 </button>
@@ -173,7 +173,7 @@ export function ResourceEditModal({
         </div>
       </div>
 
-      <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-zani-border bg-surface-card px-4 py-3 sm:px-5">
+      <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-platforma-border bg-surface-card px-4 py-3 sm:px-5">
         {canManage ? (
           <>
             <Button type="button" variant="secondary" disabled={!isDirty || isSaving} onClick={resetForm}>{t("common.cancel")}</Button>

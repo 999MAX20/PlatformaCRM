@@ -51,7 +51,7 @@ export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationIte
       action={(
         <button
           type="button"
-          className="zani-focus-ring grid h-7 w-7 shrink-0 place-items-center rounded-control text-zani-faint transition hover:bg-surface-card hover:text-zani-text"
+          className="platforma-focus-ring grid h-7 w-7 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-card hover:text-platforma-text"
           aria-label={t("common.close")}
           onClick={() => onDismiss(item.id)}
         >
@@ -113,7 +113,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       {children}
       <div
         className="pointer-events-none fixed bottom-5 right-5 flex max-h-[calc(100dvh-8rem)] flex-col-reverse items-end gap-2 overflow-y-auto"
-        style={{ zIndex: "var(--zani-z-toast)" }}
+        style={{ zIndex: "var(--platforma-z-toast)" }}
       >
         {items.map((item) => (
           <ActionFeedbackToast key={item.id} item={item} onDismiss={dismiss} />

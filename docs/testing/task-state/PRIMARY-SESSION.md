@@ -2,6 +2,56 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Rebrand to Платформа CRM — IN PROGRESS, 2026-09-28
+
+- Source: direct owner request to replace old branding in code/GitHub and rename
+  the canonical folder; owner confirmed PlatformaCRM for repository/folder and
+  Платформа CRM for product UI. This explicitly authorizes the root rename.
+- Owner: current primary 01a0d6c1-3ee4-7f92-b94c-0242bb2eb35e, generation 2 / idle;
+  native inventory shows no other writer in this CRM checkout.
+- Root/base: C:\Users\user\Desktop\Zani, codex/ui-testing-toolkit, clean
+  cea06d12cfad4471be60ed62a646243848acb220; snapshot output/rebrand-20260928.
+- Mode: implementation/operation; brand and environment references. Reuse current
+  UI/i18n, settings, docs and Git history. Target folder Desktop\PlatformaCRM,
+  repository 999MAX20/PlatformaCRM; preserve one source repository and its history.
+- Acceptance: current product surfaces/source names and current documentation use
+  new branding; retained legacy protocol/data identifiers are explicitly inventoried
+  to preserve credentials, sessions, integrations and historical evidence. GitHub/
+  remote and folder changes require readback; unresolved app path locks are reported.
+- Non-goals: business rules, billing, DB migration, provider/deployment changes,
+  rewriting Git history or historical closure evidence. No role/tenant/event changes.
+- Checks: branding inventory/diff/links, frontend build and reachable UI, isolated
+  affected backend checks/migration drift/tests for changed settings; normal push
+  and remote SHA readback, actual CI. Folder relocation is last, after verification.
+- Implemented: current UI/copy/letters/AI brand, CSS namespace, package/workflow
+  labels and current docs; new widget filename/API with old embed compatibility.
+  Credentials/signing salts/cookies/API headers/DB names and historical evidence
+  retained; inventory and rationale in docs/operations/rebranding-2026-09-28.md.
+- GitHub renamed in owner-authenticated browser; repository ID 1237608054 unchanged,
+  main still cea06d1, origin now https://github.com/999MAX20/PlatformaCRM.git.
+- Verification: `npm.cmd run build` and `npm.cmd run check:bundle` PASS (final logs);
+  5007 i18n keys aligned. Browser desktop/mobile login and new/legacy widget open
+  PASS on task-owned production preview port 4183; no provider messages sent.
+  Focused node tests (gate environment/login/action colors/UI toolkit) 27 PASS;
+  `node --test .codex/continuity-hook.test.cjs` 29 PASS;
+  `.venv\Scripts\python.exe -m unittest scripts.tests.test_codex_verify` 15 PASS.
+- Isolated backend `output/rebrand-20260928/verify_backend.py`: system/migration
+  checks PASS, 669/670 tests PASS. One unrelated appointment-today dashboard failure
+  (0 != 2) reproduced using original cea06d1 analytics view loaded in memory by
+  verify_analytics_baseline.py; no alternate source checkout or working DB used.
+  Expanded frontend sweep: 78/83 PASS; two dashboard regex and two fallback registry
+  failures pre-exist (baseline-proof.json); omitted gate env caused the fifth,
+  corrected focused run PASS. No full-suite PASS or functional certification claimed.
+  Changed settings/auth/provider/notification behavior passed; unrelated baseline
+  failures do not establish a branding regression and remain outside this phase.
+- Static audit: no new broken Markdown links, unchanged credential/signature code,
+  no migration/working-DB delta; full replacement diff/new compatibility code reviewed.
+- Folder: two guarded Move-Item attempts blocked by open-process lock. No directory
+  copied, removed or overwritten; awaiting owner choice of temporary same-source
+  PlatformaCRM junction or deferred physical rename. Task-owned preview stopped.
+- Delivery/readback/CI will be recorded in output/rebrand-20260928/result.json.
+- Next: resolve folder path disposition, scoped publication; no next product phase.
+
 ## Billing discussion deferred — DOCS VERIFIED; publication tracked in receipt, 2026-09-25
 
 - Source: owner through registered Orchestrator deferred tariffs/billing and asked

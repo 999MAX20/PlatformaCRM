@@ -20,13 +20,13 @@ export function LogoMark({ logo, label, compact = false }: { logo?: string; labe
 
   if (logo && providerLogos.has(logo)) {
     return (
-      <div className={cn("grid shrink-0 place-items-center overflow-hidden border border-zani-border bg-surface-card shadow-sm", containerClassName)}>
+      <div className={cn("grid shrink-0 place-items-center overflow-hidden border border-platforma-border bg-surface-card shadow-sm", containerClassName)}>
         <img src={logo} alt="" className={cn("object-contain", imageClassName)} />
       </div>
     );
   }
   return (
-    <div className={cn("grid shrink-0 place-items-center bg-brand-500 font-bold text-zani-ink", compact ? "text-xs" : "text-sm", containerClassName)}>
+    <div className={cn("grid shrink-0 place-items-center bg-brand-500 font-bold text-platforma-ink", compact ? "text-xs" : "text-sm", containerClassName)}>
       {label.slice(0, 2).toUpperCase()}
     </div>
   );
@@ -83,12 +83,12 @@ export function MessengerSetupShell({
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-start justify-between gap-4 border-b border-zani-border pb-4">
+      <div className="flex items-start justify-between gap-4 border-b border-platforma-border pb-4">
         <div className="flex min-w-0 items-start gap-3">
           <LogoMark logo={logo} label={title} />
           <div className="min-w-0">
-            <p className="text-lg font-bold text-zani-text">{title}</p>
-            <p className="mt-1 text-sm font-semibold leading-6 text-zani-subtle">{description}</p>
+            <p className="text-lg font-bold text-platforma-text">{title}</p>
+            <p className="mt-1 text-sm font-semibold leading-6 text-platforma-subtle">{description}</p>
           </div>
         </div>
         <Badge variant={statusVariant[statusTone]} size="md" className="shrink-0">
@@ -98,14 +98,14 @@ export function MessengerSetupShell({
 
       {error}
 
-      {children ? <div className="rounded-card border border-zani-border bg-surface-card p-4">{children}</div> : null}
+      {children ? <div className="rounded-card border border-platforma-border bg-surface-card p-4">{children}</div> : null}
 
       {advanced ? (
         <div>
           <button type="button" className="text-sm font-bold text-brand-700" onClick={onToggleAdvanced}>
             {advancedOpen ? t("integrations.setup.hideManualSetup") : resolvedAdvancedLabel}
           </button>
-          {advancedOpen ? <div className="mt-3 rounded-card border border-zani-border bg-surface-muted p-4">{advanced}</div> : null}
+          {advancedOpen ? <div className="mt-3 rounded-card border border-platforma-border bg-surface-muted p-4">{advanced}</div> : null}
         </div>
       ) : null}
 
@@ -117,7 +117,7 @@ export function MessengerSetupShell({
         </Link>
         {channelToggleVisible && onToggleChannel ? (
           <div className="flex items-center gap-3">
-            <span className="text-sm font-bold text-zani-text">{t("integrations.setup.channelEnabled")}</span>
+            <span className="text-sm font-bold text-platforma-text">{t("integrations.setup.channelEnabled")}</span>
             <ToggleSwitch
               checked={Boolean(channelEnabled)}
               disabled={!canManage}

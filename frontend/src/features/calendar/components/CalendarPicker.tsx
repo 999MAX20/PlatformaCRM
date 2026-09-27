@@ -46,19 +46,19 @@ export function CalendarPicker({
         <CalendarDays size={18} />
       </Button>
       {open ? (
-        <div className="fixed inset-x-3 top-24 z-30 rounded-card border border-zani-border bg-zani-card p-4 shadow-premium sm:absolute sm:inset-auto sm:left-0 sm:top-14 sm:w-[340px]">
+        <div className="fixed inset-x-3 top-24 z-30 rounded-card border border-platforma-border bg-platforma-card p-4 shadow-premium sm:absolute sm:inset-auto sm:left-0 sm:top-14 sm:w-[340px]">
           <div className="mb-4 flex items-center justify-between">
             <Button variant="ghost" className="h-12 w-12 rounded-full px-0" onClick={() => shiftMonth(-1)} aria-label={labels.previousMonth}>
               <ChevronLeft size={22} />
             </Button>
-            <p className="font-semibold text-zani-text">
+            <p className="font-semibold text-platforma-text">
               {new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(monthDate)}
             </p>
             <Button variant="ghost" className="h-12 w-12 rounded-full px-0" onClick={() => shiftMonth(1)} aria-label={labels.nextMonth}>
               <ChevronRight size={22} />
             </Button>
           </div>
-          <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-zani-muted">
+          <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-platforma-muted">
             {labels.weekdays.map((day) => (
               <div key={day} className="py-2">
                 {day}
@@ -85,7 +85,7 @@ export function CalendarPicker({
                       ? "bg-brand-50 text-brand-700 shadow-card ring-1 ring-brand-100"
                       : isToday
                         ? "bg-brand-50 text-brand-700"
-                        : "text-zani-text hover:bg-surface-hover",
+                        : "text-platforma-text hover:bg-surface-hover",
                   )}
                 >
                   {cell?.getDate()}

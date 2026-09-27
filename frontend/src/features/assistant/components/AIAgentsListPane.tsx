@@ -55,8 +55,8 @@ export function AIAgentsListPane({
   );
 
   return (
-    <aside className={cn("flex min-h-[240px] max-h-[340px] flex-col overflow-hidden rounded-card border border-zani-border bg-surface-card shadow-card lg:min-h-0 lg:max-h-none", className)}>
-      <div className="grid shrink-0 gap-2 border-b border-zani-border p-3 sm:grid-cols-[minmax(0,1fr)_180px] lg:grid-cols-1">
+    <aside className={cn("flex min-h-[240px] max-h-[340px] flex-col overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-card lg:min-h-0 lg:max-h-none", className)}>
+      <div className="grid shrink-0 gap-2 border-b border-platforma-border p-3 sm:grid-cols-[minmax(0,1fr)_180px] lg:grid-cols-1">
         <Input
           aria-label={t("aiAgents.searchPlaceholder")}
           leftIcon={<Search size={17} />}
@@ -89,28 +89,28 @@ export function AIAgentsListPane({
                 aria-current={selected ? "page" : undefined}
                 data-focus-return-id={`ai-agent-${bot.id}`}
                 className={cn(
-                  "zani-focus-ring group flex min-h-[76px] items-start gap-3 rounded-control border px-3 py-3 transition",
+                  "platforma-focus-ring group flex min-h-[76px] items-start gap-3 rounded-control border px-3 py-3 transition",
                   selected
                     ? "border-ai-200 bg-ai-50 shadow-sm"
-                    : "border-transparent bg-surface-card hover:border-zani-border hover:bg-surface-warm",
+                    : "border-transparent bg-surface-card hover:border-platforma-border hover:bg-surface-warm",
                 )}
               >
                 <span
                   className={cn(
                     "grid h-10 w-10 shrink-0 place-items-center rounded-control ring-1",
-                    selected ? "bg-white text-ai-700 ring-ai-100" : "bg-surface-muted text-zani-faint ring-zani-border",
+                    selected ? "bg-white text-ai-700 ring-ai-100" : "bg-surface-muted text-platforma-faint ring-platforma-border",
                   )}
                 >
                   <Bot aria-hidden="true" size={19} />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex min-w-0 items-center justify-between gap-2">
-                    <span className="min-w-0 truncate text-sm font-semibold text-zani-ink">{bot.name}</span>
+                    <span className="min-w-0 truncate text-sm font-semibold text-platforma-ink">{bot.name}</span>
                     <Badge size="sm" variant={statusVariant(bot)} className="shrink-0">
                       {agentStatusLabel(bot, t)}
                     </Badge>
                   </span>
-                  <span className="mt-1 line-clamp-2 block text-xs font-medium leading-4 text-zani-subtle">
+                  <span className="mt-1 line-clamp-2 block text-xs font-medium leading-4 text-platforma-subtle">
                     {profile?.role_description || t("aiAgents.purposeMissing")}
                   </span>
                 </span>
@@ -120,13 +120,13 @@ export function AIAgentsListPane({
         </div>
 
         {!filteredBots.length ? (
-          <div className="rounded-control border border-dashed border-zani-border bg-surface-warm p-4 text-center text-sm font-medium text-zani-subtle">
+          <div className="rounded-control border border-dashed border-platforma-border bg-surface-warm p-4 text-center text-sm font-medium text-platforma-subtle">
             {bots.length ? t("aiAgents.noMatches") : t("aiAgents.sidebarEmpty")}
           </div>
         ) : null}
       </nav>
 
-      <footer className="shrink-0 border-t border-zani-border px-3 py-2.5 text-xs font-medium text-zani-faint">
+      <footer className="shrink-0 border-t border-platforma-border px-3 py-2.5 text-xs font-medium text-platforma-faint">
         {t("aiAgents.totalCount", { count: bots.length })}
       </footer>
     </aside>

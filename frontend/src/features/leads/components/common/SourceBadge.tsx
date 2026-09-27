@@ -15,11 +15,11 @@ function SourceIcon({ source }: { source: string }) {
 export function SourceBadge({ source, t }: { source: string; t: Translate }) {
   const sourceTone: Record<string, string> = {
     whatsapp:
-      "bg-[var(--zani-success-soft)] text-zani-success ring-[rgba(21,128,61,0.18)]",
+      "bg-[var(--platforma-success-soft)] text-platforma-success ring-[rgba(21,128,61,0.18)]",
     telegram:
-      "bg-[var(--zani-info-soft)] text-zani-info ring-[rgba(14,116,144,0.18)]",
+      "bg-[var(--platforma-info-soft)] text-platforma-info ring-[rgba(14,116,144,0.18)]",
     instagram: "bg-ai-50 text-ai-700 ring-ai-100",
-    website: "bg-surface-muted text-zani-muted ring-zani-border",
+    website: "bg-surface-muted text-platforma-muted ring-platforma-border",
     landing: "bg-brand-50 text-brand-700 ring-brand-100",
   };
   return (
@@ -27,7 +27,7 @@ export function SourceBadge({ source, t }: { source: string; t: Translate }) {
       className={cn(
         "inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-bold ring-1",
         sourceTone[source] ||
-          "bg-surface-muted text-zani-muted ring-zani-border",
+          "bg-surface-muted text-platforma-muted ring-platforma-border",
       )}
     >
       <SourceIcon source={source} />

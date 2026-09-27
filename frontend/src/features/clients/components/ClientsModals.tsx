@@ -108,11 +108,11 @@ export function ClientsModals({
               title={t("clients.mergePreviewWarning")}
               description={`${t("clients.mergePreviewPolicy")}: ${mergePreview.policy}`}
             />
-            <div className="rounded-card border border-zani-border bg-surface-card p-4">
-              <p className="font-bold text-zani-text">
+            <div className="rounded-card border border-platforma-border bg-surface-card p-4">
+              <p className="font-bold text-platforma-text">
                 {mergePreview.duplicate.full_name || t("common.client")}
               </p>
-              <p className="mt-1 text-sm text-zani-muted">
+              <p className="mt-1 text-sm text-platforma-muted">
                 {mergePreview.duplicate.phone ||
                   mergePreview.duplicate.email ||
                   t("clients.noContact")}
@@ -124,10 +124,10 @@ export function ClientsModals({
                   key={key}
                   className="flex items-center justify-between gap-3 rounded-control bg-surface-muted px-3 py-2 text-sm"
                 >
-                  <span className="font-semibold text-zani-muted">
+                  <span className="font-semibold text-platforma-muted">
                     {key.replace(/_/g, " ")}
                   </span>
-                  <span className="font-bold text-zani-text">{value}</span>
+                  <span className="font-bold text-platforma-text">{value}</span>
                 </div>
               ))}
             </div>

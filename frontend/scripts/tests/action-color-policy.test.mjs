@@ -50,20 +50,20 @@ test("button, menu and confirmation primitives expose warning with complete inte
   const styles = read("src/styles.css");
 
   assert.match(button, /\| "warning" \|/);
-  assert.match(button, /--zani-warning-bold-hover/);
-  assert.match(button, /--zani-warning-bold-pressed/);
-  assert.match(button, /--zani-danger-hover/);
-  assert.match(button, /--zani-danger-pressed/);
-  assert.match(menu, /warning: "text-zani-warning/);
+  assert.match(button, /--platforma-warning-bold-hover/);
+  assert.match(button, /--platforma-warning-bold-pressed/);
+  assert.match(button, /--platforma-danger-hover/);
+  assert.match(button, /--platforma-danger-pressed/);
+  assert.match(menu, /warning: "text-platforma-warning/);
   assert.match(confirm, /tone\?: ActionTone/);
   assert.doesNotMatch(confirm, /variant\?: "danger"/);
 
   for (const token of [
-    "--zani-warning-bold",
-    "--zani-warning-bold-hover",
-    "--zani-warning-bold-pressed",
-    "--zani-danger-hover",
-    "--zani-danger-pressed",
+    "--platforma-warning-bold",
+    "--platforma-warning-bold-hover",
+    "--platforma-warning-bold-pressed",
+    "--platforma-danger-hover",
+    "--platforma-danger-pressed",
   ]) {
     assert.match(styles, new RegExp(`${token}:`));
   }

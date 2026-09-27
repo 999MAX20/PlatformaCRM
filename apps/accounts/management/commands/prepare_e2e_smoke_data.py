@@ -19,7 +19,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--password", default="ZaniTest123!")
         parser.add_argument("--business-slug", default="zani-e2e-demo")
-        parser.add_argument("--business-name", default="Zani E2E Demo")
+        parser.add_argument("--business-name", default="Платформа CRM E2E Demo")
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -31,7 +31,7 @@ class Command(BaseCommand):
             email="platform_admin@example.com",
             password=password,
             role=User.Roles.PLATFORM_ADMIN,
-            full_name="Zani Platform Admin",
+            full_name="Платформа CRM Platform Admin",
             is_staff=True,
             is_superuser=True,
         )
@@ -39,43 +39,43 @@ class Command(BaseCommand):
             email="business_owner@example.com",
             password=password,
             role=User.Roles.BUSINESS_OWNER,
-            full_name="Zani Business Owner",
+            full_name="Платформа CRM Business Owner",
         )
         administrator = self._upsert_user(
             email="business_administrator@example.com",
             password=password,
             role=User.Roles.BUSINESS_MANAGER,
-            full_name="Zani Business Administrator",
+            full_name="Платформа CRM Business Administrator",
         )
         manager = self._upsert_user(
             email="business_manager@example.com",
             password=password,
             role=User.Roles.BUSINESS_MANAGER,
-            full_name="Zani Business Manager",
+            full_name="Платформа CRM Business Manager",
         )
         operator = self._upsert_user(
             email="business_operator@example.com",
             password=password,
             role=User.Roles.BUSINESS_OPERATOR,
-            full_name="Zani Business Operator",
+            full_name="Платформа CRM Business Operator",
         )
         specialist = self._upsert_user(
             email="business_specialist@example.com",
             password=password,
             role=User.Roles.STAFF,
-            full_name="Zani Business Specialist",
+            full_name="Платформа CRM Business Specialist",
         )
         other_specialist = self._upsert_user(
             email="business_specialist_other@example.com",
             password=password,
             role=User.Roles.STAFF,
-            full_name="Zani Business Specialist Two",
+            full_name="Платформа CRM Business Specialist Two",
         )
         foreign_owner = self._upsert_user(
             email="foreign_owner@example.com",
             password=password,
             role=User.Roles.BUSINESS_OWNER,
-            full_name="Zani Foreign Business Owner",
+            full_name="Платформа CRM Foreign Business Owner",
         )
 
         business, _ = Business.objects.update_or_create(
@@ -113,7 +113,7 @@ class Command(BaseCommand):
             slug="zani-e2e-foreign",
             defaults={
                 "owner": foreign_owner,
-                "name": "Zani E2E Foreign Tenant",
+                "name": "Платформа CRM E2E Foreign Tenant",
                 "business_type": Business.BusinessTypes.MEDICAL,
                 "city": "Almaty",
                 "phone": "+77019999998",

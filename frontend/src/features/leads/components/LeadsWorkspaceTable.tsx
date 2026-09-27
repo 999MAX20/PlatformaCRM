@@ -170,8 +170,8 @@ export function LeadsWorkspaceTable({
 
   return (
     <CrmTableSurface
-      className="flex-none overflow-visible rounded-card border border-zani-border bg-surface-card shadow-card"
-      filtersClassName="border-b border-zani-border bg-surface-card px-4 py-3"
+      className="flex-none overflow-visible rounded-card border border-platforma-border bg-surface-card shadow-card"
+      filtersClassName="border-b border-platforma-border bg-surface-card px-4 py-3"
       filters={
         <LeadsToolbar
           filters={filters}
@@ -245,8 +245,8 @@ export function LeadsWorkspaceTable({
                 className={cn(
                   "grid h-5 w-5 place-items-center rounded border",
                   allPageRowsSelected
-                    ? "border-brand-500 bg-brand-500 text-zani-ink"
-                    : "border-zani-border bg-surface-card",
+                    ? "border-brand-500 bg-brand-500 text-platforma-ink"
+                    : "border-platforma-border bg-surface-card",
                 )}
               >
                 {allPageRowsSelected ? <CheckCheck size={13} /> : null}
@@ -265,12 +265,12 @@ export function LeadsWorkspaceTable({
                 <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700">
                   <Plus size={22} />
                 </div>
-                <h3 className="mt-4 text-lg font-bold text-zani-text">
+                <h3 className="mt-4 text-lg font-bold text-platforma-text">
                   {hasFilters
                     ? t("leads.emptyFilteredTitle")
                     : t("leads.emptyTitle")}
                 </h3>
-                <p className="mt-2 text-sm font-semibold leading-6 text-zani-muted">
+                <p className="mt-2 text-sm font-semibold leading-6 text-platforma-muted">
                   {hasFilters
                     ? t("leads.emptyFilteredText")
                     : t("leads.emptyText")}
@@ -320,7 +320,7 @@ export function LeadsWorkspaceTable({
                 openContextMenu={onOpenContextMenu}
                 t={t}
               />
-              <div className="divide-y divide-zani-border lg:hidden">
+              <div className="divide-y divide-platforma-border lg:hidden">
                 {pageRows.map((lead) => (
                   <LeadQueueItem
                     key={lead.id}

@@ -114,7 +114,7 @@ export function TimelineActorFilter({
           ) : (
             <>
               <ul
-                className="max-h-[40dvh] divide-y divide-zani-border overflow-y-auto"
+                className="max-h-[40dvh] divide-y divide-platforma-border overflow-y-auto"
                 aria-busy={actors.isFetching}
               >
                 {actors.data.results.map((actor) => (
@@ -123,7 +123,7 @@ export function TimelineActorFilter({
                       type="button"
                       disabled={changing}
                       aria-pressed={value === String(actor.id)}
-                      className="zani-focus-ring min-h-11 w-full break-words rounded-control px-3 py-2 text-left hover:bg-surface-muted"
+                      className="platforma-focus-ring min-h-11 w-full break-words rounded-control px-3 py-2 text-left hover:bg-surface-muted"
                       onClick={() => select(String(actor.id))}
                     >
                       {actor.name || t("timeline.unknownActor")}
@@ -132,7 +132,7 @@ export function TimelineActorFilter({
                 ))}
               </ul>
               {!actors.data.results.length && (
-                <p className="text-sm text-zani-subtle">
+                <p className="text-sm text-platforma-subtle">
                   {t("timeline.noActorsFound")}
                 </p>
               )}

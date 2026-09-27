@@ -55,7 +55,7 @@ def with_query(path, params):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Small authenticated API load smoke for Zani staging.")
+    parser = argparse.ArgumentParser(description="Small authenticated API load smoke for Платформа CRM staging.")
     parser.add_argument("--api-base-url", required=True)
     parser.add_argument("--email", required=True)
     parser.add_argument("--password", required=True)

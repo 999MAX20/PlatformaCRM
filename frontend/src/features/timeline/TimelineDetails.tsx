@@ -76,10 +76,10 @@ export function TimelineDetails({
         <div className="space-y-5 break-words">
           <div className="space-y-2">
             <TimelineCategory event={event} />
-            <p className="font-semibold text-zani-text">
+            <p className="font-semibold text-platforma-text">
               <TimelineEventLabel event={event} />
             </p>
-            <p className="text-sm text-zani-subtle">
+            <p className="text-sm text-platforma-subtle">
               {timelineDate(event.created_at, language, timeZone)} ·{" "}
               {timelineDate(event.created_at, language, timeZone, true)}
             </p>
@@ -95,13 +95,13 @@ export function TimelineDetails({
                     key={detail.label}
                     className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 text-sm"
                   >
-                    <dt className="text-zani-subtle">{detail.label}</dt>
+                    <dt className="text-platforma-subtle">{detail.label}</dt>
                     <dd>{detail.value}</dd>
                   </div>
                 ))}
               </dl>
             ) : (
-              <p className="text-sm text-zani-subtle">
+              <p className="text-sm text-platforma-subtle">
                 {t("timeline.noDetails")}
               </p>
             )}
@@ -110,20 +110,20 @@ export function TimelineDetails({
             <h3 className="text-sm font-semibold">{t("timeline.object")}</h3>
             {clientHref ? (
               <Link
-                className="zani-focus-ring flex min-h-11 items-center justify-between gap-2 rounded-control border border-zani-border bg-surface-card px-3 py-2 text-sm"
+                className="platforma-focus-ring flex min-h-11 items-center justify-between gap-2 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm"
                 to={clientHref}
               >
                 {event.client_name}
                 <ExternalLink aria-hidden size={16} className="shrink-0" />
               </Link>
             ) : (
-              <p className="text-sm text-zani-subtle">
+              <p className="text-sm text-platforma-subtle">
                 {event.client_name || t("timeline.noClient")}
               </p>
             )}
             {entityHref && entityHref !== clientHref && (
               <Link
-                className="zani-focus-ring flex min-h-11 items-center justify-between gap-2 rounded-control border border-zani-border bg-surface-card px-3 py-2 text-sm"
+                className="platforma-focus-ring flex min-h-11 items-center justify-between gap-2 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm"
                 to={entityHref}
               >
                 {t(entity.label)}

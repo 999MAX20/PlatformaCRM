@@ -20,7 +20,7 @@ export function SimpleCalendar({
   const { t } = useI18n();
 
   return (
-    <div className="overflow-hidden rounded-card border border-zani-border bg-surface-card shadow-card">
+    <div className="overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-card">
       {hours.map((hour) => {
         const items = appointments.filter((appointment) => {
           const appointmentDate = appointment.start_at.slice(0, 10);
@@ -28,8 +28,8 @@ export function SimpleCalendar({
           return appointmentDate === date && appointmentHour === hour;
         });
         return (
-          <div key={hour} className="grid min-h-24 grid-cols-[80px_1fr] border-b border-zani-border last:border-b-0">
-            <div className="bg-surface-muted px-4 py-3 text-sm font-semibold text-zani-muted">{String(hour).padStart(2, "0")}:00</div>
+          <div key={hour} className="grid min-h-24 grid-cols-[80px_1fr] border-b border-platforma-border last:border-b-0">
+            <div className="bg-surface-muted px-4 py-3 text-sm font-semibold text-platforma-muted">{String(hour).padStart(2, "0")}:00</div>
             <div className="space-y-2 p-3">
               {items.map((appointment) => {
                 const client = clients.find((item) => item.id === appointment.client);
@@ -38,10 +38,10 @@ export function SimpleCalendar({
                 return (
                   <div key={appointment.id} className="rounded-control border border-brand-100 border-l-4 border-l-brand-500 bg-brand-50 px-3 py-2 shadow-sm">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="font-semibold text-zani-ink">{client?.full_name || t("appointment.client")} · {service?.name || t("appointment.service")}</p>
+                      <p className="font-semibold text-platforma-ink">{client?.full_name || t("appointment.client")} · {service?.name || t("appointment.service")}</p>
                       <StatusBadge status={appointment.status} />
                     </div>
-                    <p className="mt-1 text-sm text-zani-muted">{resource?.name || t("appointment.noResource")}</p>
+                    <p className="mt-1 text-sm text-platforma-muted">{resource?.name || t("appointment.noResource")}</p>
                   </div>
                 );
               })}

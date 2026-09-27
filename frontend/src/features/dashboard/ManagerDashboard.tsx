@@ -81,7 +81,7 @@ function WorkListCard({
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-700">
             {eyebrow}
           </p>
-          <h2 className="mt-1 text-base font-bold text-zani-text">{title}</h2>
+          <h2 className="mt-1 text-base font-bold text-platforma-text">{title}</h2>
         </div>
         <Link to={href} className="text-sm font-bold text-brand-700">
           {t("common.all")}
@@ -119,13 +119,13 @@ function SummaryLink({
       className="rounded-control px-4 py-3 text-center"
     >
       {typeof value === "number" ? (
-        <p className="text-2xl font-bold tabular-nums text-zani-text">
+        <p className="text-2xl font-bold tabular-nums text-platforma-text">
           {value}
         </p>
       ) : (
         <Icon className="mx-auto text-brand-600" size={22} />
       )}
-      <p className="mt-1 text-xs font-bold text-zani-subtle">{label}</p>
+      <p className="mt-1 text-xs font-bold text-platforma-subtle">{label}</p>
       <span
         className={`mx-auto mt-2 block h-1 w-8 rounded-full ${toneDot(tone)}`}
       />
@@ -137,8 +137,8 @@ function toneDot(tone: "brand" | "ai" | "green" | "amber" | "slate") {
   if (tone === "ai") return "bg-ai-600";
   if (tone === "green") return "bg-green-600";
   if (tone === "amber") return "bg-amber-500";
-  if (tone === "brand") return "bg-[var(--zani-brand-content)]";
-  return "bg-zani-border";
+  if (tone === "brand") return "bg-[var(--platforma-brand-content)]";
+  return "bg-platforma-border";
 }
 
 function LeadWorkRow({
@@ -167,10 +167,10 @@ function LeadWorkRow({
       className="flex items-start justify-between gap-3 rounded-control"
     >
       <div className="min-w-0">
-        <p className="truncate font-bold text-zani-text">
+        <p className="truncate font-bold text-platforma-text">
           {title || t("dashboard.leadNumber", { id: lead.id })}
         </p>
-        <p className="mt-1 truncate text-xs font-semibold text-zani-subtle">
+        <p className="mt-1 truncate text-xs font-semibold text-platforma-subtle">
           {subtitle}
         </p>
       </div>
@@ -208,10 +208,10 @@ function AppointmentWorkRow({
         className="h-10 w-10 rounded-control"
       />
       <div className="min-w-0">
-        <p className="truncate font-bold text-zani-text">
+        <p className="truncate font-bold text-platforma-text">
           {title || t("common.client")}
         </p>
-        <p className="mt-1 truncate text-xs font-semibold text-zani-subtle">
+        <p className="mt-1 truncate text-xs font-semibold text-platforma-subtle">
           {service?.name || t("common.service")} /{" "}
           {formatDateTime(appointment.start_at)}
         </p>
@@ -236,8 +236,8 @@ function TaskWorkRow({ task }: { task: Task | WorkQueueTaskItem }) {
       className="flex items-start justify-between gap-3 rounded-control"
     >
       <div className="min-w-0">
-        <p className="truncate font-bold text-zani-text">{task.title}</p>
-        <p className="mt-1 truncate text-xs font-semibold text-zani-subtle">
+        <p className="truncate font-bold text-platforma-text">{task.title}</p>
+        <p className="mt-1 truncate text-xs font-semibold text-platforma-subtle">
           {task.due_at ? formatDateTime(task.due_at) : t("dashboard.noDueDate")}
         </p>
       </div>
@@ -268,8 +268,8 @@ function ConversationWorkRow({
       className="flex items-start justify-between gap-3 rounded-control"
     >
       <div className="min-w-0">
-        <p className="truncate font-bold text-zani-text">{conversation.title}</p>
-        <p className="mt-1 truncate text-xs font-semibold text-zani-subtle">
+        <p className="truncate font-bold text-platforma-text">{conversation.title}</p>
+        <p className="mt-1 truncate text-xs font-semibold text-platforma-subtle">
           {conversation.unread_count
             ? t("dashboard.unreadConversationCount", {
                 count: conversation.unread_count,
@@ -346,7 +346,7 @@ export function ManagerDashboard({
     return (
       <div className="space-y-5 pb-6">
         <Surface
-          className="border-brand-100 px-5 py-4 text-sm font-semibold text-zani-subtle"
+          className="border-brand-100 px-5 py-4 text-sm font-semibold text-platforma-subtle"
           padding="none"
         >
           {t("dashboard.loadingCoreData")}

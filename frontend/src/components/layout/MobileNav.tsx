@@ -52,7 +52,7 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
         <div className="absolute right-3 top-3 z-[90]">
           <Button
             variant="secondary"
-            className="h-11 w-11 rounded-full border border-zani-border bg-surface-card px-0 shadow-premium"
+            className="h-11 w-11 rounded-full border border-platforma-border bg-surface-card px-0 shadow-premium"
             onClick={onClose}
             aria-label={t("sidebar.collapse")}
           >
@@ -62,7 +62,7 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
         <Sidebar forceVisible mobileDrawer onNavigate={onClose} />
       </Drawer>
 
-      <nav className="fixed inset-x-2 bottom-2 z-[60] grid grid-cols-5 rounded-card border border-zani-border bg-surface-card/96 p-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] shadow-premium backdrop-blur-2xl lg:hidden">
+      <nav className="fixed inset-x-2 bottom-2 z-[60] grid grid-cols-5 rounded-card border border-platforma-border bg-surface-card/96 p-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] shadow-premium backdrop-blur-2xl lg:hidden">
         {visibleBottomItems.slice(0, 4).map((item) => {
           const Icon = item.icon;
           return (
@@ -72,17 +72,17 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
               end={item.to === "/app/dashboard"}
               className={({ isActive }) =>
                 cn(
-                  "zani-focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-0.5 py-2 text-center text-[10px] font-semibold leading-none transition active:scale-[0.98]",
+                  "platforma-focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-0.5 py-2 text-center text-[10px] font-semibold leading-none transition active:scale-[0.98]",
                   isActive
                     ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
-                    : "text-zani-faint",
+                    : "text-platforma-faint",
                 )
               }
             >
               <span className="relative">
                 <Icon size={26} strokeWidth={2.35} />
                 {item.to === "/app/conversations" && unreadMessages ? (
-                  <span className="absolute -right-3 -top-2 min-w-5 rounded-full bg-zani-danger px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white ring-2 ring-surface">
+                  <span className="absolute -right-3 -top-2 min-w-5 rounded-full bg-platforma-danger px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white ring-2 ring-surface">
                     {unreadMessages > 99 ? "99+" : unreadMessages}
                   </span>
                 ) : null}
@@ -99,10 +99,10 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
           aria-expanded={open}
           data-testid="bottom-mobile-menu-trigger"
           className={cn(
-            "zani-focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-0.5 py-2 text-center text-[10px] font-semibold leading-none transition hover:bg-surface-muted hover:text-zani-text active:scale-[0.98]",
+            "platforma-focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-0.5 py-2 text-center text-[10px] font-semibold leading-none transition hover:bg-surface-muted hover:text-platforma-text active:scale-[0.98]",
             open
               ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
-              : "text-zani-faint",
+              : "text-platforma-faint",
           )}
         >
           <MoreHorizontal size={26} strokeWidth={2.35} />

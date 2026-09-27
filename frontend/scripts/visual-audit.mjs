@@ -239,7 +239,7 @@ async function collectRouteAudit(page) {
 
       const computed = getComputedStyle(element);
       const backgroundColor = computed.backgroundColor;
-      const isSurfaceToken = /(^|\s)(bg-zani-card|bg-surface-card|bg-surface-hover)(\s|$)/.test(className);
+      const isSurfaceToken = /(^|\s)(bg-platforma-card|bg-surface-card|bg-surface-hover)(\s|$)/.test(className);
       const intentionallyTransparent =
         /(^|\s)bg-transparent(\s|$)/.test(className) ||
         element.tagName === "INPUT" ||

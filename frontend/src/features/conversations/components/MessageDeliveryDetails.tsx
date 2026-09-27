@@ -45,10 +45,10 @@ function statusIcon(status: DeliveryStatus) {
 }
 
 function statusClass(status: DeliveryStatus) {
-  if (status === "delivered") return "bg-[var(--zani-success-soft)] text-zani-text ring-[rgba(21,128,61,0.18)]";
-  if (status === "failed") return "bg-[var(--zani-danger-soft)] text-zani-danger ring-[rgba(185,28,28,0.18)]";
-  if (status === "delayed" || status === "retrying") return "bg-zani-warning-soft text-zani-text ring-[rgba(183,121,31,0.22)]";
-  return "bg-surface-muted text-zani-muted ring-zani-border";
+  if (status === "delivered") return "bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]";
+  if (status === "failed") return "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-[rgba(185,28,28,0.18)]";
+  if (status === "delayed" || status === "retrying") return "bg-platforma-warning-soft text-platforma-text ring-[rgba(183,121,31,0.22)]";
+  return "bg-surface-muted text-platforma-muted ring-platforma-border";
 }
 
 export function MessageDeliveryDetails({
@@ -72,18 +72,18 @@ export function MessageDeliveryDetails({
   return (
     <section
       data-testid="message-delivery-details"
-      className="rounded-card border border-zani-border bg-surface-card p-3 shadow-soft"
+      className="rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft"
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-zani-muted">
+        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-platforma-muted">
           <Icon aria-hidden="true" className={status === "sending" || status === "retrying" ? "animate-spin motion-reduce:animate-none" : ""} size={15} />
           {t("conversations.deliveryTitle")}
         </p>
         <Pill className={statusClass(status)}>{t(statusCopy[status])}</Pill>
       </div>
-      <p className="mt-2 text-xs font-semibold leading-5 text-zani-muted">{t(statusHelp[status])}</p>
+      <p className="mt-2 text-xs font-semibold leading-5 text-platforma-muted">{t(statusHelp[status])}</p>
       {attempts > 0 ? (
-        <p className="mt-2 text-[11px] font-bold text-zani-muted">
+        <p className="mt-2 text-[11px] font-bold text-platforma-muted">
           {t("conversations.deliveryAttempts", { attempts, max: maxAttempts })}
         </p>
       ) : null}
@@ -100,7 +100,7 @@ export function MessageDeliveryDetails({
         </Button>
       ) : null}
       {status === "failed" && !canRetry ? (
-        <p className="mt-3 text-xs font-semibold text-zani-muted">
+        <p className="mt-3 text-xs font-semibold text-platforma-muted">
           {t("conversations.deliveryRetryNotAllowed")}
         </p>
       ) : null}

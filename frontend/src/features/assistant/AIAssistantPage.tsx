@@ -479,14 +479,14 @@ export function AIAssistantPage() {
                     <Sparkles size={15} />
                     {t("aiNavigator.todayBrief")}
                   </div>
-                  <h2 className="mt-3 text-2xl font-bold leading-tight tracking-tight text-zani-text sm:text-3xl">
+                  <h2 className="mt-3 text-2xl font-bold leading-tight tracking-tight text-platforma-text sm:text-3xl">
                     {t("aiNavigator.workspaceSignals")}
                   </h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
                     {t("aiNavigator.factBasedNotice")}
                   </p>
                 </div>
-                <div className="rounded-card bg-surface-muted p-3 text-sm font-bold text-zani-subtle">
+                <div className="rounded-card bg-surface-muted p-3 text-sm font-bold text-platforma-subtle">
                   {isDataLoading ? t("common.loading") : t("aiNavigator.generatedFromCabinet")}
                 </div>
               </div>
@@ -505,7 +505,7 @@ export function AIAssistantPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-ai-700">{t("aiNavigator.summaryEyebrow")}</p>
-                  <h2 className="mt-2 text-2xl font-bold text-zani-text">{t("aiNavigator.summaryTitle")}</h2>
+                  <h2 className="mt-2 text-2xl font-bold text-platforma-text">{t("aiNavigator.summaryTitle")}</h2>
                 </div>
                 <Badge variant="neutral">
                   {t("aiNavigator.noExternalData")}
@@ -513,16 +513,16 @@ export function AIAssistantPage() {
               </div>
               <div className="mt-5 grid gap-3">
                 {navigatorData.summary.map((item, index) => (
-                  <div key={item} className="flex items-start gap-3 rounded-card border border-zani-border bg-surface-muted p-4">
+                  <div key={item} className="flex items-start gap-3 rounded-card border border-platforma-border bg-surface-muted p-4">
                     <span className={`mt-1 h-3 w-3 rounded-full ${aiInsightDotClass(index === 0 ? "info" : index === 1 ? "good" : index === 2 ? "warning" : "critical")}`} />
-                    <p className="text-sm font-semibold leading-6 text-zani-text">{item}</p>
+                    <p className="text-sm font-semibold leading-6 text-platforma-text">{item}</p>
                   </div>
                 ))}
               </div>
               {aiBrief ? (
                 <div className="mt-5 rounded-card border border-ai-100 bg-ai-50 p-4">
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-ai-700">{t("aiNavigator.aiInterpretation")}</p>
-                  <p className="mt-2 whitespace-pre-wrap text-sm font-semibold leading-7 text-zani-text">{aiBrief}</p>
+                  <p className="mt-2 whitespace-pre-wrap text-sm font-semibold leading-7 text-platforma-text">{aiBrief}</p>
                   {briefMutation.data?.provider_state === "mock" ? <p className="mt-2 text-sm">{t("aiQuality.mock")}</p> : null}
                   <div className="mt-2 flex flex-wrap gap-2">
                     {(briefMutation.data?.sources || []).map((source) => <Badge key={source.id}>{source.label} [{source.id}]</Badge>)}
@@ -538,7 +538,7 @@ export function AIAssistantPage() {
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-ai-700">
                   {t("aiAssistant.taskFlowTitle")}
                 </p>
-                <p className="mt-2 text-sm font-semibold leading-6 text-zani-subtle">
+                <p className="mt-2 text-sm font-semibold leading-6 text-platforma-subtle">
                   {t("aiAssistant.taskFlowText")}
                 </p>
               </div>
@@ -612,17 +612,17 @@ export function AIAssistantPage() {
                     <div
                       key={String(action.id)}
                       data-testid={`ai-action-${action.tool_name}`}
-                      className="rounded-card border border-zani-border bg-surface-muted p-4"
+                      className="rounded-card border border-platforma-border bg-surface-muted p-4"
                     >
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div className="min-w-0">
-                          <p className="font-bold text-zani-text">
+                          <p className="font-bold text-platforma-text">
                             {String(
                               action.input_json.title ||
                                 t("aiAssistant.actionFallback"),
                             )}
                           </p>
-                          <p className="mt-1 text-xs font-semibold text-zani-subtle">
+                          <p className="mt-1 text-xs font-semibold text-platforma-subtle">
                             {t("aiAssistant.actionStatus", {
                               status: action.status,
                               tool: action.tool_name,
@@ -631,14 +631,14 @@ export function AIAssistantPage() {
                           {action.conversation ? (
                             <span
                               data-testid="ai-action-source-chip"
-                              className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-surface-card px-2.5 py-1 text-[11px] font-bold text-zani-subtle ring-1 ring-zani-border"
+                              className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-surface-card px-2.5 py-1 text-[11px] font-bold text-platforma-subtle ring-1 ring-platforma-border"
                             >
                               <DatabaseZap size={12} />
                               CONVERSATION-{action.conversation}
                             </span>
                           ) : null}
                           {taskId ? (
-                            <p className="mt-2 text-sm font-semibold text-zani-success">
+                            <p className="mt-2 text-sm font-semibold text-platforma-success">
                               {t("aiAssistant.taskCreated", { id: String(taskId) })}
                             </p>
                           ) : null}
@@ -664,7 +664,7 @@ export function AIAssistantPage() {
                         ) : taskId ? (
                           <Link
                             to={`/app/tasks/${taskId}`}
-                            className="zani-focus-ring inline-flex min-h-10 items-center justify-center rounded-control border border-zani-border bg-surface-card px-3 text-sm font-bold text-zani-text"
+                            className="platforma-focus-ring inline-flex min-h-10 items-center justify-center rounded-control border border-platforma-border bg-surface-card px-3 text-sm font-bold text-platforma-text"
                           >
                             {t("common.open")}
                           </Link>
@@ -674,7 +674,7 @@ export function AIAssistantPage() {
                   );
                 })}
                 {!suggestedActions.length ? (
-                  <p className="rounded-card bg-surface-muted p-4 text-sm font-semibold leading-6 text-zani-subtle">
+                  <p className="rounded-card bg-surface-muted p-4 text-sm font-semibold leading-6 text-platforma-subtle">
                     {t("aiAssistant.emptyActionsText")}
                   </p>
                 ) : null}
@@ -687,8 +687,8 @@ export function AIAssistantPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-ai-700">BusinessEvent AI</p>
-                  <h2 className="mt-2 text-2xl font-bold text-zani-text">{t("aiNavigator.integrationInsightsTitle")}</h2>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-zani-subtle">
+                  <h2 className="mt-2 text-2xl font-bold text-platforma-text">{t("aiNavigator.integrationInsightsTitle")}</h2>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-platforma-subtle">
                     {t("aiNavigator.integrationInsightsText")}
                   </p>
                 </div>
@@ -714,19 +714,19 @@ export function AIAssistantPage() {
                   />
                 ) : null}
                 {(analystBrief.data?.insights || []).map((insight) => (
-                  <div key={insight.id} className="rounded-card border border-zani-border bg-surface-muted p-4">
+                  <div key={insight.id} className="rounded-card border border-platforma-border bg-surface-muted p-4">
                     <div className="flex items-start gap-3">
                       <span className={`mt-1 h-3 w-3 rounded-full ${aiInsightDotClass(insight.severity)}`} />
                       <div className="min-w-0 flex-1">
-                        <p className="font-bold text-zani-text">{insight.title}</p>
-                        <p className="mt-1 text-sm font-semibold leading-6 text-zani-subtle">{insight.summary}</p>
+                        <p className="font-bold text-platforma-text">{insight.title}</p>
+                        <p className="mt-1 text-sm font-semibold leading-6 text-platforma-subtle">{insight.summary}</p>
                         <SourceChips sourceIds={insight.source_ids} sourcesById={analystSourcesById} />
                       </div>
                     </div>
                   </div>
                 ))}
                 {canViewAnalyst && !analystBrief.isLoading && analystBrief.data?.provider_state === "live" && !(analystBrief.data?.insights || []).length ? (
-                  <p className="rounded-card bg-surface-muted p-4 text-sm font-semibold leading-6 text-zani-subtle">
+                  <p className="rounded-card bg-surface-muted p-4 text-sm font-semibold leading-6 text-platforma-subtle">
                     {t("aiNavigator.emptyIntegrationInsights")}
                   </p>
                 ) : null}
@@ -734,20 +734,20 @@ export function AIAssistantPage() {
 
               {(analystBrief.data?.actions || []).length ? (
                 <div className="mt-5">
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-zani-faint">{t("aiNavigator.suggestedActions")}</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-platforma-faint">{t("aiNavigator.suggestedActions")}</p>
                   <div className="mt-3 grid gap-3">
                     {(analystBrief.data?.actions || []).map((action) => (
-                      <div key={action.id} className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+                      <div key={action.id} className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
                             <Badge variant="ai" size="sm">
                               {action.priority}
                             </Badge>
-                            <p className="mt-2 font-bold text-zani-text">{action.label}</p>
-                            <p className="mt-1 text-sm font-semibold leading-6 text-zani-subtle">{action.description}</p>
+                            <p className="mt-2 font-bold text-platforma-text">{action.label}</p>
+                            <p className="mt-1 text-sm font-semibold leading-6 text-platforma-subtle">{action.description}</p>
                             <SourceChips sourceIds={action.source_ids} sourcesById={analystSourcesById} />
                           </div>
-                          <Link to={action.href} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-control border border-zani-border bg-surface-card px-3 py-2 text-sm font-bold text-zani-text transition hover:border-brand-100 hover:bg-surface-warm hover:shadow-card">
+                          <Link to={action.href} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-bold text-platforma-text transition hover:border-brand-100 hover:bg-surface-warm hover:shadow-card">
                             {t("common.open")} <ExternalLink size={15} />
                           </Link>
                         </div>
@@ -763,8 +763,8 @@ export function AIAssistantPage() {
             <CardBody className="p-5 sm:p-6">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-zani-danger">{t("aiNavigator.attentionEyebrow")}</p>
-                  <h2 className="mt-2 text-2xl font-bold text-zani-text">{t("aiNavigator.attentionTitle")}</h2>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-platforma-danger">{t("aiNavigator.attentionEyebrow")}</p>
+                  <h2 className="mt-2 text-2xl font-bold text-platforma-text">{t("aiNavigator.attentionTitle")}</h2>
                 </div>
                 <Badge variant="neutral">
                   {t("aiNavigator.itemsCount", { count: navigatorData.insights.length })}
@@ -795,11 +795,11 @@ export function AIAssistantPage() {
                   <Cpu size={20} />
                 </div>
                 <div>
-                  <p className="font-bold text-zani-text">{t("aiNavigator.dataPolicyTitle")}</p>
-                  <p className="mt-1 text-sm leading-6 text-zani-subtle">{t("aiNavigator.dataPolicyText")}</p>
+                  <p className="font-bold text-platforma-text">{t("aiNavigator.dataPolicyTitle")}</p>
+                  <p className="mt-1 text-sm leading-6 text-platforma-subtle">{t("aiNavigator.dataPolicyText")}</p>
                 </div>
               </div>
-              <div className="mt-4 rounded-control bg-surface-muted p-3 text-xs font-bold leading-5 text-zani-subtle">
+              <div className="mt-4 rounded-control bg-surface-muted p-3 text-xs font-bold leading-5 text-platforma-subtle">
                 {providerLabel}
               </div>
             </CardBody>
@@ -808,17 +808,17 @@ export function AIAssistantPage() {
           <Card>
             <CardBody>
               <div className="flex items-center gap-3">
-                <div className="grid h-11 w-11 place-items-center rounded-control bg-[var(--zani-success-soft)] text-zani-success">
+                <div className="grid h-11 w-11 place-items-center rounded-control bg-[var(--platforma-success-soft)] text-platforma-success">
                   <Users size={20} />
                 </div>
                 <div>
-                  <p className="font-bold text-zani-text">{t("aiNavigator.roleHelpTitle")}</p>
-                  <p className="text-sm text-zani-subtle">{t("aiNavigator.roleHelpText")}</p>
+                  <p className="font-bold text-platforma-text">{t("aiNavigator.roleHelpTitle")}</p>
+                  <p className="text-sm text-platforma-subtle">{t("aiNavigator.roleHelpText")}</p>
                 </div>
               </div>
               <div className="mt-4 space-y-2">
-                <p className="rounded-control bg-surface-muted p-3 text-sm font-semibold text-zani-subtle">{t("aiNavigator.ownerHelp")}</p>
-                <p className="rounded-control bg-surface-muted p-3 text-sm font-semibold text-zani-subtle">{t("aiNavigator.managerHelp")}</p>
+                <p className="rounded-control bg-surface-muted p-3 text-sm font-semibold text-platforma-subtle">{t("aiNavigator.ownerHelp")}</p>
+                <p className="rounded-control bg-surface-muted p-3 text-sm font-semibold text-platforma-subtle">{t("aiNavigator.managerHelp")}</p>
               </div>
             </CardBody>
           </Card>
@@ -830,14 +830,14 @@ export function AIAssistantPage() {
                   <BookOpenText size={19} />
                 </div>
                 <div>
-                  <p className="font-bold text-zani-text">{t("aiAssistant.businessMemory")}</p>
-                  <p className="mt-1 text-sm leading-6 text-zani-subtle">
+                  <p className="font-bold text-platforma-text">{t("aiAssistant.businessMemory")}</p>
+                  <p className="mt-1 text-sm leading-6 text-platforma-subtle">
                     {t("aiAssistant.activeFactsSummary", { count: activeMemoryItems.length })}
                   </p>
                 </div>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <h2 className="text-lg font-bold text-zani-text">{t("aiAssistant.memoryTitle")}</h2>
+                <h2 className="text-lg font-bold text-platforma-text">{t("aiAssistant.memoryTitle")}</h2>
                 <Button variant="ghost" size="sm" onClick={() => { setEditingMemory(undefined); setMemoryDraft(emptyMemoryDraft); setMemoryOpen(true); }}>
                   <Plus size={15} />{t("aiAssistant.add")}
                 </Button>
@@ -848,12 +848,12 @@ export function AIAssistantPage() {
                     key={item.id}
                     type="button"
                     onClick={() => { setEditingMemory(item); setMemoryDraft(memoryDraftFromItem(item)); setMemoryOpen(true); }}
-                    className="w-full rounded-card border border-zani-border bg-surface-muted p-4 text-left transition hover:border-brand-100 hover:bg-surface-warm hover:shadow-card"
+                    className="w-full rounded-card border border-platforma-border bg-surface-muted p-4 text-left transition hover:border-brand-100 hover:bg-surface-warm hover:shadow-card"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="truncate font-bold text-zani-text">{item.title}</p>
-                        <p className="mt-1 line-clamp-2 text-sm leading-6 text-zani-subtle">{item.content}</p>
+                        <p className="truncate font-bold text-platforma-text">{item.title}</p>
+                        <p className="mt-1 line-clamp-2 text-sm leading-6 text-platforma-subtle">{item.content}</p>
                       </div>
                       <Badge variant={item.is_active ? "success" : "neutral"} size="sm" className="shrink-0">
                         {item.is_active ? t("aiAssistant.active") : t("aiAssistant.off")}
@@ -862,7 +862,7 @@ export function AIAssistantPage() {
                   </button>
                 ))}
                 {!memory.data?.length ? (
-                  <p className="rounded-card bg-surface-muted p-4 text-sm leading-6 text-zani-subtle">
+                  <p className="rounded-card bg-surface-muted p-4 text-sm leading-6 text-platforma-subtle">
                     {t("aiAssistant.emptyMemoryText")}
                   </p>
                 ) : null}
@@ -900,7 +900,7 @@ export function AIAssistantPage() {
             placeholder={t("aiAssistant.contentPlaceholder")}
             required
           />
-          <label className="flex items-center gap-3 rounded-card border border-zani-border bg-surface-muted p-4 text-sm font-semibold text-zani-text">
+          <label className="flex items-center gap-3 rounded-card border border-platforma-border bg-surface-muted p-4 text-sm font-semibold text-platforma-text">
             <input
               type="checkbox"
               checked={memoryDraft.is_active}
@@ -919,9 +919,9 @@ export function AIAssistantPage() {
 
 function MetricTile({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-card border border-zani-border bg-surface-muted p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.14em] text-zani-faint">{label}</p>
-      <p className="mt-3 text-3xl font-bold text-zani-text">{value}</p>
+    <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-platforma-faint">{label}</p>
+      <p className="mt-3 text-3xl font-bold text-platforma-text">{value}</p>
     </div>
   );
 }
@@ -941,7 +941,7 @@ function SourceChips({
         return (
           <span
             key={sourceId}
-            className="inline-flex items-center gap-1.5 rounded-full bg-surface-card px-2.5 py-1 text-[11px] font-bold text-zani-subtle ring-1 ring-zani-border"
+            className="inline-flex items-center gap-1.5 rounded-full bg-surface-card px-2.5 py-1 text-[11px] font-bold text-platforma-subtle ring-1 ring-platforma-border"
             title={source ? `${source.label} - ${source.summary}` : sourceId}
           >
             <DatabaseZap size={12} />

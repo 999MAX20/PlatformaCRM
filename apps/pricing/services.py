@@ -59,7 +59,7 @@ def calculate_kaspi_target_price(rule, competitor_price=None):
             "status": KaspiPricingRecommendation.Statuses.PROPOSED,
             "target_price": target,
             "competitor_price": competitor,
-            "reason": "Снизить до минимально разрешенной цены. Ниже порога ZANI не опускается.",
+            "reason": "Снизить до минимально разрешенной цены. Ниже порога Платформа CRM не опускается.",
             "decision": {"guardrail": "min_price", "desired_price": str(desired), "min_price": str(min_price)},
         }
 

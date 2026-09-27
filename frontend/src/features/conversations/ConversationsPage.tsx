@@ -1335,7 +1335,7 @@ export function ConversationsPage() {
       <WorkQueueLayout
         style={{ height: "100%", minHeight: 0 }}
         className={cn(
-          "overflow-hidden border border-zani-border shadow-soft lg:grid-cols-[288px_minmax(0,1fr)]",
+          "overflow-hidden border border-platforma-border shadow-soft lg:grid-cols-[288px_minmax(0,1fr)]",
           inspectorOpen
             ? "xl:grid-cols-[288px_minmax(640px,1fr)_284px] 2xl:grid-cols-[288px_minmax(760px,1fr)_284px]"
             : "xl:grid-cols-[288px_minmax(0,1fr)]",
@@ -1443,7 +1443,7 @@ export function ConversationsPage() {
 
         <aside
           className={cn(
-            "hidden min-h-0 flex-col gap-3 overflow-y-auto border-l border-zani-border bg-surface-muted p-3 xl:flex",
+            "hidden min-h-0 flex-col gap-3 overflow-y-auto border-l border-platforma-border bg-surface-muted p-3 xl:flex",
             !inspectorOpen && "xl:hidden",
           )}
         >
@@ -1465,8 +1465,8 @@ export function ConversationsPage() {
                 />
               ) : null}
 
-              <section className="rounded-card border border-zani-border bg-surface-card p-3 shadow-soft">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-zani-muted">
+              <section className="rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-platforma-muted">
                   {t("common.client")}
                 </p>
                 <div className="mt-3 flex items-start gap-3">
@@ -1475,12 +1475,12 @@ export function ConversationsPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="min-w-0 flex-1 truncate font-bold text-zani-text">
+                      <p className="min-w-0 flex-1 truncate font-bold text-platforma-text">
                         {selected.client_name || conversationTitle(selected, t)}
                       </p>
                       <button
                         type="button"
-                        className="grid h-7 w-7 shrink-0 place-items-center rounded-control text-zani-muted hover:bg-surface-hover hover:text-zani-text disabled:cursor-not-allowed disabled:opacity-40"
+                        className="grid h-7 w-7 shrink-0 place-items-center rounded-control text-platforma-muted hover:bg-surface-hover hover:text-platforma-text disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label={t("conversations.openClientContext", {
                           title: selected.client_name || conversationTitle(selected, t),
                         })}
@@ -1492,18 +1492,18 @@ export function ConversationsPage() {
                         <ExternalLink size={14} />
                       </button>
                     </div>
-                    <p className="mt-1 truncate text-xs font-bold text-zani-muted">
+                    <p className="mt-1 truncate text-xs font-bold text-platforma-muted">
                       {selected.client_phone ||
                         selected.external_user_id ||
                         t("conversations.noContact")}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <Pill className="bg-[var(--zani-success-soft)] text-zani-text ring-[rgba(21,128,61,0.18)]">
+                      <Pill className="bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]">
                         {selected.client
                           ? t("common.client")
                           : t("conversations.newContact")}
                       </Pill>
-                      <Pill className="bg-surface-muted text-zani-muted ring-zani-border">
+                      <Pill className="bg-surface-muted text-platforma-muted ring-platforma-border">
                         {channelLabel(selected.channel, t)}
                       </Pill>
                     </div>
@@ -1511,43 +1511,43 @@ export function ConversationsPage() {
                 </div>
               </section>
 
-              <section className="rounded-card border border-zani-border bg-surface-card p-3 shadow-soft">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-zani-muted">
+              <section className="rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-platforma-muted">
                   {t("conversations.dialogState")}
                 </p>
                 <div className="mt-3 space-y-3">
                   <div className="flex items-center justify-between gap-3 rounded-card bg-surface-muted p-2">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.12em] text-zani-muted">
+                      <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
                         {t("conversations.channel")}
                       </p>
-                      <p className="mt-1 font-bold text-zani-text">
+                      <p className="mt-1 font-bold text-platforma-text">
                         {channelLabel(selected.channel, t)}
                       </p>
-                      <p className="mt-0.5 text-xs font-bold text-zani-muted">
+                      <p className="mt-0.5 text-xs font-bold text-platforma-muted">
                         {selected.bot_enabled
                           ? t("conversations.channelConnected")
                           : t("conversations.botPaused")}
                       </p>
                     </div>
                     {selected.bot_enabled ? (
-                      <PlayCircle className="text-zani-success" size={22} />
+                      <PlayCircle className="text-platforma-success" size={22} />
                     ) : (
-                      <PauseCircle className="text-zani-warning" size={22} />
+                      <PauseCircle className="text-platforma-warning" size={22} />
                     )}
                   </div>
                   <div className="rounded-card bg-surface-muted p-2">
-                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-zani-muted">
+                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
                       {t("conversations.responsible")}
                     </p>
                     <div className="mt-2 flex items-center justify-between gap-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-zani-card text-xs font-bold text-zani-text ring-1 ring-zani-border">
+                        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-platforma-card text-xs font-bold text-platforma-text ring-1 ring-platforma-border">
                           {(selected.assigned_to_email || "ZA")
                             .slice(0, 2)
                             .toUpperCase()}
                         </div>
-                        <p className="min-w-0 truncate text-sm font-bold text-zani-text">
+                        <p className="min-w-0 truncate text-sm font-bold text-platforma-text">
                           {selected.assigned_to_email ||
                             t("conversations.unassigned")}
                         </p>
@@ -1591,18 +1591,18 @@ export function ConversationsPage() {
                 </div>
               </section>
 
-              <section className="rounded-card border border-zani-border bg-surface-card p-3 shadow-soft">
-                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-zani-muted">
+              <section className="rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft">
+                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-platforma-muted">
                   <Link2 size={15} /> {t("conversations.crmLink")}
                 </p>
                 <div className="mt-3 space-y-3">
                   <div className="rounded-card bg-surface-muted p-2">
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-zani-muted">
+                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
                           {t("common.client")}
                         </p>
-                        <p className="truncate text-sm font-bold text-zani-text">
+                        <p className="truncate text-sm font-bold text-platforma-text">
                           {selected.client_name ||
                             (selected.client
                               ? `#${selected.client}`
@@ -1612,8 +1612,8 @@ export function ConversationsPage() {
                       <Pill
                         className={
                           selected.client
-                            ? "bg-[var(--zani-success-soft)] text-zani-text ring-[rgba(21,128,61,0.18)]"
-                            : "bg-surface-muted text-zani-muted ring-zani-border"
+                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]"
+                            : "bg-surface-muted text-platforma-muted ring-platforma-border"
                         }
                       >
                         {selected.client
@@ -1653,10 +1653,10 @@ export function ConversationsPage() {
                   <div className="rounded-card bg-surface-muted p-2">
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-zani-muted">
+                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
                           {t("leads.title")}
                         </p>
-                        <p className="truncate text-sm font-bold text-zani-text">
+                        <p className="truncate text-sm font-bold text-platforma-text">
                           {selected.lead
                             ? `#${selected.lead}`
                             : t("conversations.leadNotLinked")}
@@ -1665,8 +1665,8 @@ export function ConversationsPage() {
                       <Pill
                         className={
                           selected.lead
-                            ? "bg-[var(--zani-success-soft)] text-zani-text ring-[rgba(21,128,61,0.18)]"
-                            : "bg-surface-muted text-zani-muted ring-zani-border"
+                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]"
+                            : "bg-surface-muted text-platforma-muted ring-platforma-border"
                         }
                       >
                         {selected.lead
@@ -1704,10 +1704,10 @@ export function ConversationsPage() {
                   <div className="rounded-card bg-surface-muted p-2">
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-zani-muted">
+                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
                           {t("deals.title")}
                         </p>
-                        <p className="truncate text-sm font-bold text-zani-text">
+                        <p className="truncate text-sm font-bold text-platforma-text">
                           {selected.deal
                             ? `#${selected.deal}`
                             : t("conversations.dealNotLinked")}
@@ -1716,8 +1716,8 @@ export function ConversationsPage() {
                       <Pill
                         className={
                           selected.deal
-                            ? "bg-[var(--zani-success-soft)] text-zani-text ring-[rgba(21,128,61,0.18)]"
-                            : "bg-surface-muted text-zani-muted ring-zani-border"
+                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]"
+                            : "bg-surface-muted text-platforma-muted ring-platforma-border"
                         }
                       >
                         {selected.deal
@@ -1769,7 +1769,7 @@ export function ConversationsPage() {
                   <p className="flex items-center gap-2 font-bold text-ai-900">
                     <Sparkles size={18} /> {t("conversations.replyHint")}
                   </p>
-                  <span className="rounded-full bg-zani-card/80 px-2 py-0.5 text-[10px] font-bold text-ai-700 ring-1 ring-ai-100">
+                  <span className="rounded-full bg-platforma-card/80 px-2 py-0.5 text-[10px] font-bold text-ai-700 ring-1 ring-ai-100">
                     {t("conversations.suggestionStatus")}
                   </span>
                 </div>
@@ -1779,7 +1779,7 @@ export function ConversationsPage() {
                 <p className="mt-3 text-xs font-bold uppercase tracking-[0.14em] text-ai-700">
                   {t("conversations.recommendedReply")}
                 </p>
-                <div className="mt-3 rounded-card bg-zani-card p-3 text-xs font-semibold leading-5 text-zani-text">
+                <div className="mt-3 rounded-card bg-platforma-card p-3 text-xs font-semibold leading-5 text-platforma-text">
                   {suggestedReply || t("conversations.prepareDraftFallback")}
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2">
@@ -1826,13 +1826,13 @@ export function ConversationsPage() {
                   <CalendarCheck size={15} /> {t("conversations.crmAutomation")}
                 </p>
                 <div className="mt-3 rounded-card bg-ai-50 p-3">
-                  <p className="text-sm font-bold text-zani-text">
+                  <p className="text-sm font-bold text-platforma-text">
                     {selectedInsight?.nextAction ||
                       (selected.handoff_required
                         ? t("conversations.replyToClient")
                         : t("conversations.checkLinkedLeads"))}
                   </p>
-                  <p className="mt-2 text-xs font-bold leading-5 text-zani-muted">
+                  <p className="mt-2 text-xs font-bold leading-5 text-platforma-muted">
                     {selectedInsight?.intent
                       ? t("conversations.intentLine", {
                           intent: selectedInsight.intent,
@@ -1882,7 +1882,7 @@ export function ConversationsPage() {
               </section>
             </>
           ) : (
-            <div className="grid flex-1 place-items-center text-center text-sm font-bold text-zani-muted">
+            <div className="grid flex-1 place-items-center text-center text-sm font-bold text-platforma-muted">
               {t("conversations.selectContext")}
             </div>
           )}
@@ -1900,12 +1900,12 @@ export function ConversationsPage() {
         open={quickRepliesOpen}
         onClose={() => setQuickRepliesOpen(false)}
         size="md"
-        bodyClassName="bg-zani-card p-0"
+        bodyClassName="bg-platforma-card p-0"
       >
-        <div className="border-b border-zani-border p-4">
+        <div className="border-b border-platforma-border p-4">
           <input
             type="search"
-            className="h-11 w-full rounded-control border border-zani-border bg-zani-card px-3 text-sm font-semibold text-zani-text outline-none transition placeholder:text-zani-muted focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
+            className="h-11 w-full rounded-control border border-platforma-border bg-platforma-card px-3 text-sm font-semibold text-platforma-text outline-none transition placeholder:text-platforma-muted focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
             placeholder={t("conversations.quickRepliesSearch")}
             value={quickReplySearch}
             onChange={(event) => setQuickReplySearch(event.target.value)}
@@ -1927,26 +1927,26 @@ export function ConversationsPage() {
               <button
                 key={template.id}
                 type="button"
-                className="w-full rounded-card border border-zani-border bg-zani-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
+                className="w-full rounded-card border border-platforma-border bg-platforma-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
                 onClick={() => insertQuickReply(template.text)}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-zani-text">
+                    <p className="truncate text-sm font-bold text-platforma-text">
                       {template.title}
                     </p>
-                    <p className="mt-1 line-clamp-3 text-sm font-semibold leading-6 text-zani-muted">
+                    <p className="mt-1 line-clamp-3 text-sm font-semibold leading-6 text-platforma-muted">
                       {template.text}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full bg-surface-muted px-2 py-1 text-[11px] font-bold text-zani-muted">
+                  <span className="shrink-0 rounded-full bg-surface-muted px-2 py-1 text-[11px] font-bold text-platforma-muted">
                     {template.channel === "all"
                       ? t("conversations.allChannels")
                       : channelLabel(template.channel, t)}
                   </span>
                 </div>
                 {template.category ? (
-                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-zani-muted">
+                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
                     {template.category}
                   </p>
                 ) : null}
@@ -1967,9 +1967,9 @@ export function ConversationsPage() {
         open={Boolean(crmLinkModal)}
         onClose={() => setCrmLinkModal(null)}
         size="md"
-        bodyClassName="bg-zani-card p-0"
+        bodyClassName="bg-platforma-card p-0"
       >
-        <div className="border-b border-zani-border p-4">
+        <div className="border-b border-platforma-border p-4">
           <Input
             value={crmLinkSearch}
             onChange={(event) => setCrmLinkSearch(event.target.value)}
@@ -1995,13 +1995,13 @@ export function ConversationsPage() {
                   <button
                     key={client.id}
                     type="button"
-                    className="w-full rounded-card border border-zani-border bg-zani-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
+                    className="w-full rounded-card border border-platforma-border bg-platforma-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
                     onClick={() => linkClientToConversation(client.id)}
                   >
-                    <p className="text-sm font-bold text-zani-text">
+                    <p className="text-sm font-bold text-platforma-text">
                       {client.full_name || `#${client.id}`}
                     </p>
-                    <p className="mt-1 text-xs font-bold text-zani-muted">
+                    <p className="mt-1 text-xs font-bold text-platforma-muted">
                       {client.phone ||
                         client.email ||
                         t("conversations.noContact")}
@@ -2028,13 +2028,13 @@ export function ConversationsPage() {
                   <button
                     key={lead.id}
                     type="button"
-                    className="w-full rounded-card border border-zani-border bg-zani-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
+                    className="w-full rounded-card border border-platforma-border bg-platforma-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
                     onClick={() => linkLeadToConversation(lead.id)}
                   >
-                    <p className="text-sm font-bold text-zani-text">
+                    <p className="text-sm font-bold text-platforma-text">
                       {lead.client_name || `#${lead.id}`}
                     </p>
-                    <p className="mt-1 text-xs font-bold text-zani-muted">
+                    <p className="mt-1 text-xs font-bold text-platforma-muted">
                       {lead.message || lead.status}
                     </p>
                   </button>
@@ -2059,13 +2059,13 @@ export function ConversationsPage() {
                   <button
                     key={deal.id}
                     type="button"
-                    className="w-full rounded-card border border-zani-border bg-zani-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
+                    className="w-full rounded-card border border-platforma-border bg-platforma-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
                     onClick={() => linkDealToConversation(deal.id)}
                   >
-                    <p className="text-sm font-bold text-zani-text">
+                    <p className="text-sm font-bold text-platforma-text">
                       {deal.title || `#${deal.id}`}
                     </p>
-                    <p className="mt-1 text-xs font-bold text-zani-muted">
+                    <p className="mt-1 text-xs font-bold text-platforma-muted">
                       {deal.client_name || deal.stage_name || deal.status}
                     </p>
                   </button>
@@ -2081,7 +2081,7 @@ export function ConversationsPage() {
         open={taskModalOpen}
         onClose={() => setTaskModalOpen(false)}
         size="md"
-        bodyClassName="space-y-4 bg-zani-card"
+        bodyClassName="space-y-4 bg-platforma-card"
       >
         <Input
           label={t("tasks.title")}
@@ -2136,7 +2136,7 @@ export function ConversationsPage() {
             }
           />
         </div>
-        <div className="flex justify-end gap-2 border-t border-zani-border pt-4">
+        <div className="flex justify-end gap-2 border-t border-platforma-border pt-4">
           <Button
             type="button"
             variant="secondary"

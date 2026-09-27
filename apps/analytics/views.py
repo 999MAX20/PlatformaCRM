@@ -155,14 +155,14 @@ def owner_dashboard(request):
             {
                 "key": "whatsapp",
                 "title": "Подключить WhatsApp",
-                "description": "Чтобы заявки и переписка попадали в ZANI, а владелец видел обработку клиентов.",
+                "description": "Чтобы заявки и переписка попадали в Платформа CRM, а владелец видел обработку клиентов.",
                 "status": "connect" if not setup_sources["communications"] else "connected",
                 "href": "/app/integrations",
             },
             {
                 "key": "excel_csv",
                 "title": "Загрузить Excel / CSV",
-                "description": "Дайте ZANI продажи и услуги, чтобы dashboard показывал бизнес, а не пустоту.",
+                "description": "Дайте Платформа CRM продажи и услуги, чтобы dashboard показывал бизнес, а не пустоту.",
                 "status": "connect" if not setup_sources["sales_data"] else "connected",
                 "href": "/app/settings#data-tools",
             },
@@ -255,7 +255,7 @@ def _build_mobile_owner_onboarding(*, business, setup_score, setup_sources, has_
         {
             "key": "landing",
             "title": "Лендинг активирован",
-            "description": "ZANI уже знает источник заявок и может принимать лиды из формы.",
+            "description": "Платформа CRM уже знает источник заявок и может принимать лиды из формы.",
             "status": "done" if setup_sources.get("landing") else "todo",
             "href": business.landing_preview_url or "/app/leads",
             "cta": "Открыть лендинг" if business.landing_preview_url else "Проверить заявки",
@@ -273,7 +273,7 @@ def _build_mobile_owner_onboarding(*, business, setup_score, setup_sources, has_
         {
             "key": "communications",
             "title": "Подключить сообщения",
-            "description": "WhatsApp/Telegram/сайт дадут ZANI живые обращения и историю общения с клиентом.",
+            "description": "WhatsApp/Telegram/сайт дадут Платформа CRM живые обращения и историю общения с клиентом.",
             "status": "done" if setup_sources.get("communications") else "todo",
             "href": "/app/integrations",
             "cta": "Подключить канал",
@@ -308,7 +308,7 @@ def _build_mobile_owner_onboarding(*, business, setup_score, setup_sources, has_
         subtext = f"{new_leads_count} заявок нужно быстро разобрать или назначить менеджеру."
         primary_action = {"label": "Открыть заявки", "href": "/app/leads"}
     elif todo_steps:
-        headline = "ZANI готовится увидеть бизнес полностью"
+        headline = "Платформа CRM готовится увидеть бизнес полностью"
         subtext = "Подключайте источники по шагам. Первый месяц расширенного доступа уже включён."
         primary_action = {"label": todo_steps[0]["cta"], "href": todo_steps[0]["href"]}
     else:
@@ -397,7 +397,7 @@ def _build_owner_recommendations(*, has_sales_data, new_leads_count, overdue_tas
         recommendations.append({
             "key": "next_growth_step",
             "title": "Подключить следующий источник данных",
-            "description": "Добавьте канал, сотрудников или склад, чтобы ZANI показывал больше причин роста и просадок.",
+            "description": "Добавьте канал, сотрудников или склад, чтобы Платформа CRM показывал больше причин роста и просадок.",
             "priority": "medium",
             "action_label": "Открыть интеграции",
             "href": "/app/integrations",

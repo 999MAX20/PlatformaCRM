@@ -71,7 +71,7 @@ export function DataTable<T>({
   if (isLoading) {
     return (
       <div className={cn(surfaceClass, "overflow-hidden", className)} aria-busy="true">
-        {toolbar ? <div className="border-b border-zani-border bg-surface-card px-4 py-3">{toolbar}</div> : null}
+        {toolbar ? <div className="border-b border-platforma-border bg-surface-card px-4 py-3">{toolbar}</div> : null}
         <div className="space-y-3">
           <div className="space-y-3 p-4">
             {Array.from({ length: 5 }).map((_, index) => (
@@ -86,7 +86,7 @@ export function DataTable<T>({
   if (!rows.length) {
     return (
       <div className={cn(surfaceClass, "flex min-h-0 flex-col overflow-hidden", className)}>
-        {toolbar ? <div className="shrink-0 border-b border-zani-border bg-surface-card px-4 py-3">{toolbar}</div> : null}
+        {toolbar ? <div className="shrink-0 border-b border-platforma-border bg-surface-card px-4 py-3">{toolbar}</div> : null}
         <div className="p-4">
           <EmptyState title={emptyTitle} description={resolvedEmptyDescription} action={emptyAction} />
         </div>
@@ -97,14 +97,14 @@ export function DataTable<T>({
 
   return (
     <div className={cn(surfaceClass, "flex min-h-0 flex-col overflow-hidden", className)}>
-      {toolbar ? <div className="shrink-0 border-b border-zani-border bg-surface-card px-4 py-3">{toolbar}</div> : null}
+      {toolbar ? <div className="shrink-0 border-b border-platforma-border bg-surface-card px-4 py-3">{toolbar}</div> : null}
       <div className={cn("min-h-0 flex-1 overflow-auto", contentClassName)}>
-        <div className="divide-y divide-zani-border md:hidden" aria-label={tableLabel}>
+        <div className="divide-y divide-platforma-border md:hidden" aria-label={tableLabel}>
           {rows.map((row, index) => {
             const resolvedRowKey = rowKey?.(row, index) ?? index;
             const selected = selectedRowKey !== null && selectedRowKey !== undefined && String(resolvedRowKey) === String(selectedRowKey);
             return (<Fragment key={resolvedRowKey}>
-              {rowGroup && (index === 0 || rowGroup(rows[index - 1]) !== rowGroup(row)) ? <h3 className="bg-surface-muted px-3 py-2 text-xs font-semibold text-zani-subtle">{rowGroup(row)}</h3> : null}
+              {rowGroup && (index === 0 || rowGroup(rows[index - 1]) !== rowGroup(row)) ? <h3 className="bg-surface-muted px-3 py-2 text-xs font-semibold text-platforma-subtle">{rowGroup(row)}</h3> : null}
               <article
                 key={resolvedRowKey}
                 tabIndex={onRowSelect ? 0 : undefined}
@@ -115,7 +115,7 @@ export function DataTable<T>({
                 className={cn(
                   "space-y-2.5 px-3 py-2.5 transition-colors",
                   onRowSelect && "cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
-                  selected && "bg-brand-50/80 shadow-[inset_5px_0_0_var(--zani-brand)]",
+                  selected && "bg-brand-50/80 shadow-[inset_5px_0_0_var(--platforma-brand)]",
                   rowClassName?.(row),
                 )}
                 onClick={(event) => {
@@ -134,8 +134,8 @@ export function DataTable<T>({
                       <div className="text-sm font-semibold text-midnight">{column.cell(row)}</div>
                     ) : (
                       <>
-                        <span className="shrink-0 text-[11px] font-semibold text-zani-faint">{column.header}</span>
-                        <div className="min-w-0 text-right text-sm font-semibold text-zani-subtle">{column.cell(row)}</div>
+                        <span className="shrink-0 text-[11px] font-semibold text-platforma-faint">{column.header}</span>
+                        <div className="min-w-0 text-right text-sm font-semibold text-platforma-subtle">{column.cell(row)}</div>
                       </>
                     )}
                   </div>
@@ -145,25 +145,25 @@ export function DataTable<T>({
           })}
         </div>
         <div className="hidden min-h-0 overflow-x-auto md:block">
-          <table className="min-w-full divide-y divide-zani-border" aria-label={tableLabel}>
+          <table className="min-w-full divide-y divide-platforma-border" aria-label={tableLabel}>
           <thead className="bg-surface-card">
             <tr className="h-10">
               {columns.map((column) => (
                 <th
                   key={column.header}
-                  className="whitespace-nowrap px-3 py-2 text-left text-xs font-semibold text-zani-subtle"
+                  className="whitespace-nowrap px-3 py-2 text-left text-xs font-semibold text-platforma-subtle"
                 >
                   {column.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-zani-border">
+          <tbody className="divide-y divide-platforma-border">
             {rows.map((row, index) => {
               const resolvedRowKey = rowKey?.(row, index) ?? index;
               const selected = selectedRowKey !== null && selectedRowKey !== undefined && String(resolvedRowKey) === String(selectedRowKey);
               return (<Fragment key={resolvedRowKey}>
-                {rowGroup && (index === 0 || rowGroup(rows[index - 1]) !== rowGroup(row)) ? <tr className="bg-surface-muted"><th colSpan={columns.length} scope="rowgroup" className="px-3 py-2 text-left text-xs font-semibold text-zani-subtle">{rowGroup(row)}</th></tr> : null}
+                {rowGroup && (index === 0 || rowGroup(rows[index - 1]) !== rowGroup(row)) ? <tr className="bg-surface-muted"><th colSpan={columns.length} scope="rowgroup" className="px-3 py-2 text-left text-xs font-semibold text-platforma-subtle">{rowGroup(row)}</th></tr> : null}
                 <tr
                   key={resolvedRowKey}
                   tabIndex={onRowSelect ? 0 : undefined}
@@ -174,7 +174,7 @@ export function DataTable<T>({
                   className={cn(
                     "transition hover:bg-surface-warm",
                     onRowSelect && "cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
-                    selected && "bg-brand-50/80 shadow-[inset_5px_0_0_var(--zani-brand)] hover:bg-brand-50/80",
+                    selected && "bg-brand-50/80 shadow-[inset_5px_0_0_var(--platforma-brand)] hover:bg-brand-50/80",
                     rowClassName?.(row),
                   )}
                   style={{ minHeight: CRM_TABLE_ROW_HEIGHT }}
@@ -189,7 +189,7 @@ export function DataTable<T>({
                   }}
                 >
                   {columns.map((column) => (
-                    <td key={column.header} className={`whitespace-nowrap px-3 py-2 text-sm text-zani-subtle ${column.className || ""}`}>
+                    <td key={column.header} className={`whitespace-nowrap px-3 py-2 text-sm text-platforma-subtle ${column.className || ""}`}>
                       {column.cell(row)}
                     </td>
                   ))}
@@ -201,7 +201,7 @@ export function DataTable<T>({
         </div>
       </div>
       {!hideFooter && (footer || (
-        <div className="flex shrink-0 items-center justify-between border-t border-zani-border px-4 py-3 text-xs font-semibold text-zani-subtle">
+        <div className="flex shrink-0 items-center justify-between border-t border-platforma-border px-4 py-3 text-xs font-semibold text-platforma-subtle">
           <span>{t("table.total", { count: rows.length })}</span>
           <span className="rounded-control bg-surface-muted px-2.5 py-1">{t("table.records")}</span>
         </div>

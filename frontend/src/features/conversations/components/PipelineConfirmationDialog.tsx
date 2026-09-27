@@ -25,7 +25,7 @@ export function PipelineConfirmationDialog({ review, allowedActions, pending, er
   return (
     <Dialog open title={t("conversations.confirmPipelineTitle")} onClose={() => { if (!pending) onClose(); }} size="md">
       <div className="space-y-4">
-        <p className="whitespace-pre-wrap text-sm text-zani-text">{review.summary}</p>
+        <p className="whitespace-pre-wrap text-sm text-platforma-text">{review.summary}</p>
         <fieldset disabled={pending} className="space-y-3">
           <legend className="mb-3 text-sm font-semibold">{t("conversations.confirmPipelineActions")}</legend>
           {(["create_lead", "create_task", "create_deal"] as const).map((action) => (

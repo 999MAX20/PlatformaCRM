@@ -25,7 +25,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
     <Card variant="outlined">
       <CardBody className="space-y-4">
         <h3 className="text-lg font-semibold">{t("aiSetup.previewTitle")}</h3>
-        <p className="text-sm text-zani-subtle">{t("aiSetup.previewScope")}</p>
+        <p className="text-sm text-platforma-subtle">{t("aiSetup.previewScope")}</p>
         {!canTest ? <ErrorState message={t("aiSetup.previewForbidden")} /> : blocked ? (
           <StatusNotice compact tone="warning" title={t("aiSetup.saveBeforeTest")} />
         ) : null}
@@ -39,7 +39,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
         <div role="log" aria-label={t("aiSetup.previewTitle")} className="space-y-3">
           {messages.map((message, index) => (
             <div key={index} className="rounded-control bg-surface-warm p-3">
-              <p className="text-xs font-semibold text-zani-subtle">{t(message.direction === "inbound" ? "aiAgents.client" : "aiAgents.reply")}</p>
+              <p className="text-xs font-semibold text-platforma-subtle">{t(message.direction === "inbound" ? "aiAgents.client" : "aiAgents.reply")}</p>
               <p className="whitespace-pre-wrap break-words text-sm">{message.text}</p>
             </div>
           ))}
@@ -48,8 +48,8 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
           <StatusNotice compact tone={preview.data.handoff_required ? "warning" : "success"}
             title={t(preview.data.handoff_required ? "aiSetup.handoff" : preview.data.automatic_reply_enabled ? "aiSetup.automatic" : "aiSetup.draftOnly")}
             description={preview.data.summary} />
-          <p className="text-sm text-zani-subtle">{t(preview.data.provider_state === "live" ? "aiAgents.aiProviderLive" : "aiQuality.mock")}</p>
-          {preview.data.sources.length ? <ul aria-label={t("aiAgents.aiSources")} className="flex flex-wrap gap-2 text-xs text-zani-subtle">
+          <p className="text-sm text-platforma-subtle">{t(preview.data.provider_state === "live" ? "aiAgents.aiProviderLive" : "aiQuality.mock")}</p>
+          {preview.data.sources.length ? <ul aria-label={t("aiAgents.aiSources")} className="flex flex-wrap gap-2 text-xs text-platforma-subtle">
             {preview.data.sources.map((source) => <li key={`${source.type}-${source.id}`}>{source.label}</li>)}
           </ul> : null}
         </div> : null}

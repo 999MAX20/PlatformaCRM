@@ -210,10 +210,10 @@ async function installWorkspaceProfiler(page: Page) {
   await page.addInitScript(() => {
     const runtimeWindow = window as typeof window & {
       __ZANI_WORKSPACE_COMMITS__?: number;
-      __ZANI_RUNTIME_PROFILER__?: () => void;
+      __PLATFORMA_RUNTIME_PROFILER__?: () => void;
     };
     runtimeWindow.__ZANI_WORKSPACE_COMMITS__ = 0;
-    runtimeWindow.__ZANI_RUNTIME_PROFILER__ = () => {
+    runtimeWindow.__PLATFORMA_RUNTIME_PROFILER__ = () => {
       runtimeWindow.__ZANI_WORKSPACE_COMMITS__ =
         (runtimeWindow.__ZANI_WORKSPACE_COMMITS__ || 0) + 1;
     };

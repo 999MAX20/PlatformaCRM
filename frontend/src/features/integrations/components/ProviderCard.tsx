@@ -122,7 +122,7 @@ export function ProviderCard({
       if (provider.provider === "whatsapp") {
         return businessConnectorsApi.requestWhatsApp({
           business: businessId,
-          company_name: "ZANI merchant",
+          company_name: "Платформа CRM merchant",
           phone_number: "+77000000000",
           contact_person: "",
           preferred_method: "not_sure",
@@ -238,14 +238,14 @@ export function ProviderCard({
           <LogoMark logo={provider.logo} label={title} compact />
           <div className="min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-              <h3 className="min-w-0 break-words text-[15px] font-bold leading-5 text-zani-text">
+              <h3 className="min-w-0 break-words text-[15px] font-bold leading-5 text-platforma-text">
                 {title}
               </h3>
               <Badge variant={statusVariant(status)} size="sm" className="shrink-0">
                 {readableStatus(status, t, t("integrations.status.notConnectedShort"))}
               </Badge>
             </div>
-            <p className="mt-1 line-clamp-2 text-xs font-semibold leading-4 text-zani-subtle">
+            <p className="mt-1 line-clamp-2 text-xs font-semibold leading-4 text-platforma-subtle">
               {primaryUse}
             </p>
           </div>
@@ -266,15 +266,15 @@ export function ProviderCard({
 
       {connector ? (
         latestRun ? (
-          <div className="mt-2 rounded-control border border-zani-border bg-surface-muted px-2.5 py-2">
+          <div className="mt-2 rounded-control border border-platforma-border bg-surface-muted px-2.5 py-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-zani-faint">
+              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-platforma-faint">
                 {t("integrations.card.latestRun")}
               </span>
               <Badge variant={statusVariant(latestRun.status)} size="sm">
                 {readableStatus(latestRun.status, t)}
               </Badge>
-              <span className="text-xs font-semibold text-zani-subtle">
+              <span className="text-xs font-semibold text-platforma-subtle">
                 {new Date(latestRun.finished_at || latestRun.created_at).toLocaleString()}
               </span>
               {latestRun.status === "failed" ? (
@@ -300,7 +300,7 @@ export function ProviderCard({
             ) : null}
           </div>
         ) : syncRunsQuery.isSuccess ? (
-          <div className="mt-2 rounded-control border border-zani-border bg-surface-muted px-2.5 py-1.5 text-xs font-semibold text-zani-subtle">
+          <div className="mt-2 rounded-control border border-platforma-border bg-surface-muted px-2.5 py-1.5 text-xs font-semibold text-platforma-subtle">
             {t("integrations.card.noRuns")}
           </div>
         ) : null
@@ -313,7 +313,7 @@ export function ProviderCard({
   return (
     <article
       className={cn(
-        "rounded-card border border-zani-border bg-surface-card p-3 shadow-card transition hover:border-brand-100 hover:bg-surface-warm",
+        "rounded-card border border-platforma-border bg-surface-card p-3 shadow-card transition hover:border-brand-100 hover:bg-surface-warm",
         "min-h-[82px]",
         isUnavailable && "opacity-60",
       )}
@@ -335,13 +335,13 @@ export function ProviderCard({
           ) : provider.provider === "ozon" ? (
             <OzonInlineSetup businessId={businessId} canManage={canManage} connector={connector} />
           ) : (
-            <div className="space-y-4 rounded-card border border-zani-border bg-surface-card p-4">
+            <div className="space-y-4 rounded-card border border-platforma-border bg-surface-card p-4">
               <div>
-                <p className="text-sm font-bold text-zani-text">{title}</p>
-                <p className="mt-1 text-sm font-semibold leading-6 text-zani-subtle">{primaryUse}</p>
+                <p className="text-sm font-bold text-platforma-text">{title}</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-platforma-subtle">{primaryUse}</p>
               </div>
               {provider.provider === "website" ? (
-                <div className="rounded-control bg-surface-muted p-3 text-sm font-semibold text-zani-subtle">
+                <div className="rounded-control bg-surface-muted p-3 text-sm font-semibold text-platforma-subtle">
                   {t("integrations.card.websiteNoExtraData")}
                 </div>
               ) : (
@@ -356,7 +356,7 @@ export function ProviderCard({
                     </button>
                   ) : null}
                   {manualSetupOpen && canManage ? (
-                    <div className="space-y-3 rounded-card border border-zani-border bg-surface-muted p-3">
+                    <div className="space-y-3 rounded-card border border-platforma-border bg-surface-muted p-3">
                       <Input label={t("integrations.card.accountId")} value={accountId} onChange={(event) => setAccountId(event.target.value)} placeholder={t("integrations.card.accountIdPlaceholder")} />
                       <Input label={t("integrations.card.accessKey")} value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder={t("integrations.card.accessKeyPlaceholder")} type="password" autoComplete="off" />
                       <Input label={t("integrations.card.webhookSecret")} value={webhookSecret} onChange={(event) => setWebhookSecret(event.target.value)} placeholder={t("common.optional")} type="password" autoComplete="off" />

@@ -24,7 +24,7 @@ export function ResourceCreateForm({ businessId, initial, teamMembers, businessH
   );
   return (
     <div className="space-y-4" data-testid="resource-create-schedule">
-      <h3 className="font-semibold text-zani-ink">{draft.name} · {t("workingHours.individualSchedule")}</h3>
+      <h3 className="font-semibold text-platforma-ink">{draft.name} · {t("workingHours.individualSchedule")}</h3>
       <WeeklyWorkingHoursForm businessId={businessId} resources={[]} existingHours={businessHours.filter((row) => !row.resource)}
         lockTarget showContextHint={false} disabled={disabled}
         onSubmit={(days) => onSubmit({ ...draft, weekly_schedule: days.map((day) => ({

@@ -41,7 +41,7 @@ function DialogExample({ initiallyOpen = false }: { initiallyOpen?: boolean }) {
   );
 }
 
-const meta = { title: "Zani/Navigation" } satisfies Meta;
+const meta = { title: "PlatformaCRM/Navigation" } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const KeyboardTabs: Story = { render: () => <TabExample /> };

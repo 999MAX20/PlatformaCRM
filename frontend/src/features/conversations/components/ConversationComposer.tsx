@@ -30,7 +30,7 @@ export function ConversationComposer({
   t,
 }: ConversationComposerProps) {
   return (
-    <div className="border-t border-zani-border bg-zani-card p-3">
+    <div className="border-t border-platforma-border bg-platforma-card p-3">
       {selected.status === "closed" ? (
         <StatusNotice
           compact
@@ -39,13 +39,13 @@ export function ConversationComposer({
           title={t("conversations.closedReplyNotice")}
         />
       ) : null}
-      <div className="flex items-end gap-2 rounded-card border border-zani-border bg-zani-card px-3 py-2 shadow-sm">
-        <button type="button" className="mb-1 grid h-8 w-8 shrink-0 place-items-center rounded-control text-zani-muted hover:bg-surface-hover hover:text-zani-text" title={t("conversations.attachFile")}>
+      <div className="flex items-end gap-2 rounded-card border border-platforma-border bg-platforma-card px-3 py-2 shadow-sm">
+        <button type="button" className="mb-1 grid h-8 w-8 shrink-0 place-items-center rounded-control text-platforma-muted hover:bg-surface-hover hover:text-platforma-text" title={t("conversations.attachFile")}>
           <Paperclip size={16} />
         </button>
         <button
           type="button"
-          className="mb-1 inline-flex h-8 shrink-0 items-center gap-1.5 rounded-control px-2.5 text-xs font-bold text-zani-muted hover:bg-surface-hover hover:text-zani-text disabled:cursor-not-allowed disabled:opacity-50"
+          className="mb-1 inline-flex h-8 shrink-0 items-center gap-1.5 rounded-control px-2.5 text-xs font-bold text-platforma-muted hover:bg-surface-hover hover:text-platforma-text disabled:cursor-not-allowed disabled:opacity-50"
           disabled={selected.status === "closed"}
           onClick={onOpenQuickReplies}
           title={t("conversations.quickReplies")}
@@ -56,7 +56,7 @@ export function ConversationComposer({
           data-testid="inbox-action-composer"
           ref={composerRef}
           rows={1}
-          className="max-h-28 min-h-10 min-w-0 flex-1 resize-none bg-transparent py-2 text-sm text-zani-text outline-none placeholder:text-zani-muted"
+          className="max-h-28 min-h-10 min-w-0 flex-1 resize-none bg-transparent py-2 text-sm text-platforma-text outline-none placeholder:text-platforma-muted"
           disabled={selected.status === "closed" || sendPending}
           placeholder={t("conversations.replyPlaceholder")}
           value={draft}

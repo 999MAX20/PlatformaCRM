@@ -149,7 +149,7 @@ export const kk: Record<string, string> = {
   "outreach.recipientDeliveryFailed": "Жіберу орындалмады",
   "outreach.recipientSkipped": "Алушы тарату шарттары бойынша өткізіліп жіберілді",
   "pricing.changeFailed": "Өзгеріс қолданылмады. Қосылымды тексеріп, әрекетті қайталаңыз.",
-  "sidebar.product": "Zani",
+  "sidebar.product": "Платформа CRM",
   "nav.account": "Менің аккаунтым",
   "account.openMenu": "Аккаунт мәзірін ашу",
   "account.menuProfile": "Менің аккаунтым",
@@ -301,7 +301,7 @@ export const kk: Record<string, string> = {
   "auth.ownerControlText": "Түсім, өтінімдер және команда",
   "auth.aiBubble": "ЖИ маңызды өтінімдерді тауып, кеңес дайындады.",
   "auth.welcome": "Қайта қош келдіңіз",
-  "auth.signIn": "Zani жүйесіне кіру",
+  "auth.signIn": "Платформа CRM жүйесіне кіру",
   "auth.signInCopy":
     "Жұмыс кабинетіне кіріп, клиенттермен жұмысты жалғастырыңыз.",
   "auth.email": "Email",
@@ -320,7 +320,7 @@ export const kk: Record<string, string> = {
   "mfa.hero": "Екі қадам бизнес аккаунтыңызды қорғайды",
   "mfa.title": "Кіруді растау",
   "mfa.text": "Аутентификатор қолданбасындағы кодты немесе резервтік кодты енгізіңіз.",
-  "mfa.addAuthenticator": "Zani-ді аутентификаторға қосыңыз",
+  "mfa.addAuthenticator": "Платформа CRM-ді аутентификаторға қосыңыз",
   "mfa.addAuthenticatorText": "Google Authenticator, Microsoft Authenticator, 1Password немесе басқа TOTP қолданбасын ашып, төмендегі кілтті қосыңыз.",
   "mfa.openAuthenticator": "Аутентификатор қолданбасында ашу",
   "mfa.codeLabel": "Растау коды",
@@ -328,7 +328,7 @@ export const kk: Record<string, string> = {
   "mfa.recoveryHint": "Әр резервтік код алты таңбалы кодтың орнына бір рет қана қолданылады.",
   "mfa.enable": "Қорғанысты қосу",
   "mfa.verify": "Кіруді растау",
-  "mfa.recoveryWarning": "Резервтік кодтарды қауіпсіз жерде сақтаңыз. Бұл беттен шыққаннан кейін Zani оларды қайта көрсетпейді.",
+  "mfa.recoveryWarning": "Резервтік кодтарды қауіпсіз жерде сақтаңыз. Бұл беттен шыққаннан кейін Платформа CRM оларды қайта көрсетпейді.",
   "mfa.copyCodes": "Кодтарды көшіру",
   "mfa.continue": "Кодтарды сақтадым — жалғастыру",
   "mfa.sessionExpiredTitle": "Растау мерзімі аяқталды",
@@ -350,12 +350,12 @@ export const kk: Record<string, string> = {
   "mfa.disableReason": "Өшіру себебі",
   "auth.forgotPassword": "Құпиясөзді ұмыттыңыз ба?",
   "auth.registerBusiness": "Бизнесті тіркеу",
-  "auth.backToSite": "Zani сайтына",
+  "auth.backToSite": "Платформа CRM сайтына",
   "auth.brandTagline": "Бизнеске арналған жұмыс CRM",
   "auth.alreadyHaveAccount": "Аккаунтыңыз бар ма?",
   "auth.noAccount": "Аккаунтыңыз жоқ па?",
   "auth.create": "Аккаунт ашу",
-  "auth.heroAria": "Zani мүмкіндіктері",
+  "auth.heroAria": "Платформа CRM мүмкіндіктері",
   "auth.signupHeroPrefix": "Жұмыс CRM жүйесін іске қосыңыз:",
   "auth.signupHeroTime": "бірнеше минутта",
   "auth.loginHeroPrefix": "Клиенттермен жұмысқа оралыңыз:",
@@ -426,9 +426,9 @@ export const kk: Record<string, string> = {
   "passwordReset.sendEmail": "Email жіберу",
   "passwordReset.sendWhatsApp": "WhatsApp арқылы жіберу",
   "passwordReset.sendTelegram": "Telegram арқылы жіберу",
-  "passwordReset.shareTitle": "Zani құпиясөзін қалпына келтіру",
+  "passwordReset.shareTitle": "Платформа CRM құпиясөзін қалпына келтіру",
   "passwordReset.remembered": "Құпиясөз есіңізге түсті ме?",
-  "passwordReset.shareBody": "Zani құпиясөзін қалпына келтіру сілтемесі: {url}",
+  "passwordReset.shareBody": "Платформа CRM құпиясөзін қалпына келтіру сілтемесі: {url}",
   "passwordReset.repeatPasswordRequired": "Құпиясөзді қайталаңыз",
   "passwordReset.passwordMismatch": "Құпиясөздер сәйкес емес",
   "passwordReset.doneTitle": "Құпиясөз жаңартылды",
@@ -438,7 +438,7 @@ export const kk: Record<string, string> = {
   "passwordReset.repeatPassword": "Құпиясөзді қайталаңыз",
   "passwordReset.savePassword": "Құпиясөзді сақтау",
   "passwordReset.backToLogin": "Кіруге оралу",
-  "signup.badge": "Шағын бизнеске арналған Zani",
+  "signup.badge": "Шағын бизнеске арналған Платформа CRM",
   "signup.headline": "CRM жүйесін ұзақ баптаусыз іске қосыңыз.",
   "signup.copy":
     "Бір қадамда иесін, бизнесті және негізгі рөлдерді құрамыз. Қызметкерлерді кейін команда баптауларынан шақырасыз.",
@@ -457,7 +457,7 @@ export const kk: Record<string, string> = {
   "signup.city": "Қала",
   "signup.cityOptional": "Қала (міндетті емес)",
   "signup.nextText":
-    "Кіргеннен кейін Zani жылдам старт ұсынады: қызметтер, кесте, қызметкерлер және алғашқы өтінім арнасы.",
+    "Кіргеннен кейін Платформа CRM жылдам старт ұсынады: қызметтер, кесте, қызметкерлер және алғашқы өтінім арнасы.",
   "signup.startNote":
     "Тек иені және жұмыс кеңістігін құрамыз. Қызметкерлерді, рөлдерді, интеграцияларды және кестені кіргеннен кейін баптай аласыз.",
   "signup.submit": "Кабинет құру",
@@ -516,18 +516,18 @@ export const kk: Record<string, string> = {
   "dashboard.aiNavigator": "ЖИ-навигатор",
   "dashboard.aiNavigatorScope": "Осы кабинеттің деректері",
   "dashboard.channels": "Арналар",
-  "dashboard.chatBots": "ZANI чат-боттары",
+  "dashboard.chatBots": "Платформа CRM чат-боттары",
   "dashboard.dataSources": "Деректер",
   "dashboard.connectionWhatsappText": "Өтінімдер мен хабарламалар арнасы",
-  "dashboard.connectionTelegramText": "Диалогтар және ZANI боты",
+  "dashboard.connectionTelegramText": "Диалогтар және Платформа CRM боты",
   "dashboard.connectionInstagramText": "Instagram өтініштері",
   "dashboard.connectionImportText": "Сату, клиенттер, қалдықтар",
   "dashboard.connectionWarehouseText": "Тауарлар, қалдықтар, сатылымдар",
   "dashboard.connectionActive": "Белсенді",
   "dashboard.connectionConnect": "Қосу",
-  "dashboard.whatsappBot": "WhatsApp ZANI боты",
-  "dashboard.telegramBot": "Telegram ZANI боты",
-  "dashboard.instagramBot": "Instagram ZANI боты",
+  "dashboard.whatsappBot": "WhatsApp Платформа CRM боты",
+  "dashboard.telegramBot": "Telegram Платформа CRM боты",
+  "dashboard.instagramBot": "Instagram Платформа CRM боты",
   "dashboard.botWhatsappText": "Жауаптар, өтінімдер және менеджерге беру",
   "dashboard.botTelegramText": "Жауаптар, өтінімдер және менеджерге беру",
   "dashboard.botInstagramText": "Арна қосылғаннан кейін жауаптар мен өтінімдер",
@@ -571,7 +571,7 @@ export const kk: Record<string, string> = {
     "Сіздің жұмыс экраныңыз: клиентті сатып алуға жақындататын өтінімдер, тапсырмалар және жазбалар.",
   "dashboard.setupScore": "Бизнесті баптау бағасы",
   "dashboard.setupScoreText":
-    "Zani бизнесіңізді {score}% деңгейінде көреді. Дереккөздер мен анықтамалықтар көп болған сайын CRM келесі әрекеттерді дәлірек ұсынады.",
+    "Платформа CRM бизнесіңізді {score}% деңгейінде көреді. Дереккөздер мен анықтамалықтар көп болған сайын CRM келесі әрекеттерді дәлірек ұсынады.",
   "dashboard.quickLead": "Жаңа өтінім",
   "dashboard.quickBooking": "Жазба",
   "dashboard.quickDialogs": "Диалогтар",
@@ -601,12 +601,12 @@ export const kk: Record<string, string> = {
   "dashboard.demandSource": "Сұраныс көзі",
   "dashboard.checkChannels": "{source} · арналарды тексеріңіз.",
   "dashboard.notEnoughData": "Дерек әзірге аз",
-  "dashboard.aiPulse": "ZANI бизнес пульсі",
+  "dashboard.aiPulse": "Платформа CRM бизнес пульсі",
   "aiHints.eyebrow": "Навигатор",
   "aiHints.title": "Қазір не маңызды",
-  "dashboard.zaniRecommendations": "ZANI ұсыныстары",
+  "dashboard.zaniRecommendations": "Платформа CRM ұсыныстары",
   "dashboard.businessActivated": "Лендингіңіз іске қосылды",
-  "dashboard.acceptsLeads": "{business} ZANI арқылы өтінім қабылдап жатыр",
+  "dashboard.acceptsLeads": "{business} Платформа CRM арқылы өтінім қабылдап жатыр",
   "dashboard.trialCopy":
     "Сізге кеңейтілген қолжетімділіктің сыйлық айы ашылды. Қазір қосымша төлем қажет емес.",
   "dashboard.activeUntil": "Қолжетімділік {date} дейін белсенді.",
@@ -735,10 +735,10 @@ export const kk: Record<string, string> = {
     "Аяқталған жазбалар бойынша баға; нақты көрініс үшін сатылымдарды жүктеңіз.",
   "dashboard.revenueMissingValue": "Дерек жоқ",
   "dashboard.revenueMissingHint":
-    "ZANI нақты ақшаны көрсетуі үшін сатылымдарды қосыңыз немесе Excel/CSV импорттаңыз.",
+    "Платформа CRM нақты ақшаны көрсетуі үшін сатылымдарды қосыңыз немесе Excel/CSV импорттаңыз.",
   "dashboard.revenueMissingShort": "Нақты көрініс үшін сатылымдарды қосыңыз.",
   "dashboard.aiBrief.eyebrow": "AI-қорытынды",
-  "dashboard.aiBrief.title": "ZANI бүгін нені көріп тұр",
+  "dashboard.aiBrief.title": "Платформа CRM бүгін нені көріп тұр",
   "dashboard.aiBrief.source": "Тек осы кабинеттің деректері",
   "dashboard.aiBrief.overdueTitle": "Мерзімі өткен тапсырмалар бар",
   "dashboard.aiBrief.overdueText":
@@ -753,11 +753,11 @@ export const kk: Record<string, string> = {
   "dashboard.aiBrief.openCalendar": "Күнтізбені ашу",
   "dashboard.aiBrief.salesTitle": "Ақша бойынша дерек жоқ",
   "dashboard.aiBrief.salesText":
-    "ZANI түсімді түсіндіруі үшін сатылымдарды қосыңыз немесе Excel/CSV импорттаңыз.",
+    "Платформа CRM түсімді түсіндіруі үшін сатылымдарды қосыңыз немесе Excel/CSV импорттаңыз.",
   "dashboard.aiBrief.connectSales": "Деректерді қосу",
   "dashboard.aiBrief.setupTitle": "Бизнес толық бапталмаған",
   "dashboard.aiBrief.setupText":
-    "ZANI бизнесті {score}% деңгейінде көріп тұр. Дәл кеңестер үшін жылдам бастауды аяқтаңыз.",
+    "Платформа CRM бизнесті {score}% деңгейінде көріп тұр. Дәл кеңестер үшін жылдам бастауды аяқтаңыз.",
   "dashboard.aiBrief.openSetup": "Жылдам бастау",
   "dashboard.aiBrief.missingTitle": "Деректер жеткіліксіз",
   "dashboard.aiBrief.missingText":
@@ -768,9 +768,9 @@ export const kk: Record<string, string> = {
   "dashboard.ownerReadinessLine":
     "Бизнес дайындығы {setup}% · конверсия {conversion}%",
   "dashboard.stitchSubtitle": "Бұл - бизнесіңіздің ағымдағы жағдайы.",
-  "dashboard.smartTitle": "ZANI SMART ИНТЕЛЛЕКТ",
+  "dashboard.smartTitle": "Платформа CRM SMART ИНТЕЛЛЕКТ",
   "dashboard.smartSummary":
-    "ZANI маңызды сигналдарды байқады: лидтер жауап күтеді, кейбір диалогтарға жауап берілмеген, ал қозғалыссыз мәмілелерді бүгін тексеру керек.",
+    "Платформа CRM маңызды сигналдарды байқады: лидтер жауап күтеді, кейбір диалогтарға жауап берілмеген, ал қозғалыссыз мәмілелерді бүгін тексеру керек.",
   "dashboard.smartPrimaryAction": "Жауап уақытын түзету",
   "dashboard.smartSecondaryAction": "Мәмілелерді шолу",
   "dashboard.integrationStatus": "Интеграциялар",
@@ -842,7 +842,7 @@ export const kk: Record<string, string> = {
   "dashboard.openAiAnalyst": "AI Analyst ашу",
   "dashboard.openTeamSettings": "Команда баптауларын ашу",
   "dashboard.aiProviderUnavailable":
-    "Live AI провайдері дайын емес немесе бапталмаған. ZANI расталмаған AI жауаптарын көрсетпейді; дереккөзге сүйенген CRM күйлері көрініп тұрады.",
+    "Live AI провайдері дайын емес немесе бапталмаған. Платформа CRM расталмаған AI жауаптарын көрсетпейді; дереккөзге сүйенген CRM күйлері көрініп тұрады.",
   "dashboard.aiProviderStatus": "AI провайдері: {provider} · {mode}",
   "header.notifications": "Хабарламалар",
   "header.notificationsSummary": "{due} қазір назар қажет · {urgent} шұғыл",
@@ -953,7 +953,7 @@ export const kk: Record<string, string> = {
   "pricing.stopAgent": "Агентті тоқтату",
   "pricing.catalogTitle": "Интеграциялардан келген тауарлар",
   "pricing.catalogText":
-    "ZANI тауарларды Kaspi, МойСклад, 1C, Excel/CSV, Ozon және Wildberries көздерінен жинайды.",
+    "Платформа CRM тауарларды Kaspi, МойСклад, 1C, Excel/CSV, Ozon және Wildberries көздерінен жинайды.",
   "pricing.refreshCatalog": "Тауарларды жаңарту",
   "pricing.bulkMinPrice": "Жалпы шек",
   "pricing.step": "Қадам",
@@ -1005,9 +1005,9 @@ export const kk: Record<string, string> = {
   "pricing.recommendationLine": "Ұсыныс: {price} · {reason} · статус {status}",
   "pricing.autopilot": "Автопилот",
   "pricing.autopilotEnabledText":
-    "Қосулы. ZANI жоспарлы циклде қауіпсіз ұсыныстарды қолдана алады.",
+    "Қосулы. Платформа CRM жоспарлы циклде қауіпсіз ұсыныстарды қолдана алады.",
   "pricing.autopilotCheckText":
-    "Қоспас бұрын ZANI шекті, күндік лимитті және мониторинг барын тексереді.",
+    "Қоспас бұрын Платформа CRM шекті, күндік лимитті және мониторинг барын тексереді.",
   "pricing.stop": "Тоқтату",
   "pricing.enableAutopilot": "Автопилотты қосу",
   "pricing.minPriceValue": "Шек: {price}",
@@ -1213,7 +1213,7 @@ export const kk: Record<string, string> = {
   "developers.advanced": "Кеңейтілген",
   "developers.title": "Интеграция кілттері және оқиғалар",
   "developers.description":
-    "Техникалық қосылымдарға арналған кеңейтілген қабат. Оны тек әзірлеушімен немесе ZANI қолдауымен бірге пайдаланыңыз.",
+    "Техникалық қосылымдарға арналған кеңейтілген қабат. Оны тек әзірлеушімен немесе Платформа CRM қолдауымен бірге пайдаланыңыз.",
   "developers.summary": "{tokens} кілт · {webhooks} оқиға",
   "developers.defaultTokenName": "CRM интеграция кілті",
   "developers.defaultWebhookName": "Жұмыс webhook",
@@ -1342,7 +1342,7 @@ export const kk: Record<string, string> = {
     "Алдымен сайт арнасын қосыңыз. Содан кейін мұнда хабар формасы пайда болады.",
   "botDetail.previewResultTitle": "Тексеру нәтижесі",
   "botDetail.previewResultDescription":
-    "Хабарда телефон немесе email болса, ZANI клиент пен өтінім жасайды. Жібергеннен кейін хабарламаларды ашыңыз: диалог менеджерге көрінуі керек.",
+    "Хабарда телефон немесе email болса, Платформа CRM клиент пен өтінім жасайды. Жібергеннен кейін хабарламаларды ашыңыз: диалог менеджерге көрінуі керек.",
   "botDetail.noPreviewMessages": "Хабарлар әлі жоқ.",
   "botDetail.aiReplyTitle": "Жауап черновигі",
   "botDetail.aiReplyDescription":
@@ -1362,7 +1362,7 @@ export const kk: Record<string, string> = {
   "whatsappSetup.savedNotice": "WhatsApp пилоты дайындалды. Статус: {status}.",
   "whatsappSetup.title": "WhatsApp қосылымы",
   "whatsappSetup.description":
-    "Қосылымды ZANI қолдау қызметі дайындайды. Иесі тек статус пен түсінікті әрекеттерді көреді.",
+    "Қосылымды Платформа CRM қолдау қызметі дайындайды. Иесі тек статус пен түсінікті әрекеттерді көреді.",
   "whatsappSetup.supportTitle": "Қауіпсіз қосу қолдау арқылы орындалады",
   "whatsappSetup.supportText":
     "Біз нөмірді, хабарлама сценарийін тексеріп, техникалық кілттерді кабинетте көрсетпей арнаны қосамыз.",
@@ -1381,7 +1381,7 @@ export const kk: Record<string, string> = {
   "whatsappSetup.emptyHistory":
     "Тарих әзірге бос. Алғашқы кіріс және шығыс хабарламалар осында пайда болады.",
   "whatsappSetup.noChannel":
-    "WhatsApp әлі қосылмаған. Интеграциялар бөлімінде сұрау қалдырыңыз немесе ZANI қолдау қызметіне жазыңыз.",
+    "WhatsApp әлі қосылмаған. Интеграциялар бөлімінде сұрау қалдырыңыз немесе Платформа CRM қолдау қызметіне жазыңыз.",
   "pilot.status.ready": "Дайын",
   "pilot.status.needsAttention": "Назар қажет",
   "pilot.status.missing": "Бапталмаған",
@@ -1391,7 +1391,7 @@ export const kk: Record<string, string> = {
     "Чеклистті жүктеу мүмкін болмады. Бизнеске қолжетімділікті тексеріңіз.",
   "pilot.title": "Пилотқа дайындық",
   "pilot.description":
-    "Zani-ді пилот клиенттерге көрсетудің алдындағы бақылау беті: бизнес, деректер, бот, хабарламалар, төлем, ассистент, импорт және интеграциялар.",
+    "Платформа CRM-ді пилот клиенттерге көрсетудің алдындағы бақылау беті: бизнес, деректер, бот, хабарламалар, төлем, ассистент, импорт және интеграциялар.",
   "pilot.refresh": "Чеклистті жаңарту",
   "pilot.noBusiness": "Бизнес таңдалмаған",
   "pilot.scoreTitle": "Пилот дайындығы:",
@@ -1790,7 +1790,7 @@ export const kk: Record<string, string> = {
   "services.editTitle": "Қызметті өңдеу",
   "services.formHintTitle": "Қызмет күнтізбеге әсер етеді",
   "services.formHintText":
-    "Ұзақтық неғұрлым нақты болса, Zani бос уақыттарды және мамандар жүктемесін соғұрлым дәл көрсетеді.",
+    "Ұзақтық неғұрлым нақты болса, Платформа CRM бос уақыттарды және мамандар жүктемесін соғұрлым дәл көрсетеді.",
   "services.templatesTitle": "Қызметті жылдам бастау",
   "services.templatesText":
     "Үлгіні таңдаңыз, кейін атауын, бағасын немесе ұзақтығын өз бизнесіңізге бейімдеңіз.",
@@ -1973,7 +1973,7 @@ export const kk: Record<string, string> = {
     "{count} клиент әзірге өтінімдермен немесе жазбалармен байланыспаған. Оларды қайта байланыс үшін сегменттеуге болады.",
   "clients.aiLinkedTitle": "Клиент базасы оқиғалармен байланысқан",
   "clients.aiLinkedDesc":
-    "Клиенттерде өтінімдер немесе жазбалар бар, сондықтан ZANI байланыс тарихын дәлірек түсіндіреді.",
+    "Клиенттерде өтінімдер немесе жазбалар бар, сондықтан Платформа CRM байланыс тарихын дәлірек түсіндіреді.",
   "clients.aiTagsTitle": "Клиенттерге тег қосыңыз",
   "clients.aiTagsDesc":
     "Тегтер тұрақты, ыстық және тәуекелді клиенттерді күрделі CRM-логикасыз бөлуге көмектеседі.",
@@ -2737,7 +2737,7 @@ export const kk: Record<string, string> = {
   "analytics.smartReportText":
     "{source} қазір өтінімдердің ең көрнекті дереккөзі. Лидтен жазбаға конверсия: {conversion}%. Шығынды оңтайландырмас бұрын канал мен өтінім байланысын тексеріңіз.",
   "analytics.smartReportNoSource":
-    "Өтінім дереккөзі әлі анықталмаған. ZANI басымдықты көрсетуі үшін каналдарды қосып, алғашқы оқиғаларды күтіңіз.",
+    "Өтінім дереккөзі әлі анықталмаған. Платформа CRM басымдықты көрсетуі үшін каналдарды қосып, алғашқы оқиғаларды күтіңіз.",
   "analytics.smartReportAction": "Оңтайландыру",
   "analytics.noBusiness": "Аналитиканы көру үшін баптауларда бизнес жасаңыз.",
   "analytics.loadError": "Иесінің аналитикасын жүктеу мүмкін болмады.",
@@ -2783,7 +2783,7 @@ export const kk: Record<string, string> = {
   "analytics.aiDataQualityTitle": "Дерек сапасы",
   "analytics.aiSalesDataTitle": "Сатылымдар қосылмаған",
   "analytics.aiSalesDataDesc":
-    "Сатылымдарсыз ZANI табыс пен LTV бойынша қорытынды жасамайды.",
+    "Сатылымдарсыз Платформа CRM табыс пен LTV бойынша қорытынды жасамайды.",
   "analytics.aiConnectData": "Деректерді қосу",
   "analytics.sourceRoi": "Дереккөздер және қызметтерді бағалау",
   "analytics.teamCsv": "Команда CSV",
@@ -2824,7 +2824,7 @@ export const kk: Record<string, string> = {
   "analytics.noTeams": "Командалар бөлімдер бапталғаннан кейін пайда болады.",
   "settings.title": "Баптаулар",
   "settings.description":
-    "Zani бизнесі, командасы, рұқсаттары және жүйелік баптаулары.",
+    "Платформа CRM бизнесі, командасы, рұқсаттары және жүйелік баптаулары.",
   "settings.navigationTitle": "Баптау бөлімдері",
   "settings.navigationText":
     "Топты ашып, бүкіл бетті айналдырмай қажет блокқа өтіңіз.",
@@ -2950,9 +2950,9 @@ export const kk: Record<string, string> = {
   "settings.copied": "Көшірілді",
   "settings.revoke": "Қайтарып алу",
   "settings.noInvites": "Белсенді шақырулар әзірге жоқ.",
-  "settings.inviteSubject": "Zani CRM-ге шақыру",
+  "settings.inviteSubject": "Платформа CRM CRM-ге шақыру",
   "settings.inviteMessage":
-    "Сізді Zani CRM-ге шақырды. Сілтемені ашып, пароль қойыңыз: {url}",
+    "Сізді Платформа CRM CRM-ге шақырды. Сілтемені ашып, пароль қойыңыз: {url}",
   "settings.role.owner": "Ие",
   "settings.role.admin": "Әкімші",
   "settings.role.manager": "Менеджер",
@@ -3400,7 +3400,7 @@ export const kk: Record<string, string> = {
     "Қолжетімді деректер бойынша айқын тәуекел жоқ. Өтінімдер, тапсырмалар және диалогтарды бақылауды жалғастырыңыз.",
   "aiNavigator.dataPolicyTitle": "Тек осы бизнес деректері",
   "aiNavigator.dataPolicyText":
-    "ZANI AI басқа компаниялардың деректерін қолданбайды, интернеттен іздемейді және фактісіз қорытынды жасамайды.",
+    "Платформа CRM AI басқа компаниялардың деректерін қолданбайды, интернеттен іздемейді және фактісіз қорытынды жасамайды.",
   "aiNavigator.roleHelpTitle": "Рөл бойынша кеңестер",
   "aiNavigator.roleHelpText":
     "Иесі бизнес бақылауын көреді, менеджер келесі жұмыс әрекеттерін көреді.",
@@ -3416,7 +3416,7 @@ export const kk: Record<string, string> = {
   "aiNavigator.noSourceDataState":
     "Бұл рөлге әзірге бастапқы жазбалар көрінбейді. Арнаны қосыңыз, деректерді импорттаңыз немесе CRM белсенділігін күтіңіз.",
   "aiNavigator.suggestedActions": "Ұсынылған әрекеттер",
-  "aiNavigator.prompt.dailySummary": "ZANI бойынша қысқа бизнес-сводка жаса.",
+  "aiNavigator.prompt.dailySummary": "Платформа CRM бойынша қысқа бизнес-сводка жаса.",
   "aiNavigator.prompt.factOnly":
     "Тек төмендегі фактілерді қолдан. Сыртқы деректерді, нарықты, бәсекелестерді немесе расталмаған себептерді қоспа.",
   "aiNavigator.prompt.insufficientData":
@@ -3504,7 +3504,7 @@ export const kk: Record<string, string> = {
   "aiAssistant.memory.category.operations": "Операциялар",
   "aiAssistant.memory.category.tone": "Сөйлесу тоны",
   "aiAssistant.memory.category.policy": "Ережелер",
-  "aiAgents.defaultName": "Zani көмекшісі",
+  "aiAgents.defaultName": "Платформа CRM көмекшісі",
   "aiAgents.defaultRoleDescription":
     "Өтінімдерді анықтап, менеджерлерге жылдам жауап беруге көмектесу.",
   "aiAgents.defaultSystemPrompt":
@@ -4152,7 +4152,7 @@ export const kk: Record<string, string> = {
   "leads.aiReviewPipeline": "Тексеру",
   "leads.aiDataTitle": "Өтінім көздерін қосыңыз",
   "leads.aiDataDesc":
-    "WhatsApp, Telegram немесе сайт қосылса, ZANI әлсіз жерлерді дәлірек көрсетеді.",
+    "WhatsApp, Telegram немесе сайт қосылса, Платформа CRM әлсіз жерлерді дәлірек көрсетеді.",
   "leads.aiConnectSources": "Қосу",
   "leads.nextActionContactClient": "Клиентпен байланысу",
   "leads.nextActionQualifyNeed": "Қажеттілікті нақтылау",
@@ -4417,7 +4417,7 @@ export const kk: Record<string, string> = {
     "Мәмілелер, клиенттер, хат алмасулар және жақын қадамдар бір жұмыс экранында.",
   "deals.aiPriorityTitle": "AI Интеллект басымдығы",
   "deals.aiPriorityText":
-    "{deal} мәмілесін тексеріңіз: клиент {client}, сома {amount}. ZANI тоқтап қалу қаупін көріп, келесі қадамды тағайындауды ұсынады.",
+    "{deal} мәмілесін тексеріңіз: клиент {client}, сома {amount}. Платформа CRM тоқтап қалу қаупін көріп, келесі қадамды тағайындауды ұсынады.",
   "deals.aiPriorityEmpty":
     "Қазір критикалық мәмілелер жоқ. Pipeline жақын тапсырмалар бойынша жүргізіледі.",
   "deals.takeAction": "Әрекет ету",
@@ -4625,7 +4625,7 @@ export const kk: Record<string, string> = {
   "platform.overview.loading": "Платформа метрикалары жүктелуде...",
   "platform.overview.error": "Платформа dashboard жүктелмеді.",
   "platform.overview.eyebrow": "Платформаны басқару",
-  "platform.overview.title": "Zani шолуы",
+  "platform.overview.title": "Платформа CRM шолуы",
   "platform.overview.description":
     "Merchant CRM sidebar және internal dev tools жоқ нақты өнім метрикалары.",
   "platform.overview.totalMerchants": "Барлық мерчанттар",
@@ -4950,7 +4950,7 @@ export const kk: Record<string, string> = {
     "Қызметтер мен каталог немесе қалдық оқиғаларын жасайды.",
   "integrations.import.chooseFile": "CSV немесе XLSX файл таңдаңыз.",
   "integrations.import.panelDescription":
-    "Клиенттер, өтінімдер, сатылымдар немесе каталог бар файлды жүктеңіз. ZANI алдымен файлды тексеріп, алдын ала көріністі көрсетеді.",
+    "Клиенттер, өтінімдер, сатылымдар немесе каталог бар файлды жүктеңіз. Платформа CRM алдымен файлды тексеріп, алдын ала көріністі көрсетеді.",
   "integrations.import.eyebrow": "Excel / CSV коннекторы",
   "integrations.import.title": "Нақты деректерді импорттау",
   "integrations.import.description":
@@ -4978,7 +4978,7 @@ export const kk: Record<string, string> = {
   "integrations.import.duplicates": "Дубльдер",
   "integrations.import.duplicatesFound": "Ықтимал дубльдер табылды",
   "integrations.import.duplicatesDescription":
-    "Клиент телефон немесе email бойынша табылса, ZANI екінші карточка жасамайды.",
+    "Клиент телефон немесе email бойынша табылса, Платформа CRM екінші карточка жасамайды.",
   "integrations.import.duplicatesCount": "{count} ықтимал дубль",
   "integrations.import.summaryRows": "Жолдар",
   "integrations.import.summaryCreated": "Жасалды",
@@ -5049,7 +5049,7 @@ export const kk: Record<string, string> = {
     "Пилотқа арналған алғашқы сыртқы арна: Telegram хабарламалары кіріс жәшігіне түседі. Қосу қолдау арқылы қауіпсіз жасалады, күнделікті жұмыста құпия деректер көрсетілмейді.",
   "integrations.telegram.ownerGuide": "Иеге түсінікті баптау",
   "integrations.telegram.step1":
-    "1. Статусты тексеріп, арнаның ZANI ішінде жасалғанына көз жеткізіңіз.",
+    "1. Статусты тексеріп, арнаның Платформа CRM ішінде жасалғанына көз жеткізіңіз.",
   "integrations.telegram.step2":
     "2. Сыртқы Telegram әлі байланыспаса, қосуды қолдау командасына беріңіз.",
   "integrations.telegram.step3":
@@ -5060,7 +5060,7 @@ export const kk: Record<string, string> = {
   "integrations.telegram.tokenSaved": "Қолдауға берілген",
   "integrations.telegram.tokenMissing": "Баптауды күтеді",
   "integrations.telegram.messageIntake": "Хабарлама қабылдау",
-  "integrations.telegram.intakeConfigured": "ZANI ішінде бапталған",
+  "integrations.telegram.intakeConfigured": "Платформа CRM ішінде бапталған",
   "integrations.telegram.intakePending": "Сақтағаннан кейін бапталады",
   "integrations.telegram.webhook": "Арнаны дайындау",
   "integrations.telegram.webhookConfigured": "Арна дайын",
@@ -5075,7 +5075,7 @@ export const kk: Record<string, string> = {
     "Ие арна статусын және тексеруді көреді. Құпия қосылу деректері сақталғаннан кейін көрсетілмейді және күнделікті жұмысқа қажет емес.",
   "integrations.telegram.advancedSetup": "Кеңейтілген пилоттық баптау",
   "integrations.telegram.advancedSetupHelp":
-    "Қолдау командасы қосу кодын сұраса ғана қолданыңыз. ZANI оны қауіпсіз сақтайды және интерфейсте қайта көрсетпейді.",
+    "Қолдау командасы қосу кодын сұраса ғана қолданыңыз. Платформа CRM оны қауіпсіз сақтайды және интерфейсте қайта көрсетпейді.",
   "integrations.telegram.botFatherToken": "Telegram қосу коды",
   "integrations.telegram.tokenReplacePlaceholder":
     "Код сақталған. Ауыстыру үшін ғана жаңа код енгізіңіз.",
@@ -5096,7 +5096,7 @@ export const kk: Record<string, string> = {
     "Кіріс хабарламаларды қосу мүмкін болмады.",
   "integrations.telegram.createChannel": "Telegram арнасын жасау",
   "integrations.telegram.inlineDescription":
-    "ZANI клиент хабарламаларын қабылдап, компанияңыз атынан жауап жіберуі үшін ботты қосыңыз.",
+    "Платформа CRM клиент хабарламаларын қабылдап, компанияңыз атынан жауап жіберуі үшін ботты қосыңыз.",
   "integrations.telegram.botKey": "Бот кілті",
   "integrations.telegram.tokenSavedPrivate":
     "Кілт жеке сақталған. Ауыстыру үшін ғана жаңа кілт енгізіңіз.",
@@ -5155,7 +5155,7 @@ export const kk: Record<string, string> = {
   "integrations.instagram.accessSaved":
     "Instagram доступы жеке сақталды. Енді қосылымды тексеріңіз.",
   "integrations.instagram.metaOpenFailed":
-    "Meta арқылы қосуды ашу мүмкін болмады. ZANI қолдауына хабарласыңыз.",
+    "Meta арқылы қосуды ашу мүмкін болмады. Платформа CRM қолдауына хабарласыңыз.",
   "integrations.instagram.connectedNotice": "Instagram қосылды.",
   "integrations.instagram.connectionChecked": "Instagram қосылымы тексерілді.",
   "integrations.instagram.connectionCheckFailed":
@@ -5163,7 +5163,7 @@ export const kk: Record<string, string> = {
   "integrations.instagram.finishConnection": "Қосуды аяқтаңыз",
   "integrations.instagram.createChannel": "Instagram арнасын жасау",
   "integrations.instagram.inlineDescription":
-    "ZANI хабарламаларды қабылдап, диалогтарды менеджерлерге беруі үшін Instagram Direct-ті Meta арқылы қосыңыз.",
+    "Платформа CRM хабарламаларды қабылдап, диалогтарды менеджерлерге беруі үшін Instagram Direct-ті Meta арқылы қосыңыз.",
   "integrations.instagram.accountId": "Instagram аккаунт ID",
   "integrations.instagram.idSaved": "ID сақталған",
   "integrations.instagram.facebookPageId": "Facebook Page ID",
@@ -5186,18 +5186,18 @@ export const kk: Record<string, string> = {
   "integrations.whatsapp.connectionCheckFailed":
     "WhatsApp доступы тексеруден өтпеді.",
   "integrations.whatsapp.metaOpenFailed":
-    "Meta арқылы қосуды ашу мүмкін болмады. ZANI қолдауына хабарласыңыз.",
+    "Meta арқылы қосуды ашу мүмкін болмады. Платформа CRM қолдауына хабарласыңыз.",
   "integrations.whatsapp.metaAccessDenied":
     "Meta доступты растамады. WhatsApp-ты қайта қосып көріңіз.",
   "integrations.whatsapp.metaConfirmed":
     "Meta доступты растады. Қосуды аяқтаңыз.",
   "integrations.whatsapp.metaFallbackOpened":
-    "Meta қосудың резервтік терезесі ашылды. Кіруді аяқтап, ZANI-ға оралыңыз.",
+    "Meta қосудың резервтік терезесі ашылды. Кіруді аяқтап, Платформа CRM-ға оралыңыз.",
   "integrations.whatsapp.connectedNotice": "WhatsApp қосылды.",
   "integrations.whatsapp.finishConnection": "Қосуды аяқтаңыз",
   "integrations.whatsapp.createChannel": "WhatsApp арнасын жасау",
   "integrations.whatsapp.inlineDescription":
-    "ZANI WhatsApp Business арқылы хабарламаларды қабылдап және жібере алуы үшін Meta доступын растаңыз.",
+    "Платформа CRM WhatsApp Business арқылы хабарламаларды қабылдап және жібере алуы үшін Meta доступын растаңыз.",
   "integrations.whatsapp.phoneNumberId": "WhatsApp нөмір ID",
   "integrations.whatsapp.phoneNumberIdSaved": "Нөмір ID сақталған",
   "integrations.whatsapp.businessAccountId": "Бизнес аккаунт ID",
@@ -5253,7 +5253,7 @@ export const kk: Record<string, string> = {
   "integrations.kaspi.connect": "Kaspi қосу",
   "integrations.kaspi.loadOrders": "Тапсырыстарды жүктеу",
   "integrations.kaspi.readOnlyNotice":
-    "ZANI аналитика үшін тапсырыстарды ғана оқиды. Мұнда Kaspi бағаларын өзгерту, тапсырысты қабылдау және бас тарту өшірілген.",
+    "Платформа CRM аналитика үшін тапсырыстарды ғана оқиды. Мұнда Kaspi бағаларын өзгерту, тапсырысты қабылдау және бас тарту өшірілген.",
   "integrations.moysklad.accessSaved":
     "МойСклад қосылды. Доступ жеке сақталды, қосылымды тексеруге болады.",
   "integrations.moysklad.connectionChecked": "МойСклад қосылымы тексерілді.",
@@ -5266,7 +5266,7 @@ export const kk: Record<string, string> = {
   "integrations.moysklad.loadedBefore": "Жүктелген",
   "integrations.moysklad.connectionTitle": "МойСклад қосу",
   "integrations.moysklad.connectionDescription":
-    "МойСклад доступ кілтін енгізіңіз. ZANI оны жеке сақтап, тек деректерді жүктеу үшін қолданады.",
+    "МойСклад доступ кілтін енгізіңіз. Платформа CRM оны жеке сақтап, тек деректерді жүктеу үшін қолданады.",
   "integrations.moysklad.accessKey": "МойСклад доступ кілті",
   "integrations.moysklad.accessKeyPlaceholder":
     "МойСклад доступ кілтін енгізіңіз",
@@ -5278,7 +5278,7 @@ export const kk: Record<string, string> = {
   "integrations.moysklad.connect": "МойСклад қосу",
   "integrations.moysklad.loadData": "Деректерді жүктеу",
   "integrations.moysklad.readOnlyNotice":
-    "ZANI тек тауарларды, қалдықтарды, сатылымдарды және контрагенттерді оқиды. МойСклад ішінде құжаттарды, бағаларды және қалдықтарды өзгерту өшірілген.",
+    "Платформа CRM тек тауарларды, қалдықтарды, сатылымдарды және контрагенттерді оқиды. МойСклад ішінде құжаттарды, бағаларды және қалдықтарды өзгерту өшірілген.",
   "integrations.ozon.accessSaved":
     "Ozon қосылды. Доступ жеке сақталды, қосылымды тексеруге болады.",
   "integrations.ozon.connectionChecked": "Ozon қосылымы тексерілді.",
@@ -5289,7 +5289,7 @@ export const kk: Record<string, string> = {
   "integrations.ozon.data": "Деректер",
   "integrations.ozon.connectionTitle": "Ozon қосу",
   "integrations.ozon.connectionDescription":
-    "Ozon сатушы кабинетіндегі доступ деректерін енгізіңіз. ZANI оларды тек жөнелтілімдер мен қалдықтарды оқу үшін қолданады.",
+    "Ozon сатушы кабинетіндегі доступ деректерін енгізіңіз. Платформа CRM оларды тек жөнелтілімдер мен қалдықтарды оқу үшін қолданады.",
   "integrations.ozon.enterAccess": "Доступ енгізу",
   "integrations.ozon.sellerId": "Ozon сатушы ID",
   "integrations.ozon.sellerIdReplacePlaceholder":
@@ -5302,7 +5302,7 @@ export const kk: Record<string, string> = {
   "integrations.ozon.connect": "Ozon қосу",
   "integrations.ozon.loadData": "Деректерді жүктеу",
   "integrations.ozon.readOnlyNotice":
-    "ZANI Ozon бағаларын, қалдықтарын, карточкаларын, жинауды және тапсырыстан бас тартуды жаңартпайды. Қосу тек есептер үшін деректерді жүктейді.",
+    "Платформа CRM Ozon бағаларын, қалдықтарын, карточкаларын, жинауды және тапсырыстан бас тартуды жаңартпайды. Қосу тек есептер үшін деректерді жүктейді.",
   "integrations.wildberries.accessSaved":
     "Wildberries қосылды. Доступ жеке сақталды, қосылымды тексеруге болады.",
   "integrations.wildberries.connectionChecked":
@@ -5317,7 +5317,7 @@ export const kk: Record<string, string> = {
   "integrations.wildberries.updateWindowValue": "~30 минут",
   "integrations.wildberries.connectionTitle": "Wildberries қосу",
   "integrations.wildberries.connectionDescription":
-    "Wildberries сатушы кабинетіндегі доступ кілтін енгізіңіз. ZANI аналитика үшін тек тапсырыстар мен сатылымдарды оқиды.",
+    "Wildberries сатушы кабинетіндегі доступ кілтін енгізіңіз. Платформа CRM аналитика үшін тек тапсырыстар мен сатылымдарды оқиды.",
   "integrations.wildberries.accessKey": "Wildberries доступ кілті",
   "integrations.wildberries.accessKeyPlaceholder":
     "Wildberries доступ кілтін енгізіңіз",
@@ -5329,12 +5329,12 @@ export const kk: Record<string, string> = {
   "integrations.wildberries.connect": "Wildberries қосу",
   "integrations.wildberries.loadData": "Деректерді жүктеу",
   "integrations.wildberries.readOnlyNotice":
-    "ZANI Wildberries бағаларын, карточкаларын, жеткізілімдерін және тапсырыстарын өзгертпейді. Қосу тек есептер үшін деректерді жүктейді.",
+    "Платформа CRM Wildberries бағаларын, карточкаларын, жеткізілімдерін және тапсырыстарын өзгертпейді. Қосу тек есептер үшін деректерді жүктейді.",
   "integrations.kaspiPricing.stoppedNotice":
     "Баға агенті тоқтатылды. Бағаларды қолдану бұғатталды.",
   "integrations.kaspiPricing.resumedNotice": "Баға агенті қайта белсенді.",
   "integrations.kaspiPricing.productTitle":
-    "Бағаларға арналған бөлек ZANI өнімі",
+    "Бағаларға арналған бөлек Платформа CRM өнімі",
   "integrations.kaspiPricing.productDescription":
     "Қарапайым Kaspi коннекторы тек тапсырыстар мен бизнес деректерін оқиды. Kaspi Pricing баға ережелерін, шектерді, бәсекелестер мониторингін және автопилотты басқарады.",
   "integrations.kaspiPricing.openAgent": "Агентті ашу",
@@ -5367,7 +5367,7 @@ export const kk: Record<string, string> = {
     "Арналар мен сыртқы сервистерді қосу үшін бизнес құрыңыз.",
   "integrations.page.title": "Бизнес қосылымдары",
   "integrations.page.description":
-    "ZANI пилоттық коннектор картасы: self-service арналар, request-қосылымдар, тарифтік upsell модульдер және тұйық кнопкасыз roadmap.",
+    "Платформа CRM пилоттық коннектор картасы: self-service арналар, request-қосылымдар, тарифтік upsell модульдер және тұйық кнопкасыз roadmap.",
   "integrations.page.safeTokenNotice": "CRM ішінде техникалық токендер жоқ",
   "integrations.page.includedTitle": "Тарифте бар",
   "integrations.page.includedText":
@@ -5404,7 +5404,7 @@ export const kk: Record<string, string> = {
   "integrations.overview.openAgentChannels": "Агент арналарын ашу",
   "integrations.overview.recommendedTitle": "Ұсынылатын интеграция",
   "integrations.overview.recommendedText":
-    "{provider} қызметінен бастаңыз: бұл ZANI-ге өтініштер бойынша көбірек контекст беріп, қолмен өңдеуді азайтады.",
+    "{provider} қызметінен бастаңыз: бұл Платформа CRM-ге өтініштер бойынша көбірек контекст беріп, қолмен өңдеуді азайтады.",
   "integrations.overview.connectNow": "Қосуды көрсету",
   "integrations.overview.searchPlaceholder": "Іздеу: сайт, Telegram, Kaspi...",
   "integrations.overview.allGroups": "Барлық бағыттар",
@@ -5451,7 +5451,7 @@ export const kk: Record<string, string> = {
   "integrations.connectorHint.selfService":
     "Пилотта сыртқы провайдерсіз қосуға болады. Бұл қауіпсіз self-service коннектор.",
   "integrations.connectorHint.request":
-    "Кнопка ZANI ішінде қосу өтінімін жасайды. Нақты қосуды ZANI командасы қолмен орындайды.",
+    "Кнопка Платформа CRM ішінде қосу өтінімін жасайды. Нақты қосуды Платформа CRM командасы қолмен орындайды.",
   "integrations.connectorHint.upgrade":
     "{plan} немесе жоғары тарифте қолжетімді. Қазір дайын емес кнопкасыз адал upsell көрсетеміз.",
   "integrations.connectorHint.roadmap":
@@ -5478,18 +5478,18 @@ export const kk: Record<string, string> = {
   "integrations.group.website.eyebrow": "Сайт",
   "integrations.group.website.title": "Сайт және виджеттер",
   "integrations.group.website.text":
-    "Виджет, формалар және сайттан түскен өтініштер ZANI кабинетінде.",
+    "Виджет, формалар және сайттан түскен өтініштер Платформа CRM кабинетінде.",
   "integrations.group.accounting.eyebrow": "Есеп",
   "integrations.group.accounting.title": "Қаржы, қойма және есеп",
   "integrations.group.accounting.text":
     "1C, МойСклад және қойма дереккөздерінен жеңіл көрініс.",
   "integrations.bots.eyebrow": "Жауаптарды автоматтандыру",
-  "integrations.bots.title": "ZANI чат-боттары",
+  "integrations.bots.title": "Платформа CRM чат-боттары",
   "integrations.bots.description":
-    "Арналар хабарламалар мен өтінімдерді қабылдайды. ZANI чат-боттары жиі сұрақтарға жауап беруге, өтінім қабылдауға және диалогтарды менеджерлерге беруге көмектеседі.",
+    "Арналар хабарламалар мен өтінімдерді қабылдайды. Платформа CRM чат-боттары жиі сұрақтарға жауап беруге, өтінім қабылдауға және диалогтарды менеджерлерге беруге көмектеседі.",
   "integrations.bots.safeNotice":
     "Мерчантқа API кілттері, webhook және техникалық баптаулар көрсетілмейді",
-  "integrations.bots.cardTitle": "ZANI {channel}-боты",
+  "integrations.bots.cardTitle": "Платформа CRM {channel}-боты",
   "integrations.bots.whatsappText":
     "Клиенттерге автоматты жауап береді, өтінім қабылдайды және WhatsApp диалогтарын менеджерлерге береді.",
   "integrations.bots.telegramText":
@@ -5518,7 +5518,7 @@ export const kk: Record<string, string> = {
   "integrations.setupMessage.connected":
     "Арна белсенді. Жаңа өтініштер мен оқиғалар Inbox, CRM, аналитика және автоматизацияға түседі.",
   "integrations.setupMessage.needsAttention":
-    "Қосу жасалды және баптауды немесе ZANI командасының қолмен тексеруін күтеді.",
+    "Қосу жасалды және баптауды немесе Платформа CRM командасының қолмен тексеруін күтеді.",
   "integrations.setupMessage.disabled":
     "Арна өшірілген. Қайта баптаудан немесе қолдау арқылы оны қайтаруға болады.",
   "integrations.card.businessValue": "Бизнеске пайдасы",
@@ -5552,7 +5552,7 @@ export const kk: Record<string, string> = {
   "integrations.card.websiteFlipTitle":
     "Сайттан келген өтінімдерді бірінші кликтен кейін жоғалтпаңыз.",
   "integrations.card.websiteFlipText":
-    "ZANI формадағы өтінімдерді қабылдап, бірден хабарламаларға жібереді.",
+    "Платформа CRM формадағы өтінімдерді қабылдап, бірден хабарламаларға жібереді.",
   "integrations.card.websiteFlow": "Сайт → Хабарламалар → Өтінімдер",
   "integrations.card.connectionTitle": "Қосу: {title}",
   "integrations.card.websiteNoExtraData":
@@ -5571,7 +5571,7 @@ export const kk: Record<string, string> = {
   "integrations.error.actionRequired":
     "Қосылым назар аударуды қажет етеді. Баптау статусын тексеріңіз немесе иеден қайта қосуды сұраңыз.",
   "integrations.error.webhookSetup":
-    "Кіріс хабарламалар әлі дайын емес. Ие немесе ZANI қолдауы webhook/setup тексерісін аяқтауы керек.",
+    "Кіріс хабарламалар әлі дайын емес. Ие немесе Платформа CRM қолдауы webhook/setup тексерісін аяқтауы керек.",
   "integrations.error.permission":
     "Рөліңіз қосылымды көруге мүмкіндік береді, бірақ баптауын өзгерте алмайды.",
   "integrations.error.rateLimit":

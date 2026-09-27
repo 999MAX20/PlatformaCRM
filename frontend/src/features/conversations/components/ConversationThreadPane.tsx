@@ -85,22 +85,22 @@ export function ConversationThreadPane({
       {!selected ? (
         <div className="grid flex-1 place-items-center p-8">
           <div className="text-center">
-            <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-card bg-zani-card text-brand-600 shadow-sm">
+            <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-card bg-platforma-card text-brand-600 shadow-sm">
               <MessageSquare aria-hidden="true" size={26} />
             </div>
-            <p className="text-2xl font-bold text-zani-muted">
+            <p className="text-2xl font-bold text-platforma-muted">
               {t("conversations.selectDialog")}
             </p>
           </div>
         </div>
       ) : (
         <>
-          {mobileActions ? <div className="flex flex-wrap gap-2 border-b border-zani-border p-3 xl:hidden">{mobileActions}</div> : null}
-          <div className="border-b border-zani-border bg-zani-card px-4 py-3">
+          {mobileActions ? <div className="flex flex-wrap gap-2 border-b border-platforma-border p-3 xl:hidden">{mobileActions}</div> : null}
+          <div className="border-b border-platforma-border bg-platforma-card px-4 py-3">
             <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <h2 className="truncate text-lg font-bold text-zani-text">
+                  <h2 className="truncate text-lg font-bold text-platforma-text">
                     {conversationTitle(selected, t)}
                   </h2>
                 </div>
@@ -113,7 +113,7 @@ export function ConversationThreadPane({
                       {t("conversations.botActive")}
                     </Pill>
                   ) : (
-                    <Pill className="bg-surface-muted text-zani-muted ring-zani-border">
+                    <Pill className="bg-surface-muted text-platforma-muted ring-platforma-border">
                       {t("conversations.botPaused")}
                     </Pill>
                   )}
@@ -226,7 +226,7 @@ export function ConversationThreadPane({
             ) : null}
             {messageList.length ? (
               <div className="sticky top-0 z-10 flex justify-center">
-                <span className="rounded-full bg-zani-card/90 px-3 py-1 text-xs font-bold text-zani-muted shadow-sm ring-1 ring-zani-border">
+                <span className="rounded-full bg-platforma-card/90 px-3 py-1 text-xs font-bold text-platforma-muted shadow-sm ring-1 ring-platforma-border">
                   {t("common.today")}
                 </span>
               </div>

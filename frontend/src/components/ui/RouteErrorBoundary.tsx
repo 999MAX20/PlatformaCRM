@@ -51,7 +51,7 @@ export function RouteErrorView({ error, onBack, onHome }: RouteErrorViewProps) {
   const appError = getRouteAppError(error);
 
   return (
-    <div className="min-h-screen bg-zani-bg px-4 py-8 text-zani-ink sm:px-8">
+    <div className="min-h-screen bg-platforma-bg px-4 py-8 text-platforma-ink sm:px-8">
       <div className="mx-auto max-w-3xl">
         <PageFallback
           error={appError}

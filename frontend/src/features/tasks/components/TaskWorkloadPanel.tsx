@@ -15,11 +15,11 @@ export function TaskWorkloadPanel({ workload, selectedAssignee, onSelectAssignee
   if (!workload) return null;
 
   return (
-    <section className="overflow-hidden rounded-card border border-zani-border bg-surface-card shadow-soft">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zani-border px-4 py-3">
+    <section className="overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-soft">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-platforma-border px-4 py-3">
         <div>
-          <h2 className="text-sm font-bold text-zani-text">{t("tasks.workloadTitle")}</h2>
-          <p className="mt-1 text-sm font-semibold text-zani-muted">
+          <h2 className="text-sm font-bold text-platforma-text">{t("tasks.workloadTitle")}</h2>
+          <p className="mt-1 text-sm font-semibold text-platforma-muted">
             {t("tasks.workloadActiveCount", { count: workload.totals.active_tasks })} · {t("tasks.workloadAssigneeCount", { count: workload.totals.assignees })}
           </p>
         </div>
@@ -61,18 +61,18 @@ function WorkloadAssigneeCard({
     <button
       type="button"
       className={`min-h-[168px] rounded-lg border p-4 text-left transition ${
-        isSelected ? "border-brand-300 bg-brand-50 shadow-sm" : "border-zani-border bg-surface-muted hover:border-brand-200 hover:bg-zani-card"
+        isSelected ? "border-brand-300 bg-brand-50 shadow-sm" : "border-platforma-border bg-surface-muted hover:border-brand-200 hover:bg-platforma-card"
       }`}
       onClick={() => onSelectAssignee(isSelected ? "" : assigneeValue)}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${item.type === "unassigned" ? "bg-[var(--zani-warning-soft)] text-zani-warning" : "bg-brand-50 text-brand-700"}`}>
+          <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${item.type === "unassigned" ? "bg-[var(--platforma-warning-soft)] text-platforma-warning" : "bg-brand-50 text-brand-700"}`}>
             <UserRound size={18} />
           </span>
           <span className="min-w-0">
-            <span className="block truncate text-sm font-bold text-zani-text">{title}</span>
-            {item.email ? <span className="mt-0.5 block truncate text-xs font-semibold text-zani-muted">{item.email}</span> : null}
+            <span className="block truncate text-sm font-bold text-platforma-text">{title}</span>
+            {item.email ? <span className="mt-0.5 block truncate text-xs font-semibold text-platforma-muted">{item.email}</span> : null}
           </span>
         </div>
         <span className={capacityClass(item.capacity_status)}>{capacityLabel(item.capacity_status, t)}</span>
@@ -84,7 +84,7 @@ function WorkloadAssigneeCard({
         <WorkloadMetric label={t("tasks.workloadToday")} value={item.due_today} tone="amber" />
       </div>
       {item.oldest_due_at ? (
-        <p className="mt-3 flex items-center gap-1.5 truncate text-xs font-semibold text-zani-muted">
+        <p className="mt-3 flex items-center gap-1.5 truncate text-xs font-semibold text-platforma-muted">
           <Clock3 size={13} />
           {t("tasks.workloadOldest")}: {formatDateTime(item.oldest_due_at)}
         </p>
@@ -94,18 +94,18 @@ function WorkloadAssigneeCard({
 }
 
 function WorkloadMetric({ label, value, tone = "slate" }: { label: string; value: number; tone?: "slate" | "red" | "amber" }) {
-  const valueClass = tone === "red" ? "text-zani-danger" : tone === "amber" ? "text-zani-warning" : "text-zani-text";
+  const valueClass = tone === "red" ? "text-platforma-danger" : tone === "amber" ? "text-platforma-warning" : "text-platforma-text";
   return (
-    <span className="rounded-control bg-zani-card px-2 py-2 text-center ring-1 ring-zani-border">
+    <span className="rounded-control bg-platforma-card px-2 py-2 text-center ring-1 ring-platforma-border">
       <span className={`block text-base font-bold ${valueClass}`}>{value}</span>
-      <span className="mt-0.5 block truncate text-[10px] font-bold uppercase text-zani-muted">{label}</span>
+      <span className="mt-0.5 block truncate text-[10px] font-bold uppercase text-platforma-muted">{label}</span>
     </span>
   );
 }
 
 function WorkloadTotal({ label, value, tone }: { label: string; value: number; tone: "red" | "amber" | "brand" }) {
   const Icon = tone === "red" ? AlertTriangle : tone === "amber" ? Clock3 : CheckCircle2;
-  const toneClass = tone === "red" ? "bg-[var(--zani-danger-soft)] text-zani-danger" : tone === "amber" ? "bg-[var(--zani-warning-soft)] text-zani-warning" : "bg-brand-50 text-brand-700";
+  const toneClass = tone === "red" ? "bg-[var(--platforma-danger-soft)] text-platforma-danger" : tone === "amber" ? "bg-[var(--platforma-warning-soft)] text-platforma-warning" : "bg-brand-50 text-brand-700";
   return (
     <span className={`inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-bold ${toneClass}`}>
       <Icon size={14} />
@@ -121,8 +121,8 @@ function capacityLabel(status: string, t: (key: string) => string) {
 }
 
 function capacityClass(status: string) {
-  if (status === "overloaded") return "shrink-0 rounded-full bg-[var(--zani-danger-soft)] px-2 py-1 text-[10px] font-bold uppercase text-zani-danger ring-1 ring-[rgba(194,65,12,0.2)]";
-  if (status === "busy") return "shrink-0 rounded-full bg-[var(--zani-warning-soft)] px-2 py-1 text-[10px] font-bold uppercase text-zani-warning ring-1 ring-[rgba(151,90,22,0.24)]";
-  if (status === "idle") return "shrink-0 rounded-full bg-surface-muted px-2 py-1 text-[10px] font-bold uppercase text-zani-muted ring-1 ring-zani-border";
-  return "shrink-0 rounded-full bg-[var(--zani-success-soft)] px-2 py-1 text-[10px] font-bold uppercase text-zani-success ring-1 ring-[rgba(21,128,61,0.18)]";
+  if (status === "overloaded") return "shrink-0 rounded-full bg-[var(--platforma-danger-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-danger ring-1 ring-[rgba(194,65,12,0.2)]";
+  if (status === "busy") return "shrink-0 rounded-full bg-[var(--platforma-warning-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-warning ring-1 ring-[rgba(151,90,22,0.24)]";
+  if (status === "idle") return "shrink-0 rounded-full bg-surface-muted px-2 py-1 text-[10px] font-bold uppercase text-platforma-muted ring-1 ring-platforma-border";
+  return "shrink-0 rounded-full bg-[var(--platforma-success-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-success ring-1 ring-[rgba(21,128,61,0.18)]";
 }

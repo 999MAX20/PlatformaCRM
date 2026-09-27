@@ -95,8 +95,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   if (!dictionary) {
     return (
-      <div className="grid min-h-screen place-items-center bg-zani-bg text-sm font-semibold text-zani-subtle">
-        Zani
+      <div className="grid min-h-screen place-items-center bg-platforma-bg text-sm font-semibold text-platforma-subtle">
+        Платформа CRM
       </div>
     );
   }

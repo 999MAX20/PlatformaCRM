@@ -124,23 +124,23 @@ export function OperationalInspector({
   return (
     <section
       className={cn(
-        "flex h-full min-h-0 flex-col overflow-hidden rounded-card border border-zani-border bg-surface-card shadow-card",
+        "flex h-full min-h-0 flex-col overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-card",
         className,
       )}
       data-testid={testId}
       aria-labelledby={resolvedTitleId}
     >
-      <header className="flex shrink-0 items-start justify-between gap-3 border-b border-zani-border px-4 py-4">
+      <header className="flex shrink-0 items-start justify-between gap-3 border-b border-platforma-border px-4 py-4">
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <h2 id={resolvedTitleId} tabIndex={-1} className="min-w-0 truncate text-lg font-semibold text-zani-ink">{title}</h2>
+            <h2 id={resolvedTitleId} tabIndex={-1} className="min-w-0 truncate text-lg font-semibold text-platforma-ink">{title}</h2>
             {badge}
           </div>
-          {subtitle ? <p className="mt-1 text-sm font-medium leading-5 text-zani-subtle">{subtitle}</p> : null}
+          {subtitle ? <p className="mt-1 text-sm font-medium leading-5 text-platforma-subtle">{subtitle}</p> : null}
         </div>
         <button
           type="button"
-          className="zani-focus-ring zani-touch-target inline-grid shrink-0 place-items-center rounded-control text-zani-faint transition hover:bg-surface-muted hover:text-zani-text"
+          className="platforma-focus-ring platforma-touch-target inline-grid shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
           aria-label={t("common.close")}
           onClick={onClose}
         >
@@ -148,7 +148,7 @@ export function OperationalInspector({
         </button>
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto bg-surface-warm p-4">{children}</div>
-      {footer ? <footer className="shrink-0 border-t border-zani-border bg-surface-card px-4 py-3">{footer}</footer> : null}
+      {footer ? <footer className="shrink-0 border-t border-platforma-border bg-surface-card px-4 py-3">{footer}</footer> : null}
     </section>
   );
 }

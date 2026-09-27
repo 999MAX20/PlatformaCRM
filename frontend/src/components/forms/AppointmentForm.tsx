@@ -50,7 +50,7 @@ function SetupNotice({
       title={title}
       description={description}
       action={(
-        <Link className="zani-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-zani-warning underline-offset-4 hover:underline" to={to}>
+        <Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-platforma-warning underline-offset-4 hover:underline" to={to}>
           {action}
         </Link>
       )}
@@ -195,7 +195,7 @@ export function AppointmentForm({
   return (
     <form
       data-testid="appointment-form"
-      className="grid gap-4 rounded-card border border-zani-border bg-surface-card p-4 shadow-card sm:p-5"
+      className="grid gap-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-card sm:p-5"
       onSubmit={form.handleSubmit(async (values) => {
         setSubmitError(null);
         const startAt = initial?.start_at || values.slot;
@@ -240,8 +240,8 @@ export function AppointmentForm({
         />
       ) : null}
       {!hasResources ? (
-        <div className="rounded-card border border-zani-border bg-surface-muted p-4 text-sm text-zani-subtle">
-          <p className="font-semibold text-zani-ink">{t("appointment.resourceHintTitle")}</p>
+        <div className="rounded-card border border-platforma-border bg-surface-muted p-4 text-sm text-platforma-subtle">
+          <p className="font-semibold text-platforma-ink">{t("appointment.resourceHintTitle")}</p>
           <p className="mt-1 leading-6">{t("appointment.resourceHintText")}</p>
           <Link className="mt-3 inline-flex font-bold text-brand-700 underline-offset-4 hover:underline" to="/app/business/resources">
             {t("appointment.goResources")}
@@ -301,7 +301,7 @@ export function AppointmentForm({
           details={(
             <>
               {selectedHours && !selectedHours.is_day_off ? (
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-warning">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-warning">
                   {t("appointment.workingWindow").replace("{start}", selectedHours.start_time.slice(0, 5)).replace("{end}", selectedHours.end_time.slice(0, 5))}
                 </p>
               ) : null}
@@ -309,7 +309,7 @@ export function AppointmentForm({
                 {!exception ? <Button type="button" variant="secondary" isLoading={quickHoursMutation.isPending} onClick={() => quickHoursMutation.mutate()}>
                   {t("appointment.applyQuickHours")}
                 </Button> : null}
-                <Link className="zani-focus-ring inline-flex min-h-10 items-center rounded-control px-4 py-2 font-semibold text-zani-warning underline-offset-4 hover:underline" to={`/app/business/working-hours?view=resources&resource=${resourceId}&date=${date}`}>
+                <Link className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control px-4 py-2 font-semibold text-platforma-warning underline-offset-4 hover:underline" to={`/app/business/working-hours?view=resources&resource=${resourceId}&date=${date}`}>
                   {t("appointment.openHours")}
                 </Link>
               </div>

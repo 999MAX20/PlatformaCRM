@@ -20,7 +20,7 @@ class GateUser:
 
 
 class Command(BaseCommand):
-    help = "Run a fast API quality gate against the prepared ZANI pilot demo merchant."
+    help = "Run a fast API quality gate against the prepared Платформа CRM pilot demo merchant."
 
     def add_arguments(self, parser):
         parser.add_argument("--landing-id", default="demo-pilot-landing-001")

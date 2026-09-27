@@ -51,7 +51,7 @@ class ObservabilityRuntimeCheckTests(TestCase):
         ):
             call_command("observability_runtime_check", "--capture-test-message", stdout=output)
 
-        capture_message.assert_called_once_with("ZANI observability smoke", level="info")
+        capture_message.assert_called_once_with("Платформа CRM observability smoke", level="info")
         set_tag.assert_any_call("zani.check", "observability_runtime_check")
         set_tag.assert_any_call("zani.environment", "staging")
         set_tag.assert_any_call("zani.release", "release-20260528")

@@ -64,10 +64,10 @@ export function DealDrawerContent({ data, entity, onTabChange }: { data: CrmCard
             <div className="min-w-0">
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <StatusBadge status={deal.status} />
-                {deal.stage_name ? <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-zani-muted">{deal.stage_name}</span> : null}
+                {deal.stage_name ? <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-platforma-muted">{deal.stage_name}</span> : null}
               </div>
-              <h3 className="truncate text-xl font-semibold text-zani-ink">{deal.title}</h3>
-              <p className="mt-1 text-sm font-semibold text-zani-muted">
+              <h3 className="truncate text-xl font-semibold text-platforma-ink">{deal.title}</h3>
+              <p className="mt-1 text-sm font-semibold text-platforma-muted">
                 {[client?.full_name || deal.client_name, `${Number(deal.amount || 0).toLocaleString("ru-RU")} ${deal.currency}`].filter(Boolean).join(" · ")}
               </p>
             </div>
@@ -85,8 +85,8 @@ export function DealDrawerContent({ data, entity, onTabChange }: { data: CrmCard
         <div className={drawerSurfaceClass}>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("deals.nextAction")}</p>
-              <p className="mt-1 text-sm font-semibold text-zani-subtle">{deal.next_task_title || openTasks[0]?.title || t("crmCard.snapshotNoTasks")}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("deals.nextAction")}</p>
+              <p className="mt-1 text-sm font-semibold text-platforma-subtle">{deal.next_task_title || openTasks[0]?.title || t("crmCard.snapshotNoTasks")}</p>
             </div>
             <div className="flex shrink-0 flex-wrap gap-2">
               {availableActions.has("won") ? <Button size="sm" isLoading={mutation.isPending} onClick={() => mutation.mutate("won")}>{t("crmCard.won")}</Button> : null}
@@ -94,32 +94,32 @@ export function DealDrawerContent({ data, entity, onTabChange }: { data: CrmCard
               {availableActions.has("reopen") ? <Button size="sm" variant="secondary" isLoading={mutation.isPending} onClick={() => mutation.mutate("reopen")}>{t("deals.reopen")}</Button> : null}
             </div>
           </div>
-          <div className="border-t border-zani-border pt-4">
-            <div className="mb-1 flex justify-between text-xs font-bold text-zani-muted">
+          <div className="border-t border-platforma-border pt-4">
+            <div className="mb-1 flex justify-between text-xs font-bold text-platforma-muted">
               <span>{t("crmCard.probability")}</span>
               <span>{probability}%</span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
-              <div className="h-full rounded-full bg-[var(--zani-brand-content)]" style={{ width: `${probability}%` }} />
+              <div className="h-full rounded-full bg-[var(--platforma-brand-content)]" style={{ width: `${probability}%` }} />
             </div>
           </div>
         </div>
 
         <div className="grid gap-3 lg:grid-cols-3">
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><UserRound size={14} /> {t("nav.clients")}</p>
-            <p className="truncate text-sm font-semibold text-zani-ink">{client?.full_name || deal.client_name || t("deals.clientMissing")}</p>
-            <p className="mt-1 truncate text-sm font-semibold text-zani-muted">{clientContact}</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><UserRound size={14} /> {t("nav.clients")}</p>
+            <p className="truncate text-sm font-semibold text-platforma-ink">{client?.full_name || deal.client_name || t("deals.clientMissing")}</p>
+            <p className="mt-1 truncate text-sm font-semibold text-platforma-muted">{clientContact}</p>
           </div>
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><ClipboardList size={14} /> {t("deals.leadLabel")}</p>
-            <p className="truncate text-sm font-semibold text-zani-ink">{leadTitle}</p>
-            <p className="mt-1 line-clamp-2 text-sm font-semibold text-zani-muted">{lead?.message || t("crmCard.noLeadMessage")}</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><ClipboardList size={14} /> {t("deals.leadLabel")}</p>
+            <p className="truncate text-sm font-semibold text-platforma-ink">{leadTitle}</p>
+            <p className="mt-1 line-clamp-2 text-sm font-semibold text-platforma-muted">{lead?.message || t("crmCard.noLeadMessage")}</p>
           </div>
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><CalendarClock size={14} /> {t("nav.appointments")}</p>
-            <p className="text-2xl font-semibold text-zani-ink">{data.meta?.related_counts.appointments ?? data.appointments.length}</p>
-            <p className="mt-1 text-sm text-zani-muted">{latestAppointment ? formatDateTime(latestAppointment.start_at) : t("appointments.emptyText")}</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><CalendarClock size={14} /> {t("nav.appointments")}</p>
+            <p className="text-2xl font-semibold text-platforma-ink">{data.meta?.related_counts.appointments ?? data.appointments.length}</p>
+            <p className="mt-1 text-sm text-platforma-muted">{latestAppointment ? formatDateTime(latestAppointment.start_at) : t("appointments.emptyText")}</p>
             {data.appointments.length ? (
               <Button type="button" variant="ghost" size="sm" className="mt-3" onClick={() => onTabChange?.("appointments")}>
                 {t("common.open")} <ArrowRight size={14} />
@@ -130,9 +130,9 @@ export function DealDrawerContent({ data, entity, onTabChange }: { data: CrmCard
 
         <div className="grid gap-3 lg:grid-cols-3">
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><CheckCircle2 size={14} /> {t("nav.tasks")}</p>
-            <p className="text-2xl font-semibold text-zani-ink">{openTasks.length}</p>
-            <p className="mt-1 text-sm text-zani-muted">{openTasks[0]?.title || t("crmCard.noTasksText")}</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><CheckCircle2 size={14} /> {t("nav.tasks")}</p>
+            <p className="text-2xl font-semibold text-platforma-ink">{openTasks.length}</p>
+            <p className="mt-1 text-sm text-platforma-muted">{openTasks[0]?.title || t("crmCard.noTasksText")}</p>
             {data.tasks.length ? (
               <Button type="button" variant="ghost" size="sm" className="mt-3" onClick={() => onTabChange?.("tasks")}>
                 {t("common.open")} <ArrowRight size={14} />
@@ -140,9 +140,9 @@ export function DealDrawerContent({ data, entity, onTabChange }: { data: CrmCard
             ) : null}
           </div>
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><Activity size={14} /> {t("crmCard.snapshotHistory")}</p>
-            <p className="line-clamp-2 text-sm font-semibold leading-6 text-zani-text">{latestActivity ? latestActivity.text || latestActivity.event_type : t("crmCard.emptyTimelineText")}</p>
-            <p className="mt-1 text-xs font-semibold text-zani-muted">{latestActivity ? formatDateTime(latestActivity.created_at) : ""}</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><Activity size={14} /> {t("crmCard.snapshotHistory")}</p>
+            <p className="line-clamp-2 text-sm font-semibold leading-6 text-platforma-text">{latestActivity ? latestActivity.text || latestActivity.event_type : t("crmCard.emptyTimelineText")}</p>
+            <p className="mt-1 text-xs font-semibold text-platforma-muted">{latestActivity ? formatDateTime(latestActivity.created_at) : ""}</p>
             {data.timeline.length ? (
               <Button type="button" variant="ghost" size="sm" className="mt-3" onClick={() => onTabChange?.("timeline")}>
                 {t("crmCard.timeline")} <ArrowRight size={14} />
@@ -150,9 +150,9 @@ export function DealDrawerContent({ data, entity, onTabChange }: { data: CrmCard
             ) : null}
           </div>
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><MessageCircle size={14} /> {t("crmCard.snapshotMessages")}</p>
-            <p className="line-clamp-2 text-sm font-semibold leading-6 text-zani-text">{latestConversation?.last_message?.text || t("crmCard.noDialogsText")}</p>
-            <p className="mt-1 text-xs font-semibold text-zani-muted">{latestConversation ? formatDateTime(latestConversation.last_message_at || latestConversation.updated_at) : ""}</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><MessageCircle size={14} /> {t("crmCard.snapshotMessages")}</p>
+            <p className="line-clamp-2 text-sm font-semibold leading-6 text-platforma-text">{latestConversation?.last_message?.text || t("crmCard.noDialogsText")}</p>
+            <p className="mt-1 text-xs font-semibold text-platforma-muted">{latestConversation ? formatDateTime(latestConversation.last_message_at || latestConversation.updated_at) : ""}</p>
             {data.conversations.length ? (
               <Button type="button" variant="ghost" size="sm" className="mt-3" onClick={() => onTabChange?.("messages")}>
                 {t("crmCard.messages")} <ArrowRight size={14} />
@@ -162,8 +162,8 @@ export function DealDrawerContent({ data, entity, onTabChange }: { data: CrmCard
         </div>
 
         <div className={drawerSurfaceClass}>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("clients.notes")}</p>
-          {deal.notes ? <p className="text-sm leading-6 text-zani-text">{deal.notes}</p> : <p className="text-sm leading-6 text-zani-muted">{t("crmCard.noNotesText")}</p>}
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("clients.notes")}</p>
+          {deal.notes ? <p className="text-sm leading-6 text-platforma-text">{deal.notes}</p> : <p className="text-sm leading-6 text-platforma-muted">{t("crmCard.noNotesText")}</p>}
           {deal.lost_reason ? <p className="mt-3 rounded-card bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">{t("deals.lostReasonPrompt")}: {deal.lost_reason}</p> : null}
         </div>
 

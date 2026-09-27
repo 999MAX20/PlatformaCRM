@@ -42,12 +42,12 @@ export function Tabs<T extends string>({
             key={option.value}
             type="button"
             className={cn(
-              "zani-focus-ring inline-flex min-h-9 flex-1 shrink-0 items-center justify-center gap-2 rounded-control px-3 text-sm font-semibold transition",
+              "platforma-focus-ring inline-flex min-h-9 flex-1 shrink-0 items-center justify-center gap-2 rounded-control px-3 text-sm font-semibold transition",
               active
                 ? tone === "ai"
                   ? "bg-ai-50 text-ai-700 shadow-sm ring-1 ring-ai-100"
                   : "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
-                : "text-zani-subtle hover:bg-surface-warm hover:text-zani-text",
+                : "text-platforma-subtle hover:bg-surface-warm hover:text-platforma-text",
             )}
             role="tab"
             id={idPrefix ? `${idPrefix}-tab-${option.value}` : undefined}
@@ -59,7 +59,7 @@ export function Tabs<T extends string>({
           >
             <span className="min-w-0 truncate">{option.label}</span>
             {typeof option.count === "number" ? (
-              <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold", active ? "bg-surface-muted text-zani-subtle" : "bg-surface-card text-zani-faint")}>
+              <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold", active ? "bg-surface-muted text-platforma-subtle" : "bg-surface-card text-platforma-faint")}>
                 {option.count}
               </span>
             ) : null}

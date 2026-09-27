@@ -97,7 +97,7 @@ export function ResourcesToolbar({
         </div>
       </div>
 
-      <div className={cn("flex min-w-0 flex-col gap-3 border-t border-zani-border pt-3", !isSplitWorkspace && "xl:flex-row xl:items-center xl:justify-between")}>
+      <div className={cn("flex min-w-0 flex-col gap-3 border-t border-platforma-border pt-3", !isSplitWorkspace && "xl:flex-row xl:items-center xl:justify-between")}>
         <div className="flex min-w-0 items-center gap-2">
           <Select
             aria-label={t("resources.quickCreate")}

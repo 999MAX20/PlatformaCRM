@@ -25,7 +25,7 @@ export function MobileClientCards({
         <article
           key={row.client.id}
           aria-selected={selectedClientId === row.client.id}
-          className="rounded-card border border-zani-border bg-surface-card p-4 shadow-card"
+          className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-card"
         >
           <button
             type="button"
@@ -35,10 +35,10 @@ export function MobileClientCards({
             <div className="flex min-w-0 items-center gap-3">
               <ClientAvatar name={row.client.full_name} />
               <div className="min-w-0">
-                <h3 className="truncate text-sm font-bold text-zani-text">
+                <h3 className="truncate text-sm font-bold text-platforma-text">
                   {row.client.full_name}
                 </h3>
-                <p className="mt-1 truncate text-xs font-medium text-zani-muted">
+                <p className="mt-1 truncate text-xs font-medium text-platforma-muted">
                   {row.client.phone ||
                     row.client.email ||
                     t("clients.noContacts")}
@@ -50,22 +50,22 @@ export function MobileClientCards({
 
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between gap-4">
-              <dt className="text-zani-muted">{t("clients.source")}</dt>
-              <dd className="font-semibold text-zani-text">
+              <dt className="text-platforma-muted">{t("clients.source")}</dt>
+              <dd className="font-semibold text-platforma-text">
                 {sourceLabel(row.client.source, t)}
               </dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-zani-muted">{t("clients.lastContact")}</dt>
-              <dd className="text-right font-semibold text-zani-text">
+              <dt className="text-platforma-muted">{t("clients.lastContact")}</dt>
+              <dd className="text-right font-semibold text-platforma-text">
                 {row.lastContactAt
                   ? formatDateTime(row.lastContactAt)
                   : t("clients.noContact")}
               </dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-zani-muted">{t("clients.nextStep")}</dt>
-              <dd className="text-right font-semibold text-zani-text">
+              <dt className="text-platforma-muted">{t("clients.nextStep")}</dt>
+              <dd className="text-right font-semibold text-platforma-text">
                 {row.nextStep.title}
               </dd>
             </div>

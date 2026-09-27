@@ -42,9 +42,9 @@ export const ClientRow = memo(function ClientRow({
       aria-selected={selected}
       tabIndex={0}
       className={cn(
-        "group cursor-pointer border-b border-zani-border bg-surface-card transition-colors hover:bg-surface-warm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
+        "group cursor-pointer border-b border-platforma-border bg-surface-card transition-colors hover:bg-surface-warm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
         selected &&
-          "bg-brand-50/80 shadow-[inset_5px_0_0_var(--zani-brand)] hover:bg-brand-50/80",
+          "bg-brand-50/80 shadow-[inset_5px_0_0_var(--platforma-brand)] hover:bg-brand-50/80",
       )}
       onClick={onSelect}
       onKeyDown={handleKeyDown}
@@ -55,7 +55,7 @@ export const ClientRow = memo(function ClientRow({
           checked={checked}
           readOnly
           aria-label={t("clients.selectClient", { name: row.client.full_name })}
-          className="h-4 w-4 rounded border-zani-border text-brand-600 focus:ring-brand-500"
+          className="h-4 w-4 rounded border-platforma-border text-brand-600 focus:ring-brand-500"
           onClick={(event) => {
             event.stopPropagation();
             onToggleCheck();
@@ -68,13 +68,13 @@ export const ClientRow = memo(function ClientRow({
           <div className="min-w-0">
             <p
               className={cn(
-                "truncate text-sm font-semibold text-zani-text",
+                "truncate text-sm font-semibold text-platforma-text",
                 selected && "text-brand-700",
               )}
             >
               {row.client.full_name}
             </p>
-            <p className="mt-0.5 truncate text-xs font-medium text-zani-muted">
+            <p className="mt-0.5 truncate text-xs font-medium text-platforma-muted">
               {row.client.phone || row.client.email || t("clients.noContacts")}
             </p>
           </div>
@@ -82,7 +82,7 @@ export const ClientRow = memo(function ClientRow({
       </td>
       {visibleColumns.has("source") ? (
         <td role="gridcell" className="overflow-hidden px-2 py-2">
-          <div className="flex min-w-0 items-center gap-2 text-sm font-medium text-zani-muted">
+          <div className="flex min-w-0 items-center gap-2 text-sm font-medium text-platforma-muted">
             <SourceIcon source={row.client.source} />
             <span className="truncate">
               {sourceLabel(row.client.source, t)}
@@ -96,7 +96,7 @@ export const ClientRow = memo(function ClientRow({
       {visibleColumns.has("manager") ? (
         <td role="gridcell" className="overflow-hidden px-2 py-2">
           {!row.managerUserId ? (
-            <div className="flex min-w-0 items-center gap-2 text-zani-muted">
+            <div className="flex min-w-0 items-center gap-2 text-platforma-muted">
               <UserX size={16} className="shrink-0" />
               <span className="truncate text-sm font-medium">
                 {t("clients.unassigned")}
@@ -104,10 +104,10 @@ export const ClientRow = memo(function ClientRow({
             </div>
           ) : (
             <div className="flex min-w-0 items-center gap-2">
-              <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-muted text-[10px] font-bold text-zani-muted">
+              <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-muted text-[10px] font-bold text-platforma-muted">
                 {initials(row.manager)}
               </div>
-              <span className="truncate text-sm font-medium text-zani-muted">
+              <span className="truncate text-sm font-medium text-platforma-muted">
                 {row.manager}
               </span>
             </div>
@@ -115,17 +115,17 @@ export const ClientRow = memo(function ClientRow({
         </td>
       ) : null}
       <td role="gridcell" className="overflow-hidden px-2 py-2">
-        <p className="truncate text-sm font-medium text-zani-text">
+        <p className="truncate text-sm font-medium text-platforma-text">
           {row.lastContactAt
             ? formatDateTime(row.lastContactAt)
             : t("clients.noContact")}
         </p>
       </td>
       <td role="gridcell" className="overflow-hidden px-2 py-2">
-        <p className="truncate text-sm font-medium text-zani-text">
+        <p className="truncate text-sm font-medium text-platforma-text">
           {row.nextStep.title}
         </p>
-        <p className="mt-0.5 text-xs font-medium text-zani-muted">
+        <p className="mt-0.5 text-xs font-medium text-platforma-muted">
           {row.nextStep.date
             ? formatDate(row.nextStep.date)
             : t("common.today")}
@@ -137,7 +137,7 @@ export const ClientRow = memo(function ClientRow({
             type="button"
             data-testid="client-row-action-open"
             data-client-id={row.client.id}
-            className="inline-grid h-8 w-8 place-items-center rounded-lg text-zani-muted opacity-100 transition hover:bg-brand-50 hover:text-brand-700 md:opacity-0 md:group-hover:opacity-100"
+            className="inline-grid h-8 w-8 place-items-center rounded-lg text-platforma-muted opacity-100 transition hover:bg-brand-50 hover:text-brand-700 md:opacity-0 md:group-hover:opacity-100"
             onClick={(event) => {
               event.stopPropagation();
               onOpen();

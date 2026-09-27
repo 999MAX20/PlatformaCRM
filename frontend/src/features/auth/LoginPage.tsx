@@ -221,7 +221,7 @@ export function LoginPage() {
             <Zap size={20} />
           </span>
           <span className="serenity-login__brand-copy">
-            <strong>ZANI</strong>
+            <strong>Платформа CRM</strong>
             <small>{t("auth.brandTagline")}</small>
           </span>
         </Link>

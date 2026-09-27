@@ -108,7 +108,7 @@ export function MfaPage() {
       <header className="serenity-login__header">
         <Link className="serenity-login__brand" to="/login">
           <span className="serenity-login__brand-mark" aria-hidden="true"><Zap size={20} /></span>
-          <span className="serenity-login__brand-copy"><strong>ZANI</strong><small>{t("auth.brandTagline")}</small></span>
+          <span className="serenity-login__brand-copy"><strong>Платформа CRM</strong><small>{t("auth.brandTagline")}</small></span>
         </Link>
         <LanguageSelector className="serenity-login__language" />
       </header>

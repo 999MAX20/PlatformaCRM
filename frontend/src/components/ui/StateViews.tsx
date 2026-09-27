@@ -15,9 +15,9 @@ export function LoadingState({ label }: { label?: string }) {
       aria-busy="true"
       aria-live="polite"
       aria-label={resolvedLabel}
-      className="rounded-card border border-zani-border bg-surface-card p-4 shadow-card"
+      className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-card"
     >
-      <div className="flex items-center gap-3 text-sm font-semibold text-zani-subtle">
+      <div className="flex items-center gap-3 text-sm font-semibold text-platforma-subtle">
         <Loader2 aria-hidden="true" className="animate-spin text-brand-700" size={18} />
         {resolvedLabel}
       </div>
@@ -62,7 +62,7 @@ export function ForbiddenState({
       title={title || t("permissions.hiddenTitle")}
       description={message || t("actions.errorForbidden")}
       details={(
-        <p className="rounded-control bg-surface-card px-3 py-2 text-xs font-semibold text-zani-warning">
+        <p className="rounded-control bg-surface-card px-3 py-2 text-xs font-semibold text-platforma-warning">
           {t("permissions.hiddenText")}
         </p>
       )}
@@ -80,12 +80,12 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-card border border-dashed border-zani-border bg-surface-card p-6 text-center shadow-card">
-      <div className="mx-auto mb-3 grid h-11 w-11 place-items-center rounded-control bg-surface-muted text-zani-subtle">
+    <div className="rounded-card border border-dashed border-platforma-border bg-surface-card p-6 text-center shadow-card">
+      <div className="mx-auto mb-3 grid h-11 w-11 place-items-center rounded-control bg-surface-muted text-platforma-subtle">
         <Inbox aria-hidden="true" size={22} />
       </div>
-      <p className="text-base font-semibold text-zani-ink">{title}</p>
-      {description ? <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-zani-subtle">{description}</p> : null}
+      <p className="text-base font-semibold text-platforma-ink">{title}</p>
+      {description ? <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-platforma-subtle">{description}</p> : null}
       {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
     </div>
   );

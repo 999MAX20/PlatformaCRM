@@ -73,7 +73,7 @@ export function WorkingHoursEditModal({
           <Badge variant={resource ? "info" : "neutral"} size="sm">
             {t(resource ? "workingHours.individualSchedule" : "workingHours.businessSchedule")}
           </Badge>
-          <p className="text-sm text-zani-subtle">
+          <p className="text-sm text-platforma-subtle">
             {t(resource ? "workingHours.resourceInspectorSubtitle" : "workingHours.businessInspectorSubtitle")}
           </p>
         </div>
@@ -100,7 +100,7 @@ export function WorkingHoursEditModal({
         {resource ? <ScheduleExceptionsPanel key={resource.id} resource={resource} timeZone={business.timezone} canManage={canManage} /> : null}
       </div>
 
-      <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-zani-border bg-surface-card px-4 py-3 sm:px-5">
+      <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-platforma-border bg-surface-card px-4 py-3 sm:px-5">
         {canManage ? (
           <>
             <Button type="button" variant="secondary" disabled={!isDirty || isSaving} onClick={resetForm}>{t("common.cancel")}</Button>

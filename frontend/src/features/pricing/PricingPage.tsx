@@ -245,7 +245,7 @@ export function PricingPage() {
   const emergencyStop = useMutation({
     mutationFn: () => {
       if (!business?.id) throw new Error("Business is required.");
-      return kaspiPricingApi.control.emergencyStop({ business: business.id, reason: "Stopped from ZANI workspace." });
+      return kaspiPricingApi.control.emergencyStop({ business: business.id, reason: "Stopped from Платформа CRM workspace." });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["kaspi-pricing-control"] });

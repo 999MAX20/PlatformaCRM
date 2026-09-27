@@ -838,10 +838,10 @@ export function SettingsPage() {
     <div data-testid="settings-workspace-ready">
       <section className="mb-4">
         <div>
-          <h1 className="text-2xl font-semibold text-zani-text">
+          <h1 className="text-2xl font-semibold text-platforma-text">
             {t("settings.title")}
           </h1>
-          <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-zani-subtle">
+          <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-platforma-subtle">
             {t("settings.description")}
           </p>
         </div>
@@ -883,10 +883,10 @@ export function SettingsPage() {
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
                     {t("settings.appointmentMessagesEyebrow")}
                   </p>
-                  <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+                  <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
                     {t("settings.appointmentMessagesTitle")}
                   </h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
                     {t("settings.appointmentMessagesText")}
                   </p>
                 </div>
@@ -904,7 +904,7 @@ export function SettingsPage() {
                 </div>
               ) : null}
               {appointmentMessageSettings.isLoading ? (
-                <div className="rounded-card border border-zani-border bg-surface-muted p-5 text-sm font-bold text-zani-subtle">
+                <div className="rounded-card border border-platforma-border bg-surface-muted p-5 text-sm font-bold text-platforma-subtle">
                   {t("settings.appointmentMessagesLoading")}
                 </div>
               ) : (
@@ -923,14 +923,14 @@ export function SettingsPage() {
                     return (
                       <div
                         key={setting.id}
-                        className="flex flex-col rounded-card border border-zani-border bg-surface-muted p-4"
+                        className="flex flex-col rounded-card border border-platforma-border bg-surface-muted p-4"
                       >
                         <div className="mb-4 flex items-start justify-between gap-3">
                           <div>
-                            <p className="font-bold text-zani-text">
+                            <p className="font-bold text-platforma-text">
                               {t(meta.titleKey)}
                             </p>
-                            <p className="mt-1 text-sm font-semibold leading-5 text-zani-subtle">
+                            <p className="mt-1 text-sm font-semibold leading-5 text-platforma-subtle">
                               {t(meta.descriptionKey)}
                             </p>
                           </div>
@@ -945,8 +945,8 @@ export function SettingsPage() {
                             }
                             className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold transition ${
                               enabled
-                                ? "bg-[var(--zani-success-soft)] text-zani-success hover:brightness-95"
-                                : "bg-surface-card text-zani-subtle hover:bg-surface-warm"
+                                ? "bg-[var(--platforma-success-soft)] text-platforma-success hover:brightness-95"
+                                : "bg-surface-card text-platforma-subtle hover:bg-surface-warm"
                             }`}
                           >
                             {enabled
@@ -1059,14 +1059,14 @@ export function SettingsPage() {
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
                     {t("settings.teamEyebrow")}
                   </p>
-                  <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+                  <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
                     {t("settings.teamTitle")}
                   </h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
                     {t("settings.teamText")}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-zani-border bg-surface-muted px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-zani-subtle">
+                <div className="rounded-2xl border border-platforma-border bg-surface-muted px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-platforma-subtle">
                   {user?.memberships?.[0]?.role || "role"} ·{" "}
                   {user?.effective_permissions?.[String(business?.id || "")]
                     ?.length || 0}{" "}
@@ -1092,16 +1092,16 @@ export function SettingsPage() {
                 </div>
               ) : null}
               <div className="grid gap-4 xl:grid-cols-[1.3fr_0.7fr]">
-                <div className="rounded-card border border-zani-border bg-surface-card p-4">
+                <div className="rounded-card border border-platforma-border bg-surface-card p-4">
                   <div className="mb-4 flex items-start gap-3 rounded-card bg-surface-muted p-4">
                     <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-surface-card text-brand-600 shadow-sm">
                       <ShieldCheck size={22} />
                     </div>
                     <div>
-                      <p className="font-bold text-zani-text">
+                      <p className="font-bold text-platforma-text">
                         {t("settings.accessTitle")}
                       </p>
-                      <p className="mt-1 text-sm leading-6 text-zani-subtle">
+                      <p className="mt-1 text-sm leading-6 text-platforma-subtle">
                         {t("settings.accessText")}
                       </p>
                     </div>
@@ -1150,14 +1150,14 @@ export function SettingsPage() {
                       }
                     />
                     <div>
-                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-zani-subtle">
+                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-platforma-subtle">
                         {t("settings.visibilityStep")}
                       </p>
-                      <div className="rounded-2xl border border-zani-border bg-surface-card px-4 py-3">
-                        <p className="font-bold text-zani-text">
+                      <div className="rounded-2xl border border-platforma-border bg-surface-card px-4 py-3">
+                        <p className="font-bold text-platforma-text">
                           {translatedVisibilityLabel(selectedVisibility, t)}
                         </p>
-                        <p className="mt-1 text-xs leading-5 text-zani-subtle">
+                        <p className="mt-1 text-xs leading-5 text-platforma-subtle">
                           {translatedVisibilityDescription(
                             selectedVisibility,
                             t,
@@ -1166,11 +1166,11 @@ export function SettingsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-4 rounded-card border border-zani-border bg-surface-muted p-4">
-                    <p className="text-sm font-bold text-zani-text">
+                  <div className="mt-4 rounded-card border border-platforma-border bg-surface-muted p-4">
+                    <p className="text-sm font-bold text-platforma-text">
                       {t("settings.roleGuideTitle")}
                     </p>
-                    <p className="mt-1 text-sm leading-6 text-zani-subtle">
+                    <p className="mt-1 text-sm leading-6 text-platforma-subtle">
                       {t("settings.roleGuideText")}
                     </p>
                     <div className="mt-3 grid gap-2 md:grid-cols-2">
@@ -1181,7 +1181,7 @@ export function SettingsPage() {
                           className={`rounded-control border p-3 text-left transition hover:bg-surface-card ${
                             inviteForm.role === roleKey
                               ? "border-brand-200 bg-surface-card shadow-sm"
-                              : "border-zani-border bg-surface-muted"
+                              : "border-platforma-border bg-surface-muted"
                           }`}
                           onClick={() =>
                             setInviteForm((current) => ({
@@ -1190,10 +1190,10 @@ export function SettingsPage() {
                             }))
                           }
                         >
-                          <p className="text-sm font-bold text-zani-text">
+                          <p className="text-sm font-bold text-platforma-text">
                             {t(`settings.role.${roleKey}`)}
                           </p>
-                          <p className="mt-1 text-xs leading-5 text-zani-subtle">
+                          <p className="mt-1 text-xs leading-5 text-platforma-subtle">
                             {roleDescription(roleKey)}
                           </p>
                         </button>
@@ -1201,14 +1201,14 @@ export function SettingsPage() {
                     </div>
                   </div>
                   {selectedMember ? (
-                    <div className="mt-4 rounded-card border border-zani-border bg-surface-card p-4">
+                    <div className="mt-4 rounded-card border border-platforma-border bg-surface-card p-4">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                          <p className="text-lg font-bold text-zani-text">
+                          <p className="text-lg font-bold text-platforma-text">
                             {selectedMember.user.full_name ||
                               selectedMember.user.email}
                           </p>
-                          <p className="mt-1 text-sm text-zani-subtle">
+                          <p className="mt-1 text-sm text-platforma-subtle">
                             {selectedMember.user.email} ·{" "}
                             {translatedTeamRoleOptions.find(
                               (role) => role.value === selectedMember.role,
@@ -1221,8 +1221,8 @@ export function SettingsPage() {
                         <span
                           className={
                             selectedMember.is_active
-                              ? "rounded-full bg-[var(--zani-success-soft)] px-3 py-1.5 text-xs font-bold text-zani-success"
-                              : "rounded-full bg-surface-muted px-3 py-1.5 text-xs font-bold text-zani-subtle"
+                              ? "rounded-full bg-[var(--platforma-success-soft)] px-3 py-1.5 text-xs font-bold text-platforma-success"
+                              : "rounded-full bg-surface-muted px-3 py-1.5 text-xs font-bold text-platforma-subtle"
                           }
                         >
                           {selectedMember.is_active
@@ -1231,16 +1231,16 @@ export function SettingsPage() {
                         </span>
                       </div>
                       <div className="mt-4 grid gap-2 md:grid-cols-3">
-                        <div className="rounded-2xl border border-zani-border bg-surface-muted p-3 md:col-span-3">
-                          <p className="text-xs font-bold uppercase tracking-[0.16em] text-zani-faint">
+                        <div className="rounded-2xl border border-platforma-border bg-surface-muted p-3 md:col-span-3">
+                          <p className="text-xs font-bold uppercase tracking-[0.16em] text-platforma-faint">
                             {t("settings.currentRole")}
                           </p>
-                          <p className="mt-1 text-sm font-bold text-zani-text">
+                          <p className="mt-1 text-sm font-bold text-platforma-text">
                             {translatedTeamRoleOptions.find(
                               (role) => role.value === selectedMember.role,
                             )?.label || selectedMember.role}
                           </p>
-                          <p className="mt-1 text-xs leading-5 text-zani-subtle">
+                          <p className="mt-1 text-xs leading-5 text-platforma-subtle">
                             {roleDescription(selectedMember.role)}
                           </p>
                         </div>
@@ -1250,13 +1250,13 @@ export function SettingsPage() {
                             className={
                               option.value === selectedVisibility
                                 ? "rounded-2xl border border-brand-200 bg-brand-50 p-3"
-                                : "rounded-2xl border border-zani-border bg-surface-muted p-3"
+                                : "rounded-2xl border border-platforma-border bg-surface-muted p-3"
                             }
                           >
-                            <p className="text-sm font-bold text-zani-text">
+                            <p className="text-sm font-bold text-platforma-text">
                               {option.label}
                             </p>
-                            <p className="mt-1 text-xs leading-5 text-zani-subtle">
+                            <p className="mt-1 text-xs leading-5 text-platforma-subtle">
                               {option.description}
                             </p>
                           </div>
@@ -1265,7 +1265,7 @@ export function SettingsPage() {
                     </div>
                   ) : null}
                   {!teamMembers.isLoading && !members.length ? (
-                    <div className="mt-4 rounded-2xl bg-surface-muted px-4 py-5 text-sm text-zani-subtle">
+                    <div className="mt-4 rounded-2xl bg-surface-muted px-4 py-5 text-sm text-platforma-subtle">
                       {t("settings.teamEmpty")}
                     </div>
                   ) : null}
@@ -1275,10 +1275,10 @@ export function SettingsPage() {
                         <Send size={18} />
                       </div>
                       <div>
-                        <p className="font-bold text-zani-text">
+                        <p className="font-bold text-platforma-text">
                           {t("settings.inviteTitle")}
                         </p>
-                        <p className="mt-1 text-sm leading-6 text-zani-subtle">
+                        <p className="mt-1 text-sm leading-6 text-platforma-subtle">
                           {t("settings.inviteText")}
                         </p>
                       </div>
@@ -1303,7 +1303,7 @@ export function SettingsPage() {
                           }
                           required
                         />
-                        <p className="mt-1.5 text-xs leading-5 text-zani-subtle">
+                        <p className="mt-1.5 text-xs leading-5 text-platforma-subtle">
                           {t("settings.loginEmailHelp")}
                         </p>
                       </div>
@@ -1330,8 +1330,8 @@ export function SettingsPage() {
                         }
                         options={editableTeamRoleOptions}
                       />
-                      <div className="rounded-control bg-surface-card px-3 py-2 text-xs leading-5 text-zani-subtle">
-                        <span className="font-bold text-zani-text">
+                      <div className="rounded-control bg-surface-card px-3 py-2 text-xs leading-5 text-platforma-subtle">
+                        <span className="font-bold text-platforma-text">
                           {
                             translatedTeamRoleOptions.find(
                               (role) => role.value === inviteForm.role,
@@ -1358,7 +1358,7 @@ export function SettingsPage() {
                           { value: "manual", label: t("settings.copyLink") },
                         ]}
                       />
-                      <p className="rounded-control bg-surface-card px-3 py-2 text-xs leading-5 text-zani-subtle lg:col-span-2">
+                      <p className="rounded-control bg-surface-card px-3 py-2 text-xs leading-5 text-platforma-subtle lg:col-span-2">
                         {t(
                           `settings.deliveryHelp.${inviteForm.delivery_channel}`,
                         )}
@@ -1402,11 +1402,11 @@ export function SettingsPage() {
                       </div>
                     </form>
                     {lastCreatedInvite ? (
-                      <div className="mt-4 rounded-card border border-[rgba(21,128,61,0.18)] bg-[var(--zani-success-soft)] p-4">
-                        <p className="font-semibold text-zani-success">
+                      <div className="mt-4 rounded-card border border-[rgba(21,128,61,0.18)] bg-[var(--platforma-success-soft)] p-4">
+                        <p className="font-semibold text-platforma-success">
                           {t("settings.inviteCreatedTitle")}
                         </p>
-                        <p className="mt-1 text-sm leading-6 text-zani-success">
+                        <p className="mt-1 text-sm leading-6 text-platforma-success">
                           {t("settings.inviteCreatedText", {
                             email: lastCreatedInvite.email,
                             role:
@@ -1420,7 +1420,7 @@ export function SettingsPage() {
                             href={inviteShareUrl(lastCreatedInvite)}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex min-h-11 items-center justify-center rounded-full bg-zani-success px-4 py-2 text-sm font-bold text-white transition hover:brightness-95"
+                            className="inline-flex min-h-11 items-center justify-center rounded-full bg-platforma-success px-4 py-2 text-sm font-bold text-white transition hover:brightness-95"
                           >
                             {t("settings.sendInviteNow")}
                           </a>
@@ -1448,10 +1448,10 @@ export function SettingsPage() {
                           >
                             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                               <div>
-                                <p className="font-bold text-zani-text">
+                                <p className="font-bold text-platforma-text">
                                   {invitation.full_name || invitation.email}
                                 </p>
-                                <p className="text-xs text-zani-subtle">
+                                <p className="text-xs text-platforma-subtle">
                                   {invitation.email} ·{" "}
                                   {translatedTeamRoleOptions.find(
                                     (role) => role.value === invitation.role,
@@ -1464,7 +1464,7 @@ export function SettingsPage() {
                                   href={inviteShareUrl(invitation)}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-500 px-4 py-2 text-sm font-bold text-zani-ink transition hover:bg-brand-600"
+                                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-500 px-4 py-2 text-sm font-bold text-platforma-ink transition hover:bg-brand-600"
                                 >
                                   {t("settings.send")}
                                 </a>
@@ -1501,15 +1501,15 @@ export function SettingsPage() {
                           </div>
                         ))}
                       {!invitations.isLoading && !invitations.data?.length ? (
-                        <p className="text-sm text-zani-subtle">
+                        <p className="text-sm text-platforma-subtle">
                           {t("settings.noInvites")}
                         </p>
                       ) : null}
                     </div>
                   </div>
                 </div>
-                <div className="rounded-card border border-zani-border bg-surface-card p-4">
-                  <h3 className="text-base font-bold text-zani-text">
+                <div className="rounded-card border border-platforma-border bg-surface-card p-4">
+                  <h3 className="text-base font-bold text-platforma-text">
                     {t("settings.departments")}
                   </h3>
                   <form
@@ -1541,17 +1541,17 @@ export function SettingsPage() {
                         key={department.id}
                         className="rounded-2xl bg-surface-muted px-3 py-2"
                       >
-                        <p className="font-semibold text-zani-text">
+                        <p className="font-semibold text-platforma-text">
                           {department.name}
                         </p>
-                        <p className="text-xs text-zani-subtle">
+                        <p className="text-xs text-platforma-subtle">
                           {department.members_count || 0}{" "}
                           {t("settings.members")}
                         </p>
                       </div>
                     ))}
                     {!departments.isLoading && !departments.data?.length ? (
-                      <p className="text-sm text-zani-subtle">
+                      <p className="text-sm text-platforma-subtle">
                         {t("settings.noDepartments")}
                       </p>
                     ) : null}
@@ -1568,31 +1568,31 @@ export function SettingsPage() {
               <div className="mb-4">
                 <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zani-danger">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-platforma-danger">
                       {t("settings.securityEyebrow")}
                     </p>
-                    <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+                    <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
                       {t("settings.securityTitle")}
                     </h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
                       {t("settings.securityText")}
                     </p>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="rounded-control bg-[var(--zani-danger-soft)] px-3 py-2">
-                      <p className="text-xs font-semibold text-zani-danger">
+                    <div className="rounded-control bg-[var(--platforma-danger-soft)] px-3 py-2">
+                      <p className="text-xs font-semibold text-platforma-danger">
                         {t("settings.highRisk")}
                       </p>
-                      <p className="text-xl font-semibold text-zani-danger">
+                      <p className="text-xl font-semibold text-platforma-danger">
                         {(securityRisk.data?.risk_counts.high || 0) +
                           (securityRisk.data?.risk_counts.critical || 0)}
                       </p>
                     </div>
-                    <div className="rounded-control bg-[var(--zani-warning-soft)] px-3 py-2">
-                      <p className="text-xs font-semibold text-zani-warning">
+                    <div className="rounded-control bg-[var(--platforma-warning-soft)] px-3 py-2">
+                      <p className="text-xs font-semibold text-platforma-warning">
                         {t("settings.failedLogins")}
                       </p>
-                      <p className="text-xl font-semibold text-zani-warning">
+                      <p className="text-xl font-semibold text-platforma-warning">
                         {securityRisk.data?.failed_logins || 0}
                       </p>
                     </div>
@@ -1607,17 +1607,17 @@ export function SettingsPage() {
                   </div>
                 </div>
                 {securityRisk.error || auditLogs.error || loginHistory.error ? (
-                  <div className="mb-4 rounded-card border border-[rgba(151,90,22,0.24)] bg-[var(--zani-warning-soft)] p-4">
+                  <div className="mb-4 rounded-card border border-[rgba(151,90,22,0.24)] bg-[var(--platforma-warning-soft)] p-4">
                     <div className="flex gap-3">
                       <ShieldAlert
-                        className="mt-0.5 text-zani-warning"
+                        className="mt-0.5 text-platforma-warning"
                         size={20}
                       />
                       <div>
-                        <p className="font-semibold text-zani-warning">
+                        <p className="font-semibold text-platforma-warning">
                           {t("settings.securityHidden")}
                         </p>
-                        <p className="mt-1 text-sm leading-6 text-zani-warning">
+                        <p className="mt-1 text-sm leading-6 text-platforma-warning">
                           {t("settings.securityHiddenText")}
                         </p>
                       </div>
@@ -1625,12 +1625,12 @@ export function SettingsPage() {
                   </div>
                 ) : null}
                 <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-                  <div className="rounded-card border border-zani-border bg-surface-card p-4">
+                  <div className="rounded-card border border-platforma-border bg-surface-card p-4">
                     <div className="mb-3 flex items-center justify-between">
-                      <h3 className="font-bold text-zani-text">
+                      <h3 className="font-bold text-platforma-text">
                         {t("settings.riskEvents")}
                       </h3>
-                      <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-zani-subtle">
+                      <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-platforma-subtle">
                         {auditLogs.data?.length || 0} {t("settings.events")}
                       </span>
                     </div>
@@ -1638,18 +1638,18 @@ export function SettingsPage() {
                       {(auditLogs.data || []).slice(0, 8).map((log) => (
                         <div
                           key={log.id}
-                          className="rounded-2xl border border-zani-border bg-surface-muted p-3"
+                          className="rounded-2xl border border-platforma-border bg-surface-muted p-3"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <p className="font-bold text-zani-text">
+                              <p className="font-bold text-platforma-text">
                                 {auditEventTitle(
                                   log.action,
                                   log.entity_type,
                                   t,
                                 )}
                               </p>
-                              <p className="mt-1 text-xs text-zani-subtle">
+                              <p className="mt-1 text-xs text-platforma-subtle">
                                 {log.actor_email || "system"} ·{" "}
                                 {new Date(log.created_at).toLocaleString(
                                   locale,
@@ -1663,15 +1663,15 @@ export function SettingsPage() {
                         </div>
                       ))}
                       {!auditLogs.isLoading && !auditLogs.data?.length ? (
-                        <p className="rounded-2xl bg-surface-muted p-4 text-sm text-zani-subtle">
+                        <p className="rounded-2xl bg-surface-muted p-4 text-sm text-platforma-subtle">
                           {t("settings.noAuditEvents")}
                         </p>
                       ) : null}
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <div className="rounded-card border border-zani-border bg-surface-card p-4">
-                      <h3 className="font-bold text-zani-text">
+                    <div className="rounded-card border border-platforma-border bg-surface-card p-4">
+                      <h3 className="font-bold text-platforma-text">
                         {t("settings.logins")}
                       </h3>
                       <div className="mt-3 space-y-2">
@@ -1681,10 +1681,10 @@ export function SettingsPage() {
                             className="flex items-center justify-between rounded-2xl bg-surface-muted px-3 py-2"
                           >
                             <div>
-                              <p className="text-sm font-bold text-zani-text">
+                              <p className="text-sm font-bold text-platforma-text">
                                 {item.email || item.user_email}
                               </p>
-                              <p className="text-xs text-zani-subtle">
+                              <p className="text-xs text-platforma-subtle">
                                 {item.ip_address || t("settings.noIp")} ·{" "}
                                 {new Date(item.created_at).toLocaleString(
                                   locale,
@@ -1694,8 +1694,8 @@ export function SettingsPage() {
                             <span
                               className={
                                 item.status === "success"
-                                  ? "text-xs font-bold text-zani-success"
-                                  : "text-xs font-semibold text-zani-danger"
+                                  ? "text-xs font-bold text-platforma-success"
+                                  : "text-xs font-semibold text-platforma-danger"
                               }
                             >
                               {loginStatusLabel(item.status, t)}
@@ -1704,14 +1704,14 @@ export function SettingsPage() {
                         ))}
                         {!loginHistory.isLoading &&
                         !loginHistory.data?.length ? (
-                          <p className="text-sm text-zani-subtle">
+                          <p className="text-sm text-platforma-subtle">
                             {t("settings.noLoginHistory")}
                           </p>
                         ) : null}
                       </div>
                     </div>
-                    <div className="rounded-card border border-zani-border bg-surface-card p-4">
-                      <h3 className="font-bold text-zani-text">
+                    <div className="rounded-card border border-platforma-border bg-surface-card p-4">
+                      <h3 className="font-bold text-platforma-text">
                         {t("settings.supportAccess")}
                       </h3>
                       <div className="mt-3 space-y-2">
@@ -1720,10 +1720,10 @@ export function SettingsPage() {
                             key={grant.id}
                             className="rounded-2xl bg-surface-muted px-3 py-2"
                           >
-                            <p className="text-sm font-bold text-zani-text">
+                            <p className="text-sm font-bold text-platforma-text">
                               {grant.user_email}
                             </p>
-                            <p className="text-xs text-zani-subtle">
+                            <p className="text-xs text-platforma-subtle">
                               {grant.is_active
                                 ? t("settings.active")
                                 : t("settings.inactive")}{" "}
@@ -1736,7 +1736,7 @@ export function SettingsPage() {
                         ))}
                         {!supportGrants.isLoading &&
                         !supportGrants.data?.length ? (
-                          <p className="text-sm text-zani-subtle">
+                          <p className="text-sm text-platforma-subtle">
                             {t("settings.noSupportGrants")}
                           </p>
                         ) : null}
@@ -1757,10 +1757,10 @@ export function SettingsPage() {
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
                     {t("settings.notificationsEyebrow")}
                   </p>
-                  <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+                  <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
                     {t("settings.notificationsTitle")}
                   </h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
                     {t("settings.notificationsText")}
                   </p>
                 </div>
@@ -1778,7 +1778,7 @@ export function SettingsPage() {
                 </div>
               ) : null}
               {!business?.id ? (
-                <p className="rounded-2xl bg-surface-muted p-4 text-sm font-semibold text-zani-subtle">
+                <p className="rounded-2xl bg-surface-muted p-4 text-sm font-semibold text-platforma-subtle">
                   {t("account.notificationsNoBusiness")}
                 </p>
               ) : (
@@ -1789,14 +1789,14 @@ export function SettingsPage() {
                     return (
                       <div
                         key={item.category}
-                        className="rounded-card border border-zani-border bg-surface-muted p-4"
+                        className="rounded-card border border-platforma-border bg-surface-muted p-4"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="min-w-0">
-                            <p className="font-bold text-zani-text">
+                            <p className="font-bold text-platforma-text">
                               {t(item.titleKey)}
                             </p>
-                            <p className="mt-1 text-sm font-semibold leading-5 text-zani-subtle">
+                            <p className="mt-1 text-sm font-semibold leading-5 text-platforma-subtle">
                               {t(item.descriptionKey)}
                             </p>
                           </div>
@@ -1811,8 +1811,8 @@ export function SettingsPage() {
                             }
                             className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold transition ${
                               enabled
-                                ? "bg-[var(--zani-success-soft)] text-zani-success hover:brightness-95"
-                                : "bg-surface-card text-zani-subtle hover:bg-surface-warm"
+                                ? "bg-[var(--platforma-success-soft)] text-platforma-success hover:brightness-95"
+                                : "bg-surface-card text-platforma-subtle hover:bg-surface-warm"
                             }`}
                           >
                             {enabled
@@ -1836,10 +1836,10 @@ export function SettingsPage() {
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
                   {t("settings.quickRepliesEyebrow")}
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+                <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
                   {t("settings.quickRepliesTitle")}
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
                   {t("settings.quickRepliesText")}
                 </p>
               </div>
@@ -1922,7 +1922,7 @@ export function SettingsPage() {
                 {(quickReplies.data || []).map((template) => (
                   <div
                     key={template.id}
-                    className="rounded-card border border-zani-border bg-surface-muted p-4"
+                    className="rounded-card border border-platforma-border bg-surface-muted p-4"
                   >
                     {editingQuickReplyId === Number(template.id) ? (
                       <form
@@ -1983,7 +1983,7 @@ export function SettingsPage() {
                           }
                           required
                         />
-                        <label className="flex items-center gap-2 text-sm font-semibold text-zani-text">
+                        <label className="flex items-center gap-2 text-sm font-semibold text-platforma-text">
                           <input
                             type="checkbox"
                             checked={quickReplyEditForm.is_active}
@@ -2016,23 +2016,23 @@ export function SettingsPage() {
                       <>
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <p className="font-bold text-zani-text">
+                            <p className="font-bold text-platforma-text">
                               {template.title}
                             </p>
                             <div className="mt-2 flex flex-wrap gap-2">
-                              <span className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-zani-subtle">
+                              <span className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-subtle">
                                 {template.channel}
                               </span>
                               {template.category ? (
-                                <span className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-zani-subtle">
+                                <span className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-subtle">
                                   {template.category}
                                 </span>
                               ) : null}
                               <span
                                 className={
                                   template.is_active
-                                    ? "rounded-full bg-[var(--zani-success-soft)] px-2.5 py-1 text-xs font-bold text-zani-success"
-                                    : "rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-zani-subtle"
+                                    ? "rounded-full bg-[var(--platforma-success-soft)] px-2.5 py-1 text-xs font-bold text-platforma-success"
+                                    : "rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-platforma-subtle"
                                 }
                               >
                                 {template.is_active
@@ -2042,7 +2042,7 @@ export function SettingsPage() {
                             </div>
                           </div>
                         </div>
-                        <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-zani-subtle">
+                        <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-platforma-subtle">
                           {template.text}
                         </p>
                         <div className="mt-4 flex flex-wrap gap-2">
@@ -2099,7 +2099,7 @@ export function SettingsPage() {
                   </div>
                 ))}
                 {!quickReplies.isLoading && !quickReplies.data?.length ? (
-                  <p className="text-sm text-zani-subtle">
+                  <p className="text-sm text-platforma-subtle">
                     {t("settings.noQuickReplies")}
                   </p>
                 ) : null}
@@ -2113,10 +2113,10 @@ export function SettingsPage() {
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
                     {t("settings.rolesEyebrow")}
                   </p>
-                  <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+                  <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
                     {t("settings.rolesTitle")}
                   </h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
                     {t("settings.rolesText")}
                   </p>
                 </div>
@@ -2147,34 +2147,34 @@ export function SettingsPage() {
                     className={
                       Number(selectedRole?.id) === Number(role.id)
                         ? "rounded-card border border-brand-200 bg-brand-50 p-4 text-left shadow-card"
-                        : "rounded-card border border-zani-border bg-surface-muted p-4 text-left transition hover:bg-surface-card"
+                        : "rounded-card border border-platforma-border bg-surface-muted p-4 text-left transition hover:bg-surface-card"
                     }
                   >
-                    <p className="font-bold text-zani-text">{role.name}</p>
-                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-zani-faint">
+                    <p className="font-bold text-platforma-text">{role.name}</p>
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-platforma-faint">
                       {role.preset_key || "custom"}
                     </p>
-                    <p className="mt-3 text-sm leading-6 text-zani-subtle">
+                    <p className="mt-3 text-sm leading-6 text-platforma-subtle">
                       {roleSummary(role, t)}
                     </p>
-                    <span className="mt-3 inline-flex rounded-full bg-surface-card px-3 py-1 text-xs font-bold text-zani-subtle">
+                    <span className="mt-3 inline-flex rounded-full bg-surface-card px-3 py-1 text-xs font-bold text-platforma-subtle">
                       {translatedVisibilityLabel(roleVisibility(role), t)}
                     </span>
                   </button>
                 ))}
                 {!teamRoles.isLoading && !visibleRoles.length ? (
-                  <p className="text-sm text-zani-subtle">
+                  <p className="text-sm text-platforma-subtle">
                     {t("settings.noRoles")}
                   </p>
                 ) : null}
               </div>
               {advancedAccessOpen && selectedRole ? (
-                <div className="mt-5 rounded-card border border-zani-border bg-surface-muted p-4">
+                <div className="mt-5 rounded-card border border-platforma-border bg-surface-muted p-4">
                   <div className="mb-4">
-                    <p className="text-base font-bold text-zani-text">
+                    <p className="text-base font-bold text-platforma-text">
                       {t("settings.advancedFor", { name: selectedRole.name })}
                     </p>
-                    <p className="mt-1 max-w-2xl text-sm leading-6 text-zani-subtle">
+                    <p className="mt-1 max-w-2xl text-sm leading-6 text-platforma-subtle">
                       {t("settings.advancedText")}
                     </p>
                   </div>
@@ -2188,13 +2188,13 @@ export function SettingsPage() {
                         >
                           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                             <div>
-                              <p className="font-bold text-zani-text">
+                              <p className="font-bold text-platforma-text">
                                 {t(`settings.accessGroup.${group.key}`)}
                               </p>
-                              <p className="mt-1 text-sm leading-6 text-zani-subtle">
+                              <p className="mt-1 text-sm leading-6 text-platforma-subtle">
                                 {t(`settings.accessGroup.${group.key}.text`)}
                               </p>
-                              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-zani-faint">
+                              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-platforma-faint">
                                 {group.resources
                                   .map((resource) =>
                                     permissionResourceLabel(resource, t),
@@ -2281,10 +2281,10 @@ export function SettingsPage() {
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
                   {t("settings.customFieldsEyebrow")}
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+                <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
                   {t("settings.customFieldsTitle")}
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
                   {t("settings.customFieldsText")}
                 </p>
               </div>
@@ -2301,11 +2301,11 @@ export function SettingsPage() {
                   />
                 </div>
               ) : null}
-              <div className="mb-4 rounded-card border border-[rgba(151,90,22,0.24)] bg-[var(--zani-warning-soft)] p-4">
-                <p className="font-semibold text-zani-warning">
+              <div className="mb-4 rounded-card border border-[rgba(151,90,22,0.24)] bg-[var(--platforma-warning-soft)] p-4">
+                <p className="font-semibold text-platforma-warning">
                   {t("settings.customFieldsGuardTitle")}
                 </p>
-                <p className="mt-1 text-sm font-semibold leading-6 text-zani-warning">
+                <p className="mt-1 text-sm font-semibold leading-6 text-platforma-warning">
                   {t("settings.customFieldsGuardText")}
                 </p>
               </div>
@@ -2426,7 +2426,7 @@ export function SettingsPage() {
                 {(customFields.data || []).map((field) => (
                   <div
                     key={field.id}
-                    className="rounded-card border border-zani-border bg-surface-muted p-4"
+                    className="rounded-card border border-platforma-border bg-surface-muted p-4"
                   >
                     {editingCustomFieldId === Number(field.id) ? (
                       <form
@@ -2575,7 +2575,7 @@ export function SettingsPage() {
                             })
                           }
                         />
-                        <div className="flex flex-wrap gap-4 text-sm font-semibold text-zani-text">
+                        <div className="flex flex-wrap gap-4 text-sm font-semibold text-platforma-text">
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
@@ -2623,18 +2623,18 @@ export function SettingsPage() {
                       <>
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <p className="font-bold text-zani-text">
+                            <p className="font-bold text-platforma-text">
                               {field.label}
                             </p>
-                            <p className="mt-1 text-sm font-semibold text-zani-subtle">
+                            <p className="mt-1 text-sm font-semibold text-platforma-subtle">
                               {customFieldSummary(field, t)}
                             </p>
                           </div>
                           <span
                             className={
                               field.is_active
-                                ? "rounded-full bg-[var(--zani-success-soft)] px-2.5 py-1 text-xs font-bold text-zani-success"
-                                : "rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-zani-subtle"
+                                ? "rounded-full bg-[var(--platforma-success-soft)] px-2.5 py-1 text-xs font-bold text-platforma-success"
+                                : "rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-platforma-subtle"
                             }
                           >
                             {field.is_active
@@ -2643,14 +2643,14 @@ export function SettingsPage() {
                           </span>
                         </div>
                         <details className="mt-3">
-                          <summary className="cursor-pointer text-xs font-bold uppercase tracking-[0.12em] text-zani-faint">
+                          <summary className="cursor-pointer text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">
                             {t("settings.technicalDetails")}
                           </summary>
-                          <p className="mt-2 rounded-2xl bg-surface-card px-3 py-2 text-xs font-semibold text-zani-subtle">
+                          <p className="mt-2 rounded-2xl bg-surface-card px-3 py-2 text-xs font-semibold text-platforma-subtle">
                             {field.entity_type} · {field.field_type} ·{" "}
                             {field.key} · #{field.sort_order}
                           </p>
-                          <p className="mt-2 text-xs font-semibold text-zani-subtle">
+                          <p className="mt-2 text-xs font-semibold text-platforma-subtle">
                             View:{" "}
                             {Array.isArray(
                               field.permissions_json?.view_roles,
@@ -2710,7 +2710,7 @@ export function SettingsPage() {
                   </div>
                 ))}
                 {!customFields.isLoading && !customFields.data?.length ? (
-                  <p className="text-sm text-zani-subtle">
+                  <p className="text-sm text-platforma-subtle">
                     {t("settings.noCustomFields")}
                   </p>
                 ) : null}

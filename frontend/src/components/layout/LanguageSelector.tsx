@@ -16,13 +16,13 @@ export function LanguageSelector({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "zani-language-selector relative inline-flex min-h-10 items-center gap-2 rounded-control border border-zani-border bg-surface-card px-2.5 shadow-sm transition focus-within:border-brand-200 focus-within:ring-4 focus-within:ring-brand-100",
+        "platforma-language-selector relative inline-flex min-h-10 items-center gap-2 rounded-control border border-platforma-border bg-surface-card px-2.5 shadow-sm transition focus-within:border-brand-200 focus-within:ring-4 focus-within:ring-brand-100",
         className,
       )}
     >
-      <Languages size={16} className="zani-language-selector__icon shrink-0 text-brand-600" aria-hidden="true" />
+      <Languages size={16} className="platforma-language-selector__icon shrink-0 text-brand-600" aria-hidden="true" />
       <Select
-        className="zani-language-selector__control min-h-8 w-[5.25rem] border-0 bg-transparent px-1.5 py-1 text-sm shadow-none hover:bg-surface-muted"
+        className="platforma-language-selector__control min-h-8 w-[5.25rem] border-0 bg-transparent px-1.5 py-1 text-sm shadow-none hover:bg-surface-muted"
         value={language}
         onChange={(event) => setLanguage(event.target.value as typeof language)}
         aria-label={t("common.language")}

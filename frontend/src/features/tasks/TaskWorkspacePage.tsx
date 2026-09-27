@@ -318,7 +318,7 @@ export function TaskWorkspacePage() {
               <StatusBadge status={task.status} />
               <StatusBadge status={task.priority} />
             </div>
-            <p className="mt-3 text-sm font-medium leading-6 text-zani-subtle">
+            <p className="mt-3 text-sm font-medium leading-6 text-platforma-subtle">
               {task.description || t("crmCard.noNotesText")}
             </p>
           </TaskSection>
@@ -482,7 +482,7 @@ export function TaskWorkspacePage() {
               !task.deal &&
               !task.appointment &&
               !task.conversation ? (
-                <p className="text-sm font-semibold text-zani-subtle">
+                <p className="text-sm font-semibold text-platforma-subtle">
                   {t("tasks.noLinkedEntities")}
                 </p>
               ) : null}
@@ -500,7 +500,7 @@ export function TaskWorkspacePage() {
                 />
               ))}
               {!comments.length ? (
-                <p className="text-sm font-semibold text-zani-subtle">
+                <p className="text-sm font-semibold text-platforma-subtle">
                   {t("tasks.noComments")}
                 </p>
               ) : null}
@@ -534,7 +534,7 @@ export function TaskWorkspacePage() {
                 <ActivityRow key={event.id} event={event} />
               ))}
               {!activity.length ? (
-                <p className="text-sm font-semibold text-zani-subtle">
+                <p className="text-sm font-semibold text-platforma-subtle">
                   {t("tasks.noHistory")}
                 </p>
               ) : null}
@@ -554,9 +554,9 @@ function TaskMetric({
   value: React.ReactNode;
 }) {
   return (
-    <div className="rounded-card border border-zani-border bg-zani-card px-4 py-3">
-      <p className="text-xs font-semibold uppercase text-zani-muted">{label}</p>
-      <p className="mt-1 truncate text-sm font-bold text-zani-text">{value}</p>
+    <div className="rounded-card border border-platforma-border bg-platforma-card px-4 py-3">
+      <p className="text-xs font-semibold uppercase text-platforma-muted">{label}</p>
+      <p className="mt-1 truncate text-sm font-bold text-platforma-text">{value}</p>
     </div>
   );
 }
@@ -572,8 +572,8 @@ function TaskSection({
 }) {
   return (
     <section className={className}>
-      <h2 className="mb-3 text-sm font-semibold text-zani-text">{title}</h2>
-      <div className="rounded-card border border-zani-border bg-zani-card p-4 shadow-zani-card">
+      <h2 className="mb-3 text-sm font-semibold text-platforma-text">{title}</h2>
+      <div className="rounded-card border border-platforma-border bg-platforma-card p-4 shadow-platforma-card">
         {children}
       </div>
     </section>
@@ -609,13 +609,13 @@ function CommentRow({
 }) {
   const { t } = useI18n();
   return (
-    <div className="rounded-card border border-zani-border bg-surface-subtle p-3">
+    <div className="rounded-card border border-platforma-border bg-surface-subtle p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-medium leading-6 text-zani-text">
+          <p className="text-sm font-medium leading-6 text-platforma-text">
             {comment.text}
           </p>
-          <p className="mt-1 text-xs font-semibold text-zani-muted">
+          <p className="mt-1 text-xs font-semibold text-platforma-muted">
             {comment.author_name ||
               comment.author_email ||
               t("resources.typeStaff")}{" "}
@@ -640,14 +640,14 @@ function CommentRow({
 function ActivityRow({ event }: { event: ActivityEvent }) {
   return (
     <div className="flex gap-3 rounded-card bg-surface-subtle p-3">
-      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-control bg-zani-card text-brand-700">
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-control bg-platforma-card text-brand-700">
         <CalendarClock size={16} />
       </span>
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-zani-text">
+        <p className="text-sm font-semibold text-platforma-text">
           {event.text || event.event_type}
         </p>
-        <p className="mt-1 text-xs font-semibold text-zani-muted">
+        <p className="mt-1 text-xs font-semibold text-platforma-muted">
           {formatDateTime(event.created_at)}
         </p>
       </div>

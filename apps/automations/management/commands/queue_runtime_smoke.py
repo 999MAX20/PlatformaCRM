@@ -24,12 +24,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         business = self._get_business(options.get("business_id"))
         token = uuid4().hex[:12]
-        title = f"ZANI queue smoke task {token}"
+        title = f"Платформа CRM queue smoke task {token}"
 
         with transaction.atomic():
             rule = AutomationRule.objects.create(
                 business=business,
-                name=f"ZANI queue smoke {token}",
+                name=f"Платформа CRM queue smoke {token}",
                 trigger_type=AutomationRule.TriggerTypes.LEAD_CREATED,
                 is_active=True,
                 priority=9999,
@@ -95,7 +95,7 @@ class Command(BaseCommand):
             defaults={
                 "username": "queue_smoke",
                 "role": User.Roles.BUSINESS_OWNER,
-                "full_name": "ZANI Queue Smoke",
+                "full_name": "Платформа CRM Queue Smoke",
                 "is_active": True,
             },
         )
@@ -107,7 +107,7 @@ class Command(BaseCommand):
             slug="zani-queue-smoke",
             defaults={
                 "owner": owner,
-                "name": "ZANI Queue Smoke",
+                "name": "Платформа CRM Queue Smoke",
                 "status": Business.Statuses.TRIAL,
                 "timezone": "UTC",
             },

@@ -217,7 +217,7 @@ def _deliver(notification):
         if not email:
             return {"ok": False, "reason": "Client email is missing."}
         sent = send_mail(
-            subject="ZANI: напоминание о записи",
+            subject="Платформа CRM: напоминание о записи",
             message=notification.text,
             from_email=None,
             recipient_list=[email],

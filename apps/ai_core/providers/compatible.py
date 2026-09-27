@@ -24,7 +24,7 @@ def _message_content_to_text(content):
 class OpenAICompatibleProvider(BaseAIProvider):
     api_key = ""
     base_url = ""
-    app_name = "ZANI"
+    app_name = "PlatformaCRM"
     site_url = ""
 
     def _headers(self):

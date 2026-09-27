@@ -75,11 +75,11 @@ export function LeadDrawerContent({ data, entity }: { data: CrmCardPayload; enti
             <div className="min-w-0">
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <StatusBadge status={lead.status} />
-                <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-zani-muted">{getChannelLabel(lead.source, t)}</span>
+                <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-platforma-muted">{getChannelLabel(lead.source, t)}</span>
                 {serviceName ? <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">{serviceName}</span> : null}
               </div>
-              <h3 className="truncate text-xl font-semibold text-zani-ink">{client?.full_name || lead.client_name || t("crmCard.leadNumber", { id: lead.id })}</h3>
-              <p className="mt-1 text-sm font-semibold text-zani-muted">
+              <h3 className="truncate text-xl font-semibold text-platforma-ink">{client?.full_name || lead.client_name || t("crmCard.leadNumber", { id: lead.id })}</h3>
+              <p className="mt-1 text-sm font-semibold text-platforma-muted">
                 {[client?.phone || lead.client_phone, client?.email || lead.client_email].filter(Boolean).join(" · ") || t("crmCard.noContacts")}
               </p>
             </div>
@@ -105,8 +105,8 @@ export function LeadDrawerContent({ data, entity }: { data: CrmCardPayload; enti
         <div className={drawerSurfaceClass}>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("leads.takeAction")}</p>
-              <p className="mt-1 text-sm font-semibold text-zani-subtle">{lead.recommended_action || openTasks[0]?.title || t("crmCard.snapshotNoTasks")}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("leads.takeAction")}</p>
+              <p className="mt-1 text-sm font-semibold text-platforma-subtle">{lead.recommended_action || openTasks[0]?.title || t("crmCard.snapshotNoTasks")}</p>
             </div>
             {data.deals.length ? (
               <Button type="button" variant="secondary" size="sm" onClick={() => window.location.assign(`/app/deals/${data.deals[0].id}`)}>
@@ -114,7 +114,7 @@ export function LeadDrawerContent({ data, entity }: { data: CrmCardPayload; enti
               </Button>
             ) : null}
           </div>
-          <div className="flex flex-wrap gap-2 border-t border-zani-border pt-4">
+          <div className="flex flex-wrap gap-2 border-t border-platforma-border pt-4">
             {availableActions.has("take") ? (
               <Button data-crm-action-id="take" type="button" variant="secondary" size="sm" isLoading={lifecycleMutation.isPending} onClick={() => lifecycleMutation.mutate("take")}>
                 {t("leads.takeWork")}
@@ -150,19 +150,19 @@ export function LeadDrawerContent({ data, entity }: { data: CrmCardPayload; enti
 
         <div className="grid gap-3 lg:grid-cols-2">
           <div className={drawerSurfaceClass}>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("leads.priority")}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("leads.priority")}</p>
             <div className="mt-3 space-y-2">
               <div>
-                <div className="mb-1 flex justify-between text-xs font-bold text-zani-muted">
+                <div className="mb-1 flex justify-between text-xs font-bold text-platforma-muted">
                   <span>{t("leads.priorityLead", { lead: leadScore })}</span>
                   <span>{leadScore}/100</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
-                  <div className="h-full rounded-full bg-[var(--zani-brand-content)]" style={{ width: `${Math.min(100, Math.max(0, leadScore))}%` }} />
+                  <div className="h-full rounded-full bg-[var(--platforma-brand-content)]" style={{ width: `${Math.min(100, Math.max(0, leadScore))}%` }} />
                 </div>
               </div>
               <div>
-                <div className="mb-1 flex justify-between text-xs font-bold text-zani-muted">
+                <div className="mb-1 flex justify-between text-xs font-bold text-platforma-muted">
                   <span>{t("leads.priorityCallFast")}</span>
                   <span>{lossRisk}%</span>
                 </div>
@@ -173,32 +173,32 @@ export function LeadDrawerContent({ data, entity }: { data: CrmCardPayload; enti
             </div>
           </div>
           <div className={drawerSurfaceClass}>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("crmCard.snapshotMessages")}</p>
-            <p className="mt-2 text-sm font-semibold leading-6 text-zani-text">{latestConversation?.last_message?.text || t("crmCard.noDialogsText")}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("crmCard.snapshotMessages")}</p>
+            <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">{latestConversation?.last_message?.text || t("crmCard.noDialogsText")}</p>
           </div>
         </div>
 
         <div className={drawerSurfaceClass}>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("crmCard.messageNote")}</p>
-          <p className="text-sm leading-6 text-zani-text">{lead.message || t("crmCard.noLeadMessage")}</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("crmCard.messageNote")}</p>
+          <p className="text-sm leading-6 text-platforma-text">{lead.message || t("crmCard.noLeadMessage")}</p>
           {lead.lost_reason ? <p className="mt-3 rounded-card bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">{t("leads.lostReason")}: {lead.lost_reason}</p> : null}
         </div>
 
         <div className="grid gap-3 lg:grid-cols-3">
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("nav.tasks")}</p>
-            <p className="text-2xl font-semibold text-zani-ink">{openTasks.length}</p>
-            <p className="mt-1 text-sm text-zani-muted">{openTasks[0]?.title || t("crmCard.noTasksText")}</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("nav.tasks")}</p>
+            <p className="text-2xl font-semibold text-platforma-ink">{openTasks.length}</p>
+            <p className="mt-1 text-sm text-platforma-muted">{openTasks[0]?.title || t("crmCard.noTasksText")}</p>
           </div>
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><WalletCards size={14} /> {t("nav.deals")}</p>
-            <p className="text-2xl font-semibold text-zani-ink">{data.meta?.related_counts.deals ?? data.deals.length}</p>
-            <p className="mt-1 text-sm text-zani-muted">{data.deals[0]?.title || t("crmCard.snapshotNoTasks")}</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><WalletCards size={14} /> {t("nav.deals")}</p>
+            <p className="text-2xl font-semibold text-platforma-ink">{data.meta?.related_counts.deals ?? data.deals.length}</p>
+            <p className="mt-1 text-sm text-platforma-muted">{data.deals[0]?.title || t("crmCard.snapshotNoTasks")}</p>
           </div>
           <div className={drawerSurfaceClass}>
-            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><CalendarClock size={14} /> {t("nav.appointments")}</p>
-            <p className="text-2xl font-semibold text-zani-ink">{data.meta?.related_counts.appointments ?? data.appointments.length}</p>
-            <p className="mt-1 text-sm text-zani-muted">{data.appointments[0] ? formatDateTime(data.appointments[0].start_at) : t("crmCard.noTasksText")}</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><CalendarClock size={14} /> {t("nav.appointments")}</p>
+            <p className="text-2xl font-semibold text-platforma-ink">{data.meta?.related_counts.appointments ?? data.appointments.length}</p>
+            <p className="mt-1 text-sm text-platforma-muted">{data.appointments[0] ? formatDateTime(data.appointments[0].start_at) : t("crmCard.noTasksText")}</p>
           </div>
         </div>
 

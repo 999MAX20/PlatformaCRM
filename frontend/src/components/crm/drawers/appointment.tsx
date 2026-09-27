@@ -87,10 +87,10 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
           <div className="min-w-0">
             <div className="mb-2 flex flex-wrap items-center gap-2">
               <StatusBadge status={appointment.status} />
-              <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-zani-muted">{sourceLabel(appointment.source, t)}</span>
+              <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-platforma-muted">{sourceLabel(appointment.source, t)}</span>
             </div>
-            <h3 className="truncate text-xl font-semibold text-zani-ink">{clientName}</h3>
-            <p className="mt-1 text-sm font-semibold text-zani-muted">
+            <h3 className="truncate text-xl font-semibold text-platforma-ink">{clientName}</h3>
+            <p className="mt-1 text-sm font-semibold text-platforma-muted">
               {serviceMeta} · {formatDateTime(appointment.start_at)} - {formatDateTime(appointment.end_at)}
             </p>
           </div>
@@ -118,7 +118,7 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
           </div>
         </div>
         {statusReasonAction ? (
-          <div className="mt-4 rounded-lg border border-zani-border bg-surface-muted p-3">
+          <div className="mt-4 rounded-lg border border-platforma-border bg-surface-muted p-3">
             <Textarea
               value={statusReason}
               onChange={(event) => setStatusReason(event.target.value)}
@@ -154,23 +154,23 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
       <div className="grid gap-3 lg:grid-cols-3">
         <div className={drawerPrimarySurfaceClass}>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">{t("nav.calendar")}</p>
-          <p className="mt-2 text-sm font-semibold leading-6 text-zani-text">{formatDateTime(appointment.start_at)}</p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">{formatDateTime(appointment.start_at)}</p>
         </div>
         <div className={drawerSurfaceClass}>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("nav.leads")}</p>
-          <p className="mt-2 text-sm font-semibold leading-6 text-zani-text">{lead ? t("crmCard.leadNumber", { id: lead.id }) : t("appointment.noLead")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("nav.leads")}</p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">{lead ? t("crmCard.leadNumber", { id: lead.id }) : t("appointment.noLead")}</p>
         </div>
         <div className={drawerSurfaceClass}>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("nav.deals")}</p>
-          <p className="mt-2 text-sm font-semibold leading-6 text-zani-text">{data.deals.length}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("nav.deals")}</p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">{data.deals.length}</p>
         </div>
       </div>
 
       <div className={drawerSurfaceClass}>
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="font-semibold text-zani-ink">{t("appointment.notes")}</h3>
-            <p className="mt-1 text-sm text-zani-muted">{t("crmCard.quickEditText")}</p>
+            <h3 className="font-semibold text-platforma-ink">{t("appointment.notes")}</h3>
+            <p className="mt-1 text-sm text-platforma-muted">{t("crmCard.quickEditText")}</p>
           </div>
           <Button type="button" variant="secondary" isLoading={notesMutation.isPending} onClick={() => notesMutation.mutate()}>
             {t("clients.save")}

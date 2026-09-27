@@ -294,7 +294,7 @@ export function ClientInspector({
             <button type="button" onClick={onEdit} className="grid h-7 min-h-7 w-7 min-w-7 place-items-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-900" aria-label={t("clients.edit")}>
               <Edit3 size={15} />
             </button>
-            <button type="button" onClick={onArchive} className="grid h-7 min-h-7 w-7 min-w-7 place-items-center rounded-md text-zani-warning transition hover:bg-[var(--zani-warning-soft)]" aria-label={t("clients.archiveAction")}>
+            <button type="button" onClick={onArchive} className="grid h-7 min-h-7 w-7 min-w-7 place-items-center rounded-md text-platforma-warning transition hover:bg-[var(--platforma-warning-soft)]" aria-label={t("clients.archiveAction")}>
               <Archive size={15} />
             </button>
           </div>

@@ -136,7 +136,7 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
               <h4 className="font-black text-midnight">{t("aiAgents.control.advancedTitle")}</h4>
               <p className="mt-1 text-sm font-semibold leading-5 text-slate-500">{t("aiAgents.control.advancedText")}</p>
             </div>
-            <ChevronRight size={18} className={cn("shrink-0 text-zani-faint transition", showAdvanced && "rotate-90 text-ai-700")} />
+            <ChevronRight size={18} className={cn("shrink-0 text-platforma-faint transition", showAdvanced && "rotate-90 text-ai-700")} />
           </button>
 
           {showAdvanced ? (
@@ -199,7 +199,7 @@ function FunctionsSection({
   return (
     <Card variant="outlined">
       <CardBody>
-        <div className="divide-y divide-zani-border">
+        <div className="divide-y divide-platforma-border">
         {tools.map(([key, title, text]) => {
           const enabled = form.allowed_tools.includes(key);
           return (
@@ -209,13 +209,13 @@ function FunctionsSection({
                   <FunctionSquare size={18} />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-zani-ink">{title}</h3>
-                  <p className="mt-1 text-sm leading-5 text-zani-subtle">{text}</p>
+                  <h3 className="text-sm font-semibold text-platforma-ink">{title}</h3>
+                  <p className="mt-1 text-sm leading-5 text-platforma-subtle">{text}</p>
                   <FieldHint>{t(`aiAgents.hint.tool.${key}`)}</FieldHint>
                 </div>
               </div>
               <div className="flex shrink-0 items-center justify-between gap-3 sm:justify-end">
-                <span className="text-xs font-semibold text-zani-subtle">{enabled ? t("aiAgents.functions.enabled") : t("aiAgents.functions.disabled")}</span>
+                <span className="text-xs font-semibold text-platforma-subtle">{enabled ? t("aiAgents.functions.enabled") : t("aiAgents.functions.disabled")}</span>
                 <ToggleSwitch checked={enabled} disabled={!canManage} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />
               </div>
             </div>

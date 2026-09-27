@@ -198,7 +198,7 @@ export function TimelinePage() {
                 >
                   <CrmPagination
                     variant="toolbar"
-                    className="border-t border-zani-border px-3 py-3"
+                    className="border-t border-platforma-border px-3 py-3"
                     shown={rows.length}
                     total={total}
                     page={filters.page}

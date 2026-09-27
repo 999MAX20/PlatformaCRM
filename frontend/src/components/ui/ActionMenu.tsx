@@ -9,10 +9,10 @@ import { Button } from "./Button";
 import { PopoverSurface } from "./Overlay";
 
 const actionMenuToneClasses: Record<ActionTone, string> = {
-  brand: "text-[var(--zani-brand-content)] hover:bg-brand-50",
-  neutral: "text-zani-text hover:bg-surface-warm",
-  warning: "text-zani-warning hover:bg-[var(--zani-warning-soft)]",
-  danger: "text-zani-danger hover:bg-[var(--zani-danger-soft)]",
+  brand: "text-[var(--platforma-brand-content)] hover:bg-brand-50",
+  neutral: "text-platforma-text hover:bg-surface-warm",
+  warning: "text-platforma-warning hover:bg-[var(--platforma-warning-soft)]",
+  danger: "text-platforma-danger hover:bg-[var(--platforma-danger-soft)]",
   ai: "text-ai-700 hover:bg-ai-50",
 };
 
@@ -140,7 +140,7 @@ export function ActionMenu({
           role="menu"
           data-testid="action-menu"
           aria-label={label}
-          className="fixed z-[var(--zani-z-popover)] w-56 p-1.5"
+          className="fixed z-[var(--platforma-z-popover)] w-56 p-1.5"
           style={position}
           onClick={(event) => event.stopPropagation()}
           onKeyDown={handleMenuKeyDown}
@@ -155,7 +155,7 @@ export function ActionMenu({
                 data-action-key={item.key}
                 disabled={item.disabled}
                 className={cn(
-                  "zani-focus-ring flex min-h-10 w-full items-center gap-2 rounded-control px-3 py-2 text-left text-sm font-semibold transition disabled:pointer-events-none disabled:opacity-50",
+                  "platforma-focus-ring flex min-h-10 w-full items-center gap-2 rounded-control px-3 py-2 text-left text-sm font-semibold transition disabled:pointer-events-none disabled:opacity-50",
                   actionMenuToneClasses[item.tone || "neutral"],
                 )}
                 onClick={() => {

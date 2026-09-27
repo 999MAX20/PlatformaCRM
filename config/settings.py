@@ -292,7 +292,7 @@ AUTH_PRIVILEGED_MFA_REQUIRED = env.bool(
     "AUTH_PRIVILEGED_MFA_REQUIRED",
     default=IS_PRODUCTION_LIKE_ENVIRONMENT,
 )
-AUTH_MFA_ISSUER = env("AUTH_MFA_ISSUER", default="Zani")
+AUTH_MFA_ISSUER = env("AUTH_MFA_ISSUER", default="Платформа CRM")
 AUTH_MFA_CHALLENGE_SECONDS = env.int("AUTH_MFA_CHALLENGE_SECONDS", default=300)
 AUTH_MFA_STEP_UP_SECONDS = env.int("AUTH_MFA_STEP_UP_SECONDS", default=300)
 
@@ -460,7 +460,7 @@ OPENAI_TEMPERATURE = env.float("OPENAI_TEMPERATURE", default=0.4)
 OPENROUTER_API_KEY = env("OPENROUTER_API_KEY", default="")
 OPENROUTER_BASE_URL = env("OPENROUTER_BASE_URL", default="https://openrouter.ai/api/v1")
 OPENROUTER_SITE_URL = env("OPENROUTER_SITE_URL", default="")
-OPENROUTER_APP_NAME = env("OPENROUTER_APP_NAME", default="ZANI")
+OPENROUTER_APP_NAME = env("OPENROUTER_APP_NAME", default="PlatformaCRM")
 KIMI_API_KEY = env("KIMI_API_KEY", default="")
 KIMI_BASE_URL = env("KIMI_BASE_URL", default="https://api.moonshot.ai/v1")
 
@@ -504,7 +504,7 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Zani <no-reply@zani.local>")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Платформа CRM <no-reply@zani.local>")
 
 _argv = __import__("sys").argv
 if "test" in _argv or any("pytest" in arg for arg in _argv):

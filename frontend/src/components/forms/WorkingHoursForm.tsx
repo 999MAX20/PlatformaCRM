@@ -64,8 +64,8 @@ export function WorkingHoursForm({
         <Input label={t("workingHours.start")} type="time" {...form.register("start_time")} />
         <Input label={t("workingHours.end")} type="time" {...form.register("end_time")} />
       </div>
-      <label className="flex items-center gap-2 text-sm font-semibold text-zani-subtle">
-        <input type="checkbox" className="h-4 w-4 rounded border-zani-border accent-brand-500" {...form.register("is_day_off")} />
+      <label className="flex items-center gap-2 text-sm font-semibold text-platforma-subtle">
+        <input type="checkbox" className="h-4 w-4 rounded border-platforma-border accent-brand-500" {...form.register("is_day_off")} />
         {t("workingHours.dayOff")}
       </label>
       <Button type="submit" isLoading={form.formState.isSubmitting}>{t("workingHours.saveSchedule")}</Button>
@@ -218,8 +218,8 @@ export function WeeklyWorkingHoursForm({
       }}
     >
       {showContextHint ? (
-        <div className="rounded-card border border-brand-100 bg-brand-50 p-4 text-sm text-zani-subtle">
-          <p className="font-semibold text-zani-ink">{t("workingHours.formTitle")}</p>
+        <div className="rounded-card border border-brand-100 bg-brand-50 p-4 text-sm text-platforma-subtle">
+          <p className="font-semibold text-platforma-ink">{t("workingHours.formTitle")}</p>
           <p className="mt-1 leading-6">{t("workingHours.formText")}</p>
         </div>
       ) : null}
@@ -255,10 +255,10 @@ export function WeeklyWorkingHoursForm({
             <div
               key={weekday.value}
               className={layout === "week-grid"
-                ? "grid min-w-0 gap-2 rounded-card border border-zani-border bg-surface-card p-3 shadow-sm"
+                ? "grid min-w-0 gap-2 rounded-card border border-platforma-border bg-surface-card p-3 shadow-sm"
                 : compact
-                ? "grid grid-cols-2 gap-3 rounded-card border border-zani-border bg-surface-card p-3 shadow-sm"
-                : "grid gap-3 rounded-card border border-zani-border bg-surface-card p-3 shadow-sm sm:grid-cols-[120px_1fr_1fr_140px] sm:items-center"}
+                ? "grid grid-cols-2 gap-3 rounded-card border border-platforma-border bg-surface-card p-3 shadow-sm"
+                : "grid gap-3 rounded-card border border-platforma-border bg-surface-card p-3 shadow-sm sm:grid-cols-[120px_1fr_1fr_140px] sm:items-center"}
             >
               <div className={layout === "week-grid"
                 ? "flex items-center justify-between gap-2"
@@ -266,8 +266,8 @@ export function WeeklyWorkingHoursForm({
                   ? "col-span-2 flex items-center justify-between gap-3"
                   : undefined}
               >
-                <p className="font-semibold text-zani-ink">{t(weekday.labelKey)}</p>
-                <p className="text-xs font-semibold text-zani-faint">{t(weekday.shortKey)}</p>
+                <p className="font-semibold text-platforma-ink">{t(weekday.labelKey)}</p>
+                <p className="text-xs font-semibold text-platforma-faint">{t(weekday.shortKey)}</p>
               </div>
               <Input
                 label={t("workingHours.start")}
@@ -284,14 +284,14 @@ export function WeeklyWorkingHoursForm({
                 onChange={(event) => updateDay(weekday.value, { end_time: event.target.value })}
               />
               <label className={layout === "week-grid"
-                ? "flex min-h-11 items-center gap-2 rounded-control bg-surface-muted px-2 text-xs font-semibold text-zani-subtle"
+                ? "flex min-h-11 items-center gap-2 rounded-control bg-surface-muted px-2 text-xs font-semibold text-platforma-subtle"
                 : compact
-                ? "col-span-2 flex min-h-11 items-center gap-3 rounded-control bg-surface-muted px-3 text-sm font-semibold text-zani-subtle"
-                : "flex min-h-12 items-center gap-3 rounded-control bg-surface-muted px-3 text-sm font-semibold text-zani-subtle sm:pt-0"}
+                ? "col-span-2 flex min-h-11 items-center gap-3 rounded-control bg-surface-muted px-3 text-sm font-semibold text-platforma-subtle"
+                : "flex min-h-12 items-center gap-3 rounded-control bg-surface-muted px-3 text-sm font-semibold text-platforma-subtle sm:pt-0"}
               >
                 <input
                   type="checkbox"
-                  className="h-5 w-5 rounded border-zani-border accent-brand-500"
+                  className="h-5 w-5 rounded border-platforma-border accent-brand-500"
                   checked={day.is_day_off}
                   disabled={disabled}
                   onChange={(event) => updateDay(weekday.value, { is_day_off: event.target.checked })}

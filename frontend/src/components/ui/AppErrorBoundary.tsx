@@ -38,7 +38,7 @@ export class AppErrorBoundary extends React.Component<AppErrorBoundaryProps, App
     const language = getLanguage();
 
     return (
-      <main className="min-h-screen bg-zani-bg px-4 py-8 text-zani-ink sm:px-8">
+      <main className="min-h-screen bg-platforma-bg px-4 py-8 text-platforma-ink sm:px-8">
         <div className="mx-auto flex min-h-[70vh] max-w-2xl items-center">
           <PageFallbackLayout
             testId="app-error-boundary"

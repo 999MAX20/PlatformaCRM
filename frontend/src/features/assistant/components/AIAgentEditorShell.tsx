@@ -61,11 +61,11 @@ export function AIAgentEditorShell({
 
   return (
     <section
-      className="flex min-h-[680px] min-w-0 flex-col overflow-hidden rounded-card border border-zani-border bg-surface-card shadow-card lg:min-h-0"
+      className="flex min-h-[680px] min-w-0 flex-col overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-card lg:min-h-0"
       aria-label={t("aiAgents.editorAria", { name: bot.name })}
       data-testid="ai-agent-editor"
     >
-      <header className="shrink-0 border-b border-zani-border bg-surface-card px-4 py-4 sm:px-5">
+      <header className="shrink-0 border-b border-platforma-border bg-surface-card px-4 py-4 sm:px-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex min-w-0 items-start gap-3">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-control bg-ai-50 text-ai-700 ring-1 ring-ai-100">
@@ -73,10 +73,10 @@ export function AIAgentEditorShell({
             </span>
             <div className="min-w-0">
               <div className="flex min-w-0 flex-wrap items-center gap-2">
-                <h2 className="min-w-0 truncate text-xl font-semibold text-zani-ink">{bot.name}</h2>
+                <h2 className="min-w-0 truncate text-xl font-semibold text-platforma-ink">{bot.name}</h2>
                 <Badge size="sm" variant={statusVariant(bot.status, runtimeBlocked)}>{statusLabel}</Badge>
               </div>
-              <p className="mt-1 line-clamp-2 max-w-3xl text-sm font-medium leading-5 text-zani-subtle">
+              <p className="mt-1 line-clamp-2 max-w-3xl text-sm font-medium leading-5 text-platforma-subtle">
                 {profile?.role_description || t("aiAgents.purposeMissing")}
               </p>
             </div>
@@ -87,8 +87,8 @@ export function AIAgentEditorShell({
               <MessageSquareText aria-hidden="true" size={16} />
               {t("aiAgents.openMessages")}
             </Button>
-            <div className="flex min-h-9 items-center gap-2 rounded-control border border-zani-border bg-surface-warm px-3">
-              <span className="text-xs font-semibold text-zani-subtle">{statusLabel}</span>
+            <div className="flex min-h-9 items-center gap-2 rounded-control border border-platforma-border bg-surface-warm px-3">
+              <span className="text-xs font-semibold text-platforma-subtle">{statusLabel}</span>
               <Switch
                 checked={bot.status === "active"}
                 disabled={!canManage || activationBlocked || (dirty && bot.status !== "active")}
@@ -127,8 +127,8 @@ export function AIAgentEditorShell({
       </div>
 
       {canManage && (showFooter || nextSection) ? (
-        <footer className="flex shrink-0 flex-col gap-3 border-t border-zani-border bg-surface-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-          <p className="min-h-5 text-xs font-medium text-zani-subtle" aria-live="polite">
+        <footer className="flex shrink-0 flex-col gap-3 border-t border-platforma-border bg-surface-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+          <p className="min-h-5 text-xs font-medium text-platforma-subtle" aria-live="polite">
             {dirty
               ? t("aiAgents.unsavedIndicator")
               : saveState === "saved"

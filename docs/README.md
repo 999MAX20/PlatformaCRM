@@ -1,12 +1,14 @@
-# ZANI Documentation Index
+# Платформа CRM Documentation Index
 
-This folder is the single entry point for ZANI technical documentation.
+This folder is the single entry point for Платформа CRM technical documentation.
 
 [Root project status](../STATUS.md) is the owner-approved compact entry point
 for recovering context in a new chat. It routes to existing checkpoints and
 contracts; detailed technical documentation and evidence retain their owners.
 
 ## Current backend boundary and documentation status
+
+- [Ребрендинг в Платформа CRM](operations/rebranding-2026-09-28.md) — новое название, единый репозиторий PlatformaCRM и сохранённые технические идентификаторы совместимости.
 
 - [Billing discussion deferred, later 2026-09-25](billing/BILLING_DISCUSSION_DEFERRED_2026-09-25.md) — latest package with included AI direction supersedes separate-AI/PAYG; prices and billing work deferred, paid-pilot commercial gate retained. No new implementation phase.
 

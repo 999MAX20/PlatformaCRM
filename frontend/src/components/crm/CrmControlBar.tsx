@@ -68,7 +68,7 @@ export function CrmControlBar<TValue extends string>({
 
   return (
     <section
-      className={cn("border-b border-zani-border bg-surface-card", className)}
+      className={cn("border-b border-platforma-border bg-surface-card", className)}
       data-testid={testId}
     >
       <div
@@ -95,14 +95,14 @@ export function CrmControlBar<TValue extends string>({
                 aria-selected={active}
                 onClick={() => onChange(tab.value)}
                 className={cn(
-                  "zani-focus-ring inline-flex items-center gap-1.5 rounded-control font-semibold transition",
+                  "platforma-focus-ring inline-flex items-center gap-1.5 rounded-control font-semibold transition",
                   compact ? "min-h-8 px-2.5 text-xs" : "min-h-9 px-3 text-sm",
-                  active ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "text-zani-subtle hover:bg-surface-warm hover:text-zani-text",
+                  active ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-warm hover:text-platforma-text",
                 )}
               >
                 <span className="min-w-0 truncate">{tab.label}</span>
                 {typeof tab.count === "number" ? (
-                  <span className={cn("shrink-0 rounded-full px-1.5 py-0.5 text-xs font-semibold", active ? "bg-surface-muted text-zani-subtle" : "bg-surface-card text-zani-faint")}>
+                  <span className={cn("shrink-0 rounded-full px-1.5 py-0.5 text-xs font-semibold", active ? "bg-surface-muted text-platforma-subtle" : "bg-surface-card text-platforma-faint")}>
                     {tab.count}
                   </span>
                 ) : null}
@@ -127,7 +127,7 @@ export function CrmControlBar<TValue extends string>({
                 <SlidersHorizontal size={14} />
                 {advancedLabel || filtersLabel}
                 <ChevronDown size={14} className={cn("transition", advancedOpen && "rotate-180")} />
-                {advancedCounter ? <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-[11px] text-zani-subtle">{advancedCounter}</span> : null}
+                {advancedCounter ? <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-[11px] text-platforma-subtle">{advancedCounter}</span> : null}
               </Button>
               {advancedOpen ? (
                 <PopoverSurface className="absolute right-0 top-11 w-[min(620px,calc(100vw-2rem))] p-3">
@@ -140,16 +140,16 @@ export function CrmControlBar<TValue extends string>({
         </div>
       </div>
 
-      {secondary ? <div className="flex min-w-0 flex-wrap items-center gap-2 border-t border-zani-border px-3 py-2 md:px-4">{secondary}</div> : null}
+      {secondary ? <div className="flex min-w-0 flex-wrap items-center gap-2 border-t border-platforma-border px-3 py-2 md:px-4">{secondary}</div> : null}
 
       {activeFilters?.length ? (
         <div
           className={cn(
-            "flex flex-wrap items-center gap-2 border-t border-zani-border",
+            "flex flex-wrap items-center gap-2 border-t border-platforma-border",
             compact ? "px-2 py-1.5" : "px-3 py-2 md:px-4",
           )}
         >
-          <span className="text-xs font-semibold text-zani-faint">{activeFiltersLabel}</span>
+          <span className="text-xs font-semibold text-platforma-faint">{activeFiltersLabel}</span>
           {activeFilters.map((filter) => (
             <span key={filter.id} className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700">
               {filter.label}: {filter.value}
@@ -157,7 +157,7 @@ export function CrmControlBar<TValue extends string>({
                 <button
                   type="button"
                   onClick={() => onClearFilter(filter.id)}
-                  className="zani-focus-ring grid h-5 w-5 place-items-center rounded-full text-brand-600 hover:bg-surface-card hover:text-brand-700"
+                  className="platforma-focus-ring grid h-5 w-5 place-items-center rounded-full text-brand-600 hover:bg-surface-card hover:text-brand-700"
                   aria-label={`${filter.label}: ${filter.value}`}
                 >
                   <X size={12} />
@@ -166,7 +166,7 @@ export function CrmControlBar<TValue extends string>({
             </span>
           ))}
           {onClearAll ? (
-            <button type="button" onClick={onClearAll} className="zani-focus-ring h-8 rounded-full px-3 text-xs font-semibold text-brand-700 hover:bg-brand-50">
+            <button type="button" onClick={onClearAll} className="platforma-focus-ring h-8 rounded-full px-3 text-xs font-semibold text-brand-700 hover:bg-brand-50">
               {clearAllLabel}
             </button>
           ) : null}

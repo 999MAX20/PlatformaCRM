@@ -24,7 +24,7 @@ export const DealListItem = memo(function DealListItem({
   const ownerInitial = (
     deal.ownerEntity?.user.full_name ||
     deal.ownerEntity?.user.email ||
-    "Z"
+    "П"
   )
     .slice(0, 1)
     .toUpperCase();
@@ -38,8 +38,8 @@ export const DealListItem = memo(function DealListItem({
       className={cn(
         "group relative rounded-[12px] border bg-surface-card p-2.5 shadow-soft transition duration-150 hover:border-brand-100 hover:bg-surface-warm hover:shadow-card",
         selected &&
-          "border-brand-300 bg-brand-50/70 shadow-card ring-2 ring-[var(--zani-focus-ring)]",
-        !selected && "border-zani-border",
+          "border-brand-300 bg-brand-50/70 shadow-card ring-2 ring-[var(--platforma-focus-ring)]",
+        !selected && "border-platforma-border",
       )}
     >
       <div className="flex items-start">
@@ -58,15 +58,15 @@ export const DealListItem = memo(function DealListItem({
                     backgroundColor: deal.stageEntity?.color || "#F5B37A",
                   }}
                 />
-                <h3 className="min-w-0 truncate text-[13px] font-bold leading-5 text-zani-text">
+                <h3 className="min-w-0 truncate text-[13px] font-bold leading-5 text-platforma-text">
                   {deal.title}
                 </h3>
               </div>
-              <p className="truncate pl-3 text-[10px] font-semibold leading-4 text-zani-muted">
+              <p className="truncate pl-3 text-[10px] font-semibold leading-4 text-platforma-muted">
                 {deal.clientEntity?.full_name || t("deals.clientMissing")}
               </p>
             </div>
-            <span className="h-5 w-5 shrink-0 rounded-full bg-surface-muted text-center text-[10px] font-bold leading-5 text-brand-700 ring-1 ring-zani-border">
+            <span className="h-5 w-5 shrink-0 rounded-full bg-surface-muted text-center text-[10px] font-bold leading-5 text-brand-700 ring-1 ring-platforma-border">
               {ownerInitial}
             </span>
           </div>
@@ -75,16 +75,16 @@ export const DealListItem = memo(function DealListItem({
             <DealAmount
               value={deal.amount}
               currency={deal.currency}
-              className="text-[12px] font-bold text-zani-text"
+              className="text-[12px] font-bold text-platforma-text"
             />
-            <span className="truncate text-[10px] font-semibold text-zani-muted">
+            <span className="truncate text-[10px] font-semibold text-platforma-muted">
               {deal.nextTask?.due_at
                 ? formatDateTime(deal.nextTask.due_at)
                 : formatDate(deal.created_at)}
             </span>
           </div>
 
-          <div className="mt-1.5 flex items-center justify-between gap-2 pl-3 text-[10px] font-semibold text-zani-muted">
+          <div className="mt-1.5 flex items-center justify-between gap-2 pl-3 text-[10px] font-semibold text-platforma-muted">
             <span className="inline-flex min-w-0 items-center gap-1.5">
               <CalendarClock size={12} />
               <span className="truncate">
@@ -100,7 +100,7 @@ export const DealListItem = memo(function DealListItem({
         <button
           type="button"
           data-testid="deal-card-action-open"
-          className="ml-1 grid h-6 w-6 shrink-0 place-items-center rounded-md text-zani-muted opacity-100 transition hover:bg-brand-50 hover:text-brand-700 md:opacity-0 md:group-hover:opacity-100"
+          className="ml-1 grid h-6 w-6 shrink-0 place-items-center rounded-md text-platforma-muted opacity-100 transition hover:bg-brand-50 hover:text-brand-700 md:opacity-0 md:group-hover:opacity-100"
           onClick={(event) => {
             event.stopPropagation();
             onOpen(deal);

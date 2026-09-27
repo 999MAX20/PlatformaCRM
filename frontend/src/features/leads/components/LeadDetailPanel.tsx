@@ -293,7 +293,7 @@ export function LeadDetailPanel({
             <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.history")}</p>
             <div className="mt-3 space-y-3">
               <div className="flex gap-3">
-                <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[var(--zani-brand-content)]" />
+                <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[var(--platforma-brand-content)]" />
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-midnight">{t("leads.leadCreated")}</p>
                   <p className="mt-1 text-xs text-slate-500">{formatDateTime(selected.created_at)}</p>

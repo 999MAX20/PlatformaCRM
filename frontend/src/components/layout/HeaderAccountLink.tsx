@@ -34,7 +34,7 @@ export function HeaderAccountLink({
       data-testid="header-account-link"
       className={({ isActive }) =>
         cn(
-          "zani-focus-ring group flex h-10 min-w-10 max-w-[200px] items-center justify-center gap-2 rounded-control px-1 text-left transition-colors hover:bg-surface-muted 2xl:justify-start 2xl:pr-3",
+          "platforma-focus-ring group flex h-10 min-w-10 max-w-[200px] items-center justify-center gap-2 rounded-control px-1 text-left transition-colors hover:bg-surface-muted 2xl:justify-start 2xl:pr-3",
           isActive && "bg-brand-50 ring-1 ring-brand-100",
         )
       }
@@ -43,10 +43,10 @@ export function HeaderAccountLink({
         {getAccountInitials(accountName)}
       </span>
       <span className="hidden min-w-0 2xl:block" data-testid="header-account-details">
-        <span className="block max-w-[142px] truncate text-xs font-semibold leading-4 text-zani-text">
+        <span className="block max-w-[142px] truncate text-xs font-semibold leading-4 text-platforma-text">
           {accountName}
         </span>
-        <span className="block max-w-[142px] truncate text-[10px] font-medium leading-3.5 text-zani-faint">
+        <span className="block max-w-[142px] truncate text-[10px] font-medium leading-3.5 text-platforma-faint">
           {roleLabel}
         </span>
       </span>

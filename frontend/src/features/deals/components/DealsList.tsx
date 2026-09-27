@@ -36,13 +36,13 @@ function EmptyDeals({
   return (
     <div className="grid min-h-[340px] place-items-center p-8">
       <div className="max-w-sm text-center">
-        <div className="mx-auto grid h-14 w-14 place-items-center rounded-card bg-surface-muted text-zani-muted">
+        <div className="mx-auto grid h-14 w-14 place-items-center rounded-card bg-surface-muted text-platforma-muted">
           <FolderSearch size={26} />
         </div>
-        <p className="mt-4 text-lg font-bold text-zani-text">
+        <p className="mt-4 text-lg font-bold text-platforma-text">
           {t("deals.notFoundTitle")}
         </p>
-        <p className="mt-2 text-sm leading-6 text-zani-muted">
+        <p className="mt-2 text-sm leading-6 text-platforma-muted">
           {t("deals.notFoundText")}
         </p>
         <Button
@@ -148,31 +148,31 @@ export function DealsList({
     return (
       <div className="min-h-0 overflow-auto">
         <table className="w-full min-w-[860px] border-separate border-spacing-0 text-left text-sm">
-          <thead className="sticky top-0 z-10 bg-surface-muted text-xs font-semibold text-zani-muted">
+          <thead className="sticky top-0 z-10 bg-surface-muted text-xs font-semibold text-platforma-muted">
             <tr className="h-10">
-              <th className="w-12 border-b border-zani-border px-3 py-2">
+              <th className="w-12 border-b border-platforma-border px-3 py-2">
                 <input
                   type="checkbox"
                   checked={selectedIds.length === rows.length}
                   onChange={onSelectAll}
                 />
               </th>
-              <th className="border-b border-zani-border px-3 py-2">
+              <th className="border-b border-platforma-border px-3 py-2">
                 {t("deals.deal")}
               </th>
-              <th className="border-b border-zani-border px-3 py-2">
+              <th className="border-b border-platforma-border px-3 py-2">
                 {t("deals.client")}
               </th>
-              <th className="border-b border-zani-border px-3 py-2">
+              <th className="border-b border-platforma-border px-3 py-2">
                 {t("deals.amount")}
               </th>
-              <th className="border-b border-zani-border px-3 py-2">
+              <th className="border-b border-platforma-border px-3 py-2">
                 {t("deals.stage")}
               </th>
-              <th className="border-b border-zani-border px-3 py-2">
+              <th className="border-b border-platforma-border px-3 py-2">
                 {t("deals.risk")}
               </th>
-              <th className="border-b border-zani-border px-3 py-2">
+              <th className="border-b border-platforma-border px-3 py-2">
                 {t("deals.date")}
               </th>
             </tr>
@@ -188,7 +188,7 @@ export function DealsList({
                 style={{ minHeight: CRM_TABLE_ROW_HEIGHT }}
                 onClick={() => onSelect(deal)}
               >
-                <td className="border-b border-zani-border px-3 py-2">
+                <td className="border-b border-platforma-border px-3 py-2">
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(deal.id)}
@@ -196,27 +196,27 @@ export function DealsList({
                   />
                 </td>
                 <td
-                  className="border-b border-zani-border px-3 py-2 font-bold text-zani-text"
+                  className="border-b border-platforma-border px-3 py-2 font-bold text-platforma-text"
                   onDoubleClick={() => onOpen(deal)}
                 >
                   {deal.title}
                 </td>
-                <td className="border-b border-zani-border px-3 py-2 text-zani-muted">
+                <td className="border-b border-platforma-border px-3 py-2 text-platforma-muted">
                   {deal.clientEntity?.full_name || t("deals.clientMissing")}
                 </td>
-                <td className="border-b border-zani-border px-3 py-2">
+                <td className="border-b border-platforma-border px-3 py-2">
                   <DealAmount value={deal.amount} currency={deal.currency} />
                 </td>
-                <td className="border-b border-zani-border px-3 py-2">
+                <td className="border-b border-platforma-border px-3 py-2">
                   <DealStageBadge
                     stage={deal.stageEntity}
                     fallback={t("deals.noStage")}
                   />
                 </td>
-                <td className="border-b border-zani-border px-3 py-2">
+                <td className="border-b border-platforma-border px-3 py-2">
                   <DealRiskIndicator deal={deal} compact t={t} />
                 </td>
-                <td className="border-b border-zani-border px-3 py-2 text-zani-muted">
+                <td className="border-b border-platforma-border px-3 py-2 text-platforma-muted">
                   {formatDate(deal.created_at)}
                 </td>
               </tr>
@@ -237,7 +237,7 @@ export function DealsList({
           <section
             key={group.id}
             data-testid={`deals-kanban-stage-${group.id}`}
-            className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-card border border-zani-border bg-surface-muted shadow-soft"
+            className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-card border border-platforma-border bg-surface-muted shadow-soft"
             onDragOver={(event) => event.preventDefault()}
             onDrop={(event) => {
               const deal = dealMap.get(
@@ -250,10 +250,10 @@ export function DealsList({
             <header className="shrink-0 bg-surface-card px-3 py-2.5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="truncate text-[13px] font-bold text-zani-text">
+                  <h3 className="truncate text-[13px] font-bold text-platforma-text">
                     {group.name}
                   </h3>
-                  <p className="mt-1 text-[12px] font-bold text-zani-text">
+                  <p className="mt-1 text-[12px] font-bold text-platforma-text">
                     {money(
                       group.rows.reduce(
                         (sum, deal) => sum + Number(deal.amount || 0),
@@ -262,7 +262,7 @@ export function DealsList({
                     )}
                   </p>
                 </div>
-                <span className="rounded-full bg-surface-card px-2 py-0.5 text-[11px] font-bold text-zani-text ring-1 ring-zani-border">
+                <span className="rounded-full bg-surface-card px-2 py-0.5 text-[11px] font-bold text-platforma-text ring-1 ring-platforma-border">
                   {group.rows.length}
                 </span>
               </div>
@@ -331,7 +331,7 @@ export function DealsList({
       {groups.map((group) => (
         <section
           key={group.id}
-          className="mb-3 rounded-card border border-zani-border bg-surface-card shadow-card"
+          className="mb-3 rounded-card border border-platforma-border bg-surface-card shadow-card"
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {
             const deal = dealMap.get(
@@ -351,8 +351,8 @@ export function DealsList({
               }))
             }
           >
-            <span className="font-bold text-zani-text">{group.name}</span>
-            <span className="inline-flex items-center gap-2 text-xs font-bold text-zani-muted">
+            <span className="font-bold text-platforma-text">{group.name}</span>
+            <span className="inline-flex items-center gap-2 text-xs font-bold text-platforma-muted">
               {group.rows.length}
               <ChevronDown
                 size={16}

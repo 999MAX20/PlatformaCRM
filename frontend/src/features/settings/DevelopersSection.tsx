@@ -155,14 +155,14 @@ export function DevelopersSection() {
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
               {t("developers.advanced")}
             </p>
-            <h2 className="mt-2 text-2xl font-semibold text-zani-text">
+            <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
               {t("developers.title")}
             </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-zani-subtle">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
               {t("developers.description")}
             </p>
           </div>
-          <div className="rounded-control border border-zani-border bg-surface-muted px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-zani-subtle">
+          <div className="rounded-control border border-platforma-border bg-surface-muted px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-platforma-subtle">
             {t("developers.summary", {
               tokens: tokens.data?.length || 0,
               webhooks: webhooks.data?.length || 0,
@@ -183,7 +183,7 @@ export function DevelopersSection() {
               {t("developers.copyNowText")}
             </p>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-              <code className="min-w-0 flex-1 break-all rounded-control bg-surface-card px-3 py-2 text-sm text-zani-text">
+              <code className="min-w-0 flex-1 break-all rounded-control bg-surface-card px-3 py-2 text-sm text-platforma-text">
                 {lastToken.token}
               </code>
               <Button
@@ -200,16 +200,16 @@ export function DevelopersSection() {
           </div>
         ) : null}
         <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-          <div className="rounded-card border border-zani-border bg-surface-muted p-4">
+          <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
             <div className="flex items-center gap-3">
               <div className="grid h-11 w-11 place-items-center rounded-control bg-surface-card text-brand-600">
                 <KeyRound size={20} />
               </div>
               <div>
-                <h3 className="font-bold text-zani-text">
+                <h3 className="font-bold text-platforma-text">
                   {t("developers.tokensTitle")}
                 </h3>
-                <p className="text-sm text-zani-subtle">
+                <p className="text-sm text-platforma-subtle">
                   {t("developers.tokensText")}
                 </p>
               </div>
@@ -246,11 +246,11 @@ export function DevelopersSection() {
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="font-bold text-zani-text">{token.name}</p>
-                      <p className="mt-1 text-xs text-zani-subtle">
+                      <p className="font-bold text-platforma-text">{token.name}</p>
+                      <p className="mt-1 text-xs text-platforma-subtle">
                         {token.token_prefix}... / {token.scopes_json.join(", ")}
                       </p>
-                      <p className="mt-1 text-xs text-zani-faint">
+                      <p className="mt-1 text-xs text-platforma-faint">
                         {t("developers.lastUsed")}{" "}
                         {formatDate(token.last_used_at)}
                       </p>
@@ -259,7 +259,7 @@ export function DevelopersSection() {
                       className={
                         token.is_active
                           ? "rounded-full bg-green-50 px-2.5 py-1 text-xs font-bold text-green-700"
-                          : "rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-zani-subtle"
+                          : "rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-platforma-subtle"
                       }
                     >
                       {token.is_active
@@ -290,22 +290,22 @@ export function DevelopersSection() {
                 </div>
               ))}
               {!tokens.isLoading && !tokens.data?.length ? (
-                <p className="text-sm text-zani-subtle">
+                <p className="text-sm text-platforma-subtle">
                   {t("developers.noTokens")}
                 </p>
               ) : null}
             </div>
           </div>
-          <div className="rounded-card border border-zani-border bg-surface-card p-4">
+          <div className="rounded-card border border-platforma-border bg-surface-card p-4">
             <div className="flex items-center gap-3">
               <div className="grid h-11 w-11 place-items-center rounded-control bg-surface-muted text-brand-600">
                 <Webhook size={20} />
               </div>
               <div>
-                <h3 className="font-bold text-zani-text">
+                <h3 className="font-bold text-platforma-text">
                   {t("developers.webhooksTitle")}
                 </h3>
-                <p className="text-sm text-zani-subtle">
+                <p className="text-sm text-platforma-subtle">
                   {t("developers.webhooksText")}
                 </p>
               </div>
@@ -378,13 +378,13 @@ export function DevelopersSection() {
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
-                      <p className="font-bold text-zani-text">
+                      <p className="font-bold text-platforma-text">
                         {endpoint.name}
                       </p>
-                      <p className="mt-1 break-all text-xs text-zani-subtle">
+                      <p className="mt-1 break-all text-xs text-platforma-subtle">
                         {endpoint.url}
                       </p>
-                      <p className="mt-1 text-xs text-zani-faint">
+                      <p className="mt-1 text-xs text-platforma-faint">
                         {endpoint.events_json.join(", ") ||
                           t("developers.allEvents")}
                       </p>
@@ -402,20 +402,20 @@ export function DevelopersSection() {
                 </div>
               ))}
               {!webhooks.isLoading && !webhooks.data?.length ? (
-                <p className="text-sm text-zani-subtle">
+                <p className="text-sm text-platforma-subtle">
                   {t("developers.noWebhooks")}
                 </p>
               ) : null}
             </div>
           </div>
         </div>
-        <div className="mt-5 rounded-card border border-zani-border bg-surface-card p-4">
+        <div className="mt-5 rounded-card border border-platforma-border bg-surface-card p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold text-zani-text">
+              <h3 className="font-bold text-platforma-text">
                 {t("developers.deliveryTitle")}
               </h3>
-              <p className="mt-1 text-sm text-zani-subtle">
+              <p className="mt-1 text-sm text-platforma-subtle">
                 {t("developers.deliveryText")}
               </p>
             </div>
@@ -440,7 +440,7 @@ export function DevelopersSection() {
               />
             ))}
             {!deliveries.isLoading && !latestDeliveries.length ? (
-              <p className="rounded-control bg-surface-muted p-4 text-sm text-zani-subtle">
+              <p className="rounded-control bg-surface-muted p-4 text-sm text-platforma-subtle">
                 {t("developers.noDeliveries")}
               </p>
             ) : null}
@@ -463,14 +463,14 @@ function DeliveryRow({
   t: (key: string, vars?: Record<string, string | number>) => string;
 }) {
   return (
-    <div className="rounded-control border border-zani-border bg-surface-muted p-3">
+    <div className="rounded-control border border-platforma-border bg-surface-muted p-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-bold text-zani-text">
+          <p className="font-bold text-platforma-text">
             {delivery.event_type} /{" "}
             {delivery.endpoint_name || `Endpoint #${delivery.endpoint}`}
           </p>
-          <p className="mt-1 text-xs text-zani-subtle">
+          <p className="mt-1 text-xs text-platforma-subtle">
             {delivery.idempotency_key} / {t("developers.attempts")}{" "}
             {delivery.attempts} / HTTP {delivery.response_status || "-"} /{" "}
             {formatDate(delivery.created_at)}
@@ -498,7 +498,7 @@ function DeliveryRow({
         </div>
       </div>
       <details className="mt-3 rounded-control bg-surface-card px-3 py-2">
-        <summary className="cursor-pointer text-xs font-bold text-zani-subtle">
+        <summary className="cursor-pointer text-xs font-bold text-platforma-subtle">
           {t("developers.showPayload")}
         </summary>
         <Textarea
@@ -526,7 +526,7 @@ function formatDate(value?: string | null) {
 function deliveryStatusClass(status: WebhookDeliveryLog["status"]) {
   const classes: Record<WebhookDeliveryLog["status"], string> = {
     pending:
-      "rounded-full bg-surface-card px-2.5 py-1 text-xs font-semibold text-zani-subtle",
+      "rounded-full bg-surface-card px-2.5 py-1 text-xs font-semibold text-platforma-subtle",
     sent: "rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700",
     failed:
       "rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700",

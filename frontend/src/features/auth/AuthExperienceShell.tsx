@@ -37,27 +37,27 @@ export function AuthExperienceShell({ children, mode }: AuthExperienceShellProps
   const isSignup = mode === "signup";
 
   return (
-    <main className={`zani-auth-experience ${isSignup ? "is-signup" : "is-login"}`}>
-      <div className="zani-auth-noise" />
-      <header className="zani-auth-topbar">
-        <Link className="zani-auth-back" to="/">
+    <main className={`platforma-auth-experience ${isSignup ? "is-signup" : "is-login"}`}>
+      <div className="platforma-auth-noise" />
+      <header className="platforma-auth-topbar">
+        <Link className="platforma-auth-back" to="/">
           <ArrowLeft size={18} />
           {t("auth.backToSite")}
         </Link>
-        <Link className="zani-auth-brand" to="/">
-          <span>ZANI</span>
+        <Link className="platforma-auth-brand" to="/">
+          <span>Платформа CRM</span>
           <i />
           <em>{t("auth.brandTagline")}</em>
         </Link>
-        <div className="zani-auth-switch">
+        <div className="platforma-auth-switch">
           <span>{isSignup ? t("auth.alreadyHaveAccount") : t("auth.noAccount")}</span>
           <Link to={isSignup ? "/login" : "/signup"}>{isSignup ? t("auth.submit") : t("auth.create")}</Link>
-          <LanguageSelector className="zani-auth-language" />
+          <LanguageSelector className="platforma-auth-language" />
         </div>
       </header>
 
-      <div className="zani-auth-grid">
-        <section className="zani-auth-hero" aria-label={t("auth.heroAria")}>
+      <div className="platforma-auth-grid">
+        <section className="platforma-auth-hero" aria-label={t("auth.heroAria")}>
           <h1>
             {isSignup ? (
               <>{t("auth.signupHeroPrefix")} <strong>{t("auth.signupHeroTime")}</strong></>
@@ -65,13 +65,13 @@ export function AuthExperienceShell({ children, mode }: AuthExperienceShellProps
               <>{t("auth.loginHeroPrefix")} <strong>{t("auth.loginHeroTime")}</strong></>
             )}
           </h1>
-          <p className="zani-auth-lead">
+          <p className="platforma-auth-lead">
             {isSignup ? t("auth.signupHeroText") : t("auth.loginHeroText")}
           </p>
 
-          <div className="zani-auth-feature-list">
+          <div className="platforma-auth-feature-list">
             {features.map((feature) => (
-              <article key={feature.titleKey} className="zani-auth-feature">
+              <article key={feature.titleKey} className="platforma-auth-feature">
                 <span>
                   <feature.icon size={22} />
                 </span>
@@ -83,8 +83,8 @@ export function AuthExperienceShell({ children, mode }: AuthExperienceShellProps
             ))}
           </div>
 
-          <div className="zani-auth-proof">
-            <div className="zani-auth-avatars" aria-hidden="true">
+          <div className="platforma-auth-proof">
+            <div className="platforma-auth-avatars" aria-hidden="true">
               {["A", "M", "D", "S"].map((item) => (
                 <span key={item}>{item}</span>
               ))}
@@ -93,7 +93,7 @@ export function AuthExperienceShell({ children, mode }: AuthExperienceShellProps
             <p>{t("auth.proofText")}</p>
           </div>
 
-          <div className="zani-auth-trust">
+          <div className="platforma-auth-trust">
             <span>
               <ShieldCheck size={18} />
               {t("auth.trustSecurity")}
@@ -107,7 +107,7 @@ export function AuthExperienceShell({ children, mode }: AuthExperienceShellProps
           <DashboardPreview />
         </section>
 
-        <section className="zani-auth-card-wrap">{children}</section>
+        <section className="platforma-auth-card-wrap">{children}</section>
       </div>
     </main>
   );
@@ -116,22 +116,22 @@ export function AuthExperienceShell({ children, mode }: AuthExperienceShellProps
 function DashboardPreview() {
   const { t } = useI18n();
   return (
-    <div className="zani-auth-dashboard" aria-hidden="true">
-      <div className="zani-auth-dashboard-sidebar">
-        <b>ZANI</b>
+    <div className="platforma-auth-dashboard" aria-hidden="true">
+      <div className="platforma-auth-dashboard-sidebar">
+        <b>Платформа CRM</b>
         {[t("nav.dashboard"), t("nav.clients"), t("nav.deals"), t("nav.bots"), t("nav.analytics")].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>
-      <div className="zani-auth-dashboard-main">
-        <div className="zani-auth-dashboard-title">
+      <div className="platforma-auth-dashboard-main">
+        <div className="platforma-auth-dashboard-title">
           <div>
             <p>{t("auth.previewWelcome")}</p>
             <small>{t("auth.previewScanned")}</small>
           </div>
           <UsersRound size={18} />
         </div>
-        <div className="zani-auth-metrics">
+        <div className="platforma-auth-metrics">
           {[
             [t("auth.previewNewLeads"), "248", "+24%"],
             [t("auth.previewBookings"), "32", "+18%"],
@@ -144,7 +144,7 @@ function DashboardPreview() {
             </div>
           ))}
         </div>
-        <div className="zani-auth-pipeline">
+        <div className="platforma-auth-pipeline">
           <div>
             <BriefcaseBusiness size={15} />
             {t("auth.previewPipeline")}
@@ -153,7 +153,7 @@ function DashboardPreview() {
           <span />
           <span />
         </div>
-        <div className="zani-auth-dashboard-bottom">
+        <div className="platforma-auth-dashboard-bottom">
           <div>
             <Bot size={16} />
             {t("auth.previewAiTip")}

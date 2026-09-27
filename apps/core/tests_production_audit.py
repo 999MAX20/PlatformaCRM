@@ -271,7 +271,7 @@ class ProductionReadinessAuditTests(TestCase):
 
     @override_settings(
         EMAIL_HOST="smtp.example.net",
-        DEFAULT_FROM_EMAIL="Zani <no-reply@zani.local>",
+        DEFAULT_FROM_EMAIL="Платформа CRM <no-reply@zani.local>",
         EMAIL_USE_TLS=True,
         EMAIL_USE_SSL=False,
     )
@@ -283,7 +283,7 @@ class ProductionReadinessAuditTests(TestCase):
 
     @override_settings(
         EMAIL_HOST="smtp.example.net",
-        DEFAULT_FROM_EMAIL="Zani <no-reply@zani.example.net>",
+        DEFAULT_FROM_EMAIL="Платформа CRM <no-reply@zani.example.net>",
         EMAIL_USE_TLS=False,
         EMAIL_USE_SSL=False,
     )
@@ -295,7 +295,7 @@ class ProductionReadinessAuditTests(TestCase):
 
     @override_settings(
         EMAIL_HOST="smtp.example.net",
-        DEFAULT_FROM_EMAIL="Zani <no-reply@zani.example.net>",
+        DEFAULT_FROM_EMAIL="Платформа CRM <no-reply@zani.example.net>",
         EMAIL_USE_TLS=True,
         EMAIL_USE_SSL=False,
     )

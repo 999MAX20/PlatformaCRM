@@ -1,4 +1,4 @@
-type ZaniWidgetOptions = {
+type PlatformaCRMWidgetOptions = {
   publicToken: string;
   apiUrl?: string;
   position?: "right" | "left";
@@ -12,40 +12,42 @@ type ConversationResponse = {
 
 declare global {
   interface Window {
-    ZaniWidget?: {
-      init: (options: ZaniWidgetOptions) => void;
+    /** Compatibility for existing embedded widgets. */
+    ZaniWidget?: { init: (options: PlatformaCRMWidgetOptions) => void };
+    PlatformaCRMWidget?: {
+      init: (options: PlatformaCRMWidgetOptions) => void;
     };
   }
 }
 
 const styles = `
-.zani-widget-root{position:fixed;z-index:2147483000;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.zani-widget-root[data-position="right"]{right:22px;bottom:22px}
-.zani-widget-root[data-position="left"]{left:22px;bottom:22px}
-.zani-bubble{display:grid;place-items:center;width:64px;height:64px;border:0;border-radius:24px;background:linear-gradient(135deg,#0ea5e9,#4f46e5,#7c3aed);color:white;box-shadow:0 18px 45px rgba(79,70,229,.35);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
-.zani-bubble:hover{transform:translateY(-2px);box-shadow:0 22px 60px rgba(79,70,229,.42)}
-.zani-panel{position:absolute;right:0;bottom:78px;width:min(380px,calc(100vw - 32px));overflow:hidden;border:1px solid rgba(226,232,240,.9);border-radius:28px;background:rgba(255,255,255,.96);box-shadow:0 28px 90px rgba(15,23,42,.22);backdrop-filter:blur(18px)}
-.zani-widget-root[data-position="left"] .zani-panel{left:0;right:auto}
-.zani-panel[hidden]{display:none}
-.zani-header{padding:18px 18px 14px;background:linear-gradient(135deg,#0f172a,#1d4ed8);color:white}
-.zani-title{margin:0;font-size:16px;font-weight:800}
-.zani-subtitle{margin:4px 0 0;font-size:13px;color:rgba(255,255,255,.72)}
-.zani-body{display:grid;gap:10px;max-height:360px;overflow:auto;padding:16px;background:linear-gradient(180deg,#fff,#f8fafc)}
-.zani-message{max-width:86%;border-radius:18px;padding:10px 12px;font-size:13px;line-height:1.45}
-.zani-message.system{background:#eef2ff;color:#3730a3}
-.zani-message.user{justify-self:end;background:#0f172a;color:white}
-.zani-message.status{background:#f1f5f9;color:#475569}
-.zani-form{display:grid;gap:8px;padding:14px;border-top:1px solid #e2e8f0;background:white}
-.zani-input{min-height:42px;border:1px solid #dbe3ef;border-radius:16px;padding:0 12px;font:inherit;font-size:14px;outline:none}
-.zani-input:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
-.zani-actions{display:flex;gap:8px}
-.zani-actions .zani-input{flex:1}
-.zani-send{min-width:92px;border:0;border-radius:16px;background:#0f172a;color:white;font-weight:800;cursor:pointer}
-.zani-send:disabled{opacity:.55;cursor:not-allowed}
+.platforma-widget-root{position:fixed;z-index:2147483000;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.platforma-widget-root[data-position="right"]{right:22px;bottom:22px}
+.platforma-widget-root[data-position="left"]{left:22px;bottom:22px}
+.platforma-bubble{display:grid;place-items:center;width:64px;height:64px;border:0;border-radius:24px;background:linear-gradient(135deg,#0ea5e9,#4f46e5,#7c3aed);color:white;box-shadow:0 18px 45px rgba(79,70,229,.35);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+.platforma-bubble:hover{transform:translateY(-2px);box-shadow:0 22px 60px rgba(79,70,229,.42)}
+.platforma-panel{position:absolute;right:0;bottom:78px;width:min(380px,calc(100vw - 32px));overflow:hidden;border:1px solid rgba(226,232,240,.9);border-radius:28px;background:rgba(255,255,255,.96);box-shadow:0 28px 90px rgba(15,23,42,.22);backdrop-filter:blur(18px)}
+.platforma-widget-root[data-position="left"] .platforma-panel{left:0;right:auto}
+.platforma-panel[hidden]{display:none}
+.platforma-header{padding:18px 18px 14px;background:linear-gradient(135deg,#0f172a,#1d4ed8);color:white}
+.platforma-title{margin:0;font-size:16px;font-weight:800}
+.platforma-subtitle{margin:4px 0 0;font-size:13px;color:rgba(255,255,255,.72)}
+.platforma-body{display:grid;gap:10px;max-height:360px;overflow:auto;padding:16px;background:linear-gradient(180deg,#fff,#f8fafc)}
+.platforma-message{max-width:86%;border-radius:18px;padding:10px 12px;font-size:13px;line-height:1.45}
+.platforma-message.system{background:#eef2ff;color:#3730a3}
+.platforma-message.user{justify-self:end;background:#0f172a;color:white}
+.platforma-message.status{background:#f1f5f9;color:#475569}
+.platforma-form{display:grid;gap:8px;padding:14px;border-top:1px solid #e2e8f0;background:white}
+.platforma-input{min-height:42px;border:1px solid #dbe3ef;border-radius:16px;padding:0 12px;font:inherit;font-size:14px;outline:none}
+.platforma-input:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.platforma-actions{display:flex;gap:8px}
+.platforma-actions .platforma-input{flex:1}
+.platforma-send{min-width:92px;border:0;border-radius:16px;background:#0f172a;color:white;font-weight:800;cursor:pointer}
+.platforma-send:disabled{opacity:.55;cursor:not-allowed}
 `;
 
-class ZaniWidgetController {
-  private options: ZaniWidgetOptions;
+class PlatformaCRMWidgetController {
+  private options: PlatformaCRMWidgetOptions;
   private conversationId: string | null = null;
   private root: HTMLDivElement;
   private panel: HTMLDivElement;
@@ -55,7 +57,7 @@ class ZaniWidgetController {
   private phoneInput: HTMLInputElement;
   private sendButton: HTMLButtonElement;
 
-  constructor(options: ZaniWidgetOptions) {
+  constructor(options: PlatformaCRMWidgetOptions) {
     this.options = options;
     this.root = document.createElement("div");
     this.panel = document.createElement("div");
@@ -69,42 +71,42 @@ class ZaniWidgetController {
 
   private mount() {
     injectStyles();
-    this.root.className = "zani-widget-root";
+    this.root.className = "platforma-widget-root";
     this.root.dataset.position = this.options.position || "right";
 
     const bubble = document.createElement("button");
-    bubble.className = "zani-bubble";
+    bubble.className = "platforma-bubble";
     bubble.type = "button";
     bubble.innerHTML = "✦";
-    bubble.ariaLabel = "Open Zani chat";
+    bubble.ariaLabel = "Open Платформа CRM chat";
 
-    this.panel.className = "zani-panel";
+    this.panel.className = "platforma-panel";
     this.panel.hidden = true;
     this.panel.innerHTML = `
-      <div class="zani-header">
-        <p class="zani-title">Zani chat</p>
-        <p class="zani-subtitle">Напишите нам, и менеджер увидит сообщение в CRM.</p>
+      <div class="platforma-header">
+        <p class="platforma-title">Платформа CRM chat</p>
+        <p class="platforma-subtitle">Напишите нам, и менеджер увидит сообщение в CRM.</p>
       </div>
     `;
 
-    this.body.className = "zani-body";
+    this.body.className = "platforma-body";
     this.panel.appendChild(this.body);
     this.addMessage("system", "Здравствуйте! Чем можем помочь?");
 
     const form = document.createElement("form");
-    form.className = "zani-form";
-    this.nameInput.className = "zani-input";
+    form.className = "platforma-form";
+    this.nameInput.className = "platforma-input";
     this.nameInput.placeholder = "Ваше имя";
-    this.phoneInput.className = "zani-input";
+    this.phoneInput.className = "platforma-input";
     this.phoneInput.placeholder = "Телефон";
-    this.input.className = "zani-input";
+    this.input.className = "platforma-input";
     this.input.placeholder = "Сообщение...";
-    this.sendButton.className = "zani-send";
+    this.sendButton.className = "platforma-send";
     this.sendButton.type = "submit";
     this.sendButton.textContent = "Send";
 
     const actions = document.createElement("div");
-    actions.className = "zani-actions";
+    actions.className = "platforma-actions";
     actions.append(this.input, this.sendButton);
     form.append(this.nameInput, this.phoneInput, actions);
     form.addEventListener("submit", (event) => {
@@ -162,7 +164,7 @@ class ZaniWidgetController {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    if (!response.ok) throw new Error(`Zani widget request failed: ${response.status}`);
+    if (!response.ok) throw new Error(`Платформа CRM widget request failed: ${response.status}`);
     return response.json() as Promise<T>;
   }
 
@@ -172,7 +174,7 @@ class ZaniWidgetController {
 
   private addMessage(type: "system" | "user" | "status", text: string) {
     const node = document.createElement("div");
-    node.className = `zani-message ${type}`;
+    node.className = `platforma-message ${type}`;
     node.textContent = text;
     this.body.appendChild(node);
     this.body.scrollTop = this.body.scrollHeight;
@@ -180,9 +182,9 @@ class ZaniWidgetController {
 }
 
 function injectStyles() {
-  if (document.getElementById("zani-widget-styles")) return;
+  if (document.getElementById("platforma-widget-styles")) return;
   const style = document.createElement("style");
-  style.id = "zani-widget-styles";
+  style.id = "platforma-widget-styles";
   style.textContent = styles;
   document.head.appendChild(style);
 }
@@ -196,22 +198,23 @@ function getVisitorId() {
   return value;
 }
 
-function init(options: ZaniWidgetOptions) {
+function init(options: PlatformaCRMWidgetOptions) {
   if (!options.publicToken) {
-    console.warn("ZaniWidget: publicToken is required.");
+    console.warn("PlatformaCRMWidget: publicToken is required.");
     return;
   }
-  new ZaniWidgetController(options);
+  new PlatformaCRMWidgetController(options);
 }
 
-window.ZaniWidget = { init };
+window.PlatformaCRMWidget = { init };
+window.ZaniWidget = window.PlatformaCRMWidget;
 
 const currentScript = document.currentScript as HTMLScriptElement | null;
-const token = currentScript?.dataset.zaniToken;
+const token = (currentScript?.dataset.platformaToken || currentScript?.dataset.zaniToken);
 if (token) {
   init({
     publicToken: token,
-    apiUrl: currentScript?.dataset.zaniApi || "",
-    position: currentScript?.dataset.zaniPosition === "left" ? "left" : "right",
+    apiUrl: currentScript?.dataset.platformaApi || currentScript?.dataset.zaniApi || "",
+    position: (currentScript?.dataset.platformaPosition || currentScript?.dataset.zaniPosition) === "left" ? "left" : "right",
   });
 }

@@ -49,7 +49,7 @@ class PaidBetaGateTests(TestCase):
         SENTRY_DSN="https://public@sentry.example.net/1",
         SENTRY_TRACES_SAMPLE_RATE=0.05,
         EMAIL_HOST="smtp.zani.example.net",
-        DEFAULT_FROM_EMAIL="Zani <no-reply@zani.example.net>",
+        DEFAULT_FROM_EMAIL="Платформа CRM <no-reply@zani.example.net>",
         EMAIL_USE_TLS=True,
         EMAIL_USE_SSL=False,
         PAID_BETA_STAGING_SMOKE_GREEN=True,

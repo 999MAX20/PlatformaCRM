@@ -78,7 +78,7 @@ export function TimelineEventTable({
                 >
                   <Icon aria-hidden size={17} />
                 </span>
-                <span className="min-w-0 break-words font-semibold text-zani-text">
+                <span className="min-w-0 break-words font-semibold text-platforma-text">
                   <TimelineEventLabel event={event} />
                 </span>
               </div>

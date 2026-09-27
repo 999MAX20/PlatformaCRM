@@ -20,13 +20,13 @@ const roles: Array<{ tone: ActionTone; label: string; example: string }> = [
 
 function ActionColorRolesFixture() {
   return (
-    <main className="min-h-screen bg-zani-page p-6 text-zani-text sm:p-10">
-      <section className="mx-auto max-w-4xl rounded-card border border-zani-border bg-surface-card p-5 shadow-panel sm:p-8">
-        <h1 className="text-2xl font-bold text-zani-ink">Action color roles</h1>
-        <p className="mt-2 text-sm text-zani-subtle">Semantic role matrix for default, focus, hover, pressed and disabled verification.</p>
+    <main className="min-h-screen bg-platforma-page p-6 text-platforma-text sm:p-10">
+      <section className="mx-auto max-w-4xl rounded-card border border-platforma-border bg-surface-card p-5 shadow-panel sm:p-8">
+        <h1 className="text-2xl font-bold text-platforma-ink">Action color roles</h1>
+        <p className="mt-2 text-sm text-platforma-subtle">Semantic role matrix for default, focus, hover, pressed and disabled verification.</p>
         <div className="mt-6 grid gap-3" data-testid="action-color-matrix">
           {roles.map((role) => (
-            <div key={role.tone} className="grid gap-3 rounded-card border border-zani-border bg-surface-warm p-4 sm:grid-cols-[120px_1fr_1fr] sm:items-center">
+            <div key={role.tone} className="grid gap-3 rounded-card border border-platforma-border bg-surface-warm p-4 sm:grid-cols-[120px_1fr_1fr] sm:items-center">
               <strong>{role.label}</strong>
               <Button data-testid={`tone-${role.tone}`} variant={buttonVariantForActionTone(role.tone)}>
                 {role.example}

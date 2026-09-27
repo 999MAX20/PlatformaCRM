@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--channel-id", type=int, help="BotChannel id to use. Defaults to latest active Telegram channel with webhook secret.")
-        parser.add_argument("--text", default="ZANI Telegram webhook smoke", help="Inbound message text.")
+        parser.add_argument("--text", default="Платформа CRM Telegram webhook smoke", help="Inbound message text.")
         parser.add_argument("--fail-on-error", action="store_true", help="Exit with an error when smoke check fails.")
 
     def handle(self, *args, **options):

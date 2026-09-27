@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings
 class EmailRuntimeSmokeTests(TestCase):
     @override_settings(
         EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
-        DEFAULT_FROM_EMAIL="Zani <no-reply@test.local>",
+        DEFAULT_FROM_EMAIL="Платформа CRM <no-reply@test.local>",
         ENVIRONMENT="test",
         RELEASE="test",
     )
@@ -25,7 +25,7 @@ class EmailRuntimeSmokeTests(TestCase):
     @override_settings(
         EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
         EMAIL_HOST="",
-        DEFAULT_FROM_EMAIL="Zani <no-reply@test.local>",
+        DEFAULT_FROM_EMAIL="Платформа CRM <no-reply@test.local>",
     )
     def test_email_runtime_smoke_can_fail_when_provider_missing(self):
         with self.assertRaises(CommandError):

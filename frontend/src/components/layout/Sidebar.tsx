@@ -181,7 +181,7 @@ export function Sidebar({
       onMouseEnter={forceVisible ? undefined : onDesktopMouseEnter}
       onMouseLeave={forceVisible ? undefined : onDesktopMouseLeave}
       className={cn(
-        "relative z-[60] shrink-0 border-r border-zani-border bg-surface-card transition-[width,box-shadow,background-color,backdrop-filter] duration-200 ease-out",
+        "relative z-[60] shrink-0 border-r border-platforma-border bg-surface-card transition-[width,box-shadow,background-color,backdrop-filter] duration-200 ease-out",
         forceVisible && "h-dvh max-h-dvh w-[min(360px,94vw)] bg-surface-card shadow-premium backdrop-blur-2xl",
         !forceVisible && cn(
           "hidden bg-surface-card/92 backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:block",
@@ -199,7 +199,7 @@ export function Sidebar({
             return (
             <section key={group.id}>
               {mobileDrawer ? <div
-                className="mb-1 flex min-h-7 w-full items-center justify-between rounded-control px-3 text-left text-[10px] font-semibold text-zani-faint transition-colors hover:bg-surface-muted hover:text-zani-subtle"
+                className="mb-1 flex min-h-7 w-full items-center justify-between rounded-control px-3 text-left text-[10px] font-semibold text-platforma-faint transition-colors hover:bg-surface-muted hover:text-platforma-subtle"
               >
                 <span>{t(group.titleKey)}</span>
               </div> : null}
@@ -220,27 +220,27 @@ export function Sidebar({
                           onClick={() => setOpenGroups((value) => ({ ...value, [item.label]: !childrenOpen }))}
                           title={t(item.label)}
                           className={cn(
-                            "zani-focus-ring group relative flex min-h-10 w-full items-center gap-2 rounded-control border-l-2 border-transparent px-3 py-2 text-xs font-semibold text-zani-subtle transition-colors duration-150",
+                            "platforma-focus-ring group relative flex min-h-10 w-full items-center gap-2 rounded-control border-l-2 border-transparent px-3 py-2 text-xs font-semibold text-platforma-subtle transition-colors duration-150",
                             !isExpanded && "justify-center px-0",
-                            "hover:bg-brand-50 hover:text-zani-text",
-                            active && "border-[var(--zani-brand-content)] bg-brand-50 text-zani-text",
+                            "hover:bg-brand-50 hover:text-platforma-text",
+                            active && "border-[var(--platforma-brand-content)] bg-brand-50 text-platforma-text",
                           )}
                         >
                           <span
                             className={cn(
-                              "grid h-5 w-5 shrink-0 place-items-center text-zani-faint transition-colors",
+                              "grid h-5 w-5 shrink-0 place-items-center text-platforma-faint transition-colors",
                               active && "text-brand-700",
-                              !active && "group-hover:text-zani-text",
+                              !active && "group-hover:text-platforma-text",
                             )}
                           >
                             <Icon size={18} strokeWidth={2.1} />
                           </span>
                           <span className={cn("min-w-0 truncate text-left transition-opacity duration-150", isExpanded ? "opacity-100" : "hidden opacity-0")}>{t(item.label)}</span>
                           {!isExpanded ? <span className="sr-only">{t(item.label)}</span> : null}
-                          {isExpanded ? <ChevronDown size={16} className={cn("ml-auto text-zani-faint transition-transform", childrenOpen && "rotate-180")} /> : null}
+                          {isExpanded ? <ChevronDown size={16} className={cn("ml-auto text-platforma-faint transition-transform", childrenOpen && "rotate-180")} /> : null}
                         </button>
                         {isExpanded && childrenOpen ? (
-                          <div className="ml-6 mt-1 space-y-0.5 border-l border-zani-border pl-2">
+                          <div className="ml-6 mt-1 space-y-0.5 border-l border-platforma-border pl-2">
                             {item.children?.map((child) => {
                               const ChildIcon = child.icon;
                               const childIsActive = isItemActive(location.pathname, child.to);
@@ -253,12 +253,12 @@ export function Sidebar({
                                   onFocus={() => prefetchRouteData(child.to!, queryClient, business?.id)}
                                   title={t(child.label)}
                                   className={cn(
-                                    "zani-focus-ring group relative flex min-h-9 items-center gap-2 rounded-control px-2.5 py-1.5 text-xs font-semibold text-zani-subtle transition-colors duration-150",
-                                    "hover:bg-brand-50 hover:text-zani-text",
-                                    childIsActive && "bg-brand-50 text-zani-text ring-1 ring-brand-100",
+                                    "platforma-focus-ring group relative flex min-h-9 items-center gap-2 rounded-control px-2.5 py-1.5 text-xs font-semibold text-platforma-subtle transition-colors duration-150",
+                                    "hover:bg-brand-50 hover:text-platforma-text",
+                                    childIsActive && "bg-brand-50 text-platforma-text ring-1 ring-brand-100",
                                   )}
                                 >
-                                  <ChildIcon size={16} strokeWidth={2.1} className={cn("shrink-0 text-zani-faint", childIsActive && "text-brand-700")} />
+                                  <ChildIcon size={16} strokeWidth={2.1} className={cn("shrink-0 text-platforma-faint", childIsActive && "text-brand-700")} />
                                   <span className="min-w-0 truncate">{t(child.label)}</span>
                                 </NavLink>
                               ) : null;
@@ -279,17 +279,17 @@ export function Sidebar({
                       onFocus={() => prefetchRouteData(item.to!, queryClient, business?.id)}
                       title={t(item.label)}
                       className={cn(
-                        "zani-focus-ring group relative flex min-h-10 items-center gap-2 rounded-control border-l-2 border-transparent px-3 py-2 text-xs font-semibold text-zani-subtle transition-colors duration-150",
+                        "platforma-focus-ring group relative flex min-h-10 items-center gap-2 rounded-control border-l-2 border-transparent px-3 py-2 text-xs font-semibold text-platforma-subtle transition-colors duration-150",
                         !isExpanded && "justify-center px-0",
-                        "hover:bg-brand-50 hover:text-zani-text",
-                        active && "border-[var(--zani-brand-content)] bg-brand-50 text-zani-text",
+                        "hover:bg-brand-50 hover:text-platforma-text",
+                        active && "border-[var(--platforma-brand-content)] bg-brand-50 text-platforma-text",
                       )}
                     >
                       <span
                         className={cn(
-                          "grid h-5 w-5 shrink-0 place-items-center text-zani-faint transition-colors",
+                          "grid h-5 w-5 shrink-0 place-items-center text-platforma-faint transition-colors",
                           active && "text-brand-700",
-                          !active && "group-hover:text-zani-text",
+                          !active && "group-hover:text-platforma-text",
                         )}
                       >
                         <Icon size={18} strokeWidth={2.1} />
@@ -297,10 +297,10 @@ export function Sidebar({
                       <span className={cn("min-w-0 truncate transition-opacity duration-150", isExpanded ? "opacity-100" : "hidden opacity-0")}>{t(item.label)}</span>
                       {!isExpanded ? <span className="sr-only">{t(item.label)}</span> : null}
                       {item.to === "/app/conversations" && unreadMessages ? (
-                        <span className={cn("min-w-5 rounded-full bg-zani-danger px-1.5 py-0.5 text-center text-[10px] font-semibold leading-none text-white shadow-sm", isExpanded ? "ml-auto" : "absolute right-1 top-1 px-1")}>
+                        <span className={cn("min-w-5 rounded-full bg-platforma-danger px-1.5 py-0.5 text-center text-[10px] font-semibold leading-none text-white shadow-sm", isExpanded ? "ml-auto" : "absolute right-1 top-1 px-1")}>
                           {unreadMessages > 99 ? "99+" : unreadMessages}
                         </span>
-                      ) : active && isExpanded ? <span className="ml-auto h-2 w-2 rounded-full bg-[var(--zani-brand-content)]" /> : null}
+                      ) : active && isExpanded ? <span className="ml-auto h-2 w-2 rounded-full bg-[var(--platforma-brand-content)]" /> : null}
                     </NavLink>
                   );
                 })}

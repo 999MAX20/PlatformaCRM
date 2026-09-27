@@ -156,7 +156,7 @@ def setup_first_channel(business: Business, channel: str = BotChannel.Channels.W
 
     bot, _ = Bot.objects.get_or_create(
         business=business,
-        name="Zani assistant",
+        name="Платформа CRM assistant",
         defaults={
             "status": Bot.Statuses.DRAFT,
             "settings_json": {"created_by": "onboarding", "handoff_mode": "manager_first"},

@@ -49,12 +49,12 @@ export function LeadsBulkBar({
             )
           }
         >
-          <option className="text-zani-text" value="">
+          <option className="text-platforma-text" value="">
             {labels.assign}
           </option>
           {teamMembers.map((member) => (
             <option
-              className="text-zani-text"
+              className="text-platforma-text"
               key={member.user.id}
               value={member.user.id}
             >

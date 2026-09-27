@@ -16,6 +16,15 @@ const event = (extra = {}) => ({
   session_id:'primary-1', ...extra
 });
 const context = x => x.hookSpecificOutput.additionalContext;
+
+test('renamed checkout junction resolves to the same root but a sibling does not', (t) => {
+  t.mock.method(fs, 'realpathSync', (value) => {
+    if (value === 'C:\\Projects\\OldBrand') return 'C:\\Projects\\PlatformaCRM';
+    return value;
+  });
+  assert.equal(inside('C:\\Projects\\PlatformaCRM', 'C:\\Projects\\OldBrand'), true);
+  assert.equal(inside('C:\\Projects\\PlatformaCRM', 'C:\\Projects\\PlatformaCRM-other'), false);
+});
 test('normal startup restores state without requesting rollover', () => {
   const x=buildResponse(event(),registry); assert.match(context(x),/Recheck actual root/);
   assert.doesNotMatch(context(x),/AUTOMATIC_PROJECT_HANDOFF_REQUIRED/);

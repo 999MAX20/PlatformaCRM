@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        zani: {
+        platforma: {
           bg: "#F7F3EE",
           page: "#F4EEE7",
           surface: "#FFFFFF",
@@ -77,7 +77,7 @@ export default {
         panel: "0 12px 28px rgba(23, 18, 15, 0.10)",
         glow: "0 12px 32px rgba(255, 122, 26, 0.18)",
         premium: "0 10px 15px rgba(23, 18, 15, 0.10)",
-        "zani-card": "0 4px 12px rgba(23, 18, 15, 0.05)",
+        "platforma-card": "0 4px 12px rgba(23, 18, 15, 0.05)",
       },
       fontSize: {
         "crm-caption": ["0.75rem", { lineHeight: "1rem" }],

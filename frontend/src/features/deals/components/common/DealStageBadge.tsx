@@ -37,9 +37,9 @@ export function StatusPill({
     <span
       className={cn(
         "inline-flex rounded-lg px-2.5 py-1 text-xs font-bold",
-        status === "won" && "bg-[var(--zani-success-soft)] text-zani-success",
-        status === "lost" && "bg-[var(--zani-danger-soft)] text-zani-danger",
-        status === "open" && "bg-surface-muted text-zani-muted",
+        status === "won" && "bg-[var(--platforma-success-soft)] text-platforma-success",
+        status === "lost" && "bg-[var(--platforma-danger-soft)] text-platforma-danger",
+        status === "open" && "bg-surface-muted text-platforma-muted",
       )}
     >
       {label}

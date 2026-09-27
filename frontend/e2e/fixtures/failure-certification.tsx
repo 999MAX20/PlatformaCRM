@@ -88,7 +88,7 @@ function CertificationCell({ cell }: { cell: ReturnType<typeof createFb010Matrix
   switch (cell.state) {
     case "success":
       surface = (
-        <div role="status" className="rounded-card border border-zani-border bg-surface-card p-4 text-sm text-zani-text">
+        <div role="status" className="rounded-card border border-platforma-border bg-surface-card p-4 text-sm text-platforma-text">
           <p>Действие завершено.</p>
           <div className="mt-3">{recoveryButton("Продолжить")}</div>
         </div>
@@ -161,27 +161,27 @@ function CertificationCell({ cell }: { cell: ReturnType<typeof createFb010Matrix
   return (
     <section
       aria-label={`${cell.journey} ${cell.role} ${cell.state}`}
-      className="min-w-0 space-y-3 rounded-card border border-zani-border bg-surface-card p-3"
+      className="min-w-0 space-y-3 rounded-card border border-platforma-border bg-surface-card p-3"
       data-fb010-case={cell.id}
       data-fb010-category={cell.category}
       data-fb010-state={cell.state}
       data-fb010-surface={cell.expectedSurface}
       data-fb010-axe-sample={cell.journey === "J01-inbox-lead-next-action" && cell.role === "owner" ? "true" : undefined}
     >
-      <p className="break-all text-xs font-semibold text-zani-faint">
+      <p className="break-all text-xs font-semibold text-platforma-faint">
         {cell.journey} / {cell.role} / {cell.state}
       </p>
-      <label className="block text-xs font-semibold text-zani-subtle">
+      <label className="block text-xs font-semibold text-platforma-subtle">
         Сохранённый контекст
         <input
           ref={contextRef}
           aria-label={`Сохранённый контекст ${cell.id}`}
-          className="mt-1 block w-full rounded-control border border-zani-border bg-surface-card px-3 py-2 text-sm text-zani-text"
+          className="mt-1 block w-full rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm text-platforma-text"
           defaultValue={`draft:${cell.journey}:${cell.role}`}
         />
       </label>
       {surface}
-      <p data-testid="fb010-recovery-status" role="status" className="text-xs text-zani-subtle">
+      <p data-testid="fb010-recovery-status" role="status" className="text-xs text-platforma-subtle">
         {recovered ? "recovered" : "context-preserved"}
       </p>
     </section>
@@ -194,9 +194,9 @@ function Fixture() {
 
   return (
     <I18nProvider>
-      <main className="min-h-screen bg-zani-bg p-3 text-zani-text sm:p-5" data-testid="fb010-matrix">
-        <h1 className="text-xl font-semibold text-zani-ink">FB-010 failure certification</h1>
-        <p className="mt-1 text-sm text-zani-subtle" data-testid="fb010-cell-count">
+      <main className="min-h-screen bg-platforma-bg p-3 text-platforma-text sm:p-5" data-testid="fb010-matrix">
+        <h1 className="text-xl font-semibold text-platforma-ink">FB-010 failure certification</h1>
+        <p className="mt-1 text-sm text-platforma-subtle" data-testid="fb010-cell-count">
           {cells.length} browser cells
         </p>
         <div className="mt-4 grid min-w-0 gap-4 xl:grid-cols-2">

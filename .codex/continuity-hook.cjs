@@ -7,6 +7,10 @@ function normalized(value) {
   return path.win32.normalize(value.replace(/^\\\\\?\\/u, '')).toLowerCase();
 }
 function inside(root, cwd) {
+  // A renamed checkout may retain a junction for an already-open desktop task.
+  // Compare real locations when available; never treat a second checkout as an alias.
+  try { root = fs.realpathSync(root); } catch { /* Metadata-only fixture or unavailable path. */ }
+  try { cwd = fs.realpathSync(cwd); } catch { /* Preserve the existing lexical guard. */ }
   const relative = path.win32.relative(normalized(root), normalized(cwd));
   return relative !== '..' && !relative.startsWith('..\\') && !path.win32.isAbsolute(relative);
 }

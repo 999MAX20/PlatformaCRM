@@ -114,17 +114,17 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-[80] bg-[rgba(23,18,15,0.35)] p-4 backdrop-blur-sm" onClick={onClose}>
-      <div className="mx-auto mt-20 max-w-xl overflow-hidden rounded-card border border-zani-border bg-surface-card shadow-premium" onClick={(event) => event.stopPropagation()}>
-        <div className="flex items-center gap-3 border-b border-zani-border px-4 py-3">
-          <Search size={18} className="text-zani-faint" />
+      <div className="mx-auto mt-20 max-w-xl overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-premium" onClick={(event) => event.stopPropagation()}>
+        <div className="flex items-center gap-3 border-b border-platforma-border px-4 py-3">
+          <Search size={18} className="text-platforma-faint" />
           <input
             autoFocus
-            className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-zani-ink outline-none placeholder:text-zani-faint"
+            className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-platforma-ink outline-none placeholder:text-platforma-faint"
             placeholder={t("command.placeholder")}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
-          <button type="button" className="zani-focus-ring grid h-8 w-8 place-items-center rounded-control text-zani-faint hover:bg-surface-muted hover:text-zani-ink" onClick={onClose}>
+          <button type="button" className="platforma-focus-ring grid h-8 w-8 place-items-center rounded-control text-platforma-faint hover:bg-surface-muted hover:text-platforma-ink" onClick={onClose}>
             <X size={17} />
           </button>
         </div>
@@ -136,7 +136,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                 key={command.id}
                 data-testid={`command-${command.id}`}
                 type="button"
-                className={cn("zani-focus-ring flex w-full items-center gap-3 rounded-control px-3 py-3 text-left transition", index === 0 ? "bg-brand-50" : "hover:bg-surface-muted")}
+                className={cn("platforma-focus-ring flex w-full items-center gap-3 rounded-control px-3 py-3 text-left transition", index === 0 ? "bg-brand-50" : "hover:bg-surface-muted")}
                 onClick={() => {
                   navigate(command.to);
                   onClose();
@@ -147,14 +147,14 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                   <Icon size={17} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold text-zani-ink">{command.label}</span>
-                  <span className="block truncate text-xs font-semibold text-zani-faint">{command.hint}</span>
+                  <span className="block truncate text-sm font-semibold text-platforma-ink">{command.label}</span>
+                  <span className="block truncate text-xs font-semibold text-platforma-faint">{command.hint}</span>
                 </span>
-                <span className="shrink-0 rounded-control bg-surface-muted px-2 py-1 text-[11px] font-semibold text-zani-faint">Cmd K</span>
+                <span className="shrink-0 rounded-control bg-surface-muted px-2 py-1 text-[11px] font-semibold text-platforma-faint">Cmd K</span>
               </button>
             );
           }) : (
-            <p className="px-3 py-8 text-center text-sm font-semibold text-zani-faint">{t("command.empty")}</p>
+            <p className="px-3 py-8 text-center text-sm font-semibold text-platforma-faint">{t("command.empty")}</p>
           )}
         </div>
       </div>

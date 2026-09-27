@@ -13,10 +13,10 @@ export type AiNavigatorSignal = {
 };
 
 const toneClasses: Record<NonNullable<AiNavigatorSignal["tone"]>, string> = {
-  good: "bg-zani-success",
-  warning: "bg-zani-warning",
-  danger: "bg-zani-danger",
-  info: "bg-zani-info",
+  good: "bg-platforma-success",
+  warning: "bg-platforma-warning",
+  danger: "bg-platforma-danger",
+  info: "bg-platforma-info",
 };
 
 export function AiNavigatorWidget({ signals }: { signals: AiNavigatorSignal[] }) {
@@ -41,13 +41,13 @@ export function AiNavigatorWidget({ signals }: { signals: AiNavigatorSignal[] })
                 <Bot size={17} />
               </span>
               <div>
-                <p className="text-sm font-semibold text-zani-ink">{t("dashboard.aiNavigator")}</p>
-                <p className="text-xs font-semibold text-zani-subtle">{t("dashboard.aiNavigatorScope")}</p>
+                <p className="text-sm font-semibold text-platforma-ink">{t("dashboard.aiNavigator")}</p>
+                <p className="text-xs font-semibold text-platforma-subtle">{t("dashboard.aiNavigatorScope")}</p>
               </div>
             </div>
             <button
               type="button"
-              className="zani-focus-ring grid h-9 w-9 place-items-center rounded-control bg-surface-card text-zani-muted transition hover:bg-surface-muted hover:text-zani-text"
+              className="platforma-focus-ring grid h-9 w-9 place-items-center rounded-control bg-surface-card text-platforma-muted transition hover:bg-surface-muted hover:text-platforma-text"
               onClick={() => setIsOpen(false)}
               aria-label={t("common.close")}
             >
@@ -60,8 +60,8 @@ export function AiNavigatorWidget({ signals }: { signals: AiNavigatorSignal[] })
                 <div className="flex gap-3 rounded-card bg-surface-card p-3 ring-1 ring-ai-100 transition hover:bg-surface-warm">
                   <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${toneClasses[signal.tone || "info"]}`} />
                   <span className="min-w-0">
-                    <span className="block text-sm font-semibold text-zani-ink">{signal.title}</span>
-                    <span className="mt-0.5 block text-xs font-semibold leading-5 text-zani-subtle">{signal.text}</span>
+                    <span className="block text-sm font-semibold text-platforma-ink">{signal.title}</span>
+                    <span className="mt-0.5 block text-xs font-semibold leading-5 text-platforma-subtle">{signal.text}</span>
                   </span>
                 </div>
               );
@@ -74,7 +74,7 @@ export function AiNavigatorWidget({ signals }: { signals: AiNavigatorSignal[] })
 
       <button
         type="button"
-        className="zani-focus-ring flex w-full items-center justify-between gap-3 rounded-card border border-ai-100 bg-ai-50 px-4 py-3 text-left shadow-soft transition hover:bg-surface-card"
+        className="platforma-focus-ring flex w-full items-center justify-between gap-3 rounded-card border border-ai-100 bg-ai-50 px-4 py-3 text-left shadow-soft transition hover:bg-surface-card"
         onClick={() => setIsOpen((value) => !value)}
       >
         <span className="flex min-w-0 items-center gap-3">
@@ -83,10 +83,10 @@ export function AiNavigatorWidget({ signals }: { signals: AiNavigatorSignal[] })
           </span>
           <span className="min-w-0">
             <span className="block text-xs font-semibold text-ai-700">{t("dashboard.aiNavigator")}</span>
-            <span className="block truncate text-sm font-semibold text-zani-ink">{primarySignal.title}</span>
+            <span className="block truncate text-sm font-semibold text-platforma-ink">{primarySignal.title}</span>
           </span>
         </span>
-        <ChevronUp className={`shrink-0 text-zani-muted transition ${isOpen ? "" : "rotate-180"}`} size={18} />
+        <ChevronUp className={`shrink-0 text-platforma-muted transition ${isOpen ? "" : "rotate-180"}`} size={18} />
       </button>
     </div>
   );

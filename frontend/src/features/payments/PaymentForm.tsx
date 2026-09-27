@@ -107,7 +107,7 @@ export function PaymentForm({ businessId, currency, initialClient, original, can
       if (event.key === "Escape" && event.target instanceof Element && event.target.closest('[role="listbox"], [role="combobox"][aria-expanded="true"]')) event.stopPropagation();
     }}>
       {mutation.error && <ErrorState message={getApiErrorMessage(mutation.error)} />}
-      {fieldErrors.form && <p role="alert" className="text-zani-danger">{fieldErrors.form}</p>}
+      {fieldErrors.form && <p role="alert" className="text-platforma-danger">{fieldErrors.form}</p>}
       {uncertain && <p role="alert">{t("payments.uncertain")}</p>}
       <fieldset disabled={mutation.isPending || uncertain} className="space-y-4">
         {original ? <p>{original.client_name} · #{original.id} · {t("payments.refundLimit", { amount: original.remaining_amount, currency: original.currency })}</p>
@@ -128,7 +128,7 @@ export function PaymentForm({ businessId, currency, initialClient, original, can
         <Select label={t("payments.method")} value={method} onChange={(e) => setMethod(e.target.value as PaymentMethod)} options={(["cash", "card", "transfer", "other"] as const).map((value) => ({ value, label: t(`payments.method.${value}`) }))} />
         {original && <Textarea label={t("payments.reason")} value={reason} maxLength={500} required error={fieldErrors.reason} onChange={(e) => setReason(e.target.value)} />}
         <Textarea label={t("payments.note")} value={note} maxLength={1000} onChange={(e) => setNote(e.target.value)} />
-        <p className="text-sm text-zani-muted">{t("payments.manualNotice")}</p>
+        <p className="text-sm text-platforma-muted">{t("payments.manualNotice")}</p>
       </fieldset>
       <div className="flex flex-wrap justify-end gap-2">
         <Button type="button" variant="secondary" disabled={mutation.isPending} onClick={() => void close()}>{t("common.cancel")}</Button>

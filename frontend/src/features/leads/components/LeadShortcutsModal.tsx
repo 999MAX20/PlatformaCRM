@@ -22,12 +22,12 @@ export function LeadShortcutsModal({
         {shortcuts.map((shortcut) => (
           <div
             key={shortcut.key}
-            className="flex items-center justify-between gap-3 rounded-control border border-zani-border bg-surface-muted px-3 py-2"
+            className="flex items-center justify-between gap-3 rounded-control border border-platforma-border bg-surface-muted px-3 py-2"
           >
-            <span className="text-sm font-bold text-zani-muted">
+            <span className="text-sm font-bold text-platforma-muted">
               {shortcut.label}
             </span>
-            <kbd className="rounded-lg border border-zani-border bg-surface-card px-2 py-1 text-xs font-bold text-zani-text shadow-sm">
+            <kbd className="rounded-lg border border-platforma-border bg-surface-card px-2 py-1 text-xs font-bold text-platforma-text shadow-sm">
               {shortcut.key}
             </kbd>
           </div>

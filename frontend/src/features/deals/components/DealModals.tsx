@@ -164,8 +164,8 @@ export function DealActionModal({
           }}
         >
           <div className="rounded-card bg-surface-muted p-4">
-            <p className="font-bold text-zani-text">{actionFlow.deal.title}</p>
-            <p className="mt-1 text-sm font-semibold text-zani-muted">
+            <p className="font-bold text-platforma-text">{actionFlow.deal.title}</p>
+            <p className="mt-1 text-sm font-semibold text-platforma-muted">
               {money(actionFlow.deal.amount, actionFlow.deal.currency)}
             </p>
           </div>
@@ -247,8 +247,8 @@ export function NextActionModal({
           }}
         >
           <div className="rounded-card bg-surface-muted p-4">
-            <p className="font-bold text-zani-text">{deal.title}</p>
-            <p className="mt-1 text-sm font-semibold text-zani-muted">
+            <p className="font-bold text-platforma-text">{deal.title}</p>
+            <p className="mt-1 text-sm font-semibold text-platforma-muted">
               {money(deal.amount, deal.currency)}
             </p>
           </div>

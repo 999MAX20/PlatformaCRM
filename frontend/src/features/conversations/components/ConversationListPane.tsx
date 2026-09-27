@@ -127,12 +127,12 @@ export function ConversationListPane({
       />
 
       {priorityActions.length ? (
-        <div className="space-y-2 border-b border-zani-border bg-surface-warm px-3 py-3" data-testid="inbox-priority-actions">
+        <div className="space-y-2 border-b border-platforma-border bg-surface-warm px-3 py-3" data-testid="inbox-priority-actions">
           {priorityActions.slice(0, 3).map((action) => (
             <Link
               key={`${action.href}-${action.label}`}
               to={action.href}
-              className="flex min-h-9 items-center justify-between gap-2 rounded-control border border-zani-border bg-surface-card px-3 text-xs font-bold text-zani-text transition hover:border-brand-100 hover:bg-brand-50"
+              className="flex min-h-9 items-center justify-between gap-2 rounded-control border border-platforma-border bg-surface-card px-3 text-xs font-bold text-platforma-text transition hover:border-brand-100 hover:bg-brand-50"
             >
               <span className="truncate">{action.code ? t(`conversations.nextAction.${action.code}`) : action.label}</span>
               <span className="shrink-0 text-brand-700">{t("conversations.openPriority")}</span>
@@ -143,7 +143,7 @@ export function ConversationListPane({
 
       {connectorReadinessLoading ? (
         <div
-          className="border-b border-zani-border bg-surface-muted px-3 py-2 text-xs font-semibold text-zani-muted"
+          className="border-b border-platforma-border bg-surface-muted px-3 py-2 text-xs font-semibold text-platforma-muted"
           data-testid="inbox-provider-status-loading"
           role="status"
         >
@@ -181,7 +181,7 @@ export function ConversationListPane({
           tone="warning"
           title={t("conversations.channelsUnavailable", { count: unavailableChannelCount })}
           action={canViewIntegrations ? (
-            <Link className="zani-focus-ring inline-flex rounded-control px-2 py-1 font-bold text-zani-warning underline" to="/app/ai-agents">
+            <Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-bold text-platforma-warning underline" to="/app/ai-agents">
               {t("conversations.openIntegrations")}
             </Link>
           ) : null}
@@ -189,16 +189,16 @@ export function ConversationListPane({
       ) : null}
 
       {items.length ? (
-        <div className="border-b border-zani-border px-3 py-2">
+        <div className="border-b border-platforma-border px-3 py-2">
           {!bulkMode ? (
-            <button type="button" data-testid="conversation-select-multiple" className="zani-focus-ring rounded-control text-xs font-bold text-brand-700" onClick={onSelectVisible}>
+            <button type="button" data-testid="conversation-select-multiple" className="platforma-focus-ring rounded-control text-xs font-bold text-brand-700" onClick={onSelectVisible}>
               {t("conversations.selectMultiple")}
             </button>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-bold text-zani-text">{t("conversations.selectedCount", { count: selectedIds.length })}</p>
-                <button type="button" className="text-sm font-bold text-zani-muted transition hover:text-zani-text" onClick={onResetBulk}>
+                <p className="text-sm font-bold text-platforma-text">{t("conversations.selectedCount", { count: selectedIds.length })}</p>
+                <button type="button" className="text-sm font-bold text-platforma-muted transition hover:text-platforma-text" onClick={onResetBulk}>
                   {t("common.cancel")}
                 </button>
               </div>

@@ -302,7 +302,7 @@ export function ServicesPage() {
         <section
           tabIndex={0}
           aria-label={t("services.metricsLabel")}
-          className="zani-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
+          className="platforma-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
         >
           <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.active")} value={activeServices.length} hint={t("services.activeHint")} icon={Scissors} />
           <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.avgDuration")} value={avgDuration ? `${avgDuration} ${t("appointment.minutes")}` : "-"} hint={t("services.avgDurationHint")} icon={Clock3} />
@@ -376,7 +376,7 @@ export function ServicesPage() {
                   </div>
                   <CrmPagination
                     variant="toolbar"
-                    className="w-full border-t border-zani-border pt-3 xl:w-auto xl:border-t-0 xl:pt-0"
+                    className="w-full border-t border-platforma-border pt-3 xl:w-auto xl:border-t-0 xl:pt-0"
                     shown={serviceRows.length}
                     total={totalServices}
                     page={page}
@@ -392,7 +392,7 @@ export function ServicesPage() {
                 </div>
               }
               columns={[
-                { header: t("services.name"), className: "max-w-[320px]", cell: (service) => <span data-testid="service-name" className="block truncate font-semibold text-zani-ink">{service.name}</span> },
+                { header: t("services.name"), className: "max-w-[320px]", cell: (service) => <span data-testid="service-name" className="block truncate font-semibold text-platforma-ink">{service.name}</span> },
                 { header: t("services.duration"), cell: (service) => `${service.duration_minutes} ${t("appointment.minutes")}` },
                 { header: t("services.priceFrom"), cell: (service) => formatMoney(service.price_from) },
                 { header: t("services.bookings"), cell: (service) => appointmentUsage.get(service.id) || 0 },

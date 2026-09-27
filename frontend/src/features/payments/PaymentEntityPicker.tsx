@@ -34,8 +34,8 @@ export function PaymentEntityPicker({ businessId, kind, clientId, value, onChang
       onClick={() => setOpen(!open)}>
       {label}: {value?.label || t("common.select")}
     </Button>
-    {error && <p role="alert" className="text-sm text-zani-danger">{error}</p>}
-    {open && <div className="space-y-2 rounded-control border border-zani-border p-3"
+    {error && <p role="alert" className="text-sm text-platforma-danger">{error}</p>}
+    {open && <div className="space-y-2 rounded-control border border-platforma-border p-3"
       onKeyDown={(event) => { if (event.key === "Escape") { event.stopPropagation(); setOpen(false); trigger.current?.focus(); } }}>
       <Input autoFocus label={`${t("common.search")}: ${label}`} value={search} maxLength={200} onChange={(e) => setSearch(e.target.value)} />
       {options.isLoading && <LoadingState />}

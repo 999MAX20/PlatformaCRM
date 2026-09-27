@@ -3,61 +3,61 @@
 @tailwind utilities;
 
 :root {
-  --zani-bg: #f7f3ee;
-  --zani-page-soft: #f4eee7;
-  --zani-surface: #ffffff;
-  --zani-surface-warm: #fffcf8;
-  --zani-surface-muted: #f2ede6;
-  --zani-surface-raised: rgba(255, 252, 248, 0.96);
-  --zani-brand: #f5b37a;
-  --zani-brand-hover: #ee995a;
-  --zani-brand-strong: #df813f;
-  --zani-brand-content: #a4470d;
-  --zani-brand-soft: #fff3ea;
-  --zani-focus-ring: rgba(164, 71, 13, 0.42);
-  --zani-text-inverse: #ffffff;
-  --zani-discovery: #4f46e5;
-  --zani-discovery-soft: #eef2ff;
-  --zani-discovery-border: #c7d2fe;
-  --zani-ai: #6f4cc3;
-  --zani-ai-hover: #5e3cae;
-  --zani-ai-soft: #f4f0ff;
-  --zani-ai-border: #ddd2ff;
-  --zani-ai-end: #5e3cae;
-  --zani-success: #15803d;
-  --zani-success-soft: #ecfdf3;
-  --zani-warning: #975a16;
-  --zani-warning-soft: #fff7e6;
-  --zani-warning-bold: #f4c04f;
-  --zani-warning-bold-hover: #e9ac2d;
-  --zani-warning-bold-pressed: #d99616;
-  --zani-danger: #c2410c;
-  --zani-danger-soft: #fff1ed;
-  --zani-danger-hover: #9a3412;
-  --zani-danger-pressed: #7c2d12;
-  --zani-info: #0e7490;
-  --zani-info-soft: #eaf9fc;
-  --zani-neutral: #6b625a;
-  --zani-neutral-soft: #f2ede6;
-  --zani-ink: #17120f;
-  --zani-midnight: #17120f;
-  --zani-muted: #5f554d;
-  --zani-muted-soft: #6b625a;
-  --zani-border: #e6ddd2;
-  --zani-shadow-soft: 0 1px 3px rgba(23, 18, 15, 0.06);
-  --zani-shadow-elevated: 0 4px 12px rgba(23, 18, 15, 0.05);
-  --zani-shadow-card: 0 4px 12px rgba(23, 18, 15, 0.05);
-  --zani-shadow-panel: 0 16px 40px rgba(23, 18, 15, 0.1);
-  --zani-shadow-premium: 0 16px 40px rgba(23, 18, 15, 0.1);
-  --zani-radius-card: 12px;
-  --zani-radius-control: 10px;
-  --zani-radius-modal: 16px;
-  --zani-z-popover: 60;
-  --zani-z-drawer: 70;
-  --zani-z-modal: 80;
-  --zani-z-toast: 90;
-  color: var(--zani-ink);
-  background: var(--zani-bg);
+  --platforma-bg: #f7f3ee;
+  --platforma-page-soft: #f4eee7;
+  --platforma-surface: #ffffff;
+  --platforma-surface-warm: #fffcf8;
+  --platforma-surface-muted: #f2ede6;
+  --platforma-surface-raised: rgba(255, 252, 248, 0.96);
+  --platforma-brand: #f5b37a;
+  --platforma-brand-hover: #ee995a;
+  --platforma-brand-strong: #df813f;
+  --platforma-brand-content: #a4470d;
+  --platforma-brand-soft: #fff3ea;
+  --platforma-focus-ring: rgba(164, 71, 13, 0.42);
+  --platforma-text-inverse: #ffffff;
+  --platforma-discovery: #4f46e5;
+  --platforma-discovery-soft: #eef2ff;
+  --platforma-discovery-border: #c7d2fe;
+  --platforma-ai: #6f4cc3;
+  --platforma-ai-hover: #5e3cae;
+  --platforma-ai-soft: #f4f0ff;
+  --platforma-ai-border: #ddd2ff;
+  --platforma-ai-end: #5e3cae;
+  --platforma-success: #15803d;
+  --platforma-success-soft: #ecfdf3;
+  --platforma-warning: #975a16;
+  --platforma-warning-soft: #fff7e6;
+  --platforma-warning-bold: #f4c04f;
+  --platforma-warning-bold-hover: #e9ac2d;
+  --platforma-warning-bold-pressed: #d99616;
+  --platforma-danger: #c2410c;
+  --platforma-danger-soft: #fff1ed;
+  --platforma-danger-hover: #9a3412;
+  --platforma-danger-pressed: #7c2d12;
+  --platforma-info: #0e7490;
+  --platforma-info-soft: #eaf9fc;
+  --platforma-neutral: #6b625a;
+  --platforma-neutral-soft: #f2ede6;
+  --platforma-ink: #17120f;
+  --platforma-midnight: #17120f;
+  --platforma-muted: #5f554d;
+  --platforma-muted-soft: #6b625a;
+  --platforma-border: #e6ddd2;
+  --platforma-shadow-soft: 0 1px 3px rgba(23, 18, 15, 0.06);
+  --platforma-shadow-elevated: 0 4px 12px rgba(23, 18, 15, 0.05);
+  --platforma-shadow-card: 0 4px 12px rgba(23, 18, 15, 0.05);
+  --platforma-shadow-panel: 0 16px 40px rgba(23, 18, 15, 0.1);
+  --platforma-shadow-premium: 0 16px 40px rgba(23, 18, 15, 0.1);
+  --platforma-radius-card: 12px;
+  --platforma-radius-control: 10px;
+  --platforma-radius-modal: 16px;
+  --platforma-z-popover: 60;
+  --platforma-z-drawer: 70;
+  --platforma-z-modal: 80;
+  --platforma-z-toast: 90;
+  color: var(--platforma-ink);
+  background: var(--platforma-bg);
   font-family:
     "Manrope Variable", "Noto Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
     sans-serif;
@@ -69,7 +69,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: var(--zani-bg);
+  background: var(--platforma-bg);
 }
 
 html,
@@ -101,78 +101,78 @@ select {
 }
 
 @layer components {
-  .zani-surface {
-    border: 1px solid var(--zani-border);
-    background: var(--zani-surface-raised);
-    box-shadow: var(--zani-shadow-soft);
-    border-radius: var(--zani-radius-card);
+  .platforma-surface {
+    border: 1px solid var(--platforma-border);
+    background: var(--platforma-surface-raised);
+    box-shadow: var(--platforma-shadow-soft);
+    border-radius: var(--platforma-radius-card);
   }
 
-  .zani-surface-strong {
-    border: 1px solid var(--zani-border);
-    background: var(--zani-surface-warm);
-    box-shadow: var(--zani-shadow-elevated);
-    border-radius: var(--zani-radius-card);
+  .platforma-surface-strong {
+    border: 1px solid var(--platforma-border);
+    background: var(--platforma-surface-warm);
+    box-shadow: var(--platforma-shadow-elevated);
+    border-radius: var(--platforma-radius-card);
   }
 
-  .zani-card {
-    border: 1px solid var(--zani-border);
-    background: var(--zani-surface);
-    box-shadow: var(--zani-shadow-card);
-    border-radius: var(--zani-radius-card);
+  .platforma-card {
+    border: 1px solid var(--platforma-border);
+    background: var(--platforma-surface);
+    box-shadow: var(--platforma-shadow-card);
+    border-radius: var(--platforma-radius-card);
   }
 
-  .zani-panel {
-    border: 1px solid var(--zani-border);
-    background: var(--zani-surface);
-    box-shadow: var(--zani-shadow-panel);
-    border-radius: var(--zani-radius-card);
+  .platforma-panel {
+    border: 1px solid var(--platforma-border);
+    background: var(--platforma-surface);
+    box-shadow: var(--platforma-shadow-panel);
+    border-radius: var(--platforma-radius-card);
   }
 
-  .zani-overlay-backdrop {
+  .platforma-overlay-backdrop {
     background: rgba(23, 18, 15, 0.46);
     backdrop-filter: blur(10px);
   }
 
-  .zani-dialog-surface {
-    border: 1px solid var(--zani-border);
-    background: var(--zani-surface);
-    box-shadow: var(--zani-shadow-premium);
-    border-radius: var(--zani-radius-modal);
+  .platforma-dialog-surface {
+    border: 1px solid var(--platforma-border);
+    background: var(--platforma-surface);
+    box-shadow: var(--platforma-shadow-premium);
+    border-radius: var(--platforma-radius-modal);
   }
 
-  .zani-drawer-surface {
-    border-left: 1px solid var(--zani-border);
-    background: var(--zani-surface);
-    box-shadow: var(--zani-shadow-premium);
+  .platforma-drawer-surface {
+    border-left: 1px solid var(--platforma-border);
+    background: var(--platforma-surface);
+    box-shadow: var(--platforma-shadow-premium);
   }
 
-  .zani-popover-surface {
-    z-index: var(--zani-z-popover);
-    border: 1px solid var(--zani-border);
-    background: var(--zani-surface);
-    box-shadow: var(--zani-shadow-panel);
-    border-radius: var(--zani-radius-card);
+  .platforma-popover-surface {
+    z-index: var(--platforma-z-popover);
+    border: 1px solid var(--platforma-border);
+    background: var(--platforma-surface);
+    box-shadow: var(--platforma-shadow-panel);
+    border-radius: var(--platforma-radius-card);
   }
 
-  .zani-toast-surface {
-    border: 1px solid var(--zani-border);
-    background: var(--zani-surface);
-    box-shadow: var(--zani-shadow-panel);
-    border-radius: var(--zani-radius-card);
+  .platforma-toast-surface {
+    border: 1px solid var(--platforma-border);
+    background: var(--platforma-surface);
+    box-shadow: var(--platforma-shadow-panel);
+    border-radius: var(--platforma-radius-card);
   }
 
-  .zani-control {
+  .platforma-control {
     min-height: 40px;
-    border-radius: var(--zani-radius-control);
+    border-radius: var(--platforma-radius-control);
   }
 
-  .zani-touch-target {
+  .platforma-touch-target {
     min-height: 44px;
     min-width: 44px;
   }
 
-  .zani-focus-ring {
+  .platforma-focus-ring {
     outline: none;
     transition:
       border-color 160ms ease,
@@ -180,36 +180,36 @@ select {
       transform 160ms ease;
   }
 
-  .zani-focus-ring:focus-visible {
-    border-color: var(--zani-brand-content);
-    box-shadow: 0 0 0 4px var(--zani-focus-ring);
+  .platforma-focus-ring:focus-visible {
+    border-color: var(--platforma-brand-content);
+    box-shadow: 0 0 0 4px var(--platforma-focus-ring);
   }
 
-  .zani-ai-surface {
+  .platforma-ai-surface {
     position: relative;
-    border: 1px solid var(--zani-ai-border);
-    background: var(--zani-ai-soft);
-    box-shadow: var(--zani-shadow-card);
+    border: 1px solid var(--platforma-ai-border);
+    background: var(--platforma-ai-soft);
+    box-shadow: var(--platforma-shadow-card);
   }
 
-  .zani-ai-surface::before {
+  .platforma-ai-surface::before {
     content: none;
   }
 }
 
 .glass-panel {
-  border: 1px solid var(--zani-border);
-  background: var(--zani-surface-raised);
-  box-shadow: var(--zani-shadow-soft);
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface-raised);
+  box-shadow: var(--platforma-shadow-soft);
   backdrop-filter: blur(10px);
-  border-radius: var(--zani-radius-card);
+  border-radius: var(--platforma-radius-card);
 }
 
 .premium-card {
-  border: 1px solid var(--zani-border);
-  background: var(--zani-surface-raised);
-  box-shadow: var(--zani-shadow-soft);
-  border-radius: var(--zani-radius-card);
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface-raised);
+  box-shadow: var(--platforma-shadow-soft);
+  border-radius: var(--platforma-radius-card);
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -221,7 +221,7 @@ select {
   scrollbar-width: none;
 }
 
-@keyframes zani-slide-down {
+@keyframes platforma-slide-down {
   from {
     opacity: 0;
     transform: translateY(-20px);
@@ -232,7 +232,7 @@ select {
   }
 }
 
-@keyframes zani-fade-in {
+@keyframes platforma-fade-in {
   from {
     opacity: 0;
   }
@@ -241,7 +241,7 @@ select {
   }
 }
 
-@keyframes zani-pulse-slow {
+@keyframes platforma-pulse-slow {
   0%,
   100% {
     opacity: 1;
@@ -252,15 +252,15 @@ select {
 }
 
 .animate-slide-down {
-  animation: zani-slide-down 0.3s ease-out;
+  animation: platforma-slide-down 0.3s ease-out;
 }
 
 .animate-fade-in {
-  animation: zani-fade-in 0.2s ease-out;
+  animation: platforma-fade-in 0.2s ease-out;
 }
 
 .animate-pulse-slow {
-  animation: zani-pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: platforma-pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -283,7 +283,7 @@ select {
 }
 
 .focus-visible-ring:focus-visible {
-  outline: 2px solid var(--zani-focus-ring);
+  outline: 2px solid var(--platforma-focus-ring);
   outline-offset: 2px;
 }
 

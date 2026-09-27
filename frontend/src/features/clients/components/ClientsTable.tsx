@@ -96,7 +96,7 @@ export function ClientsTable({
               </span>
               <button
                 type="button"
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-zani-border bg-surface-card px-3 text-xs font-semibold text-zani-text transition hover:bg-surface-warm"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-platforma-border bg-surface-card px-3 text-xs font-semibold text-platforma-text transition hover:bg-surface-warm"
                 onClick={() =>
                   firstCheckedRow && onOpenClient(firstCheckedRow.client.id)
                 }
@@ -107,7 +107,7 @@ export function ClientsTable({
               </button>
               <button
                 type="button"
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-zani-muted transition hover:bg-surface-muted hover:text-zani-text"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-platforma-muted transition hover:bg-surface-muted hover:text-platforma-text"
                 onClick={clearCheckedRows}
               >
                 <X size={14} />
@@ -135,7 +135,7 @@ export function ClientsTable({
           <thead className="sticky top-0 z-10">
             <tr
               role="row"
-              className="h-10 border-b border-zani-border bg-surface-muted text-left text-xs font-semibold text-zani-muted"
+              className="h-10 border-b border-platforma-border bg-surface-muted text-left text-xs font-semibold text-platforma-muted"
             >
               <th role="columnheader" className="w-10 px-3 py-2">
                 <input
@@ -143,7 +143,7 @@ export function ClientsTable({
                   checked={allPageRowsChecked}
                   readOnly
                   onClick={toggleAllPageRows}
-                  className="h-4 w-4 rounded border-zani-border text-brand-600 focus:ring-brand-500"
+                  className="h-4 w-4 rounded border-platforma-border text-brand-600 focus:ring-brand-500"
                   aria-label={t("clients.selectAllPage")}
                 />
               </th>
@@ -209,10 +209,10 @@ export function ClientsTable({
 
       {!rows.length ? (
         <div className="px-6 py-12 text-center">
-          <p className="font-bold text-zani-text">
+          <p className="font-bold text-platforma-text">
             {hasFilters ? t("clients.notFoundTitle") : t("clients.emptyTitle")}
           </p>
-          <p className="mt-1 text-sm text-zani-muted">
+          <p className="mt-1 text-sm text-platforma-muted">
             {hasFilters ? t("clients.emptyFiltered") : t("clients.emptyText")}
           </p>
         </div>

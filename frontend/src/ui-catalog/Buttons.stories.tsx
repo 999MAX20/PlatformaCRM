@@ -13,7 +13,7 @@ function ButtonStates() {
     <section aria-label="Button states" className="grid gap-4">
       <output data-testid="click-count" aria-label="Test clicks">{clicks}</output>
       {variants.map((variant) => (
-        <section key={variant} data-testid={`variant-${variant}`} className="rounded-card border border-zani-border bg-surface-card p-4">
+        <section key={variant} data-testid={`variant-${variant}`} className="rounded-card border border-platforma-border bg-surface-card p-4">
           <h2 className="mb-3 text-sm font-semibold">{variant}</h2>
           <div className="flex flex-wrap items-center gap-3">
             <Button variant={variant} onClick={() => setClicks((value) => value + 1)} aria-label={variant === "icon" ? t("common.save") : undefined}>
@@ -40,7 +40,7 @@ function LongLabel() {
   );
 }
 
-const meta = { title: "Zani/Buttons", component: Button } satisfies Meta<typeof Button>;
+const meta = { title: "PlatformaCRM/Buttons", component: Button } satisfies Meta<typeof Button>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const States: Story = { render: () => <ButtonStates /> };

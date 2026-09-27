@@ -376,11 +376,11 @@
   box-shadow: 0 8px 24px rgba(100, 59, 30, 0.05);
 }
 
-.serenity-login__language .zani-language-selector__icon {
+.serenity-login__language .platforma-language-selector__icon {
   color: #c84d00;
 }
 
-.serenity-login__language .zani-language-selector__control {
+.serenity-login__language .platforma-language-selector__control {
   min-height: 32px;
   border: 0;
   background: transparent;
@@ -388,8 +388,8 @@
   box-shadow: none;
 }
 
-.serenity-login__language .zani-language-selector__control:hover,
-.serenity-login__language .zani-language-selector__control[aria-expanded="true"] {
+.serenity-login__language .platforma-language-selector__control:hover,
+.serenity-login__language .platforma-language-selector__control[aria-expanded="true"] {
   background: rgba(255, 240, 224, 0.82);
   color: #9a3c03;
 }
@@ -948,7 +948,7 @@
     padding-left: 9px;
   }
 
-  .serenity-login__language .zani-language-selector__control {
+  .serenity-login__language .platforma-language-selector__control {
     min-height: 30px;
     width: 4.75rem;
   }

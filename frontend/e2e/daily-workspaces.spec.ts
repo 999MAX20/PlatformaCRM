@@ -355,7 +355,7 @@ test("F-201 recoverable queue, calendar and provider failure states expose next 
       const failedConnector = {
         id: 990001,
         business: 1,
-        business_name: "Zani E2E Demo",
+        business_name: "Платформа CRM E2E Demo",
         provider: "telegram",
         capability: "communications",
         name: "Telegram E2E failure",
@@ -469,8 +469,8 @@ test("F-201 recoverable queue, calendar and provider failure states expose next 
       .filter({ hasText: "E2E failed outbound message" });
     await expect(failedMessage).toBeVisible();
     await expect(failedMessage).toHaveAttribute("data-message-status", "failed");
-    await expect(failedMessage.getByTestId("conversation-message-bubble")).toHaveClass(/bg-zani-card/);
-    await expect(failedMessage.getByTestId("conversation-message-bubble")).toHaveClass(/text-zani-text/);
+    await expect(failedMessage.getByTestId("conversation-message-bubble")).toHaveClass(/bg-platforma-card/);
+    await expect(failedMessage.getByTestId("conversation-message-bubble")).toHaveClass(/text-platforma-text/);
     await expect(failedMessage).not.toContainText(rawMessageDeliveryError);
     await expect(failedMessage.getByRole("button")).toHaveCount(0);
     const botMessage = page
@@ -478,8 +478,8 @@ test("F-201 recoverable queue, calendar and provider failure states expose next 
       .filter({ hasText: "E2E bot outbound message" });
     await expect(botMessage).toBeVisible();
     await expect(botMessage).toHaveAttribute("data-message-sender", "bot");
-    await expect(botMessage.getByTestId("conversation-message-bubble")).toHaveClass(/bg-zani-card/);
-    await expect(botMessage.getByTestId("conversation-message-bubble")).toHaveClass(/text-zani-text/);
+    await expect(botMessage.getByTestId("conversation-message-bubble")).toHaveClass(/bg-platforma-card/);
+    await expect(botMessage.getByTestId("conversation-message-bubble")).toHaveClass(/text-platforma-text/);
     await expect(botMessage.getByRole("button")).toHaveCount(0);
   }
 

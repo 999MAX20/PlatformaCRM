@@ -1,10 +1,10 @@
-# ZANI Design System Notes
+# Платформа CRM Design System Notes
 
 Last updated: 2026-07-17
 
 ## Product UI Principle
 
-ZANI is an AI-first CRM and business control layer for SMB. Authenticated CRM pages must feel premium, calm, fast, and operational. The interface should help the user complete real work: qualify a lead, process an inbox conversation, book an appointment, move a deal, assign a task, inspect integration health, or confirm an AI recommendation.
+Платформа CRM is an AI-first CRM and business control layer for SMB. Authenticated CRM pages must feel premium, calm, fast, and operational. The interface should help the user complete real work: qualify a lead, process an inbox conversation, book an appointment, move a deal, assign a task, inspect integration health, or confirm an AI recommendation.
 
 The desired visual direction is:
 
@@ -36,7 +36,7 @@ For the agreed redesign brief and implementation guardrails, see `docs/WARM_PREM
 
 - Premium, warm, relaxed SaaS feeling.
 - No blue-tinted page background in the CRM workspace.
-- Soft peach stays as the ZANI brand action color, with a dark brand-content token for readable emphasis and focus.
+- Soft peach stays as the Платформа CRM brand action color, with a dark brand-content token for readable emphasis and focus.
 - Brand must not become every semantic color in the product.
 - AI must stay visually distinct from ordinary CRM actions.
 - Status colors must communicate state, not decoration.
@@ -138,7 +138,7 @@ Status colors are semantic. Do not use them as generic decoration.
 
 ### Semantic Color Roles
 
-ZANI follows the semantic role model from [Atlassian Color Foundation](https://atlassian.design/foundations/color): role determines meaning, emphasis determines visual weight, and interaction state determines hover, pressed, focus and disabled treatment.
+Платформа CRM follows the semantic role model from [Atlassian Color Foundation](https://atlassian.design/foundations/color): role determines meaning, emphasis determines visual weight, and interaction state determines hover, pressed, focus and disabled treatment.
 
 ```txt
 Neutral:       default text, secondary actions, navigation and table controls
@@ -150,7 +150,7 @@ Danger:        destructive actions and serious failures
 Discovery:     onboarding and genuinely new product capability
 Inverse:       readable content placed on bold semantic surfaces
 Input:         form borders, focus, validation and disabled states
-AI:            ZANI AI recommendations, drafts and assistant surfaces
+AI:            Платформа CRM AI recommendations, drafts and assistant surfaces
 ```
 
 Brand and semantic status colors must not be substituted for one another. In particular, `in_progress`, `queued` and `syncing` use information; warning is reserved for caution; AI remains violet.
@@ -192,7 +192,7 @@ Optional nested surfaces are allowed only when they clarify a real workflow.
 The full authenticated app viewport uses one background:
 
 ```txt
-var(--zani-bg) / App Background
+var(--platforma-bg) / App Background
 ```
 
 The layout background should be stable across Dashboard, Leads, Conversations, Calendar, Settings, Tasks, and Analytics. Do not give individual pages their own full-page background unless the route is a separate product mode such as public auth or platform admin.
@@ -370,7 +370,7 @@ Control radius:     10px
 Button radius:      10px
 Modal radius:       16px
 Sidebar shell:      20-24px only when visually framed
-Border:             1px solid var(--zani-border)
+Border:             1px solid var(--platforma-border)
 Card shadow:        0 4px 12px rgba(23, 18, 15, 0.05)
 Panel shadow:       0 16px 40px rgba(23, 18, 15, 0.10)
 ```
@@ -468,7 +468,7 @@ Long button labels:
 Button states:
 
 ```txt
-primary default:     Brand Primary (#F5B37A) background, dark Zani Ink text for contrast
+primary default:     Brand Primary (#F5B37A) background, dark Платформа CRM Ink text for contrast
 primary hover:       Primary Hover background, slightly stronger shadow
 primary active:      Primary Pressed background, optional scale 0.99
 primary focus:       4px Focus Ring, 2px offset when outside dense surfaces
@@ -481,7 +481,7 @@ secondary active:    Surface Muted, neutral border
 ghost default:       transparent, Text Secondary
 ghost hover:         Surface Muted, Text Primary
 
-warning default:     Warning Bold background, Zani Ink text
+warning default:     Warning Bold background, Платформа CRM Ink text
 warning hover:       Warning Hover background
 warning active:      Warning Pressed background
 

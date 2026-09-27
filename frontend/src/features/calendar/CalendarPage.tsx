@@ -742,16 +742,16 @@ export function CalendarPage() {
           isCalendarDataLoading ? undefined : "calendar-workspace-ready"
         }
       >
-        <div className="overflow-hidden rounded-card border border-zani-border bg-zani-card shadow-sm lg:hidden">
+        <div className="overflow-hidden rounded-card border border-platforma-border bg-platforma-card shadow-sm lg:hidden">
           <div className="p-4">
             <div className="min-w-0">
-              <p className="text-xs font-bold uppercase text-zani-muted">
+              <p className="text-xs font-bold uppercase text-platforma-muted">
                 {t("calendar.mobileAgenda")}
               </p>
-              <p className="mt-1 truncate text-lg font-bold text-zani-text">
+              <p className="mt-1 truncate text-lg font-bold text-platforma-text">
                 {formatPickerDate(date, locale)}
               </p>
-              <p className="mt-1 text-sm font-bold text-zani-muted">
+              <p className="mt-1 text-sm font-bold text-platforma-muted">
                 {selectedDayHours && !selectedDayHours.is_day_off
                   ? `${selectedDayHours.start_time.slice(0, 5)}-${selectedDayHours.end_time.slice(0, 5)}`
                   : t("calendar.freeDay")}
@@ -759,22 +759,22 @@ export function CalendarPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 divide-x divide-zani-border border-y border-zani-border bg-surface-muted">
+          <div className="grid grid-cols-3 divide-x divide-platforma-border border-y border-platforma-border bg-surface-muted">
             {[
               [t("calendar.bookings"), dayAppointments.length],
               [openSlotsLabel, openSlotsCount],
               [t("calendar.tasksToday"), dayTasks.length],
             ].map(([label, value]) => (
               <div key={label} className="min-w-0 px-3 py-2">
-                <p className="text-lg font-bold text-zani-text">{value}</p>
-                <p className="truncate text-[11px] font-bold uppercase text-zani-muted">
+                <p className="text-lg font-bold text-platforma-text">{value}</p>
+                <p className="truncate text-[11px] font-bold uppercase text-platforma-muted">
                   {label}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 border-b border-zani-border p-3">
+          <div className="grid grid-cols-2 gap-2 border-b border-platforma-border p-3">
             {canCreateAppointment ? (
               <Button
                 type="button"
@@ -787,14 +787,14 @@ export function CalendarPage() {
             ) : null}
             {canManageWorkingHours ? (
               <Link
-                className="inline-flex min-h-10 items-center justify-center rounded-control border border-zani-border bg-zani-card px-3 py-2 text-xs font-bold text-zani-text hover:bg-surface-hover"
+                className="inline-flex min-h-10 items-center justify-center rounded-control border border-platforma-border bg-platforma-card px-3 py-2 text-xs font-bold text-platforma-text hover:bg-surface-hover"
                 to="/app/business/working-hours"
               >
                 {t("appointment.openHours")}
               </Link>
             ) : canViewTasks ? (
               <Link
-                className="inline-flex min-h-10 items-center justify-center rounded-control border border-zani-border bg-zani-card px-3 py-2 text-xs font-bold text-zani-text hover:bg-surface-hover"
+                className="inline-flex min-h-10 items-center justify-center rounded-control border border-platforma-border bg-platforma-card px-3 py-2 text-xs font-bold text-platforma-text hover:bg-surface-hover"
                 to="/app/tasks?tab=today"
               >
                 {t("calendar.openTodayTasks")}
@@ -802,7 +802,7 @@ export function CalendarPage() {
             ) : null}
           </div>
 
-          <div className="divide-y divide-zani-border">
+          <div className="divide-y divide-platforma-border">
             {dayAppointments.map((appointment) => (
               <CalendarAppointmentPreview
                 key={`appointment-${appointment.id}`}
@@ -860,7 +860,7 @@ export function CalendarPage() {
           </div>
         </div>
 
-        <div className="hidden min-w-0 overflow-visible rounded-card border border-zani-border bg-zani-card shadow-sm lg:block">
+        <div className="hidden min-w-0 overflow-visible rounded-card border border-platforma-border bg-platforma-card shadow-sm lg:block">
           <ActiveCalendarFilters
             chips={activeFilterChips}
             onClearAll={clearAllFilters}
@@ -870,13 +870,13 @@ export function CalendarPage() {
             <div className="overflow-y-visible">
               <div className="min-w-0">
                 <div
-                  className="sticky top-0 z-10 grid border-b border-zani-border bg-zani-card"
+                  className="sticky top-0 z-10 grid border-b border-platforma-border bg-platforma-card"
                   style={{ gridTemplateColumns: "72px minmax(0, 1fr)" }}
                 >
-                  <div className="bg-surface-muted p-3 text-xs font-bold uppercase text-zani-muted">
+                  <div className="bg-surface-muted p-3 text-xs font-bold uppercase text-platforma-muted">
                     {timeZoneLabel}
                   </div>
-                  <div className="border-l border-zani-border bg-zani-card p-3">
+                  <div className="border-l border-platforma-border bg-platforma-card p-3">
                     <div className="flex items-center gap-3">
                       <div
                         className={cn(
@@ -887,10 +887,10 @@ export function CalendarPage() {
                         {getInitials(dayScheduleResource.name)}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-zani-text">
+                        <p className="truncate text-sm font-bold text-platforma-text">
                           {t("calendar.daySchedule")}
                         </p>
-                        <p className="text-xs font-bold text-zani-muted">
+                        <p className="text-xs font-bold text-platforma-muted">
                           {formatWorkingHoursLabel(
                             workingHourItems,
                             date,
@@ -909,11 +909,11 @@ export function CalendarPage() {
                     height: `${(dayEndHour - dayStartHour) * hourHeight}px`,
                   }}
                 >
-                  <div className="relative border-r border-zani-border bg-surface-muted">
+                  <div className="relative border-r border-platforma-border bg-surface-muted">
                     {timelineHours.slice(0, -1).map((hour) => (
                       <div
                         key={hour}
-                        className="absolute left-0 right-0 border-t border-zani-border px-3 pt-2 text-xs font-bold text-zani-muted"
+                        className="absolute left-0 right-0 border-t border-platforma-border px-3 pt-2 text-xs font-bold text-platforma-muted"
                         style={{
                           top: `${(hour - dayStartHour) * hourHeight}px`,
                         }}
@@ -922,7 +922,7 @@ export function CalendarPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="relative border-l border-zani-border">
+                  <div className="relative border-l border-platforma-border">
                     {timelineHours.slice(0, -1).map((hour) => {
                       const isWorking = isWorkingHourSlot(
                         workingHourItems,
@@ -936,7 +936,7 @@ export function CalendarPage() {
                           type="button"
                           disabled={!isWorking}
                           className={cn(
-                            "absolute left-0 right-0 border-t border-zani-border text-left transition",
+                            "absolute left-0 right-0 border-t border-platforma-border text-left transition",
                             isWorking
                               ? "hover:bg-brand-50"
                               : "cursor-not-allowed bg-surface-muted opacity-70",
@@ -977,7 +977,7 @@ export function CalendarPage() {
                             "group absolute left-2 right-2 overflow-visible rounded-control border-l-4 border-t border-r border-b px-3 py-2 text-left shadow-sm transition hover:z-30 hover:shadow-md",
                             getTone(index),
                             selectedAppointment?.id === appointment.id &&
-                              "border-[var(--zani-brand-content)] bg-brand-50 shadow-md",
+                              "border-[var(--platforma-brand-content)] bg-brand-50 shadow-md",
                           )}
                           style={{
                             top: `${metrics.top + 6}px`,
@@ -1013,13 +1013,13 @@ export function CalendarPage() {
                               {resource ? ` · ${resource.name}` : ""}
                             </p>
                           ) : null}
-                          <div className="pointer-events-none absolute left-0 top-[calc(100%+6px)] z-50 hidden w-72 rounded-card border border-zani-border bg-zani-card p-3 text-zani-text shadow-premium group-hover:block">
+                          <div className="pointer-events-none absolute left-0 top-[calc(100%+6px)] z-50 hidden w-72 rounded-card border border-platforma-border bg-platforma-card p-3 text-platforma-text shadow-premium group-hover:block">
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
-                                <p className="truncate text-sm font-bold text-zani-text">
+                                <p className="truncate text-sm font-bold text-platforma-text">
                                   {client?.full_name || t("common.client")}
                                 </p>
-                                <p className="mt-1 text-xs font-bold text-zani-muted">
+                                <p className="mt-1 text-xs font-bold text-platforma-muted">
                                   {formatTime(
                                     appointment.start_at,
                                     locale,
@@ -1035,7 +1035,7 @@ export function CalendarPage() {
                               </div>
                               <StatusBadge status={appointment.status} />
                             </div>
-                            <div className="mt-3 space-y-1 text-xs font-bold text-zani-muted">
+                            <div className="mt-3 space-y-1 text-xs font-bold text-platforma-muted">
                               <p className="truncate">
                                 {service?.name || t("common.service")}
                               </p>
@@ -1057,12 +1057,12 @@ export function CalendarPage() {
             <div className="overflow-x-auto overflow-y-visible">
               <div className="min-w-[980px]">
                 <div
-                  className="sticky top-0 z-10 grid border-b border-zani-border bg-zani-card"
+                  className="sticky top-0 z-10 grid border-b border-platforma-border bg-platforma-card"
                   style={{
                     gridTemplateColumns: "72px repeat(7, minmax(128px, 1fr))",
                   }}
                 >
-                  <div className="bg-surface-muted p-3 text-xs font-bold uppercase text-zani-muted">
+                  <div className="bg-surface-muted p-3 text-xs font-bold uppercase text-platforma-muted">
                     {timeZoneLabel}
                   </div>
                   {weekDates.map((day) => {
@@ -1072,15 +1072,15 @@ export function CalendarPage() {
                         key={key}
                         type="button"
                         className={cn(
-                          "border-l border-zani-border p-3 text-left",
-                          key === date ? "bg-brand-50" : "bg-zani-card",
+                          "border-l border-platforma-border p-3 text-left",
+                          key === date ? "bg-brand-50" : "bg-platforma-card",
                         )}
                         onClick={() => setDate(key)}
                       >
-                        <p className="text-xs font-bold uppercase text-zani-muted">
+                        <p className="text-xs font-bold uppercase text-platforma-muted">
                           {weekDays[(day.getDay() + 6) % 7]}
                         </p>
-                        <p className="mt-1 text-lg font-bold text-zani-text">
+                        <p className="mt-1 text-lg font-bold text-platforma-text">
                           {day.getDate()}
                         </p>
                       </button>
@@ -1094,11 +1094,11 @@ export function CalendarPage() {
                     height: `${(dayEndHour - dayStartHour) * hourHeight}px`,
                   }}
                 >
-                  <div className="relative border-r border-zani-border bg-surface-muted">
+                  <div className="relative border-r border-platforma-border bg-surface-muted">
                     {timelineHours.slice(0, -1).map((hour) => (
                       <div
                         key={hour}
-                        className="absolute left-0 right-0 border-t border-zani-border px-3 pt-2 text-xs font-bold text-zani-muted"
+                        className="absolute left-0 right-0 border-t border-platforma-border px-3 pt-2 text-xs font-bold text-platforma-muted"
                         style={{
                           top: `${(hour - dayStartHour) * hourHeight}px`,
                         }}
@@ -1120,7 +1120,7 @@ export function CalendarPage() {
                       <div
                         key={key}
                         className={cn(
-                          "relative border-l border-zani-border",
+                          "relative border-l border-platforma-border",
                           key === date && "bg-brand-50",
                         )}
                       >
@@ -1137,7 +1137,7 @@ export function CalendarPage() {
                               type="button"
                               disabled={!isWorking}
                               className={cn(
-                                "absolute left-0 right-0 border-t border-zani-border transition",
+                                "absolute left-0 right-0 border-t border-platforma-border transition",
                                 isWorking
                                   ? "hover:bg-brand-50"
                                   : "cursor-not-allowed bg-surface-muted opacity-70",
@@ -1170,7 +1170,7 @@ export function CalendarPage() {
                                 "group absolute left-1 right-1 overflow-visible rounded-control border-l-4 border-t border-r border-b px-2 py-1 text-left text-xs shadow-sm hover:z-30 hover:shadow-md",
                                 getTone(index),
                                 selectedAppointment?.id === appointment.id &&
-                              "border-[var(--zani-brand-content)] bg-brand-50 shadow-md",
+                              "border-[var(--platforma-brand-content)] bg-brand-50 shadow-md",
                               )}
                               style={{
                                 top: `${metrics.top + 4}px`,
@@ -1188,11 +1188,11 @@ export function CalendarPage() {
                               <p className="truncate font-bold">
                                 {client?.full_name || t("common.client")}
                               </p>
-                              <div className="pointer-events-none absolute left-0 top-[calc(100%+6px)] z-50 hidden w-64 rounded-card border border-zani-border bg-zani-card p-3 text-zani-text shadow-premium group-hover:block">
-                                <p className="truncate text-sm font-bold text-zani-text">
+                              <div className="pointer-events-none absolute left-0 top-[calc(100%+6px)] z-50 hidden w-64 rounded-card border border-platforma-border bg-platforma-card p-3 text-platforma-text shadow-premium group-hover:block">
+                                <p className="truncate text-sm font-bold text-platforma-text">
                                   {client?.full_name || t("common.client")}
                                 </p>
-                                <p className="mt-1 text-xs font-bold text-zani-muted">
+                                <p className="mt-1 text-xs font-bold text-platforma-muted">
                                   {formatTime(
                                     appointment.start_at,
                                     locale,
@@ -1205,7 +1205,7 @@ export function CalendarPage() {
                                     businessTimeZone,
                                   )}
                                 </p>
-                                <p className="mt-2 truncate text-xs font-bold text-zani-muted">
+                                <p className="mt-2 truncate text-xs font-bold text-platforma-muted">
                                   {service?.name || t("common.service")}
                                 </p>
                               </div>
@@ -1222,17 +1222,17 @@ export function CalendarPage() {
 
           {viewMode === "month" ? (
             <div className="overflow-hidden">
-              <div className="grid grid-cols-7 border-b border-zani-border">
+              <div className="grid grid-cols-7 border-b border-platforma-border">
                 {weekDays.map((day) => (
                   <div
                     key={day}
-                    className="bg-surface-muted p-3 text-center text-xs font-bold uppercase text-zani-muted"
+                    className="bg-surface-muted p-3 text-center text-xs font-bold uppercase text-platforma-muted"
                   >
                     {day}
                   </div>
                 ))}
               </div>
-              <div className="grid grid-cols-7 bg-zani-border">
+              <div className="grid grid-cols-7 bg-platforma-border">
                 {monthDates.map((day, index) => {
                   const key = day ? toDateInputValue(day) : `empty-${index}`;
                   const items = day
@@ -1249,7 +1249,7 @@ export function CalendarPage() {
                     <div
                       key={key}
                       className={cn(
-                        "relative min-h-28 bg-zani-card p-3 text-left transition",
+                        "relative min-h-28 bg-platforma-card p-3 text-left transition",
                         !day && "bg-surface-muted",
                         isSelectedDay
                           ? "bg-brand-50 ring-2 ring-inset ring-brand-500"
@@ -1271,7 +1271,7 @@ export function CalendarPage() {
                       ) : null}
                       {day ? (
                         <div className="pointer-events-none relative z-10 flex items-center justify-between gap-2">
-                          <span className="text-sm font-bold text-zani-text">
+                          <span className="text-sm font-bold text-platforma-text">
                             {day.getDate()}
                           </span>
                           {isSelectedDay ? (
@@ -1288,7 +1288,7 @@ export function CalendarPage() {
                             <button
                               key={appointment.id}
                               type="button"
-                              className="w-full truncate rounded-control border border-brand-100 bg-zani-card px-2 py-1 text-left text-xs font-bold text-brand-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-50"
+                              className="w-full truncate rounded-control border border-brand-100 bg-platforma-card px-2 py-1 text-left text-xs font-bold text-brand-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-50"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 selectAppointment(appointment);
@@ -1304,7 +1304,7 @@ export function CalendarPage() {
                           );
                         })}
                         {items.length > 3 ? (
-                          <p className="text-xs font-bold text-zani-muted">
+                          <p className="text-xs font-bold text-platforma-muted">
                             +{items.length - 3}
                           </p>
                         ) : null}
@@ -1317,7 +1317,7 @@ export function CalendarPage() {
           ) : null}
 
           {viewMode === "list" ? (
-            <div className="divide-y divide-zani-border">
+            <div className="divide-y divide-platforma-border">
               {dayAppointments.map((appointment) => {
                 const client = clientById.get(appointment.client);
                 const service = serviceById.get(appointment.service);
@@ -1338,14 +1338,14 @@ export function CalendarPage() {
                       className="text-left"
                       onClick={() => selectAppointment(appointment)}
                     >
-                      <p className="text-sm font-bold text-zani-text">
+                      <p className="text-sm font-bold text-platforma-text">
                         {formatCalendarDateTime(
                           appointment.start_at,
                           locale,
                           businessTimeZone,
                         )}
                       </p>
-                      <p className="mt-1 text-xs font-bold text-zani-muted">
+                      <p className="mt-1 text-xs font-bold text-platforma-muted">
                         {formatTime(
                           appointment.start_at,
                           locale,
@@ -1364,18 +1364,18 @@ export function CalendarPage() {
                       className="min-w-0 text-left"
                       onClick={() => selectAppointment(appointment)}
                     >
-                      <p className="truncate text-sm font-bold text-zani-text">
+                      <p className="truncate text-sm font-bold text-platforma-text">
                         {client?.full_name || t("common.client")}
                       </p>
-                      <p className="mt-1 truncate text-xs font-bold text-zani-muted">
+                      <p className="mt-1 truncate text-xs font-bold text-platforma-muted">
                         {service?.name || t("common.service")}
                       </p>
                     </button>
-                    <div className="min-w-0 text-sm font-bold text-zani-muted">
+                    <div className="min-w-0 text-sm font-bold text-platforma-muted">
                       <p className="truncate">
                         {resource?.name || t("calendar.noResource")}
                       </p>
-                      <p className="mt-1 truncate text-xs text-zani-muted">
+                      <p className="mt-1 truncate text-xs text-platforma-muted">
                         {appointment.source}
                       </p>
                     </div>
@@ -1395,7 +1395,7 @@ export function CalendarPage() {
               {!dayAppointments.length ? (
                 <button
                   type="button"
-                  className="w-full p-8 text-left text-sm font-bold text-zani-muted transition hover:bg-brand-50 hover:text-brand-700"
+                  className="w-full p-8 text-left text-sm font-bold text-platforma-muted transition hover:bg-brand-50 hover:text-brand-700"
                   onClick={() => openBookingForDate(date)}
                 >
                   {t("calendar.freeDayHint")}

@@ -24,9 +24,9 @@ const WorkspaceOutlet = memo(function WorkspaceOutlet() {
 function MeasuredWorkspaceOutlet() {
   const onRender = (
     window as typeof window & {
-      __ZANI_RUNTIME_PROFILER__?: ProfilerOnRenderCallback;
+      __PLATFORMA_RUNTIME_PROFILER__?: ProfilerOnRenderCallback;
     }
-  ).__ZANI_RUNTIME_PROFILER__;
+  ).__PLATFORMA_RUNTIME_PROFILER__;
 
   if (!onRender) return <WorkspaceOutlet />;
 

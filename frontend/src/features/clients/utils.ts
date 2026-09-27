@@ -94,7 +94,7 @@ export function statusMeta(status: ClientTableRow["status"], t: Translate) {
     active: {
       label: t("clients.statusActive"),
       className:
-        "bg-[var(--zani-success-soft)] text-zani-success before:bg-zani-success",
+        "bg-[var(--platforma-success-soft)] text-platforma-success before:bg-platforma-success",
     },
     new: {
       label: t("clients.statusNew"),
@@ -104,11 +104,11 @@ export function statusMeta(status: ClientTableRow["status"], t: Translate) {
     no_reply: {
       label: t("clients.statusNoReply"),
       className:
-        "bg-[var(--zani-warning-soft)] text-zani-warning before:bg-zani-warning",
+        "bg-[var(--platforma-warning-soft)] text-platforma-warning before:bg-platforma-warning",
     },
     archived: {
       label: t("clients.archive"),
-      className: "bg-surface-muted text-zani-muted before:bg-zani-muted",
+      className: "bg-surface-muted text-platforma-muted before:bg-platforma-muted",
     },
   } satisfies Record<
     ClientTableRow["status"],

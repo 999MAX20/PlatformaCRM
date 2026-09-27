@@ -29,13 +29,13 @@ export function FieldErrorSummary({ error, fieldLabels = {}, onFieldSelect }: Fi
       title={t("fallback.fields.title")}
       description={t("fallback.fields.description")}
       details={(
-          <ul className="space-y-1.5 text-sm text-zani-danger">
+          <ul className="space-y-1.5 text-sm text-platforma-danger">
             {entries.map(({ field, label, message }, index) => (
               <li key={`${field}-${index}`}>
                 {onFieldSelect ? (
                   <button
                     type="button"
-                    className="zani-focus-ring rounded-sm text-left font-semibold underline decoration-[rgba(194,65,12,0.35)] underline-offset-2 hover:decoration-current"
+                    className="platforma-focus-ring rounded-sm text-left font-semibold underline decoration-[rgba(194,65,12,0.35)] underline-offset-2 hover:decoration-current"
                     onClick={() => onFieldSelect(field)}
                   >
                     {label ? `${label}: ` : ""}{message}

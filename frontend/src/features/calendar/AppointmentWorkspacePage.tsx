@@ -258,7 +258,7 @@ export function AppointmentWorkspacePage() {
                 <StatusBadge status={appointment.status} />
                 <StatusBadge status={appointment.source} />
               </div>
-              <div className="mt-3 space-y-2 text-sm font-semibold text-zani-subtle">
+              <div className="mt-3 space-y-2 text-sm font-semibold text-platforma-subtle">
                 <MetaRow
                   label={t("tasks.dueAt")}
                   value={formatDateTime(appointment.start_at)}
@@ -330,7 +330,7 @@ export function AppointmentWorkspacePage() {
                   </EntityLink>
                 ) : null}
                 {!client && !lead ? (
-                  <p className="text-sm font-semibold text-zani-subtle">
+                  <p className="text-sm font-semibold text-platforma-subtle">
                     {t("tasks.noLinkedEntities")}
                   </p>
                 ) : null}
@@ -347,7 +347,7 @@ export function AppointmentWorkspacePage() {
                   />
                 ))}
                 {!tasks.length ? (
-                  <p className="text-sm font-semibold text-zani-subtle">
+                  <p className="text-sm font-semibold text-platforma-subtle">
                     {t("tasks.emptyText")}
                   </p>
                 ) : null}
@@ -363,7 +363,7 @@ export function AppointmentWorkspacePage() {
                   <ActivityRow key={event.id} event={event} />
                 ))}
                 {!timeline.length ? (
-                  <p className="text-sm font-semibold text-zani-subtle">
+                  <p className="text-sm font-semibold text-platforma-subtle">
                     {t("tasks.noHistory")}
                   </p>
                 ) : null}
@@ -418,9 +418,9 @@ function AppointmentMetric({
   value: ReactNode;
 }) {
   return (
-    <div className="rounded-card border border-zani-border bg-zani-card px-4 py-3">
-      <p className="text-xs font-semibold uppercase text-zani-muted">{label}</p>
-      <p className="mt-1 truncate text-sm font-bold text-zani-text">{value}</p>
+    <div className="rounded-card border border-platforma-border bg-platforma-card px-4 py-3">
+      <p className="text-xs font-semibold uppercase text-platforma-muted">{label}</p>
+      <p className="mt-1 truncate text-sm font-bold text-platforma-text">{value}</p>
     </div>
   );
 }
@@ -436,8 +436,8 @@ function AppointmentSection({
 }) {
   return (
     <section className={className}>
-      <h2 className="mb-3 text-sm font-semibold text-zani-text">{title}</h2>
-      <div className="rounded-card border border-zani-border bg-zani-card p-4 shadow-zani-card">
+      <h2 className="mb-3 text-sm font-semibold text-platforma-text">{title}</h2>
+      <div className="rounded-card border border-platforma-border bg-platforma-card p-4 shadow-platforma-card">
         {children}
       </div>
     </section>
@@ -448,7 +448,7 @@ function MetaRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-control bg-surface-subtle px-3 py-2">
       <span>{label}</span>
-      <span className="text-right text-zani-text">{value}</span>
+      <span className="text-right text-platforma-text">{value}</span>
     </div>
   );
 }
@@ -476,15 +476,15 @@ function TaskRow({ task, onOpen }: { task: Task; onOpen: () => void }) {
   return (
     <button
       type="button"
-      className="w-full rounded-card border border-zani-border bg-surface-subtle p-3 text-left transition hover:border-brand-200 hover:bg-brand-50"
+      className="w-full rounded-card border border-platforma-border bg-surface-subtle p-3 text-left transition hover:border-brand-200 hover:bg-brand-50"
       onClick={onOpen}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-zani-text">
+          <p className="truncate text-sm font-semibold text-platforma-text">
             {task.title}
           </p>
-          <p className="mt-1 text-xs font-semibold text-zani-muted">
+          <p className="mt-1 text-xs font-semibold text-platforma-muted">
             {task.due_at ? formatDateTime(task.due_at) : t("tasks.groupNoDue")}
           </p>
         </div>
@@ -497,14 +497,14 @@ function TaskRow({ task, onOpen }: { task: Task; onOpen: () => void }) {
 function ActivityRow({ event }: { event: ActivityEvent }) {
   return (
     <div className="flex gap-3 rounded-card bg-surface-subtle p-3">
-      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-control bg-zani-card text-brand-600">
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-control bg-platforma-card text-brand-600">
         <CalendarClock size={16} />
       </span>
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-zani-text">
+        <p className="text-sm font-semibold text-platforma-text">
           {event.text || event.event_type}
         </p>
-        <p className="mt-1 text-xs font-semibold text-zani-muted">
+        <p className="mt-1 text-xs font-semibold text-platforma-muted">
           {formatDateTime(event.created_at)}
         </p>
       </div>

@@ -34,7 +34,7 @@ import { SourceBadge } from "./common/SourceBadge";
 
 function ManagerAvatar({ name }: { name?: string }) {
   if (!name)
-    return <span className="text-xs font-bold text-zani-muted">-</span>;
+    return <span className="text-xs font-bold text-platforma-muted">-</span>;
   return (
     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface-muted text-[11px] font-bold text-brand-700 ring-1 ring-surface-card">
       {initials(name)}
@@ -85,7 +85,7 @@ function LeadTableRow({
       <button
         type="button"
         data-testid="lead-row-keyboard-open"
-        className="zani-focus-ring -m-1 flex min-w-0 items-center gap-3 rounded-control p-1 text-left"
+        className="platforma-focus-ring -m-1 flex min-w-0 items-center gap-3 rounded-control p-1 text-left"
         aria-label={t("leads.openContext", { title })}
         onClick={(event) => {
           event.stopPropagation();
@@ -96,17 +96,17 @@ function LeadTableRow({
           {initials(title)}
         </span>
         <span className="min-w-0">
-          <TruncatedText className="font-bold text-zani-text">
+          <TruncatedText className="font-bold text-platforma-text">
             {title}
           </TruncatedText>
-          <TruncatedText className="text-xs font-semibold text-zani-muted">
+          <TruncatedText className="text-xs font-semibold text-platforma-muted">
             {service?.name || getSourceLabel(lead.source, t)}
           </TruncatedText>
         </span>
       </button>
     ),
     phone: (
-      <span className="truncate font-semibold text-zani-text">
+      <span className="truncate font-semibold text-platforma-text">
         {client?.phone || t("leads.noPhoneLower")}
       </span>
     ),
@@ -131,13 +131,13 @@ function LeadTableRow({
           className={cn(
             "h-2 w-2 rounded-full",
             isHot
-              ? "bg-zani-danger"
+              ? "bg-platforma-danger"
               : lead.status === "new"
-                ? "bg-zani-warning"
-                : "bg-zani-success",
+                ? "bg-platforma-warning"
+                : "bg-platforma-success",
           )}
         />
-        <span className="text-xs font-bold text-zani-muted">
+        <span className="text-xs font-bold text-platforma-muted">
           {isHot ? t("leads.priorityHot") : t("leads.priorityNormal")}
         </span>
       </span>
@@ -149,7 +149,7 @@ function LeadTableRow({
       >
         <ManagerAvatar name={responsibleName} />
         <select
-          className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent text-xs font-bold text-zani-muted outline-none hover:border-zani-border hover:bg-surface-card"
+          className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent text-xs font-bold text-platforma-muted outline-none hover:border-platforma-border hover:bg-surface-card"
           value={lead.responsible_user ? String(lead.responsible_user) : ""}
           onChange={(event) =>
             onAssign(
@@ -168,16 +168,16 @@ function LeadTableRow({
       </span>
     ),
     activity: (
-      <span className="truncate text-xs font-bold text-zani-muted">
+      <span className="truncate text-xs font-bold text-platforma-muted">
         {formatRelativeTime(lead.updated_at, t)}
       </span>
     ),
     next: (
       <span className="min-w-0">
-        <TruncatedText className="font-bold text-zani-text">
+        <TruncatedText className="font-bold text-platforma-text">
           {nextAction(lead, t)}
         </TruncatedText>
-        <span className="block truncate text-xs text-zani-muted">
+        <span className="block truncate text-xs text-platforma-muted">
           {formatDateTime(lead.updated_at)}
         </span>
       </span>
@@ -188,9 +188,9 @@ function LeadTableRow({
       data-testid="lead-row-open"
       className={cn(
         CRM_TABLE_ROW_GRID_CLASS,
-        selected && "bg-brand-50/70 shadow-[inset_3px_0_0_var(--zani-brand)]",
+        selected && "bg-brand-50/70 shadow-[inset_3px_0_0_var(--platforma-brand)]",
         bulkSelected && "bg-surface-muted",
-        aiInsight.stale && !selected && "bg-[var(--zani-warning-soft)]/45",
+        aiInsight.stale && !selected && "bg-[var(--platforma-warning-soft)]/45",
       )}
       style={{
         gridTemplateColumns,
@@ -216,8 +216,8 @@ function LeadTableRow({
           className={cn(
             "grid h-5 w-5 place-items-center rounded border",
             bulkSelected
-              ? "border-brand-500 bg-brand-500 text-zani-ink"
-              : "border-zani-border bg-surface-card",
+              ? "border-brand-500 bg-brand-500 text-platforma-ink"
+              : "border-platforma-border bg-surface-card",
           )}
         >
           {bulkSelected ? <CheckCheck size={13} /> : null}
@@ -246,7 +246,7 @@ function LeadTableRow({
               key={item.id}
               type="button"
               data-testid={`lead-row-action-${item.id}`}
-              className="grid h-8 w-8 place-items-center rounded-control border border-zani-border bg-surface-card text-zani-muted shadow-sm transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
+              className="grid h-8 w-8 place-items-center rounded-control border border-platforma-border bg-surface-card text-platforma-muted shadow-sm transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
               aria-label={item.label}
               title={item.label}
               onClick={(event) => {

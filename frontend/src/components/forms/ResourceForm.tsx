@@ -80,8 +80,8 @@ export function ResourceForm({
       })}
     >
       {showContextHint ? (
-        <div className="rounded-card border border-brand-100 bg-brand-50 p-4 text-sm text-zani-subtle">
-          <p className="font-semibold text-zani-ink">{t("resources.formHintTitle")}</p>
+        <div className="rounded-card border border-brand-100 bg-brand-50 p-4 text-sm text-platforma-subtle">
+          <p className="font-semibold text-platforma-ink">{t("resources.formHintTitle")}</p>
           <p className="mt-1 leading-6">
             {t("resources.formHintText")}
           </p>
@@ -126,8 +126,8 @@ export function ResourceForm({
           />
         )}
       />
-      <label className="flex items-center gap-2 text-sm font-semibold text-zani-subtle">
-        <input disabled={disabled} type="checkbox" className="h-4 w-4 rounded border-zani-border accent-brand-500 disabled:cursor-not-allowed disabled:opacity-60" {...form.register("is_active")} />
+      <label className="flex items-center gap-2 text-sm font-semibold text-platforma-subtle">
+        <input disabled={disabled} type="checkbox" className="h-4 w-4 rounded border-platforma-border accent-brand-500 disabled:cursor-not-allowed disabled:opacity-60" {...form.register("is_active")} />
         {t("resources.available")}
       </label>
       {showSubmit ? <Button type="submit" disabled={disabled} isLoading={form.formState.isSubmitting}>{submitLabel || t("resources.save")}</Button> : null}

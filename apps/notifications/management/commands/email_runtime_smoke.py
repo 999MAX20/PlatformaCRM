@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         configured = email_is_configured()
-        self.stdout.write("Zani email runtime check")
+        self.stdout.write("Платформа CRM email runtime check")
         self.stdout.write(f"Backend: {settings.EMAIL_BACKEND}")
         self.stdout.write(f"Host configured: {bool(settings.EMAIL_HOST)}")
         self.stdout.write(f"Default from: {settings.DEFAULT_FROM_EMAIL}")

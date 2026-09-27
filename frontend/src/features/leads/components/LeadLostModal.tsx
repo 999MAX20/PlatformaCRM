@@ -46,8 +46,8 @@ export function LeadLostModal({
         }}
       >
         <div className="rounded-card bg-surface-muted p-4">
-          <p className="font-bold text-zani-text">{leadTitle}</p>
-          <p className="mt-1 text-sm font-semibold text-zani-muted">
+          <p className="font-bold text-platforma-text">{leadTitle}</p>
+          <p className="mt-1 text-sm font-semibold text-platforma-muted">
             {leadMessage || labels.noComment}
           </p>
         </div>

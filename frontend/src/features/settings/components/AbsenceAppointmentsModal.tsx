@@ -42,16 +42,16 @@ export function AbsenceAppointmentsModal({ resource, date, appointments, loading
   return (
     <Modal title={`${resource.name} · ${date}`} open onClose={() => { if (!mutation.isPending) onClose(); }} size="xl" testId="absence-appointments-modal">
       <div className="space-y-4">
-        <p className="text-sm text-zani-subtle">{t("appointment.date")}: {date}</p>
+        <p className="text-sm text-platforma-subtle">{t("appointment.date")}: {date}</p>
         {!loading && !error ? <p className="font-semibold">{t("workingHours.absenceCounts", { count: appointments.length, clients: new Set(appointments.map((item) => item.client)).size })}</p> : null}
         {loading || resources.isLoading ? <LoadingState /> : null}
         {error || mutation.error || resources.error ? <ErrorState message={getApiErrorMessage(error || mutation.error || resources.error)} /> : null}
         {selected ? <AppointmentRescheduleForm appointment={selected} businessId={resource.business} resources={resources.data || []}
           timeZone={timeZone} isSubmitting={mutation.isPending} onCancel={() => setSelected(null)}
           onSubmit={(payload) => mutation.mutateAsync({ appointment: selected, payload })} /> : (
-          <ul className="divide-y divide-zani-border">
+          <ul className="divide-y divide-platforma-border">
             {appointments.map((item) => <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-              <Link className="zani-focus-ring text-sm text-brand-700 underline" to={`/app/calendar?date=${date}&appointment=${item.id}`}>
+              <Link className="platforma-focus-ring text-sm text-brand-700 underline" to={`/app/calendar?date=${date}&appointment=${item.id}`}>
                 {new Date(item.start_at).toLocaleTimeString(language, { hour: "2-digit", minute: "2-digit", timeZone })} · {item.client_name} · {item.service_name}
               </Link>
               <div className="flex gap-2">

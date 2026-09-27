@@ -67,13 +67,13 @@ export function AttachmentFilePicker({
         className={`mb-4 flex w-full cursor-pointer flex-col items-center justify-center rounded-card border border-dashed px-4 py-5 text-center transition ${
           isDragging
             ? "border-brand-300 bg-brand-50 text-brand-700"
-            : "border-zani-border bg-surface-muted text-zani-muted hover:border-brand-200 hover:bg-surface-card"
+            : "border-platforma-border bg-surface-muted text-platforma-muted hover:border-brand-200 hover:bg-surface-card"
         }`}
       >
         <span className="grid h-10 w-10 place-items-center rounded-card bg-surface-card text-brand-600 shadow-sm">
           <Upload size={18} />
         </span>
-        <span className="mt-3 text-sm font-semibold text-zani-ink">
+        <span className="mt-3 text-sm font-semibold text-platforma-ink">
           {t("crmCard.dropFilesTitle")}
         </span>
         <span className="mt-1 max-w-md text-xs font-semibold leading-5">

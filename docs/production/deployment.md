@@ -1,4 +1,4 @@
-# Zani Deployment Baseline
+# Платформа CRM Deployment Baseline
 
 This document describes the current production baseline. It is intentionally simple: Docker Compose, PostgreSQL, Redis, Django/Gunicorn, Celery and a separately built React frontend.
 
@@ -97,7 +97,7 @@ AI_HTTP_TIMEOUT_SECONDS=20
 OPENROUTER_API_KEY=replace-with-openrouter-api-key
 OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 OPENROUTER_SITE_URL=https://app.your-domain.com
-OPENROUTER_APP_NAME=ZANI
+OPENROUTER_APP_NAME=Платформа CRM
 SENTRY_DSN=https://...
 ```
 

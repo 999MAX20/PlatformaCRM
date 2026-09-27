@@ -96,12 +96,12 @@ export function LeadsToolbar({
       >
         <label className="relative block min-w-0">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zani-muted"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-platforma-muted"
             size={18}
           />
           <input
             data-testid="leads-search-input"
-            className="h-9 w-full rounded-control border border-zani-border bg-surface-card px-9 text-sm font-semibold text-zani-text outline-none transition placeholder:text-zani-muted focus:border-brand-300 focus:ring-4 focus:ring-[var(--zani-focus-ring)]"
+            className="h-9 w-full rounded-control border border-platforma-border bg-surface-card px-9 text-sm font-semibold text-platforma-text outline-none transition placeholder:text-platforma-muted focus:border-brand-300 focus:ring-4 focus:ring-[var(--platforma-focus-ring)]"
             placeholder={labels.search}
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
@@ -168,28 +168,28 @@ export function LeadsToolbar({
       </div>
       {savedFiltersOpen ? (
         <div data-testid="lead-saved-filters-panel">
-        <div className="mt-3 rounded-card border border-zani-border bg-surface-muted p-3">
+        <div className="mt-3 rounded-card border border-platforma-border bg-surface-muted p-3">
           <div className="flex min-w-0 items-center gap-2 overflow-x-auto pb-2">
             {filterPresets.length ? (
               filterPresets.map((preset) => (
                 <button
                   key={preset.id}
                   type="button"
-                  className="shrink-0 rounded-control border border-zani-border bg-surface-card px-3 py-2 text-xs font-bold text-zani-text hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
+                  className="shrink-0 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-xs font-bold text-platforma-text hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
                   onClick={() => onApplyPreset(preset)}
                 >
                   {preset.name}
                 </button>
               ))
             ) : (
-              <span className="py-2 text-xs font-semibold text-zani-muted">
+              <span className="py-2 text-xs font-semibold text-platforma-muted">
                 {labels.noSavedFilters}
               </span>
             )}
           </div>
-          <div className="mt-2 flex gap-2 border-t border-zani-border pt-3">
+          <div className="mt-2 flex gap-2 border-t border-platforma-border pt-3">
             <input
-              className="h-9 min-w-0 flex-1 rounded-control border border-zani-border bg-surface-card px-3 text-sm font-semibold text-zani-text outline-none focus:border-brand-300 focus:ring-4 focus:ring-[var(--zani-focus-ring)]"
+              className="h-9 min-w-0 flex-1 rounded-control border border-platforma-border bg-surface-card px-3 text-sm font-semibold text-platforma-text outline-none focus:border-brand-300 focus:ring-4 focus:ring-[var(--platforma-focus-ring)]"
               placeholder={labels.filterPresetName}
               value={presetName}
               onChange={(event) => onPresetNameChange(event.target.value)}
@@ -207,16 +207,16 @@ export function LeadsToolbar({
         </div>
       ) : null}
       {moreMenuOpen ? (
-        <div className="mt-3 grid gap-3 rounded-card border border-zani-border bg-surface-muted p-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="mt-3 grid gap-3 rounded-card border border-platforma-border bg-surface-muted p-3 lg:grid-cols-[minmax(0,1fr)_auto]">
           <div className="min-w-0">
-            <div className="mb-2 flex items-center gap-2 text-sm font-bold text-zani-text">
+            <div className="mb-2 flex items-center gap-2 text-sm font-bold text-platforma-text">
               <Columns3 size={16} /> {labels.columns}
             </div>
             <div className="flex min-w-0 flex-wrap gap-2">
               {columnOrder.map((column) => (
                 <label
                   key={column}
-                  className="inline-flex h-8 cursor-pointer items-center gap-2 rounded-control border border-zani-border bg-surface-card px-3 text-xs font-bold text-zani-text hover:border-brand-100 hover:bg-surface-warm"
+                  className="inline-flex h-8 cursor-pointer items-center gap-2 rounded-control border border-platforma-border bg-surface-card px-3 text-xs font-bold text-platforma-text hover:border-brand-100 hover:bg-surface-warm"
                 >
                   <input
                     type="checkbox"

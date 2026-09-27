@@ -71,7 +71,7 @@ export function CrmWorkspaceGrid({
             <div className="fixed bottom-4 right-4 top-20 z-50 min-h-0 w-[min(380px,calc(100vw-2rem))] 2xl:static 2xl:z-auto 2xl:w-auto">
               <button
                 type="button"
-                className="zani-focus-ring absolute right-2 top-2 z-20 grid h-9 w-9 place-items-center rounded-control bg-surface-card text-zani-subtle shadow-card hover:text-zani-text"
+                className="platforma-focus-ring absolute right-2 top-2 z-20 grid h-9 w-9 place-items-center rounded-control bg-surface-card text-platforma-subtle shadow-card hover:text-platforma-text"
                 aria-label={t("crmCard.closeInspector")}
                 onClick={() => setInspectorVisible(false)}
               >
@@ -83,7 +83,7 @@ export function CrmWorkspaceGrid({
         ) : (
           <button
             type="button"
-            className="zani-focus-ring absolute right-3 top-3 z-20 inline-flex h-9 items-center gap-2 rounded-control border border-zani-border bg-surface-card px-3 text-xs font-bold text-zani-subtle shadow-card hover:text-zani-text"
+            className="platforma-focus-ring absolute right-3 top-3 z-20 inline-flex h-9 items-center gap-2 rounded-control border border-platforma-border bg-surface-card px-3 text-xs font-bold text-platforma-subtle shadow-card hover:text-platforma-text"
             aria-label={t("crmCard.openInspector")}
             onClick={() => setInspectorVisible(true)}
           >

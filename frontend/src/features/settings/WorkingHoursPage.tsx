@@ -258,7 +258,7 @@ export function WorkingHoursPage() {
   return (
     <CrmWorkspacePage maxWidthClassName="max-w-[1520px]" testId={pageError ? undefined : "working-hours-workspace-ready"}>
       <BusinessWorkspaceNav />
-      <section tabIndex={0} aria-label={t("workingHours.metricsLabel")} className="zani-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0">
+      <section tabIndex={0} aria-label={t("workingHours.metricsLabel")} className="platforma-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0">
         <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("workingHours.businessDays")} value={`${businessDays}/7`} hint={t("workingHours.businessDaysHint")} icon={CalendarDays} />
         <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("workingHours.resourceSchedules")} value={`${individualSchedules}/${activeResources.length}`} hint={t("workingHours.resourceSchedulesHint")} icon={UsersRound} />
         <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("workingHours.daysOff")} value={dayOffRows} hint={t("workingHours.daysOffHint")} icon={Clock3} tone="slate" />
@@ -283,10 +283,10 @@ export function WorkingHoursPage() {
 
       {activeView === "business" ? (
         <>
-          <section className="mb-3 flex shrink-0 flex-col gap-3 rounded-card border border-zani-border bg-surface-card p-3 shadow-card lg:flex-row lg:items-end lg:justify-between">
+          <section className="mb-3 flex shrink-0 flex-col gap-3 rounded-card border border-platforma-border bg-surface-card p-3 shadow-card lg:flex-row lg:items-end lg:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-surface-muted text-zani-subtle"><SlidersHorizontal aria-hidden="true" size={18} /></div>
-              <div className="min-w-0"><h2 className="text-sm font-semibold text-zani-ink">{t("workingHours.quickSetup")}</h2><p className="truncate text-xs font-medium text-zani-subtle">{t("workingHours.quickToolbarHint")}</p></div>
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-surface-muted text-platforma-subtle"><SlidersHorizontal aria-hidden="true" size={18} /></div>
+              <div className="min-w-0"><h2 className="text-sm font-semibold text-platforma-ink">{t("workingHours.quickSetup")}</h2><p className="truncate text-xs font-medium text-platforma-subtle">{t("workingHours.quickToolbarHint")}</p></div>
             </div>
             <div className="grid gap-2 sm:grid-cols-[minmax(240px,360px)_auto]">
               <Select aria-label={t("workingHours.presetLabel")} value={preset} disabled={!canManage || presetMutation.isPending} onChange={(event) => setPreset(event.target.value as WorkingHoursPreset)} options={presetOptions.map((item) => ({ value: item.value, label: `${t(item.labelKey)} · ${t(item.descriptionKey)}` }))} />

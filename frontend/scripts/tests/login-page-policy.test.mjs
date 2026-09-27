@@ -135,7 +135,7 @@ test("login signal field uses lightweight motion without grid, orbit or pointer 
 test("signup uses the compact serenity auth system, not the legacy dark shell", () => {
   assert.match(signupPage, /className="serenity-login serenity-login--signup"/);
   assert.match(signupPage, /import "\.\/authLoginSerenity\.css";/);
-  assert.doesNotMatch(signupPage, /AuthExperienceShell|authExperience\.css|authExperienceMobileFix\.css|zani-auth-/);
+  assert.doesNotMatch(signupPage, /AuthExperienceShell|authExperience\.css|authExperienceMobileFix\.css|platforma-auth-/);
   assert.match(loginCss, /\.serenity-login--signup \.serenity-login__layout/);
   assert.match(loginCss, /\.serenity-login__field-grid/);
 });

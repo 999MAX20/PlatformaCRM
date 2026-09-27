@@ -43,13 +43,13 @@ function merchantStatus(connector: BusinessConnector | undefined, capability: Co
 function merchantStatusUi(status: string, t: (key: string) => string) {
   const classes: Record<string, string> = {
     available: "bg-brand-50 text-brand-700 ring-brand-100",
-    connected: "bg-[var(--zani-success-soft)] text-zani-success ring-[rgba(21,128,61,0.18)]",
-    setup_required: "bg-[var(--zani-warning-soft)] text-zani-warning ring-[rgba(151,90,22,0.24)]",
+    connected: "bg-[var(--platforma-success-soft)] text-platforma-success ring-[rgba(21,128,61,0.18)]",
+    setup_required: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-[rgba(151,90,22,0.24)]",
     pending_request: "bg-ai-50 text-ai-700 ring-ai-100",
-    coming_soon: "bg-surface-muted text-zani-subtle ring-zani-border",
-    unavailable_on_plan: "bg-[var(--zani-warning-soft)] text-zani-warning ring-[rgba(151,90,22,0.24)]",
-    error: "bg-[var(--zani-danger-soft)] text-zani-danger ring-[rgba(194,65,12,0.2)]",
-    disconnected: "bg-surface-muted text-zani-subtle ring-zani-border",
+    coming_soon: "bg-surface-muted text-platforma-subtle ring-platforma-border",
+    unavailable_on_plan: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-[rgba(151,90,22,0.24)]",
+    error: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-[rgba(194,65,12,0.2)]",
+    disconnected: "bg-surface-muted text-platforma-subtle ring-platforma-border",
   };
   return { label: t(`integrations.merchantStatus.${status}`) || status, className: classes[status] || classes.coming_soon };
 }
@@ -143,15 +143,15 @@ export function ConnectorCard({
   const statusUi = merchantStatusUi(merchantStatus(connector, capability), t);
 
   return (
-    <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-card">
+    <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-card">
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-3">
           <div className="grid h-12 w-12 shrink-0 place-items-center rounded-control bg-surface-muted text-brand-600">
             {isConnected ? <ShieldCheck size={22} /> : <PlugZap size={22} />}
           </div>
           <div className="min-w-0">
-            <p className="text-base font-semibold text-zani-ink">{capability.label}</p>
-            <p className="mt-1 text-sm font-medium text-zani-muted">{connectorTitle(capability, t)}</p>
+            <p className="text-base font-semibold text-platforma-ink">{capability.label}</p>
+            <p className="mt-1 text-sm font-medium text-platforma-muted">{connectorTitle(capability, t)}</p>
           </div>
         </div>
         <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${statusUi.className}`}>
@@ -159,7 +159,7 @@ export function ConnectorCard({
         </span>
       </div>
 
-      <p className="mt-4 text-sm leading-6 text-zani-subtle">{capability.description}</p>
+      <p className="mt-4 text-sm leading-6 text-platforma-subtle">{capability.description}</p>
 
       {connector?.last_error ? (
         <StatusNotice
@@ -170,26 +170,26 @@ export function ConnectorCard({
         />
       ) : null}
 
-      <div className="mt-5 grid gap-2 text-sm text-zani-subtle sm:grid-cols-3">
+      <div className="mt-5 grid gap-2 text-sm text-platforma-subtle sm:grid-cols-3">
         <div className="rounded-control bg-surface-muted p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zani-faint">{t("integrations.card.businessValue")}</p>
-          <p className="mt-1 font-semibold text-zani-ink">{connectorTitle(capability, t)}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.card.businessValue")}</p>
+          <p className="mt-1 font-semibold text-platforma-ink">{connectorTitle(capability, t)}</p>
         </div>
         <div className="rounded-control bg-surface-muted p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zani-faint">{t("integrations.card.plan")}</p>
-          <p className="mt-1 font-semibold text-zani-ink">{availabilityLabel(capability.availability, t)} · {planLabel(capability.required_plan)}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.card.plan")}</p>
+          <p className="mt-1 font-semibold text-platforma-ink">{availabilityLabel(capability.availability, t)} · {planLabel(capability.required_plan)}</p>
         </div>
         <div className="rounded-control bg-surface-muted p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zani-faint">{t("integrations.card.connection")}</p>
-          <p className="mt-1 font-semibold text-zani-ink">{setupStateLabel(capability.setup_state, t)}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.card.connection")}</p>
+          <p className="mt-1 font-semibold text-platforma-ink">{setupStateLabel(capability.setup_state, t)}</p>
         </div>
       </div>
 
-      <div className="mt-4 rounded-card border border-zani-border bg-surface-muted p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zani-faint">{t("integrations.card.ownerAction")}</p>
-        <p className="mt-2 text-sm leading-6 text-zani-subtle">{connectorSetupMessage(capability, t, connector)}</p>
-        <p className="mt-2 text-xs font-semibold text-zani-muted">{connectorActionHint(capability, t)}</p>
-        {capability.pilot_note ? <p className="mt-2 text-xs font-semibold text-zani-muted">{capability.pilot_note}</p> : null}
+      <div className="mt-4 rounded-card border border-platforma-border bg-surface-muted p-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-platforma-faint">{t("integrations.card.ownerAction")}</p>
+        <p className="mt-2 text-sm leading-6 text-platforma-subtle">{connectorSetupMessage(capability, t, connector)}</p>
+        <p className="mt-2 text-xs font-semibold text-platforma-muted">{connectorActionHint(capability, t)}</p>
+        {capability.pilot_note ? <p className="mt-2 text-xs font-semibold text-platforma-muted">{capability.pilot_note}</p> : null}
       </div>
 
       {canManage ? (

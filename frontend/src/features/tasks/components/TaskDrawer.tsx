@@ -210,7 +210,7 @@ export function TaskDrawer({
           )}
           onMouseDown={(event) => event.stopPropagation()}
         >
-          <div className="sticky top-0 z-10 border-b border-zani-border bg-surface-card/95 px-5 py-4 backdrop-blur-xl sm:px-7">
+          <div className="sticky top-0 z-10 border-b border-platforma-border bg-surface-card/95 px-5 py-4 backdrop-blur-xl sm:px-7">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -218,8 +218,8 @@ export function TaskDrawer({
                   <StatusBadge status={task.status} />
                   {task.due_at ? <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">{t("tasks.due")} {formatDateTime(task.due_at)}</span> : null}
                 </div>
-                <h2 id={titleId} className="truncate text-2xl font-semibold tracking-tight text-zani-ink">{task.title}</h2>
-                <p className="mt-1 text-sm font-semibold text-zani-muted">
+                <h2 id={titleId} className="truncate text-2xl font-semibold tracking-tight text-platforma-ink">{task.title}</h2>
+                <p className="mt-1 text-sm font-semibold text-platforma-muted">
                   {assigneeLabel || t("tasks.noAssignee")}
                   {task.reminder_at ? ` · ${t("tasks.reminderAt")}: ${formatDateTime(task.reminder_at)}` : ""}
                 </p>
@@ -231,11 +231,11 @@ export function TaskDrawer({
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7">
-            <section className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+            <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("tasks.taskSummary")}</p>
-                  <p className="mt-2 text-sm leading-6 text-zani-subtle">{statusHint}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("tasks.taskSummary")}</p>
+                  <p className="mt-2 text-sm leading-6 text-platforma-subtle">{statusHint}</p>
                 </div>
                 <div className="flex flex-wrap gap-2 lg:justify-end">
                   {canStart ? <Button variant="secondary" onClick={() => onStart(task)} isLoading={pending.start}><Play size={16} /> {t("tasks.start")}</Button> : null}
@@ -254,7 +254,7 @@ export function TaskDrawer({
               </div>
             </section>
 
-            <div className="sticky top-0 z-10 -mx-5 mt-4 border-y border-zani-border bg-surface-muted/92 px-5 py-2 backdrop-blur sm:-mx-7 sm:px-7">
+            <div className="sticky top-0 z-10 -mx-5 mt-4 border-y border-platforma-border bg-surface-muted/92 px-5 py-2 backdrop-blur sm:-mx-7 sm:px-7">
               <div className="grid grid-cols-3 gap-1 rounded-control bg-surface-muted p-1">
                 <TaskDrawerTabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")}>
                   {t("tasks.drawerOverviewTab")}
@@ -273,7 +273,7 @@ export function TaskDrawer({
                 {isEditingDetails ? (
                   <div className="rounded-card border border-brand-100 bg-surface-card p-4 shadow-sm">
                     <div className="mb-4 flex items-center justify-between gap-3">
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("tasks.editTitle")}</p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("tasks.editTitle")}</p>
                       <div className="flex items-center gap-2">
                         <Button type="button" variant="ghost" size="sm" onClick={cancelDetailsEdit}>
                           {t("common.cancel")}
@@ -326,14 +326,14 @@ export function TaskDrawer({
                   </div>
                 ) : null}
 
-                <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("crmCard.overview")}</p>
-                  {task.description ? <p className="text-sm leading-6 text-zani-text">{task.description}</p> : <p className="text-sm leading-6 text-zani-muted">{t("crmCard.noNotesText")}</p>}
+                <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("crmCard.overview")}</p>
+                  {task.description ? <p className="text-sm leading-6 text-platforma-text">{task.description}</p> : <p className="text-sm leading-6 text-platforma-muted">{t("crmCard.noNotesText")}</p>}
                 </div>
 
                 <div className="grid gap-4 lg:grid-cols-2">
-                  <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">{t("tasks.assignee")}</p>
+                  <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("tasks.assignee")}</p>
                     <div className="flex flex-col gap-3">
                       <Select
                         value={assigneeDraft}
@@ -361,11 +361,11 @@ export function TaskDrawer({
                     </div>
                   </div>
 
-                  <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
-                    <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">
+                  <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+                    <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">
                       <CalendarClock size={14} /> {t("tasks.dates")}
                     </p>
-                    <div className="space-y-2 text-sm font-semibold text-zani-subtle">
+                    <div className="space-y-2 text-sm font-semibold text-platforma-subtle">
                       {task.due_at ? <MetaRow label={t("tasks.dueAt")} value={formatDateTime(task.due_at)} /> : null}
                       {task.reminder_at ? <MetaRow label={t("tasks.reminderAt")} value={formatDateTime(task.reminder_at)} /> : null}
                       {task.snoozed_until ? <MetaRow label={t("tasks.snoozed")} value={formatDateTime(task.snoozed_until)} /> : null}
@@ -376,20 +376,20 @@ export function TaskDrawer({
                   </div>
                 </div>
 
-                <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+                <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">
+                    <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">
                       <Link2 size={14} /> {t("tasks.links")}
                     </p>
-                    <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-zani-muted">{linkedEntitiesCount}</span>
+                    <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-platforma-muted">{linkedEntitiesCount}</span>
                   </div>
-                  <div className="flex flex-wrap gap-2 text-xs font-bold text-zani-muted">
+                  <div className="flex flex-wrap gap-2 text-xs font-bold text-platforma-muted">
                     {task.client ? <EntityChip onClick={() => onOpenEntity({ type: "client", id: Number(task.client) })}>{task.client_name || t("common.client")}</EntityChip> : null}
                     {task.lead ? <EntityChip onClick={() => onOpenEntity({ type: "lead", id: Number(task.lead) })}>{task.lead_title || t("crmCard.leadNumber", { id: task.lead })}</EntityChip> : null}
                     {task.deal ? <EntityChip onClick={() => onOpenEntity({ type: "deal", id: Number(task.deal) })}>{task.deal_title || t("nav.deals")}</EntityChip> : null}
                     {task.appointment ? <EntityChip onClick={() => onOpenEntity({ type: "appointment", id: Number(task.appointment) })}>{task.appointment_service_name || t("nav.appointments")}{task.appointment_start_at ? ` · ${formatDateTime(task.appointment_start_at)}` : ""}</EntityChip> : null}
                     {task.conversation ? <EntityLinkChip href={`/app/conversations?conversation=${task.conversation}`}>{task.conversation_label || task.conversation_external_user_id || t("nav.conversations")}</EntityLinkChip> : null}
-                    {!linkedEntitiesCount ? <p className="text-sm font-semibold text-zani-muted">{t("tasks.noLinkedEntities")}</p> : null}
+                    {!linkedEntitiesCount ? <p className="text-sm font-semibold text-platforma-muted">{t("tasks.noLinkedEntities")}</p> : null}
                   </div>
                 </div>
 
@@ -403,18 +403,18 @@ export function TaskDrawer({
             ) : null}
 
             {activeTab === "comments" ? (
-              <div className="mt-4 rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+              <div className="mt-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint"><MessageSquare size={14} /> {t("tasks.comments")}</p>
-                  <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-zani-muted">{comments.length}</span>
+                  <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><MessageSquare size={14} /> {t("tasks.comments")}</p>
+                  <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-platforma-muted">{comments.length}</span>
                 </div>
                 <div className="space-y-2">
                   {comments.map((comment) => (
-                    <div key={comment.id} className="rounded-card border border-zani-border bg-surface-muted p-3">
+                    <div key={comment.id} className="rounded-card border border-platforma-border bg-surface-muted p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-sm leading-6 text-zani-text">{comment.text}</p>
-                          <p className="mt-1 text-xs font-semibold text-zani-faint">
+                          <p className="text-sm leading-6 text-platforma-text">{comment.text}</p>
+                          <p className="mt-1 text-xs font-semibold text-platforma-faint">
                             {comment.author_name || comment.author_email || t("resources.typeStaff")} · {formatDateTime(comment.created_at)}
                           </p>
                         </div>
@@ -433,8 +433,8 @@ export function TaskDrawer({
                       </div>
                     </div>
                   ))}
-                  {commentsLoading ? <p className="text-sm text-zani-muted">{t("common.loading")}</p> : null}
-                  {!commentsLoading && !comments.length ? <p className="text-sm text-zani-muted">{t("tasks.noComments")}</p> : null}
+                  {commentsLoading ? <p className="text-sm text-platforma-muted">{t("common.loading")}</p> : null}
+                  {!commentsLoading && !comments.length ? <p className="text-sm text-platforma-muted">{t("tasks.noComments")}</p> : null}
                 </div>
                 <form
                   className="mt-3 space-y-2"
@@ -450,19 +450,19 @@ export function TaskDrawer({
             ) : null}
 
             {activeTab === "history" ? (
-              <div className="mt-4 rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
+              <div className="mt-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zani-faint">
+                  <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">
                     <CalendarClock size={14} /> {t("tasks.history")}
                   </p>
-                  <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-zani-muted">{activityEvents.length}</span>
+                  <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-platforma-muted">{activityEvents.length}</span>
                 </div>
                 <div className="space-y-2">
                   {activityEvents.slice(0, 16).map((event) => (
                     <TaskActivityRow key={event.id} event={event} />
                   ))}
-                  {activityLoading ? <p className="text-sm text-zani-muted">{t("common.loading")}</p> : null}
-                  {!activityLoading && !activityEvents.length ? <p className="text-sm text-zani-muted">{t("tasks.noHistory")}</p> : null}
+                  {activityLoading ? <p className="text-sm text-platforma-muted">{t("common.loading")}</p> : null}
+                  {!activityLoading && !activityEvents.length ? <p className="text-sm text-platforma-muted">{t("tasks.noHistory")}</p> : null}
                 </div>
               </div>
             ) : null}
@@ -480,7 +480,7 @@ function TaskDrawerTabButton({ active, onClick, children }: { active: boolean; o
       type="button"
       className={cn(
         "min-h-10 rounded-lg px-3 text-sm font-semibold transition",
-        active ? "bg-surface-card text-brand-700 shadow-sm" : "text-zani-muted hover:bg-surface-card hover:text-zani-ink",
+        active ? "bg-surface-card text-brand-700 shadow-sm" : "text-platforma-muted hover:bg-surface-card hover:text-platforma-ink",
       )}
       onClick={onClick}
     >
@@ -492,8 +492,8 @@ function TaskDrawerTabButton({ active, onClick, children }: { active: boolean; o
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-control bg-surface-muted px-3 py-2">
-      <span className="text-zani-faint">{label}</span>
-      <span className="text-right text-zani-ink">{value}</span>
+      <span className="text-platforma-faint">{label}</span>
+      <span className="text-right text-platforma-ink">{value}</span>
     </div>
   );
 }
@@ -523,12 +523,12 @@ function TaskActivityRow({ event }: { event: ActivityEvent }) {
         <CalendarClock size={16} />
       </span>
       <div className="min-w-0">
-        <p className="text-sm font-bold text-zani-ink">{event.text || event.event_type}</p>
-        <p className="mt-1 text-xs font-semibold text-zani-faint">{formatDateTime(event.created_at)}</p>
+        <p className="text-sm font-bold text-platforma-ink">{event.text || event.event_type}</p>
+        <p className="mt-1 text-xs font-semibold text-platforma-faint">{formatDateTime(event.created_at)}</p>
         {details.length ? (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {details.map((detail) => (
-              <span key={detail} className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-zani-muted">
+              <span key={detail} className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-muted">
                 {detail}
               </span>
             ))}

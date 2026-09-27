@@ -80,7 +80,7 @@ export function InviteAcceptPage() {
             <KeyRound size={24} />
           </div>
           <p className="text-sm font-black uppercase tracking-[0.16em] text-brand-700">{t("invite.eyebrow")}</p>
-          <h1 className="mt-2 text-3xl font-black text-midnight">{preview.data?.business_name || "Zani"}</h1>
+          <h1 className="mt-2 text-3xl font-black text-midnight">{preview.data?.business_name || "Платформа CRM"}</h1>
           <p className="mt-3 text-sm leading-6 text-slate-500">
             {t("invite.description")}
           </p>

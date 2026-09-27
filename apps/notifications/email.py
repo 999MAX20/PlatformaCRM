@@ -11,8 +11,8 @@ def email_is_configured():
 
 def send_email_smoke(to_email):
     return send_mail(
-        subject=f"ZANI email smoke: {settings.ENVIRONMENT}/{settings.RELEASE}",
-        message="This is a safe ZANI transactional email smoke message. It contains no merchant or customer data.",
+        subject=f"Платформа CRM email smoke: {settings.ENVIRONMENT}/{settings.RELEASE}",
+        message="This is a safe Платформа CRM transactional email smoke message. It contains no merchant or customer data.",
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[to_email],
         fail_silently=False,

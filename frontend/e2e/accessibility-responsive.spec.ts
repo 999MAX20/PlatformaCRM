@@ -246,7 +246,7 @@ test("F-301 sidebar overlays the fixed workspace without compressing page conten
   if (testInfo.project.name !== "mobile-chromium") {
     const desktopSidebar = page.getByTestId("desktop-sidebar");
     await expect(desktopSidebar).toBeVisible();
-    await expect(desktopSidebar.getByText("Zani", { exact: true })).toHaveCount(0);
+    await expect(desktopSidebar.getByText("Платформа CRM", { exact: true })).toHaveCount(0);
 
     const workspaceBefore = await main.boundingBox();
     const sidebarBefore = await desktopSidebar.boundingBox();
@@ -275,7 +275,7 @@ test("F-301 sidebar overlays the fixed workspace without compressing page conten
 
   const drawer = page.getByTestId("mobile-navigation-drawer");
   await expect(drawer).toBeVisible();
-  await expect(drawer.getByText("Zani", { exact: true })).toHaveCount(0);
+  await expect(drawer.getByText("Платформа CRM", { exact: true })).toHaveCount(0);
 
   const tabletWorkspaceAfter = await main.boundingBox();
   expect(tabletWorkspaceAfter?.x).toBeCloseTo(tabletWorkspaceBefore?.x ?? 0, 0);

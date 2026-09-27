@@ -83,20 +83,20 @@ export function ActiveCalendarFilters({
   if (!chips.length) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-zani-border bg-surface-muted px-4 py-2">
-      <span className="text-[11px] font-bold uppercase text-zani-muted">{t("calendar.filters")}</span>
+    <div className="flex flex-wrap items-center gap-2 border-b border-platforma-border bg-surface-muted px-4 py-2">
+      <span className="text-[11px] font-bold uppercase text-platforma-muted">{t("calendar.filters")}</span>
       {chips.map((chip) => (
         <button
           key={chip.key}
           type="button"
-          className="inline-flex min-h-7 max-w-full items-center gap-2 rounded-control border border-brand-100 bg-zani-card px-2.5 py-1 text-xs font-bold text-brand-700 transition hover:border-brand-200 hover:bg-brand-50"
+          className="inline-flex min-h-7 max-w-full items-center gap-2 rounded-control border border-brand-100 bg-platforma-card px-2.5 py-1 text-xs font-bold text-brand-700 transition hover:border-brand-200 hover:bg-brand-50"
           onClick={chip.clear}
         >
           <span className="truncate">{chip.label}</span>
           <X size={13} />
         </button>
       ))}
-      <button type="button" className="min-h-7 rounded-control px-2.5 py-1 text-xs font-bold text-zani-muted transition hover:bg-zani-card hover:text-zani-text" onClick={onClearAll}>
+      <button type="button" className="min-h-7 rounded-control px-2.5 py-1 text-xs font-bold text-platforma-muted transition hover:bg-platforma-card hover:text-platforma-text" onClick={onClearAll}>
         {t("conversations.resetFilters")}
       </button>
     </div>

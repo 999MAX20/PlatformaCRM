@@ -11,7 +11,7 @@ function Fields({ invalid = false }: { invalid?: boolean }) {
   const [selected, setSelected] = useState("all");
   const [checked, setChecked] = useState(false);
   return (
-    <section aria-label="Field states" className="grid w-full max-w-lg gap-4 rounded-card border border-zani-border bg-surface-card p-4">
+    <section aria-label="Field states" className="grid w-full max-w-lg gap-4 rounded-card border border-platforma-border bg-surface-card p-4">
       <Input label={t("services.name")} value={text} onChange={(event) => setText(event.target.value)} error={invalid ? t("services.nameRequired") : undefined} />
       <Input label={`${t("services.name")} (disabled)`} disabled value="Synthetic fixture" />
       <Input label={`${t("services.name")} (readonly)`} readOnly value="Synthetic fixture" />
@@ -30,7 +30,7 @@ function Fields({ invalid = false }: { invalid?: boolean }) {
   );
 }
 
-const meta = { title: "Zani/Fields", component: Fields } satisfies Meta<typeof Fields>;
+const meta = { title: "PlatformaCRM/Fields", component: Fields } satisfies Meta<typeof Fields>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = {};

@@ -34,7 +34,7 @@ function CloseButton({ onClose }: { onClose: () => void }) {
   return (
     <button
       type="button"
-      className="zani-focus-ring zani-touch-target inline-flex shrink-0 items-center justify-center rounded-control text-zani-faint transition hover:bg-surface-muted hover:text-zani-text"
+      className="platforma-focus-ring platforma-touch-target inline-flex shrink-0 items-center justify-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
       onClick={onClose}
       aria-label={t("common.close")}
     >
@@ -237,8 +237,8 @@ export function Dialog({
 
   return createPortal(
     <div
-      className="zani-overlay-backdrop fixed inset-0 grid place-items-center p-3 sm:p-5"
-      style={{ zIndex: "var(--zani-z-modal)" }}
+      className="platforma-overlay-backdrop fixed inset-0 grid place-items-center p-3 sm:p-5"
+      style={{ zIndex: "var(--platforma-z-modal)" }}
       onMouseDown={closeOnBackdrop ? onClose : undefined}
     >
       <section
@@ -250,14 +250,14 @@ export function Dialog({
         tabIndex={-1}
         autoFocus
         className={cn(
-          "zani-dialog-surface flex max-h-[calc(100dvh-1.5rem)] w-full flex-col overflow-hidden sm:max-h-[90vh]",
+          "platforma-dialog-surface flex max-h-[calc(100dvh-1.5rem)] w-full flex-col overflow-hidden sm:max-h-[90vh]",
           dialogSizeClass[size],
           className,
         )}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-zani-border bg-surface-card px-4 sm:px-5">
-          <h2 id={titleId} className="min-w-0 truncate text-lg font-semibold text-zani-ink">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-platforma-border bg-surface-card px-4 sm:px-5">
+          <h2 id={titleId} className="min-w-0 truncate text-lg font-semibold text-platforma-ink">
             {title}
           </h2>
           <CloseButton onClose={onClose} />
@@ -304,8 +304,8 @@ export function Drawer({
 
   return createPortal(
     <div
-      className={cn("zani-overlay-backdrop fixed inset-0", backdropClassName)}
-      style={{ zIndex: "var(--zani-z-drawer)" }}
+      className={cn("platforma-overlay-backdrop fixed inset-0", backdropClassName)}
+      style={{ zIndex: "var(--platforma-z-drawer)" }}
       onMouseDown={closeOnBackdrop ? onClose : undefined}
     >
       <aside
@@ -319,7 +319,7 @@ export function Drawer({
         autoFocus
         data-testid={testId}
         className={cn(
-          "zani-drawer-surface flex h-full w-full flex-col overflow-clip",
+          "platforma-drawer-surface flex h-full w-full flex-col overflow-clip",
           drawerSizeClass[size],
           side === "left"
             ? "mr-auto sm:rounded-r-[16px]"
@@ -340,7 +340,7 @@ export const PopoverSurface = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivE
   ref,
 ) {
   return (
-    <div ref={ref} className={cn("zani-popover-surface", className)} {...props}>
+    <div ref={ref} className={cn("platforma-popover-surface", className)} {...props}>
       {children}
     </div>
   );
@@ -359,8 +359,8 @@ export function ToastSurface({
 }) {
   return createPortal(
     <div
-      className={cn("zani-toast-surface fixed bottom-5 right-5 flex max-w-sm items-center gap-3 px-4 py-3", className)}
-      style={{ zIndex: "var(--zani-z-toast)" }}
+      className={cn("platforma-toast-surface fixed bottom-5 right-5 flex max-w-sm items-center gap-3 px-4 py-3", className)}
+      style={{ zIndex: "var(--platforma-z-toast)" }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >

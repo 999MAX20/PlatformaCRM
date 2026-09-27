@@ -21,9 +21,9 @@ function AppBoundaryDemo() {
 
   return (
     <section aria-labelledby="app-boundary-heading" className="space-y-3">
-      <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-card">
-        <h1 id="app-boundary-heading" className="text-lg font-semibold text-zani-ink">Сбой приложения</h1>
-        <p data-testid="app-monitoring-status" className="mt-1 text-sm text-zani-subtle">
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-card">
+        <h1 id="app-boundary-heading" className="text-lg font-semibold text-platforma-ink">Сбой приложения</h1>
+        <p data-testid="app-monitoring-status" className="mt-1 text-sm text-platforma-subtle">
           {monitoringCaptured ? "Исходная ошибка передана в мониторинг" : "Ожидается тестовый сбой"}
         </p>
       </div>
@@ -35,7 +35,7 @@ function AppBoundaryDemo() {
         {shouldCrash ? (
           <TechnicalCrash />
         ) : (
-          <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-card">
+          <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-card">
             <Button data-testid="trigger-app-crash" type="button" onClick={() => setShouldCrash(true)}>
               Вызвать тестовый сбой
             </Button>
@@ -49,11 +49,11 @@ function AppBoundaryDemo() {
 function Fixture() {
   return (
     <I18nProvider>
-      <main className="min-h-screen bg-zani-bg p-4 text-zani-text sm:p-6">
+      <main className="min-h-screen bg-platforma-bg p-4 text-platforma-text sm:p-6">
         <div className="mx-auto max-w-5xl space-y-6">
           <AppBoundaryDemo />
           <section aria-labelledby="route-boundary-heading" className="space-y-3">
-            <h2 id="route-boundary-heading" className="text-lg font-semibold text-zani-ink">Сбой маршрута</h2>
+            <h2 id="route-boundary-heading" className="text-lg font-semibold text-platforma-ink">Сбой маршрута</h2>
             <RouteErrorView
               error={new Error(ROUTE_TECHNICAL_ERROR)}
               onBack={() => undefined}

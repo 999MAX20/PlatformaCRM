@@ -29,7 +29,7 @@ export function TimelineToolbar({
   );
   return (
     <div
-      className="shrink-0 space-y-3 border-b border-zani-border p-3"
+      className="shrink-0 space-y-3 border-b border-platforma-border p-3"
       data-testid="timeline-toolbar"
     >
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(180px,1fr)_minmax(160px,220px)_minmax(160px,220px)]">

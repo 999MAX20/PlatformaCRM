@@ -45,4 +45,4 @@ class QueueRuntimeSmokeCommandTests(TestCase):
 
         self.assertIn("Queue runtime smoke passed", stdout.getvalue())
         self.assertFalse(AutomationRun.objects.filter(business=self.business, idempotency_key__startswith="queue-smoke:").exists())
-        self.assertFalse(Task.objects.filter(business=self.business, title__startswith="ZANI queue smoke task").exists())
+        self.assertFalse(Task.objects.filter(business=self.business, title__startswith="Платформа CRM queue smoke task").exists())

@@ -14,7 +14,7 @@ export function CrmEntityHeader({ data, entity, titleId, onClose }: { data?: Crm
   const activeStatus = entity.type === "client" ? undefined : data?.deal?.status || data?.appointment?.status || data?.lead?.status;
 
   return (
-    <div className="sticky top-0 z-10 border-b border-zani-border bg-surface-card/95 px-5 py-4 backdrop-blur-xl sm:px-7">
+    <div className="sticky top-0 z-10 border-b border-platforma-border bg-surface-card/95 px-5 py-4 backdrop-blur-xl sm:px-7">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -23,8 +23,8 @@ export function CrmEntityHeader({ data, entity, titleId, onClose }: { data?: Crm
             </span>
             {activeStatus ? <StatusBadge status={activeStatus} /> : null}
           </div>
-          <h2 id={titleId} className="truncate text-2xl font-semibold tracking-tight text-zani-ink">{getDrawerTitle(data, t, entity)}</h2>
-          <p className="mt-1 text-sm text-zani-muted">{getDrawerSubtitle(data, t)}</p>
+          <h2 id={titleId} className="truncate text-2xl font-semibold tracking-tight text-platforma-ink">{getDrawerTitle(data, t, entity)}</h2>
+          <p className="mt-1 text-sm text-platforma-muted">{getDrawerSubtitle(data, t)}</p>
         </div>
         <Button type="button" variant="ghost" className="h-12 w-12 shrink-0 rounded-full px-0" onClick={onClose} aria-label={t("crmCard.close")}>
           <X size={28} strokeWidth={2.4} />
@@ -59,13 +59,13 @@ export function CrmEntityTabs({ active, onChange, data }: { active: CrmCardTab; 
             data-testid={`crm-entity-tab-${tab.id}`}
             className={cn(
               "flex shrink-0 items-center gap-2 rounded-card px-4 py-2 text-sm font-bold transition",
-              active === tab.id ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "bg-surface-card text-zani-muted hover:bg-surface-warm hover:text-zani-ink",
+              active === tab.id ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "bg-surface-card text-platforma-muted hover:bg-surface-warm hover:text-platforma-ink",
             )}
             onClick={() => onChange(tab.id)}
           >
             <span>{t(tab.labelKey)}</span>
             {typeof count === "number" ? (
-              <span className={cn("min-w-5 rounded-full px-1.5 py-0.5 text-center text-[11px] font-semibold", active === tab.id ? "bg-surface-card/45 text-zani-ink" : "bg-surface-muted text-zani-muted")}>
+              <span className={cn("min-w-5 rounded-full px-1.5 py-0.5 text-center text-[11px] font-semibold", active === tab.id ? "bg-surface-card/45 text-platforma-ink" : "bg-surface-muted text-platforma-muted")}>
                 {count}
               </span>
             ) : null}

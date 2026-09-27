@@ -86,7 +86,7 @@ export function CrmActionBar({ actions, onExecute, isPending = false, className,
       <Modal title={confirmAction ? actionLabel(confirmAction, t) : ""} open={Boolean(confirmAction)} onClose={() => setConfirmAction(null)}>
         {confirmAction ? (
           <div className="space-y-4">
-            <p className="text-sm font-semibold leading-6 text-zani-subtle">{scopeLabel(confirmAction, t)}</p>
+            <p className="text-sm font-semibold leading-6 text-platforma-subtle">{scopeLabel(confirmAction, t)}</p>
             <div className="flex justify-end gap-2">
               <Button type="button" variant="secondary" onClick={() => setConfirmAction(null)}>
                 {t("common.cancel")}

@@ -59,8 +59,8 @@ export const categoryConfig: Record<ActivityEvent["category"], TimelineCategoryC
   system: {
     icon: PlugZap,
     labelKey: "crmCard.timelineCategorySystem",
-    iconClassName: "bg-surface-muted text-zani-text",
-    badgeClassName: "bg-surface-muted text-zani-text",
+    iconClassName: "bg-surface-muted text-platforma-text",
+    badgeClassName: "bg-surface-muted text-platforma-text",
   },
 };
 

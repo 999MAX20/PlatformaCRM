@@ -283,7 +283,7 @@ export function ResourcesPage() {
         <section
           tabIndex={0}
           aria-label={t("resources.metricsLabel")}
-          className="zani-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
+          className="platforma-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
         >
           <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("resources.active")} value={summary.active} hint={t("resources.activeHint")} icon={UsersRound} />
           <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("resources.staff")} value={summary.staff} hint={t("resources.staffHint")} icon={BriefcaseBusiness} />
@@ -347,7 +347,7 @@ export function ResourcesPage() {
                 />
               }
               columns={[
-                { header: t("resources.name"), className: "max-w-[300px]", cell: (resource) => <span data-testid="resource-name" className="block truncate font-semibold text-zani-ink">{resource.name}</span> },
+                { header: t("resources.name"), className: "max-w-[300px]", cell: (resource) => <span data-testid="resource-name" className="block truncate font-semibold text-platforma-ink">{resource.name}</span> },
                 { header: t("resources.type"), cell: (resource) => t(resourceTypeLabelKeys[resource.resource_type]) },
                 { header: t("resources.linkedUser"), className: "max-w-[220px]", cell: (resource) => <span className="block truncate">{resource.linked_user_name || resource.linked_user_email || t("resources.noLinkedUser")}</span> },
                 { header: t("resources.bookings"), cell: (resource) => resource.appointment_count || 0 },

@@ -49,7 +49,7 @@ export function TagPill({
   return (
     <span
       className={cn(
-        "inline-flex h-6 items-center rounded-full bg-surface-muted px-2.5 text-[11px] font-semibold text-zani-muted",
+        "inline-flex h-6 items-center rounded-full bg-surface-muted px-2.5 text-[11px] font-semibold text-platforma-muted",
         className,
       )}
     >
@@ -74,7 +74,7 @@ export function ClientAvatar({
   return (
     <div
       className={cn(
-        "grid shrink-0 place-items-center rounded-full bg-surface-muted font-semibold text-brand-700 ring-1 ring-zani-border",
+        "grid shrink-0 place-items-center rounded-full bg-surface-muted font-semibold text-brand-700 ring-1 ring-platforma-border",
         sizes[size],
       )}
     >

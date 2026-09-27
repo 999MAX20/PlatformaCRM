@@ -87,7 +87,7 @@ type DashboardMetricProps = {
 };
 
 function initials(value?: string | null) {
-  return (value || "ZANI")
+  return (value || "Платформа CRM")
     .trim()
     .split(/\s+/)
     .slice(0, 2)
@@ -97,10 +97,10 @@ function initials(value?: string | null) {
 }
 
 function toneDot(tone: AttentionItem["tone"]) {
-  if (tone === "red") return "bg-zani-danger";
-  if (tone === "amber") return "bg-zani-warning";
+  if (tone === "red") return "bg-platforma-danger";
+  if (tone === "amber") return "bg-platforma-warning";
   if (tone === "ai") return "bg-ai-600";
-  return "bg-[var(--zani-brand-content)]";
+  return "bg-[var(--platforma-brand-content)]";
 }
 
 function DashboardMetric({
@@ -121,17 +121,17 @@ function DashboardMetric({
     >
       <IconBubble icon={icon} tone={tone} className="h-10 w-10 rounded-control" />
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-semibold text-zani-subtle">{label}</span>
-        <span className="mt-1 block text-2xl font-semibold tracking-tight tabular-nums text-zani-ink">
+        <span className="block text-sm font-semibold text-platforma-subtle">{label}</span>
+        <span className="mt-1 block text-2xl font-semibold tracking-tight tabular-nums text-platforma-ink">
           {value}
         </span>
       </span>
       <ArrowRight
         aria-hidden="true"
         size={16}
-        className="mt-1 shrink-0 text-zani-faint transition-transform group-hover:translate-x-0.5 group-hover:text-brand-700"
+        className="mt-1 shrink-0 text-platforma-faint transition-transform group-hover:translate-x-0.5 group-hover:text-brand-700"
       />
-      <span className="col-span-3 block text-xs font-medium text-zani-faint">{hint}</span>
+      <span className="col-span-3 block text-xs font-medium text-platforma-faint">{hint}</span>
     </Surface>
   );
 }
@@ -146,7 +146,7 @@ function AttentionList({ items }: { items: AttentionItem[] }) {
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-700">
             {t("dashboard.ownerUrgentActions")}
           </p>
-          <h2 className="mt-1 text-base font-bold text-zani-text">
+          <h2 className="mt-1 text-base font-bold text-platforma-text">
             {t("dashboard.attention")}
           </h2>
         </div>
@@ -160,37 +160,37 @@ function AttentionList({ items }: { items: AttentionItem[] }) {
               <Link
                 key={item.key}
                 to={item.href}
-                className="group flex min-h-14 items-center gap-3 rounded-control border border-zani-border bg-surface-card px-3 py-2.5 transition hover:border-brand-100 hover:bg-surface-warm"
+                className="group flex min-h-14 items-center gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-2.5 transition hover:border-brand-100 hover:bg-surface-warm"
               >
                 <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${toneDot(item.tone)}`} />
-                <Icon aria-hidden="true" className="shrink-0 text-zani-subtle" size={18} />
+                <Icon aria-hidden="true" className="shrink-0 text-platforma-subtle" size={18} />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-bold text-zani-text">
+                  <span className="block truncate text-sm font-bold text-platforma-text">
                     {item.title}
                   </span>
-                  <span className="block truncate text-xs font-semibold text-zani-subtle">
+                  <span className="block truncate text-xs font-semibold text-platforma-subtle">
                     {item.text}
                   </span>
                 </span>
-                <span className="shrink-0 text-sm font-bold tabular-nums text-zani-text">
+                <span className="shrink-0 text-sm font-bold tabular-nums text-platforma-text">
                   {item.count}
                 </span>
                 <ArrowRight
                   aria-hidden="true"
                   size={16}
-                  className="shrink-0 text-zani-faint transition-transform group-hover:translate-x-0.5"
+                  className="shrink-0 text-platforma-faint transition-transform group-hover:translate-x-0.5"
                 />
               </Link>
             );
           })}
         </div>
       ) : (
-        <div className="flex min-h-44 flex-col items-center justify-center rounded-control border border-dashed border-zani-border bg-surface-muted px-5 text-center">
-          <CheckCircle2 aria-hidden="true" size={28} className="text-zani-success" />
-          <p className="mt-3 text-sm font-bold text-zani-text">
+        <div className="flex min-h-44 flex-col items-center justify-center rounded-control border border-dashed border-platforma-border bg-surface-muted px-5 text-center">
+          <CheckCircle2 aria-hidden="true" size={28} className="text-platforma-success" />
+          <p className="mt-3 text-sm font-bold text-platforma-text">
             {t("dashboard.noPrioritiesTitle")}
           </p>
-          <p className="mt-1 text-xs leading-5 text-zani-subtle">
+          <p className="mt-1 text-xs leading-5 text-platforma-subtle">
             {t("dashboard.noPrioritiesText")}
           </p>
         </div>
@@ -209,7 +209,7 @@ function AiBriefCard({ items }: { items: BriefItem[] }) {
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-ai-700">
             {t("dashboard.aiBrief.eyebrow")}
           </p>
-          <h2 className="mt-1 text-base font-bold text-zani-text">
+          <h2 className="mt-1 text-base font-bold text-platforma-text">
             {t("dashboard.aiBrief.title")}
           </h2>
         </div>
@@ -221,10 +221,10 @@ function AiBriefCard({ items }: { items: BriefItem[] }) {
             <div className="flex items-start gap-3">
               <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${toneDot(item.tone)}`} />
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-zani-text">{item.title}</p>
-                <p className="mt-1 text-xs leading-5 text-zani-subtle">{item.text}</p>
+                <p className="text-sm font-bold text-platforma-text">{item.title}</p>
+                <p className="mt-1 text-xs leading-5 text-platforma-subtle">{item.text}</p>
                 {item.sourceLabels?.length ? (
-                  <p className="mt-2 truncate text-[11px] font-semibold text-zani-faint">
+                  <p className="mt-2 truncate text-[11px] font-semibold text-platforma-faint">
                     {t("dashboard.ownerBriefSourceIds", {
                       ids: item.sourceLabels.join(", "),
                     })}
@@ -264,7 +264,7 @@ function TeamPerformanceCard({ dashboard }: { dashboard?: OwnerDashboardMetrics 
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <UsersRound aria-hidden="true" size={20} className="shrink-0 text-brand-600" />
-          <h2 className="truncate text-base font-bold text-zani-text">
+          <h2 className="truncate text-base font-bold text-platforma-text">
             {t("analytics.teamPerformance")}
           </h2>
         </div>
@@ -278,24 +278,24 @@ function TeamPerformanceCard({ dashboard }: { dashboard?: OwnerDashboardMetrics 
           {members.map((member) => (
             <div
               key={member.user_id}
-              className="grid min-h-14 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 rounded-control border border-zani-border bg-surface-card px-3 py-2.5 sm:flex"
+              className="grid min-h-14 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 rounded-control border border-platforma-border bg-surface-card px-3 py-2.5 sm:flex"
             >
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">
                 {initials(member.full_name || member.email)}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-bold text-zani-text">
+                <span className="block truncate text-sm font-bold text-platforma-text">
                   {member.full_name || member.email}
                 </span>
-                <span className="block truncate text-xs font-semibold text-zani-subtle">
+                <span className="block truncate text-xs font-semibold text-platforma-subtle">
                   {businessRoleLabel(member.role, t)}
                 </span>
               </span>
-              <span className="col-span-2 flex min-w-0 justify-between gap-3 border-t border-zani-border pt-2 text-xs font-semibold text-zani-subtle sm:block sm:shrink-0 sm:border-0 sm:pt-0 sm:text-right">
-                <span className="truncate tabular-nums text-zani-text sm:block">
+              <span className="col-span-2 flex min-w-0 justify-between gap-3 border-t border-platforma-border pt-2 text-xs font-semibold text-platforma-subtle sm:block sm:shrink-0 sm:border-0 sm:pt-0 sm:text-right">
+                <span className="truncate tabular-nums text-platforma-text sm:block">
                   {t("analytics.assignedLeads")}: {member.assigned_leads}
                 </span>
-                <span className={`truncate sm:block ${member.overdue_tasks ? "text-zani-danger" : "text-zani-faint"}`}>
+                <span className={`truncate sm:block ${member.overdue_tasks ? "text-platforma-danger" : "text-platforma-faint"}`}>
                   {t("analytics.overdueTasks")}: {member.overdue_tasks}
                 </span>
               </span>
@@ -303,12 +303,12 @@ function TeamPerformanceCard({ dashboard }: { dashboard?: OwnerDashboardMetrics 
           ))}
         </div>
       ) : (
-        <div className="flex min-h-44 flex-col items-center justify-center rounded-control border border-dashed border-zani-border bg-surface-muted px-5 text-center">
-          <UsersRound aria-hidden="true" size={28} className="text-zani-faint" />
-          <p className="mt-3 text-sm font-bold text-zani-text">
+        <div className="flex min-h-44 flex-col items-center justify-center rounded-control border border-dashed border-platforma-border bg-surface-muted px-5 text-center">
+          <UsersRound aria-hidden="true" size={28} className="text-platforma-faint" />
+          <p className="mt-3 text-sm font-bold text-platforma-text">
             {t("dashboard.teamDataEmpty")}
           </p>
-          <p className="mt-1 text-xs leading-5 text-zani-subtle">
+          <p className="mt-1 text-xs leading-5 text-platforma-subtle">
             {t("dashboard.teamDataEmptyText")}
           </p>
         </div>
@@ -562,7 +562,7 @@ export function OwnerDashboard({
     <div className="space-y-4 pb-8" data-testid="dashboard-workspace-ready">
       {metricsError ? (
         <Surface
-          className="border-[rgba(151,90,22,0.24)] bg-[var(--zani-warning-soft)] px-4 py-3 text-sm font-semibold text-zani-warning"
+          className="border-[rgba(151,90,22,0.24)] bg-[var(--platforma-warning-soft)] px-4 py-3 text-sm font-semibold text-platforma-warning"
           padding="none"
         >
           {t("dashboard.ownerAnalyticsError")}

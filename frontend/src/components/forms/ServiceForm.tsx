@@ -82,15 +82,15 @@ export function ServiceForm({
       })}
     >
       {showContextHint ? (
-        <div className="rounded-card border border-brand-100 bg-brand-50 p-4 text-sm text-zani-subtle">
-          <p className="font-semibold text-zani-ink">{t("services.formHintTitle")}</p>
+        <div className="rounded-card border border-brand-100 bg-brand-50 p-4 text-sm text-platforma-subtle">
+          <p className="font-semibold text-platforma-ink">{t("services.formHintTitle")}</p>
           <p className="mt-1 leading-6">{t("services.formHintText")}</p>
         </div>
       ) : null}
       {!initial ? (
-        <div className="rounded-card border border-zani-border bg-surface-card p-4 shadow-sm">
-          <p className="text-sm font-semibold text-zani-ink">{t("services.templatesTitle")}</p>
-          <p className="mt-1 text-sm leading-6 text-zani-muted">{t("services.templatesText")}</p>
+        <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+          <p className="text-sm font-semibold text-platforma-ink">{t("services.templatesTitle")}</p>
+          <p className="mt-1 text-sm leading-6 text-platforma-muted">{t("services.templatesText")}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {serviceTemplates.map((template) => (
               <Button key={template.key} type="button" variant="secondary" disabled={disabled} onClick={() => applyTemplate(template)}>
