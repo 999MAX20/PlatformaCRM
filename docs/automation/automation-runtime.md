@@ -106,6 +106,21 @@ Failed runs store:
 
 Transient failures move to `retry_scheduled`; due selection includes pending, waiting and retry-scheduled runs. Claims use a conditional state transition so two workers cannot execute the same run. Stale running claims are recovered after the configured timeout.
 
+Each claim captures the incremented attempt inside its transaction. Before an
+action, persisted wait, or final status write, the worker locks and checks that it
+still owns this running attempt. A resumed obsolete worker returns the current
+state without replaying effects or overwriting cancellation. Retry/cancel also
+refresh their potentially stale API object under a row lock (ZD-016).
+
+Local synthetic process restart/duplicate-dispatch and SQLite restore can be
+rehearsed with `python scripts/pilot_recovery_drill.py`. This creates a disposable
+DB, private files and filesystem broker; it never uses the working DB or Redis.
+On Windows Kombu's filesystem transport needs pywin32; optional dependencies may
+be provided with `--dependencies <isolated-install-directory>`. The current drill
+uses pywin32 311 installed only into ignored output, not application requirements.
+Target Redis/PostgreSQL, backup storage, monitoring/rollback and RPO/RTO still need
+their separate environment acceptance.
+
 API:
 
 ```text

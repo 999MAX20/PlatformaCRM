@@ -50,6 +50,182 @@ async function getBusinessId(
 }
 
 test.describe("FC-006 pilot merchant journeys", () => {
+  test("team access toggle retains specialist and task until manual reassignment", async ({ page, request }) => {
+    test.setTimeout(90_000);
+    const tokens = await login(page);
+    const business = await getBusinessId(page.request, tokens);
+    const headers = authHeaders(tokens);
+    const membersResponse = await page.request.get(`${apiBaseURL}/api/team/members/?business=${business}`, { headers });
+    expect(membersResponse.ok()).toBeTruthy();
+    const members = unwrapList<{ id: number; role: string; user: { id: number; email: string } }>(await membersResponse.json());
+    const operator = members.find(member => member.user.email === operatorEmail)!;
+    const manager = members.find(member => member.role === "manager")!;
+    const owner = members.find(member => member.role === "owner")!;
+    expect(operator && manager && owner).toBeTruthy();
+    const oldSession = await request.post(`${apiBaseURL}/api/auth/token/`, { data: { email: operatorEmail, password } });
+    expect(oldSession.ok()).toBeTruthy();
+    const oldHeaders = authHeaders(await oldSession.json());
+    const taskResponse = await page.request.post(`${apiBaseURL}/api/tasks/`, {
+      headers, data: { business, title: `Retained assignment ${Date.now()}`, assignee: operator.user.id },
+    });
+    expect(taskResponse.ok()).toBeTruthy();
+    const task = await taskResponse.json();
+    const resourceResponse = await page.request.post(`${apiBaseURL}/api/resources/`, {
+      headers, data: { business, name: `Retained specialist ${Date.now()}`, resource_type: "staff", linked_user: operator.user.id, is_active: true },
+    });
+    expect(resourceResponse.ok()).toBeTruthy();
+    const resource = await resourceResponse.json();
+    expect((await request.get(`${apiBaseURL}/api/tasks/${task.id}/`, { headers: oldHeaders })).ok()).toBeTruthy();
+    await page.goto("/app/settings#team-access");
+    await page.getByTestId("team-member-select").selectOption(String(owner.id));
+    await expect(page.getByTestId("team-access-toggle")).toHaveCount(0);
+    await page.getByTestId("team-member-select").selectOption(String(operator.id));
+    async function toggle() {
+      await page.getByTestId("team-access-toggle").click();
+      const updated = page.waitForResponse(response => response.request().method() === "PATCH" && response.url().endsWith(`/api/team/members/${operator.id}/`));
+      await page.getByRole("dialog").getByRole("button").last().click();
+      const response = await updated;
+      expect(response.ok()).toBeTruthy();
+      return response.json();
+    }
+    try {
+      expect((await toggle()).is_active).toBe(false);
+      const denied = await request.get(`${apiBaseURL}/api/tasks/${task.id}/`, { headers: oldHeaders });
+      expect([401, 403, 404]).toContain(denied.status());
+      const retainedTask = await page.request.get(`${apiBaseURL}/api/tasks/${task.id}/`, { headers });
+      expect(await retainedTask.json()).toMatchObject({ assignee: operator.user.id, status: "open" });
+      const retainedResource = await page.request.get(`${apiBaseURL}/api/resources/${resource.id}/`, { headers });
+      expect(await retainedResource.json()).toMatchObject({ linked_user: operator.user.id, is_active: true });
+      await page.goto(`/app/tasks/${task.id}`);
+      await page.locator("select").filter({ has: page.locator(`option[value="${manager.user.id}"]`) }).selectOption(String(manager.user.id));
+      const assigned = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/api/tasks/${task.id}/assign/`));
+      await page.getByRole("button", { name: /Сохранить исполнителя|Save assignee/ }).click();
+      expect((await assigned).ok()).toBeTruthy();
+      const reassigned = await page.request.get(`${apiBaseURL}/api/tasks/${task.id}/`, { headers });
+      expect((await reassigned.json()).assignee).toBe(manager.user.id);
+      await page.goto("/app/settings#team-access");
+      await page.getByTestId("team-member-select").selectOption(String(operator.id));
+      expect((await toggle()).is_active).toBe(true);
+    } finally {
+      const restore = await page.request.patch(`${apiBaseURL}/api/team/members/${operator.id}/`, { headers, data: { is_active: true } });
+      expect(restore.ok()).toBeTruthy();
+    }
+  });
+
+  test("duplicate client preview and confirmed merge transfer the linked lead", async ({ page }) => {
+    test.setTimeout(90_000);
+    const tokens = await login(page);
+    const business = await getBusinessId(page.request, tokens);
+    const headers = authHeaders(tokens);
+    const unique = Date.now();
+    const clients = [];
+    for (const name of ["Target", "Duplicate"]) {
+      const response = await page.request.post(`${apiBaseURL}/api/clients/`, {
+        headers, data: { business, full_name: `${name} ${unique}`, email: `merge-${unique}@example.com`, source: "manual" },
+      });
+      expect(response.ok()).toBeTruthy();
+      clients.push(await response.json());
+    }
+    const [target, duplicate] = clients;
+    const leadResponse = await page.request.post(`${apiBaseURL}/api/leads/`, {
+      headers, data: { business, client: duplicate.id, source: "manual", message: "Preserve merge history" },
+    });
+    expect(leadResponse.ok()).toBeTruthy();
+    const lead = await leadResponse.json();
+    await page.goto("/app/clients");
+    await page.locator(`[data-testid="client-row-action-open"][data-client-id="${target.id}"]`).click();
+    await page.getByTestId("crm-entity-drawer").getByRole("button", { name: /^(Изменить|Edit|Өзгерту)$/ }).click();
+    const previewResponse = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/api/clients/${target.id}/merge-dry-run/`));
+    await page.getByTestId("client-action-form").getByRole("button", { name: /Объединить в текущего|Merge into current/ }).click();
+    expect((await previewResponse).ok()).toBeTruthy();
+    const before = await page.request.get(`${apiBaseURL}/api/leads/${lead.id}/`, { headers });
+    expect((await before.json()).client).toBe(duplicate.id);
+    const mergedResponse = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/api/clients/${target.id}/merge/`));
+    await page.getByRole("button", { name: /^(Объединить клиентов|Merge clients)$/ }).click();
+    expect((await mergedResponse).ok()).toBeTruthy();
+    const after = await page.request.get(`${apiBaseURL}/api/leads/${lead.id}/`, { headers });
+    expect(after.ok()).toBeTruthy();
+    expect((await after.json()).client).toBe(target.id);
+    await page.reload();
+    await expect(page.locator(`[data-testid="client-row-action-open"][data-client-id="${duplicate.id}"]`)).toHaveCount(0);
+    const preserved = await page.request.get(`${apiBaseURL}/api/clients/${target.id}/`, { headers });
+    expect(preserved.ok()).toBeTruthy();
+    expect((await preserved.json()).email).toBe(`merge-${unique}@example.com`);
+  });
+
+  test("manual receipt and refund persist once through the client journal", async ({ page }) => {
+    test.setTimeout(90_000);
+    const tokens = await login(page);
+    const business = await getBusinessId(page.request, tokens);
+    const headers = authHeaders(tokens);
+    const created = await page.request.post(`${apiBaseURL}/api/clients/`, {
+      headers, data: { business, full_name: `Journal ${Date.now()}`, source: "manual" },
+    });
+    expect(created.ok()).toBeTruthy();
+    const client = await created.json();
+    await page.goto(`/app/clients/${client.id}`);
+    await page.getByTestId("client-payments-open").click();
+    await page.getByTestId("payment-add").click();
+    const form = page.getByTestId("payment-form");
+    await form.getByLabel(/^(Сумма|Amount|Сома) \(/).fill("1250.50");
+    const receiptResponse = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/client-payments/"));
+    await form.locator('button[type="submit"]').click();
+    const receiptResult = await receiptResponse;
+    expect(receiptResult.ok()).toBeTruthy();
+    const receipt = await receiptResult.json();
+    const row = page.getByTestId(`payment-row-${receipt.id}`);
+    await expect(row).toContainText("1250.50");
+    await row.getByRole("button").click();
+    await form.getByLabel(/^(Сумма|Amount|Сома) \(/).fill("250.50");
+    await form.locator("textarea").first().fill("Synthetic partial refund");
+    const refundResponse = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/client-payments/"));
+    await form.locator('button[type="submit"]').click();
+    const refundResult = await refundResponse;
+    expect(refundResult.ok()).toBeTruthy();
+    const refund = await refundResult.json();
+    expect(refund).toMatchObject({ original: receipt.id, kind: "refund", amount: "250.50" });
+    // Replaying the exact submitted command must not add another journal entry.
+    const replay = await page.request.post(`${apiBaseURL}/api/client-payments/`, {
+      headers, data: refundResult.request().postDataJSON(),
+    });
+    expect(replay.ok()).toBeTruthy();
+    expect((await replay.json()).id).toBe(refund.id);
+    await page.reload();
+    await page.getByTestId("client-payments-open").click();
+    await expect(page.getByTestId(`payment-row-${refund.id}`)).toBeVisible();
+    const persisted = await page.request.get(`${apiBaseURL}/api/client-payments/?business=${business}&client=${client.id}`, { headers });
+    expect(persisted.ok()).toBeTruthy();
+    const journal = await persisted.json();
+    expect(journal.count).toBe(2);
+    expect(journal.results.find((item: { id: number }) => item.id === receipt.id)).toMatchObject({ refunded_amount: "250.50", remaining_amount: "1000.00" });
+  });
+
+  test("client archive and undo restore persist through the workspace", async ({ page }) => {
+    const tokens = await login(page);
+    const business = await getBusinessId(page.request, tokens);
+    const headers = authHeaders(tokens);
+    const created = await page.request.post(`${apiBaseURL}/api/clients/`, {
+      headers, data: { business, full_name: `Archive ${Date.now()}`, source: "manual" },
+    });
+    expect(created.ok()).toBeTruthy();
+    const client = await created.json();
+    await page.goto(`/app/clients/${client.id}`);
+    await page.getByRole("button", { name: /^(Архивировать|Archive|Мұрағаттау)$/ }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.locator("textarea").fill("Synthetic archive acceptance");
+    const archived = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/api/clients/${client.id}/archive/`));
+    await dialog.getByRole("button").last().click();
+    expect((await archived).ok()).toBeTruthy();
+    const restored = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/api/clients/${client.id}/restore/`));
+    await page.getByRole("button", { name: /^(Отменить|Undo|Болдырмау)$/ }).click();
+    expect((await restored).ok()).toBeTruthy();
+    const persisted = await page.request.get(`${apiBaseURL}/api/clients/${client.id}/`, { headers });
+    expect(persisted.ok()).toBeTruthy();
+    expect((await persisted.json()).is_archived).toBe(false);
+    await page.goto(`/app/clients/${client.id}`);
+    await expect(page.getByText(client.full_name).first()).toBeVisible();
+  });
+
   test("ZD-015 owner dashboard displays the persisted appointment count from analytics", async ({ page }) => {
     const metricsResponse = page.waitForResponse(
       (response) => response.request().method() === "GET"

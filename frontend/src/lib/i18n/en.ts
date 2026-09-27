@@ -1,6 +1,10 @@
 import { ru } from "./ru";
 
 export const en: Record<string, string> = {
+  "teamAccess.disable": "Disable company access",
+  "teamAccess.enable": "Enable company access",
+  "teamAccess.disableText": "Disable {name}'s access to this company? History, tasks and appointments will remain. The specialist's schedule stays active; a manager reassigns work manually when needed.",
+  "teamAccess.enableText": "Restore {name}'s access to this company with the current role?",
   "aiSetup.dentalEscalation": "Escalate complaints, clinical questions and requests for a human to the administrator.\nAsk the administrator when information is missing or contradictory.",
   "aiSetup.advanced": "Advanced settings",
   "aiSetup.advancedText": "Instructions, model and response variability.",

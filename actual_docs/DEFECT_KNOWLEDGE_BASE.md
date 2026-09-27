@@ -650,6 +650,42 @@ Copy this section for every new confirmed precedent:
   simultaneous false inclusions/exclusions; test business vs application timezone
   and DST dates with a fixed clock. Never remove tenant/role query scoping.
 
+### ZD-016 — Recovered automation worker retained stale write authority
+
+- Recorded: 2026-09-28. Type: RELIABILITY / automation. Status: VERIFIED_LOCAL;
+  current publication and full-gate receipt live in PRIMARY-SESSION.
+- A paused worker resumed after its claim was recovered and executed a completed
+  action again (two tasks instead of one). Cancellation was overwritten as success.
+  Stale cancel/retry API objects could also overwrite/reopen a completed run.
+- Four deterministic interleavings failed before the fix. Claims now capture the
+  monotonically increasing attempt under transaction; every action (including wait)
+  and final write locks/rechecks that attempt and running state. Cancel/retry read
+  current state under the same row lock. Existing transactional effects/cursor remain.
+- No schema, permissions, BusinessEvent, external delivery or AI contract changes.
+  Existing activity and notifications remain; obsolete workers cannot add effects.
+- Regression and affected automation/B1 suites: 41 PASS in isolated SQLite.
+  Real local Celery process restart + persisted WAIT + duplicate dispatch also PASS
+  with filesystem transport. This does not certify Redis/PostgreSQL concurrency.
+- Derived rule: testing a stale-lock recovery flag is insufficient; resume the old
+  worker after replacement/cancellation and assert effects, cursor and final state.
+
+### ZD-017 — Team access deactivation had no reachable merchant control
+
+- Recorded: 2026-09-28. Type: WORKFLOW / team access. Status: VERIFIED_LOCAL.
+- Backend membership deactivation, old-token denial and retained assignments were
+  implemented, but SettingsPage only displayed an activity badge. No frontend
+  updateMember call changed is_active; the approved staff-exit flow was API-only.
+- Added TeamAccessControl using the existing API, confirmation, feedback and
+  RU/KK/EN dictionaries. Available only with team:manage; owner control hidden.
+  Backend guards unchanged. Changes only membership access to this company;
+  specialist activity, user-global login, history and assignments remain unchanged.
+- Browser proves disable/enable, old session denial, retained specialist/task,
+  and explicit task reassignment to a manager. Initial test fixture accidentally
+  shared staff refresh cookies with the owner's browser; isolated request context
+  corrected that test setup. Full backend/build/mobile gate and 84 Node tests PASS.
+- Derived rule: an implemented API is not complete until the authorized operator
+  has a reachable UI action and its retention/reassignment effects are verified.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

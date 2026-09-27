@@ -50,6 +50,7 @@ import type {
   RolePermission,
 } from "../../types";
 import { SettingsNavigation } from "./components/SettingsNavigation";
+import { TeamAccessControl } from "./components/TeamAccessControl";
 import { useSettingsSectionNavigation } from "./hooks/useSettingsSectionNavigation";
 import { BillingSection } from "./sections/BillingSection";
 import { UsageSection } from "./sections/UsageSection";
@@ -1262,6 +1263,7 @@ export function SettingsPage() {
                           </div>
                         ))}
                       </div>
+                      <TeamAccessControl key={selectedMember.id} member={selectedMember} canManage={canManageTeam} />
                     </div>
                   ) : null}
                   {!teamMembers.isLoading && !members.length ? (

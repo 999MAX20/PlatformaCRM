@@ -289,6 +289,28 @@ Manual fallback when browser automation is unavailable:
 4. Operator path: task queue and inbox handoff visibility.
 5. Confirm `/api/pilot/readiness/`, owner dashboard, inbox summary and integration health states are reachable and do not imply live providers are connected.
 
+## Isolated pilot process/recovery drill
+
+`python scripts/pilot_recovery_drill.py` owns a disposable SQLite database,
+private-media directory and Celery filesystem broker. It starts its own solo
+worker, stops it after a persisted WAIT, restarts and resumes, verifies duplicate
+dispatch has no extra effect, then restores the DB and a synthetic private file.
+No working DB, existing worker, external provider or production file is used.
+
+On Windows, install the filesystem transport's optional dependency into an ignored
+directory, then explicitly supply it (not the application's requirements):
+
+```text
+python -m pip install --only-binary=:all: --no-deps --target output/pilot-worker-deps pywin32==311
+python scripts/pilot_recovery_drill.py --dependencies output/pilot-worker-deps
+```
+
+Capture stdout/stderr as task evidence. PASS covers local process persistence and
+SQLite/file restore only, not Redis/PostgreSQL locking, object storage, scheduler
+uptime, RPO/RTO, live monitoring or a production rollback. Those require the named
+target environment and operator acceptance. The drill does not change data-retention
+policy or apply migrations to any working database.
+
 ## External Network Policy
 
 Backend tests must not call real external services.

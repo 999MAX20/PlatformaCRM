@@ -195,6 +195,7 @@ def recover_stale_automation_runs(*, now=None):
     )
 
 
+@transaction.atomic
 def _claim_automation_run(run_id, *, now=None):
     now = now or timezone.now()
     claimed = (
@@ -223,6 +224,7 @@ def process_automation_run(run_id):
     if run is None:
         return AutomationRun.objects.select_related("business", "rule").filter(id=run_id).first()
 
+    claim_attempt = run.attempts
     capability_denied = False
     try:
         rule = run.rule
@@ -238,48 +240,52 @@ def process_automation_run(run_id):
             else:
                 actions = list(rule.actions.all())
                 while run.current_action_index < len(actions):
-                    action = actions[run.current_action_index]
-                    if action.action_type == AutomationAction.ActionTypes.WAIT:
-                        run.action_results = [
-                            *(run.action_results or []),
-                            {
-                                "action_id": action.id,
-                                "action_index": run.current_action_index,
-                                "action": action.action_type,
-                                "status": "delayed",
-                                "delay_seconds": action.delay_seconds,
-                            },
-                        ]
-                        run.current_action_index += 1
-                        run.status = AutomationRun.Statuses.WAITING
-                        run.run_after = timezone.now() + timezone.timedelta(seconds=action.delay_seconds)
-                        run.locked_at = None
-                        run.save(
-                            update_fields=[
-                                "action_results", "current_action_index", "status", "run_after", "locked_at"
-                            ]
-                        )
-                        _write_run_activity(run)
-                        return run
-                    if action.delay_seconds and not _action_delay_scheduled(run, action):
-                        run.action_results = [
-                            *(run.action_results or []),
-                            {
-                                "action_id": action.id,
-                                "action_index": run.current_action_index,
-                                "action": action.action_type,
-                                "status": "scheduled",
-                                "delay_seconds": action.delay_seconds,
-                            },
-                        ]
-                        run.status = AutomationRun.Statuses.WAITING
-                        run.run_after = timezone.now() + timezone.timedelta(seconds=action.delay_seconds)
-                        run.locked_at = None
-                        run.save(update_fields=["action_results", "status", "run_after", "locked_at"])
-                        _write_run_activity(run)
-                        return run
                     with transaction.atomic():
                         current = AutomationRun.objects.select_for_update().get(id=run.id)
+                        if not _owns_automation_claim(current, claim_attempt):
+                            return current
+                        run = current
+                        action = actions[run.current_action_index]
+                        if action.action_type == AutomationAction.ActionTypes.WAIT:
+                            run.action_results = [
+                                *(run.action_results or []),
+                                {
+                                    "action_id": action.id,
+                                    "action_index": run.current_action_index,
+                                    "action": action.action_type,
+                                    "status": "delayed",
+                                    "delay_seconds": action.delay_seconds,
+                                },
+                            ]
+                            run.current_action_index += 1
+                            run.status = AutomationRun.Statuses.WAITING
+                            run.run_after = timezone.now() + timezone.timedelta(seconds=action.delay_seconds)
+                            run.locked_at = None
+                            run.save(
+                                update_fields=[
+                                    "action_results", "current_action_index", "status", "run_after", "locked_at"
+                                ]
+                            )
+                            _write_run_activity(run)
+                            return run
+                        if action.delay_seconds and not _action_delay_scheduled(run, action):
+                            run.action_results = [
+                                *(run.action_results or []),
+                                {
+                                    "action_id": action.id,
+                                    "action_index": run.current_action_index,
+                                    "action": action.action_type,
+                                    "status": "scheduled",
+                                    "delay_seconds": action.delay_seconds,
+                                },
+                            ]
+                            run.status = AutomationRun.Statuses.WAITING
+                            run.run_after = timezone.now() + timezone.timedelta(seconds=action.delay_seconds)
+                            run.locked_at = None
+                            run.save(update_fields=["action_results", "status", "run_after", "locked_at"])
+                            _write_run_activity(run)
+                            return run
+                        current = run
                         result = _execute_action(action, business=run.business, entity=entity, payload=run.payload)
                         current.action_results = [
                             *(current.action_results or []),
@@ -314,10 +320,19 @@ def process_automation_run(run_id):
     } else None
     run.locked_at = None
     run.run_after = None
-    run.save(update_fields=["status", "error", "action_results", "next_retry_at", "finished_at", "locked_at", "run_after"])
-    if not capability_denied:
-        _write_run_activity(run)
+    with transaction.atomic():
+        current = AutomationRun.objects.select_for_update().get(id=run.id)
+        if not _owns_automation_claim(current, claim_attempt):
+            return current
+        run.save(update_fields=["status", "error", "action_results", "next_retry_at", "finished_at", "locked_at", "run_after"])
+        if not capability_denied:
+            _write_run_activity(run)
     return run
+
+
+def _owns_automation_claim(run, attempt):
+    # Attempts increase on each claim, fencing workers resumed after recovery.
+    return run.status == AutomationRun.Statuses.RUNNING and run.attempts == attempt
 
 
 def _action_delay_scheduled(run, action):
@@ -328,19 +343,23 @@ def _action_delay_scheduled(run, action):
 
 
 def retry_automation_run(run):
-    if run.status not in {AutomationRun.Statuses.FAILED, AutomationRun.Statuses.CANCELLED, AutomationRun.Statuses.RETRY_SCHEDULED}:
-        return run
-    run.status = AutomationRun.Statuses.PENDING
-    run.error = ""
-    run.run_after = timezone.now()
-    run.next_retry_at = None
-    run.finished_at = None
-    run.locked_at = None
-    run.save(update_fields=["status", "error", "run_after", "next_retry_at", "finished_at", "locked_at"])
+    with transaction.atomic():
+        run = AutomationRun.objects.select_for_update().get(id=run.id)
+        if run.status not in {AutomationRun.Statuses.FAILED, AutomationRun.Statuses.CANCELLED, AutomationRun.Statuses.RETRY_SCHEDULED}:
+            return run
+        run.status = AutomationRun.Statuses.PENDING
+        run.error = ""
+        run.run_after = timezone.now()
+        run.next_retry_at = None
+        run.finished_at = None
+        run.locked_at = None
+        run.save(update_fields=["status", "error", "run_after", "next_retry_at", "finished_at", "locked_at"])
     return schedule_automation_run(run)
 
 
+@transaction.atomic
 def cancel_automation_run(run):
+    run = AutomationRun.objects.select_for_update().get(id=run.id)
     if run.status in {AutomationRun.Statuses.SUCCESS, AutomationRun.Statuses.SKIPPED, AutomationRun.Statuses.CANCELLED}:
         return run
     run.status = AutomationRun.Statuses.CANCELLED

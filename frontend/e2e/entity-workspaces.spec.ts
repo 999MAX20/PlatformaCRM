@@ -123,7 +123,7 @@ async function waitForAnalyticsReportSummary(page: Page) {
   );
 }
 
-test("client, lead, deal, appointment, conversation and task workspaces render executable action bars", async ({
+test("entity workspaces persist deal, visit and task outcomes with activity history", async ({
   page,
 }) => {
   test.setTimeout(90_000);
@@ -191,13 +191,13 @@ test("client, lead, deal, appointment, conversation and task workspaces render e
   expect(leadResponse.ok()).toBeTruthy();
   const lead = await leadResponse.json();
 
-  const dealResponse = await page.request.post(
-    `${apiBaseURL}/api/leads/${lead.id}/create-deal/`,
-    {
-      headers,
-      data: { title: `E2E Workspace Deal ${unique}`, amount: "2500.00" },
-    },
+  await authenticate(page, tokens);
+  await navigateInsideApp(page, `/app/leads/${lead.id}`);
+  const dealCreated = page.waitForResponse(
+    (response) => response.url().endsWith(`/api/leads/${lead.id}/create-deal/`) && response.request().method() === "POST",
   );
+  await page.locator('[data-crm-action-id="create_deal"]').click();
+  const dealResponse = await dealCreated;
   expect(dealResponse.ok()).toBeTruthy();
   const deal = await dealResponse.json();
 
@@ -284,27 +284,15 @@ test("client, lead, deal, appointment, conversation and task workspaces render e
   const existingBots = Array.isArray(botsPayload)
     ? botsPayload
     : botsPayload.results || [];
-  let bot = existingBots.find(
-    (candidate: { status?: string }) => candidate.status === "active",
-  );
-  if (!bot && existingBots[0]) {
-    const botResponse = await page.request.patch(
-      `${apiBaseURL}/api/bots/${existingBots[0].id}/`,
-      {
-        headers,
-        data: { status: "active" },
-      },
-    );
-    expect(botResponse.ok()).toBeTruthy();
-    bot = await botResponse.json();
-  }
+  // Website intake remains available while AI is paused; do not bypass agent readiness.
+  let bot = existingBots[0];
   if (!bot) {
     const botResponse = await page.request.post(`${apiBaseURL}/api/bots/`, {
       headers,
       data: {
         business: businessId,
         name: `E2E Workspace Bot ${unique}`,
-        status: "active",
+        status: "draft",
         default_language: "ru",
       },
     });
@@ -325,7 +313,7 @@ test("client, lead, deal, appointment, conversation and task workspaces render e
     (candidate: { bot?: number; channel?: string }) =>
       candidate.bot === bot.id && candidate.channel === "website",
   );
-  if (websiteChannel && !["active", "draft"].includes(websiteChannel.status)) {
+  if (websiteChannel && websiteChannel.status !== "active") {
     const channelResponse = await page.request.patch(
       `${apiBaseURL}/api/bot-channels/${websiteChannel.id}/`,
       {
@@ -401,8 +389,6 @@ test("client, lead, deal, appointment, conversation and task workspaces render e
   expect(taskResponse.ok()).toBeTruthy();
   const task = await taskResponse.json();
 
-  await authenticate(page, tokens);
-
   await navigateInsideApp(page, `/app/clients/${client.id}`);
   await expect(page).toHaveURL(new RegExp(`/app/clients/${client.id}`));
   await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
@@ -428,7 +414,7 @@ test("client, lead, deal, appointment, conversation and task workspaces render e
   await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
   await expect(
-    page.getByText(`E2E Workspace Deal ${unique}`).first(),
+    page.getByText(deal.title, { exact: true }).first(),
   ).toBeVisible();
   await expect(page.locator('[data-crm-action-id="won"]')).toBeVisible();
   await expect(page.locator('[data-crm-action-id="lost"]')).toBeVisible();
@@ -474,6 +460,69 @@ test("client, lead, deal, appointment, conversation and task workspaces render e
   ).toBeVisible();
   await expect(page.locator('[data-task-action-id="complete"]')).toBeVisible();
   await expect(page.locator('[data-task-action-id="cancel"]')).toBeVisible();
+
+  // Exercise real UI mutations, then read persisted state independently of the UI cache.
+  const taskCompleted = page.waitForResponse(
+    (response) => response.url().endsWith(`/api/tasks/${task.id}/complete/`) && response.request().method() === "POST",
+  );
+  await page.locator('[data-task-action-id="complete"]').click();
+  expect((await taskCompleted).ok()).toBeTruthy();
+  await page.reload();
+  await expect(page.locator('[data-task-action-id="reopen"]')).toBeVisible();
+  await expect(page.locator('[data-task-action-id="complete"]')).toHaveCount(0);
+
+  await navigateInsideApp(page, `/app/deals/${deal.id}`);
+  await page.locator('[data-crm-action-id="won"]').click();
+  const dealWon = page.waitForResponse(
+    (response) => response.url().endsWith(`/api/deals/${deal.id}/mark-won/`) && response.request().method() === "POST",
+  );
+  await page.getByRole("dialog").getByRole("button", { name: /Подтвердить|Confirm|Растау/, exact: true }).click();
+  expect((await dealWon).ok()).toBeTruthy();
+  await page.reload();
+  await expect(page.locator('[data-crm-action-id="reopen"]')).toBeVisible();
+
+  await navigateInsideApp(page, `/app/calendar/${appointment.id}`);
+  await page.locator('[data-appointment-action-id="reschedule"]').click();
+  const slotSelect = page.getByTestId("appointment-reschedule-slot");
+  await expect(slotSelect.locator("option").nth(2)).toBeAttached();
+  const options = await slotSelect.locator("option").evaluateAll(
+    (items) => items.map((item) => (item as HTMLOptionElement).value).filter(Boolean),
+  );
+  const alternative = options.find((value) => Date.parse(value) !== Date.parse(appointment.start_at));
+  expect(alternative).toBeTruthy();
+  await slotSelect.selectOption(alternative!);
+  await page.getByTestId("appointment-reschedule-form").locator("textarea").fill("Synthetic reschedule acceptance");
+  const rescheduled = page.waitForResponse(
+    (response) => response.url().endsWith(`/api/appointments/${appointment.id}/reschedule/`) && response.request().method() === "POST",
+  );
+  await page.getByTestId("appointment-reschedule-submit").click();
+  const rescheduleResult = await rescheduled;
+  expect(rescheduleResult.ok()).toBeTruthy();
+  expect(Date.parse((await rescheduleResult.json()).start_at)).toBe(Date.parse(alternative!));
+  for (const [action, endpoint] of [["confirmed", "confirm"], ["completed", "complete"]]) {
+    const changed = page.waitForResponse(
+      (response) => response.url().endsWith(`/api/appointments/${appointment.id}/${endpoint}/`) && response.request().method() === "POST",
+    );
+    await page.locator(`[data-appointment-action-id="${action}"]`).click();
+    expect((await changed).ok()).toBeTruthy();
+  }
+  await page.reload();
+  await expect(page.locator('[data-appointment-action-id="reschedule"]')).toHaveCount(0);
+
+  for (const [collection, id, entityType, status, eventType] of [
+    ["tasks", task.id, "Task", "done", "task_completed"],
+    ["deals", deal.id, "Deal", "won", "deal_won"],
+    ["appointments", appointment.id, "Appointment", "completed", "appointment_completed"],
+  ] as const) {
+    const persisted = await page.request.get(`${apiBaseURL}/api/${collection}/${id}/`, { headers });
+    expect(persisted.ok()).toBeTruthy();
+    expect((await persisted.json()).status).toBe(status);
+    const history = await page.request.get(`${apiBaseURL}/api/activity-events/?entity_type=${entityType}&entity_id=${id}`, { headers });
+    expect(history.ok()).toBeTruthy();
+    const payload = await history.json();
+    const events = Array.isArray(payload) ? payload : payload.results;
+    expect(events.filter((event: { event_type: string }) => event.event_type === eventType)).toHaveLength(1);
+  }
 
   const dashboardMetricsPromise = waitForOwnerDashboardMetrics(page);
   await page.goto("/app");

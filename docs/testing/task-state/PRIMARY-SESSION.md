@@ -2,6 +2,80 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Seven-stage autonomous pilot run — ACTIVE, 2026-09-28
+
+- Owner explicitly instructed completion of all seven agreed stages in one run,
+  continuing independent work and collecting unanswered decisions in
+  [owner questions](../../pilot/owner-questions-2026-09-28.md). No time limit imposed.
+- Same registered primary/root/branch; clean start bb5caf63d49d384b9e9927fb8059a25d6a925b7b;
+  no other writer in native inventory. Logs: output/pilot-seven-20260928/.
+- Scope: internal CRM journeys; import/merge/archive/team/manual ledger; role/tenant;
+  automation/recovery; bounded grounded AI; local operations/restore preparation;
+  exact-candidate certification and explicit remaining owner/environment gates.
+- Exclusions unchanged: external integrations/messengers/1C/MoySklad/payment gateway,
+  billing/tariffs, paid calls/services, deployment and ordinary working DB migration.
+- Acceptance is behavioral evidence, not feature count. Reuse existing code/tests;
+  fix reproduced defects. No closed packet reopened without an acceptance gap.
+- Begin with isolated current backend baseline, then missing semantic browser cycles;
+  freeze application source during baseline. Record per-fix permission/event/AI/
+  notification/migration impact, run focused/dependent checks and final full gate.
+- Seven-stage status: 1–5 local acceptance in progress; 6 local recovery drill PASS,
+  target-env gates depend on Q02/Q03; 7 full gate PASS, broader responsive/role
+  matrix in progress, clinic acceptance depends on Q04.
+  Questions do not stop independent work; no silent policy answers or fake PASS.
+- FC-003 evidence delta: existing entity workspace scenario only rendered action
+  controls. Extend it with real deal/visit/task mutations, independent API readback,
+  reload and exactly-one activity assertions. No runtime/API/permission change.
+- BE-GAP-006 hypothesis: a worker resumed after stale-claim recovery may execute
+  from its stale action index or overwrite cancellation. Reproduce deterministic
+  worker interleavings before any engine change; preserve existing atomic actions,
+  retries and persisted cursor. Required boundary: regression, automation/runtime
+  suites, then full candidate gate. No external delivery or schema change intended.
+- Confirmed ZD-016: four before-fix failures (duplicate task, cancellation overwrite,
+  stale API cancel/retry); engine fence now uses existing monotonic attempts + row
+  locks. 41 automation/B1 tests PASS, `claim-after.log`; no migrations/role/AI changes.
+- Baseline history: initial migration child crashed 0xC0000005 without Django error;
+  isolated diagnostic passed. Local repeated baseline intentionally stopped after
+  new regressions were proven to run one final gate on the fix. Not a local PASS.
+  Independently, GitHub bb5caf6 run 36347456165 backend+frontend completed SUCCESS.
+- Browser receipts: original core fixture wrongly PATCHed bot status (409 under
+  current lifecycle); use paused agent with active website intake, preserving the
+  approved independence of transport and AI. Core outcome/history test then PASS.
+  Expanded core UI (lead→deal, reschedule→visit, task completion) + manual journal
+  receipt/refund/replay: 2 PASS, browser-expanded.log. Archive/undo: PASS in earlier
+  browser-supporting.log; journal first attempt was only a label selector timeout,
+  corrected to include its currency suffix. Existing import/role/dashboard/AI: 4 PASS.
+- Local operational drill added under scripts/pilot_recovery_drill.py: synthetic
+  isolated DB/filesystem broker, actual owned Celery processes, stop/restart at WAIT,
+  duplicate dispatch and independent SQLite/private-file restore PASS. Windows pywin32 311 installed into ignored
+  output/pilot-seven-20260928/worker-deps only. Initial tool setup failures (lazy
+  Celery config, absent Windows transport dependency, inactive fixture rule) retained
+  in logs; not product defects. Target Redis/PostgreSQL/live ops remain Q02/Q03.
+- Full gate PASS with ancestor 69b62c99, log full-gate.log: 1163 backend tests,
+  system/migration checks, locked installs, i18n/build/bundle, 2 mobile role smokes,
+  Python/npm dependency audits. Backend unchanged since ZD-016; frontend build
+  includes TeamAccessControl. Extended semantic browser tests separately PASS.
+  Node 84/84 PASS in node-checks-final.log after updating renamed evidence markers.
+- Further receipts: merge preview→confirmed transfer→reload PASS (browser-merge.log).
+  Actual Celery restart/WAIT/replay plus SQLite AND private-file byte/DB-key restore
+  PASS (recovery-drill-files.log). This is synthetic filesystem transport, explicitly
+  not production Redis/Postgres. No working DB/files/processes were touched.
+- New stage-2 UI gap confirmed: SettingsPage renders member activity but has no
+  action calling updateMember with is_active. Backend deactivation/history/manual
+  reassignment contract exists and is tested. Add a small team access control using
+  existing team API/confirm/feedback/i18n; no new role policy, no account-global or
+  specialist deactivation, no automatic reassignment. Verify UI disable/enable,
+  existing-token denial and retained work; build + affected backend acceptance.
+- ZD-017 UI acceptance PASS: browser-team-access-retry.log (disable/enable, previous
+  token denied, specialist stays active, task retained then manually reassigned).
+  Initial timeout was shared owner/staff refresh-cookie fixture contamination;
+  separate Playwright request context fixes it. No product auth bypass/change.
+- Broader desktop/tablet/mobile matrix now running: daily-workspaces,
+  accessibility-responsive, failure-certification, agent-setup, services-lifecycle;
+  browser-matrix.log and matrix-results/. Not a substitute for human screen-reader
+  and clinic acceptance. Next: publish this verified bounded package, then finish
+  remaining semantic reconciliation/matrix findings under the same authorization.
+
 ## Pilot reconciliation and internal CRM acceptance — ACTIVE, 2026-09-28
 
 - Authorization: owner requests current/future source-of-truth reconciliation of

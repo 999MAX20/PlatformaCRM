@@ -8,7 +8,7 @@ export const pilotMerchantJourneys = [
     browserEvidence: [
       {
         file: "frontend/e2e/entity-workspaces.spec.ts",
-        marker: "client, lead, deal, appointment, conversation and task workspaces render executable action bars",
+        marker: "entity workspaces persist deal, visit and task outcomes with activity history",
       },
     ],
     backendEvidence: [
@@ -28,7 +28,7 @@ export const pilotMerchantJourneys = [
     browserEvidence: [
       {
         file: "frontend/e2e/entity-workspaces.spec.ts",
-        marker: "client, lead, deal, appointment, conversation and task workspaces render executable action bars",
+        marker: "entity workspaces persist deal, visit and task outcomes with activity history",
       },
     ],
     backendEvidence: [
@@ -96,7 +96,7 @@ export const pilotMerchantJourneys = [
     browserEvidence: [
       {
         file: "frontend/e2e/entity-workspaces.spec.ts",
-        marker: "client, lead, deal, appointment, conversation and task workspaces render executable action bars",
+        marker: "entity workspaces persist deal, visit and task outcomes with activity history",
       },
     ],
     backendEvidence: [
