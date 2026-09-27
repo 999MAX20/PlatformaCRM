@@ -1,5 +1,16 @@
 # ZANI Application Functional Certification
 
+## Применимая приёмка — 28.09.2026
+
+[Текущий план](../docs/pilot/local-crm-completion.md#current-plan) разрешает внутреннюю
+CRM-приёмку на новом candidate. FC-003/008 открыты: 43 structural route/action
+строки NOT_RUN не доказывают результат каждого действия. Не заменять их PASS
+по факту существования страницы или по прошлому FC-006. Для текущих CRM-действий
+нужны UI/API/persistence/history, права/tenant/replay/recovery на одной версии.
+Внешние каналы/провайдеры и billing отложены, их evidence не объявлять выполненным.
+FC-004/006 и старые полные gates сохраняют свои версии; BE-REM-007 и ручной
+screen-reader/UX-4 остаются в финальном остатке. Точные новые проверки — PRIMARY-SESSION.
+
 - Date: 2026-08-20
 - Status: **EXECUTED / PARTIAL - FC-004 AND FC-006 PASS; FC-003 AND FC-008 OPEN**
 - Activation: owner authorized execution on 2026-08-20

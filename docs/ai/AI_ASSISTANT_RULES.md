@@ -1,5 +1,22 @@
 # AI Assistant And AI Analyst Rules
 
+## Граница текущей AI-приёмки — 28.09.2026
+
+Порядок и scope — [текущий пилот](../pilot/local-crm-completion.md#current-plan).
+Принимаются помощник сотрудника и аналитик на конкретных рабочих вопросах;
+клиентский агент сохраняет закрытые preview/approval evidence, live-каналы отложены.
+В `assistant.py` контекст ограничен агрегатами и до 8 записей каждого типа.
+В `tool_registry.py` summarize — 5 последних сообщений/500 символов, qualify —
+эвристика 80/60/40; предложения действий детерминированы. Это ограниченная
+реализация, не универсальный интеллектуальный агент; handlers не доказывают UI flow.
+Event analyst получает последние 24 BusinessEvent из UI и цитирует source_ids,
+не анализирует всю историю или произвольный период; финансовые выводы запрещены
+без проверенного источника. Owner brief в `recommendations.py` — правила без LLM.
+Изменение качества требует ожидаемого результата/тестовых вопросов и проверки
+источников, ролей, no-data/failure, approval/audit/idempotency. Закрытые пакеты не
+переписываются. Автокарточка клиента допустима, Lead/Task/черновик Deal требуют
+подтверждения сотрудника; запись/перенос/отмена/результат сделки остаются ручными.
+
 > **Later commercial decision, 2026-09-25:**
 > [CRM packages include AI volume; billing work deferred](../billing/BILLING_DISCUSSION_DEFERRED_2026-09-25.md).
 > This supersedes separate-AI/PAYG/no-package wording below. The client bot's unit

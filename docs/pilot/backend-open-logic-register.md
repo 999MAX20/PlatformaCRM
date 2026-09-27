@@ -1,5 +1,19 @@
 # Backend Open And Partial Logic Register
 
+## Актуальное применение регистра — 28.09.2026
+
+[План пилота](local-crm-completion.md#current-plan) владеет текущим порядком.
+Основа новой сверки `69b62c99`; сентябрьский WIP ниже — исторический, поздние
+закрытия scheduling/AI/finance перечислены в плане. Они не переоткрываются.
+BE-GAP-003/FC-003/008 — открытая приёмка; BE-GAP-004 — конфликт support-note роли,
+не доказательство произвольных чужих CRM-записей. BE-GAP-006 — проверка внутренних
+worker/retry/recovery отдельно от eager; BE-GAP-007/008/011 применяются по среде,
+открытости и режиму данных до их допуска. Новые runtime-уязвимости этой сверкой
+не заявлены. BE-GAP-005 и внешняя часть 006, 009/010 отложены вне текущего scope.
+Обнаруженные прежде appointments_today и frontend policy/inventory FAIL требуют
+классификации и исправления при пересечении с внутренними циклами; точные результаты
+будут в PRIMARY-SESSION. Исторический регистр не является новым полным аудитом.
+
 - Status: active pre-pilot technical source of truth
 - Reconciled: 2026-09-14 (documentation and read-only code audit)
 - Historical certification branch: `codex/be-gap-003-functional-certification`

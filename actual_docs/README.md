@@ -1,4 +1,4 @@
-# Active ZANI Technical Documentation
+# Active PlatformaCRM Technical Documentation
 
 Startup entrypoint after task consolidation (2026-09-21):
 [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md),
@@ -21,7 +21,7 @@ gates do not certify the current uncommitted AI/channel package. See
 1. `PROJECT_HANDOFF.md` — canonical identity, migration snapshot and startup guardrails for the new Codex Zani project.
 2. `PRE_PILOT_CODE_READINESS_MASTER.md` — final pre-pilot code-readiness
    synthesis, ordered security/fallback/UX/certification gates and release
-   definition of done. It owns overall sequence but does not replace detailed
+   definition of done. Current pilot sequence is owned by `../docs/pilot/local-crm-completion.md`; this master retains readiness/security evidence and does not replace detailed
    task contracts.
 3. `CRM_WORKSPACE_UX_REFORM.md` — active UI/UX delivery plan. UX-3
    (owner/administrator dashboard) is done; UX-4 (final browser certification)

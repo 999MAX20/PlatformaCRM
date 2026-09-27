@@ -2,6 +2,32 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Pilot reconciliation and internal CRM acceptance — ACTIVE, 2026-09-28
+
+- Authorization: owner requests current/future source-of-truth reconciliation of
+  both discussions, then execution of remaining pilot work, including earlier debt.
+  Multi-stage direction is authorized; no automatic live rollout/payment/migration.
+- Owner/root/base: registered primary, generation 2 idle, sole writer confirmed;
+  C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+  clean 69b62c99b79c0028ffc01d7af7ca4bac8c0c9af2.
+- Input: delivered read-only second-chat synthesis at cea06d12; native readback of
+  ephemeral source is unavailable. Use supplied synthesis plus current code/contracts;
+  relevant subsequent delta is branding, not a new functional certification.
+- First boundary: reconcile existing authority documents, then internal CRM-cycle
+  acceptance and proven defects. Reuse services/API/UI/tests; preserve closed scopes.
+- Excluded: external integrations/messengers/1C/MoySklad/payment gateway; tariffs
+  and billing deferred. AI remains optional, no financial AI without verified source.
+- Acceptance: current pilot scope/order unambiguous, old debts classified and routed;
+  inspect/reproduce applicable internal defects, verify fixes and record exact evidence.
+  FC-003/008 stay open until their complete applicable acceptance passes.
+- Checks: docs links/diff/consistency; isolated focused/dependent backend and browser
+  UI/API/persistence checks according to actual changed flow; no ordinary DB changes.
+  Publish verified bounded commits normally to origin main and inspect actual CI.
+- Impact: reconciliation changes no runtime permissions/events/notifications/AI;
+  any implementation impact recorded before its fix. Logs: output/pilot-20260928/.
+- Next: reconcile existing pilot plan and authority routes, then execute internal
+  evidence map and smallest reproduced CRM defect. No readiness percentage asserted.
+
 ## Exact UI brand PlatformaCRM — VERIFIED; publication in receipt, 2026-09-28
 
 - Source: owner correction: exact public spelling PlatformaCRM, Latin/no spaces;

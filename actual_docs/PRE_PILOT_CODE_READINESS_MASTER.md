@@ -1,5 +1,17 @@
 # ZANI Pre-Pilot Code Readiness Master
 
+## Текущий порядок и граница — 28.09.2026
+
+Порядок исполнения текущего пилота задаёт [актуальный план](../docs/pilot/local-crm-completion.md#current-plan):
+внутренняя CRM → надёжность/применимые права и recovery → предметная AI-приёмка →
+эксплуатационный допуск/финальная версия. Внешние интеграции/мессенджеры и платёжный
+шлюз исключены из текущего scope, тарифы/billing отложены. Это разрешённое владельцем
+исполнение, не только предложение. Этот master сохраняет security closures и
+критерии допуска; старые очереди/проценты ниже не переопределяют новый план.
+PP-SEC-001…010, AUD-027, FC-004/006 и последующие закрытые пакеты не переоткрыты.
+FC-003/008, BE-REM-007, FB-009 manual и UX-4 остаются; реальные данные требуют
+среды/backup/restore/private files/monitoring и применимых BE-GAP-004/008/011.
+
 - Status: **ACTIVE / EXECUTION IN PROGRESS**
 - Created: 2026-08-21
 - Baseline branch: `codex/pre-pilot-sec-010-security-certification`

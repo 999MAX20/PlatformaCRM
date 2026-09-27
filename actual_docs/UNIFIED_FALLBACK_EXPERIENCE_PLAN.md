@@ -1,5 +1,15 @@
 # ZANI Unified Fallback And Error Experience Plan
 
+## Текущий остаток — 28.09.2026
+
+В [пилоте внутренней CRM](../docs/pilot/local-crm-completion.md#current-plan) продолжаются
+применимые recovery/no-data/permission/session проверки. FB-008 внутренний
+worker/retry/restart принимается отдельно от отложенных live-provider сценариев;
+FB-009 manual screen-reader и UX-4 не закрыты. FC-004/006 уже закрывались на своих
+снимках; FC-003/008 и BE-REM-007 остаются. Старые evidence ниже не создают нового
+backlog. Два известных fallback inventory/registry FAIL требуют актуального
+воспроизведения; не менять реестр только ради зелёного теста.
+
 - Status: **ACTIVE / IN EXECUTION**
 - Created: 2026-08-18
 - Scope: merchant-visible errors, recovery actions, loading/empty/offline states, backend error contracts and technical-detail isolation

@@ -1,5 +1,15 @@
 # Zani Production Readiness Baseline
 
+## Текущий пилот — 28.09.2026
+
+[Порядок пилота](../pilot/local-crm-completion.md#current-plan) сначала принимает
+внутреннюю CRM и AI без внешних интеграций/мессенджеров/платёжного шлюза; billing
+отложен. Это не отменяет эксплуатационные gates для реальных данных: названная
+среда/оператор, backup и restore drill, private files, monitoring/очереди/rollback,
+применимые abuse и file-lifecycle требования. Пока среда/режим данных не выбраны,
+локальные проверки синтетические и не являются live-допуском. Старые требования
+каналов/коммерции ниже применяются при возвращении к соответствующему scope.
+
 Date: 2026-05-20
 
 This document is the operational checklist for moving Zani from local MVP to staging and then production.

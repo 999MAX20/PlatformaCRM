@@ -1,5 +1,16 @@
 # CRM Production Layer Plan
 
+## Текущее исполнение — 28.09.2026
+
+Владелец запустил [план внутреннего пилота](../pilot/local-crm-completion.md#current-plan):
+приёмка существующих клиент/заявка/сделка, запись/визит, задача/напоминание циклов
+через UI → API → сохранение/история, включая права, tenant, replay и recovery.
+Импорт/дубли, архив/restore, отключение логина и ручное переназначение включены.
+Сервисы/API/UI и закрытые W05/W06, scheduling, AI/finance пакеты переиспользуются;
+код меняется для доказанных пробелов. Внешние интеграции и billing вне текущего
+исполнения. Состояние по candidate и незакрытый FC-003/008 — в PRIMARY-SESSION,
+исторические PASS ниже не являются общей приёмкой новой версии.
+
 ## V1-A01/A02/A10 quality locally verified — 2026-09-24
 
 Scoped AI sources, explicit provider failure/no-data, queued UI recovery and
