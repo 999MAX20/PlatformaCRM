@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic, production-credential-free local quality gate for Платформа CRM."""
+"""Deterministic, production-credential-free local quality gate for PlatformaCRM."""
 
 from __future__ import annotations
 
@@ -130,7 +130,7 @@ SAFE_ENV = {
     "EMAIL_HOST_USER": "",
     "EMAIL_HOST_PASSWORD": "",
     "EMAIL_USE_TLS": "False",
-    "DEFAULT_FROM_EMAIL": "Платформа CRM Gate <gate@example.invalid>",
+    "DEFAULT_FROM_EMAIL": "PlatformaCRM Gate <gate@example.invalid>",
     "E2E_SKIP_LOCAL_SETUP": "false",
     "E2E_REUSE_EXISTING_SERVER": "false",
     "E2E_PASSWORD": "ZaniTest123!",
@@ -144,7 +144,7 @@ SAFE_ENV = {
     "E2E_OPERATOR_EMAIL": "business_operator@example.com",
     "E2E_DOCTOR_EMAIL": "business_doctor@example.com",
     "E2E_BUSINESS_SLUG": "zani-e2e-gate",
-    "E2E_BUSINESS_NAME": "Платформа CRM E2E Quality Gate",
+    "E2E_BUSINESS_NAME": "PlatformaCRM E2E Quality Gate",
     "ZANI_QUALITY_GATE": "1",
 }
 

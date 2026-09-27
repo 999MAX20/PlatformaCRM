@@ -89,7 +89,7 @@ export function BotDetailPage() {
     : [];
   const widgetApiBase = import.meta.env.VITE_API_URL || window.location.origin;
   const widgetSnippet = websiteChannel
-    ? `<script src="/widget/zani-widget.js" data-zani-token="${websiteChannel.public_token}" data-zani-api="${widgetApiBase}"></script>`
+    ? `<script src="/widget/platformacrm-widget.js" data-platforma-token="${websiteChannel.public_token}" data-platforma-api="${widgetApiBase}"></script>`
     : "";
 
   return (

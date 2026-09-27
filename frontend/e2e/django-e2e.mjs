@@ -10,7 +10,7 @@ const pythonPath = process.env.E2E_PYTHON || defaultPythonPath();
 const djangoPort = process.env.E2E_DJANGO_PORT || "8000";
 const password = process.env.E2E_PASSWORD || "ZaniTest123!";
 const businessSlug = process.env.E2E_BUSINESS_SLUG || "zani-e2e-demo";
-const businessName = process.env.E2E_BUSINESS_NAME || "Платформа CRM E2E Demo";
+const businessName = process.env.E2E_BUSINESS_NAME || "PlatformaCRM E2E Demo";
 const djangoEnv = {
   ...process.env,
   DATABASE_URL: process.env.DATABASE_URL || "sqlite:///db.sqlite3",

@@ -292,7 +292,7 @@ AUTH_PRIVILEGED_MFA_REQUIRED = env.bool(
     "AUTH_PRIVILEGED_MFA_REQUIRED",
     default=IS_PRODUCTION_LIKE_ENVIRONMENT,
 )
-AUTH_MFA_ISSUER = env("AUTH_MFA_ISSUER", default="Платформа CRM")
+AUTH_MFA_ISSUER = env("AUTH_MFA_ISSUER", default="PlatformaCRM")
 AUTH_MFA_CHALLENGE_SECONDS = env.int("AUTH_MFA_CHALLENGE_SECONDS", default=300)
 AUTH_MFA_STEP_UP_SECONDS = env.int("AUTH_MFA_STEP_UP_SECONDS", default=300)
 
@@ -504,7 +504,7 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Платформа CRM <no-reply@zani.local>")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="PlatformaCRM <no-reply@zani.local>")
 
 _argv = __import__("sys").argv
 if "test" in _argv or any("pytest" in arg for arg in _argv):

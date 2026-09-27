@@ -6,7 +6,7 @@ from apps.core.import_export import IMPORT_TEMPLATES
 
 
 class Command(BaseCommand):
-    help = "Write Платформа CRM pilot import sample CSV files for clients, sales, and catalog."
+    help = "Write PlatformaCRM pilot import sample CSV files for clients, sales, and catalog."
 
     def add_arguments(self, parser):
         parser.add_argument(

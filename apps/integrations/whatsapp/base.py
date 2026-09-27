@@ -57,6 +57,6 @@ def build_whatsapp_provider_decision(preferred_method, monthly_messages, has_met
         provider_key="provider_placeholder",
         label="Provider review",
         status="pending_request",
-        next_step="Платформа CRM support должен выбрать провайдера после проверки номера, страны и объёма.",
+        next_step="PlatformaCRM support должен выбрать провайдера после проверки номера, страны и объёма.",
         reason="Недостаточно данных для безопасного автоматического выбора провайдера.",
     )

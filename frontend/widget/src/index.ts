@@ -78,13 +78,13 @@ class PlatformaCRMWidgetController {
     bubble.className = "platforma-bubble";
     bubble.type = "button";
     bubble.innerHTML = "✦";
-    bubble.ariaLabel = "Open Платформа CRM chat";
+    bubble.ariaLabel = "Open PlatformaCRM chat";
 
     this.panel.className = "platforma-panel";
     this.panel.hidden = true;
     this.panel.innerHTML = `
       <div class="platforma-header">
-        <p class="platforma-title">Платформа CRM chat</p>
+        <p class="platforma-title">PlatformaCRM chat</p>
         <p class="platforma-subtitle">Напишите нам, и менеджер увидит сообщение в CRM.</p>
       </div>
     `;
@@ -164,7 +164,7 @@ class PlatformaCRMWidgetController {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    if (!response.ok) throw new Error(`Платформа CRM widget request failed: ${response.status}`);
+    if (!response.ok) throw new Error(`PlatformaCRM widget request failed: ${response.status}`);
     return response.json() as Promise<T>;
   }
 

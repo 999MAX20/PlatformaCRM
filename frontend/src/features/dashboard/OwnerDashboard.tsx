@@ -87,7 +87,7 @@ type DashboardMetricProps = {
 };
 
 function initials(value?: string | null) {
-  return (value || "Платформа CRM")
+  return (value || "PlatformaCRM")
     .trim()
     .split(/\s+/)
     .slice(0, 2)

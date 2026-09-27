@@ -6,7 +6,7 @@ from apps.core.paid_beta_gate import run_paid_beta_gate_check
 
 
 class Command(BaseCommand):
-    help = "Checks whether Платформа CRM is allowed to enter real paid beta."
+    help = "Checks whether PlatformaCRM is allowed to enter real paid beta."
 
     def add_arguments(self, parser):
         parser.add_argument("--format", choices=["text", "json"], default="text")

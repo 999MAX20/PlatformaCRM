@@ -45,7 +45,7 @@ export function AuthExperienceShell({ children, mode }: AuthExperienceShellProps
           {t("auth.backToSite")}
         </Link>
         <Link className="platforma-auth-brand" to="/">
-          <span>Платформа CRM</span>
+          <span>PlatformaCRM</span>
           <i />
           <em>{t("auth.brandTagline")}</em>
         </Link>
@@ -118,7 +118,7 @@ function DashboardPreview() {
   return (
     <div className="platforma-auth-dashboard" aria-hidden="true">
       <div className="platforma-auth-dashboard-sidebar">
-        <b>Платформа CRM</b>
+        <b>PlatformaCRM</b>
         {[t("nav.dashboard"), t("nav.clients"), t("nav.deals"), t("nav.bots"), t("nav.analytics")].map((item) => (
           <span key={item}>{item}</span>
         ))}

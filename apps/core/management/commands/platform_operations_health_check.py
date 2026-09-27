@@ -24,7 +24,7 @@ class Command(BaseCommand):
             raise CommandError(f"Platform operations health is critical: {report['summary']['critical']} issue(s).")
 
     def _write_text(self, report):
-        self.stdout.write("Платформа CRM platform operations health")
+        self.stdout.write("PlatformaCRM platform operations health")
         self.stdout.write(f"Environment: {report['environment']}")
         self.stdout.write(f"Release: {report['release']}")
         self.stdout.write(f"Status: {report['status']}")

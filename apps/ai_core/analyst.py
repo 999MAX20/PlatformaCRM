@@ -45,7 +45,7 @@ def build_event_analyst_brief(*, business, user=None, limit=24):
     language = getattr(getattr(user, "preferences", None), "language", "ru")
     response_language = {"ru": "Russian", "kk": "Kazakh", "en": "English"}.get(language, "Russian")
     user_input = (
-        f"Ты AI Analyst для CRM Платформа CRM. Проанализируй BusinessEvent текущего бизнеса. Язык всех заголовков, описаний и выводов: {response_language}. "
+        f"Ты AI Analyst для CRM PlatformaCRM. Проанализируй BusinessEvent текущего бизнеса. Язык всех заголовков, описаний и выводов: {response_language}. "
         "Верни только JSON без markdown. Формат: "
         '{"insights":[{"id":"short_id","severity":"critical|warning|info|good","title":"...","summary":"...",'
         '"source_ids":["BE-1"]}],"actions":[{"id":"short_id","priority":"high|medium|low","label":"...",'

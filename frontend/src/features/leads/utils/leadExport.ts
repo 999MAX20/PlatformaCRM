@@ -74,9 +74,9 @@ export async function exportLeadRows({
         ...data.map((row) => headers.map((header) => ({ value: String(row[header] ?? "") }))),
       ],
       { sheet: t("nav.leads").slice(0, 31), columns: headers.map(() => ({ width: 24 })) },
-    ).toFile("zani-leads.xlsx");
+    ).toFile("PlatformaCRM-leads.xlsx");
     return;
   }
   const lines = data.map((row) => headers.map((header) => toCsvValue(row[header])).join(","));
-  downloadText("zani-leads.csv", [headers.map(toCsvValue).join(","), ...lines].join("\n"), "text/csv;charset=utf-8");
+  downloadText("PlatformaCRM-leads.csv", [headers.map(toCsvValue).join(","), ...lines].join("\n"), "text/csv;charset=utf-8");
 }

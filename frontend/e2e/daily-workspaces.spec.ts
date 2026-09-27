@@ -355,7 +355,7 @@ test("F-201 recoverable queue, calendar and provider failure states expose next 
       const failedConnector = {
         id: 990001,
         business: 1,
-        business_name: "Платформа CRM E2E Demo",
+        business_name: "PlatformaCRM E2E Demo",
         provider: "telegram",
         capability: "communications",
         name: "Telegram E2E failure",

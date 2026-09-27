@@ -2,6 +2,31 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Exact UI brand PlatformaCRM — VERIFIED; publication in receipt, 2026-09-28
+
+- Source: owner correction: exact public spelling PlatformaCRM, Latin/no spaces;
+  exclude Zani from user-facing UI. Reopens branding only for this approved delta.
+- Owner/root: same registered primary, generation 2 idle; one writer verified.
+  Desktop/PlatformaCRM, codex/ui-testing-toolkit, clean base 84004595.
+- Scope: existing UI/i18n/widget, public copy/email/AI/settings and matching tests;
+  current identity docs. Reuse existing layers; no permission, tenant, BusinessEvent,
+  billing, migration, credential or provider behavior changes.
+- Acceptance: PlatformaCRM in public copy; no legacy brand in displayed embed or
+  download names; keep invisible stored/protocol aliases for compatibility.
+- Checks: source inventory, frontend build/bundle, reachable login/widget, focused
+  copy tests and isolated Django checks; reviewed normal push to main and CI readback.
+- Prior scope published as 84004595; earlier broad baseline failures remain outside
+  this copy correction. Receipt: output/rebrand-latin-20260928/result.json.
+- Result: exact Latin brand in current copy and RU/KK/EN, email/MFA/AI defaults;
+  BotDetail embed uses the new widget URL/attributes, lead exports use PlatformaCRM.
+- Verification: npm build and check:bundle PASS, 16 login/gate tests PASS;
+  isolated Django check/migration drift and 13 notification-email/onboarding tests
+  PASS. Browser login title/copy and opened widget header PASS, no message sent.
+  Diff audit proves mechanical text substitution except reviewed embed/export and
+  checkpoint edits. Full product gate not rerun for copy-only change; no deployment.
+- Remaining old frontend identifiers are storage/protocol aliases and i18n keys,
+  not product labels. User-provided/persisted content is not rewritten by this task.
+
 ## Rebrand to Платформа CRM — VERIFIED; publication tracked in receipt, 2026-09-28
 
 - Source: direct owner request to replace old branding in code/GitHub and rename

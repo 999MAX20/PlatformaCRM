@@ -22,7 +22,7 @@ class Command(BaseCommand):
             raise CommandError(f"Backup readiness has {report['summary']['paid_beta_blockers']} paid-beta blocker(s).")
 
     def _write_text(self, report):
-        self.stdout.write("Платформа CRM backup/restore readiness check")
+        self.stdout.write("PlatformaCRM backup/restore readiness check")
         self.stdout.write(f"Environment: {report['environment']}")
         self.stdout.write(
             f"Summary: {report['summary']['pass']} passed, {report['summary']['fail']} failed, "

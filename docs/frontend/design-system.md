@@ -1,10 +1,10 @@
-# Платформа CRM Design System Notes
+# PlatformaCRM Design System Notes
 
 Last updated: 2026-07-17
 
 ## Product UI Principle
 
-Платформа CRM is an AI-first CRM and business control layer for SMB. Authenticated CRM pages must feel premium, calm, fast, and operational. The interface should help the user complete real work: qualify a lead, process an inbox conversation, book an appointment, move a deal, assign a task, inspect integration health, or confirm an AI recommendation.
+PlatformaCRM is an AI-first CRM and business control layer for SMB. Authenticated CRM pages must feel premium, calm, fast, and operational. The interface should help the user complete real work: qualify a lead, process an inbox conversation, book an appointment, move a deal, assign a task, inspect integration health, or confirm an AI recommendation.
 
 The desired visual direction is:
 
@@ -36,7 +36,7 @@ For the agreed redesign brief and implementation guardrails, see `docs/WARM_PREM
 
 - Premium, warm, relaxed SaaS feeling.
 - No blue-tinted page background in the CRM workspace.
-- Soft peach stays as the Платформа CRM brand action color, with a dark brand-content token for readable emphasis and focus.
+- Soft peach stays as the PlatformaCRM brand action color, with a dark brand-content token for readable emphasis and focus.
 - Brand must not become every semantic color in the product.
 - AI must stay visually distinct from ordinary CRM actions.
 - Status colors must communicate state, not decoration.
@@ -138,7 +138,7 @@ Status colors are semantic. Do not use them as generic decoration.
 
 ### Semantic Color Roles
 
-Платформа CRM follows the semantic role model from [Atlassian Color Foundation](https://atlassian.design/foundations/color): role determines meaning, emphasis determines visual weight, and interaction state determines hover, pressed, focus and disabled treatment.
+PlatformaCRM follows the semantic role model from [Atlassian Color Foundation](https://atlassian.design/foundations/color): role determines meaning, emphasis determines visual weight, and interaction state determines hover, pressed, focus and disabled treatment.
 
 ```txt
 Neutral:       default text, secondary actions, navigation and table controls
@@ -150,7 +150,7 @@ Danger:        destructive actions and serious failures
 Discovery:     onboarding and genuinely new product capability
 Inverse:       readable content placed on bold semantic surfaces
 Input:         form borders, focus, validation and disabled states
-AI:            Платформа CRM AI recommendations, drafts and assistant surfaces
+AI:            PlatformaCRM AI recommendations, drafts and assistant surfaces
 ```
 
 Brand and semantic status colors must not be substituted for one another. In particular, `in_progress`, `queued` and `syncing` use information; warning is reserved for caution; AI remains violet.
@@ -468,7 +468,7 @@ Long button labels:
 Button states:
 
 ```txt
-primary default:     Brand Primary (#F5B37A) background, dark Платформа CRM Ink text for contrast
+primary default:     Brand Primary (#F5B37A) background, dark PlatformaCRM Ink text for contrast
 primary hover:       Primary Hover background, slightly stronger shadow
 primary active:      Primary Pressed background, optional scale 0.99
 primary focus:       4px Focus Ring, 2px offset when outside dense surfaces
@@ -481,7 +481,7 @@ secondary active:    Surface Muted, neutral border
 ghost default:       transparent, Text Secondary
 ghost hover:         Surface Muted, Text Primary
 
-warning default:     Warning Bold background, Платформа CRM Ink text
+warning default:     Warning Bold background, PlatformaCRM Ink text
 warning hover:       Warning Hover background
 warning active:      Warning Pressed background
 

@@ -6,7 +6,7 @@ from apps.core.production_audit import run_production_readiness_audit
 
 
 class Command(BaseCommand):
-    help = "Run a production-readiness audit for Платформа CRM infrastructure and settings."
+    help = "Run a production-readiness audit for PlatformaCRM infrastructure and settings."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -33,7 +33,7 @@ class Command(BaseCommand):
             raise CommandError(f"Production readiness audit has {audit['summary']['fail']} critical failure(s).")
 
     def _write_text_report(self, audit: dict):
-        self.stdout.write("Платформа CRM production readiness audit")
+        self.stdout.write("PlatformaCRM production readiness audit")
         self.stdout.write(f"Environment: {audit['environment']}")
         self.stdout.write(f"Release: {audit['release']}")
         self.stdout.write(

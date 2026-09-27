@@ -338,7 +338,7 @@ class BaseRefValidationTests(unittest.TestCase):
         self.git = codex_verify.find_executable("git")
         self.run_git("init", "-q")
         self.run_git("config", "user.email", "gate@example.invalid")
-        self.run_git("config", "user.name", "Платформа CRM Gate")
+        self.run_git("config", "user.name", "PlatformaCRM Gate")
         (self.root / "tracked.txt").write_text("base\n", encoding="utf-8")
         self.run_git("add", "tracked.txt")
         self.run_git("commit", "-q", "-m", "base")

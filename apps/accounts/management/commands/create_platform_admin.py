@@ -4,12 +4,12 @@ from apps.accounts.models import User
 
 
 class Command(BaseCommand):
-    help = "Create or update an idempotent Платформа CRM platform admin user."
+    help = "Create or update an idempotent PlatformaCRM platform admin user."
 
     def add_arguments(self, parser):
         parser.add_argument("--email", required=True)
         parser.add_argument("--password", required=True)
-        parser.add_argument("--full-name", default="Платформа CRM Platform Admin")
+        parser.add_argument("--full-name", default="PlatformaCRM Platform Admin")
 
     def handle(self, *args, **options):
         email = options["email"].strip().lower()

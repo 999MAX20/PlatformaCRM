@@ -60,7 +60,7 @@ class Command(BaseCommand):
             self.stdout.write(json.dumps(report, ensure_ascii=False, indent=2))
             return
 
-        self.stdout.write("Платформа CRM CRM pipeline runtime check")
+        self.stdout.write("PlatformaCRM CRM pipeline runtime check")
         self.stdout.write(f"AI mode used: {report['ai_mode_used']}")
         self.stdout.write(f"Live external ready: {report['provider_readiness']['ready_for_live_external']}")
         for step in report["steps"]:

@@ -45,7 +45,7 @@ export function PlatformLayout() {
               <ShieldCheck size={23} />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">Платформа CRM</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">PlatformaCRM</p>
               <h1 className="text-lg font-semibold tracking-tight">{t("platform.title")}</h1>
             </div>
           </div>

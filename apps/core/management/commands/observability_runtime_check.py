@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         sentry_configured = bool(settings.SENTRY_DSN)
-        self.stdout.write("Платформа CRM observability runtime check")
+        self.stdout.write("PlatformaCRM observability runtime check")
         self.stdout.write(f"Environment: {settings.ENVIRONMENT}")
         self.stdout.write(f"Release: {settings.RELEASE}")
         self.stdout.write(f"Sentry configured: {sentry_configured}")
@@ -47,7 +47,7 @@ class Command(BaseCommand):
             sentry_sdk.set_tag("zani.check", "observability_runtime_check")
             sentry_sdk.set_tag("zani.environment", settings.ENVIRONMENT)
             sentry_sdk.set_tag("zani.release", settings.RELEASE)
-            event_id = sentry_sdk.capture_message("Платформа CRM observability smoke", level="info")
+            event_id = sentry_sdk.capture_message("PlatformaCRM observability smoke", level="info")
             self.stdout.write(self.style.SUCCESS(f"Sentry smoke message captured: {event_id}"))
         else:
             self.stdout.write(self.style.SUCCESS("Observability configuration is present."))

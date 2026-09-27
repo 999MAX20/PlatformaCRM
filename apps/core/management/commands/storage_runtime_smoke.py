@@ -19,7 +19,7 @@ class Command(BaseCommand):
         business = self._get_business(options.get("business_id"))
         token = uuid4().hex[:12]
         filename = f"zani-storage-smoke-{token}.txt"
-        content = ContentFile(f"Платформа CRM storage smoke {token}\n".encode("utf-8"))
+        content = ContentFile(f"PlatformaCRM storage smoke {token}\n".encode("utf-8"))
 
         attachment = FileAttachment(
             business=business,
@@ -58,7 +58,7 @@ class Command(BaseCommand):
             defaults={
                 "username": "storage_smoke",
                 "role": User.Roles.BUSINESS_OWNER,
-                "full_name": "Платформа CRM Storage Smoke",
+                "full_name": "PlatformaCRM Storage Smoke",
                 "is_active": True,
             },
         )
@@ -70,7 +70,7 @@ class Command(BaseCommand):
             slug="zani-storage-smoke",
             defaults={
                 "owner": owner,
-                "name": "Платформа CRM Storage Smoke",
+                "name": "PlatformaCRM Storage Smoke",
                 "status": Business.Statuses.TRIAL,
                 "timezone": "UTC",
             },

@@ -482,7 +482,7 @@ class WebhookEndpointViewSet(TenantModelViewSet):
         log = deliver_webhook_event(
             endpoint,
             "system.test",
-            {"message": "Платформа CRM webhook test", "endpoint_id": endpoint.id},
+            {"message": "PlatformaCRM webhook test", "endpoint_id": endpoint.id},
             f"test-{endpoint.id}-{request.user.id}",
         )
         return Response(WebhookDeliveryLogSerializer(log).data)

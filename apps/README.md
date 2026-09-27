@@ -1,6 +1,6 @@
 # Backend Apps Map
 
-Текущие Django apps соответствуют public product core Платформа CRM.
+Текущие Django apps соответствуют public product core PlatformaCRM.
 
 ## Implemented
 

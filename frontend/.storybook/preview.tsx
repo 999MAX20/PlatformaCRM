@@ -19,7 +19,7 @@ const preview: Preview = {
   initialGlobals: { locale: "ru" },
   globalTypes: {
     locale: {
-      description: "Платформа CRM locale",
+      description: "PlatformaCRM locale",
       toolbar: { icon: "globe", items: ["ru", "kk", "en"], dynamicTitle: true },
     },
   },

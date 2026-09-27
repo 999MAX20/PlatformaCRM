@@ -126,7 +126,7 @@ class OnboardingTests(TestCase):
 
         self.assertEqual(response.status_code, 201)
         self.assertTrue(BotChannel.objects.filter(bot__business=self.business, channel=BotChannel.Channels.WEBSITE, status=BotChannel.Statuses.ACTIVE).exists())
-        self.assertTrue(Bot.objects.filter(business=self.business, name="Платформа CRM assistant", status=Bot.Statuses.DRAFT).exists())
+        self.assertTrue(Bot.objects.filter(business=self.business, name="PlatformaCRM assistant", status=Bot.Statuses.DRAFT).exists())
         connector = BusinessConnector.objects.get(business=self.business, provider=BusinessConnector.Providers.WEBSITE)
         self.assertEqual(connector.status, BusinessConnector.Statuses.CONNECTED)
         self.assertTrue(BusinessEvent.objects.filter(business=self.business, source=BusinessConnector.Providers.WEBSITE, event_type="channel_connected").exists())

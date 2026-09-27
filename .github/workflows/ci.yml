@@ -1,4 +1,4 @@
-name: Платформа CRM CI
+name: PlatformaCRM CI
 
 on:
   push:

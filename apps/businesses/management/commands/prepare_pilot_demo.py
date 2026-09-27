@@ -59,7 +59,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--landing-id", default="demo-pilot-landing-001")
-        parser.add_argument("--business-name", default="Платформа CRM Demo Beauty")
+        parser.add_argument("--business-name", default="PlatformaCRM Demo Beauty")
         parser.add_argument("--platform-email", default="platform@zani.local")
         parser.add_argument("--platform-password", default="Platform123!")
         parser.add_argument("--owner-email", default="demo-owner@zani.local")
@@ -110,7 +110,7 @@ class Command(BaseCommand):
         business = Business.objects.select_related("owner").get(landing_id=options["landing_id"])
         lead_form = LeadForm.objects.filter(business=business, is_active=True).order_by("-created_at").first()
 
-        self.stdout.write(self.style.SUCCESS("Платформа CRM pilot demo launch is ready."))
+        self.stdout.write(self.style.SUCCESS("PlatformaCRM pilot demo launch is ready."))
         self.stdout.write("=" * 72)
         self.stdout.write("URLS")
         self.stdout.write(f"Frontend: {options['frontend_url']}")
@@ -189,7 +189,7 @@ class Command(BaseCommand):
             defaults={
                 "username": username,
                 "role": User.Roles.PLATFORM_ADMIN,
-                "full_name": "Платформа CRM Platform Admin",
+                "full_name": "PlatformaCRM Platform Admin",
                 "is_staff": True,
                 "is_superuser": True,
                 "is_active": True,
@@ -197,7 +197,7 @@ class Command(BaseCommand):
         )
         user.username = user.username or username
         user.role = User.Roles.PLATFORM_ADMIN
-        user.full_name = user.full_name or "Платформа CRM Platform Admin"
+        user.full_name = user.full_name or "PlatformaCRM Platform Admin"
         user.is_staff = True
         user.is_superuser = True
         user.is_active = True

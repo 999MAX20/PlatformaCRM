@@ -1,10 +1,10 @@
-# Платформа CRM
+# PlatformaCRM
 
 Репозиторий: [999MAX20/PlatformaCRM](https://github.com/999MAX20/PlatformaCRM).
 Название и правила совместимости после переименования —
 [ребрендинг 28.09.2026](docs/operations/rebranding-2026-09-28.md).
 
-Платформа CRM — AI-first CRM / Business OS для малого и среднего бизнеса. Сейчас проект содержит Django + DRF backend, React + TypeScript frontend, multi-tenant Merchant CRM и foundation для будущего Platform Admin.
+PlatformaCRM — AI-first CRM / Business OS для малого и среднего бизнеса. Сейчас проект содержит Django + DRF backend, React + TypeScript frontend, multi-tenant Merchant CRM и foundation для будущего Platform Admin.
 
 Работа ведется по актуальным правилам и документации:
 
@@ -204,7 +204,7 @@ DATABASE_URL=sqlite:///db.sqlite3 .venv/bin/python manage.py check
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 1: Mobile-first business cockpit
+### PlatformaCRM 10 next tasks — Task 1: Mobile-first business cockpit
 
 Статус: **готово как первый visual-shell шаг**.
 
@@ -255,7 +255,7 @@ cd frontend && npm run build
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 2: Compact grouped navigation
+### PlatformaCRM 10 next tasks — Task 2: Compact grouped navigation
 
 Статус: **готово**.
 
@@ -285,7 +285,7 @@ cd frontend && npm run build
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 3: Design system foundation
+### PlatformaCRM 10 next tasks — Task 3: Design system foundation
 
 Статус: **готово как базовый слой**.
 
@@ -315,7 +315,7 @@ cd frontend && npm run build
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 4: RU / KK / EN language foundation
+### PlatformaCRM 10 next tasks — Task 4: RU / KK / EN language foundation
 
 Статус: **готово как базовый i18n слой**.
 
@@ -347,7 +347,7 @@ cd frontend && npm run build
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 5: Owner vs manager dashboard
+### PlatformaCRM 10 next tasks — Task 5: Owner vs manager dashboard
 
 Статус: **готово**.
 
@@ -371,7 +371,7 @@ cd frontend && npm run build
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 6: CRM flow polish
+### PlatformaCRM 10 next tasks — Task 6: CRM flow polish
 
 Статус: **готово как первый проход по сквозному сценарию**.
 
@@ -398,7 +398,7 @@ cd frontend && npm run build
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 7: AI Business Memory
+### PlatformaCRM 10 next tasks — Task 7: AI Business Memory
 
 Статус: **готово как управляемый memory foundation**.
 
@@ -432,7 +432,7 @@ cd frontend && npm run build
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 8: Integration onboarding v2
+### PlatformaCRM 10 next tasks — Task 8: Integration onboarding v2
 
 Статус: **готово**.
 
@@ -465,7 +465,7 @@ cd frontend && npm run build
 cd frontend && npm run build
 ```
 
-### Платформа CRM 10 next tasks — Task 9: Pilot launch quality gate
+### PlatformaCRM 10 next tasks — Task 9: Pilot launch quality gate
 
 Статус: **готово**.
 
@@ -646,7 +646,7 @@ cd frontend && npm run build
 cd frontend && npm run e2e -- --project=desktop-chromium
 ```
 
-### Pilot Tech Plan — Этап 1: Внешний лендинг → Платформа CRM
+### Pilot Tech Plan — Этап 1: Внешний лендинг → PlatformaCRM
 
 Статус: **готово**.
 
@@ -1848,13 +1848,13 @@ python manage.py test
 cd frontend && npm run build
 ```
 
-### Prompt 00 — Repo Cleanup and Платформа CRM Baseline
+### Prompt 00 — Repo Cleanup and PlatformaCRM Baseline
 
 Статус: **готово**.
 
 Добавлено:
 
-- Публичные упоминания старых названий заменены на `Платформа CRM` в README/frontend/package metadata.
+- Публичные упоминания старых названий заменены на `PlatformaCRM` в README/frontend/package metadata.
 - `.gitignore` расширен для безопасного GitHub-коммита:
   - `.env`;
   - `.venv/`;
@@ -4603,10 +4603,10 @@ ZaniTest123!
 Аккаунты:
 
 - `platform_admin@example.com` — platform admin, superuser/staff, доступ к Django Admin и `/platform`.
-- `business_owner@example.com` — владелец бизнеса `Платформа CRM Demo Business`, membership `owner`, видит все реализованные merchant-разделы и функции.
-- `business_operator@example.com` — оператор бизнеса `Платформа CRM Demo Business`, global role `business_operator`, membership `operator`, видит только ограниченный рабочий набор: clients, leads, conversations, tasks.
+- `business_owner@example.com` — владелец бизнеса `PlatformaCRM Demo Business`, membership `owner`, видит все реализованные merchant-разделы и функции.
+- `business_operator@example.com` — оператор бизнеса `PlatformaCRM Demo Business`, global role `business_operator`, membership `operator`, видит только ограниченный рабочий набор: clients, leads, conversations, tasks.
 
-В `Платформа CRM Demo Business` добавлены минимальные demo-данные для проверки UI:
+В `PlatformaCRM Demo Business` добавлены минимальные demo-данные для проверки UI:
 
 - клиент;
 - услуга;
@@ -4695,7 +4695,7 @@ See `docs/pilot/block14-pilot-demo-launch.md`.
 
 ## Local run without Docker
 
-Some Mac machines cannot run Docker Desktop because of CPU/virtualization compatibility. Платформа CRM can still be checked locally without Docker by using SQLite fallback for development checks.
+Some Mac machines cannot run Docker Desktop because of CPU/virtualization compatibility. PlatformaCRM can still be checked locally without Docker by using SQLite fallback for development checks.
 
 ### One-command local backend setup
 
@@ -5601,7 +5601,7 @@ Frontend production build: OK
 Playwright E2E: 15 passed, 7 intentional desktop/mobile skips
 ```
 
-### Платформа CRM 10 next tasks — Task 10: Pre-Deploy Hardening
+### PlatformaCRM 10 next tasks — Task 10: Pre-Deploy Hardening
 
 Статус: **готово как staging gate**.
 
@@ -6224,7 +6224,7 @@ AI Assistant chat layout pass: the AI Assistant page now uses a ChatGPT-style wo
 Backend check after AI Assistant chat layout pass: OK
 Frontend production build after AI Assistant chat layout pass: OK
 
-AI Navigator concept pass: the former AI Assistant page was repositioned into an AI Navigator. The section now prioritizes fact-based business signals, daily summaries, overdue work, stale leads, handoff conversations and stuck deals instead of a free-form always-on chat. The UI explicitly states that Платформа CRM AI uses only the current merchant workspace data and connected integrations. Backend AI prompts now include the same data-boundary guardrail and pass runtime workspace facts into the prompt so OpenRouter responses are constrained to provided business context.
+AI Navigator concept pass: the former AI Assistant page was repositioned into an AI Navigator. The section now prioritizes fact-based business signals, daily summaries, overdue work, stale leads, handoff conversations and stuck deals instead of a free-form always-on chat. The UI explicitly states that PlatformaCRM AI uses only the current merchant workspace data and connected integrations. Backend AI prompts now include the same data-boundary guardrail and pass runtime workspace facts into the prompt so OpenRouter responses are constrained to provided business context.
 
 Backend check after AI Navigator concept pass: OK
 Targeted AI tests after AI Navigator concept pass: 15 OK
@@ -6238,7 +6238,7 @@ Owner dashboard production redesign pass: the business-owner dashboard now uses 
 
 Frontend production build after owner dashboard production redesign pass: OK
 
-Dashboard role split and AI navigator pass: `DashboardPage` is now a data-container/role-router, while owner and manager dashboards live in separate components. Legacy owner dashboard blocks were removed from the render path, the owner first screen now includes a real period selector, revenue card, four KPI cards, urgent actions and structured connections. The AI navigator was changed from a large static/floating dashboard block into a compact expandable widget so it does not cover useful page content. Connections now separate channels, Платформа CRM chatbots and data sources.
+Dashboard role split and AI navigator pass: `DashboardPage` is now a data-container/role-router, while owner and manager dashboards live in separate components. Legacy owner dashboard blocks were removed from the render path, the owner first screen now includes a real period selector, revenue card, four KPI cards, urgent actions and structured connections. The AI navigator was changed from a large static/floating dashboard block into a compact expandable widget so it does not cover useful page content. Connections now separate channels, PlatformaCRM chatbots and data sources.
 
 Frontend production build after dashboard role split and AI navigator pass: OK
 

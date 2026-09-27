@@ -1,8 +1,8 @@
-# Платформа CRM Project Handoff
+# PlatformaCRM Project Handoff
 
 ## Ребрендинг — 2026-09-28
 
-Владелец утвердил название Платформа CRM и техническое PlatformaCRM для папки/
+Владелец утвердил название PlatformaCRM и техническое PlatformaCRM для папки/
 репозитория. [Граница совместимости и переноса](../docs/operations/rebranding-2026-09-28.md).
 GitHub переименован, origin обновлён. Каноническая папка теперь
 `C:\Users\user\Desktop\PlatformaCRM`; `Desktop\Zani` — junction к ней для

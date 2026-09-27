@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Execution rules for Codex/AI agents in Платформа CRM (PlatformaCRM).
+Execution rules for Codex/AI agents in PlatformaCRM (PlatformaCRM).
 These rules govern work; live status and test counts belong in task evidence.
 
 ## 1. Start and restore context
@@ -73,7 +73,7 @@ Working-DB migrations and removal of old trees need their own agreed scope/check
 
 ## 3. Product and engineering invariants
 
-Платформа CRM is an AI-first CRM/business control layer for SMB. The first paid release
+PlatformaCRM is an AI-first CRM/business control layer for SMB. The first paid release
 serves dental administrators under [V1 rules](docs/product/V1_PRODUCT_RULES.md).
 Keep daily work simple, fast, role-aware and action-oriented. Do not introduce
 clinical records, a new permission framework or vertical-mode rewrite implicitly.
@@ -209,7 +209,7 @@ No background autosave is promised; abrupt closure may leave unsaved progress.
 
 An explicit user command «Передай работу новому чату» invokes the managed handoff
 in [SESSION_ROLLOVER](docs/testing/SESSION_ROLLOVER.md). It authorizes one successor
-named Платформа CRM in the same saved project/local canonical folder, its prepared
+named PlatformaCRM in the same saved project/local canonical folder, its prepared
 read-only context prompt, verified ownership transfer and archival of this source.
 Follow the protocol without asking again for already-authorized steps. A quotation,
 discussion/setup of this command, compaction, window closure or archive-button click
@@ -242,7 +242,7 @@ old "continue" messages do not authorize multiple new phases.
 Every visible block must serve navigation, a metric, real business data, an action,
 form, list/entity card, chart, integration status, meaningful empty-state action or
 system alert. Do not invent decorative/marketing/demo/motivational/explanatory blocks
-unless explicitly requested. Dashboard pages show business state, not explain Платформа CRM.
+unless explicitly requested. Dashboard pages show business state, not explain PlatformaCRM.
 
 Copy comes from the prompt, existing page structure, approved content map,
 i18n/constants or real API/model fields; do not invent static Russian page text.

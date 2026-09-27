@@ -27,11 +27,11 @@ from apps.tasks.models import Task
 
 
 class Command(BaseCommand):
-    help = "Seed a complete Платформа CRM pilot demo merchant for sales/staging smoke checks."
+    help = "Seed a complete PlatformaCRM pilot demo merchant for sales/staging smoke checks."
 
     def add_arguments(self, parser):
         parser.add_argument("--landing-id", default="demo-pilot-landing-001")
-        parser.add_argument("--business-name", default="Платформа CRM Demo Beauty")
+        parser.add_argument("--business-name", default="PlatformaCRM Demo Beauty")
         parser.add_argument("--owner-email", default="demo-owner@zani.local")
         parser.add_argument("--owner-password", default="DemoOwner123!")
         parser.add_argument("--manager-email", default="demo-manager@zani.local")
@@ -87,7 +87,7 @@ class Command(BaseCommand):
         self._ensure_operator_work(business, owner, operator)
         self._ensure_quick_replies(business)
 
-        self.stdout.write(self.style.SUCCESS("Платформа CRM pilot demo seeded."))
+        self.stdout.write(self.style.SUCCESS("PlatformaCRM pilot demo seeded."))
         self.stdout.write(f"Business: {business.id} / {business.name} / {business.slug}")
         self.stdout.write(f"Owner login: {options['owner_email']} / {self._display_password(options['owner_password'], options['show_passwords'])}")
         self.stdout.write(f"Manager login: {options['manager_email']} / {self._display_password(options['manager_password'], options['show_passwords'])}")
@@ -258,7 +258,7 @@ class Command(BaseCommand):
     def _ensure_inbox(self, business: Business, manager):
         bot, _ = Bot.objects.update_or_create(
             business=business,
-            name="Платформа CRM Demo Assistant",
+            name="PlatformaCRM Demo Assistant",
             defaults={"status": Bot.Statuses.ACTIVE, "default_language": "ru", "settings_json": {"demo": True}},
         )
         BotChannel.objects.update_or_create(

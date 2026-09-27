@@ -122,7 +122,7 @@ export function ProviderCard({
       if (provider.provider === "whatsapp") {
         return businessConnectorsApi.requestWhatsApp({
           business: businessId,
-          company_name: "Платформа CRM merchant",
+          company_name: "PlatformaCRM merchant",
           phone_number: "+77000000000",
           contact_person: "",
           preferred_method: "not_sure",
