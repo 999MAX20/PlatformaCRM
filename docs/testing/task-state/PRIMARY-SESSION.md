@@ -2,7 +2,7 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Rebrand to Платформа CRM — IN PROGRESS, 2026-09-28
+## Rebrand to Платформа CRM — VERIFIED; publication tracked in receipt, 2026-09-28
 
 - Source: direct owner request to replace old branding in code/GitHub and rename
   the canonical folder; owner confirmed PlatformaCRM for repository/folder and
@@ -46,11 +46,21 @@
   failures do not establish a branding regression and remain outside this phase.
 - Static audit: no new broken Markdown links, unchanged credential/signature code,
   no migration/working-DB delta; full replacement diff/new compatibility code reviewed.
-- Folder: two guarded Move-Item attempts blocked by open-process lock. No directory
-  copied, removed or overwritten; awaiting owner choice of temporary same-source
-  PlatformaCRM junction or deferred physical rename. Task-owned preview stopped.
+- Folder: diagnosed task tool processes holding the old working directory; task-owned
+  browser/REPL processes stopped, no merchant server or other project stopped.
+  Move-Item partially moved root files/Git before an access error; remaining folders
+  moved with collision checks, docs required -Force. All task manifest hashes and
+  Git HEAD matched after relocation. Actual root is Desktop\PlatformaCRM;
+  old Desktop\Zani is a junction for the saved project's existing path.
+  Auto-review rejected empty old-root/.git removal (no detailed reason); safer
+  no-delete path retained Zani-empty-rebrand-20260928 with only an empty .git.
+  Registry/template/protocol/hooks paths updated; hook trust/activation unchanged.
 - Delivery/readback/CI will be recorded in output/rebrand-20260928/result.json.
-- Next: resolve folder path disposition, scoped publication; no next product phase.
+- Final path checks: 29 continuity-hook tests pass from the physical PlatformaCRM
+  root; static codex_verify gate passes against cea06d12 (migration drift, Django
+  system check and working/index/committed diff hygiene); 275-file audit reports
+  no introduced broken links or credential/signature changes.
+- Next: normal publication and remote SHA readback; stop, no next product phase.
 
 ## Billing discussion deferred — DOCS VERIFIED; publication tracked in receipt, 2026-09-25
 

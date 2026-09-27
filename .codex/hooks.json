@@ -8,7 +8,7 @@
           {
             "type": "command",
             "command": "node \"$(git rev-parse --show-toplevel)/.codex/continuity-hook.cjs\"",
-            "commandWindows": "node \"C:\\Users\\user\\Desktop\\Zani\\.codex\\continuity-hook.cjs\"",
+            "commandWindows": "node \"C:\\Users\\user\\Desktop\\PlatformaCRM\\.codex\\continuity-hook.cjs\"",
             "timeout": 5,
             "additionalContextLimit": 5000,
             "statusMessage": "Restore project state and continue the current task"
@@ -22,7 +22,7 @@
           {
             "type": "command",
             "command": "node \"$(git rev-parse --show-toplevel)/.codex/continuity-hook.cjs\"",
-            "commandWindows": "node \"C:\\Users\\user\\Desktop\\Zani\\.codex\\continuity-hook.cjs\"",
+            "commandWindows": "node \"C:\\Users\\user\\Desktop\\PlatformaCRM\\.codex\\continuity-hook.cjs\"",
             "timeout": 5,
             "additionalContextLimit": 5000,
             "statusMessage": "Restore project state and continue the current task"

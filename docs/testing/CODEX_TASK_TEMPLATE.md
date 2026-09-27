@@ -35,7 +35,7 @@ Non-goals / do not change:
 Owner and overlap check:
 ...
 
-Canonical root (must equal C:\Users\user\Desktop\Zani), branch, starting HEAD/base and affected-path dirty snapshot:
+Canonical root (must equal C:\Users\user\Desktop\PlatformaCRM), branch, starting HEAD/base and affected-path dirty snapshot:
 ...
 
 Acceptance criteria and one phase completion condition:
@@ -402,7 +402,7 @@ Hooks требуют доверия к проекту и отдельного re
 пока фактический запуск не подтверждён, статус автоматизации — «не проверено».
 Уже открытые задачи и отдельные worktrees не считать автоматически обновлёнными.
 В другом worktree код не менять: по решению владельца 2026-09-21 продолжать
-разработку только в `C:\Users\user\Desktop\Zani` после сверки текущего владельца.
+разработку только в `C:\Users\user\Desktop\PlatformaCRM` после сверки текущего владельца.
 Не переносить hooks в старые деревья и не менять их trust автоматически.
 
 Источник механизма: https://learn.chatgpt.com/docs/hooks

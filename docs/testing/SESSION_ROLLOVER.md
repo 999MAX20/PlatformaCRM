@@ -1,7 +1,7 @@
 # Продолжение задачи и передача после полного завершения
 
 Решение владельца: 2026-09-21. Проект Platforma.CRM.
-Canonical checkout: `C:\Users\user\Desktop\Zani`.
+Canonical checkout: `C:\Users\user\Desktop\PlatformaCRM`.
 Saved project ID: `local-3368c3df041be97f9549005fc6749ad2`.
 
 ## Команда владельца — 2026-09-25

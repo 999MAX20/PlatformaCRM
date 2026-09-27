@@ -16,8 +16,11 @@ These rules govern work; live status and test counts belong in task evidence.
 4. Read the relevant contracts below and compare existing code/tests/closure evidence
    before creating models, endpoints, services or components. An old plan is not a new task.
 
-Only `C:\Users\user\Desktop\Zani` is a writable source checkout (owner decision
-2026-09-21). Do not create/use another worktree, clone or source copy for edits.
+Only `C:\Users\user\Desktop\PlatformaCRM` is a writable source checkout (owner decision
+2026-09-21; canonical folder renamed with explicit owner approval 2026-09-28).
+The old `Desktop\Zani` junction resolves to this same checkout for an already-open
+Codex project; it is not another source copy. Use the new canonical path for new work.
+Do not create/use another worktree, clone or source copy for edits.
 Alternate trees are read-only recovery sources until separately accepted/retired.
 One repository-wide writer includes code, migrations, contracts and shared docs.
 Parallel audits may only read an identified snapshot. Keep the current branch;
