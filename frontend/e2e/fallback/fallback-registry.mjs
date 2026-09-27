@@ -54,6 +54,7 @@ export const apiModulePolicies = {
   leads: merchant("leads:view", "lead_list_or_workspace"),
   notifications: merchant("authenticated_user", "notification_center"),
   outreach: merchant("notifications:view", "campaign_or_recipient_details"),
+  payments: merchant("payments:view/create/manage by operation + clients:view + linked_entity_scope", "manual_payment_ledger"),
   pilot: merchant("owner_or_administrator", "pilot_readiness"),
   platform: merchant("platform_admin", "platform_operation_details"),
   pricing: merchant("integrations:view", "pricing_operation_details"),
@@ -69,6 +70,12 @@ export const apiModulePolicies = {
 };
 
 export const idempotentMutationRules = [
+  {
+    method: "POST",
+    endpointPattern: "^/api/client-payments/$",
+    guarantee: "business_submission_id_and_request_hash",
+    evidence: "apps.payments.services.record_payment locks business and validates submission_id/request_hash",
+  },
   {
     method: "POST",
     endpointPattern: "^/api/tasks/$",

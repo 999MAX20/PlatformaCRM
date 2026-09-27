@@ -10,6 +10,13 @@ FB-009 manual screen-reader и UX-4 не закрыты. FC-004/006 уже за�
 backlog. Два известных fallback inventory/registry FAIL требуют актуального
 воспроизведения; не менять реестр только ради зелёного теста.
 
+Последующая проверка 28.09: оба inventory FAIL воспроизведены и устранены —
+scanner не распознавал const path в payments.ts, отсутствовала policy ручного
+журнала. Добавлено статическое разрешение literal const без выполнения кода,
+permission/idempotency metadata сверено с payment selectors/services; автоматические
+повторы mutations запрещены. Генерируемый реестр обновлён, Node gate PASS.
+Это структурное покрытие, не новая функциональная/финансовая/live приёмка.
+
 - Status: **ACTIVE / IN EXECUTION**
 - Created: 2026-08-18
 - Scope: merchant-visible errors, recovery actions, loading/empty/offline states, backend error contracts and technical-detail isolation

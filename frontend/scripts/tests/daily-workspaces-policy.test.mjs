@@ -68,7 +68,7 @@ test("owner dashboard fetches and renders capability-scoped daily modules", asyn
     source("features/dashboard/OwnerDashboard.tsx"),
   ]);
 
-  assert.match(page, /clients:\s*dailyAccess\.clients/);
+  assert.match(page, /clients:\s*!isOwnerView && dailyAccess\.clients/);
   assert.match(page, /leads:\s*dailyAccess\.leads/);
   assert.match(page, /appointments:\s*dailyAccess\.appointments/);
   assert.match(page, /tasks:\s*dailyAccess\.tasks/);
@@ -109,5 +109,7 @@ test("owner AI brief does not substitute unsourced local recommendations", async
   assert.doesNotMatch(briefBuilder, /if \(overdueTasks > 0\)/);
   assert.doesNotMatch(briefBuilder, /if \(newLeadsCount > 0\)/);
   assert.match(briefBuilder, /ownerBrief\?\.recommendations/);
-  assert.match(briefBuilder, /sourceIds:\s*recommendation\.source_ids/);
+  assert.match(briefBuilder, /const sourceLabels = recommendation\.source_ids/);
+  assert.match(briefBuilder, /sourcesById\.get\(sourceId\)\?\.label/);
+  assert.match(briefBuilder, /sourceLabels,/);
 });

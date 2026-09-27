@@ -62,6 +62,21 @@
   or suppress unresolved operations. Next bounded package: repair verification
   against current behavior, then extend semantic internal-cycle evidence.
 - Publication/readback and actual CI: output/pilot-20260928/result.json.
+- ZD-015 published as 071fe0d, remote main SHA matched. Continued the already
+  authorized verification-debt package: no runtime UI/payment/billing changes.
+  Daily policy assertions now enforce existing owner-query and source-label behavior;
+  inventory scanner resolves literal const arguments with TypeScript lexical symbols
+  (no source execution), preserving unresolved dynamic/mutable values. Added manual
+  payment module permission/idempotency metadata from actual selectors/services;
+  mutations still never auto-retry. Generated inventory refreshed.
+- Before: 4 known frontend failures. After: all 84 Node tests PASS with safe gate
+  env, including new resolver/shadow/mutable/dynamic and payment-policy assertions.
+  Inventory: 43 routes / 601 operations / 13 tasks / 83 statuses; structural evidence
+  only, no automatic FC-003 promotion. Runtime browser/backend evidence above reused
+  because application source unchanged by this second package. Full gate not claimed.
+- Next remaining result: semantic UI/API/history acceptance of client→lead→deal,
+  appointment lifecycle and task completion beyond the existing backend evidence;
+  then internal worker/recovery, AI questions and environment gates per pilot plan.
 
 ## Exact UI brand PlatformaCRM — VERIFIED; publication in receipt, 2026-09-28
 

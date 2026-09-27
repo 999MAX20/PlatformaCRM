@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import ts from "typescript";
 
 import { routeActionRegistry } from "../e2e/certification/route-action-registry.mjs";
 import {
@@ -86,6 +87,55 @@ function normalizeEndpoint(raw) {
   return endpoint.startsWith("/api/") ? endpoint : null;
 }
 
+// Resolve only literal const values, using lexical symbols so shadowed identifiers
+// cannot inherit a module-level endpoint. Never execute application source.
+export function constantApiArguments(source) {
+  const fileName = "inventory.ts";
+  const ast = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
+  const program = ts.createProgram([fileName], { noLib: true, noResolve: true }, {
+    getSourceFile: (name) => name === fileName ? ast : undefined,
+    getDefaultLibFileName: () => "", writeFile() {}, getCurrentDirectory: () => "",
+    getDirectories: () => [], fileExists: (name) => name === fileName,
+    readFile: (name) => name === fileName ? source : undefined,
+    getCanonicalFileName: (name) => name, useCaseSensitiveFileNames: () => true,
+    getNewLine: () => "\n",
+  });
+  const checker = program.getTypeChecker();
+  const values = new Map();
+  function resolve(node, seen = new Set()) {
+    if (!node || seen.has(node)) return null;
+    seen = new Set([...seen, node]);
+    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
+    if (ts.isIdentifier(node)) {
+      const declaration = checker.getSymbolAtLocation(node)?.valueDeclaration;
+      if (declaration && ts.isVariableDeclaration(declaration)
+          && ts.isVariableDeclarationList(declaration.parent)
+          && (declaration.parent.flags & ts.NodeFlags.Const)) {
+        return resolve(declaration.initializer, seen);
+      }
+    }
+    if (ts.isTemplateExpression(node)) {
+      let result = node.head.text;
+      for (const span of node.templateSpans) {
+        const value = resolve(span.expression, seen);
+        if (value === null) return null;
+        result += value + span.literal.text;
+      }
+      return result;
+    }
+    return null;
+  }
+  function visit(node) {
+    if (ts.isCallExpression(node)) {
+      const value = resolve(node.arguments[0]);
+      if (value !== null) values.set(node.expression.getStart(ast), value);
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(ast);
+  return values;
+}
+
 function extractApiOperations(rootDir) {
   const apiDir = path.join(rootDir, "src", "api");
   const files = walk(apiDir, (file) => file.endsWith(".ts"));
@@ -97,6 +147,7 @@ function extractApiOperations(rootDir) {
     const moduleName = path.basename(file, ".ts");
     if (["client", "crud"].includes(moduleName)) continue;
     const source = fs.readFileSync(file, "utf8");
+    const constantArguments = constantApiArguments(source);
     const relative = toPosix(path.relative(repoDir, file));
     const callPattern = /\b(apiClient|axios)\.(get|post|put|patch|delete)\b/g;
     for (const match of source.matchAll(callPattern)) {
@@ -119,7 +170,8 @@ function extractApiOperations(rootDir) {
           continue;
         }
       }
-      const endpoint = quoted ? normalizeEndpoint(quoted.value) : null;
+      const rawEndpoint = constantArguments.get(match.index) ?? quoted?.value;
+      const endpoint = rawEndpoint ? normalizeEndpoint(rawEndpoint) : null;
       if (!endpoint) {
         unresolved.push(`${relative}:${lineNumber(source, match.index)} ${match[0]}`);
         continue;
