@@ -132,7 +132,6 @@ test.describe("FC-002 shared search and filter contracts", () => {
     for (const route of [
       "/app/clients",
       "/app/conversations",
-      "/app/outreach",
       "/app/pricing",
     ]) {
       await page.goto(route);

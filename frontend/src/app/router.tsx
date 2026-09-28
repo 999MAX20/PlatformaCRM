@@ -166,11 +166,6 @@ const AutomationsPage = lazy(() =>
     default: module.AutomationsPage,
   })),
 );
-const OutreachPage = lazy(() =>
-  import("../features/outreach/OutreachPage").then((module) => ({
-    default: module.OutreachPage,
-  })),
-);
 const ResourcesPage = lazy(() =>
   import("../features/resources/ResourcesPage").then((module) => ({
     default: module.ResourcesPage,
@@ -564,15 +559,6 @@ const merchantChildren = [
     ),
   },
   {
-    path: "outreach",
-    resource: "notifications",
-    element: (
-      <PageLoader>
-        <OutreachPage />
-      </PageLoader>
-    ),
-  },
-  {
     path: "business",
     resource: "settings",
     element: <Navigate to="/app/business/services" replace />,
@@ -787,15 +773,6 @@ const legacyMerchantRoutes = [
     ),
   },
   {
-    path: "/outreach",
-    resource: "notifications",
-    element: (
-      <PageLoader>
-        <OutreachPage />
-      </PageLoader>
-    ),
-  },
-  {
     path: "/services",
     resource: "settings",
     element: <BusinessRouteRedirect section="services" />,
@@ -979,10 +956,6 @@ const router = createBrowserRouter([
       {
         path: "landings",
         element: <PlatformPlaceholderPage {...platformPages.landings} />,
-      },
-      {
-        path: "outreach",
-        element: <PlatformPlaceholderPage {...platformPages.outreach} />,
       },
       {
         path: "billing",

@@ -495,7 +495,6 @@ function getPageTitle(pathname: string, t: (key: string) => string) {
     ["/app/tasks", "nav.tasks"],
     ["/app/calendar", "nav.calendar"],
     ["/app/conversations", "nav.conversations"],
-    ["/app/outreach", "nav.outreach"],
     ["/app/business/services", "nav.services"],
     ["/app/business/resources", "nav.resources"],
     ["/app/business/working-hours", "nav.workingHours"],

@@ -9,7 +9,6 @@ import {
   Inbox,
   KanbanSquare,
   ListChecks,
-  Megaphone,
   MessageSquareText,
   PlugZap,
   Settings,
@@ -61,7 +60,6 @@ const desktopSections = [
         label: "nav.channels",
         icon: PlugZap,
         children: [
-          { to: "/app/outreach", label: "nav.outreach", icon: Megaphone, resource: "notifications" },
           { to: "/app/ai-agents", label: "nav.aiAgents", icon: Bot, resource: "ai_automation" },
           { to: "/app/integrations", label: "nav.integrations", icon: PlugZap, resource: "integrations" },
         ],
@@ -97,7 +95,6 @@ const mobileDrawerSections = [
         label: "nav.channels",
         icon: PlugZap,
         children: [
-          { to: "/app/outreach", label: "nav.outreach", icon: Megaphone, resource: "notifications" },
           { to: "/app/ai-agents", label: "nav.aiAgents", icon: Bot, resource: "ai_automation" },
           { to: "/app/integrations", label: "nav.integrations", icon: PlugZap, resource: "integrations" },
         ],

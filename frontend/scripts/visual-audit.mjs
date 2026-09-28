@@ -25,7 +25,6 @@ const routes = [
   ["calendar-day", "/app/calendar?date=2026-07-21&view=day"],
   ["calendar-month", "/app/calendar?date=2026-07-21&view=month"],
   ["conversations", "/app/conversations"],
-  ["outreach", "/app/outreach"],
   ["ai-agents", "/app/ai-agents"],
   ["integrations", "/app/integrations"],
   ["analytics", "/app/analytics"],

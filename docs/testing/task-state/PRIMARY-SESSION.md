@@ -2,6 +2,33 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Outreach excluded from pilot navigation / VERIFIED, 2026-09-29
+
+- Owner explicitly requested temporary removal of Outreach links and page routes
+  for pilot. Canonical root/primary/branch unchanged, clean base 0d8f490.
+- Remove merchant desktop/mobile link, /app/outreach, legacy /outreach and platform
+  placeholder /platform/outreach plus its link. Preserve feature source, API,
+  database and background behavior; this is page availability, not an API shutdown.
+- Update current route certification/audit lists to match approved pilot scope,
+  retain historical evidence. No permissions, migration, AI or notifications change.
+- Acceptance: no navigation entry, all three direct URLs reach existing not-found
+  handling, remaining Channels entries work. Build/route inventory checks and actual
+  desktop/mobile route verification; reviewed normal publication and CI readback.
+- Removed lazy page import, all three routes, merchant/mobile/platform links and
+  stale Header title mapping. Aligned route registry, global-search route loop and
+  visual/interaction audit lists with owner-approved exclusion. Feature/API/i18n
+  sources remain available to restore; notification categories remain valid.
+- `npm run check:certification` PASS (42 entries, 82 declarations/79 unique);
+  `npm run test:certification-registry` 1 PASS; `npm run build` PASS (i18n/TS/app/
+  widget), log output/pilot-no-outreach-build.log; bundle budget PASS.
+- CUA direct navigation to /app/outreach, /outreach, /platform/outreach each shows
+  existing NotFoundPage ('Страница пока не подключена'), not OutreachPage or its
+  platform placeholder. Desktop expanded and mobile390x700: zero Outreach links;
+  AI agents and integrations links remain. Escape/focus restore works; viewport reset.
+- Source scan apps/frontend confirms no remaining links to these three URLs in
+  active navigation/audit lists. No app data writes, migrations or backend changes;
+  backend/full suite not repeated. Reviewed task-owned diff and publication checks.
+
 ## Sidebar overflow indicator / VERIFIED, 2026-09-29
 
 - Owner requested a downward chevron when additional links are hidden below the

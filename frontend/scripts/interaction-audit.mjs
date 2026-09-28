@@ -130,13 +130,6 @@ const routes = [
     ],
   },
   {
-    name: "outreach",
-    url: "/app/outreach",
-    actions: [
-      { name: "open-primary-action", kind: "button", text: /импорт согласий|создать рассылку/i },
-    ],
-  },
-  {
     name: "ai-agents",
     url: "/app/ai-agents",
     actions: [
