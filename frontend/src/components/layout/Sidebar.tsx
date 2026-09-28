@@ -18,8 +18,9 @@ import {
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { NavLink, useLocation } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 
+import platformaCrmLogo from "../../assets/platforma-crm-logo.png";
 import { useAuth } from "../../features/auth/AuthProvider";
 import { inboxApi } from "../../api/inbox";
 import { useActiveBusiness } from "../../hooks/useBusiness";
@@ -190,11 +191,24 @@ export function Sidebar({
         !forceVisible && "hidden lg:block",
       )}
     >
-      <div className={cn("flex h-full min-h-0 flex-col", forceVisible && "min-h-dvh overflow-y-auto pb-8")}>
-        <div className={cn(
-          "min-h-0 flex-1 space-y-2 overflow-y-auto px-1.5 no-scrollbar",
-          mobileDrawer ? "pt-16" : "pt-3",
-        )}>
+      <div className="flex h-full min-h-0 flex-col pb-[max(4.5rem,env(safe-area-inset-bottom))]">
+        <div className={cn("flex h-[4.5rem] shrink-0 items-center justify-center", mobileDrawer && "pr-16")}>
+          <Link
+            to="/app/dashboard"
+            onClick={onNavigate}
+            aria-label="PlatformaCRM"
+            className={cn("platforma-focus-ring flex items-center justify-center overflow-hidden rounded-control", isExpanded ? "w-[184px] max-w-full" : "h-10 w-8")}
+          >
+            {isExpanded ? (
+              <img src={platformaCrmLogo} alt="" width={4096} height={1366} className="block h-auto w-full" />
+            ) : (
+              <svg viewBox="64 288 416 512" className="h-10 w-8" aria-hidden="true">
+                <image href={platformaCrmLogo} width="4096" height="1366" />
+              </svg>
+            )}
+          </Link>
+        </div>
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-1.5 no-scrollbar">
           {visibleGroups.map((group) => {
             return (
             <section key={group.id}>

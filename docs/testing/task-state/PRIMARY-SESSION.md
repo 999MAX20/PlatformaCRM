@@ -2,6 +2,46 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Sidebar logo and edge spacing / VERIFIED, 2026-09-29
+
+- Owner requested supplied CRM logo at sidebar top and matching bottom clearance
+  so browser link-status overlays cannot cover the last navigation item.
+- Bounded frontend presentation change; canonical root/primary/branch unchanged,
+  clean base bbbc691. Reuse Sidebar and its mobile drawer, original approved PNG,
+  current navigation/permissions. No API, data, migration, AI or role changes.
+- Acceptance: full logo expanded and recognizable mark collapsed, equal 72px
+  top/bottom zones, independently scrollable links on short viewports, reachable
+  Settings and mobile close button, no workspace compression or horizontal overflow.
+- Required verification: frontend build, existing sidebar/mobile navigation
+  coverage in isolated runtime and visual/geometry check; docs/diff/asset review,
+  normal publication and actual CI. No new policy or unrelated pilot work.
+- Supplied path resolved to Desktop/Platforma References/Platforma_CRM_Logo_4K.png.
+  Original 4096x1366 PNG copied byte-for-byte to frontend/src/assets (573454 bytes);
+  no generated/repainted logo. Expanded width 184px with preserved aspect ratio;
+  collapsed SVG viewport displays only its existing P mark. Accessible dashboard
+  link named PlatformaCRM; no added translatable copy or permission changes.
+- Header and reserved bottom space are 72px; nav is the only scrolling region.
+  Mobile logo leaves space for the existing close button. Brand slot stays visible.
+- `npm run build` PASS: i18n 5016 RU/KK/EN keys, TypeScript and app/widget builds;
+  `npm run check:bundle` PASS. Final build log: output/sidebar-build-final.log.
+- Existing isolated browser command `python output/pilot-seven-20260928/browser.py
+  --project=desktop-chromium --project=mobile-chromium --grep 'F-301 sidebar|mobile
+  navigation drawer'` selected F-301 twice: 2 PASS, 1.5 minutes. No new test harness
+  or app tests added for this presentation change. After this check, removed the
+  extra 8px nav padding for exact symmetry and verified final geometry via browser.
+- CUA visual/DOM acceptance on final layout: collapsed mark and expanded full logo;
+  desktop 1280x600 scrolled to Settings => top zone 72px / bottom clearance 72px;
+  mobile 390x700 => 72px / 72px, no horizontal overflow, close button works and
+  focus returns to trigger. Viewport override reset. Existing demo login only;
+  no working-DB seed, reset or migration. Backend/auth/API unchanged.
+- Old exec-bound dev session was no longer listening. Restored Vite as hidden
+  Start-Process PID 8908 from canonical frontend on 127.0.0.1:5173; logs output/
+  sidebar-vite*.log. No existing server was killed. Initial browser connection
+  refusal preceded this launch; subsequent authenticated UI checks passed.
+- Reviewed scope: Sidebar, original PNG, STATUS and this checkpoint. No backend
+  suite/full gate needed for unchanged backend; publication/CI reported at closeout.
+
+
 ## Local dev recovery / VERIFIED, 2026-09-29
 
 - Owner reported dev down and requested next steps/antivirus status. Bounded
