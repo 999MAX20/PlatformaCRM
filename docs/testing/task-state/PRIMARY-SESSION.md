@@ -2,7 +2,20 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## BE-GAP-011 — Internal file antivirus / LOCAL_VERIFIED, 2026-09-28
+## BE-GAP-011 — Internal file antivirus / PUBLISHED / CI_SUCCESS, 2026-09-28
+
+- Published candidate `b9e0232e8e48deb658b4b7ae116424af2cd3ede5`, normal
+  `git push origin HEAD:main`, remote SHA matched. Canonical root and branch
+  codex/ui-testing-toolkit unchanged. Exact committed-base static runner PASS
+  against 88e72f261a41a2b3ebff8496bee2ee2098d2d263 (committed-static.log).
+  [CI 36463598077](https://github.com/999MAX20/PlatformaCRM/actions/runs/36463598077)
+  completed SUCCESS: backend and frontend both succeeded, verified at
+  2026-09-28 18:25 UTC. This publication receipt changes documentation only and
+  reuses unchanged runtime evidence. No working DB or cloud changes.
+- Authorized local antivirus phase completed. BE-GAP-011 as a whole remains
+  PARTIAL for target-environment setup and separately agreed retention. Next
+  product step is an explicitly scoped environment rollout/acceptance, not more
+  antivirus code by default. No new unanswered policy questions were invented.
 
 - Final local closure: all required full-gate stages covered across the recorded
   runs, not a single uninterrupted PASS. Backend 1190 PASS + final security/admin
@@ -20,8 +33,8 @@
   from navigation-regression.log; original full-gate mobile assertion preserved.
 - Changed/new documentation links checked (10 local targets), new file contents
   reviewed; outputs/signatures/native tools/synthetic data remain ignored.
-  Before publication: review staged and outgoing range, fetch main, normal push,
-  verify remote SHA and inspect actual CI. No live deployment or working migration.
+  Staged/outgoing scope reviewed, main fetched, normal push and remote SHA/CI
+  verified as above. No live deployment or working migration.
 
 - Authorization: owner explicitly started file antivirus after the ClamAV/private
   quarantine proposal. One bounded implementation, not retention/billing or cloud deployment.
@@ -50,11 +63,11 @@
   actual linked entity. Imports scan identical bytes before preview/confirm;
   source URLs are not serialized. CRM pending/clean/blocked/error states and disabled
   actions use ru/en/kk. Dedicated compose worker/daemon and readiness command added.
-- Isolated checks so far (output/file-antivirus-20260928): `isolated.py test
+- Initial isolated checks (output/file-antivirus-20260928): `isolated.py test
   apps.core.tests_file_scanning apps.core.tests_file_attachments
   apps.core.tests_import_export apps.core.tests_import_samples apps.core.tests
   --noinput` => 87 PASS (backend-affected.log); subsequent audit/own-scope assertions
-  are included in the pending full gate. Helper is output/pilot-seven-20260928/isolated.py.
+  passed in final-security.log and published CI. Helper is output/pilot-seven-20260928/isolated.py.
   `python -m unittest scripts.tests.test_codex_verify` => 15 PASS (runner-tests.log).
 - `browser.py --project=desktop-chromium --project=mobile-chromium --grep
   'quarantined files|private attachment upload'` => 4 PASS (browser-serial.log).
@@ -74,7 +87,7 @@
   Native smoke used the same bounds plus AlertOLE2Macros=yes; no macro acceptance
   claim. Production configuration does not introduce that unapproved blanket ban.
   Owned daemon PID 3504 stopped after checks; no other processes stopped.
-- Full gate currently running: `.venv/Scripts/python.exe -X utf8
+- Initial full gate invocation: `.venv/Scripts/python.exe -X utf8
   scripts/codex_verify.py --mode full --base-ref
   5677848ad4e71ffea702fa3aaf77d66627b3a96a` (full-gate.log). This real ancestor is
   the prior implementation; task starting HEAD 88e72f2 only adds its docs receipt.
@@ -82,7 +95,7 @@
 - Docker runtime is unavailable locally. Compose image/config is prepared, not
   deployed or claimed container-tested. Working DB/migrations, S3/private bucket
   rollout, retention/deletion, business quotas and cloud operator remain separate.
-- Next: finish full gate, review exact diff/untracked contents, normal push and CI.
+- Final gate/publication result is recorded at this checkpoint's head.
 
 - Required mobile gate reproduced twice: untouched AI-agent draft (no saved
   profile) blocks leaving for integrations. Trace shows empty profile list and
@@ -102,7 +115,7 @@
 - Security slice PASS: hashed lock installability, pip audit no known findings,
   npm audit 0 vulnerabilities (security-gate.log). Frontend deterministic install,
   build/i18n and bundle budgets PASS in resumed-gate.log before the small guard
-  fix; final frontend rebuild required after the new browser run.
+  fix; final frontend rebuild subsequently passed (frontend-final.log).
 
 - Full run backend: 1190 PASS / 935.844 s; migration drift/system checks PASS.
   Frontend deterministic install hit Windows EPERM on the loaded rolldown native
@@ -115,7 +128,8 @@
   runner stages (plus repeats static/migration/system checks) in a new disposable
   runtime. Only already-passed Django tests are reused, with final-security 22 PASS
   for the final admin delta. No assertion/command weakened; install/build/browser/
-  audits are still required. Results: resumed-gate.log (currently running).
+  audits remained required. Resumed install/build passed; mobile failed as
+  diagnosed above. Final mobile/frontend/security slices subsequently passed.
 
 - Final review delta: prevent Django Admin file widgets from minting direct S3
   URLs (FileAttachment and ImportJob). Added rendered admin-page regression with

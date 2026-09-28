@@ -888,9 +888,10 @@ Copy this section for every new confirmed precedent:
   only when bot/profile values differ from their saved editor snapshots.
 - Scope: AI-agent editor navigation/unload, all viewports; no AI execution,
   backend permission, profile persistence or activation policy changes.
-- Status: VERIFIED_BRANCH, verification/publication in current PRIMARY-SESSION.
+- Status: VERIFIED/PUBLISHED in b9e0232; code CI 36463598077 SUCCESS.
+  Detailed verification/publication in current PRIMARY-SESSION.
   Regression covers untouched draft exit, real edit cancel/discard and unchanged
-  server values; existing saved-preview/readiness and mobile smoke also required.
+  server values; existing saved-preview/readiness and mobile smoke also passed.
 - Audit rule: incomplete setup is not evidence of an unsaved user edit.
 
 ## Maintenance Contract
