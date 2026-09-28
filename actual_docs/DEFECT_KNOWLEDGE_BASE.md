@@ -631,7 +631,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-015 — Owner dashboard day used mixed timezones
 
-- Recorded: 2026-09-28. Type: FUNCTIONAL / analytics. Status: VERIFIED_LOCAL;
+- Recorded: 2026-09-28. Type: FUNCTIONAL / analytics. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
   publication and CI receipt: output/pilot-20260928/result.json.
 - Symptom: owner dashboard's appointments-today count includes a neighbouring
   business day or omits appointments close to local midnight.
@@ -652,7 +652,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-016 — Recovered automation worker retained stale write authority
 
-- Recorded: 2026-09-28. Type: RELIABILITY / automation. Status: VERIFIED_LOCAL;
+- Recorded: 2026-09-28. Type: RELIABILITY / automation. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
   current publication and full-gate receipt live in PRIMARY-SESSION.
 - A paused worker resumed after its claim was recovered and executed a completed
   action again (two tasks instead of one). Cancellation was overwritten as success.
@@ -671,7 +671,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-017 — Team access deactivation had no reachable merchant control
 
-- Recorded: 2026-09-28. Type: WORKFLOW / team access. Status: VERIFIED_LOCAL.
+- Recorded: 2026-09-28. Type: WORKFLOW / team access. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - Backend membership deactivation, old-token denial and retained assignments were
   implemented, but SettingsPage only displayed an activity badge. No frontend
   updateMember call changed is_active; the approved staff-exit flow was API-only.
@@ -688,7 +688,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-018 — Scheduled task reminders were stored but never dispatched
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - V1-F05/UI exposes reminder_at, but no runtime consumer existed. Two notification
   ticks produced zero notifications in the before-fix regression. Reuse the existing
   notification task/command, task recipient policy and delivery retry mechanism.
@@ -706,7 +706,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-019 — Invalid task assignee expanded notification recipients
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - The generic resolver fell back to every allowed assignee role when the preferred
   member was inactive. A regression observed manager + owner + unrelated specialist
   instead of the approved manager/admin/operator fallback.
@@ -719,7 +719,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-020 — Waiting automation runs had no reachable cancel action
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - A real lead-triggered WAIT run persisted, but row/detail controls omitted Cancel.
   Backend already permits cancellation of waiting/retry_scheduled. Frontend status
   type and canCancelRun now include both states; no backend permission expansion.
@@ -730,7 +730,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-021 — Future/cancelled outbound records hid due reminders in the bell
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - Standalone due reminder passed; a populated UI suite sorted future and cancelled
   appointment deliveries above it. Bell feed/summary/mark-all now request an explicit
   due SYSTEM/non-cancelled subset with separate query keys. General delivery ledger
@@ -743,7 +743,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-022 — Schedule deep link lost its focus target beyond page one
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - With 37 active resources and page size 20, deep-linked editor saved but closing
   left page 1 visible and lost focus. Close now selects the resource's visible page;
   a filter invalidated by the edit is cleared only when it hides that resource.
@@ -754,7 +754,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-023 — Password-reset success disappeared without a returned token
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - The API correctly returns the same generic message without reset_path/token;
   ForgotPasswordPage discarded that message and displayed no successful outcome.
   Synthetic nonexistent-account browser test failed after a successful API response
@@ -772,7 +772,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-024 — MFA completion discarded the invitation/workspace return route
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - An existing MFA account follows a manual invitation, signs in and verifies its
   recovery code, but lands at /app/dashboard instead of the invitation. Reproduced
   in mfa-invite-before.log with the expected/actual URL; invitation not accepted.
@@ -795,7 +795,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-025 — Mixed business roles make tenant list queries fail
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - After accepting an operator invitation while owning another business, task and
   bell-summary GETs return 500: `Cannot combine a unique query with a non-unique query`.
   Evidence: auth-invite-final.log; UI invitation assertions passed, server requests did not.
@@ -812,7 +812,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-026 — Browser lead CSV bypassed formula-prefix escaping
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - Lead export quoted cells but retained formula prefixes, unlike the established
   server `safe_csv_cell` contract. Actual-function regression: `=1+1` produced
   `"=1+1"` instead of the protected text representation; 1 FAIL / 1 PASS before.
@@ -825,7 +825,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-027 — Client-card creation links dropped the selected client
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - Before reproduction: lead creation opened with client=0; deal, appointment and
   task creation did not open at all. Saving a task from the client card was blocked.
   Five semantic browser failures, not a missing-link or page-render assertion.
@@ -843,7 +843,7 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-028 — Setup editor deep links depended on the current list page
 
-- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: VERIFIED_PUBLISHED; candidate 1e96f15 and CI SUCCESS in PRIMARY-SESSION.
 - Populated combined browser run: a valid resource ID beyond the first page did
   not open its editor. ResourcesPage looked only in current rows and deleted the
   URL selection. ServicesPage shared this behavior, including service links from

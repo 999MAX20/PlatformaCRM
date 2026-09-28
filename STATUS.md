@@ -15,8 +15,9 @@ mobile smoke и dependency audit; 89 Node-проверок. Общая брау�
 Реальный локальный Celery restart/replay и восстановление БД/приватного файла
 также подтверждены. Точные команды, версии и границы —
 [верхний checkpoint](docs/testing/task-state/PRIMARY-SESSION.md).
-Пакет ZD-016/017 уже опубликован как `c2af14c`, CI SUCCESS; финальный пакет
-ZD-018…028 подготовлен к обычной публикации, push/CI ещё не подтверждены.
+Пакет ZD-016/017 опубликован как `c2af14c`, CI SUCCESS; финальный пакет
+ZD-018…028 опубликован как `1e96f15`, remote SHA совпал;
+[GitHub CI SUCCESS](https://github.com/999MAX20/PlatformaCRM/actions/runs/36363582390).
 
 Это не допуск реальных данных или всей клиники. Остались
 [пять решений владельца](docs/pilot/owner-questions-2026-09-28.md): support policy,

@@ -2,7 +2,42 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Seven-stage autonomous pilot run — ACTIVE, 2026-09-28
+## Seven-stage autonomous pilot run — LOCAL_SCOPE_PUBLISHED_CI_SUCCESS / OWNER_GATES_OPEN, 2026-09-28
+
+- IMPLEMENTATION DELIVERY COMPLETE: commit `1e96f15190e9a4973c3369ddd8eb5ed6dd17f368`
+  is on remote main (normal push and matching readback). GitHub run
+  [36363582390](https://github.com/999MAX20/PlatformaCRM/actions/runs/36363582390)
+  completed SUCCESS for both backend and frontend; run head SHA verified.
+  Exact current-root/branch: C:/Users/user/Desktop/PlatformaCRM,
+  codex/ui-testing-toolkit; registered primary/generation 2 unchanged.
+  The docs-only delivery receipt updates STATUS, pilot plan, owner questions,
+  defect statuses and this checkpoint. It does not invalidate the unchanged
+  implementation's full/browser/Node/recovery evidence. Receipt static gate PASS
+  against c2af14c; its actual committed range is checked before normal publication.
+  Receipt SHA/remote/CI readback are retained in the local ignored artifact
+  output/pilot-seven-20260928/publication-result.json and Git history.
+- Seven-direction local outcome: core lifecycle and related-record creation,
+  imports/merge/archive/manual journal/team access, current tenant/role guards,
+  automation/reminder replay and local process recovery, deterministic AI
+  source/confirmation/cancellation/failure, private files/backup restoration,
+  combined viewport/full candidate gate and implementation publication are verified
+  within the scope documented above. ZD-015…028 are fixed and published.
+- Remaining owner gates are Q01 support-note policy, Q02 target environment/operator/
+  backup objectives (including authorized migration/worker setup), Q03 file lifecycle/
+  antivirus, Q04 visual/screen-reader/clinic acceptance and real-data permission,
+  Q05 live-model quality/budget. No answers were invented. Global FC-003/008,
+  BE-REM-007 and FB-009/UX-4 remain open at their broader certification boundary;
+  the structural action catalogue is not a blanket page-level PASS. Excluded
+  integrations/billing remain excluded. No deployment, working-DB migration or paid
+  calls occurred. Next step: resolve the applicable owner gates before live admission;
+  do not restart closed local fixes or silently authorize a new environment.
+
+- Final implementation PUBLISHED: `1e96f15190e9a4973c3369ddd8eb5ed6dd17f368`
+  on codex/ui-testing-toolkit, normal `git push origin HEAD:main`, remote readback
+  exactly matches. Committed static gate against c2af14c passed; fetched main was
+  an ancestor and no unrelated range was merged/rebased. Working tree clean after
+  publication. [CI run 36363582390](https://github.com/999MAX20/PlatformaCRM/actions/runs/36363582390)
+  was IN_PROGRESS at this earlier checkpoint; its SUCCESS is recorded above.
 
 - FINAL LOCAL CANDIDATE VERIFIED: candidate-full.log exited 0, QUALITY GATE
   PASSED (full): 1176 backend tests / 806.773s, no migration drift, system check,
