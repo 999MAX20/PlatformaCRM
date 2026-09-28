@@ -17,7 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
 
 import platformaCrmLogo from "../../assets/platforma-crm-logo.png";
@@ -165,6 +165,28 @@ export function Sidebar({
   const unreadMessages = inboxSummary.data?.unread_messages ?? inboxSummary.data?.unread ?? 0;
   const isExpanded = forceVisible || expanded;
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ "nav.channels": true, "nav.control": true });
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [canScrollDown, setCanScrollDown] = useState(false);
+
+  useLayoutEffect(() => {
+    const viewport = scrollRef.current;
+    const content = contentRef.current;
+    if (!viewport || !content) return;
+
+    const updateScrollHint = () => setCanScrollDown(
+      viewport.clientHeight > 0 && viewport.scrollHeight - viewport.clientHeight - viewport.scrollTop > 1,
+    );
+    const observer = new ResizeObserver(updateScrollHint);
+    observer.observe(viewport);
+    observer.observe(content);
+    viewport.addEventListener("scroll", updateScrollHint, { passive: true });
+    updateScrollHint();
+    return () => {
+      observer.disconnect();
+      viewport.removeEventListener("scroll", updateScrollHint);
+    };
+  }, []);
 
   const visibleGroups = useMemo(
     () =>
@@ -208,7 +230,8 @@ export function Sidebar({
             )}
           </Link>
         </div>
-        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-1.5 no-scrollbar">
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-1.5 no-scrollbar">
+          <div ref={contentRef} className="space-y-2">
           {visibleGroups.map((group) => {
             return (
             <section key={group.id}>
@@ -323,7 +346,13 @@ export function Sidebar({
             );
           })}
 
+          </div>
         </div>
+        {canScrollDown ? (
+          <div aria-hidden="true" data-testid="sidebar-scroll-hint" className="pointer-events-none absolute inset-x-0 bottom-[max(4.5rem,env(safe-area-inset-bottom))] flex h-8 translate-y-full items-center justify-center text-platforma-subtle">
+            <ChevronDown size={20} strokeWidth={2} />
+          </div>
+        ) : null}
       </div>
     </aside>
   );

@@ -2,6 +2,32 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Sidebar overflow indicator / VERIFIED, 2026-09-29
+
+- Owner requested a downward chevron when additional links are hidden below the
+  sidebar viewport, disappearing at the end. Approved follow-up to 18f6ab1;
+  canonical root/primary/branch unchanged, clean starting snapshot.
+- Presentation only: reuse ChevronDown; observe viewport/content dimensions and
+  scroll position. Keep existing 72px clearance, logo, routes and permissions.
+  No API/DB/AI changes. Indicator occupies reserved space and cannot intercept
+  navigation. Resize/content changes must update it, including group expansion.
+- Acceptance/checks: visible for overflow, hidden at bottom and without overflow,
+  returns on upward scroll; desktop/mobile and resize check, frontend build and
+  bundle budget, diff review and normal push/actual CI. No redundant backend suite.
+- Implemented passive scroll listener plus ResizeObserver on scroll viewport and
+  content, with cleanup on unmount and 1px end tolerance. Decorative chevron is
+  aria-hidden/pointer-events-none, below the scroll area in the existing clearance;
+  it adds no focus stop, copy, routes or layout movement.
+- `npm run build` and `npm run check:bundle` PASS (output/sidebar-scroll-build.log).
+  CUA actual UI: desktop 1280x600 expanded overflow => hint 1, bottom => 0, up => 1;
+  resize to 1280x1100 => 0. Mobile 390x700 => visible, bottom scrollTop168 +
+  clientHeight556 = scrollHeight724 => hint false; up => 1. Escape closes drawer;
+  viewport reset. Initial unscoped count included hidden desktop; scoped mobile
+  DOM and actual scroll geometry resolved that observation without code changes.
+- No new test suite for this reversible visual follow-up; actual browser behavior
+  and build cover the changed boundary. Existing source/permission behavior intact.
+  Scope reviewed: Sidebar, STATUS, checkpoint; no new files or unrelated changes.
+
 ## Sidebar logo and edge spacing / VERIFIED, 2026-09-29
 
 - Owner requested supplied CRM logo at sidebar top and matching bottom clearance
