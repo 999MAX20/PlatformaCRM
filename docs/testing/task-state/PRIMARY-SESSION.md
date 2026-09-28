@@ -2,6 +2,65 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## BE-GAP-011 — Local antivirus activation / VERIFIED, 2026-09-28
+
+- Owner explicitly selected this computer for migration and service startup.
+  Mode: operation; gap: local environment. Canonical root, registered primary
+  generation 2 / idle and branch codex/ui-testing-toolkit unchanged; clean base
+  494448bfeb35f9bdf69203e89d5d9e80078d3fe2. No source changes at start.
+- Target: canonical db.sqlite3 / private local media. Apply only core.0011;
+  unrelated pending scheduling.0008 and tasks.0010 stay pending. Existing backend
+  on loopback :8000 belongs to an earlier session and must not be stopped.
+- Reuse verified ClamAV 1.5.4, file-scanning service and Celery task. No Redis or
+  Docker listener is available. Use a dedicated local filesystem broker and
+  file-only Celery beat/solo worker, without enabling other periodic jobs or
+  changing the application's broker. This is local development, not cloud parity.
+- DoD: verified DB/media backup, bounded migration, real scanner/signatures,
+  automatic file-only dispatch/worker, synthetic clean/blocked/outage/recovery
+  evidence in an isolated DB, actual working DB readiness/counts, restart command.
+  No real-data seed, external provider calls, retention, other schema changes,
+  deployment or Yandex resources. Existing authorization/audit contracts unchanged.
+- Required checks: SQLite backup integrity and media CRC, migration plan/readback,
+  actual service health and periodic dispatch, isolated real-engine acceptance,
+  reviewed operational docs with diff/link/publication checks. Reuse unchanged
+  application gate from b9e0232; no source rewrite or redundant full gate.
+- Backup: output/local-file-antivirus/backups/20260928T184440Z, SQLite integrity
+  and media ZIP CRC PASS; 0 attachment rows, 81 media files. No old attachment
+  backlog to release. Logs/config/binaries/backups remain ignored and private.
+- Completed: `manage.py migrate core 0011 --plan` contained only core.0011;
+  `migrate core 0011 --noinput` PASS; `check` PASS; `showmigrations core` confirms
+  applied. `migrate --plan` leaves only scheduling.0008 and tasks.0010. Working
+  SQLite integrity is OK and attachment count remains 0; no synthetic seed/reset.
+- `manage.py file_antivirus` reports ClamAV 1.5.4/28137, counts {}. Native archive
+  SHA256 rechecked: 0d9e0228b2674137ea1a2853566c98a0278ad52ab2582c3d6dbd75373848c395.
+  Freshclam reports daily/main/bytecode current and runs 12 checks/day. Listener
+  binds only 127.0.0.1:3310. Logs show actual beat/worker success every 15 seconds.
+- `python -X utf8 output/local-file-antivirus/live_pipeline.py` PASS (exit 0):
+  six real-engine API/quarantine/outage/restart/duplicate-lease checks in isolated
+  SQLite/filesystem storage/broker; EICAR only in memory. Logs/JSON in that folder.
+  Reuses the prior harness against newly activated scanner, not the working DB.
+- Supervisor `stop` readback confirmed all four owned process trees ended; tested
+  `start.ps1`, new supervisor PID 17480, scanner 5220, updater 18512, worker launcher
+  18776, beat launcher 11836. Fresh heartbeat, ready scanner and resumed successful
+  periodic jobs confirmed at 18:49 UTC. Existing backend PID 7036 not stopped;
+  GET /health/ and /health/db/ both return OK. State/log paths in the runbook.
+- Runtime is machine-local ignored output, not product source. No OS autostart
+  installed: manual start after reboot is documented. No dependency/env/application
+  changes, no cloud or real customer acceptance. Current receipt 494448b CI
+  36465256854 confirmed SUCCESS. Prior application/tenant/UI gates reused unchanged;
+  no redundant build/full suite. No Docker/cloud/Redis runtime acceptance claimed.
+- One scratch PowerShell-to-Python replacement had a quoting SyntaxError; corrected
+  by literal .NET file replacement before final restart. Native updater supports
+  daemon mode; final startup and signature check passed. No application failure.
+- Documentation review: five intended Markdown files only, added links/anchor and
+  command paths checked, credential-pattern scan and working diff hygiene PASS.
+  Machine artifacts are ignored; no untracked source or unrelated WIP. Main fetched
+  at starting 494448b before publication. Final commit/remote/CI readback is recorded
+  in output/local-file-antivirus/publication.json and the task closeout; CI queued
+  or running must not be called green. Product source gates remain unchanged.
+- Local activation DoD complete. Next separate product scope: remaining local
+  migrations or Yandex rollout/retention; neither started implicitly.
+
 ## BE-GAP-011 — Internal file antivirus / PUBLISHED / CI_SUCCESS, 2026-09-28
 
 - Published candidate `b9e0232e8e48deb658b4b7ae116424af2cd3ede5`, normal

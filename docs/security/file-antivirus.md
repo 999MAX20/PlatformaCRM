@@ -37,7 +37,10 @@ Execution/gates/publication: [PRIMARY-SESSION](../testing/task-state/PRIMARY-SES
   and can be retried through the existing preview flow. Import source storage URLs
   are write-only. Generated exports are not untrusted uploaded files.
 
-## Deployment configuration (not applied to a working environment)
+## Deployment configuration
+
+The local Windows activation below was completed on 2026-09-28. Docker/cloud
+deployment remains unapplied; its readiness is not implied by the local result.
 
 `CLAMD_HOST`/`CLAMD_PORT` identify a trusted internal daemon only. Defaults are
 127.0.0.1:3310; Docker web/file worker override host to `clamav`. No disable flag
@@ -92,6 +95,59 @@ The default compose beat profile must be enabled in an authorized deployment.
    quarantine. Rollback must retain download guards and scan state; reverting to
    the old unguarded download code would reopen blocked files.
 
+## Local Windows activation — 2026-09-28
+
+Owner selected the local computer explicitly. Only `core.0011_file_security_scanning`
+was applied to canonical `db.sqlite3`, after an SQLite backup with integrity check
+and a CRC-checked archive of `media/`. Backup is in the ignored local directory
+`output/local-file-antivirus/backups/20260928T184440Z`. There were zero attachment
+rows; 81 media files were backed up without importing them into the CRM.
+
+Machine-specific runtime lives in `output/local-file-antivirus/`: verified ClamAV
+1.5.4 binaries, signatures, configs, logs, local Python dependencies and `runtime.py`.
+Keep this directory: it is active runtime data, not disposable test output.
+It is excluded from Git and is not a portable installation or cloud deployment.
+
+The hidden supervisor starts ClamD on **127.0.0.1:3310**, freshclam (12 checks/day),
+one Celery solo worker and a beat with **only** the file scan schedule (15 seconds).
+An isolated filesystem broker replaces Redis for these local processes only;
+application `.env`, its broker and unrelated jobs are unchanged. The supervisor
+checks its child processes and restarts a failed child after 15 seconds. It holds
+a single-instance lock and refuses a different DB, cloud environment or an occupied
+scanner port. This Windows development arrangement does not certify Redis/Linux
+production behavior.
+
+From PowerShell in `C:\Users\user\Desktop\PlatformaCRM`:
+
+```powershell
+# Read-only state / scanner and database readiness
+.\.venv\Scripts\python.exe output/local-file-antivirus/runtime.py status
+.\.venv\Scripts\python.exe manage.py file_antivirus
+
+# Start when stopped (for example, after reboot)
+.\output\local-file-antivirus\start.ps1
+
+# Stop only this supervisor and its owned processes
+.\.venv\Scripts\python.exe output/local-file-antivirus/runtime.py stop
+```
+
+No Windows boot/logon task or system service was installed. After reboot, start
+the local runtime with the command above. A fresh state heartbeat plus successful
+`file_antivirus` and recent successful tasks in `worker.log` are required; an old
+state file alone does not prove readiness. Stop/restart was exercised successfully.
+If these processes are stopped, files remain quarantined until service recovers.
+
+Evidence: `output/local-file-antivirus/acceptance.log` and
+`live-pipeline-result.json` prove clean/EICAR API download behavior, scanner outage,
+worker restart and duplicate/expired-lease recovery in a disposable DB against
+this real scanner. Working DB has no synthetic fixtures; actual beat dispatch and
+worker completion were observed with zero pending rows. `/health/` and `/health/db/`
+on the existing local backend returned OK. No other user's processes were stopped.
+
+Unrelated `scheduling.0008` and `tasks.0010` remain unapplied. Their rollout,
+Yandex Cloud acceptance and retention are separate remaining work, not a claim
+that the entire local CRM schema or pilot is ready.
+
 ## Verification boundary
 
 Unit tests control scanner failures/protocols and storage changes. Browser gates
@@ -101,5 +157,6 @@ The production adapter still executes its socket protocol; the fake accepts only
 test fixtures. It is not shipped as a production fallback or evidence of detection.
 Real-engine evidence uses the official Windows ClamAV distribution and freshly
 downloaded signatures in ignored output; exact results belong in the checkpoint.
-Docker/cloud deployment, working-DB migration, retention and real customer data
-are separate gates and are not claimed by local PASS.
+Docker/cloud deployment, retention and real customer data remain separate gates.
+The working-DB migration was separately authorized and verified in the local
+activation above; isolated test PASS alone would not establish that result.

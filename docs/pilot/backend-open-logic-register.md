@@ -83,7 +83,7 @@ document to be green.
 | BE-GAP-008 | Public abuse controls beyond fixed DRF throttles | `PARTIAL` | Accept only with bounded traffic | Required before broad exposure |
 | BE-GAP-009 | Marketplace write-back and reconciliation | `ROADMAP` | Must stay disabled | Not generally available |
 | BE-GAP-010 | 1C bridge and other future providers | `ROADMAP` | Must show request/roadmap | Not available |
-| BE-GAP-011 | Production file lifecycle hardening | `PARTIAL` | Private media + ClamAV quarantine implemented; see checkpoint | Target-environment rollout and retention policy still required |
+| BE-GAP-011 | Production file lifecycle hardening | `PARTIAL` | Private quarantine implemented; local migration/scanner/worker activated | Cloud rollout and retention policy still required |
 | BE-GAP-012 | Vertical-specific CRM behavior | `ROADMAP` | Canonical CRM only | Product decision required |
 
 ## BE-GAP-001 - Tenant Ownership Immutability - Closed
@@ -342,15 +342,17 @@ plan-aware quota checks and upload/download audit. Owner-authorized 2026-09-28:
 internal ClamAV INSTREAM, persisted quarantine, SHA-bound downloads, retry/lease
 recovery, import scanning and reachable scan states are implemented. See the
 [file antivirus contract](../security/file-antivirus.md) and current checkpoint
-for verification/publication. BE-GAP-011 remains PARTIAL for the environment and
-retention requirements below; local scanning is no longer a missing code layer.
+for verification/publication. On 2026-09-28, the owner separately authorized local
+activation: core.0011 applied after backup, native ClamAV/updater and file-only
+Celery worker/beat started and verified. BE-GAP-011 remains PARTIAL for the cloud
+environment and retention requirements below; local scanning is active.
 
 Still missing:
 
 - paid storage provider setup;
-- migration of existing files;
+- migration of existing files in the future cloud target (local attachment backlog was empty);
 - CDN strategy;
-- deployment/operational acceptance of scanner, private storage and file worker;
+- cloud deployment/operational acceptance of scanner, private storage and file worker;
 - production retention and lifecycle policy.
 
 Private bucket configuration and an upload/download/audit smoke are mandatory
