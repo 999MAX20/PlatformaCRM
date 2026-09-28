@@ -5,8 +5,9 @@
 [План пилота](local-crm-completion.md#current-plan) владеет текущим порядком.
 Основа новой сверки `69b62c99`; сентябрьский WIP ниже — исторический, поздние
 закрытия scheduling/AI/finance перечислены в плане. Они не переоткрываются.
-BE-GAP-003/FC-003/008 — открытая приёмка; BE-GAP-004 — конфликт support-note роли,
-не доказательство произвольных чужих CRM-записей. BE-GAP-006 — проверка внутренних
+BE-GAP-003/FC-003/008 — открытая приёмка; BE-GAP-004 разрешён решением владельца
+28.09: admin + grant конкретной компании/пользователя + MFA; код/UI согласованы.
+Команды и результаты — в PRIMARY-SESSION. BE-GAP-006 — проверка внутренних
 worker/retry/recovery отдельно от eager; BE-GAP-007/008/011 применяются по среде,
 открытости и режиму данных до их допуска. Новые runtime-уязвимости этой сверкой
 не заявлены. BE-GAP-005 и внешняя часть 006, 009/010 отложены вне текущего scope.
@@ -75,7 +76,7 @@ document to be green.
 | BE-GAP-001 | Tenant ownership immutability on generic updates | `CLOSED` | Cleared at repository level | Cleared at repository level; environment gates remain separate |
 | BE-GAP-002 | Exact clean release candidate and final integrated gate | `CLOSED` historical checkpoint | Cleared for named commit only; current WIP requires a new gate | Production env gates remain separate |
 | BE-GAP-003 | Functional certification FC-003/008 | `PARTIAL` - FC-004/006 closed | Blocks formal acceptance | Blocks |
-| BE-GAP-004 | Platform manager support-mutation policy | `POLICY_CONFLICT` | Resolve before support access | Blocks support operations |
+| BE-GAP-004 | Platform manager support-mutation policy | `RESOLVED_2026_09_28` | Admin + explicit grant + MFA; verified boundary in checkpoint | Target-environment acceptance remains separate |
 | BE-GAP-005 | Real provider failure and recovery evidence | `ENV_GATED` | May remain disabled | Blocks each enabled provider |
 | BE-GAP-006 | Queue-backed production runtime | `PARTIAL` / `ENV_GATED` | Local eager allowed; do not promise async connector sync | Blocks applicable live async workloads |
 | BE-GAP-007 | Production database, storage, email, monitoring and backup | `ENV_GATED` | Out of local/demo scope | Blocks |
@@ -205,6 +206,13 @@ inside J01-J10. Live-provider and managed-service gates remain separately
 environment-gated and are not closed by repository certification.
 
 ## BE-GAP-004 - Platform Manager Support Mutation Policy Conflict
+
+Resolved 2026-09-28 under delegated owner decision: only platform admins
+(existing superuser semantics included), with active exact-business/actor grant
+and recent MFA, may create support notes. Backend and UI capability now match
+the permission matrix. Regression tests cover manager, revoked/expired/missing
+and foreign grants plus success, MFA and masking. The following describes the
+historical conflict, not current permission or a task to reopen.
 
 `docs/security/PERMISSION_MATRIX.md` says platform operations are readable by
 `platform_admin` and `platform_manager`, while mutation is restricted to

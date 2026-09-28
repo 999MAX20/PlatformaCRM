@@ -11,6 +11,13 @@ def platform_admin_has_global_access(user):
     return is_platform_admin(user) and not settings.SUPPORT_REQUIRES_GRANT
 
 
+def can_log_support_action(user, business):
+    """Support-note writes always require an explicit, current owner grant."""
+    return bool(is_platform_admin(user) and business.support_access_grants.filter(
+        user=user, is_active=True, expires_at__gt=timezone.now(),
+    ).exists())
+
+
 def is_platform_user(user):
     return bool(user and user.is_authenticated and getattr(user, "is_platform_user", False))
 

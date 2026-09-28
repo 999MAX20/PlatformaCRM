@@ -183,29 +183,33 @@ export function PlatformMerchantDetailPage() {
             </div>
           </CardHeader>
           <CardBody>
-            <div className="grid gap-3 sm:grid-cols-[220px_1fr]">
-              <Select value={actionType} onChange={(event) => setActionType(event.target.value)} options={actionOptions} />
-              <Input value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("platform.merchantDetail.notePlaceholder")} />
-            </div>
-            <Textarea className="mt-3" value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("platform.merchantDetail.noteTextarea")} />
-            <Input
-              className="mt-3"
-              label={t("mfa.codeLabel")}
-              value={mfaCode}
-              onChange={(event) => setMfaCode(event.target.value)}
-              placeholder={t("mfa.codePlaceholder")}
-              autoComplete="one-time-code"
-            />
-            {supportMutation.isError ? <ErrorState message={getApiErrorMessage(supportMutation.error)} /> : null}
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button onClick={() => supportMutation.mutate()} isLoading={supportMutation.isPending} disabled={!note.trim() || !mfaCode.trim()}>
-                <MessageSquarePlus size={16} /> {t("platform.merchantDetail.saveAction")}
-              </Button>
-              <Button variant="secondary" onClick={() => merchant.refetch()} isLoading={merchant.isFetching}>
-                <RefreshCw size={16} /> {t("platform.merchantDetail.refresh")}
-              </Button>
-            </div>
-            <div className="mt-5 space-y-2">
+            {data.can_log_support_action ? (
+              <div data-testid="support-action-form">
+                <div className="grid gap-3 sm:grid-cols-[220px_1fr]">
+                  <Select value={actionType} onChange={(event) => setActionType(event.target.value)} options={actionOptions} />
+                  <Input value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("platform.merchantDetail.notePlaceholder")} />
+                </div>
+                <Textarea className="mt-3" value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("platform.merchantDetail.noteTextarea")} />
+                <Input
+                  className="mt-3"
+                  label={t("mfa.codeLabel")}
+                  value={mfaCode}
+                  onChange={(event) => setMfaCode(event.target.value)}
+                  placeholder={t("mfa.codePlaceholder")}
+                  autoComplete="one-time-code"
+                />
+                {supportMutation.isError ? <ErrorState message={getApiErrorMessage(supportMutation.error)} /> : null}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button onClick={() => supportMutation.mutate()} isLoading={supportMutation.isPending} disabled={!note.trim() || !mfaCode.trim()}>
+                    <MessageSquarePlus size={16} /> {t("platform.merchantDetail.saveAction")}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+            <Button variant="secondary" onClick={() => merchant.refetch()} isLoading={merchant.isFetching}>
+              <RefreshCw size={16} /> {t("platform.merchantDetail.refresh")}
+            </Button>
+            <div className="mt-5 space-y-2" data-testid="support-action-history">
               {(workflow?.recent_actions || []).map((action) => (
                 <div key={action.id} className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3">
                   <div className="flex items-center justify-between gap-3">

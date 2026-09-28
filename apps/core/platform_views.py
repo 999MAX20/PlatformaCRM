@@ -18,7 +18,7 @@ from apps.businesses.serializers import ActivateLandingBusinessSerializer
 from apps.core.audit import write_audit_log
 from apps.core.models import AuditLog
 from apps.core.operations_health import platform_operations_health
-from apps.core.permissions import IsPlatformAdmin, IsPlatformUser
+from apps.core.permissions import IsPlatformAdmin, IsPlatformUser, can_log_support_action
 from apps.integrations.models import BusinessConnector, BusinessEvent
 from apps.integrations.sanitization import sanitize_error_text
 from apps.leads.models import Lead, LeadForm, LeadFormSubmissionError
@@ -310,18 +310,22 @@ def platform_merchant_detail(request, business_id):
             "operations": counts,
             "health": health,
             "support_workflow": _merchant_support_workflow(business, counts, health),
+            "can_log_support_action": can_log_support_action(request.user, business),
         }
     )
 
 
 @api_view(["POST"])
-@permission_classes([IsPlatformUser])
+@permission_classes([IsPlatformAdmin])
 def platform_merchant_support_action(request, business_id):
     validate_step_up_token(request.user, request.headers.get("X-Zani-MFA-Step-Up", ""))
     try:
         business = Business.objects.get(id=business_id)
     except Business.DoesNotExist:
         return Response({"detail": "Merchant not found."}, status=404)
+
+    if not can_log_support_action(request.user, business):
+        return Response({"detail": "An active support access grant is required."}, status=403)
 
     action_type = (request.data.get("action_type") or "support_note").strip()[:64]
     note = sanitize_error_text((request.data.get("note") or "").strip())

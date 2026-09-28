@@ -860,6 +860,22 @@ Copy this section for every new confirmed precedent:
 - Regression rule: a paginated list is not an entity-existence or access check.
   Every cross-page entity deep link must resolve independently through its API.
 
+### ZD-029 — Support notes lacked exact-business grant enforcement
+
+- Recorded: 2026-09-28. Status: LOCALLY_VERIFIED; publication receipt in PRIMARY-SESSION.
+- The support-action endpoint checked MFA but accepted notes without a current
+  grant for the actor/business. Six before regressions returned 201 for manager,
+  revoked, expired, wrong-recipient, wrong-business and absent grants.
+- Owner delegated resolution of BE-GAP-004; use existing platform-admin semantics,
+  require an explicit valid grant even with permissive global-access configuration,
+  and preserve recent MFA plus sanitized audit. Detail capability controls only
+  form visibility; server rechecks every POST. History and diagnostics stay readable.
+- Backend security/platform suites and desktop/mobile capability rendering passed;
+  commands, boundaries and candidate are in PRIMARY-SESSION. No schema or working
+  DB changes. This is not a redesign of all platform diagnostics permissions.
+- Regression rule: MFA and platform role never substitute for the specific tenant
+  support grant; test revocation, expiration, recipient and business independently.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

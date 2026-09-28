@@ -1535,6 +1535,32 @@ test("platform routes render without merchant sidebar", async ({
   }
 });
 
+test("support note form follows the server capability and preserves history", async ({ page }) => {
+  await login(page, users.platform, /\/platform/);
+  await page.goto("/platform/merchants");
+  const merchantLink = page.locator('a[href^="/platform/merchants/"]').first();
+  await expect(merchantLink).toBeVisible();
+  const href = await merchantLink.getAttribute("href");
+  expect(href).toBeTruthy();
+  // Backend grant/role enforcement is covered by tests_platform_operations.
+  // Vary only the returned capability to exercise both reachable UI states.
+  let allowed = true;
+  await page.route("**/api/platform/merchants/*/", async (route) => {
+    const response = await route.fetch();
+    const data = await response.json();
+    await route.fulfill({ response, json: { ...data, can_log_support_action: allowed } });
+  });
+  await page.goto(href!);
+  await expect(page.getByTestId("support-action-form")).toBeVisible();
+  await expect(page.getByTestId("support-action-form").getByRole("button")).toBeDisabled();
+  await expect(page.getByTestId("support-action-history")).toBeVisible();
+  allowed = false;
+  await page.reload();
+  await expect(page.getByTestId("support-action-history")).toBeVisible();
+  await expect(page.getByTestId("support-action-form")).toHaveCount(0);
+  await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
+});
+
 test("activated landing owner sees first-run dashboard", async ({
   page,
   isMobile,

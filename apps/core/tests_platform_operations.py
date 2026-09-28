@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 from io import StringIO
 from unittest.mock import patch
 
@@ -15,7 +16,7 @@ from apps.billing.models import Subscription, SubscriptionPlan
 from apps.bots.models import Bot, BotConversation
 from apps.businesses.models import Business, BusinessMember
 from apps.clients.models import Client
-from apps.core.models import AuditLog
+from apps.core.models import AuditLog, SupportAccessGrant
 from apps.integrations.models import BusinessConnector, BusinessEvent, IntegrationEventLog, WebhookDeliveryLog, WebhookEndpoint
 from apps.integrations.credential_encryption import encrypt_credential_value
 from apps.leads.models import Lead, LeadForm, LeadFormSubmissionError
@@ -167,6 +168,47 @@ class PlatformOperationsDashboardTests(TestCase):
         self.assertEqual(response.status_code, 200)
         return {"HTTP_X_ZANI_MFA_STEP_UP": response.data["step_up_token"]}
 
+    def _allow_support_notes(self):
+        self.platform.role = User.Roles.PLATFORM_ADMIN
+        self.platform.save(update_fields=["role"])
+        return SupportAccessGrant.objects.create(
+            business=self.business, user=self.platform, created_by=self.owner,
+            reason="Owner-authorized support", expires_at=timezone.now() + timedelta(hours=1),
+        )
+
+    def test_support_note_requires_admin_and_matching_active_grant(self):
+        grant = self._allow_support_notes()
+        step_up = self._authenticate_platform_with_step_up()
+        for scenario in ("manager", "revoked", "expired", "different_recipient", "different_business", "missing"):
+            with self.subTest(scenario=scenario):
+                self.platform.role = User.Roles.PLATFORM_ADMIN
+                grant.is_active = True
+                grant.expires_at = timezone.now() + timedelta(hours=1)
+                grant.user = self.platform
+                grant.business = self.business
+                if scenario == "manager":
+                    self.platform.role = User.Roles.PLATFORM_MANAGER
+                elif scenario == "revoked":
+                    grant.is_active = False
+                elif scenario == "expired":
+                    grant.expires_at = timezone.now() - timedelta(seconds=1)
+                elif scenario == "different_recipient":
+                    grant.user = self.owner
+                elif scenario == "different_business":
+                    grant.business = Business.objects.create(owner=self.owner, name="Other", slug="other-support")
+                self.platform.save(update_fields=["role"])
+                grant.save()
+                if scenario == "missing":
+                    grant.delete()
+                response = self.api.post(
+                    f"/api/platform/merchants/{self.business.id}/support-actions/",
+                    {"note": "Must not be written"}, format="json", **step_up,
+                )
+                self.assertEqual(response.status_code, 403)
+                self.assertFalse(AuditLog.objects.filter(entity_type="platform_support_action").exists())
+                detail = self.api.get(f"/api/platform/merchants/{self.business.id}/")
+                self.assertFalse(detail.data["can_log_support_action"])
+
     def test_platform_overview_returns_operations_summary(self):
         self.api.force_authenticate(self.platform)
 
@@ -222,6 +264,7 @@ class PlatformOperationsDashboardTests(TestCase):
         self.assertIn("answer_inbox", keys)
 
     def test_platform_user_can_log_support_action(self):
+        self._allow_support_notes()
         step_up = self._authenticate_platform_with_step_up()
 
         response = self.api.post(
@@ -234,11 +277,13 @@ class PlatformOperationsDashboardTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["action_type"], "whatsapp_followup")
         detail = self.api.get(f"/api/platform/merchants/{self.business.id}/")
+        self.assertTrue(detail.data["can_log_support_action"])
         actions = detail.data["support_workflow"]["recent_actions"]
         self.assertEqual(actions[0]["note"], "Asked owner to reconnect WhatsApp QR")
         self.assertEqual(actions[0]["actor_email"], self.platform.email)
 
     def test_platform_support_action_masks_secret_note(self):
+        self._allow_support_notes()
         step_up = self._authenticate_platform_with_step_up()
 
         response = self.api.post(
@@ -258,6 +303,7 @@ class PlatformOperationsDashboardTests(TestCase):
         )
 
     def test_support_action_requires_note_and_platform_user(self):
+        self._allow_support_notes()
         step_up = self._authenticate_platform_with_step_up()
         bad = self.api.post(
             f"/api/platform/merchants/{self.business.id}/support-actions/",
@@ -276,6 +322,7 @@ class PlatformOperationsDashboardTests(TestCase):
         self.assertEqual(forbidden.status_code, 403)
 
     def test_platform_support_action_requires_recent_mfa_step_up(self):
+        self._allow_support_notes()
         self.api.force_authenticate(self.platform)
 
         response = self.api.post(

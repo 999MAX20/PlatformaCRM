@@ -330,6 +330,7 @@ export type PlatformMerchant = {
   operations?: PlatformMerchantOperations;
   health?: PlatformMerchantHealth;
   support_workflow?: PlatformSupportWorkflow;
+  can_log_support_action?: boolean;
 };
 
 export type Bot = {

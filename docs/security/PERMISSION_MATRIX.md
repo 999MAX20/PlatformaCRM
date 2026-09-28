@@ -1,6 +1,18 @@
 # Permission Matrix
 
-This file is the working reference for role-aware behavior in ZANI.
+This file is the working reference for role-aware behavior in PlatformaCRM.
+
+## Support-note decision — 2026-09-28
+
+Owner delegated the policy choice. Creating a merchant support-note requires
+`platform_admin` (including existing superuser admin semantics), a current active
+SupportAccessGrant for that exact business and actor, and recent MFA step-up.
+The grant is mandatory even when `SUPPORT_REQUIRES_GRANT=False`; ownership or
+membership is not a substitute. `platform_manager` retains platform diagnostics
+read access, but cannot create support notes even with a grant and MFA.
+The detail API exposes `can_log_support_action` for form visibility; the POST
+rechecks authorization and writes a sanitized audit record. This resolves
+BE-GAP-004; it does not redesign the platform diagnostics read surface.
 
 V1-M01/M02 (2026-09-22): a whole-business verified financial snapshot requires
 `analytics:view` at BUSINESS scope and the analytics capability. OWN/TEAM scopes
