@@ -17,6 +17,22 @@ Event analyst получает последние 24 BusinessEvent из UI и ц
 переписываются. Автокарточка клиента допустима, Lead/Task/черновик Deal требуют
 подтверждения сотрудника; запись/перенос/отмена/результат сделки остаются ручными.
 
+### Предметные вопросы текущей приёмки
+
+| Вопрос/ситуация сотрудника | Обязательный результат | Исполняемое evidence |
+| --- | --- | --- |
+| «Сколько заявок?» | Число из разрешённого CRM-summary; ссылки только на переданные источники | `AIWorkflowQualityTests.test_assistant_returns_only_validated_answer_and_citations`; invented/foreign-source denial рядом |
+| «Что требует внимания сегодня?» | Реальные просроченные задачи/зависшие заявки/диалоги/сделки с ID источников; не произвольные советы | `AICoreFoundationTests.test_ai_owner_daily_brief_returns_source_grounded_next_best_actions`; no-data и role-scope tests |
+| «Создай задачу по этому диалогу» | Предложение не создаёт запись; явное approval, одна задача и audit после подтверждения | `merchant-journeys-certification.spec.ts`, `FC-J10 grounded AI suggestion requires approval and persists task plus audit`; backend approval/permission/replay suites |
+| «Напомни исполнителю к сроку» | AI-approved Task сохраняет assignee/due/reminder; общий runtime доставляет напоминание один раз | `test_ai_tool_execute_creates_task_with_due_reminder_and_assignee` + `ScheduledTaskReminderTests`; UI reminder scenario |
+| «Что изменилось в событиях?» при пустой базе | Честное no_data, нет вымышленных причин/выручки и нет платного вызова | `test_no_event_data_skips_paid_provider_call`, analyst source/financial boundary suites |
+| Недоступный провайдер / отозванный доступ | Без подмены сбоя mock-ответом; контролируемый retry/отказ; ручная CRM продолжает работу | `ProviderQualityTests`, `test_job_rechecks_revoked_access_before_provider`, browser failure certification |
+
+Эти проверки подтверждают ограничения, источники, права и эффекты. Ответы
+провайдера в них контролируемые, поэтому они не измеряют качество реального LLM
+на произвольных вопросах клиники. Такая оценка остаётся в согласовании целевой
+среды/провайдера (Q05 в документе вопросов владельцу); платные вызовы ночью запрещены.
+
 > **Later commercial decision, 2026-09-25:**
 > [CRM packages include AI volume; billing work deferred](../billing/BILLING_DISCUSSION_DEFERRED_2026-09-25.md).
 > This supersedes separate-AI/PAYG/no-package wording below. The client bot's unit

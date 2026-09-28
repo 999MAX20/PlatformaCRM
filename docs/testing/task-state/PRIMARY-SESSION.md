@@ -1,8 +1,360 @@
-# PRIMARY-SESSION — Platforma.CRM
+# PRIMARY-SESSION — PlatformaCRM
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
 ## Seven-stage autonomous pilot run — ACTIVE, 2026-09-28
+
+- FINAL LOCAL CANDIDATE VERIFIED: candidate-full.log exited 0, QUALITY GATE
+  PASSED (full): 1176 backend tests / 806.773s, no migration drift, system check,
+  deterministic install/i18n/type/build/bundle, two mobile role smokes, Python/npm
+  dependency audits and final working/index/range diff hygiene. Command/base as
+  below. Windows, Python 3.12.14, Node v24.18.0; all databases/media/providers isolated.
+  Candidate-browser: 239 PASS / 55 viewport-conditioned skips / 27.9m, zero server
+  5xx; skip distribution desktop 9, tablet 16, mobile 30. Separate unchanged-input
+  auth evidence: auth-mixed-final 9 PASS (six MFA plus three invitations); reset
+  desktop/tablet in content-matrix and mobile in reset-mobile PASS. Node 89 PASS.
+  Runtime/test hashes still exactly match final-source-manifest.json after full gate.
+  Recovery reminder worker/replay/DB/private-file restoration: recovery-reminder-retry.log PASS.
+  Reviewed all 66 intended paths; recognized secret-pattern scan has no matches;
+  synthetic test credentials only. No deployment workflow, working-DB migration,
+  paid provider invocation or external messaging. Latest fetched main equals c2af14c.
+  Sources of truth updated for the current local result; publication and actual CI
+  still pending. Do not substitute local PASS for Q01–Q05 or global FC/UX acceptance.
+
+- Final browser candidate COMPLETE: candidate-browser.log, exit 0, 239 PASS /
+  55 conditional viewport/role skips, 27.9m, all three Chromium projects. No 5xx
+  request entries. Exact command: `.venv/Scripts/python.exe
+  output/pilot-seven-20260928/browser.py --project=desktop-chromium
+  --project=tablet-chromium --project=mobile-chromium --grep-invert
+  'MFA enrollment|existing MFA account|password reset link'
+  --output=../output/pilot-seven-20260928/candidate-browser-results`.
+  Excluded auth cohorts retain their unchanged-input evidence below; throttles
+  were not disabled. All candidate source/test hashes match the frozen manifest.
+  After browser process exit, started serial `scripts/codex_verify.py --mode full
+  --base-ref bb5caf63d49d384b9e9927fb8059a25d6a925b7b`, candidate-full.log.
+  Final gate/publication/CI pending. Seven newly added local doc links resolve.
+
+- Final-candidate continuity review: canonical root/owner/generation/branch and
+  HEAD c2af14c unchanged; all current code/test hashes match final-source-manifest.json.
+  Reviewed reminder transaction/receipt/migration, notification recipient and bell
+  scopes, mixed-role query combination, auth return/invitation flows, linked-client
+  forms and setup editor detail loading. No additional runtime delta introduced.
+  Candidate desktop cohort completed without failure; tablet/mobile matrix remains
+  active. Git diff hygiene passes; 16 intentional new source/test files must be
+  staged explicitly after the final gates. Workflow remains checks/tests/build only,
+  without a deployment step. No working DB or existing user process was changed.
+
+- ZD-028 and final semantic delta: setup-link-after.log COMPLETE, 24 PASS / 3
+  viewport-specific skips / 3.1m. Includes filtered/off-page setup editors, exact
+  persisted names/IDs, foreign resource/service denial, normal service archive/
+  restore, resource deactivate/reactivate, focus, manual rule preview without
+  writes, linked lead/deal/booking, booking cancellation releasing occupancy and
+  confirmed no-show with required reason. TypeScript PASS; Node 89 PASS.
+  No runtime changes after this result. Fresh candidate-browser matrix now runs
+  every project with only separately verified signup-heavy MFA and reset-link
+  cohorts excluded to preserve real throttles. After it, run full gate serially
+  (never npm ci while a browser server holds frontend DLLs), review/publish and
+  inspect actual CI. Previous interrupted combined log is diagnostic only.
+
+- ZD-028 before: setup-link-before.log 2 FAIL (both editors outside list filter).
+  Shared pattern corrected in ResourcesPage/ServicesPage: on-page row remains
+  fast path; off-page selected ID gets a tenant-authorized detail fetch and active-
+  business check. List filters/page stay independent, error/retry stays visible.
+  Query waits for the list so normal archived-service row editing is preserved.
+  Combined old-runtime matrix stopped after confirmed defect, not called PASS:
+  owned browser.py PID 15048 and child 14892 identity/command/root verified before
+  taskkill /T; no other processes stopped. This avoids finishing an obsolete gate.
+  New focused matrix setup-link-after includes both editors, foreign denial,
+  resource and service lifecycle/focus, corrected preview and appointment terminals.
+  Final combined/full gates and publication remain pending; no working DB migration.
+
+- New confirmed bounded ZD-028 / FC-003: combined-final resource edit deep link
+  fails on populated tablet data; selected resource is sought only in current 20-row
+  page, then URL selection is silently deleted. ServicesPage has the same pattern;
+  CommandPalette links directly with service=ID, so a service outside page one is
+  affected too. Contract: retrieve selected setup entity independently through the
+  existing tenant-scoped detail API; retain filters/pagination, reject foreign
+  active-business context and show recoverable errors, no domain/API/policy change.
+  Add before regression with selected item excluded by a list filter, then verify
+  edit/readback/reload/close and foreign denial, existing overlay/focus/lifecycle
+  scenarios and final candidate gates. Keep runtime frozen until combined browser
+  pass has finished; its old snapshot is not a final PASS after this correction.
+  Extra semantic cohort: AI cancellation + WAIT retry 6 PASS; manual preview and
+  appointment terminal additions failed on test navigation (collapsed details and
+  wrong /appointments route). Corrected tests use actual disclosure and /calendar;
+  rerun after this cohort has exited. No runtime fix inferred from those two failures.
+
+- Current runtime frozen after ZD-027 for combined-final browser matrix (all three
+  viewports). Runtime snapshot: candidate-source-manifest.json under ignored output;
+  HEAD c2af14c, sole owner/branch unchanged. Node current candidate: 89 PASS.
+  linked-final.log: 6 PASS / 1.7m, foreign-client denial in all four pages and
+  linked lead/deal/appointment persisted client IDs at every viewport. Earlier
+  linked task persistence is green. Reset mobile isolated rerun: 1 PASS / 1.1m;
+  other reset viewports passed in content-matrix (30 PASS, 2 skips, 4 fixture/rate
+  failures). Security throttle stays 5/hour; no acceptance assertion relaxed.
+  Additional semantic test delta during combined run (no runtime changes): WAIT
+  retry/readback, manual rule preview/no-effects, AI confirmation cancellation,
+  appointment cancel/freed-slot/no-show. Run these explicitly after combined run.
+  AI registry corrected to actual inspect_sources chips and cancel confirmation,
+  not invented source-link/permanent-reject controls. Existing approved chips
+  contract and backend rejection lifecycle remain unchanged.
+
+- ZD-027 implementation: shared useClientCreateIntent across lead/deal/calendar/task
+  obtains authorized client, checks business, adds out-of-page selection and consumes
+  URL intent. Lead/appointment Select displays actual form client. No domain/schema
+  change. content-fixed.log: 10 PASS / 1.7m desktop (including real reset/replay,
+  note/private file, CSV, client tag/task, Kanban and four linked editors).
+  TypeScript/Node initial delta: PASS / 89 checks. New matrix adds cancel/reload,
+  wrong tenant and specialist denial. Foreign fixture initially overwrote the
+  browser refresh cookie; corrected to an independent request context, retaining
+  strict 403/404. Reset replay across three projects hits the real 5/hour throttle
+  on the sixth request; run that cohort in separate isolated environments rather
+  than changing security rates/assertions. Remaining: linked lead/deal/appointment
+  save readback and combined candidate acceptance/publication.
+
+- content-before.log desktop COMPLETE: 4 PASS, 6 FAIL (3.6m). Five failures prove
+  ZD-027: lead dialog has client=0; deal/appointment/task dialogs never open; linked
+  task cannot be saved. Sixth is CSV debounce synchronization, not escaping (download
+  already contains protected formula/phone). Passed: real reset/replay/revocation,
+  notes/private upload/rename/download, Kanban move/persistence, analytics CSV.
+  Authorized minimal fix: consume create/client intent through existing forms,
+  fetch/verify the referenced client against active business, include it even beyond
+  first option page, preserve other URL filters and consume intent without reopening
+  after cancel. Backend remains authority; no new models/endpoints or policies.
+  Required: focused happy/cancel/foreign/role browser proof, affected Node/build,
+  final combined candidate acceptance. New source not covered by earlier full gate.
+
+- full-serial-final.log COMPLETE: QUALITY GATE PASSED (full), 1176 backend tests
+  / 882.213s, system/migration drift, locked frontend install/build/i18n/bundle,
+  2 mobile role smokes, Python/npm dependency audits and final diff hygiene PASS.
+  Covers runtime through ZD-026; subsequent ZD-027 candidate is not yet changed.
+  content-before desktop cohort started after full process exited (no installer overlap).
+  Reset-token consumption/replay/session revocation and note/file upload/rename/private
+  download already PASS. CSV first failure is a fixture synchronization issue: the
+  matching row was present before search debounce, so download contained old rows;
+  wait for the completed filtered response and whole list count before export.
+
+- Next bounded FC-003 gap (ZD-027 candidate): ClientWorkspacePage offers four
+  `?create=1&client=ID` actions. Source trace shows TasksPage/DealsPage/CalendarPage
+  do not consume that create intent; LeadsPage opens its form but client prefill
+  still needs verification. Add four before browser scenarios plus saved linked
+  task readback. Do not call a propagated URL successful creation. Runtime for this
+  candidate gap remains untouched while serial full gate completes; next step is
+  focused content/reset/browser before reproduction, then minimal existing-form
+  integration if proven. Preserve backend role/tenant/lifecycle checks and no new
+  models/endpoints. Do not silently drop these user-visible actions from scope.
+
+- Publication preflight read-only: `git fetch origin main` still resolves FETCH_HEAD
+  to c2af14c8cd90c65aff83184ef323cacc63a8fddb, same as local HEAD; no competing writer
+  or target drift. Existing CI workflow has only backend/frontend checks, no deployment.
+  Final browser integration will split signup-heavy security fixtures into their own
+  isolated cohort, preserving the real signup throttle rather than raising it for tests.
+  `--list` discovery of new content/reset cases passed; discovery is not execution.
+
+- CSV fix actual-function checks and complete Node suite: 89 PASS
+  (node-csv-final.log). Additional FC-003 tests now also cover client edit/tag/linked
+  task, mouse Kanban move and actual report CSV. Analytics registry previously
+  invented period/filter controls absent from AnalyticsPage; corrected to existing
+  CSV/disclosures/source links. Current catalogue: 202 actions / 142 unique names
+  across 43 routes. This corrects metadata, not a new period-selection feature or
+  a PASS claim. New content/reset browser checks await completion of serial gate.
+
+- ZD-026 / FC-003 export: browser lead CSV bypasses the established server
+  safe_csv_cell formula-prefix contract. Pure actual-function regression has
+  1 FAIL/1 PASS before. Minimal frontend-only delta: prefix formula-like cells
+  after trimStart detection, preserve original text and existing quote escaping.
+  Add downloaded CSV assertion. No domain/API/permission/event/schema change.
+  Full serial gate is still in backend phase; backend inputs unchanged. This
+  frontend delta precedes its install/build/mobile phase and will be covered by it;
+  record final source snapshot, Node checks and semantic browser result separately.
+
+- auth-mixed-final.log: 9 PASS (2.4m), including post-acceptance task/bell API 200.
+  Complete serial gate started on frozen runtime (full-serial-final.log); no other
+  browsers/installers run alongside it. Independent FC-003 evidence work adds only
+  tests: notes/private upload/rename/download persistence, filtered CSV contents,
+  real Django reset-token consumption/replay/session revocation in isolated DB.
+  New files pilot-record-content.spec.ts and pilot-password-reset.spec.ts are
+  unverified until the post-gate browser run. No real email delivery or working DB.
+
+- ZD-025 focused before: 2 FAIL (both 500). After normalizing DISTINCT on every
+  already-scoped branch before OR: 27 PASS / 45.962s (mixed membership, tenant
+  isolation, role queues, bell). node-final.log: 87 PASS. Latest mixed-membership
+  browser run adds explicit successful task/bell requests after MFA invitation.
+
+- ZD-024 latest auth-invite-final.log: 9 PASS (2.1m), all three sizes. Wrong-account
+  new-user invitation now shows the existing account warning and explicit logout,
+  never the password/accept form; direct wrong-account acceptance remains 403.
+  auth-return-path behavioral suite brings Node checks to 87 PASS.
+- New ZD-025: this mixed-membership journey exposed server 500s after acceptance:
+  TenantModelViewSet OR-combines BUSINESS and OWN/TEAM querysets with inconsistent
+  DISTINCT flags. Bounded contract: normalize distinctness before combining existing
+  scoped queries; preserve each business/role/archive filter and membership revocation.
+  No policy, model, audit/event or migration change. Add API regression for tasks and
+  notification list/count/read with other-assignee/foreign/revoked-member negatives,
+  then full gate. Browser alone was green but its server log proves this new gap.
+  Base/root/owner unchanged; new task-owned file core/tests_mixed_membership_scope.py.
+
+- Full-candidate attempt: all 1174 backend tests PASS (1120.249s), system and
+  migration checks PASS. Frontend npm ci then FAILED EPERM on rolldown native DLL:
+  the additional owned MFA browser was still running. This is an orchestration
+  error, not a product gate PASS. Both processes have exited; serial frontend gate
+  restores dependencies. Do not run browsers alongside a full gate's install again.
+- ZD-024 before reproduced /app/dashboard instead of invitation after MFA. Minimal
+  shared return-path policy extracted from LoginPage; MfaPage consumes its nested
+  original route and existing session-expiry fallback. Backend unchanged. Fresh
+  frontend gate underway (frontend-candidate.log), followed by affected MFA UI;
+  then rerun the complete gate serially for the final candidate. No working DB
+  migrations, external delivery or account changes occurred.
+- frontend-candidate gate PASS, Node 84 PASS; MFA normal path 3 PASS but invitation
+  3 FAIL persisted. Small router diagnostic found PublicRoute unconditionally
+  rejects authenticated users on /invite/:token. Remove that guest-only wrapper
+  (InviteAcceptPage already enforces its authenticated matching-account UI and
+  backend acceptance remains authoritative), pass flat MFA state and share a
+  reader that also supports legacy nested state. This is the same ZD-024 gap,
+  not a new permission policy. auth-complete.log now covers both MFA and new-user
+  invitations on three sizes; latest frontend/full gates still required afterward.
+
+- ZD-023 reproduced: reset API returns generic success, UI has no acknowledgment.
+  auth-before.log: 1 FAIL, signup/password-change 1 PASS. Shared StatusNotice now
+  renders the API message; removed obsolete delivery choices/share-link UI because
+  the established backend sends email only and never returns the token. Existing
+  email backend/privacy contract unchanged. Runtime source frozen after this fix.
+- auth-wait-final.log: 9 PASS across desktop/tablet/mobile (1.6m), proves isolated
+  WAIT cancellation and localized statuses, signup/password credentials and reset
+  acknowledgment. Obsolete reset-control cleanup was finalized afterward; separate
+  reset-surface-final.log checks its latest payload/no-selector assertions. Node
+  candidate checks: 84 PASS. Final application gate still pending.
+- reset-surface-final.log: latest email-only/no-selector acknowledgment 3 PASS.
+  Full candidate gate started against ancestor bb5caf63 (full-candidate.log).
+  Runtime source frozen. Independent semantic evidence continues with specialist
+  edit/deactivate/reactivate (not archive/delete) and template draft/enable/disable;
+  these add only tests and correct structural metadata, not product behavior.
+- FC-003 next evidence delta: structural action names still lack machine-checked
+  expected outcomes. Add explicit expected-result contracts for registered actions
+  and validate coverage without converting NOT_RUN rows to PASS. Reuse existing
+  route/action registry; no second backlog or invented live evidence. Contracts
+  describe acceptance, not proof of successful execution. External/live exclusions
+  and Q01–Q05 remain separate from automated internal CRM proof.
+- New expected-result catalogue covers all 203 registered actions/143 unique keys;
+  functional-registry checker PASS (43 route records). Initial missing closing brace
+  in the catalogue was corrected before verification; no application runtime effect.
+  setup-final.log: resource edit/deactivate/reactivate and template draft/toggle
+  6 PASS across three sizes. settings-timeline.log: business profile 3 PASS; timeline
+  3 fixture failures (searchbox misidentified as textbox and request uses q rather
+  than search). Correct actual role/API parameter; targeted retry ongoing. Neither
+  registry presence nor a selector failure is claimed as semantic product PASS.
+- timeline-retry.log: 3 PASS with native searchbox and actual q parameter; no
+  runtime correction needed. Latest contract checker and all 84 Node tests PASS
+  (node-contracts.log). Final combined pilot-actions + pilot-auth matrix now verifies
+  the new fixtures together on three sizes, including run-count stability for
+  template toggling; earlier cross-viewport collision justifies this integration
+  pass. Backend full gate is still running independently in a different temp DB.
+- AUTH-MFA remains structural-only in the route inventory. Add isolated browser
+  evidence for existing enrollment→recovery-code login→authorized disable with
+  a new synthetic owner; reuse current endpoints and TOTP algorithm. PP-SEC-004
+  backend closure/policy remain intact; no security behavior rewrite, no real
+  account changes and no external authenticator/service calls. Expected result:
+  persisted enabled state, second-factor challenge, valid recovery login and
+  disabled state only after password/code/reason. Run after combined browser exits.
+- MFA baseline UI: mfa.log 3 PASS across sizes. Readback uncovered an additional
+  integration gap to reproduce: LoginPage preserves invitation return state, but
+  MfaPage always navigates to /app or /platform after verification. Test an existing
+  MFA account accepting a manual invitation from a second synthetic business.
+  If confirmed, preserve the existing safe return-path policy after MFA; no new
+  permission/tenant/invitation policy. Any frontend delta requires fresh affected
+  UI/build checks; unchanged backend evidence remains applicable.
+
+- Broad browser run finished: 149 PASS, 53 platform-specific skips, 8 FAIL in
+  all-browser.log (26.2m). Failed paths map to ZD-021/022 and fixture/surface
+  corrections below. This is not an exact-final green gate: backend retained its
+  startup snapshot while subsequent frontend fixes hot-reloaded. Serial fresh
+  affected-final.log now checks populated bell, team reuse, mobile merge/navigation,
+  real WAIT cancellation, lifecycle/profile and >20-resource focus on three sizes.
+- Final Node checks after bell/focus changes: 84 PASS, node-final.log. Added
+  independent signup→password-change→old-login-denied/new-login-valid browser
+  acceptance (pilot-auth.spec.ts); synthetic new accounts only, no shared fixture
+  password mutation or external messages. Its browser execution remains pending.
+- Next auth acceptance checks the generic password-reset acknowledgment. Current
+  ForgotPasswordPage stores only reset_path and discards server message, so normal
+  non-disclosing responses appear to do nothing. Reproduce before changing UI;
+  reuse the server's generic message and accessible status, preserve anti-enumeration
+  and debug-link policy. Synthetic nonexistent account causes no email delivery.
+- Fresh affected matrix: 48 PASS, 1 platform skip, 2 WAIT fixture FAIL (11.8m).
+  All bell/focus/team/mobile-merge/navigation regressions now pass on applicable
+  screens. WAIT tablet/mobile selected an older fixture's run for the same lead:
+  each viewport left its rule active, generating multiple visually identical rows.
+  API/snapshot proves successful cancellation of that other run; not an engine
+  failure. Disable the test rule after its own trigger, before UI cancellation,
+  then rerun fresh three-viewport WAIT acceptance. Do not count the failed cases.
+
+- Next bounded correction ZD-018: V1-F05 requires scheduled task reminders;
+  reminder_at is persisted/UI-editable but has no runtime consumer. Reproduce via
+  existing notification tick, then reuse task recipient routing and notification
+  delivery with durable atomic deduplication. No reassignment/role/AI changes.
+  Intentional internal delivery-receipt migration is permitted only in isolated
+  verification; ordinary DB migration/deployment remain excluded. Acceptance:
+  due reminder once, replay/crash safety, closed/archive/snoozed exclusions,
+  recipient/tenant/preferences, UI persistence and affected/full checks.
+- Expanded c2af14c browser matrix completed: 40 PASS, 11 platform-specific skips,
+  browser-matrix.log; desktop/tablet/mobile responsive, access and recovery paths.
+- c2af14c GitHub CI run 36350513987 completed SUCCESS (read back 28.09).
+- ZD-019 inactive-assignee routing regression observed three recipients instead
+  of manager-only. Existing contract explicitly requires manager/admin/operator
+  fallback; membership precheck fixes generic resolver's broad fallback. No new
+  policy or automatic reassignment. All 71 task/notification tests PASS,
+  reminders-final.log. Real worker reminder dispatch/replay/restore PASS,
+  recovery-reminder-retry.log (initial drill edit syntax error fixed before execution).
+- All existing browser suites across desktop/tablet/mobile now running on this
+  application snapshot (all-browser.log). Additional semantic lifecycle tests in
+  pilot-actions.spec.ts run separately; these are evidence additions, not runtime
+  changes. Existing structural registry corrected where it named non-existent
+  standalone-card controls; list/drawer actions retained at their actual surfaces.
+- New ZD-020 acceptance gap: a real lead-triggered run persists WAITING but the
+  automations row/detail omit cancellation because canCancelRun excludes waiting
+  and retry_scheduled. Before browser scenario failed at missing cancel control;
+  backend already permits these states. Minimal UI state-list correction; preserve
+  backend manage authorization and idempotency. Verify actual cancel/readback on
+  all three viewports, then build/full gate. No schema/policy/external effects.
+- Additional semantic task and lead/deal terminal scenarios PASS (pilot-actions.log,
+  two desktop tests). Account profile/preferences PASS (pilot-extra-before.log);
+  real WAIT row reproduced missing cancel there. Follow-up matrix startup exceeded
+  existing 120s webServer timeout under concurrent full browser run; preserve
+  pilot-actions-matrix.log as NOT PASS and rerun serially after main browser run.
+  Do not weaken assertions or count server-start timeout as functional evidence.
+- Node checks after reminder/registry changes: 84 PASS, node-reminders.log.
+  Generated fallback inventory line reference updated to notification tick's new
+  definition line; no fallback behavior/coverage status changed.
+- Broad run exposed ZD-021: header's unfiltered feed sorts future/cancelled outbound
+  appointment delivery records above a newly due in-app task reminder. Standalone
+  reminder passes, populated-suite reminder fails at missing bell item after API
+  proves one sent reminder. Add explicit bell surface filter (due SYSTEM, not
+  cancelled) consistently to list/summary/mark-all; retain general delivery ledger
+  and all existing backend role/tenant access. Regress mixed feed and independent
+  read-state effects; rerun populated browser sequence/build/full gate.
+- Broad team-access tablet fixture tries to create another staff resource for the
+  same linked user (correct backend rejection). Reuse the existing fixture resource
+  across viewports; do not weaken one-specialist-per-user constraints.
+- ZD-022 broad working-hours UI failure: deep link to resource 37 saves correctly,
+  but closing returns to page 1 (20 rows) and cannot restore focus to that resource.
+  Snapshot proves 37 resources and page 1/2; not a fixture-only failure. Keep the
+  existing pagination/filter model and reveal the selected resource's page before
+  restoring focus; clear only a filter that now hides the edited row. Add an
+  explicit >page-size regression and run working-hours focused browser checks.
+- ZD-021 mixed-feed regression failed before fix; 30 notification/reminder tests
+  PASS afterward (bell-after.log). Header now uses distinct bell query keys and
+  matching list/summary/mark-all filters; general outbox/read state preserved.
+- Additional broad-only test corrections: mobile client cards use native card
+  buttons, not desktop row selectors; mobile dashboard navigation is the visible
+  bottom link, not a hidden desktop sidebar. Resource reuse lookup searches linked
+  operator email so pagination cannot hide the existing staff resource. Behavioral
+  assertions retained (merge transfer, visible navigation, active specialist).
+- ZD-018 before: notification tick produced zero reminders. First implementation's
+  editable-task marker also failed stale-editor replay regression; replaced before
+  publication by unique TaskReminderDelivery(task, reminder_at), atomically committed
+  with routed notifications. No working DB migration applied. 70 affected tests PASS
+  (reminders-receipt.log), UI create→persist→two command ticks→one bell item→task
+  readback PASS (reminder-ui-retry.log). Initial fixture fixes: unique test emails and
+  select the assignee button, not template combobox. Real worker check in progress.
 
 - Owner explicitly instructed completion of all seven agreed stages in one run,
   continuing independent work and collecting unanswered decisions in
@@ -75,6 +427,12 @@
   browser-matrix.log and matrix-results/. Not a substitute for human screen-reader
   and clinic acceptance. Next: publish this verified bounded package, then finish
   remaining semantic reconciliation/matrix findings under the same authorization.
+- Publication receipt: c2af14c8cd90c65aff83184ef323cacc63a8fddb committed and normal
+  pushed HEAD:main; ls-remote matches. `origin/main` tracking ref is intentionally
+  stale under the existing narrow fetch refspec; fetched main/FETCH_HEAD and
+  ls-remote were both bb5caf6 before publication (ancestor proved). No branch drift.
+  Static gate on real bb5caf6..c2af14c range PASS, committed-static.log; working tree
+  was clean. GitHub run 36350513987 in progress; queued/running is not CI PASS.
 
 ## Pilot reconciliation and internal CRM acceptance — ACTIVE, 2026-09-28
 

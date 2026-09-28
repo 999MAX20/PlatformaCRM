@@ -14,7 +14,6 @@ import {
   getApiErrorMessage,
   getLoginErrorMessage,
   hasSessionExpiredNotice,
-  isSafeInternalReturnPath,
 } from "../../api/client";
 import { isMfaPendingResponse, type SocialProvider } from "../../api/auth";
 import { LanguageSelector } from "../../components/layout/LanguageSelector";
@@ -24,6 +23,7 @@ import { StatusNotice } from "../../components/ui/StatusNotice";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "./AuthProvider";
 import { PasswordVisibilityToggle } from "./PasswordVisibilityToggle";
+import { getPostAuthReturnPath } from "./authReturnPath";
 import type { CurrentUser } from "../../types";
 import "./authLoginSerenity.css";
 
@@ -90,7 +90,6 @@ export function LoginPage() {
   }, [sessionExpiredNotice]);
 
   function getPostLoginPath(user: CurrentUser) {
-    const fallback = user.is_platform_user ? "/platform" : "/app";
     const from = (location.state as LoginLocationState | null)?.from;
     const pathname = from?.pathname;
     const storedReturnTo = consumeSessionExpiredReturnTo();
@@ -98,13 +97,7 @@ export function LoginPage() {
       ? `${pathname}${from?.search ?? ""}${from?.hash ?? ""}`
       : storedReturnTo;
 
-    if (!intendedPath) return fallback;
-    if (intendedPath.startsWith("/invite/")) return intendedPath;
-    if (!isSafeInternalReturnPath(intendedPath)) return fallback;
-    if (user.is_platform_user && !intendedPath.startsWith("/platform")) return fallback;
-    if (!user.is_platform_user && !intendedPath.startsWith("/app")) return fallback;
-
-    return intendedPath;
+    return getPostAuthReturnPath(user.is_platform_user, intendedPath);
   }
 
   async function onSubmit(values: FormValues) {
@@ -114,7 +107,7 @@ export function LoginPage() {
       const user = await login(values.email, values.password);
       if (isMfaPendingResponse(user)) {
         sessionStorage.setItem("zani_mfa_pending", JSON.stringify(user));
-        navigate("/mfa", { replace: true, state: { from: location.state } });
+        navigate("/mfa", { replace: true, state: location.state });
         return;
       }
       navigate(getPostLoginPath(user), { replace: true });
@@ -134,7 +127,7 @@ export function LoginPage() {
       const user = await loginWithSocial(provider, idToken);
       if (isMfaPendingResponse(user)) {
         sessionStorage.setItem("zani_mfa_pending", JSON.stringify(user));
-        navigate("/mfa", { replace: true, state: { from: location.state } });
+        navigate("/mfa", { replace: true, state: location.state });
         return;
       }
       navigate(getPostLoginPath(user), { replace: true });

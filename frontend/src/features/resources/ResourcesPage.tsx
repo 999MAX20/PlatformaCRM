@@ -114,13 +114,24 @@ export function ResourcesPage() {
   const resourceRows = resourcesQuery.data?.results || [];
   const totalResources = resourcesQuery.data?.count || 0;
   const totalPages = Math.max(1, Math.ceil(totalResources / pageSize));
-  const selectedResource = resourceRows.find((resource) => resource.id === selectedResourceId) || null;
+  const selectedResourceOnPage = resourceRows.find((resource) => resource.id === selectedResourceId && resource.business === business?.id) || null;
+  const selectedResourceQuery = useQuery({
+    queryKey: ["resources", "selected", business?.id, selectedResourceId],
+    queryFn: async () => {
+      const resource = await resourcesApi.get(selectedResourceId!);
+      if (resource.business !== business?.id) throw new Error(t("actions.errorForbidden"));
+      return resource;
+    },
+    enabled: Boolean(business?.id && selectedResourceId && !resourcesQuery.isPending && !selectedResourceOnPage),
+    retry: false,
+  });
+  const selectedResource = selectedResourceOnPage || selectedResourceQuery.data || null;
   const activeTeamMembers = (teamMembersQuery.data || []).filter((member) => member.is_active);
 
   const workingHoursQuery = useQuery({
     queryKey: ["working-hours", "resource-modal", business?.id, selectedResourceId],
     queryFn: () => workingHoursApi.list({ business: business!.id, resource: selectedResourceId! }),
-    enabled: Boolean(business?.id && selectedResourceId),
+    enabled: Boolean(business?.id && selectedResource),
   });
   const businessHoursQuery = useQuery({
     queryKey: ["working-hours", "resource-create", business?.id],
@@ -167,14 +178,9 @@ export function ResourcesPage() {
   useEffect(() => {
     if (resourcesQuery.isLoading || resourcesQuery.isFetching) return;
     if (page > totalPages) {
-      updateSearchParams({ page: totalPages, resource: null });
-      return;
+      updateSearchParams({ page: totalPages });
     }
-    if (selectedResourceId && !selectedResource) {
-      updateSearchParams({ resource: null });
-      return;
-    }
-  }, [page, resourcesQuery.isFetching, resourcesQuery.isLoading, selectedResource, selectedResourceId, totalPages, updateSearchParams]);
+  }, [page, resourcesQuery.isFetching, resourcesQuery.isLoading, totalPages, updateSearchParams]);
 
   const permissionMessage = permissionForbiddenMessage("settings", "update", t);
 
@@ -266,7 +272,7 @@ export function ResourcesPage() {
   if (!business) return <ErrorState message={t("resources.noBusiness")} />;
   if (resourcesQuery.isLoading || teamMembersQuery.isLoading) return <LoadingState />;
 
-  const pageError = resourcesQuery.error || teamMembersQuery.error;
+  const pageError = resourcesQuery.error || teamMembersQuery.error || (!selectedResourceOnPage && selectedResourceQuery.error);
   const hasFilters = Boolean(search || resourceType || status);
   const pageFrom = totalResources === 0 ? 0 : (page - 1) * pageSize + 1;
   const pageTo = Math.min(totalResources, page * pageSize);
@@ -290,11 +296,12 @@ export function ResourcesPage() {
           <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("resources.withSchedule")} value={`${summary.with_individual_schedule}/${summary.active}`} hint={t("resources.withScheduleHint")} icon={CalendarClock} />
         </section>
 
+        {selectedResourceQuery.isLoading ? <LoadingState /> : null}
         {pageError ? (
           <div className="mb-3 shrink-0">
             <ErrorState
               message={getApiErrorMessage(pageError)}
-              action={<Button type="button" variant="secondary" onClick={() => void Promise.all([resourcesQuery.refetch(), teamMembersQuery.refetch()])}>{t("common.retry")}</Button>}
+              action={<Button type="button" variant="secondary" onClick={() => void Promise.all([resourcesQuery.refetch(), teamMembersQuery.refetch(), ...(selectedResourceId && !selectedResourceOnPage ? [selectedResourceQuery.refetch()] : [])])}>{t("common.retry")}</Button>}
             />
           </div>
         ) : null}

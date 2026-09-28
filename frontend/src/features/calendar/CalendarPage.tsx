@@ -1,5 +1,5 @@
 import { MoreHorizontal, Plus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -25,7 +25,8 @@ import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useEntityData } from "../../hooks/useEntityData";
-import type { Appointment, Task } from "../../types";
+import { useClientCreateIntent } from "../../hooks/useClientCreateIntent";
+import type { Appointment, Client, Task } from "../../types";
 import {
   dayEndHour,
   dayStartHour,
@@ -120,6 +121,11 @@ export function CalendarPage() {
     hour?: number;
     source?: Appointment["source"];
   } | null>(null);
+  const openLinkedAppointment = useCallback((client: Client | null) => {
+    setBookingPrefill({ client: client?.id, source: "manual" });
+    setBookingOpen(true);
+  }, []);
+  const createContext = useClientCreateIntent({ businessId: business?.id, allowed: canCreateAppointment, onOpen: openLinkedAppointment });
   const [serviceFilter, setServiceFilter] = useState(
     searchParams.get("service") || "",
   );
@@ -396,9 +402,11 @@ export function CalendarPage() {
   }, [canCreateAppointment, date, setPageHeader, t]);
 
   if (!business) return <ErrorState message={t("calendar.noBusiness")} />;
+  if (createContext.error) return <ErrorState message={createContext.error} />;
+  if (createContext.isLoading) return <LoadingState />;
 
   const appointmentItems = appointments.data || [];
-  const clientItems = clients.data || [];
+  const clientItems = createContext.includeClient(clients.data || []);
   const serviceItems = services.data || [];
   const resourceItems = resources.data || [];
   const leadItems = leads.data || [];

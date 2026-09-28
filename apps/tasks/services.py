@@ -418,13 +418,12 @@ def create_routed_task_notifications(*, task: Task, text: str, priority: str | N
 def resolve_task_notification_recipients(*, task: Task, priority: str) -> list:
     recipients = []
     if task.assignee_id:
-        recipients = resolve_notification_recipients(
-            business=task.business,
-            preferred_user=task.assignee,
-            roles=TASK_ASSIGNEE_NOTIFICATION_ROLES,
-            exclude_owner=False,
-            fallback_to_owner=False,
-        )
+        membership = BusinessMember.objects.select_related("user").filter(
+            business=task.business, user_id=task.assignee_id, is_active=True,
+            role__in=TASK_ASSIGNEE_NOTIFICATION_ROLES,
+        ).first()
+        if membership:
+            recipients = [membership.user]
     if not recipients:
         recipients = resolve_notification_recipients(
             business=task.business,

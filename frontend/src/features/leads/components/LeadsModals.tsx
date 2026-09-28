@@ -13,6 +13,7 @@ export function LeadsModals({
   businessId,
   shortcutsOpen,
   createOpen,
+  createClientId,
   appointmentOpen,
   nextActionOpen,
   lostLead,
@@ -43,6 +44,7 @@ export function LeadsModals({
   businessId: Id;
   shortcutsOpen: boolean;
   createOpen: boolean;
+  createClientId?: Id;
   appointmentOpen: boolean;
   nextActionOpen: boolean;
   lostLead: Lead | null;
@@ -89,6 +91,7 @@ export function LeadsModals({
 
       <LeadCreateModal
         open={createOpen}
+        initialClientId={createClientId}
         title={t("leads.new")}
         businessId={businessId}
         clients={clientList}

@@ -83,7 +83,7 @@ function formatJson(value: unknown) {
 }
 
 function canCancelRun(run: AutomationRun) {
-  return run.status === "pending" || run.status === "running" || run.status === "failed";
+  return ["pending", "running", "waiting", "retry_scheduled", "failed"].includes(run.status);
 }
 
 function canRetryRun(run: AutomationRun) {
@@ -91,14 +91,16 @@ function canRetryRun(run: AutomationRun) {
 }
 
 function runStatusVariant(status?: string): BadgeVariant {
-  if (["succeeded", "completed", "processed"].includes(status || "")) return "success";
-  if (["pending", "queued", "running"].includes(status || "")) return "warning";
+  if (["success", "succeeded", "completed", "processed"].includes(status || "")) return "success";
+  if (["pending", "queued", "running", "waiting", "retry_scheduled"].includes(status || "")) return "warning";
   if (["failed", "error", "cancelled", "blocked"].includes(status || "")) return "danger";
   return "neutral";
 }
 
 function runStatusLabel(status: string | undefined, t: (key: string) => string) {
   if (!status) return "-";
+  if (status === "waiting" || status === "retry_scheduled") return t("status.pending");
+  if (status === "success" || status === "cancelled") return t(`status.${status}`);
   const statusKey = status === "completed" ? "status.completed" : `integrations.status.${status}`;
   const label = t(statusKey);
   return label === statusKey ? status : label;

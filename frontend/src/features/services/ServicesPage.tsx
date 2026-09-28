@@ -171,19 +171,25 @@ export function ServicesPage() {
   const serviceRows = servicesQuery.data?.results || [];
   const totalServices = servicesQuery.data?.count || 0;
   const totalPages = Math.max(1, Math.ceil(totalServices / pageSize));
-  const selectedService = serviceRows.find((service) => service.id === selectedServiceId) || null;
+  const selectedServiceOnPage = serviceRows.find((service) => service.id === selectedServiceId && service.business === business?.id) || null;
+  const selectedServiceQuery = useQuery({
+    queryKey: ["services", "selected", business?.id, selectedServiceId],
+    queryFn: async () => {
+      const service = await servicesApi.get(selectedServiceId!);
+      if (service.business !== business?.id) throw new Error(t("actions.errorForbidden"));
+      return service;
+    },
+    enabled: Boolean(business?.id && selectedServiceId && !servicesQuery.isPending && !selectedServiceOnPage),
+    retry: false,
+  });
+  const selectedService = selectedServiceOnPage || selectedServiceQuery.data || null;
 
   useEffect(() => {
     if (servicesQuery.isLoading || servicesQuery.isFetching) return;
     if (page > totalPages) {
-      updateSearchParams({ page: totalPages, service: null });
-      return;
+      updateSearchParams({ page: totalPages });
     }
-    if (selectedServiceId && !selectedService) {
-      updateSearchParams({ service: null });
-      return;
-    }
-  }, [page, selectedService, selectedServiceId, servicesQuery.isFetching, servicesQuery.isLoading, totalPages, updateSearchParams]);
+  }, [page, servicesQuery.isFetching, servicesQuery.isLoading, totalPages, updateSearchParams]);
 
   const overviewServices = overviewQuery.data?.results || [];
   const activeServices = overviewServices.filter((service) => service.is_active);
@@ -290,7 +296,7 @@ export function ServicesPage() {
   if (!business) return <ErrorState message={t("services.noBusiness")} />;
   if (overviewQuery.isLoading || appointmentsQuery.isLoading || servicesQuery.isLoading) return <LoadingState />;
 
-  const pageError = overviewQuery.error || appointmentsQuery.error || servicesQuery.error;
+  const pageError = overviewQuery.error || appointmentsQuery.error || servicesQuery.error || (!selectedServiceOnPage && selectedServiceQuery.error);
   const hasFilters = Boolean(search || status);
   const pageFrom = totalServices === 0 ? 0 : (page - 1) * pageSize + 1;
   const pageTo = Math.min(totalServices, page * pageSize);
@@ -309,11 +315,12 @@ export function ServicesPage() {
           <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.usedInBookings")} value={usedServiceIds.size} hint={t("services.usedInBookingsHint")} icon={WalletCards} />
         </section>
 
+        {selectedServiceQuery.isLoading ? <LoadingState /> : null}
         {pageError ? (
           <div className="mb-3 shrink-0">
             <ErrorState
               message={getApiErrorMessage(pageError)}
-              action={<Button type="button" variant="secondary" onClick={() => void Promise.all([overviewQuery.refetch(), appointmentsQuery.refetch(), servicesQuery.refetch()])}>{t("common.retry")}</Button>}
+              action={<Button type="button" variant="secondary" onClick={() => void Promise.all([overviewQuery.refetch(), appointmentsQuery.refetch(), servicesQuery.refetch(), ...(selectedServiceId && !selectedServiceOnPage ? [selectedServiceQuery.refetch()] : [])])}>{t("common.retry")}</Button>}
             />
           </div>
         ) : null}

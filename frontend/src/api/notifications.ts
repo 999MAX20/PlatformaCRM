@@ -20,8 +20,8 @@ export const notificationsApi = {
       return Array.isArray(data) ? data : data.results;
     },
   },
-  summary: async () => {
-    const { data } = await apiClient.get<NotificationSummary>("/api/notifications/summary/");
+  summary: async (params?: { surface?: "bell" }) => {
+    const { data } = await apiClient.get<NotificationSummary>("/api/notifications/summary/", { params });
     return data;
   },
   markSent: async (id: Id) => {
@@ -36,8 +36,8 @@ export const notificationsApi = {
     const { data } = await apiClient.post<Notification>(`/api/notifications/${id}/mark-unread/`);
     return data;
   },
-  markAllRead: async () => {
-    const { data } = await apiClient.post<{ updated: number }>("/api/notifications/mark-all-read/");
+  markAllRead: async (params?: { surface?: "bell" }) => {
+    const { data } = await apiClient.post<{ updated: number }>("/api/notifications/mark-all-read/", {}, { params });
     return data;
   },
   cancel: async (id: Id) => {

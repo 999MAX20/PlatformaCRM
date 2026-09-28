@@ -249,7 +249,7 @@ export function AppointmentForm({
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
-        <Select label={t("appointment.client")} error={form.formState.errors.client?.message} options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: client.full_name }))]} {...form.register("client")} />
+        <Select label={t("appointment.client")} error={form.formState.errors.client?.message} options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: client.full_name }))]} {...form.register("client")} value={form.watch("client")} />
         <Select label={t("appointment.service")} error={form.formState.errors.service?.message} options={[{ value: 0, label: t("appointment.selectService") }, ...selectableServices.map((service) => ({ value: service.id, label: `${service.name} · ${service.duration_minutes} ${t("appointment.minutes")}` }))]} {...form.register("service")} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

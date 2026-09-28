@@ -1,6 +1,6 @@
 import { ArrowRight, Copy, KeyRound, ShieldCheck, Smartphone, Zap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 import {
   confirmMfaEnrollment,
@@ -10,7 +10,7 @@ import {
   type MfaEnrollment,
   type MfaPendingResponse,
 } from "../../api/auth";
-import { getApiErrorMessage } from "../../api/client";
+import { consumeSessionExpiredReturnTo, getApiErrorMessage } from "../../api/client";
 import { LanguageSelector } from "../../components/layout/LanguageSelector";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -18,6 +18,7 @@ import { ErrorState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "./AuthProvider";
+import { getAuthReturnPathFromState, getPostAuthReturnPath } from "./authReturnPath";
 import "./authLoginSerenity.css";
 
 function readPending(): MfaPendingResponse | null {
@@ -32,6 +33,7 @@ function readPending(): MfaPendingResponse | null {
 export function MfaPage() {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const location = useLocation();
   const { completeMfaSession } = useAuth();
   const pending = useMemo(readPending, []);
   const [enrollment, setEnrollment] = useState<MfaEnrollment | null>(null);
@@ -62,7 +64,9 @@ export function MfaPage() {
   async function finishSession() {
     const user = await completeMfaSession();
     sessionStorage.removeItem("zani_mfa_pending");
-    navigate(user.is_platform_user ? "/platform" : "/app", { replace: true });
+    const storedReturnTo = consumeSessionExpiredReturnTo();
+    const intendedPath = getAuthReturnPathFromState(location.state) || storedReturnTo;
+    navigate(getPostAuthReturnPath(user.is_platform_user, intendedPath), { replace: true });
   }
 
   async function submit(event: React.FormEvent) {

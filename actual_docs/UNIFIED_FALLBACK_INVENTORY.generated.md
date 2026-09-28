@@ -73,7 +73,7 @@ Detection records which fallback signals currently exist in the owning page sour
 | AUTH-MFA | /mfa | PublicRoute | loading:detected; empty:not_detected; denied:not_applicable; failure:detected; recovery:detected | authentication_flow | frontend/src/features/auth/MfaPage.tsx |
 | AUTH-FORGOT | /forgot-password | PublicRoute | loading:detected; empty:not_detected; denied:not_applicable; failure:detected; recovery:not_detected | authentication_flow | frontend/src/features/auth/ForgotPasswordPage.tsx |
 | AUTH-RESET | /reset-password/:uid/:token | PublicRoute | loading:detected; empty:not_detected; denied:not_applicable; failure:detected; recovery:detected | authentication_flow | frontend/src/features/auth/ResetPasswordPage.tsx |
-| AUTH-INVITE | /invite/:token | PublicRoute | loading:detected; empty:not_detected; denied:not_applicable; failure:detected; recovery:detected | authentication_flow | frontend/src/features/auth/InviteAcceptPage.tsx |
+| AUTH-INVITE | /invite/:token | InviteAcceptPage | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | authentication_flow | frontend/src/features/auth/InviteAcceptPage.tsx |
 | PUBLIC-LEGACY-REDIRECTS | /login | PublicRoute | loading:not_detected; empty:not_detected; denied:not_applicable; failure:not_detected; recovery:not_detected | authentication_flow | route_registry_only |
 | MERCHANT-SHELL | /app | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:not_detected; recovery:not_detected | owning_page_or_action | frontend/src/components/layout/AppLayout.tsx |
 | MERCHANT-DASHBOARD | /app/dashboard | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/dashboard/DashboardPage.tsx |
@@ -732,7 +732,7 @@ Detection records which fallback signals currently exist in the owning page sour
 | crm.prune_command_idempotency | default | system | bounded_expiry_delete | none | apps/core/tasks.py:19 |
 | exports.process_due_jobs | reports_exports | system | locked_due_job_claim | import_export_status | apps/core/tasks.py:13 |
 | exports.process_job | reports_exports | requesting_user | job_state_claim | import_export_status | apps/core/tasks.py:7 |
-| notifications.process_due_notifications | notifications | system | notification_delivery_state | notification_center | apps/notifications/tasks.py:6 |
+| notifications.process_due_notifications | notifications | system | notification_delivery_state | notification_center | apps/notifications/tasks.py:7 |
 | pricing.run_kaspi_pricing_cycle | integrations | pricing_operator | rule_and_change_log_guard | pricing_operation_details | apps/pricing/tasks.py:7 |
 | routing.process_cycle | automations | system | cycle_state_guard | work_queue_status | apps/businesses/tasks.py:6 |
 

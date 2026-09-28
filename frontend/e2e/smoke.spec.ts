@@ -388,6 +388,7 @@ test("platform admin lands in platform workspace", async ({ page }) => {
 
 test("merchant root redirects to the canonical dashboard route", async ({
   page,
+  isMobile,
 }) => {
   await login(page, users.owner, /\/app\/dashboard/);
 
@@ -395,7 +396,7 @@ test("merchant root redirects to the canonical dashboard route", async ({
   await expect(page).toHaveURL(/\/app\/dashboard\/?$/);
   await expect(page.getByTestId("dashboard-workspace-ready")).toBeVisible();
   await expect(
-    page.locator('aside a[href="/app/dashboard"]').first(),
+    page.locator(isMobile ? 'a[href="/app/dashboard"]:visible' : 'aside a[href="/app/dashboard"]').first(),
   ).toBeVisible();
 });
 

@@ -16,7 +16,10 @@ export function downloadText(filename: string, content: string, type: string) {
 }
 
 export function toCsvValue(value: unknown) {
-  return `"${String(value ?? "").replace(/"/g, '""')}"`;
+  const text = String(value ?? "");
+  // Match the server's safe_csv_cell policy, including leading whitespace.
+  const safeText = /^[=+\-@]/.test(text.trimStart()) ? `'${text}` : text;
+  return `"${safeText.replace(/"/g, '""')}"`;
 }
 
 export function getLeadExportRows({

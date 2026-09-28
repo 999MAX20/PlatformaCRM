@@ -26,7 +26,7 @@ export function InviteAcceptPage() {
   const location = useLocation();
   const { token = "" } = useParams();
   const { t } = useI18n();
-  const { isAuthenticated, isLoading: isAuthLoading, user, refreshUser } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, user, refreshUser, logout } = useAuth();
   const schema = z.object({
     full_name: z.string().optional(),
     phone: z.string().optional(),
@@ -68,7 +68,7 @@ export function InviteAcceptPage() {
     values: { full_name: preview.data?.full_name || "", phone: "", password: "", password_confirm: "" },
   });
 
-  if (preview.isLoading || (requiresAuthentication && isAuthLoading)) {
+  if (preview.isLoading || isAuthLoading) {
     return <LoadingState label={t("invite.checking")} />;
   }
 
@@ -103,7 +103,7 @@ export function InviteAcceptPage() {
           ) : null}
           {acceptMutation.error ? <div className="mt-5"><ErrorState message={getApiErrorMessage(acceptMutation.error)} /></div> : null}
 
-          {requiresAuthentication ? (
+          {requiresAuthentication || isAuthenticated ? (
             <div className="mt-6 space-y-4">
               <Input label={t("invite.email")} value={preview.data?.email || ""} readOnly />
               {!isAuthenticated ? (
@@ -119,7 +119,12 @@ export function InviteAcceptPage() {
                   </Link>
                 </>
               ) : !isInvitedAccount ? (
-                <ErrorState message={t("invite.wrongAccount")} />
+                <>
+                  <ErrorState message={t("invite.wrongAccount")} />
+                  <Button className="w-full" type="button" onClick={logout}>
+                    {t("header.logout")}
+                  </Button>
+                </>
               ) : (
                 <Button
                   className="w-full"

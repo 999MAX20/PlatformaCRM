@@ -30,6 +30,7 @@ export function LeadForm({
   services,
   teamMembers = [],
   initial,
+  initialClientId,
   onSubmit,
   onOpenClient,
 }: {
@@ -38,6 +39,7 @@ export function LeadForm({
   services: Service[];
   teamMembers?: TeamMember[];
   initial?: Lead;
+  initialClientId?: Id;
   onSubmit: (payload: LeadCreatePayload) => Promise<unknown>;
   onOpenClient?: (id: Id) => void;
 }) {
@@ -52,7 +54,7 @@ export function LeadForm({
   const form = useForm<Values>({
     resolver: zodResolver(createSchema(t)),
     defaultValues: {
-      client: initial?.client || 0,
+      client: initial?.client || initialClientId || 0,
       service: initial?.service || undefined,
       source: initial?.source || "manual",
       message: initial?.message || "",
@@ -115,6 +117,7 @@ export function LeadForm({
         error={form.formState.errors.client?.message}
         options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: `${client.full_name} ${client.phone || ""}` }))]}
         {...form.register("client")}
+        value={clientId}
       />
       {duplicates.length || relatedLeadsCount ? (
         <StatusNotice

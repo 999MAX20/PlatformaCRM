@@ -16,6 +16,7 @@ import {
 } from "../api/client";
 import { useAuth } from "../features/auth/AuthProvider";
 import { LoginPage } from "../features/auth/LoginPage";
+import { getAuthReturnPathFromState } from "../features/auth/authReturnPath";
 import {
   PlatformPlaceholderPage,
   platformPages,
@@ -250,12 +251,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   if (isLoading) return <LoadingState label={t("common.loadingAccess")} />;
   if (!isAuthenticated) return children;
 
-  const from = (location.state as {
-    from?: { pathname?: string; search?: string; hash?: string };
-  } | null)?.from;
-  const stateReturnTo = from?.pathname
-    ? `${from.pathname}${from.search ?? ""}${from.hash ?? ""}`
-    : undefined;
+  const stateReturnTo = getAuthReturnPathFromState(location.state);
   const intendedPath = stateReturnTo || storedReturnTo;
   const fallback = isPlatformUser ? "/platform" : "/app/dashboard";
 
@@ -928,11 +924,9 @@ const router = createBrowserRouter([
     path: "/invite/:token",
     errorElement: <RouteErrorBoundary />,
     element: (
-      <PublicRoute>
-        <PageLoader>
-          <InviteAcceptPage />
-        </PageLoader>
-      </PublicRoute>
+      <PageLoader>
+        <InviteAcceptPage />
+      </PageLoader>
     ),
   },
   {

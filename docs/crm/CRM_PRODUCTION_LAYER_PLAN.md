@@ -247,6 +247,27 @@ Current follow-up after completed phase:
 
 ### Tasks
 
+28.09.2026, ZD-018: acceptance found that `reminder_at` previously had no scheduled
+consumer. The existing notification beat tick and `process_due_notifications`
+command now enqueue due reminders for open/in-progress, non-archived tasks whose
+snooze has expired. A unique internal receipt per task/reminder timestamp commits
+atomically with in-app notifications; replay or an old task editor cannot remove
+the receipt. A different reminder timestamp schedules a new reminder. Normal
+preferences may intentionally suppress it; high/urgent use established escalation
+routing. Disabled task modules defer reminders without consuming them. Delivery
+uses the existing notification queue/retries; this does not send external messages
+or reassign tasks. Migration `tasks.0010` is tested only in isolated databases;
+applying it to a pilot/working environment still requires that environment's scope.
+Exact verification/publication status remains in PRIMARY-SESSION.
+Automatic scheduling requires Celery beat and a worker consuming `notifications`;
+a web-only development server only persists the requested time. The manual command
+is an operational alternative, not a claim that web requests run future timers.
+
+The header bell uses `surface=bell` for list, summary and mark-all-read: due SYSTEM
+notifications excluding cancelled delivery. The general notification ledger keeps
+all authorized channels/states for delivery management. This filter does not grant
+access, change delivery status or mark future/outbound records read.
+
 Статус: Phase 7 task operations checklist is complete at current scope; production-like scale QA and broader E2E can continue as follow-up.
 
 Update 2026-07-09: Phase 7 pass 5 completed task notification routing by role and assignee. Assigned tasks now create targeted notifications for the active assignee, while unassigned or invalid-assignee tasks route to manager/admin/operator roles with owner fallback. Normal task notifications respect business-scoped notification preferences, and high/urgent task notifications bypass disabled preferences as escalation notifications. Task events no longer create business-wide `recipient=null` notifications by default.

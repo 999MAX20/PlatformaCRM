@@ -12,6 +12,7 @@ import { useI18n } from "../../lib/i18n";
 import { getBusinessRole, hasPermission } from "../../lib/permissions";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useEntityData } from "../../hooks/useEntityData";
+import { useClientCreateIntent } from "../../hooks/useClientCreateIntent";
 import { TaskFormModal } from "./components/TaskFormModal";
 import {
   type TaskTabFilter,
@@ -22,7 +23,7 @@ import { useTaskActions } from "./hooks/useTaskActions";
 import { useTaskFilters } from "./hooks/useTaskFilters";
 import { useTaskQueries } from "./hooks/useTaskQueries";
 import { emptyTaskForm } from "./taskFormUtils";
-import type { Task } from "../../types";
+import type { Client, Task } from "../../types";
 import { useAuth } from "../auth/AuthProvider";
 
 export function TasksPage() {
@@ -63,6 +64,12 @@ export function TasksPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [commentText, setCommentText] = useState("");
   const [form, setForm] = useState(emptyTaskForm);
+  const openLinkedTask = useCallback((client: Client | null) => {
+    setEditingTask(null);
+    setForm({ ...emptyTaskForm, client: client ? String(client.id) : "" });
+    setOpen(true);
+  }, []);
+  const createContext = useClientCreateIntent({ businessId: business?.id, allowed: canCreateTask, onOpen: openLinkedTask });
   const {
     tasksQuery,
     taskSummary,
@@ -160,6 +167,8 @@ export function TasksPage() {
   ]);
 
   if (!business) return <ErrorState message={t("tasks.noBusiness")} />;
+  if (createContext.error) return <ErrorState message={createContext.error} />;
+  if (createContext.isLoading) return <LoadingState />;
   if (taskIdParam) return <Navigate to={`/app/tasks/${taskIdParam}`} replace />;
   if (
     taskSummary.isLoading ||
@@ -268,7 +277,7 @@ export function TasksPage() {
         open={open}
         editingTask={editingTask}
         form={form}
-        clients={clients.data || []}
+        clients={createContext.includeClient(clients.data || [])}
         leads={leads.data || []}
         deals={deals.data || []}
         appointments={appointments.data || []}

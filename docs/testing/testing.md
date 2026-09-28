@@ -295,6 +295,9 @@ Manual fallback when browser automation is unavailable:
 private-media directory and Celery filesystem broker. It starts its own solo
 worker, stops it after a persisted WAIT, restarts and resumes, verifies duplicate
 dispatch has no extra effect, then restores the DB and a synthetic private file.
+The same worker consumes a due task reminder after restart and its repeated
+notification tick; exactly one notification and durable reminder receipt must
+survive, including in the independently restored database.
 No working DB, existing worker, external provider or production file is used.
 
 On Windows, install the filesystem transport's optional dependency into an ignored

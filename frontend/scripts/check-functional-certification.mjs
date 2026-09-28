@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { routeActionRegistry } from "../e2e/certification/route-action-registry.mjs";
+import { expectedActionOutcome } from "../e2e/certification/action-outcome-contracts.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const frontendDir = path.resolve(scriptDir, "..");
@@ -71,6 +72,9 @@ export function verifyFunctionalCertificationRegistry({ rootDir = frontendDir } 
     }
     if (!allowedStatuses.has(entry.status)) {
       errors.push(`${entry.id} has invalid status ${entry.status}`);
+    }
+    for (const action of [...entry.primaryActions, ...entry.secondaryActions]) {
+      if (!expectedActionOutcome(action)) errors.push(`${entry.id}/${action} has no expected-result contract`);
     }
     for (const testLocation of entry.automatedTests || []) {
       if (!fs.existsSync(path.join(rootDir, testLocation))) {

@@ -12,6 +12,14 @@ PP-SEC-001…010, AUD-027, FC-004/006 и последующие закрытые
 FC-003/008, BE-REM-007, FB-009 manual и UX-4 остаются; реальные данные требуют
 среды/backup/restore/private files/monitoring и применимых BE-GAP-004/008/011.
 
+Ночной прогон устранил воспроизведённые дефекты ZD-015…028 в существующей CRM,
+правах, напоминаниях, автоматизациях и связанной навигации. Предметные проверки
+дополняют прежние closures; это не повторный полный security audit. Версия,
+полный gate, браузерные результаты и публикация принадлежат
+[PRIMARY-SESSION](../docs/testing/task-state/PRIMARY-SESSION.md). Пять решений
+для допуска записаны в [вопросах владельцу](../docs/pilot/owner-questions-2026-09-28.md).
+Локальный PASS не закрывает support policy, выбранную среду, live AI и ручную приёмку.
+
 - Status: **ACTIVE / EXECUTION IN PROGRESS**
 - Created: 2026-08-21
 - Baseline branch: `codex/pre-pilot-sec-010-security-certification`

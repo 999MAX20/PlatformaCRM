@@ -1,4 +1,6 @@
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
+import { spawnSync } from "node:child_process";
+import path from "node:path";
 
 const password = process.env.E2E_PASSWORD || "ZaniTest123!";
 const apiBaseURL = process.env.E2E_API_BASE_URL || "http://127.0.0.1:8000";
@@ -50,6 +52,57 @@ async function getBusinessId(
 }
 
 test.describe("FC-006 pilot merchant journeys", () => {
+  test("task created in UI delivers one scheduled reminder and opens its saved card", async ({ page }) => {
+    test.skip(process.env.ZANI_QUALITY_GATE !== "1", "Requires the isolated quality-gate database and safe provider environment");
+    test.setTimeout(90_000);
+    expect(process.env.DATABASE_URL).toMatch(/zani-quality-gate-[^/]+\/gate\.sqlite3$/);
+    expect(process.env.E2E_PYTHON).toBeTruthy();
+    const tokens = await login(page);
+    const headers = authHeaders(tokens);
+    const membersResponse = await page.request.get(`${apiBaseURL}/api/team/members/`, { headers });
+    const members = unwrapList<{ role: string; user: { email: string; full_name: string } }>(await membersResponse.json());
+    const owner = members.find(member => member.user.email === ownerEmail)!;
+    const title = `Scheduled reminder ${Date.now()}`;
+    await page.goto("/app/tasks");
+    await page.locator('[data-testid="page-primary-action"]:visible').click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByLabel("Название", { exact: true }).fill(title);
+    await dialog.getByRole("button", { name: /^Исполнитель / }).click();
+    await page.getByRole("option").filter({ hasText: owner.user.full_name || ownerEmail }).click();
+    const past = await page.evaluate(() => {
+      const date = new Date(Date.now() - 120_000);
+      return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+    });
+    await dialog.getByLabel("Напоминание", { exact: true }).fill(past);
+    const saved = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/tasks/"));
+    await dialog.getByRole("button", { name: "Сохранить", exact: true }).click();
+    const response = await saved;
+    expect(response.status()).toBe(201);
+    const task = await response.json();
+    expect(new Date(task.reminder_at).getTime()).toBeLessThan(Date.now());
+    await expect(dialog).not.toBeVisible();
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const tick = spawnSync(process.env.E2E_PYTHON!, ["manage.py", "process_due_notifications"], {
+        cwd: path.resolve(process.cwd(), ".."), env: process.env, encoding: "utf8", timeout: 30_000,
+      });
+      expect(tick.status, tick.stderr || String(tick.error || "")).toBe(0);
+    }
+    const notifications = await page.request.get(`${apiBaseURL}/api/notifications/?category=tasks`, { headers });
+    expect(notifications.ok()).toBeTruthy();
+    const reminders = unwrapList<{ text: string; action_url: string; status: string }>(await notifications.json())
+      .filter(item => item.text === `Напоминание: ${title}`);
+    expect(reminders).toHaveLength(1);
+    expect(reminders[0].status).toBe("sent");
+    await page.reload();
+    await page.getByTestId("header-notifications-trigger").click();
+    await expect(page.getByText(`Напоминание: ${title}`, { exact: true })).toBeVisible();
+    await page.getByText(`Напоминание: ${title}`, { exact: true }).locator("../../..").getByRole("button", { name: "Открыть задачу", exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`/app/tasks\\?task=${task.id}`));
+    await expect(page.getByText(title, { exact: true }).first()).toBeVisible();
+    const readback = await page.request.get(`${apiBaseURL}/api/tasks/${task.id}/`, { headers });
+    expect((await readback.json()).reminder_at).toBe(task.reminder_at);
+  });
+
   test("team access toggle retains specialist and task until manual reassignment", async ({ page, request }) => {
     test.setTimeout(90_000);
     const tokens = await login(page);
@@ -70,11 +123,18 @@ test.describe("FC-006 pilot merchant journeys", () => {
     });
     expect(taskResponse.ok()).toBeTruthy();
     const task = await taskResponse.json();
-    const resourceResponse = await page.request.post(`${apiBaseURL}/api/resources/`, {
-      headers, data: { business, name: `Retained specialist ${Date.now()}`, resource_type: "staff", linked_user: operator.user.id, is_active: true },
-    });
-    expect(resourceResponse.ok()).toBeTruthy();
-    const resource = await resourceResponse.json();
+    const resourcesResponse = await page.request.get(`${apiBaseURL}/api/resources/?search=${encodeURIComponent(operatorEmail)}`, { headers });
+    expect(resourcesResponse.ok()).toBeTruthy();
+    let resource = unwrapList<{ id: number; linked_user: number }>(await resourcesResponse.json())
+      .find(item => item.linked_user === operator.user.id);
+    if (!resource) {
+      const resourceResponse = await page.request.post(`${apiBaseURL}/api/resources/`, {
+        headers, data: { business, name: `Retained specialist ${Date.now()}`, resource_type: "staff", linked_user: operator.user.id, is_active: true },
+      });
+      expect(resourceResponse.ok(), await resourceResponse.text()).toBeTruthy();
+      resource = await resourceResponse.json();
+    }
+    expect(resource).toBeTruthy();
     expect((await request.get(`${apiBaseURL}/api/tasks/${task.id}/`, { headers: oldHeaders })).ok()).toBeTruthy();
     await page.goto("/app/settings#team-access");
     await page.getByTestId("team-member-select").selectOption(String(owner.id));
@@ -94,7 +154,7 @@ test.describe("FC-006 pilot merchant journeys", () => {
       expect([401, 403, 404]).toContain(denied.status());
       const retainedTask = await page.request.get(`${apiBaseURL}/api/tasks/${task.id}/`, { headers });
       expect(await retainedTask.json()).toMatchObject({ assignee: operator.user.id, status: "open" });
-      const retainedResource = await page.request.get(`${apiBaseURL}/api/resources/${resource.id}/`, { headers });
+      const retainedResource = await page.request.get(`${apiBaseURL}/api/resources/${resource!.id}/`, { headers });
       expect(await retainedResource.json()).toMatchObject({ linked_user: operator.user.id, is_active: true });
       await page.goto(`/app/tasks/${task.id}`);
       await page.locator("select").filter({ has: page.locator(`option[value="${manager.user.id}"]`) }).selectOption(String(manager.user.id));
@@ -112,7 +172,7 @@ test.describe("FC-006 pilot merchant journeys", () => {
     }
   });
 
-  test("duplicate client preview and confirmed merge transfer the linked lead", async ({ page }) => {
+  test("duplicate client preview and confirmed merge transfer the linked lead", async ({ page, isMobile }) => {
     test.setTimeout(90_000);
     const tokens = await login(page);
     const business = await getBusinessId(page.request, tokens);
@@ -133,7 +193,11 @@ test.describe("FC-006 pilot merchant journeys", () => {
     expect(leadResponse.ok()).toBeTruthy();
     const lead = await leadResponse.json();
     await page.goto("/app/clients");
-    await page.locator(`[data-testid="client-row-action-open"][data-client-id="${target.id}"]`).click();
+    if (isMobile) {
+      await page.getByRole("button").filter({ has: page.getByRole("heading", { name: target.full_name, exact: true }) }).click();
+    } else {
+      await page.locator(`[data-testid="client-row-action-open"][data-client-id="${target.id}"]`).click();
+    }
     await page.getByTestId("crm-entity-drawer").getByRole("button", { name: /^(Изменить|Edit|Өзгерту)$/ }).click();
     const previewResponse = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/api/clients/${target.id}/merge-dry-run/`));
     await page.getByTestId("client-action-form").getByRole("button", { name: /Объединить в текущего|Merge into current/ }).click();
@@ -147,7 +211,9 @@ test.describe("FC-006 pilot merchant journeys", () => {
     expect(after.ok()).toBeTruthy();
     expect((await after.json()).client).toBe(target.id);
     await page.reload();
-    await expect(page.locator(`[data-testid="client-row-action-open"][data-client-id="${duplicate.id}"]`)).toHaveCount(0);
+    await expect(isMobile
+      ? page.getByRole("heading", { name: duplicate.full_name, exact: true })
+      : page.locator(`[data-testid="client-row-action-open"][data-client-id="${duplicate.id}"]`)).toHaveCount(0);
     const preserved = await page.request.get(`${apiBaseURL}/api/clients/${target.id}/`, { headers });
     expect(preserved.ok()).toBeTruthy();
     expect((await preserved.json()).email).toBe(`merge-${unique}@example.com`);
@@ -456,6 +522,22 @@ test.describe("FC-006 pilot merchant journeys", () => {
 
     await page.getByTestId(`ai-action-run-${taskAction.id}`).click();
     const approvalDialog = page.getByRole("dialog");
+    await expect(approvalDialog).toBeVisible();
+    const tasksBeforeCancel = await page.request.get(`${apiBaseURL}/api/tasks/`, { headers });
+    expect(tasksBeforeCancel.ok()).toBeTruthy();
+    const beforeCancelCount = (await tasksBeforeCancel.json()).count;
+    const approvalWrites: string[] = [];
+    const captureApprovalWrite = (request: import("@playwright/test").Request) => {
+      if (request.method() === "POST" && /\/api\/ai\/(approval-requests|tools\/\d+\/execute)/.test(request.url())) approvalWrites.push(request.url());
+    };
+    page.on("request", captureApprovalWrite);
+    await approvalDialog.getByRole("button", { name: "Отмена", exact: true }).click();
+    await expect(approvalDialog).not.toBeVisible();
+    const tasksAfterCancel = await page.request.get(`${apiBaseURL}/api/tasks/`, { headers });
+    expect((await tasksAfterCancel.json()).count).toBe(beforeCancelCount);
+    expect(approvalWrites).toHaveLength(0);
+    page.off("request", captureApprovalWrite);
+    await page.getByTestId(`ai-action-run-${taskAction.id}`).click();
     await expect(approvalDialog).toBeVisible();
     await approvalDialog.locator("textarea").fill("Owner confirmed this action");
     const executeResponse = page.waitForResponse(

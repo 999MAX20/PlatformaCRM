@@ -25,6 +25,8 @@ const router = fs.readFileSync(routerPath, "utf8");
 const tokenApi = fs.readFileSync(tokenApiPath, "utf8");
 const clientApi = fs.readFileSync(clientApiPath, "utf8");
 const authProvider = fs.readFileSync(authProviderPath, "utf8");
+const authReturnPath = fs.readFileSync(path.join(frontendDir, "src", "features", "auth", "authReturnPath.ts"), "utf8");
+const mfaPage = fs.readFileSync(path.join(frontendDir, "src", "features", "auth", "MfaPage.tsx"), "utf8");
 
 test("credential login failures use credential copy instead of expired-session copy", () => {
   assert.match(loginPage, /getLoginErrorMessage/);
@@ -95,9 +97,11 @@ test("auth language switcher uses the themed shared select", () => {
 test("protected-route login redirects preserve the intended workspace route", () => {
   assert.match(router, /<Navigate to="\/login" replace state={{ from: location }} \/>/);
   assert.match(loginPage, /function getPostLoginPath/);
-  assert.match(loginPage, /isSafeInternalReturnPath\(intendedPath\)/);
-  assert.match(loginPage, /intendedPath\.startsWith\("\/app"\)/);
-  assert.match(loginPage, /intendedPath\.startsWith\("\/platform"\)/);
+  assert.match(authReturnPath, /isSafeInternalReturnPath\(intendedPath\)/);
+  assert.match(authReturnPath, /intendedPath\.startsWith\("\/app"\)/);
+  assert.match(authReturnPath, /intendedPath\.startsWith\("\/platform"\)/);
+  assert.match(loginPage, /getPostAuthReturnPath\(user.is_platform_user, intendedPath\)/);
+  assert.match(mfaPage, /getPostAuthReturnPath\(user.is_platform_user, intendedPath\)/);
   assert.match(router, /const \[storedReturnTo\] = useState\(\(\) => getSessionExpiredReturnTo\(\)\)/);
   assert.match(router, /const intendedPath = stateReturnTo \|\| storedReturnTo/);
   assert.match(router, /clearSessionExpiredReturnTo\(\)/);

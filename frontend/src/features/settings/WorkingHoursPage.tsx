@@ -81,6 +81,33 @@ export function WorkingHoursPage() {
   const selectedResource = (resources.data || []).find((resource) => resource.id === selectedResourceId) || null;
   const modalOpen = businessSelected || Boolean(selectedResource);
 
+  const businessWeek = weekdayKeys.map((key, weekday) => ({
+    key,
+    schedule: rows.find((row) => !row.resource && row.weekday === weekday) || null,
+  }));
+  const businessDays = businessWeek.filter((day) => day.schedule && !day.schedule.is_day_off).length;
+  const resourceSummaries: ResourceScheduleSummary[] = activeResources.map((resource) => {
+    const ownRows = rows.filter((row) => row.resource === resource.id);
+    const effectiveWeek = weekdayKeys.map((_, weekday) => ownRows.find((row) => row.weekday === weekday) || businessWeek[weekday]?.schedule || null);
+    return {
+      resource,
+      individual: ownRows.length > 0,
+      workingDays: effectiveWeek.filter((row) => row && !row.is_day_off).length,
+    };
+  });
+  const normalizedSearch = resourceSearch.trim().toLocaleLowerCase();
+  const filteredResources = resourceSummaries.filter((item) => {
+    if (normalizedSearch && !item.resource.name.toLocaleLowerCase().includes(normalizedSearch)) return false;
+    if (scheduleMode === "individual" && !item.individual) return false;
+    if (scheduleMode === "business" && item.individual) return false;
+    return true;
+  });
+  const resourceTotalPages = Math.max(1, Math.ceil(filteredResources.length / resourcePageSize));
+  const safeResourcePage = Math.min(resourcePage, resourceTotalPages);
+  const pagedResources = filteredResources.slice((safeResourcePage - 1) * resourcePageSize, safeResourcePage * resourcePageSize);
+  const individualSchedules = resourceSummaries.filter((item) => item.individual).length;
+  const dayOffRows = rows.filter((row) => row.is_day_off).length;
+
   const setView = useCallback((view: WorkingHoursView) => {
     setSearchParams((current) => {
       const next = new URLSearchParams(current);
@@ -191,6 +218,19 @@ export function WorkingHoursPage() {
 
   const closeModal = useCallback(async () => {
     if (!await confirmDiscard()) return;
+    if (selectedResourceId) {
+      const visibleIndex = filteredResources.findIndex((item) => item.resource.id === selectedResourceId);
+      if (visibleIndex >= 0) {
+        setResourcePage(Math.floor(visibleIndex / resourcePageSize) + 1);
+      } else {
+        // Saving an individual schedule can remove the row from an inherited-only
+        // filter. Reveal the edited resource before returning keyboard focus.
+        const resourceIndex = activeResources.findIndex((resource) => resource.id === selectedResourceId);
+        setResourceSearch("");
+        setScheduleMode("");
+        setResourcePage(Math.max(1, Math.floor(resourceIndex / resourcePageSize) + 1));
+      }
+    }
     const focusReturnId = selectedResourceId
       ? `working-hours-resource-${selectedResourceId}`
       : businessSelected
@@ -212,7 +252,7 @@ export function WorkingHoursPage() {
         window.requestAnimationFrame(restoreFocus);
       });
     }
-  }, [businessSelected, clearSelection, confirmDiscard, selectedResourceId]);
+  }, [activeResources, businessSelected, clearSelection, confirmDiscard, filteredResources, resourcePageSize, selectedResourceId]);
 
   async function applyPreset() {
     if (!canManage || presetMutation.isPending) return;
@@ -228,32 +268,6 @@ export function WorkingHoursPage() {
   if (workingHours.isLoading || resources.isLoading) return <LoadingState />;
 
   const pageError = workingHours.error || resources.error;
-  const businessWeek = weekdayKeys.map((key, weekday) => ({
-    key,
-    schedule: rows.find((row) => !row.resource && row.weekday === weekday) || null,
-  }));
-  const businessDays = businessWeek.filter((day) => day.schedule && !day.schedule.is_day_off).length;
-  const resourceSummaries: ResourceScheduleSummary[] = activeResources.map((resource) => {
-    const ownRows = rows.filter((row) => row.resource === resource.id);
-    const effectiveWeek = weekdayKeys.map((_, weekday) => ownRows.find((row) => row.weekday === weekday) || businessWeek[weekday]?.schedule || null);
-    return {
-      resource,
-      individual: ownRows.length > 0,
-      workingDays: effectiveWeek.filter((row) => row && !row.is_day_off).length,
-    };
-  });
-  const normalizedSearch = resourceSearch.trim().toLocaleLowerCase();
-  const filteredResources = resourceSummaries.filter((item) => {
-    if (normalizedSearch && !item.resource.name.toLocaleLowerCase().includes(normalizedSearch)) return false;
-    if (scheduleMode === "individual" && !item.individual) return false;
-    if (scheduleMode === "business" && item.individual) return false;
-    return true;
-  });
-  const resourceTotalPages = Math.max(1, Math.ceil(filteredResources.length / resourcePageSize));
-  const safeResourcePage = Math.min(resourcePage, resourceTotalPages);
-  const pagedResources = filteredResources.slice((safeResourcePage - 1) * resourcePageSize, safeResourcePage * resourcePageSize);
-  const individualSchedules = resourceSummaries.filter((item) => item.individual).length;
-  const dayOffRows = rows.filter((row) => row.is_day_off).length;
 
   return (
     <CrmWorkspacePage maxWidthClassName="max-w-[1520px]" testId={pageError ? undefined : "working-hours-workspace-ready"}>

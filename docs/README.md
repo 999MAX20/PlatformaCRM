@@ -13,6 +13,7 @@ contracts; detailed technical documentation and evidence retain their owners.
 - [Billing discussion deferred, later 2026-09-25](billing/BILLING_DISCUSSION_DEFERRED_2026-09-25.md) — latest package with included AI direction supersedes separate-AI/PAYG; prices and billing work deferred, paid-pilot commercial gate retained. No new implementation phase.
 
 - [Текущий план пилота, 28.09](pilot/local-crm-completion.md#current-plan) — источник порядка разрешённого исполнения: внутренняя CRM и AI, старые долги и точные границы; интеграции/мессенджеры/шлюз исключены, billing отложен.
+- [Вопросы владельцу по пилоту](pilot/owner-questions-2026-09-28.md) — решения по поддержке, среде, хранению файлов, ручной приёмке и live AI; независимые проверки продолжаются без ожидания ответов.
 - [Backend development audit, 2026-09-14](pilot/backend-development-audit.md) — implemented vs WIP vs missing evidence; not a second task queue.
 - [Backend open logic register](pilot/backend-open-logic-register.md) — canonical backend gap IDs.
 - [Technical documentation audit](operations/technical-documentation-audit.md) — 105 source documents and archive decisions.

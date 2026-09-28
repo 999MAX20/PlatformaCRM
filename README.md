@@ -28,6 +28,13 @@ plan/clean_code_rules/zani_required_clean_code_rules.md
 не банковская операция и не подтверждение через 1С. Контракт и проверки:
 [Client payments](docs/crm/client-payments.md).
 
+Напоминания задач доставляет периодический обработчик уведомлений: для
+автоматической работы нужны worker очереди `notifications` и Celery beat.
+Один web-сервер сохраняет время напоминания, но не запускает периодические задания.
+Настройка — [deployment](docs/production/deployment.md), локальная проверка
+на временной базе — [recovery drill](docs/testing/testing.md#isolated-pilot-processrecovery-drill).
+Применение новых миграций к рабочей среде выполняется отдельно от тестов.
+
 ### Реализовано до этапного плана
 
 - Django + DRF backend-core.

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useSearchParams } from "react-router";
 
 import { dealsApi } from "../../api/deals";
@@ -22,7 +22,10 @@ import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { useNotification } from "../../components/notifications/NotificationProvider";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
-import type { Deal, Id } from "../../types";
+import { hasPermission } from "../../lib/permissions";
+import { useClientCreateIntent } from "../../hooks/useClientCreateIntent";
+import { useAuth } from "../auth/AuthProvider";
+import type { Client, Deal, Id } from "../../types";
 import { DealsList } from "./components/DealsList";
 import { DealsFilters } from "./components/DealsFilters";
 import {
@@ -38,6 +41,7 @@ import { useDeals } from "./hooks/useDeals";
 
 export function DealsPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const { setPageHeader } = usePageHeader();
   const confirmAction = useActionConfirm();
   const showUndoToast = useUndoToast();
@@ -104,6 +108,11 @@ export function DealsPage() {
     onSelect: selection.openDeal,
     t,
   });
+  const openLinkedDeal = useCallback((client: Client | null) => {
+    actions.setForm({ title: "", client: client ? String(client.id) : "", pipeline: "", stage: "", amount: "0", source: "manual" });
+    actions.setCreateOpen(true);
+  }, [actions.setCreateOpen, actions.setForm]);
+  const createContext = useClientCreateIntent({ businessId: business?.id, allowed: hasPermission(user, business?.id, "deals", "create"), onOpen: openLinkedDeal });
   const [drawerEntity, setDrawerEntity] = useState<CrmDrawerEntity | null>(
     null,
   );
@@ -230,6 +239,8 @@ export function DealsPage() {
   }
 
   if (!business) return <ErrorState message={t("deals.noBusiness")} />;
+  if (createContext.error) return <ErrorState message={createContext.error} />;
+  if (createContext.isLoading) return <LoadingState />;
   if (isLoading) return <LoadingState />;
 
   const dealWorkspaceError =
@@ -302,7 +313,7 @@ export function DealsPage() {
       <CreateDealModal
         open={actions.createOpen}
         form={actions.form}
-        clients={data.clients}
+        clients={createContext.includeClient(data.clients)}
         pipelines={data.pipelines}
         defaultPipeline={defaultPipeline}
         stages={stagesForForm}

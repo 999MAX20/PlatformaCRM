@@ -69,6 +69,14 @@ def stop_worker(worker):
             worker.wait(timeout=10)
 
 
+def wait_for_dispatch(directory, dispatch, worker):
+    deadline = time.monotonic() + 45
+    while not (directory / f"done-{dispatch.id}").exists():
+        if worker.poll() is not None or time.monotonic() >= deadline:
+            raise RuntimeError("Queued drill dispatch did not complete")
+        time.sleep(0.25)
+
+
 def run_drill(directory):
     import django
     django.setup()
@@ -78,7 +86,8 @@ def run_drill(directory):
     from apps.accounts.models import User
     from apps.automations.models import AutomationAction, AutomationRule, AutomationRun
     from apps.businesses.models import Business, BusinessMember
-    from apps.tasks.models import Task
+    from apps.tasks.models import Task, TaskReminderDelivery
+    from apps.notifications.models import Notification
     from apps.core.models import FileAttachment
 
     app = configure_worker(directory)
@@ -104,6 +113,9 @@ def run_drill(directory):
             wait_for_run(run, "waiting", worker)
             assert run.current_action_index == 2
             assert Task.objects.filter(business=business, title="Before restart").count() == 1
+            Task.objects.filter(business=business, title="Before restart").update(
+                assignee=owner, reminder_at=timezone.now() - timezone.timedelta(minutes=1),
+            )
             stop_worker(worker)
             run.run_after = timezone.now() - timezone.timedelta(seconds=1)
             run.save(update_fields=["run_after"])
@@ -112,11 +124,13 @@ def run_drill(directory):
             wait_for_run(run, "success", worker)
             # A duplicate persisted dispatch is harmless after completion.
             duplicate = app.send_task("automations.process_automation_run", args=[run.id], queue="automations")
-            deadline = time.monotonic() + 45
-            while not (directory / f"done-{duplicate.id}").exists():
-                if worker.poll() is not None or time.monotonic() >= deadline:
-                    raise RuntimeError("Duplicate dispatch did not complete")
-                time.sleep(0.25)
+            wait_for_dispatch(directory, duplicate, worker)
+            for _ in range(2):
+                reminder_tick = app.send_task("notifications.process_due_notifications", queue="notifications")
+                wait_for_dispatch(directory, reminder_tick, worker)
+            reminders = Notification.objects.filter(business=business, text="Напоминание: Before restart")
+            assert reminders.count() == 1 and reminders.get().status == "sent"
+            assert TaskReminderDelivery.objects.filter(task__business=business).count() == 1
         except Exception:
             log.flush()
             print((directory / "worker.log").read_text(encoding="utf-8", errors="replace")[-4000:])
@@ -145,9 +159,10 @@ def run_drill(directory):
         original.backup(restored)
         assert restored.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
         assert restored.execute("SELECT COUNT(*) FROM tasks_task").fetchone()[0] == 2
+        assert restored.execute("SELECT COUNT(*) FROM tasks_taskreminderdelivery").fetchone()[0] == 1
         assert restored.execute("SELECT status, current_action_index FROM automations_automationrun WHERE id=?", (run.id,)).fetchone() == ("success", 3)
         assert restored.execute("SELECT file FROM core_fileattachment WHERE id=?", (attachment.id,)).fetchone()[0] == attachment.file.name
-    print(json.dumps({"worker_restart": "pass", "persisted_wait_resume": "pass", "duplicate_dispatch": "pass", "sqlite_restore": "pass", "private_file_restore": "pass", "tasks": 2, "transport": "filesystem", "production_acceptance": False}))
+    print(json.dumps({"worker_restart": "pass", "persisted_wait_resume": "pass", "duplicate_dispatch": "pass", "task_reminder_replay": "pass", "sqlite_restore": "pass", "private_file_restore": "pass", "tasks": 2, "transport": "filesystem", "production_acceptance": False}))
 
 
 def main():
@@ -168,7 +183,7 @@ def main():
     if os.environ.get("PILOT_DRILL_DEPS"):
         site.addsitedir(os.environ["PILOT_DRILL_DEPS"])
     if sys.argv[1:] == ["--worker"]:
-        configure_worker(directory).worker_main(["worker", "--pool=solo", "--concurrency=1", "-Q", "automations", "--without-gossip", "--without-mingle", "--without-heartbeat", "--loglevel=WARNING"])
+        configure_worker(directory).worker_main(["worker", "--pool=solo", "--concurrency=1", "-Q", "automations,notifications", "--without-gossip", "--without-mingle", "--without-heartbeat", "--loglevel=WARNING"])
     elif sys.argv[1:] == ["--drill"]:
         run_drill(directory)
     else:

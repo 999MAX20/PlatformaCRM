@@ -686,6 +686,180 @@ Copy this section for every new confirmed precedent:
 - Derived rule: an implemented API is not complete until the authorized operator
   has a reachable UI action and its retention/reassignment effects are verified.
 
+### ZD-018 — Scheduled task reminders were stored but never dispatched
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- V1-F05/UI exposes reminder_at, but no runtime consumer existed. Two notification
+  ticks produced zero notifications in the before-fix regression. Reuse the existing
+  notification task/command, task recipient policy and delivery retry mechanism.
+- Due active/non-archived tasks dispatch once per task/timestamp; future, snoozed,
+  closed and disabled-module tasks do not dispatch. Unique TaskReminderDelivery
+  receipt and notifications commit atomically. A changed timestamp schedules a new
+  reminder; a preference-suppressed normal reminder is consumed intentionally.
+- An initial unpublished task-field marker failed a stale-editor regression (two
+  reminders); independent receipts prevent ordinary task saves from resetting it.
+- Migration tasks.0010 only exercised in disposable databases. UI create, saved
+  time, two ticks, one bell item and return to task PASS. Real filesystem-broker
+  Celery restart/replay and restored receipt PASS; not a production transport claim.
+- Derived rule: a scheduling field needs a proven consumer, restart-safe receipt,
+  reachable result and concurrency checks against ordinary entity editing.
+
+### ZD-019 — Invalid task assignee expanded notification recipients
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- The generic resolver fell back to every allowed assignee role when the preferred
+  member was inactive. A regression observed manager + owner + unrelated specialist
+  instead of the approved manager/admin/operator fallback.
+- Task routing now checks active eligible membership before invoking preferred-user
+  resolution. Otherwise it uses the existing manager roles/owner fallback. Task
+  assignment, history, specialist activity and permission policy remain unchanged.
+- Reminder/task/notification suites: 71 PASS; no automatic reassignment or new roles.
+- Derived rule: fallback recipient sets are part of authorization/product contracts;
+  test inactive preferred users with unrelated active roles, not just one owner.
+
+### ZD-020 — Waiting automation runs had no reachable cancel action
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- A real lead-triggered WAIT run persisted, but row/detail controls omitted Cancel.
+  Backend already permits cancellation of waiting/retry_scheduled. Frontend status
+  type and canCancelRun now include both states; no backend permission expansion.
+- Before-fix browser failure: pilot-extra-before.log. Follow-up matrix server-start
+  timeout is NOT PASS; serial behavioral rerun required in PRIMARY-SESSION.
+- Derived rule: frontend runtime-state unions/actions must track resumable backend
+  states, not just pending/running/terminal states.
+
+### ZD-021 — Future/cancelled outbound records hid due reminders in the bell
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Standalone due reminder passed; a populated UI suite sorted future and cancelled
+  appointment deliveries above it. Bell feed/summary/mark-all now request an explicit
+  due SYSTEM/non-cancelled subset with separate query keys. General delivery ledger
+  and existing tenant/recipient permission scopes are preserved.
+- Before API regression returned four mixed records instead of one in-app item.
+  Post-fix test verifies list/count plus mark-all leaves outbound/future read state
+  untouched. Populated browser follow-up required; see PRIMARY-SESSION.
+- Derived rule: test operational notification surfaces with mixed channels, future
+  timestamps and cancelled jobs; an empty inbox conceals ordering/filter defects.
+
+### ZD-022 — Schedule deep link lost its focus target beyond page one
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- With 37 active resources and page size 20, deep-linked editor saved but closing
+  left page 1 visible and lost focus. Close now selects the resource's visible page;
+  a filter invalidated by the edit is cleared only when it hides that resource.
+- Existing full-suite smoke reproduced it; dedicated >20-resource deep-link scenario
+  checks close→focus→keyboard reopen independently of other test fixtures.
+- Derived rule: overlay focus restoration must also restore a reachable paginated
+  context, including direct URLs and filters invalidated by a successful save.
+
+### ZD-023 — Password-reset success disappeared without a returned token
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- The API correctly returns the same generic message without reset_path/token;
+  ForgotPasswordPage discarded that message and displayed no successful outcome.
+  Synthetic nonexistent-account browser test failed after a successful API response
+  (auth-before.log). Registration/password-change test in the same run passed.
+- Display the existing server message with shared accessible StatusNotice, clear
+  it on a new attempt, retain error feedback and anti-enumeration behavior. No
+  token exposure, delivery-policy change or external message is introduced.
+- The same page offered manual/WhatsApp/Telegram choices although the current
+  backend always uses email and never returns a reset link. Removed these obsolete
+  choices and unreachable share-link UI; request explicitly selects existing email
+  behavior. This aligns the screen with the established non-disclosing API, without
+  implementing excluded messenger integrations.
+- Derived rule: public recovery UI must render the non-disclosing acknowledgment;
+  a successful HTTP response alone does not prove usable user feedback.
+
+### ZD-024 — MFA completion discarded the invitation/workspace return route
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- An existing MFA account follows a manual invitation, signs in and verifies its
+  recovery code, but lands at /app/dashboard instead of the invitation. Reproduced
+  in mfa-invite-before.log with the expected/actual URL; invitation not accepted.
+- MfaPage now reads LoginPage's preserved return context and session-expiry fallback.
+  Both credential/social login and MFA use the same extracted authReturnPath policy:
+  existing invitation allowance, safe internal paths and merchant/platform boundary.
+  No invitation grants or permission checks are bypassed or broadened.
+- Regression must complete the intended invitation once with the invited operator
+  membership, alongside ordinary enrollment/recovery login/authorized disable.
+- First MFA-only correction did not close the scenario: mfa-final.log had 3 PASS
+  and 3 invitation FAIL. Router diagnosis found PublicRoute redirecting an already
+  authenticated invitee away from InviteAcceptPage, plus the nested MFA return
+  state. Invitation now reaches its existing account-aware page directly; its
+  server token/account/membership checks remain mandatory. Login passes flat return
+  state; the shared reader also accepts the old nested format for pending flows.
+- New-employee manual invitation→password setup→login is checked alongside the
+  existing-account/MFA path. Neither sends external invitation messages.
+- Derived rule: every authentication step must preserve the same safe destination;
+  testing login and invitation separately misses a broken second-factor transition.
+
+### ZD-025 — Mixed business roles make tenant list queries fail
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- After accepting an operator invitation while owning another business, task and
+  bell-summary GETs return 500: `Cannot combine a unique query with a non-unique query`.
+  Evidence: auth-invite-final.log; UI invitation assertions passed, server requests did not.
+- BUSINESS scope preserves a non-distinct query; OWN/TEAM adds distinct. Generic
+  tenant viewset OR-combination fails before the final distinct call.
+- Required result: normalize query distinctness before combination without changing
+  role filters, tenant ownership, archive handling or capability checks. Cover
+  mixed-role lists and unread updates, hidden assignments, foreign records and
+  revoked membership. Existing support policy is unaffected.
+- Focused regression: 2 failures before; mixed membership, tenant isolation,
+  role queues and bell suites 27 PASS after. Full gate still required.
+- Derived rule: verify the post-invitation workspace, including users holding
+  different scopes across businesses; a successful membership response is insufficient.
+
+### ZD-026 — Browser lead CSV bypassed formula-prefix escaping
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Lead export quoted cells but retained formula prefixes, unlike the established
+  server `safe_csv_cell` contract. Actual-function regression: `=1+1` produced
+  `"=1+1"` instead of the protected text representation; 1 FAIL / 1 PASS before.
+- Apply the same leading-whitespace/prefix rule before existing CSV quote escaping.
+  Original text is preserved. XLSX already writes explicit string cells and is unchanged.
+- Require pure prefix/quote/newline cases and browser download-content verification;
+  no new permission, API, data model, external service or export policy is introduced.
+- Derived rule: local browser downloads must preserve the server export's safety
+  properties; API export tests alone do not cover a separate client-side exporter.
+
+### ZD-027 — Client-card creation links dropped the selected client
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Before reproduction: lead creation opened with client=0; deal, appointment and
+  task creation did not open at all. Saving a task from the client card was blocked.
+  Five semantic browser failures, not a missing-link or page-render assertion.
+- Shared bounded hook consumes the existing create/client intent, obtains the client
+  through the authorized API, checks its business and includes it in form options.
+  Creation uses the existing domain endpoints and permission checks; unrelated URL
+  filters remain. Consuming the intent prevents reopening after cancellation/reload.
+- Lead/appointment client Select now reflects the form value, rather than a separate
+  initial placeholder. The visible selected client and submitted ID must agree.
+- Desktop content/reset cohort after correction: 10 PASS. Expanded viewport,
+  cancel/foreign-role and persisted creation coverage recorded in PRIMARY-SESSION.
+- Regression rule: a related-entity creation link is accepted only after the actual
+  editor has the intended context and its submitted record retains that link.
+  Verify wrong tenant/role and cancellation; URL propagation alone is insufficient.
+
+### ZD-028 — Setup editor deep links depended on the current list page
+
+- Recorded: 2026-09-28. Status: VERIFIED_LOCAL; final candidate gate PASS, publication/CI in PRIMARY-SESSION.
+- Populated combined browser run: a valid resource ID beyond the first page did
+  not open its editor. ResourcesPage looked only in current rows and deleted the
+  URL selection. ServicesPage shared this behavior, including service links from
+  CommandPalette. Two focused before tests FAIL when the selected entity is
+  outside the current filter, demonstrating the same issue without a large seed.
+- Keep the existing selected row fast path. When absent, fetch the authorized detail
+  independently, verify active business, preserve list context and show retryable
+  errors. Do not clear a valid selection merely because the list excludes it.
+  Existing on-page archived-service lifecycle and focus behavior remain applicable.
+- Required: edit/readback/reload/close outside the list; other-tenant refusal;
+  resource lifecycle, service archive/restore and existing modal/focus scenarios.
+  Focused matrix: 24 PASS, 3 viewport skips; TypeScript and 89 Node checks PASS.
+  Commands/results/candidate are recorded in PRIMARY-SESSION.
+- Regression rule: a paginated list is not an entity-existence or access check.
+  Every cross-page entity deep link must resolve independently through its API.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

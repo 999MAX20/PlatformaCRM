@@ -1576,7 +1576,7 @@ export type AutomationRun = {
   entity_type: string;
   entity_id: string;
   idempotency_key?: string | null;
-  status: "pending" | "running" | "success" | "failed" | "skipped" | "cancelled";
+  status: "pending" | "running" | "waiting" | "retry_scheduled" | "success" | "failed" | "skipped" | "cancelled";
   payload: Record<string, unknown>;
   action_results?: Array<Record<string, unknown>>;
   error: string;

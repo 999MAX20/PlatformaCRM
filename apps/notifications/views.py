@@ -51,6 +51,10 @@ class NotificationViewSet(TenantModelViewSet):
             queryset = queryset.filter(read_at__isnull=False)
         if due_filter in {"1", "true", "yes"}:
             queryset = queryset.filter(status=Notification.Statuses.PENDING, send_at__lte=timezone.now())
+        if self.request.query_params.get("surface") == "bell":
+            queryset = queryset.filter(
+                channel=Notification.Channels.SYSTEM, send_at__lte=timezone.now(),
+            ).exclude(status=Notification.Statuses.CANCELLED)
         return queryset
 
     @action(detail=True, methods=["post"], url_path="mark-sent")

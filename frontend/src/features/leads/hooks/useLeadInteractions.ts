@@ -48,10 +48,6 @@ export function useLeadInteractions({
   const navigate = useNavigate();
 
   useEffect(() => {
-    setCreateOpen(searchParams.get("create") === "1");
-  }, [searchParams, setCreateOpen]);
-
-  useEffect(() => {
     const leadId = Number(searchParams.get("lead"));
     if (Number.isFinite(leadId) && leadId > 0) setSelectedId(leadId);
   }, [searchParams, setSelectedId]);

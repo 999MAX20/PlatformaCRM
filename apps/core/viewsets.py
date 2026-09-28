@@ -147,14 +147,17 @@ class TenantModelViewSet(ModelViewSet):
         if resource is None:
             return filtered
 
-        scoped_queryset = queryset.none()
+        scoped_queryset = queryset.none().distinct()
         for business in businesses:
             if not resource_is_enabled(business, resource):
                 continue
             if not can(user, business, resource, Actions.VIEW).allowed:
                 continue
             business_queryset = filtered.filter(**{self.business_lookup: business})
-            scoped_queryset = scoped_queryset | scope_queryset(business_queryset, user, business, resource, Actions.VIEW)
+            # OWN/TEAM joins are distinct, while BUSINESS scope may not be.
+            # Django requires matching distinctness before OR-combining them.
+            business_scope = scope_queryset(business_queryset, user, business, resource, Actions.VIEW).distinct()
+            scoped_queryset = scoped_queryset | business_scope
         ordering = getattr(queryset.model._meta, "ordering", None) or ["pk"]
         return scoped_queryset.distinct().order_by(*ordering)
 

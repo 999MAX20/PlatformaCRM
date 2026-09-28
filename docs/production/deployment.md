@@ -127,7 +127,8 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Run optional Celery beat:
+Run Celery beat for scheduled work (required for automatic task reminders,
+automation WAIT/retry and other periodic jobs; optional only for a web-only demo):
 
 ```bash
 docker compose --profile beat up --build

@@ -58,6 +58,7 @@ class Task(TimeStampedModel):
     class Meta:
         ordering = ["status", "due_at", "-created_at"]
         indexes = [
+            models.Index(fields=["reminder_at"], name="tasks_due_reminder_idx"),
             models.Index(fields=["business", "status", "due_at"]),
             models.Index(fields=["business", "is_archived", "updated_at"]),
             models.Index(fields=["business", "assignee", "due_at"]),
@@ -72,6 +73,19 @@ class Task(TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+
+class TaskReminderDelivery(models.Model):
+    """Internal receipt; independent from editable task fields and API writes."""
+
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="reminder_deliveries")
+    reminder_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["task", "reminder_at"], name="unique_task_reminder_delivery"),
+        ]
 
 
 class TaskComment(models.Model):

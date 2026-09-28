@@ -7,6 +7,7 @@ export function LeadCreateModal({
   open,
   title,
   businessId,
+  initialClientId,
   clients,
   services,
   teamMembers,
@@ -17,6 +18,7 @@ export function LeadCreateModal({
   open: boolean;
   title: string;
   businessId: Id;
+  initialClientId?: Id;
   clients: Client[];
   services: Service[];
   teamMembers: TeamMember[];
@@ -28,6 +30,7 @@ export function LeadCreateModal({
     <Modal title={title} open={open} onClose={onClose}>
       <LeadForm
         businessId={businessId}
+        initialClientId={initialClientId}
         clients={clients}
         services={services}
         teamMembers={teamMembers}

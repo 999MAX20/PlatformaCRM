@@ -17,6 +17,14 @@ permission/idempotency metadata сверено с payment selectors/services; а
 повторы mutations запрещены. Генерируемый реестр обновлён, Node gate PASS.
 Это структурное покрытие, не новая функциональная/финансовая/live приёмка.
 
+Ночной прогон: внутренняя часть FB-008 проверена отдельным реальным локальным
+Celery worker — restart на сохранённом WAIT, повтор dispatch, одно напоминание,
+восстановление SQLite и приватного файла. Это filesystem transport в disposable
+среде, не Redis/PostgreSQL или production PASS. Воспроизведённые stale-worker,
+notification и UI-recovery дефекты исправляются под ZD-016…028; точные команды,
+границы и итоговый candidate находятся в PRIMARY-SESSION. Внешняя FB-008 часть
+остаётся исключённой из текущего прогона, ручной FB-009 остаётся открытым.
+
 - Status: **ACTIVE / IN EXECUTION**
 - Created: 2026-08-18
 - Scope: merchant-visible errors, recovery actions, loading/empty/offline states, backend error contracts and technical-detail isolation

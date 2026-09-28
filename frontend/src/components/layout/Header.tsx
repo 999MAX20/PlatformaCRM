@@ -45,14 +45,14 @@ export function Header({
   const filterDrawerId = useId();
   const filterDrawerTitleId = useId();
   const notifications = useQuery({
-    queryKey: ["notifications"],
-    queryFn: () => notificationsApi.list(),
+    queryKey: ["notifications", "bell"],
+    queryFn: () => notificationsApi.list({ surface: "bell" }),
     enabled: Boolean(user) && showNotifications,
     ...realtimeQueryOptions,
   });
   const notificationSummary = useQuery({
-    queryKey: ["notifications-summary"],
-    queryFn: () => notificationsApi.summary(),
+    queryKey: ["notifications-summary", "bell"],
+    queryFn: () => notificationsApi.summary({ surface: "bell" }),
     enabled: Boolean(user),
     refetchInterval: realtimeIntervals.notificationsMs,
     ...realtimeQueryOptions,
@@ -72,7 +72,7 @@ export function Header({
     },
   });
   const markAllReadMutation = useMutation({
-    mutationFn: notificationsApi.markAllRead,
+    mutationFn: () => notificationsApi.markAllRead({ surface: "bell" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["notifications-summary"] });

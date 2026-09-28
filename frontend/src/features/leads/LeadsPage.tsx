@@ -10,7 +10,10 @@ import { useNotification } from "../../components/notifications/NotificationProv
 import { ErrorState, PageSkeleton } from "../../components/ui/StateViews";
 import { Modal } from "../../components/ui/Modal";
 import { useI18n } from "../../lib/i18n";
-import type { Id, Lead, Task } from "../../types";
+import { hasPermission } from "../../lib/permissions";
+import { useClientCreateIntent } from "../../hooks/useClientCreateIntent";
+import { useAuth } from "../auth/AuthProvider";
+import type { Client, Id, Lead, Task } from "../../types";
 import { LeadsActionOverlays } from "./components/LeadsActionOverlays";
 import { LeadsModals } from "./components/LeadsModals";
 import { LeadsWorkspaceTable } from "./components/LeadsWorkspaceTable";
@@ -27,14 +30,14 @@ import { ImportPanel } from "../integrations/components/ImportPanel";
 
 export function LeadsPage() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const showNotification = useNotification();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<number | null>(
     () => Number(searchParams.get("lead")) || null,
   );
-  const [createOpen, setCreateOpen] = useState(
-    searchParams.get("create") === "1",
-  );
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createClientId, setCreateClientId] = useState<Id | undefined>();
   const [importOpen, setImportOpen] = useState(false);
   const [appointmentOpen, setAppointmentOpen] = useState(false);
   const [drawerEntity, setDrawerEntity] = useState<CrmDrawerEntity | null>(
@@ -56,7 +59,14 @@ export function LeadsPage() {
     assignee: "",
     priority: "normal" as Task["priority"],
   });
-  const openCreateLead = useCallback(() => setCreateOpen(true), []);
+  const openCreateLead = useCallback(() => {
+    setCreateClientId(undefined);
+    setCreateOpen(true);
+  }, []);
+  const openLinkedLead = useCallback((client: Client | null) => {
+    setCreateClientId(client?.id);
+    setCreateOpen(true);
+  }, []);
   const setNotice = useCallback(
     (
       message: string | null,
@@ -211,12 +221,15 @@ export function LeadsPage() {
     if (page > pageCount) setPage(pageCount);
   }, [page, pageCount]);
 
+  const createContext = useClientCreateIntent({ businessId: business?.id, allowed: hasPermission(user, business?.id, "leads", "create"), onOpen: openLinkedLead });
   const legacyLeadId = Number(searchParams.get("lead") || "");
   if (Number.isFinite(legacyLeadId) && legacyLeadId > 0) {
     return <Navigate to={`/app/leads/${legacyLeadId}`} replace />;
   }
 
   if (!business) return <ErrorState message={t("leads.noBusiness")} />;
+  if (createContext.error) return <ErrorState message={createContext.error} />;
+  if (createContext.isLoading) return <PageSkeleton />;
   if (isPageLoading) return <PageSkeleton />;
   if (pageError) return <ErrorState message={pageErrorMessage} />;
 
@@ -330,13 +343,14 @@ export function LeadsPage() {
         businessId={business.id}
         shortcutsOpen={shortcutsOpen}
         createOpen={createOpen}
+        createClientId={createClientId}
         appointmentOpen={appointmentOpen}
         nextActionOpen={nextActionOpen}
         lostLead={lostLead}
         lostReason={lostReason}
         selected={selected}
         nextActionDraft={nextActionDraft}
-        clientList={clientList}
+        clientList={createContext.includeClient(clientList)}
         serviceList={serviceList}
         resourceList={resourceList}
         teamList={teamList}
