@@ -862,7 +862,8 @@ Copy this section for every new confirmed precedent:
 
 ### ZD-029 — Support notes lacked exact-business grant enforcement
 
-- Recorded: 2026-09-28. Status: LOCALLY_VERIFIED; publication receipt in PRIMARY-SESSION.
+- Recorded: 2026-09-28. Status: LOCALLY_VERIFIED_PUBLISHED; candidate 5677848,
+  remote readback matched; final CI pending in PRIMARY-SESSION.
 - The support-action endpoint checked MFA but accepted notes without a current
   grant for the actor/business. Six before regressions returned 201 for manager,
   revoked, expired, wrong-recipient, wrong-business and absent grants.

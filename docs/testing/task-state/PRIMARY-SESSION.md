@@ -2,7 +2,16 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Pilot owner decisions Q01–Q05 — LOCAL_VERIFIED / PUBLICATION_PENDING, 2026-09-28
+## Pilot owner decisions Q01–Q05 — PUBLISHED / LOCAL_VERIFIED / CI_RUNNING, 2026-09-28
+
+- Published code/docs candidate: `5677848ad4e71ffea702fa3aaf77d66627b3a96a`,
+  normal `git push origin HEAD:main`, remote SHA readback matched; canonical root
+  C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit unchanged.
+  Actual [CI run 36387255922](https://github.com/999MAX20/PlatformaCRM/actions/runs/36387255922):
+  frontend SUCCESS, backend tests IN_PROGRESS at latest readback. Full CI success
+  is not asserted. This receipt is documentation only; application evidence applies
+  unchanged. Follow-up: read final CI result for candidate/receipt, then address
+  only any actual failure; do not reopen unchanged seven-stage acceptance.
 
 - Authorization: owner delegated the reasonable support policy implementation;
   selected Yandex Cloud; asked for internal antivirus feasibility and a comfortable
@@ -90,7 +99,7 @@ New relative doc links resolve; intended diff reviewed for unrelated work/secret
 no new tracked runtime credential/config or untracked source files. ZD-029 records
 the confirmed grant gap. Existing push workflow has checks/tests/builds, no deployment.
 
-Next step: reviewed normal push and actual CI. Gate base is
+Publication/readback is recorded above; the remaining CI result is open. Gate base is
 1e96f15190e9a4973c3369ddd8eb5ed6dd17f368,
 the verified ancestor immediately before the docs-only baseline 562d8ab; no fake
 base equal to HEAD is used. Full overnight evidence is not claimed for this delta.
