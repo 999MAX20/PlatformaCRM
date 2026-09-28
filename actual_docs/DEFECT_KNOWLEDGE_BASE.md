@@ -877,6 +877,22 @@ Copy this section for every new confirmed precedent:
 - Regression rule: MFA and platform role never substitute for the specific tenant
   support grant; test revocation, expiration, recipient and business independently.
 
+### ZD-030 — Untouched AI draft blocked normal navigation
+
+- Confirmed twice during BE-GAP-011 full-gate mobile smoke, 2026-09-28. Opening
+  the seeded draft without a saved profile and selecting integrations leaves
+  the owner on the agent page, despite no edits. Trace: file-antivirus-20260928.
+- Cause: the shared editor used profile initialization/readiness as the dirty
+  condition for both navigation and unload. Those are different from user edits.
+- Bounded fix: preserve the existing save/readiness requirement, but guard leaving
+  only when bot/profile values differ from their saved editor snapshots.
+- Scope: AI-agent editor navigation/unload, all viewports; no AI execution,
+  backend permission, profile persistence or activation policy changes.
+- Status: VERIFIED_BRANCH, verification/publication in current PRIMARY-SESSION.
+  Regression covers untouched draft exit, real edit cancel/discard and unchanged
+  server values; existing saved-preview/readiness and mobile smoke also required.
+- Audit rule: incomplete setup is not evidence of an unsaved user edit.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

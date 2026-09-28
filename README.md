@@ -1,5 +1,10 @@
 # PlatformaCRM
 
+Файлы и CSV/XLSX-импорт требуют внутреннего ClamAV с актуальными сигнатурами.
+Вложения доступны после проверки; нужны `celery-files` и scheduler beat.
+Настройка, карантин старых файлов и порядок миграции:
+[файловый антивирус](docs/security/file-antivirus.md).
+
 Репозиторий: [999MAX20/PlatformaCRM](https://github.com/999MAX20/PlatformaCRM).
 Название и правила совместимости после переименования —
 [ребрендинг 28.09.2026](docs/operations/rebranding-2026-09-28.md).

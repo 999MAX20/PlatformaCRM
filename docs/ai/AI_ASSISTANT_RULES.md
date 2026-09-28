@@ -64,6 +64,10 @@ receptionist preset; existing profiles are preserved unless the operator applies
 the preset. Language, tone, instructions, behavior, model and temperature share
 the editor save/unsaved-change guard. Advanced instructions/model/temperature
 are optional. Live Inbox remains accessible through Open messages.
+An untouched draft without an active saved profile still needs saving before
+preview/activation, but viewing it must not block navigation or unload. Those
+guards protect actual edits; cancelling preserves them and discarding releases
+navigation without persisting them.
 
 `POST /api/bots/{id}/preview/` rehearses up to 16 messages, 2000 characters each,
 using the saved profile and shared qualification/reply/scheduling services.

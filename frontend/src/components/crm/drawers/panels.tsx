@@ -23,6 +23,7 @@ import { AttachmentFilePicker } from "./AttachmentFilePicker";
 import { drawerSurfaceClass, EmptyBlock, getChannelLabel } from "./shared";
 import { EntityTimelineList } from "./timeline";
 import type { CrmDrawerEntity } from "./types";
+import { AttachmentScanStatus } from "../AttachmentScanStatus";
 
 const attachmentAccept = "image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt";
 
@@ -32,7 +33,7 @@ function formatAttachmentSize(size: number) {
 }
 
 function isPreviewableAttachment(attachment: FileAttachment) {
-  return attachment.content_type.startsWith("image/") || attachment.content_type === "application/pdf" || attachment.content_type.startsWith("text/");
+  return attachment.scan_status === "clean" && (attachment.content_type.startsWith("image/") || attachment.content_type === "application/pdf" || attachment.content_type.startsWith("text/"));
 }
 
 function attachmentTypeLabel(attachment: FileAttachment) {
@@ -47,6 +48,16 @@ function attachmentTypeLabel(attachment: FileAttachment) {
 export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload; entity: CrmDrawerEntity }) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
+  const awaitingScan = data.attachments.some((item) => !["clean", "infected"].includes(item.scan_status));
+  useEffect(() => {
+    if (!awaitingScan) return;
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        queryClient.invalidateQueries({ queryKey: ["crm-card", entity.type, entity.id] });
+      }
+    }, 10000);
+    return () => window.clearInterval(timer);
+  }, [awaitingScan, queryClient, entity.type, entity.id]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [previewAttachment, setPreviewAttachment] = useState<FileAttachment | null>(null);
@@ -120,6 +131,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
   }, [previewUrl]);
 
   async function loadAttachmentBlob(attachment: FileAttachment) {
+    if (attachment.scan_status !== "clean") return null;
     setAttachmentActionError("");
     setLoadingAttachmentId(attachment.id);
     try {
@@ -250,6 +262,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                   <p className="mt-0.5 truncate text-xs font-semibold text-platforma-muted">
                     {attachmentTypeLabel(attachment)} · {formatAttachmentSize(attachment.size)} · {formatDateTime(attachment.created_at)}
                   </p>
+                  <AttachmentScanStatus attachment={attachment} />
                 </div>
               </div>
               <button
@@ -291,6 +304,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                     </button>
                     <button
                       type="button"
+                      disabled={attachment.scan_status !== "clean"}
                       className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-muted"
                       onClick={() => {
                         setOpenAttachmentMenuId(null);
@@ -302,6 +316,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                     </button>
                     <button
                       type="button"
+                      disabled={attachment.scan_status !== "clean"}
                       className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-muted"
                       onClick={() => {
                         setOpenAttachmentMenuId(null);

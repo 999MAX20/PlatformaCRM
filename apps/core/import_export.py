@@ -132,7 +132,7 @@ IMPORT_TEMPLATES = {
 
 
 def build_import_preview(job: ImportJob, mapping=None):
-    rows = read_tabular_file(job.source_file.path)
+    rows = read_tabular_file(job.source_file)
     headers = list(rows[0].keys()) if rows else []
     mapping = mapping or guess_mapping(headers, aliases_for_entity(job.entity_type))
     preview_rows = rows[: settings.IMPORT_PREVIEW_ROWS]
@@ -179,7 +179,7 @@ def confirm_import(job: ImportJob, request):
         raise ValidationError("Run preview before confirming import.")
     if (job.errors_json or {}).get("rows"):
         raise ValidationError("Fix import errors before confirming.")
-    rows = read_tabular_file(job.source_file.path)
+    rows = read_tabular_file(job.source_file)
     connector = ensure_excel_csv_connector(job)
     sync_run = ConnectorSyncRun.objects.create(
         business=job.business,
@@ -556,9 +556,26 @@ def normalize_client_source(value):
 
 
 def read_tabular_file(path):
-    extension = Path(path).suffix.lower()
+    from io import BytesIO, StringIO
+    from apps.core.antivirus import ScanUnavailable, scan_stream
+    from rest_framework.exceptions import APIException
+
+    # Scan and parse the same bounded bytes, including old jobs and confirmation.
+    with (path.open("rb") if hasattr(path, "storage") else open(path, "rb")) as source:
+        content = source.read(settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024 + 1)
+    if len(content) > settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024:
+        raise ValidationError("Import file exceeds the upload size limit.")
+    try:
+        result = scan_stream(BytesIO(content))
+    except ScanUnavailable:
+        error = APIException("File security check is temporarily unavailable. Retry later.")
+        error.status_code = 503
+        raise error from None
+    if not result.clean:
+        raise ValidationError("File was blocked by the security check.")
+    extension = Path(path.name if hasattr(path, "storage") else path).suffix.lower()
     if extension == ".csv":
-        with open(path, newline="", encoding="utf-8-sig") as file:
+        with StringIO(content.decode("utf-8-sig"), newline="") as file:
             reader = csv.DictReader(file)
             rows = list(reader)
             if not reader.fieldnames:
@@ -567,7 +584,7 @@ def read_tabular_file(path):
     if extension == ".xlsx":
         if load_workbook is None:
             raise ValidationError("XLSX import requires openpyxl. Install requirements.txt and retry.")
-        workbook = load_workbook(path, read_only=True, data_only=True)
+        workbook = load_workbook(BytesIO(content), read_only=True, data_only=True)
         sheet = workbook.active
         rows = list(sheet.iter_rows(values_only=True))
         if not rows:

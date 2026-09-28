@@ -51,6 +51,9 @@ test("lead notes and private attachment upload rename and download survive reope
   const uploadedResponse = await uploaded;
   expect(uploadedResponse.status()).toBe(201);
   const attachment = await uploadedResponse.json();
+  expect(attachment.scan_status).toBe("pending");
+  expect(attachment.download_url).toBe("");
+  await expect(drawer.locator('[data-testid="attachment-scan-status"][data-scan-status="clean"]')).toBeVisible({ timeout: 20000 });
   await expect(drawer.getByText("pilot-content.txt", { exact: true })).toBeVisible();
   await drawer.getByRole("button", { name: "Действия с файлом", exact: true }).click();
   await drawer.getByRole("button", { name: "Переименовать", exact: true }).click();
@@ -86,6 +89,38 @@ test("lead notes and private attachment upload rename and download survive reope
   const persisted = await card.json();
   expect(persisted.notes.filter((item: { text: string }) => item.text === note)).toHaveLength(1);
   expect(persisted.attachments.filter((item: { id: number; original_name: string }) => item.id === attachment.id && item.original_name === "pilot-renamed.txt")).toHaveLength(1);
+});
+
+test("quarantined files expose status but cannot be previewed or downloaded", async ({ page }) => {
+  test.setTimeout(90000);
+  const fixture = await leadFixture(page);
+  for (const [marker, state] of [["E2E_SCAN_BLOCK", "infected"], ["E2E_SCAN_ERROR", "error"]]) {
+    const uploaded = await page.request.post(`${api}/api/file-attachments/`, {
+      headers: fixture.headers,
+      multipart: {
+        business: String(fixture.record.business), entity_type: "lead", entity_id: String(fixture.record.id),
+        file: { name: `${marker}.txt`, mimeType: "text/plain", buffer: Buffer.from(marker) },
+      },
+    });
+    expect(uploaded.status()).toBe(201);
+    const attachment = await uploaded.json();
+    expect(attachment.scan_status).toBe("pending");
+    expect(attachment.download_url).toBe("");
+    await expect.poll(async () => {
+      const result = await page.request.get(`${api}/api/file-attachments/${attachment.id}/`, { headers: fixture.headers });
+      return (await result.json()).scan_status;
+    }, { timeout: 15000 }).toBe(state);
+    const blocked = await page.request.get(`${api}/api/file-attachments/${attachment.id}/download/`, { headers: fixture.headers });
+    expect(blocked.status()).toBe(423);
+  }
+  await fixture.openDrawer();
+  const drawer = page.getByTestId("crm-entity-drawer");
+  await drawer.getByTestId("crm-entity-tab-files").click();
+  await expect(drawer.locator('[data-scan-status="infected"]')).toBeVisible();
+  await expect(drawer.locator('[data-scan-status="error"]')).toBeVisible();
+  await drawer.getByRole("button", { name: "Действия с файлом", exact: true }).first().click();
+  await expect(drawer.getByRole("button", { name: "Скачать", exact: true })).toBeDisabled();
+  await expect(drawer.getByRole("button", { name: "Открыть", exact: true })).toBeDisabled();
 });
 
 test("lead CSV export contains only the filtered saved record", async ({ page }) => {

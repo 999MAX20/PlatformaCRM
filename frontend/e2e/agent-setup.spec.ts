@@ -1,5 +1,45 @@
 import { expect, test } from "@playwright/test";
 
+test("untouched agent draft permits navigation but actual edits require discard", async ({ page }, testInfo) => {
+  test.setTimeout(90000);
+  const email = process.env.E2E_OWNER_EMAIL || "business_owner@example.com";
+  const password = process.env.E2E_PASSWORD || "ZaniTest123!";
+  const api = process.env.E2E_API_BASE_URL || "http://127.0.0.1:8000";
+  const tokenResponse = await page.request.post(`${api}/api/auth/token/`, { data: { email, password } });
+  expect(tokenResponse.ok()).toBeTruthy();
+  const { access } = await tokenResponse.json();
+  const headers = { Authorization: `Bearer ${access}` };
+  const me = await (await page.request.get(`${api}/api/auth/me/`, { headers })).json();
+  const originalName = `Untouched ${testInfo.project.name}`;
+  const created = await page.request.post(`${api}/api/bots/`, {
+    headers, data: { business: me.businesses[0].id, name: originalName, status: "draft" },
+  });
+  expect(created.status()).toBe(201);
+  const bot = await created.json();
+  // The real token endpoint also establishes the browser's refresh cookie.
+  const agentPath = `/app/ai-agents/${bot.id}/profile`;
+  await page.goto(agentPath);
+  const editor = page.getByTestId("ai-agent-editor");
+  await expect(editor.getByLabel("Название", { exact: true })).toHaveValue(originalName);
+  await expect(editor.getByRole("button", { name: "Сохранить изменения", exact: true })).toBeEnabled();
+  await page.locator('nav a[href="/app/clients"]:visible').last().click();
+  await expect(page).toHaveURL(/\/app\/clients/);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+
+  await page.goto(agentPath);
+  await editor.getByLabel("Название", { exact: true }).fill("Actual unsaved edit");
+  await page.locator('nav a[href="/app/clients"]:visible').last().click();
+  const guard = page.getByRole("dialog", { name: "Несохранённые изменения", exact: true });
+  await expect(guard).toBeVisible();
+  await guard.getByRole("button", { name: "Отмена", exact: true }).click();
+  await expect(editor.getByLabel("Название", { exact: true })).toHaveValue("Actual unsaved edit");
+  await page.locator('nav a[href="/app/clients"]:visible').last().click();
+  await guard.getByRole("button", { name: "Отменить изменения", exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/clients/);
+  const persisted = await page.request.get(`${api}/api/bots/${bot.id}/`, { headers });
+  expect((await persisted.json()).name).toBe(originalName);
+});
+
 test("saved agent setup, draft preview, recovery and readiness", async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   await page.goto("/login");

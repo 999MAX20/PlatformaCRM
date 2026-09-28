@@ -2,6 +2,14 @@
 
 This file is the working reference for role-aware behavior in PlatformaCRM.
 
+## File quarantine — 2026-09-28
+
+Existing entity/Business permissions remain mandatory for upload and download.
+Upload checks UPDATE on the resolved entity, including OWN/TEAM scope. Downloads
+add a clean scan and matching content fingerprint after access checks; no role,
+including platform admin, bypasses quarantine or assigns a clean verdict.
+Imports scan before parsing. See [file antivirus](file-antivirus.md).
+
 ## Support-note decision — 2026-09-28
 
 Owner delegated the policy choice. Creating a merchant support-note requires

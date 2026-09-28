@@ -191,6 +191,11 @@ PRIVATE_MEDIA_ROOT = env("PRIVATE_MEDIA_ROOT", default=str(BASE_DIR / "media" / 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MAX_UPLOAD_SIZE_MB = env.int("MAX_UPLOAD_SIZE_MB", default=10)
+CLAMD_HOST = env("CLAMD_HOST", default="127.0.0.1")
+CLAMD_PORT = env.int("CLAMD_PORT", default=3310)
+FILE_SCAN_TIMEOUT_SECONDS = env.int("FILE_SCAN_TIMEOUT_SECONDS", default=30)
+FILE_SCAN_SIGNATURE_MAX_AGE_HOURS = env.int("FILE_SCAN_SIGNATURE_MAX_AGE_HOURS", default=72)
+FILE_SCAN_LEASE_SECONDS = max(120, FILE_SCAN_TIMEOUT_SECONDS * 3)
 IMPORT_MAX_ROWS = env.int("IMPORT_MAX_ROWS", default=5000)
 EXPORT_SYNC_MAX_ROWS = env.int("EXPORT_SYNC_MAX_ROWS", default=5000)
 EXPORT_MAX_ROWS = env.int("EXPORT_MAX_ROWS", default=100000)
@@ -398,6 +403,11 @@ KASPI_COMPETITOR_MONITOR_API_KEY = env("KASPI_COMPETITOR_MONITOR_API_KEY", defau
 CELERY_BEAT_SCHEDULE = {}
 CELERY_BEAT_SCHEDULE.update(
     {
+        "file-antivirus-runtime": {
+            "task": "files.scan_due_attachments",
+            "schedule": 15,
+            "kwargs": {"limit": 10},
+        },
         "notification-delivery": {
             "task": "notifications.process_due_notifications",
             "schedule": NOTIFICATION_DELIVERY_INTERVAL_SECONDS,

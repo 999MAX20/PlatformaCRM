@@ -2,6 +2,7 @@ from datetime import datetime, time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from zoneinfo import ZoneInfo
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.checks import run_checks
@@ -732,6 +733,10 @@ class FileSafetyFoundationTests(TestCase):
                 entity_id=str(client.id),
             )
             private_path = attachment.file.name.removeprefix("private/")
+            from apps.core.file_scanning import scan_attachment
+            from apps.core.tests_file_scanning import clean_result
+            with patch("apps.core.file_scanning.scan_stream", side_effect=clean_result):
+                scan_attachment(attachment.id, attachment.business_id)
             private_url = f"/api/files/private/{private_path}/"
             anonymous_response = self.api.get(private_url)
             self.assertEqual(anonymous_response.status_code, 401)

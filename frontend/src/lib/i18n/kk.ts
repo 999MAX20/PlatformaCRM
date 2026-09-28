@@ -5829,4 +5829,9 @@ export const kk: Record<string, string> = {
   "aiAgents.knowledge.category.sales": "Сату",
   "aiAgents.knowledge.category.policy": "Ережелер",
   "aiAgents.knowledge.category.faq": "Жиі қойылатын сұрақтар",
+  "files.scan.pending": "Тексеруді күтуде",
+  "files.scan.scanning": "Тексерілуде",
+  "files.scan.clean": "Қауіпсіздік тексеруінен өтті",
+  "files.scan.infected": "Файл қауіпсіздік тексеруімен бұғатталды",
+  "files.scan.error": "Тексеру қолжетімсіз. Автоматты түрде қайталанады",
 };

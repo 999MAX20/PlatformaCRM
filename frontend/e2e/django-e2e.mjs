@@ -64,7 +64,15 @@ if (mode === "prepare") {
   prepare();
 } else if (mode === "serve") {
   prepare();
-  runManage(["runserver", `127.0.0.1:${djangoPort}`, "--noreload"]);
+  if (djangoEnv.ZANI_QUALITY_GATE === "1") {
+    const result = spawnSync(pythonPath, [path.join(e2eDir, "serve-isolated.py")], {
+      cwd: rootDir, env: djangoEnv, stdio: "inherit",
+    });
+    if (result.error) throw result.error;
+    process.exit(result.status ?? 1);
+  } else {
+    runManage(["runserver", `127.0.0.1:${djangoPort}`, "--noreload"]);
+  }
 } else {
   console.error(`Unknown django-e2e mode: ${mode}`);
   process.exit(2);

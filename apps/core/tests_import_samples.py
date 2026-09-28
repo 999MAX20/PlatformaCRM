@@ -2,6 +2,8 @@ import csv
 import shutil
 import tempfile
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from django.core.management import call_command
 from django.test import SimpleTestCase
@@ -11,6 +13,11 @@ from apps.core.models import ImportJob
 
 
 class PilotImportSamplesTests(SimpleTestCase):
+    def setUp(self):
+        scanner = patch("apps.core.antivirus.scan_stream", return_value=SimpleNamespace(clean=True))
+        scanner.start()
+        self.addCleanup(scanner.stop)
+
     def test_committed_pilot_import_samples_are_parseable(self):
         base_dir = Path(__file__).resolve().parents[2]
         samples_dir = base_dir / "docs" / "integrations" / "imports" / "samples"

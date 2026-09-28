@@ -197,7 +197,7 @@ export function useLeadActions({
         ),
       );
       const attachmentText = uploaded.length
-        ? `\n\n${t("leads.attachments")}:\n${uploaded.map((attachment) => `- ${attachment.original_name}: ${attachment.download_url}`).join("\n")}`
+        ? `\n\n${t("leads.attachments")}:\n${uploaded.map((attachment) => `- ${attachment.original_name}`).join("\n")}`
         : "";
       const noteText = `${text.trim() || t("leads.filesAttachedNote")}${attachmentText}`;
       return leadsApi.addNote({ id: lead.id, text: noteText });

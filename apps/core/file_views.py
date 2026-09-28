@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.businesses.access import Actions
 from apps.core.audit import write_audit_log
 from apps.core.file_attachments import assert_attachment_access
+from apps.core.file_scanning import open_clean_attachment
 from apps.core.models import AuditLog, FileAttachment
 
 
@@ -42,6 +43,7 @@ def private_media_file(request, file_path):
     except (PermissionDenied, ValidationError) as exc:
         raise Http404("File not found.") from exc
 
+    source = open_clean_attachment(attachment)
     write_audit_log(
         request,
         AuditLog.Actions.DOWNLOAD,
@@ -55,4 +57,5 @@ def private_media_file(request, file_path):
         },
     )
 
-    return FileResponse(path.open("rb"), as_attachment=False, filename=attachment.original_name)
+    return FileResponse(source, as_attachment=True, filename=attachment.original_name,
+                        content_type=attachment.content_type or "application/octet-stream")

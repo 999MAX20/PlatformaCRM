@@ -5797,4 +5797,9 @@ export const en: Record<string, string> = {
   "aiAgents.knowledge.category.sales": "Sales",
   "aiAgents.knowledge.category.policy": "Policies",
   "aiAgents.knowledge.category.faq": "FAQ",
+  "files.scan.pending": "Awaiting scan",
+  "files.scan.scanning": "Scanning",
+  "files.scan.clean": "Security check passed",
+  "files.scan.infected": "File blocked by security check",
+  "files.scan.error": "Scan unavailable. Will retry automatically",
 };

@@ -12,6 +12,9 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      CLAMD_HOST: clamav
+      CLAMD_PORT: 3310
     depends_on:
       db:
         condition: service_healthy
@@ -78,6 +81,38 @@ services:
       redis:
         condition: service_healthy
 
+  clamav:
+    image: clamav/clamav:1.5.4@sha256:ebec5bc138401b36ae987caa1a3fa3c3b2a21ed3d51f0bfa5852825e663e67b0
+    environment:
+      TZ: UTC
+      FRESHCLAM_CHECKS: 12
+    volumes:
+      - clamav_data:/var/lib/clamav
+      - ./deploy/clamav/clamd.conf:/etc/clamav/clamd.conf:ro
+    # Deliberately no published ports: INSTREAM is unauthenticated.
+    mem_limit: 3g
+    cpus: 1.0
+    restart: unless-stopped
+
+  celery-files:
+    build: .
+    command: celery -A config worker --loglevel=info --queues=file_scans --concurrency=1
+    volumes:
+      - media_data:/app/media
+    env_file:
+      - .env
+    environment:
+      CLAMD_HOST: clamav
+      CLAMD_PORT: 3310
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      clamav:
+        condition: service_started
+    restart: unless-stopped
+
   db:
     image: postgres:16-alpine
     environment:
@@ -112,3 +147,4 @@ volumes:
   redis_data:
   static_data:
   media_data:
+  clamav_data:

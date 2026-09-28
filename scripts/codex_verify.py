@@ -71,6 +71,8 @@ SAFE_ENV = {
     "CELERY_TASK_STORE_EAGER_RESULT": "False",
     "AUTOMATIONS_RUN_INLINE": "True",
     "AI_PROVIDER": "mock",
+    "CLAMD_HOST": "127.0.0.1",
+    "CLAMD_PORT": "1",
     "AI_ENABLED": "True",
     "OPENAI_API_KEY": "",
     "OPENAI_BASE_URL": "",

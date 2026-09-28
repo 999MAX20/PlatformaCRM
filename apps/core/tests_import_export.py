@@ -1,5 +1,7 @@
 import shutil
 import tempfile
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
@@ -28,6 +30,10 @@ class ImportExportTests(TestCase):
         shutil.rmtree(TEST_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
+        # Import-domain suite: scanner safety/failure cases have their own tests.
+        scanner = patch("apps.core.antivirus.scan_stream", return_value=SimpleNamespace(clean=True))
+        scanner.start()
+        self.addCleanup(scanner.stop)
         self.api = APIClient()
         self.owner = User.objects.create_user(
             username="owner-import",

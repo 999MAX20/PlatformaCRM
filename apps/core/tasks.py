@@ -2,6 +2,12 @@ from celery import shared_task
 
 from apps.core.export_jobs import process_due_export_jobs, process_export_job
 from apps.core.idempotency import prune_expired_crm_commands
+from apps.core.file_scanning import scan_due_attachments
+
+
+@shared_task(name="files.scan_due_attachments", queue="file_scans")
+def scan_due_attachments_task(limit=10):
+    return {"processed": scan_due_attachments(limit=limit)}
 
 
 @shared_task(bind=True, name="exports.process_job", queue="reports_exports")

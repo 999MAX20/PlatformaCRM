@@ -588,6 +588,8 @@ export type FileAttachment = {
   entity_type: string;
   entity_id: string;
   visibility: "private";
+  scan_status: "pending" | "scanning" | "clean" | "infected" | "error";
+  scanned_at: string | null;
   download_url: string;
   created_at: string;
 };

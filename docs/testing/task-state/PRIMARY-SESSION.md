@@ -2,6 +2,135 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## BE-GAP-011 — Internal file antivirus / LOCAL_VERIFIED, 2026-09-28
+
+- Final local closure: all required full-gate stages covered across the recorded
+  runs, not a single uninterrupted PASS. Backend 1190 PASS + final security/admin
+  22 PASS; runner 15 PASS; actual ClamAV/EICAR/migration/Celery recovery PASS;
+  attachment desktop/mobile 4 PASS. Final frontend slice PASS after ZD-030:
+  deterministic npm ci, gate-env tests, ru/kk/en, TypeScript, app/widget build,
+  bundle limits, migration drift/system and diff checks (frontend-final.log).
+  Security slice PASS (security-gate.log), no dependency/lock changes afterward.
+- Final browser command: `browser.py --project=desktop-chromium
+  --project=mobile-chromium --grep 'untouched agent draft|mobile (owner|manager)
+  smoke|mobile navigation away'` => 5 PASS / 3 intentional desktop skips for
+  mobile-only scenarios (navigation-final.log). Fresh missing-profile draft on
+  both viewports: leave untouched, edit/cancel retains input, discard leaves,
+  backend name unchanged. Existing saved-agent setup/preview/recovery: 2 PASS
+  from navigation-regression.log; original full-gate mobile assertion preserved.
+- Changed/new documentation links checked (10 local targets), new file contents
+  reviewed; outputs/signatures/native tools/synthetic data remain ignored.
+  Before publication: review staged and outgoing range, fetch main, normal push,
+  verify remote SHA and inspect actual CI. No live deployment or working migration.
+
+- Authorization: owner explicitly started file antivirus after the ClamAV/private
+  quarantine proposal. One bounded implementation, not retention/billing or cloud deployment.
+- Root C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit; clean starting
+  HEAD 88e72f261a41a2b3ebff8496bee2ee2098d2d263. Registered primary generation 2,
+  transition idle, no other writer. Prior candidate and receipt CI both SUCCESS
+  (36387255922 / 36387785470), verified in the preceding read-only turn.
+- Observable result: uploaded attachments stay inaccessible until clean; malicious,
+  unscannable, stale-signature or scanner-failure cases fail closed. Existing files
+  start pending. Durable worker retry/expired-claim recovery; current tenant/entity
+  permissions and audit preserved. Inspect import ingress and all download surfaces.
+- Reuse FileAttachment/private storage, serializers, Celery beat/tasks, existing CRM
+  attachment UI and i18n. Add narrowly scoped scan state migration/service/adapter;
+  no external antivirus SaaS, paid services, real data, working DB migration or deployment.
+- Impacts: reuse entity authorization and system audit; no new role framework,
+  notifications, BusinessEvents or AI/provider calls. Migration adds only scan
+  metadata/index; environment adds internal ClamD and the dedicated file worker.
+- DoD: scanner protocol/limits/freshness, pending-clean/infected/error, legacy/API
+  download denial, tenant/role guards, source-integrity check, duplicate/restart/retry,
+  old-file migration, safe audit, reachable desktop/mobile states. Real ClamAV smoke
+  when locally obtainable; distinguish real engine from controlled protocol tests.
+  Focused isolated gates then full candidate gate, reviewed normal push and actual CI.
+- Implementation: migration core/0011; ClamD INSTREAM/freshness/limits adapter;
+  atomic scan lease/token/retry and audited verdict/integrity quarantine; both file
+  download routes require a clean matching snapshot. Upload UPDATE now checks the
+  actual linked entity. Imports scan identical bytes before preview/confirm;
+  source URLs are not serialized. CRM pending/clean/blocked/error states and disabled
+  actions use ru/en/kk. Dedicated compose worker/daemon and readiness command added.
+- Isolated checks so far (output/file-antivirus-20260928): `isolated.py test
+  apps.core.tests_file_scanning apps.core.tests_file_attachments
+  apps.core.tests_import_export apps.core.tests_import_samples apps.core.tests
+  --noinput` => 87 PASS (backend-affected.log); subsequent audit/own-scope assertions
+  are included in the pending full gate. Helper is output/pilot-seven-20260928/isolated.py.
+  `python -m unittest scripts.tests.test_codex_verify` => 15 PASS (runner-tests.log).
+- `browser.py --project=desktop-chromium --project=mobile-chromium --grep
+  'quarantined files|private attachment upload'` => 4 PASS (browser-serial.log).
+  First attempt hit backend webServer startup timeout while backend tests and
+  ClamAV consumed local memory; serial retry passed unchanged scenario assertions.
+  Explicit isolated fake ClamD is browser workflow evidence, not malware detection.
+- Real engine: official ClamAV 1.5.4 Windows archive, verified SHA-256
+  0d9e0228b2674137ea1a2853566c98a0278ad52ab2582c3d6dbd75373848c395;
+  fresh database 28137. Synthetic safe bytes clean, harmless EICAR blocked.
+  `live_pipeline.py` => PASS: old-row migration pending/423; actual upload/scan/download;
+  outage quarantine; actual Celery worker recovery, restart with queued duplicate
+  tasks and a seeded expired lease, one audit result. Disposable SQLite + filesystem
+  broker, not Redis/cloud. EICAR stayed in in-memory storage. See real-engine.log,
+  live-pipeline-result.json and celery-first/second.log. Initial harness failures
+  were testserver host, Celery namespaced config and missing Windows broker package;
+  fixed only the ignored harness, reusing prior isolated pywin32 dependencies.
+  Native smoke used the same bounds plus AlertOLE2Macros=yes; no macro acceptance
+  claim. Production configuration does not introduce that unapproved blanket ban.
+  Owned daemon PID 3504 stopped after checks; no other processes stopped.
+- Full gate currently running: `.venv/Scripts/python.exe -X utf8
+  scripts/codex_verify.py --mode full --base-ref
+  5677848ad4e71ffea702fa3aaf77d66627b3a96a` (full-gate.log). This real ancestor is
+  the prior implementation; task starting HEAD 88e72f2 only adds its docs receipt.
+  Dirty candidate and new files are reviewed separately; no invented committed range.
+- Docker runtime is unavailable locally. Compose image/config is prepared, not
+  deployed or claimed container-tested. Working DB/migrations, S3/private bucket
+  rollout, retention/deletion, business quotas and cloud operator remain separate.
+- Next: finish full gate, review exact diff/untracked contents, normal push and CI.
+
+- Required mobile gate reproduced twice: untouched AI-agent draft (no saved
+  profile) blocks leaving for integrations. Trace shows empty profile list and
+  unsaved indicator without user edits; existing editorDirty also classifies
+  missing/inactive profile as dirty. Source hook unchanged since prior work.
+  Within owner's earlier pilot-defect authorization, bounded gate-blocker fix:
+  distinguish actual edits for navigation/unload guards while retaining profile
+  initialization/save/readiness requirements. No AI execution or permission change.
+  Verify ordinary mobile navigation and genuine edit/discard protection; record ZD-030.
+- After the fix, original owner/manager mobile smoke and canonical-route regression
+  PASS; existing saved-agent setup/preview/recovery PASS on desktop/mobile (5 PASS,
+  3 viewport skips). The new test initially tried UI login after API token login
+  had already set its refresh cookie, causing 2 test-harness timeouts before the
+  scenario; corrected authentication setup, retained all behavioral assertions.
+  Final rerun includes fresh-draft discard/cancel and pristine mobile smoke so
+  earlier setup tests cannot mask the unsaved-profile condition.
+- Security slice PASS: hashed lock installability, pip audit no known findings,
+  npm audit 0 vulnerabilities (security-gate.log). Frontend deterministic install,
+  build/i18n and bundle budgets PASS in resumed-gate.log before the small guard
+  fix; final frontend rebuild required after the new browser run.
+
+- Full run backend: 1190 PASS / 935.844 s; migration drift/system checks PASS.
+  Frontend deterministic install hit Windows EPERM on the loaded rolldown native
+  module. Diagnosis identified pre-existing Vite PID 5712 (started 22:01 local),
+  outside this task's ownership; it was not stopped. Verified canonical cache
+  paths, moved only frontend/node_modules into ignored task output
+  locked-node-modules, preserving loaded files. Reinstalling from the same lock
+  in the canonical frontend path. No source directory/copy or working DB moved.
+- `output/file-antivirus-20260928/resume_gate.py` runs the exact remaining full
+  runner stages (plus repeats static/migration/system checks) in a new disposable
+  runtime. Only already-passed Django tests are reused, with final-security 22 PASS
+  for the final admin delta. No assertion/command weakened; install/build/browser/
+  audits are still required. Results: resumed-gate.log (currently running).
+
+- Final review delta: prevent Django Admin file widgets from minting direct S3
+  URLs (FileAttachment and ImportJob). Added rendered admin-page regression with
+  storage.url forbidden; no manual clean override. Full gate had already loaded
+  backend modules, so this delta gets a separate isolated final-security run.
+  `isolated.py test apps.core.tests_file_scanning apps.core.tests_file_attachments
+  --noinput` => 22 PASS, system check clean (final-security.log).
+  Official image source review found the entrypoint requires a local socket;
+  clamd.conf now keeps /run/clamav/clamd.sock, updater checks 12/day, memory cap
+  3 GB pending actual container sizing. No application behavior changed by this
+  compose-only correction. Python YAML parser unavailable; no container PASS claimed.
+  Source inspected: Cisco-Talos/clamav-docker main 1eba87c1, 1.5/alpine/scripts
+  docker-entrypoint.sh and clamdcheck.sh. Normal fetch confirmed origin/main still
+  equals task base 88e72f2; no concurrent writer or branch drift observed.
+
 ## Pilot owner decisions Q01–Q05 — PUBLISHED / LOCAL_VERIFIED / CI_RUNNING, 2026-09-28
 
 - Published code/docs candidate: `5677848ad4e71ffea702fa3aaf77d66627b3a96a`,

@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
@@ -59,6 +60,12 @@ class FileAttachmentTests(TestCase):
         self.assertEqual(attachment.uploaded_by, self.owner)
         self.assertTrue(attachment.file.name.startswith(f"private/attachments/business-{self.business.id}/"))
         self.assertNotIn("contract.pdf", attachment.file.name)
+
+        from apps.core.file_scanning import scan_attachment
+        from apps.core.tests_file_scanning import clean_result
+        self.assertEqual(response.data["scan_status"], "pending")
+        with patch("apps.core.file_scanning.scan_stream", side_effect=clean_result):
+            scan_attachment(attachment.id, attachment.business_id)
 
         download_response = self.api.get(f"/api/file-attachments/{attachment.id}/download/")
         self.assertEqual(download_response.status_code, 200)
@@ -229,6 +236,13 @@ class FileAttachmentTests(TestCase):
 
         self.assertEqual(scoped_response.status_code, 404)
         self.assertEqual(raw_response.status_code, 404)
+
+        denied_upload = self.api.post("/api/file-attachments/", {
+            "business": self.business.id, "entity_type": "task", "entity_id": task.id,
+            "file": SimpleUploadedFile("unauthorized.txt", b"note", content_type="text/plain"),
+        }, format="multipart")
+        self.assertEqual(denied_upload.status_code, 403)
+        self.assertEqual(FileAttachment.objects.count(), 1)
 
     def test_storage_quota_rejects_upload_over_plan_limit(self):
         plan = SubscriptionPlan.objects.get(code="start")

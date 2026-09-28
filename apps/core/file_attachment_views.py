@@ -9,6 +9,7 @@ from apps.businesses.access import Actions, assert_can, can, scope_queryset
 from apps.billing.storage import assert_storage_quota_allows
 from apps.core.audit import write_audit_log
 from apps.core.file_attachments import assert_attachment_access, resolve_attachment_entity
+from apps.core.file_scanning import open_clean_attachment
 from apps.core.models import AuditLog, FileAttachment, safe_original_filename
 from apps.core.permissions import IsTenantMember, accessible_businesses, platform_admin_has_global_access, user_can_access_business
 from apps.core.serializers import FileAttachmentSerializer
@@ -48,12 +49,12 @@ class FileAttachmentViewSet(ModelViewSet):
         business = serializer.validated_data["business"]
         if not user_can_access_business(self.request.user, business):
             raise PermissionDenied("You do not have access to this business.")
-        _, resource = resolve_attachment_entity(
+        entity, resource = resolve_attachment_entity(
             business,
             serializer.validated_data["entity_type"],
             serializer.validated_data["entity_id"],
         )
-        assert_can(self.request.user, business, resource, Actions.UPDATE)
+        assert_can(self.request.user, business, resource, Actions.UPDATE, obj=entity)
         uploaded_file = serializer.validated_data["file"]
         assert_storage_quota_allows(business, getattr(uploaded_file, "size", 0) or 0)
         attachment = serializer.save(uploaded_by=self.request.user)
@@ -74,6 +75,7 @@ class FileAttachmentViewSet(ModelViewSet):
     def download(self, request, pk=None):
         attachment = self.get_object()
         assert_attachment_access(request.user, attachment, Actions.VIEW)
+        source = open_clean_attachment(attachment)
         write_audit_log(
             request,
             AuditLog.Actions.DOWNLOAD,
@@ -81,7 +83,8 @@ class FileAttachmentViewSet(ModelViewSet):
             business=attachment.business,
             metadata={"kind": "file_download", "entity_type": attachment.entity_type, "entity_id": attachment.entity_id},
         )
-        return FileResponse(attachment.file.open("rb"), as_attachment=False, filename=attachment.original_name)
+        return FileResponse(source, as_attachment=True, filename=attachment.original_name,
+                            content_type=attachment.content_type or "application/octet-stream")
 
     @action(detail=True, methods=["post"])
     def rename(self, request, pk=None):

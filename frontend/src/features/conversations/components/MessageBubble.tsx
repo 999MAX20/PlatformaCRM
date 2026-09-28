@@ -4,6 +4,7 @@ import type { InboxMessage } from "../../../api/inbox";
 import { cn } from "../../../lib/cn";
 import type { Translate } from "../conversationTypes";
 import { formatMessageTime } from "../conversationUtils";
+import { AttachmentScanStatus } from "../../../components/crm/AttachmentScanStatus";
 
 export function MessageBubble({ message, t }: { message: InboxMessage; t: Translate }) {
   const system = message.sender_type === "system";
@@ -52,18 +53,21 @@ export function MessageBubble({ message, t }: { message: InboxMessage; t: Transl
         {message.attachments?.length ? (
           <div className="mt-3 space-y-2 text-platforma-text">
             {message.attachments.map((attachment) => (
-              <a
-                key={attachment.id}
-                href={attachment.download_url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 rounded-control bg-surface-muted px-3 py-2 text-xs font-bold ring-1 ring-platforma-border"
-              >
-                <Paperclip size={14} />
-                <span className="min-w-0 flex-1 truncate">
-                  {attachment.original_name}
-                </span>
-              </a>
+              <div key={attachment.id}>
+                <a
+                  href={attachment.scan_status === "clean" ? attachment.download_url : undefined}
+                  aria-disabled={attachment.scan_status !== "clean"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 rounded-control bg-surface-muted px-3 py-2 text-xs font-bold ring-1 ring-platforma-border"
+                >
+                  <Paperclip size={14} />
+                  <span className="min-w-0 flex-1 truncate">
+                    {attachment.original_name}
+                  </span>
+                </a>
+                <AttachmentScanStatus attachment={attachment} />
+              </div>
             ))}
           </div>
         ) : null}

@@ -46,6 +46,10 @@ class ImportJobAdmin(admin.ModelAdmin):
     list_filter = ("entity_type", "status", "business")
     search_fields = ("business__name", "actor__email", "original_filename")
     readonly_fields = ("created_at", "updated_at", "imported_at")
+    exclude = ("source_file",)  # File widgets expose storage URLs outside quarantine.
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(FileAttachment)
@@ -53,4 +57,11 @@ class FileAttachmentAdmin(admin.ModelAdmin):
     list_display = ("original_name", "business", "entity_type", "entity_id", "content_type", "size", "uploaded_by", "created_at")
     list_filter = ("business", "entity_type", "content_type", "created_at")
     search_fields = ("original_name", "business__name", "entity_type", "entity_id", "uploaded_by__email")
-    readonly_fields = ("created_at",)
+    exclude = ("file",)
+    readonly_fields = tuple(field.name for field in FileAttachment._meta.fields if field.name != "file")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

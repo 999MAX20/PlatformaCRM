@@ -83,7 +83,7 @@ document to be green.
 | BE-GAP-008 | Public abuse controls beyond fixed DRF throttles | `PARTIAL` | Accept only with bounded traffic | Required before broad exposure |
 | BE-GAP-009 | Marketplace write-back and reconciliation | `ROADMAP` | Must stay disabled | Not generally available |
 | BE-GAP-010 | 1C bridge and other future providers | `ROADMAP` | Must show request/roadmap | Not available |
-| BE-GAP-011 | Production file lifecycle hardening | `PARTIAL` | Local private media is sufficient | Required by production policy |
+| BE-GAP-011 | Production file lifecycle hardening | `PARTIAL` | Private media + ClamAV quarantine implemented; see checkpoint | Target-environment rollout and retention policy still required |
 | BE-GAP-012 | Vertical-specific CRM behavior | `ROADMAP` | Canonical CRM only | Product decision required |
 
 ## BE-GAP-001 - Tenant Ownership Immutability - Closed
@@ -338,14 +338,19 @@ The same rule applies to future payments, delivery and accounting providers.
 
 Implemented today: private local media behavior, optional S3-compatible
 settings, upload validation, attachment metadata/API, usage summary,
-plan-aware quota checks and upload/download audit.
+plan-aware quota checks and upload/download audit. Owner-authorized 2026-09-28:
+internal ClamAV INSTREAM, persisted quarantine, SHA-bound downloads, retry/lease
+recovery, import scanning and reachable scan states are implemented. See the
+[file antivirus contract](../security/file-antivirus.md) and current checkpoint
+for verification/publication. BE-GAP-011 remains PARTIAL for the environment and
+retention requirements below; local scanning is no longer a missing code layer.
 
 Still missing:
 
 - paid storage provider setup;
 - migration of existing files;
 - CDN strategy;
-- antivirus/provider interface;
+- deployment/operational acceptance of scanner, private storage and file worker;
 - production retention and lifecycle policy.
 
 Private bucket configuration and an upload/download/audit smoke are mandatory

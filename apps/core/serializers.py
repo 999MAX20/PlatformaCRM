@@ -90,6 +90,7 @@ class BulkCustomFieldValueSerializer(serializers.Serializer):
 
 
 class ImportJobSerializer(serializers.ModelSerializer):
+    source_file = serializers.FileField(write_only=True)
     actor_email = serializers.EmailField(source="actor.email", read_only=True)
     summary_json = serializers.SerializerMethodField()
 
@@ -297,10 +298,12 @@ class FileAttachmentSerializer(serializers.ModelSerializer):
             "entity_type",
             "entity_id",
             "visibility",
+            "scan_status",
+            "scanned_at",
             "download_url",
             "created_at",
         ]
-        read_only_fields = ["uploaded_by", "original_name", "content_type", "size", "visibility", "download_url", "created_at"]
+        read_only_fields = ["uploaded_by", "original_name", "content_type", "size", "visibility", "download_url", "created_at", "scan_status", "scanned_at"]
 
     def validate_file(self, uploaded_file):
         return validate_file_upload(uploaded_file)
@@ -314,6 +317,8 @@ class FileAttachmentSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def get_download_url(self, obj):
+        if obj.scan_status != "clean" or not obj.scan_sha256:
+            return ""
         request = self.context.get("request")
         url = f"/api/file-attachments/{obj.id}/download/"
         return request.build_absolute_uri(url) if request else url

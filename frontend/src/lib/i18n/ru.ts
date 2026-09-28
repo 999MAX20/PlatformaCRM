@@ -5820,4 +5820,9 @@ export const ru: Record<string, string> = {
   "aiAgents.knowledge.category.sales": "Продажи",
   "aiAgents.knowledge.category.policy": "Правила",
   "aiAgents.knowledge.category.faq": "Частые вопросы",
+  "files.scan.pending": "Ожидает проверки",
+  "files.scan.scanning": "Проверяется",
+  "files.scan.clean": "Проверка пройдена",
+  "files.scan.infected": "Файл заблокирован проверкой безопасности",
+  "files.scan.error": "Проверка недоступна. Повторим автоматически",
 };

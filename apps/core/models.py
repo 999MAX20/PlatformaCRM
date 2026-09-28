@@ -168,6 +168,13 @@ class LoginHistory(models.Model):
 
 
 class FileAttachment(models.Model):
+    class ScanStatuses(models.TextChoices):
+        PENDING = "pending", "Pending"
+        SCANNING = "scanning", "Scanning"
+        CLEAN = "clean", "Clean"
+        INFECTED = "infected", "Blocked"
+        ERROR = "error", "Scan unavailable"
+
     class Visibility(models.TextChoices):
         PRIVATE = "private", "Private"
 
@@ -180,6 +187,15 @@ class FileAttachment(models.Model):
     entity_type = models.CharField(max_length=64)
     entity_id = models.CharField(max_length=64)
     visibility = models.CharField(max_length=32, choices=Visibility.choices, default=Visibility.PRIVATE)
+    scan_status = models.CharField(max_length=16, choices=ScanStatuses.choices, default=ScanStatuses.PENDING)
+    scan_token = models.UUIDField(null=True, editable=False)
+    scan_started_at = models.DateTimeField(null=True, editable=False)
+    scanned_at = models.DateTimeField(null=True, editable=False)
+    scan_next_attempt_at = models.DateTimeField(null=True, editable=False)
+    scan_attempts = models.PositiveIntegerField(default=0, editable=False)
+    scan_error_code = models.CharField(max_length=48, blank=True, editable=False)
+    scan_sha256 = models.CharField(max_length=64, blank=True, editable=False)
+    scan_engine = models.CharField(max_length=64, blank=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -187,6 +203,7 @@ class FileAttachment(models.Model):
         indexes = [
             models.Index(fields=["business", "entity_type", "entity_id", "created_at"]),
             models.Index(fields=["uploaded_by", "created_at"]),
+            models.Index(fields=["scan_status", "scan_next_attempt_at"], name="attachment_scan_due_idx"),
         ]
 
     def __str__(self):
