@@ -2,6 +2,33 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Local dev recovery / VERIFIED, 2026-09-29
+
+- Owner reported dev down and requested next steps/antivirus status. Bounded
+  operation: restore existing local frontend, read-only backend/AV checks; no
+  implementation, working migration, process takeover or next product phase.
+  Canonical root/primary generation 2/idle/branch unchanged; clean base a134e7c.
+- No listener or Vite process on :5173. Existing backend PID 7036 on :8000 and
+  scanner PID 5220 on :3310 remained healthy. Prior Vite exit cause is unknown;
+  antivirus causation is not established. No other processes were stopped.
+- Hidden background-launch command was rejected by execution policy before
+  execution. Used ordinary foreground exec session instead, without env changes:
+  `node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173 --strictPort`
+  from canonical frontend. Session 30803, listener PID 19148; Vite 8.0.16 ready.
+  Keep this session running for local dev; no OS autostart was installed.
+- Actual HTTP checks: / and /src/main.tsx on :5173 => 200; /api/auth/me/ through
+  Vite => expected 401 authentication_required; backend /health/db/ => OK.
+  `manage.py file_antivirus` => ClamAV 1.5.4/28137, counts {}; file worker continues
+  successful periodic jobs. No synthetic working-DB writes or migrations.
+- No app changes, so no build/full suite required; documentation diff/index/range
+  hygiene and review apply to this receipt. AV activation commit a134e7c is on
+  main; its CI 36468290064 was still in_progress at this inspection, not green.
+- Antivirus implementation and local activation are complete within agreed scope.
+  Remaining operations: manual start after reboot, future cloud deployment/Redis
+  acceptance; retention/quota policy is separate. Next local product step is the
+  separately scoped scheduling.0008/tasks.0010 rollout, then workflow acceptance.
+  Cloud backup/restore/monitoring and business-user acceptance remain pilot gates.
+
 ## BE-GAP-011 — Local antivirus activation / VERIFIED, 2026-09-28
 
 - Owner explicitly selected this computer for migration and service startup.
