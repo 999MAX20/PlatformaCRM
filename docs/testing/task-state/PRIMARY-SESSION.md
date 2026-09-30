@@ -2,6 +2,504 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Account publication + audit follow-up / IN PROGRESS, 2026-09-30
+
+- Owner explicitly requested publication of accumulated WIP, then the five audit
+  recommendations (cache isolation, fallback registry, dependencies, internal CRM
+  acceptance, evidence-based screen improvements). Same primary/canonical root;
+  branch codex/ui-testing-toolkit; starting HEAD/base 1e21de8. Starting file hashes
+  retained in output/publication-20260930/starting-snapshot.json; prior WIP owned
+  by this task. Publish to existing origin main without switching branch.
+- First bounded result: verified publication of account WIP, including scoped
+  PyJWT/brace-expansion dependency remediation. Reuse earlier UI/backend evidence
+  where inputs unchanged; recheck dependency-affected authentication and build.
+  Gate: isolated checks/drift/account suites, hashed locks/audits, build/browser,
+  then full exact committed-candidate gate and remote SHA/actual CI readback.
+- Subsequent audit fixes use existing QueryClient/auth boundary and fallback
+  inventory generator; establish focused regression before implementation.
+  Internal acceptance follows existing pilot registry, no invented new roadmap.
+- No working DB migrations, real emails/provider calls, deployment, billing or
+  external integration activation. Existing account migrations are intentional;
+  new dependency changes have no schema/permission/notification/BusinessEvent/AI
+  policy effects. No other writer detected; stop on unexpected source drift.
+- Precommit verification: isolated Django check/drift and all apps.accounts tests
+  69 PASS (111.704s); exact guide focused command logged in accounts-gate.log.
+  npm ci PASS after releasing our verified canonical Vite binding (initial EPERM;
+  no other app/server stopped); dev :5173 will be restored after full npm-ci gate.
+  Build/bundle PASS; auth-return-path/login Node policy 18 PASS. Interface browser
+  21 PASS/4.1m; security/avatar/email/QR/session browser 18 PASS/2.9m, three sizes.
+  UI avatar/email responses mocked; QR/TOTP and device revocation use isolated
+  real backend. No live mail/provider/working-DB writes. Earlier visual evidence
+  reused because no UI implementation changed in publication preparation.
+- Dependency deltas only: PyJWT2.13.0→2.15.1, urllib3 2.7.0→2.8.0 in both locks,
+  brace-expansion5.0.9→5.0.12, dev pip26.1.2→26.2.1; generated via pip-tools/npm.
+  Production pip-audit and npm audit PASS/zero findings; dev audit rerun pending.
+  Reviewed 66 intended paths including all new source/tests/migrations, no secret
+  pattern hits; original source hashes unchanged except scoped docs/locks.
+  origin/main explicitly fetched (configured refspec omits main) = starting HEAD.
+  Workflow inspection: main push runs CI; no repository deployment workflow.
+- Evidence directory output/publication-20260930 (ignored). Local candidate commit
+  next, then full gate --base-ref 1e21de8 before normal HEAD:main push; not yet
+  published and no new CI result. Cache/fallback implementation not begun.
+
+## Account Security redesign + device sessions / LOCAL VERIFIED AND ACTIVATED, PUBLICATION BLOCKED, 2026-09-30
+
+- Interface phase (owner annotation2026-09-30): replace User settings card with
+  Interface; retain language, implement stored start-page selection and optional
+  pleasant notification sound; advise notification placement/role summary.
+  Mode implementation; code gap. Reuse UserPreference.start_page, auth /app index,
+  hasPermission/capabilities, bell API and existing notification-category controls.
+  Keep categories separate; sound toggle per authenticated user in this browser,
+  initially off, with preview and autoplay-safe activation. Compact read-only
+  actual role/available-section scope summary in profile, no permission editor.
+  Same registered owner/root/codex/ui-testing-toolkit HEAD1e21de8; all prior WIP
+  task-owned and preserved. No new backend schema/migration/working-DB operation,
+  permission policy, BusinessEvent, AI or external notification sending effects.
+  Acceptance: persisted permitted start page for normal entry; intended links,
+  MFA/platform redirects and denied-page fallback preserved. Sound only for new
+  visible bell records after baseline, no initial/repeat/read/muted sounds; user
+  isolation and storage/AudioContext failures safe. Interface nav/center preserved.
+  Gates: build/budget, existing auth-policy tests, isolated UI across3viewports for
+  settings/navigation plus focused sound/start-page/limited-role/recovery checks.
+
+- Interface implementation reuses /app index redirect, leaving normal/MFA/social
+  intended-return policy unchanged. Available start pages derive from membership
+  permissions and module capabilities; lost access falls back to dashboard.
+  Sound preference is user-keyed browser storage, explicitly labelled as local.
+  Native Web Audio chime uses two low-gain sine notes, smooth attack/decay and
+  user-gesture unlock (MDN Web Audio best practices). Bell polling shared with
+  Header; silent fresh baseline on enable/mount, seen IDs/send_at watermark,
+  one chime per batch and cross-tab Web Locks+played-ID dedupe. No remote audio.
+  Profile disclosure shows actual role and view scopes, never edit permissions.
+- Initial auth policy gate: `node --test frontend/scripts/tests/auth-return-path.
+  test.mjs frontend/scripts/tests/login-page-policy.test.mjs` 18 PASS.
+  Initial UI diagnostic: desktop sound/mute/preview/backlog/read-replay and audio
+  failure checks PASS. Start-page test incorrectly expected default entry after
+  a logout with retained intended /app/account state. Actual direct /app entry
+  correctly opened tasks. Failed test left preferences behind, cascading to later
+  RU assertions. Adjust test to a genuinely fresh tab and guaranteed preference
+  cleanup; do not weaken intended-return precedence or alter auth semantics.
+
+- Focused interface suite:4 desktop checks PASS (account-interface-focused.log):
+  real saved start-page + fresh-tab login + restricted-role fallback; muted/new/
+  read/repeat/backlog handling; cross-tab one-chime dedupe; native AudioContext
+  preview and blocked-audio recovery. Added same-browser second-user isolation.
+- First full follow-up stopped on test navigation race: immediate second document
+  goto after calendar URL assertion aborted refresh response (server200+broken
+  pipe, next refresh401). UI had not finished authentication; using the visible
+  account link now waits for actual authenticated page and tests the real route.
+  No weakening of token rotation/auth contracts. Evidence account-interface-ui-
+  final.log retained. Final full rerun uses max-failures1 and preference cleanup.
+
+- Sound boundary: enabled browser polls the existing bell list every60s (including
+  background tabs subject to browser scheduling); no closed-tab/OS push delivery.
+  First baseline, read/unread changes and unmuting backlog are silent. Toggle is
+  per user in browser storage, initially off; category routing and mandatory
+  critical visual notifications are unchanged. Native audio unlock follows
+  https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices .
+  No recording, external audio files, new dependency, backend or migration.
+  Limited-role UI tests use a mocked current-user permissions response; sound
+  preference isolation switches between real seeded owner/operator accounts.
+  Backend authorization is unchanged, not recertified by mocked UI evidence.
+
+- Interface phase FINAL locally complete: old personal-settings block replaced
+  by Interface with matching internal-nav label; language/start-page save through
+  existing own-user API. Sound browser preference + preview, collapsed role/access
+  view in Profile; notification categories remain a separate existing card.
+- Final verification on this dirty snapshot:
+  `npm --prefix frontend run build` PASS (output/account-interface-build.log);
+  `npm --prefix frontend run check:bundle` PASS (account-interface-budget.log);
+  `node --test frontend/scripts/tests/auth-return-path.test.mjs
+  frontend/scripts/tests/login-page-policy.test.mjs` 18 PASS (auth-policy log);
+  `.venv/Scripts/python.exe output/account-interface-verify.py` 21 PASS/5.0m
+  (account-interface-ui-final2.log). Desktop/tablet/mobile coverage: real preference
+  persistence, normal fresh-tab login, explicit route precedence, revoked-choice
+  fallback, limited-role read-only scopes, native audio preview, blocked-audio
+  recovery, new-only/muted/unmute/read-replay sounds, cross-tab dedupe, owner-to-
+  operator same-browser sound isolation; prior language draft/error/reload and
+  four-section sticky/center/search geometry checks. Desktop plus mobile nav/
+  interface and limited-role expanded screenshots viewed. No real user's settings
+  changed by verification. Initial failed/aborted logs retained with causes above.
+- Working/index `git diff --check` PASS; new helpers/components/tests reviewed.
+  Backend/DB schema unchanged: existing backend evidence reused, no new migrations
+  or working-DB actions. No new package dependencies, external sends or AI effects.
+  Canonical root C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit
+  HEAD1e21de8 unchanged; prior owned WIP preserved. No commit/push/new CI because
+  previously reproduced PyJWT/brace-expansion baseline audit blockers remain.
+  No further settings phase started; role summary grants no new permissions.
+
+- User-settings phase authorized: separate personal settings on Account page and
+  add internal navigation entry; propose further settings and role-dependent content.
+  Implement existing language preference with separate save; keep profile drafts
+  across preference refreshes. Same owner/root/branch/HEAD1e21de8 and owned WIP.
+  No new business policy, permissions, backend, migrations or external effects.
+  Acceptance: independent persisted language, error recovery, preserved profile
+  draft, four-section navigation and unchanged centered panels/search geometry.
+  Gates: build/budget and isolated settings/navigation/search UI across viewports.
+
+- User-settings implementation: new real language card (RU/KK/EN) and fourth
+  internal-navigation link; profile saves only name/phone, language PATCH only
+  preferences.language. Existing centered panels, external sticky nav and 1:2
+  search reference retained. Profile sync now watches actual identity fields,
+  so unrelated refreshes preserve unsaved drafts. No backend/DB changes.
+- Initial UI run: 6 geometry/navigation checks PASS; three new settings checks
+  expected raw503 detail but existing API normalizer correctly sanitizes it.
+  Test now checks the real error alert. Small desktop diagnostic then reproduced
+  draft loss on first language switch (account-settings-focused.log). The i18n
+  provider unmounts children while loading an uncached dictionary. Added reusable
+  prepareLanguage, called before language PATCH, to preload without unmounting;
+  no change to general provider behavior. Final regression assertions retained.
+- Additional content remains PROPOSAL: start page chosen from permitted routes;
+  per-business personal calendar view and saved list filters/columns; personal
+  notification delivery preferences (critical security/system alerts retain policy);
+  read-only role/access display. Owner: summary/analytics; administrator: calendar
+  and appointment view; manager: own leads/deals/tasks; operator: assigned inbox;
+  specialist: own appointments/tasks. Roles set defaults and available options,
+  permissions remain backend-owned. Shared business hours, roles, sales stages,
+  integrations and billing stay in business settings. No automatic next phase.
+
+- User-settings FINAL checks: `npm --prefix frontend run build` and
+  `npm --prefix frontend run check:bundle` PASS (output/account-settings-build.log,
+  account-settings-budget.log). `.venv/Scripts/python.exe
+  output/account-settings-verify.py`: 9 PASS, 2.4m, account-settings-ui-final.log.
+  Covers persisted language/reload, scoped PATCH,503/retry, preserved unsaved name,
+  four-section scrollspy/keyboard/sticky/resize, equal margins and search geometry
+  across eight routes in three viewports. Desktop/mobile screenshots reviewed.
+  `git diff --check` and cached check PASS; new component/test reviewed. Backend
+  unchanged, no new backend tests/migrations/working-DB changes required.
+  Same canonical root C:/Users/user/Desktop/PlatformaCRM, branch
+  codex/ui-testing-toolkit HEAD1e21de8, all owned prior WIP retained.
+  No commit/push/new CI: unchanged prior PyJWT/brace-expansion audit blockers.
+  This authorized settings phase is locally complete; further proposals not begun.
+
+- Owner positioning correction: restore centered original-width account panels
+  with equal workspace margins. Navigation must sit midway in left gutter between
+  global sidebar and panel, outside content flow, and remain sticky. Same owner/
+  root/branch/HEAD and WIP. On narrow screens without a usable gutter retain top
+  navigation; compact icon rail at intermediate desktop widths. Restore search
+  reference to original panel width. Gate: build/budget, center/gutter/scroll checks.
+- Positioning correction complete: panels restored to original centered max960px
+  with equal workspace margins. Absolute full-height rail outside content owns
+  sticky navigation; its width is actual gap from 64px global sidebar to content.
+  Nav centered in rail (192px with labels >=1536, compact accessible icon rail
+  >=1280). Below1280 no usable gutter: sticky top navigation, no horizontal shift.
+  Shared search width restored to half original profile reference across routes.
+- `npm --prefix frontend run build` and `run check:bundle` PASS, output/account-nav-
+  center-build.log and account-nav-center-budget.log. Isolated
+  `.venv/Scripts/python.exe output/account-nav-verify.py`: 6 PASS,
+  account-nav-center-ui.log. Assertions now prove equal panel margins, 960px desktop
+  width, exact gutter midpoint at1920/1280, sticky visibility, scroll/keyboard/
+  resize/current-section and eight-route search ratio. Wide screenshot reviewed.
+  Working/index hygiene PASS, backend unchanged. No commit/push/new CI due unchanged
+  dependency blockers; same canonical root/branch HEAD1e21de8 and owned WIP.
+
+- Account internal-navigation phase authorized: left sticky section navigation,
+  active section follows scroll, links jump to existing Profile/Security/Personal
+  notifications. Responsive compact navigation above content. Analyze personal
+  settings/role differences as proposals, no new settings or permissions yet.
+  Same primary/canonical root/branch/HEAD1e21de8, prior WIP owned and preserved.
+  Reuse current cards/i18n; adjust shared profile/search width reference for sidebar
+  space so agreed 1:2 ratio remains. No backend/migration/notification/AI effects.
+  Gate: build/budget, isolated scroll/click/resize/keyboard and search geometry.
+- Implemented AccountSectionNav: existing three sections, sticky left desktop /
+  compact top mobile; native anchors, aria-current, rAF-throttled scroll/resize and
+  ResizeObserver for async content heights. Existing labels plus RU/KK/EN nav label.
+  Account-only CSS uses overflow-x:clip on body/root so shared overflow-x:hidden
+  does not create an unscrolled ancestor scrollport. Initial tests reproduced sticky
+  failure in all three viewports; fixed scope-locally, assertions unchanged.
+  Account layout reuses 960px content +192px sidebar/16px gap; shared search token
+  accounts for sidebar space while retaining half actual profile-panel width.
+- `npm --prefix frontend run build` / `run check:bundle` PASS, output/account-nav-
+  build.log and account-nav-budget.log. `.venv/Scripts/python.exe
+  output/account-nav-verify.py` final 6 PASS (account-nav-ui-final.log): navigation
+  clicks, manual scroll, bottom section, keyboard, resize, sticky visibility,
+  single active link and horizontal fit, plus 8-route search geometry per viewport.
+  Initial failure evidence account-nav-ui.log retained. Desktop/mobile screenshots
+  reviewed. New CSS/component/test reviewed; working/index hygiene PASS.
+  Backend unchanged: prior evidence reused, no migrations/working DB mutation.
+  No commit/push/new CI due existing PyJWT/brace-expansion audit blockers; unchanged
+  codex/ui-testing-toolkit HEAD1e21de8 in canonical root, all prior owned WIP retained.
+- Personal-settings assessment (PROPOSAL, not implemented policy): keep existing
+  identity/security/preferences common; add a useful Workplace section for a
+  permission-validated default page and saved own/team view filters. UserPreference
+  already persists language/timezone/start_page (models.py/serializers.py), but
+  authReturnPath does not consume start_page; format.ts uses Business timezone.
+  Do not expose an ineffective timezone toggle or change booking-time semantics.
+  NotificationPreference is Business+user scoped; routing.py preserves high/urgent
+  delivery despite ordinary category opt-out. Suggest role/permitted-module-aware
+  categories, optional sound and ordinary-notification quiet hours only after
+  delivery semantics are designed. Existing own-device/email/MFA flows reused.
+- Suggested initial destinations: owner dashboard, admin calendar, manager leads/
+  tasks, operator conversations, specialist own calendar/tasks. These are defaults,
+  not rights: actual capabilities determine offered choices; always allow a safe
+  permitted fallback after membership/permission changes. Own-account identity is
+  global, workspace/default views and notifications should be scoped per business.
+  A read-only Role and access view can explain membership/team and allowed modules;
+  staff cannot self-change roles, Business hours, integrations, billing or rights.
+  Specialist absence/working hours remain manager-controlled under current contract.
+  MFA currently exposes enrollment only to privileged users; optional staff MFA
+  would require a separate backend policy implementation, not just a visible button.
+
+- Final QR modal layout owner correction: center manual-fallback disclosure and
+  fit-content centered key; remove setup Cancel and center Enable protection.
+  Same owner/root/branch/HEAD1e21de8, existing owned WIP preserved. Cosmetic frontend
+  scope, reuse modal close control, no authentication/API changes. Required build/
+  budget and affected responsive enrollment/restart tests; prior audit blockers stay.
+- Done: centered disclosure and fit-content key, setup footer contains only centered
+  Enable protection. Existing close icon preserved; recovery/disable footers unchanged.
+  `npm run build` and `npm run check:bundle` PASS, output/qr-final-layout-build.log
+  and qr-final-layout-budget.log. `.venv/Scripts/python.exe output/account-qr-verify.py`
+  9 PASS (qr-final-layout-ui.log), including center geometry, Cancel absence, close/
+  restart, independent QR decoding and real isolated TOTP enrollment/login across
+  desktop/tablet/mobile. Expanded desktop/mobile screenshots reviewed. No working
+  account MFA changed. Backend unchanged; previous backend evidence reused.
+  Diff/index hygiene PASS; no commit/push/new CI due existing dependency audit
+  blockers. Canonical root/branch/HEAD unchanged, previous owned work preserved.
+
+- Header search follow-up authorized: remove shortcut hint; input width is half
+  the Account profile panel reference across routes/states, preserving placement.
+  Same primary/root/branch/HEAD and owned WIP. Shared responsive width token for
+  profile/search; existing mobile collapsed trigger retained, opened field uses
+  same ratio. No search/API/keyboard behavior changes. Build/budget + isolated
+  cross-route geometry, focus/query/sidebar and responsive checks required.
+- Shared responsive --account-content-width and --global-search-width tokens
+  derive search=profile/2; desktop grid keeps its start, mobile opened input uses
+  same ratio. Shortcut hint removed, keyboard listener unchanged. Initial desktop
+  eight-route PASS; tablet test hover hit an expanded-sidebar-covered heading
+  (changed pointer target), mobile revealed conflicting hidden/flex and relative/
+  absolute classes because cn only concatenates. Explicit mutually exclusive
+  classes fix expanded mobile input; popup anchored below it at original viewport
+  inset. No auth/API change or working DB mutation.
+- Final `npm run build` / `npm run check:bundle` PASS (output/header-search-build.log,
+  header-search-budget.log). `.venv/Scripts/python.exe output/header-search-verify.py`
+  3 PASS, output/header-search-ui-final.log: desktop/tablet/mobile each cover account,
+  dashboard/leads/clients/deals/calendar/tasks/settings; width=profile/2, stable x,
+  focused/query/clear and sidebar hover states. Desktop/mobile screenshots viewed.
+  Initial failures retained in header-search-ui.log, corrected without weakening
+  geometry assertions. Working/index hygiene PASS; backend skipped unchanged.
+  Same canonical root/branch HEAD1e21de8, owned WIP preserved; no commit/push/new CI
+  due unchanged PyJWT/brace-expansion audit blockers. This is local UI verification.
+
+- Owner QR layout correction: remove authenticator deep link and center a compact
+  six-digit enrollment input on both existing setup surfaces. Same owner/root/HEAD
+  and owned WIP; frontend-only, no auth/API/policy changes. Build/budget and existing
+  responsive QR checks with link absence/input geometry assertions required.
+- Correction complete: shared deep link removed; setup input/label centered at
+  192px, centered monospaced digits. Existing recovery/login-factor entry unaffected.
+  `npm run build` and `npm run check:bundle` PASS (output/account-qr-layout-build.log,
+  account-qr-layout-budget.log). `.venv/Scripts/python.exe output/account-qr-verify.py`
+  9 PASS (account-qr-layout-ui.log); link absence and centered compact field checked
+  on both setup surfaces, all three viewport projects. Desktop/mobile screenshots
+  viewed; prior backend results reused as backend unchanged. Diff hygiene PASS.
+  Same HEAD/branch, no commit/push/CI because existing audit blockers remain.
+
+- QR follow-up authorized: implement Google Authenticator enrollment using existing
+  otpauth_uri/TOTP API. Same primary/canonical root, branch and HEAD1e21de8;
+  starting WIP is owned account work listed above in Git, no competing writer.
+  Scope: reusable local QR enrollment UI, account/login setup integration, RU/KK/EN,
+  meaningful isolated QR decode and actual enrollment/login checks. No new server
+  policy, migrations, working-user MFA activation, provider, AI or BusinessEvent.
+  Gate: build/i18n/budget, npm audit, isolated MFA and responsive UI/API tests.
+  Existing PyJWT publication blocker persists; no implicit dependency remediation.
+- QR implementation verified: shared AuthenticatorEnrollment renders existing
+  otpauth_uri as local SVG (qrcode.react4.2.0), 240px, four-module quiet zone;
+  manual key collapsed, same-device link retained. Both account modal and required
+  login enrollment use it. Setup accepts six digits; factor/recovery inputs retain
+  previous behavior. Action errors now visible inside modal and reset on restart.
+  All three locales updated. No server/API/permission or DB schema changes.
+- `npm run build` / `npm run check:bundle`: PASS, logs account-qr-build.log and
+  account-qr-budget.log in output. Isolated `manage.py test apps.accounts.tests_mfa
+  -v 1`: 14 PASS, includes replay/expiry; account-qr-verify.log. Initial browser
+  run exposed legacy local issuer override (Zani Local), not QR decode failure.
+  Explicit test issuer set to PlatformaCRM; assertions preserved. Local .env issuer
+  renamed to PlatformaCRM with private backup output/account-security-backups/
+  qr-issuer.env and dev settings reload; no actual account factor activated.
+- `.venv/Scripts/python.exe output/account-qr-verify.py`: final 9 browser PASS,
+  account-qr-ui.log. Canonical source, isolated DB/ports/no provider calls. Independent
+  jsqr1.4.0 dev-only decoder reads screenshot and matches real API otpauth_uri;
+  independent TOTP confirms enrollment, ten recovery codes and next login. Tests
+  cover bad-code error, hidden/manual fallback, no external requests, expired
+  response/cancel/fresh enrollment and required-login QR (mocked challenge route).
+  Three viewport projects; desktop/mobile screenshots visually reviewed.
+- npm audit: FAILED on existing brace-expansion high advisories; exact HEAD package
+  + lock audited in disposable metadata-only directory reproduces same finding
+  (output/account-qr-npm-baseline.json versus account-qr-npm-audit.json). Lock delta
+  contains only QR encoder/decoder additions, no transitive changes. Prior PyJWT
+  blocker remains. No dependency fixes silently added; no commit/push/new CI.
+  Full gate not claimed: HEAD equals starting base and baseline audit blocks
+  publication. Working/index diff hygiene PASS; new component/tests reviewed.
+  Canonical root C:\Users\user\Desktop\PlatformaCRM, branch codex/ui-testing-toolkit,
+  unchanged HEAD1e21de8; all prior owned account WIP preserved.
+
+- Follow-up owner request: remove visible legacy-session explanation, retain
+  actual revoke logic; assess QR enrollment UX only (no QR implementation yet).
+  Same owner/root/base/WIP, frontend copy-only delta; build and reachable UI check.
+  Existing MFA server already returns otpauth_uri and verifies TOTP before enabling.
+- Follow-up result: removed only the legacy explanation paragraph in ActiveSessions;
+  legacy_count and revoke-all behavior retained. `npm run build` PASS (log:
+  output/account-remove-session-note-build.log); live /app/account CUA readback
+  confirms paragraph absent, current device and all-others button present.
+  Diff hygiene PASS; backend unchanged, previous tests remain applicable.
+  QR assessment only: render existing otpauth_uri locally, no external QR service;
+  scan, six-digit confirmation, then recovery codes; manual key as fallback.
+  No Google API or migration needed; QR implementation not authorized in this delta.
+
+- Owner requests simpler consistent Security UI without repeated password label,
+  and actual active-device list with selective remote logout. Implementation/code
+  gap, same primary/root/branch codex/ui-testing-toolkit/HEAD 1e21de8 and existing
+  owned avatar/email WIP; no unrelated files. Reuse JWT auth_epoch, refresh rotation,
+  MFA verification, security audit, API client, shared modal and account primitives.
+- Device sessions need stable session ID across refresh rotations, tracked expiry/
+  revocation, bounded device metadata and current-device marker. Revoking another
+  own session blocks access and refresh for it while other sessions remain valid.
+  Only own-user list/actions (foreign IDs return404), MFA required if enabled.
+- Legacy JWTs lack session ID: explicit legacy group, adopt on refresh; global
+  revoke still invalidates legacy access via epoch. No invented device details.
+  Rollout flag defaults off until migration applied; no surprise logout/migration.
+  New local DB migration/activation requires explicit owner scope after checks.
+- Required: isolated accounts/auth/MFA/session permission/replay/rotation tests,
+  system/drift checks, frontend build/budget, responsive UI and selective revoke
+  integration evidence. No real user sessions revoked during verification.
+  No BusinessEvent/AI/domain-policy change. Existing dependency audit blocker
+  continues to block publication; no implicit PyJWT update or SMTP activation.
+
+- Implemented consistent icon/title/value/action rows; Password no longer repeats
+  "Change password" in visible label and action. MFA setup/manage is separate from
+  device sessions. Device rows show browser/OS, last-active, peer IP, current badge;
+  other-session/all-others actions have confirmation and enabled-MFA factor.
+  Login history remains collapsible. Mobile value spans available row width.
+- New AccountSession model/0010 and services track sid across refresh rotations;
+  access/refresh both enforce own user/epoch/expiry/revocation. Refresh acquires
+  user/session locks and rechecks token blacklist after locking. Ordinary logout
+  and account-wide security revocation keep their existing epoch semantics.
+  Rollout off is compatible with unmigrated runtime; sid tokens never bypass
+  revocation if flag later off. Flag in tests explicitly on, no provider calls.
+- `python output/account-sessions-verify.py` (isolated_runtime): system and drift
+  PASS, 69 tests PASS (accounts baseline/MFA/avatar/email + device sessions).
+  Covers three independent sessions, target-only revoke/access+refresh denial,
+  rotation/replay, current/foreign/unknown ID denial, enabled MFA, old-token
+  adoption, expiry, global revoke and rollout-disabled sid checks.
+- `python output/account-sessions-ui.py`: 9 PASS, isolated desktop/tablet/mobile;
+  real second browser context/API login then revoke proves target access+refresh
+  401 while initiator reload succeeds. Avatar/email UI regressions included.
+  After demonstrated mobile email wrapping, adjusted only shared row grid:
+  `python output/account-sessions-responsive.py` 3 PASS, screenshots reviewed.
+  `npm run build` and `npm run check:bundle` PASS final; initial TS return-union
+  error corrected in mutation orchestration before final build. No assertions
+  weakened. Diff/index hygiene PASS, no arbitrary committed range/full gate claim.
+- Owner explicitly answered "Да, применить и включить локально" for accounts0009
+  +0010, backup and rollout flag, no forced logout/SMTP. Executed prepared
+  `python output/account-security-local-activate.py`: canonical SQLite path and
+  exact two-migration forward plan asserted, backup integrity OK at
+  `output/account-security-backups/20260930T121051Z/db.sqlite3`, SHA256
+  `c2c63654732ff147fb49e6ab5b5bd6b1f7d6f18cc840bcd59d0852c36f8b0f8d`.
+  Both applied OK; scheduling0008/tasks0010 still pending. Local env backed up
+  privately, AUTH_DEVICE_SESSIONS_ENABLED=True; dev settings autoreload activated.
+- Runtime readback: both migrations applied/flag True. Separate CUA local tab
+  shows Chrome/Windows current device + one legacy session; no real revocations,
+  no email mutation, existing user page/input left intact. New tab created solely
+  for checking the result; no test seed/reset in working DB.
+- Canonical root C:\Users\user\Desktop\PlatformaCRM, branch
+  codex/ui-testing-toolkit, unchanged HEAD1e21de8, all WIP from this account scope.
+  No commit/push/new CI: unchanged baseline PyJWT audit blocker remains; earlier
+  dependency evidence retained. SMTP remains console/unconfigured. Next unfinished
+  item: separately authorized PyJWT remediation/publication; real mail setup is
+  still needed for mailbox-code delivery. This activation does not authorize either.
+
+## Account avatar and proportional fields / LOCAL VERIFIED, PUBLICATION BLOCKED, 2026-09-30
+
+- Owner UI correction 30.09: replace circular-only preview/X/Y sliders with
+  photo-aspect rectangular viewport, fixed circular mask and direct photo drag.
+  Same owned WIP/root/base. Frontend-only delta, existing crop API reused. Pointer
+  mouse/touch and keyboard arrows; keep zoom. Required build/budget and responsive
+  drag/save browser checks; prior backend evidence unchanged. Email activation
+  approval remains pending, no migration or SMTP changes authorized by this request.
+
+- Drag correction verified: `npm run build` and `npm run check:bundle` PASS;
+  `python output/avatar-ui.py` isolated runtime, 6 PASS (avatar-drag-ui.log).
+  Browser checks assert source aspect, mouse drag changes image position,
+  keyboard arrows, no X/Y sliders, save/header sync/remove and email regression
+  across desktop/tablet/mobile. Desktop/mobile screenshots visually checked.
+  No new backend changes or migration; prior backend evidence reused. Source
+  crop uses 80% of shorter edge at initial zoom, leaving room to reposition even
+  square images. Single writer/HEAD 1e21de8 unchanged; no commit/push due existing
+  baseline dependency audit blocker. Working/index hygiene PASS.
+
+- Follow-up 30.09: owner requests centered pencil avatar, modal crop/zoom, removal
+  of profile email/business captions, email/login change in Security. Same owner,
+  root/branch/base and task-owned WIP. Mode implementation; code gap. Reuse me,
+  MFA, session revocation, audit and modal primitives. Preserve User.pk and links.
+  Email change requires current password, enabled MFA and expiring single-use
+  mailbox code; pending challenge stored separately. Required isolated auth tests,
+  migration drift, build and responsive browser flows. No real email/user changes
+  for tests; any new working-DB migration needs explicit approval. Existing PyJWT
+  publication blocker remains. BusinessEvent/AI/business policy unchanged.
+
+- Follow-up implementation: avatar pencil centered in left column; modal uses
+  keyboard-accessible zoom/X/Y ranges, original file + bounded crop server-side
+  after scanner and EXIF orientation. Removed profile email/business caption.
+  New Security email row and two-step confirmation reuse API/MFA/audit/session
+  layers. Own-user challenge: keyed code hash, 10min/5 attempts, resend replaces,
+  current password + enabled MFA, duplicate check at request/confirm, epoch
+  invalidation, atomic consume/email update/revoke and replacement JWT/cookie.
+  User.pk, username, owner/member/social links unchanged. No CRM/AI events changed.
+- Checks on 1e21de8 + current owned WIP: `python output/account-followup-verify.py`
+  via isolated_runtime: system/drift PASS, 58 accounts/avatar/email/MFA tests PASS.
+  Subsequent crop bounds/pixel assertion: isolated apps.accounts.tests_avatars
+  8 PASS (output/account-crop-backend.log). Subsequent delivery-mode/timeout guard:
+  isolated apps.accounts.tests_email_changes 9 PASS (output/account-email-final.log).
+  `npm run build`, `npm run check:bundle` PASS, i18n ru/kk/en PASS.
+- `python output/avatar-ui.py` isolated browser run: 6 PASS, desktop/tablet/mobile
+  crop save/header sync/navigation/delete and email request/confirmation/refetch.
+  Mail/avatar transport intercepted; real backend security covered above. First
+  run 3 failed due stale pre-modal selectors/Windows encoding in test edit, 3 pass;
+  test file corrected to UTF-8 and modal flow, final log account-followup-ui-final.
+  Mobile crop screenshot inspected; profile screenshot captured too early at
+  loading state, so desktop layout independently inspected through current CUA
+  local account page: centered avatar and security email confirmed. No user values
+  changed; screenshot showed owner's in-progress phone edit, left intact.
+- accounts.0009_emailchangechallenge created/tested in isolated DB only. Local
+  migration approval requested. Runtime mail backend is console with no SMTP
+  host/credentials; console/file/dummy explicitly fail instead of claiming sent.
+  No real mailbox sends/account-email mutations performed. Live email acceptance
+  pending SMTP. Full release gate/commit/push not claimed; baseline PyJWT blocker
+  unchanged. Next: approved local 0009 backup/apply if owner agrees; configure
+  actual mail separately, then resolve authorized dependency publication blocker.
+
+- Owner requests durable personal avatar on Account + header and shorter fields.
+- Clean base 1e21de8, canonical checkout/current primary/branch unchanged.
+- Reuse authenticated me API boundary, ClamAV scanner, query cache and shared UI.
+- New own-user avatar model/API (bounded normalized JPEG in DB, no public URL),
+  upload/remove and shared avatar component. Personal data independent of Business.
+- Acceptance: isolation/auth, file bounds/type/infection/scanner outage, persistence,
+  header/profile synchronization, responsive form. Isolated backend/migration checks,
+  frontend build and UI evidence. Working DB migration requires separate scope.
+- No existing FileAttachment lifecycle, business permissions or AI changes.
+
+- Added Pillow 12.3.0 with generated hashes; only this dependency added to lock.
+  Installed locked runtime (also reconciled local DRF to existing lock 3.17.2).
+- Checks: build/i18n and bundle PASS; check/migration drift PASS; isolated accounts
+  + avatar suites 36 PASS after fixing scanner error to use DomainAPIException.
+  First run 35/36: custom 503 had been normalized to 500; final regression proves 503.
+- account-avatar.spec.ts 3 PASS desktop/tablet/mobile, intercepted avatar transport
+  for UI synchronization/navigation/remove; actual backend persistence tested above.
+- Real ClamAV clean normalize + EICAR reject PASS using synthetic memory bytes and
+  mocked persistence only (output/avatar-real-scan.py), no user photo/data changed.
+- Owner explicitly approved local accounts.0008 only after tests. SQLite online
+  backup + integrity PASS: output/avatar-backups/20260930T105137Z/db.sqlite3,
+  SHA256 522e04b847dda69d9c4a16c83b91d72c259524b069cc24e75cae31821b5f203f.
+  Target migration plan asserted exactly accounts.0008, then applied successfully.
+  scheduling.0008/tasks.0010 remain pending. AV supervisor restarted from existing
+  local runtime; file_antivirus health ClamAV 1.5.4/28137, no queued files.
+- CUA local after migration: avatar editor visible without API error, fields bounded
+  beside 80px avatar on desktop; 390x844 stacks correctly. Viewport reset.
+- Publication BLOCKED: pip_audit requirements reports 10 advisories in unchanged
+  PyJWT 2.13.0 (fix 2.14.0). Same findings reproduced on HEAD requirements extracted
+  to output/avatar-baseline-requirements.txt. Pillow has no reported advisories.
+  Logs output/avatar-{dependency,baseline}-audit.log; no silent auth dependency
+  upgrade, no commit/push while required dependency gate is failed. Need separately
+  scoped PyJWT update/verification. Full release gate not claimed.
+
 ## Compact account page / VERIFIED, 2026-09-30
 
 - Owner approved the account-page review proposal. Mode implementation; UI/code gap.

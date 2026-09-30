@@ -1,0 +1,31 @@
+/* Keep horizontal clipping without creating an unscrolled ancestor scrollport
+   that prevents the account section navigation from sticking to the viewport. */
+body:has([data-account-page]),
+#root:has([data-account-page]) {
+  overflow-x: clip;
+}
+
+.account-section-nav-rail {
+  position: sticky;
+  top: 4rem;
+  z-index: 30;
+  margin-bottom: 1rem;
+}
+
+[data-account-page] > div > section {
+  scroll-margin-top: 9rem;
+}
+
+@media (min-width: 1280px) {
+  .account-section-nav-rail {
+    position: absolute;
+    inset-block: 0;
+    right: 100%;
+    width: calc((100vw - 4rem - var(--account-content-width)) / 2);
+    margin-bottom: 0;
+  }
+
+  [data-account-page] > div > section {
+    scroll-margin-top: 6rem;
+  }
+}

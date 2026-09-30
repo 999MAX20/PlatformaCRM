@@ -110,7 +110,7 @@ export function AppLayout() {
   const workspaceAnimationKey = aiAgentWorkspaceKey || location.pathname;
 
   return (
-    <div className="min-h-screen bg-surface text-ink">
+    <div className="min-h-screen bg-surface text-ink [--account-content-width:min(960px,calc(100vw_-_2rem))] [--global-search-width:calc(var(--account-content-width)*0.5)] sm:[--account-content-width:min(960px,calc(100vw_-_3rem))] lg:[--account-content-width:min(960px,calc(100vw_-_7rem))]">
       <PageHeaderContext.Provider value={pageHeaderActions}>
         <div className="relative flex min-h-screen">
           <DesktopSidebar />

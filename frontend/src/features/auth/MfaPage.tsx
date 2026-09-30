@@ -1,4 +1,4 @@
-import { ArrowRight, Copy, KeyRound, ShieldCheck, Smartphone, Zap } from "lucide-react";
+import { ArrowRight, Copy, KeyRound, ShieldCheck, Zap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 
@@ -18,6 +18,7 @@ import { ErrorState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "./AuthProvider";
+import { AuthenticatorEnrollment } from "./AuthenticatorEnrollment";
 import { getAuthReturnPathFromState, getPostAuthReturnPath } from "./authReturnPath";
 import "./authLoginSerenity.css";
 
@@ -143,29 +144,23 @@ export function MfaPage() {
               </div>
             ) : (
               <form className="serenity-login__form" onSubmit={submit}>
-                {pending.code === "mfa_enrollment_required" ? (
-                  <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="flex items-center gap-2 font-black text-midnight"><Smartphone size={18} />{t("mfa.addAuthenticator")}</div>
-                    <p className="text-sm font-semibold leading-6 text-slate-600">{t("mfa.addAuthenticatorText")}</p>
-                    {enrollment ? (
-                      <>
-                        <code className="break-all rounded-xl bg-white px-3 py-2 text-sm font-black text-midnight">{enrollment.manual_key}</code>
-                        <a className="text-sm font-black text-brand-700" href={enrollment.otpauth_uri}>{t("mfa.openAuthenticator")}</a>
-                      </>
-                    ) : null}
-                  </div>
-                ) : null}
+                {pending.code === "mfa_enrollment_required" && enrollment ? <AuthenticatorEnrollment enrollment={enrollment} /> : null}
+                <div className={pending.code === "mfa_enrollment_required" ? "mx-auto w-48 max-w-full text-center" : undefined}>
                 <Input
                   label={t("mfa.codeLabel")}
                   value={code}
                   onChange={(event) => setCode(event.target.value)}
                   autoComplete="one-time-code"
                   inputMode="numeric"
-                  placeholder={t("mfa.codePlaceholder")}
-                  leftIcon={<KeyRound size={18} />}
+                  placeholder={pending.code === "mfa_enrollment_required" ? "000000" : t("mfa.codePlaceholder")}
+                  pattern={pending.code === "mfa_enrollment_required" ? "[0-9]{6}" : undefined}
+                  maxLength={pending.code === "mfa_enrollment_required" ? 6 : undefined}
+                  className={pending.code === "mfa_enrollment_required" ? "text-center font-mono text-lg tracking-[0.25em]" : undefined}
+                  leftIcon={pending.code === "mfa_enrollment_required" ? undefined : <KeyRound size={18} />}
                   required
                 />
-                <p className="text-xs font-semibold leading-5 text-slate-500">{t("mfa.recoveryHint")}</p>
+                </div>
+                {pending.code !== "mfa_enrollment_required" ? <p className="text-xs font-semibold leading-5 text-slate-500">{t("mfa.recoveryHint")}</p> : null}
                 <Button type="submit" isLoading={loading} disabled={pending.code === "mfa_enrollment_required" && !enrollment}>
                   {pending.code === "mfa_enrollment_required" ? t("mfa.enable") : t("mfa.verify")}
                   <ArrowRight size={18} />

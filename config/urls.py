@@ -1,3 +1,6 @@
+from apps.accounts.avatar_views import CurrentUserAvatarView
+from apps.accounts.session_views import AccountSessionsView, RevokeAccountSessionView
+from apps.accounts.email_change_views import EmailChangeRequestView, EmailChangeConfirmView
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
@@ -206,8 +209,13 @@ urlpatterns = [
     path("api/auth/signup/owner/", OwnerSignupView.as_view(), name="auth_signup_owner"),
     path("api/auth/password-reset/request/", PasswordResetRequestView.as_view(), name="auth_password_reset_request"),
     path("api/auth/password-reset/confirm/", PasswordResetConfirmView.as_view(), name="auth_password_reset_confirm"),
+    path("api/auth/me/avatar/", CurrentUserAvatarView.as_view(), name="auth_me_avatar"),
     path("api/auth/me/", CurrentUserView.as_view(), name="auth_me"),
     path("api/auth/change-password/", ChangePasswordView.as_view(), name="auth_change_password"),
+    path("api/auth/sessions/", AccountSessionsView.as_view(), name="auth_sessions"),
+    path("api/auth/sessions/<uuid:session_id>/revoke/", RevokeAccountSessionView.as_view(), name="auth_session_revoke"),
+    path("api/auth/change-email/request/", EmailChangeRequestView.as_view(), name="auth_email_change_request"),
+    path("api/auth/change-email/confirm/", EmailChangeConfirmView.as_view(), name="auth_email_change_confirm"),
     path("api/auth/login-history/", CurrentUserLoginHistoryView.as_view(), name="auth_login_history"),
     path("api/auth/mfa/status/", MfaStatusView.as_view(), name="auth_mfa_status"),
     path("api/auth/mfa/enrollment/start/", MfaEnrollmentStartView.as_view(), name="auth_mfa_enrollment_start"),

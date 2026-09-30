@@ -272,6 +272,8 @@ REST_FRAMEWORK = {
         "auth_social": env("AUTH_SOCIAL_RATE", default="20/min"),
         "auth_signup": env("AUTH_SIGNUP_RATE", default="10/hour"),
         "auth_password_reset": env("AUTH_PASSWORD_RESET_RATE", default="5/hour"),
+        "auth_profile": "10/min",
+        "auth_email_change": "5/hour",
         "auth_mfa": env("AUTH_MFA_RATE", default="10/min"),
         "public_api": env("PUBLIC_API_RATE", default="120/min"),
         "public_form": env("PUBLIC_FORM_RATE", default="60/min"),
@@ -507,6 +509,8 @@ AI_PROMPT_MODEL_TIERS = env(
 )
 AI_TEMPERATURE = env.float("AI_TEMPERATURE", default=OPENAI_TEMPERATURE)
 AI_HTTP_TIMEOUT_SECONDS = env.int("AI_HTTP_TIMEOUT_SECONDS", default=20)
+
+AUTH_DEVICE_SESSIONS_ENABLED = env.bool("AUTH_DEVICE_SESSIONS_ENABLED", default=False)
 
 EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = env("EMAIL_HOST", default="")

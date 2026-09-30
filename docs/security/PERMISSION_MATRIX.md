@@ -2,6 +2,49 @@
 
 This file is the working reference for role-aware behavior in PlatformaCRM.
 
+## Own-device sessions — 2026-09-30
+
+`GET /api/auth/sessions/` lists only the authenticated user's device sessions.
+`POST /api/auth/sessions/<uuid>/revoke/` revokes one other own session; foreign
+and unknown IDs return404, current-session revocation is rejected, retries are
+idempotent. Enabled MFA requires a valid factor as in existing all-session revoke.
+No business role grants access to another user's sessions. No credentials or
+refresh-token identifiers are returned. Revocation writes a security audit event.
+
+AccountSession stores stable UUID, user/epoch, current refresh JTI, observed peer
+IP, bounded User-Agent, creation/last-active/expiry/revocation times. Browser/OS
+labels are derived from User-Agent, not verified device identity or geolocation.
+Access JWTs and every refresh rotation check `sid` revocation and expiry; rotations
+retain the session ID. Account-wide epoch revocation still supersedes all sessions.
+Last-active writes are limited to once per minute per session. IP is REMOTE_ADDR,
+which may be the reverse proxy rather than a physical device's public address.
+
+Rollout: apply accounts.0010 (depends on0009), then explicitly enable
+`AUTH_DEVICE_SESSIONS_ENABLED=True`. Default False keeps the pre-migration local
+runtime working. Once a token has sid, its revocation is checked even if the flag
+is subsequently disabled. Pre-rollout tokens have no sid: valid refresh adopts a
+tracked session with currently observed metadata; other old sessions appear as a
+legacy count, not invented devices. Previously issued sid-less access remains
+epoch-governed until its normal expiry (15min default). Use the existing
+all-session revoke to end legacy access immediately; the initiating browser gets
+a replacement session. The UI action is labelled "End other sessions" because
+that browser stays signed in. Ordinary logout semantics are unchanged.
+
+## Own-account email/login change — 2026-09-30
+
+Authenticated `/api/auth/change-email/request/` accepts `new_email`, current
+password and enabled MFA factor; `/confirm/` accepts a six-digit mailbox code.
+Both resolve only request.user. User ID, username, ownership and membership links
+remain unchanged; email is the login field. Ordinary profile PATCH cannot change it.
+Codes expire in ten minutes, allow five attempts and are stored as keyed hashes;
+resending replaces the pending request. Request throttle is five per hour.
+Confirmation rechecks address availability and authentication epoch, consumes
+the challenge, revokes existing JWT sessions and returns a replacement access
+token/HttpOnly refresh cookie. Security audit contains no code/password.
+Console/file/dummy delivery fails explicitly. Working SMTP and separately approved
+accounts.0009 migration are needed for local activation; no live delivery is
+claimed by locmem tests. Social provider identities retain their existing links.
+
 ## File quarantine — 2026-09-28
 
 Existing entity/Business permissions remain mandatory for upload and download.

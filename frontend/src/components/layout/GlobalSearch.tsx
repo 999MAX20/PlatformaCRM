@@ -1,4 +1,4 @@
-import { CalendarCheck, Command, Inbox, KanbanSquare, ListChecks, MessageCircle, Search, User, X } from "lucide-react";
+import { CalendarCheck, Inbox, KanbanSquare, ListChecks, MessageCircle, Search, User, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router";
 
@@ -212,7 +212,7 @@ export function GlobalSearch() {
   const placeholder = scope === "page" ? t(activeContext.placeholderKey) : t("search.placeholder.global");
 
   return (
-    <div ref={rootRef} className={cn("relative w-full", mobileExpanded && "absolute inset-x-[4.35rem] top-1/2 z-[70] -translate-y-1/2 lg:static lg:translate-y-0")}>
+    <div ref={rootRef} className={mobileExpanded ? "absolute left-[4.35rem] top-1/2 z-[70] w-[var(--global-search-width)] -translate-y-1/2 lg:relative lg:left-auto lg:top-auto lg:w-full lg:translate-y-0" : "relative w-full"}>
       <Button
         className={cn("h-[52px] w-[52px] min-h-[52px] min-w-[52px] rounded-full px-0 lg:hidden", mobileExpanded && "hidden")}
         variant="ghost"
@@ -227,9 +227,9 @@ export function GlobalSearch() {
 
       <div
         className={cn(
-          "hidden h-10 w-full items-center gap-3 rounded-control border border-platforma-border bg-surface-card px-3 text-sm shadow-sm",
+          "w-full items-center gap-3 border border-platforma-border bg-surface-card px-3 text-sm shadow-sm",
           "lg:flex lg:min-w-0",
-          mobileExpanded && "flex h-[52px] min-w-0 rounded-full",
+          mobileExpanded ? "flex h-[52px] min-w-0 rounded-full lg:h-10 lg:rounded-control" : "hidden h-10 rounded-control",
         )}
       >
         <Search size={18} className="shrink-0 text-platforma-faint" />
@@ -249,15 +249,11 @@ export function GlobalSearch() {
           <button type="button" className="platforma-focus-ring grid h-8 w-8 place-items-center rounded-control text-platforma-faint hover:bg-surface-muted hover:text-platforma-text" onClick={query ? clearSearch : closeSearch} aria-label={t("search.close")}>
             <X size={20} />
           </button>
-        ) : (
-          <span className="ml-auto hidden items-center gap-1 rounded-control bg-surface-muted px-2 py-1 text-[11px] font-semibold text-platforma-faint lg:inline-flex">
-            <Command size={13} /> K
-          </span>
-        )}
+        ) : null}
       </div>
 
       {open && !rendersPageSearchInline ? (
-        <div className="fixed inset-x-3 top-16 z-[70] rounded-card border border-platforma-border bg-surface-card p-3 shadow-premium lg:absolute lg:inset-x-auto lg:left-1/2 lg:top-full lg:mt-2 lg:w-[min(560px,calc(100vw-8rem))] lg:-translate-x-1/2">
+        <div className="absolute left-[-3.6rem] top-full z-[70] mt-2 w-[calc(100vw-1.5rem)] rounded-card border border-platforma-border bg-surface-card p-3 shadow-premium lg:left-1/2 lg:w-[min(560px,calc(100vw-8rem))] lg:-translate-x-1/2">
           <div className="mb-3 grid grid-cols-2 rounded-control bg-surface-muted p-1">
             {(["page", "global"] as const).map((value) => (
               <button

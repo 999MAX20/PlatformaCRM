@@ -152,3 +152,40 @@ class UserPreference(models.Model):
 
     def __str__(self):
         return f"{self.user} preferences"
+
+
+class AccountSession(models.Model):
+    """A browser/device session, independent of rotating JWT identifiers."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="device_sessions")
+    auth_epoch = models.PositiveBigIntegerField()
+    refresh_jti = models.CharField(max_length=255, unique=True)
+    user_agent = models.CharField(max_length=512, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_seen_at = models.DateTimeField()
+    expires_at = models.DateTimeField()
+    revoked_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["user", "revoked_at", "expires_at"], name="acct_session_active_idx")]
+
+
+class EmailChangeChallenge(models.Model):
+    """One pending mailbox change per user; only a keyed code hash is stored."""
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="email_change")
+    new_email = models.EmailField()
+    code_hash = models.CharField(max_length=64)
+    auth_epoch = models.PositiveBigIntegerField()
+    expires_at = models.DateTimeField()
+    failed_attempts = models.PositiveSmallIntegerField(default=0)
+
+
+class UserAvatar(models.Model):
+    """Small normalized image, accessible only through the authenticated me API."""
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="account_avatar")
+    image = models.BinaryField(editable=False)
+    updated_at = models.DateTimeField(auto_now=True)

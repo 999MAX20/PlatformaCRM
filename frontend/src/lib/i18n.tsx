@@ -58,6 +58,11 @@ async function loadDictionary(language: Language): Promise<Dictionary> {
   return import("./i18n/ru").then((module) => module.ru);
 }
 
+// Load a requested language before changing it so open form drafts stay mounted.
+export async function prepareLanguage(language: Language): Promise<void> {
+  dictionaryCache[language] = await loadDictionary(language);
+}
+
 export function translate(language: Language, key: string, vars?: Record<string, string | number>) {
   const template = dictionaryCache[language]?.[key] || errorBoundaryDictionary[language]?.[key] || errorBoundaryDictionary.ru[key] || key;
   if (!vars) return template;

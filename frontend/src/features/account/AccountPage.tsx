@@ -10,14 +10,20 @@ import { Card } from "../../components/ui/Card";
 import { ErrorState } from "../../components/ui/StateViews";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
-import { Select } from "../../components/ui/Select";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { formatDateTime } from "../../lib/format";
-import { useI18n, type Language } from "../../lib/i18n";
-import { businessRoleLabel } from "../../lib/permissions";
+import { useI18n } from "../../lib/i18n";
 import { useAuth } from "../auth/AuthProvider";
 import type { Notification, NotificationPreference } from "../../types";
+import { SecuritySettingRow } from "./SecuritySettingRow";
+import { ActiveSessions } from "./ActiveSessions";
+import { AvatarEditor } from "./AvatarEditor";
+import { EmailSecurityRow } from "./EmailSecurityRow";
 import { MfaSecurityCard } from "./MfaSecurityCard";
+import { AccountSectionNav } from "./AccountSectionNav";
+import { InterfaceSettingsCard } from "./InterfaceSettingsCard";
+import { AccountAccessSummary } from "./AccountAccessSummary";
+import "./accountPage.css";
 
 const notificationCategories: Array<{ category: Notification["category"]; titleKey: string; descriptionKey: string }> = [
   { category: "sales", titleKey: "settings.notifications.category.sales", descriptionKey: "settings.notifications.category.sales.text" },
@@ -28,19 +34,13 @@ const notificationCategories: Array<{ category: Notification["category"]; titleK
 ];
 
 export function AccountPage() {
-  const { t, language, setLanguage } = useI18n();
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   const { user, refreshUser, logout } = useAuth();
   const { business } = useActiveBusiness();
-  const activeMembership = user?.memberships?.find((membership) => String(membership.business) === String(business?.id) && membership.is_active);
   const [profileForm, setProfileForm] = useState({
     full_name: user?.full_name || "",
     phone: user?.phone || "",
-  });
-  const [preferenceForm, setPreferenceForm] = useState({
-    language: user?.preferences?.language || language,
-    timezone: user?.preferences?.timezone || "Asia/Almaty",
-    start_page: user?.preferences?.start_page || "dashboard",
   });
   const [passwordForm, setPasswordForm] = useState({
     current_password: "",
@@ -48,7 +48,7 @@ export function AccountPage() {
     confirm_password: "",
     mfa_code: "",
   });
-  const profileDirty = profileForm.full_name !== (user?.full_name || "") || profileForm.phone !== (user?.phone || "") || preferenceForm.language !== (user?.preferences?.language || language);
+  const profileDirty = profileForm.full_name !== (user?.full_name || "") || profileForm.phone !== (user?.phone || "");
   const [profileSaved, setProfileSaved] = useState(false);
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -70,25 +70,16 @@ export function AccountPage() {
       full_name: user?.full_name || "",
       phone: user?.phone || "",
     });
-    if (user?.preferences) {
-      setPreferenceForm({
-        language: user.preferences.language,
-        timezone: user.preferences.timezone,
-        start_page: user.preferences.start_page,
-      });
-      if (user.preferences.language !== language) setLanguage(user.preferences.language);
-    }
-  }, [language, setLanguage, user]);
+  }, [user?.id, user?.full_name, user?.phone]);
   const preferenceByCategory = useMemo(
     () => new Map((notificationPreferences.data || []).map((preference) => [preference.category, preference])),
     [notificationPreferences.data],
   );
 
   const profileMutation = useMutation({
-    mutationFn: () => updateCurrentUser({ ...profileForm, preferences: preferenceForm }),
+    mutationFn: () => updateCurrentUser(profileForm),
     onSuccess: async () => {
       setProfileSaved(true);
-      setLanguage(preferenceForm.language as Language);
       await refreshUser();
       window.setTimeout(() => setProfileSaved(false), 2600);
     },
@@ -105,6 +96,7 @@ export function AccountPage() {
       });
     },
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["account-sessions"] });
       setPasswordSaved(true);
       setPasswordModalOpen(false);
       setPasswordForm({ current_password: "", new_password: "", confirm_password: "", mfa_code: "" });
@@ -132,34 +124,41 @@ export function AccountPage() {
   });
 
   return (
-    <div className="mx-auto max-w-[960px] space-y-4 [&_input]:min-h-11 sm:[&_input]:min-h-10 [&_button]:min-h-11 sm:[&_button]:min-h-9">
-      <Card padding="md">
+    <div data-account-page className="relative mx-auto max-w-[var(--account-content-width)] [&_input]:min-h-11 sm:[&_input]:min-h-10 [&_button]:min-h-11 sm:[&_button]:min-h-9">
+      <AccountSectionNav />
+      <div className="min-w-0 space-y-4">
+      <Card id="profile" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-lg font-bold text-platforma-text">{t("account.profileEyebrow")}</h1>
-            <p className="break-all text-sm text-platforma-subtle">{user?.email}</p>
-            <p className="text-xs text-platforma-subtle">{business?.name}{activeMembership ? ` · ${businessRoleLabel(activeMembership.role, t)}` : ""}</p>
           </div>
           <Button size="sm" variant="ghost" data-testid="merchant-logout" onClick={logout}><LogOut size={16} />{t("header.logout")}</Button>
         </div>
         {profileMutation.error ? <ErrorState message={getApiErrorMessage(profileMutation.error)} /> : null}
         {profileSaved ? <p role="status" className="mb-3 text-sm text-emerald-700">{t("account.saved")}</p> : null}
-        <form className="grid gap-3 sm:grid-cols-2" onSubmit={(event) => { event.preventDefault(); profileMutation.mutate(); }}>
+        <div className="grid gap-5 sm:grid-cols-[160px_minmax(0,1fr)]">
+          <AvatarEditor user={user} />
+        <form className="grid max-w-[560px] gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]" onSubmit={(event) => { event.preventDefault(); profileMutation.mutate(); }}>
           <Input label={t("account.fullName")} autoComplete="name" value={profileForm.full_name} disabled={profileMutation.isPending} onChange={(event) => setProfileForm((current) => ({ ...current, full_name: event.target.value }))} />
           <Input label={t("account.phone")} type="tel" autoComplete="tel" value={profileForm.phone} disabled={profileMutation.isPending} onChange={(event) => setProfileForm((current) => ({ ...current, phone: event.target.value }))} />
-          <Select label={t("common.language")} value={preferenceForm.language} disabled={profileMutation.isPending} onChange={(event) => setPreferenceForm((current) => ({ ...current, language: event.target.value as Language }))} options={[{ value: "ru", label: "Русский" }, { value: "kk", label: "Қазақша" }, { value: "en", label: "English" }]} />
-          <div className="flex items-end sm:justify-end"><Button size="sm" type="submit" disabled={!profileDirty} isLoading={profileMutation.isPending}>{t("common.save")}</Button></div>
+          <div className="flex items-end sm:col-span-2 sm:justify-end"><Button size="sm" type="submit" disabled={!profileDirty} isLoading={profileMutation.isPending}>{t("common.save")}</Button></div>
         </form>
+        </div>
+        <AccountAccessSummary />
       </Card>
 
-      <Card id="security" padding="md" className="scroll-mt-24">
+      <InterfaceSettingsCard />
+
+      <Card id="security" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <h2 className="mb-3 text-base font-bold">{t("account.loginHistoryEyebrow")}</h2>
         {passwordSaved ? <p role="status" className="mb-3 text-sm text-emerald-700">{t("account.passwordSaved")}</p> : null}
-        <div className="flex items-center justify-between gap-3 border-b border-platforma-border pb-3">
-          <span className="text-sm">{t("account.changePassword")}</span>
-          <Button size="sm" variant="secondary" onClick={() => { passwordMutation.reset(); setPasswordModalOpen(true); }}><KeyRound size={16} />{t("account.changePassword")}</Button>
+        <div className="divide-y divide-platforma-border">
+          <EmailSecurityRow />
+          <SecuritySettingRow icon={<KeyRound size={18} />} title={t("account.passwordLabel")}
+            action={<Button size="sm" variant="secondary" aria-label={t("account.changePassword")} onClick={() => { passwordMutation.reset(); setPasswordModalOpen(true); }}>{t("account.securityEdit")}</Button>} />
+          <MfaSecurityCard />
         </div>
-        <MfaSecurityCard />
+        <ActiveSessions />
         {user?.social_identities?.length ? <details className="border-t border-platforma-border py-3">
           <summary className="cursor-pointer text-sm font-semibold">{t("account.connectedTitle")}</summary>
           {user.social_identities.map((identity) => <p key={`${identity.provider}-${identity.email}`} className="mt-2 break-all text-sm">{identity.provider} · {identity.email} · {identity.email_verified ? t("account.verified") : t("account.notVerified")}</p>)}
@@ -175,7 +174,7 @@ export function AccountPage() {
         </details>
       </Card>
 
-      <Card id="notifications" padding="md" className="scroll-mt-24">
+      <Card id="notifications" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <h2 className="mb-2 text-base font-bold">{t("account.notificationsEyebrow")}</h2>
         <p className="mb-2 text-xs text-platforma-subtle">{t("account.notificationsText")}</p>
         {notificationPreferenceMutation.error ? <ErrorState message={getApiErrorMessage(notificationPreferenceMutation.error)} /> : null}
@@ -232,6 +231,7 @@ export function AccountPage() {
           </form>
         </div>
       </Modal>
+      </div>
     </div>
   );
 }

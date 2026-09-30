@@ -25,6 +25,7 @@ import { NotFoundPage } from "../features/pilot/NotFoundPage";
 import { useActiveBusiness } from "../hooks/useBusiness";
 import { useI18n } from "../lib/i18n";
 import { permissionForbiddenMessage } from "../lib/permissions";
+import { getUserStartPath } from "../lib/startPage";
 
 const AppLayout = lazy(() =>
   import("../components/layout/AppLayout").then((module) => ({
@@ -248,7 +249,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
   const stateReturnTo = getAuthReturnPathFromState(location.state);
   const intendedPath = stateReturnTo || storedReturnTo;
-  const fallback = isPlatformUser ? "/platform" : "/app/dashboard";
+  const fallback = isPlatformUser ? "/platform" : "/app";
 
   if (!intendedPath) return <Navigate to={fallback} replace />;
   if (intendedPath.startsWith("/invite/")) return <Navigate to={intendedPath} replace />;
@@ -295,6 +296,14 @@ function PermissionRoute({
   );
 }
 
+function UserStartRedirect() {
+  const { user } = useAuth();
+  const { business, isLoading } = useActiveBusiness();
+  const { t } = useI18n();
+  if (isLoading) return <LoadingState label={t("common.loadingWorkspace")} />;
+  return <Navigate to={getUserStartPath(user, business?.id)} replace />;
+}
+
 function LegacyDashboardRedirect() {
   const location = useLocation();
   const legacySuffix = location.pathname.replace(/^\/dashboard(?=\/|$)/, "");
@@ -319,7 +328,7 @@ function BusinessRouteRedirect({ section }: { section: "services" | "resources" 
 const merchantChildren = [
   {
     index: true,
-    element: <Navigate to="/app/dashboard" replace />,
+    element: <UserStartRedirect />,
   },
   {
     path: "dashboard",

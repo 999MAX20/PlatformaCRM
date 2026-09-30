@@ -69,7 +69,7 @@ class MfaEnrollmentConfirmView(APIView):
                 record_security_event(request, user=audit_user, event="mfa_enrollment_failed")
             raise
         revoked_sessions = revoke_user_refresh_sessions(user)
-        refresh = issue_session(user, mfa_verified=True)
+        refresh = issue_session(user, mfa_verified=True, request=request)
         record_login(request, user=user, email=user.email, status=LoginHistory.Statuses.SUCCESS)
         record_security_event(
             request,
@@ -89,6 +89,7 @@ class MfaVerifyView(APIView):
         audit_user = challenge_user(_challenge_token(request), MfaChallenge.Purposes.LOGIN)
         try:
             user, refresh = verify_login_challenge(
+                request=request,
                 challenge_token=_challenge_token(request),
                 code=request.data.get("code"),
             )
@@ -191,7 +192,7 @@ class MfaDisableView(APIView):
                 status=status.HTTP_202_ACCEPTED,
             )
             return clear_refresh_cookie(response)
-        refresh = issue_session(request.user, mfa_verified=False)
+        refresh = issue_session(request.user, mfa_verified=False, request=request)
         return _session_response(refresh, extra={"ok": True})
 
 
@@ -212,7 +213,7 @@ class MfaRevokeSessionsView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
         revoked_sessions = revoke_user_refresh_sessions(request.user)
-        refresh = issue_session(request.user, mfa_verified=has_confirmed_mfa(request.user))
+        refresh = issue_session(request.user, mfa_verified=has_confirmed_mfa(request.user), request=request)
         record_security_event(
             request,
             user=request.user,

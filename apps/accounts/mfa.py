@@ -89,11 +89,16 @@ def requires_mfa(user):
     )
 
 
-def issue_session(user, *, mfa_verified=False):
+@transaction.atomic
+def issue_session(user, *, mfa_verified=False, request=None):
+    from apps.accounts.device_sessions import attach_device_session
+
+    user = User.objects.select_for_update().get(pk=user.pk)
     refresh = RefreshToken.for_user(user)
     refresh["mfa_verified"] = bool(mfa_verified)
     refresh["auth_time"] = int(timezone.now().timestamp())
     refresh["auth_epoch"] = int(user.auth_epoch)
+    attach_device_session(user, refresh, request)
     return refresh
 
 
@@ -170,7 +175,7 @@ def confirm_enrollment(*, challenge_token, code):
     return result
 
 
-def verify_login_challenge(*, challenge_token, code):
+def verify_login_challenge(*, challenge_token, code, request=None):
     failed = False
     with transaction.atomic():
         challenge = _resolve_challenge(challenge_token, MfaChallenge.Purposes.LOGIN, lock=True)
@@ -179,7 +184,7 @@ def verify_login_challenge(*, challenge_token, code):
             failed = True
         else:
             _consume_challenge(challenge)
-            result = (challenge.user, issue_session(challenge.user, mfa_verified=True))
+            result = (challenge.user, issue_session(challenge.user, mfa_verified=True, request=request))
     if failed:
         raise MfaCodeInvalid()
     return result

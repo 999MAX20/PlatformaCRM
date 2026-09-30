@@ -7,13 +7,12 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.settings import api_settings
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from apps.accounts.models import User
+from apps.accounts.device_sessions import refresh_browser_session
 from apps.accounts.mfa import issue_session, requires_mfa, start_auth_challenge
-from apps.accounts.session_security import blacklist_refresh_token, token_matches_auth_epoch
+from apps.accounts.session_security import blacklist_refresh_token
 from apps.core.audit import get_client_ip, write_actor_audit_log
 from apps.core.models import AuditLog, LoginHistory
 from apps.core.permissions import accessible_businesses
@@ -96,7 +95,7 @@ class ThrottledTokenObtainPairView(TokenObtainPairView):
         if requires_mfa(user):
             return Response(start_auth_challenge(user), status=status.HTTP_202_ACCEPTED)
 
-        refresh = issue_session(user, mfa_verified=False)
+        refresh = issue_session(user, mfa_verified=False, request=request)
         update_last_login(None, user)
         record_login(request, user=user, email=user.email, status=LoginHistory.Statuses.SUCCESS)
         return set_refresh_cookie(Response({"access": str(refresh.access_token)}), str(refresh))
@@ -111,26 +110,9 @@ class ThrottledTokenRefreshView(TokenRefreshView):
             cookie_token = request.COOKIES.get(settings.AUTH_REFRESH_COOKIE_NAME)
             if cookie_token:
                 data["refresh"] = cookie_token
-        raw_refresh = data.get("refresh")
-        if raw_refresh:
-            try:
-                refresh = RefreshToken(raw_refresh)
-                user_id = refresh.payload.get(api_settings.USER_ID_CLAIM)
-                user = User.objects.filter(**{api_settings.USER_ID_FIELD: user_id}).first()
-                if not user or not token_matches_auth_epoch(user, refresh):
-                    raise TokenError("Session epoch is no longer valid.")
-                if user and requires_mfa(user) and not refresh.payload.get("mfa_verified"):
-                    raise TokenError("MFA verification is required.")
-            except TokenError:
-                return clear_refresh_cookie(
-                    Response(
-                        {"detail": "Session expired or invalid.", "code": "token_not_valid"},
-                        status=status.HTTP_401_UNAUTHORIZED,
-                    )
-                )
         serializer = self.get_serializer(data=data)
         try:
-            serializer.is_valid(raise_exception=True)
+            response_data = refresh_browser_session(request, data, serializer)
         except TokenError:
             return clear_refresh_cookie(
                 Response(
@@ -138,7 +120,6 @@ class ThrottledTokenRefreshView(TokenRefreshView):
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
             )
-        response_data = dict(serializer.validated_data)
         rotated_refresh = response_data.pop("refresh", None)
         response = Response(response_data)
         if rotated_refresh:

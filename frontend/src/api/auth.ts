@@ -67,7 +67,7 @@ export async function getCurrentUser() {
   return data;
 }
 
-export async function updateCurrentUser(payload: Partial<Pick<CurrentUser, "full_name" | "phone" | "preferences">>) {
+export async function updateCurrentUser(payload: Partial<Pick<CurrentUser, "full_name" | "phone">> & { preferences?: Partial<NonNullable<CurrentUser["preferences"]>> }) {
   const { data } = await apiClient.patch<CurrentUser>("/api/auth/me/", payload);
   return data;
 }
@@ -81,6 +81,40 @@ export async function changePassword(payload: { current_password: string; new_pa
 
 export async function getCurrentUserLoginHistory() {
   const { data } = await apiClient.get<LoginHistory[]>("/api/auth/login-history/");
+  return data;
+}
+
+export type AccountSession = {
+  id: string;
+  user_agent: string;
+  ip_address: string | null;
+  created_at: string;
+  last_seen_at: string;
+  is_current: boolean;
+};
+type AccountSessions = { available: boolean; sessions: AccountSession[]; legacy_count: number };
+
+export async function getAccountSessions() {
+  let { data } = await apiClient.get<AccountSessions>("/api/auth/sessions/");
+  if (data.available && !data.sessions.some(session => session.is_current)) {
+    // Upgrade this browser's pre-rollout refresh token to a tracked session.
+    await refreshToken();
+    data = (await apiClient.get<AccountSessions>("/api/auth/sessions/")).data;
+  }
+  return data;
+}
+
+export async function revokeAccountSession(id: string, code: string) {
+  return (await apiClient.post<{ ok: boolean }>(`/api/auth/sessions/${encodeURIComponent(id)}/revoke/`, { code })).data;
+}
+
+export async function requestEmailChange(payload: { new_email: string; current_password: string; mfa_code?: string }) {
+  return (await apiClient.post<{ ok: boolean; expires_in: number }>("/api/auth/change-email/request/", payload)).data;
+}
+
+export async function confirmEmailChange(code: string) {
+  const { data } = await apiClient.post<{ ok: boolean; email: string; access: string }>("/api/auth/change-email/confirm/", { code }, { withCredentials: true });
+  tokenStorage.setAccess(data.access);
   return data;
 }
 
@@ -135,4 +169,19 @@ export async function revokeMfaSessions(code: string) {
 export function logout() {
   void clearRefreshCookie().catch(() => undefined);
   tokenStorage.clear();
+}
+
+
+export type AccountAvatar = { image: string | null };
+export async function getAccountAvatar() {
+  return (await apiClient.get<AccountAvatar>("/api/auth/me/avatar/")).data;
+}
+export async function uploadAccountAvatar(file: File, crop?: { x: number; y: number; size: number }) {
+  const body = new FormData();
+  body.append("file", file);
+  if (crop) Object.entries(crop).forEach(([key, value]) => body.append(key, String(value)));
+  return (await apiClient.post<AccountAvatar>("/api/auth/me/avatar/", body, { timeout: 75_000, headers: { "Content-Type": "multipart/form-data" } })).data;
+}
+export async function removeAccountAvatar() {
+  return (await apiClient.delete<AccountAvatar>("/api/auth/me/avatar/")).data;
 }

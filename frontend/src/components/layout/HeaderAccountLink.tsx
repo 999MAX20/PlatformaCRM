@@ -1,16 +1,10 @@
+import { UserAvatar } from "../../features/account/UserAvatar";
+
 import { NavLink } from "react-router";
 
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
 import type { BusinessMembershipSummary, CurrentUser } from "../../types";
-
-function getAccountInitials(value: string) {
-  const parts = value.trim().split(/\s+/).filter(Boolean);
-  if (parts.length > 1) {
-    return `${parts[0]?.[0] || ""}${parts.at(-1)?.[0] || ""}`.toUpperCase();
-  }
-  return (parts[0] || "A").slice(0, 2).toUpperCase();
-}
 
 export function HeaderAccountLink({
   user,
@@ -39,9 +33,7 @@ export function HeaderAccountLink({
         )
       }
     >
-      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800 ring-1 ring-brand-200/70">
-        {getAccountInitials(accountName)}
-      </span>
+      <UserAvatar user={user} className="h-8 w-8 text-xs" />
       <span className="hidden min-w-0 2xl:block" data-testid="header-account-details">
         <span className="block max-w-[142px] truncate text-xs font-semibold leading-4 text-platforma-text">
           {accountName}

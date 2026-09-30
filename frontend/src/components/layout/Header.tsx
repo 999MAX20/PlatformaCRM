@@ -19,6 +19,8 @@ import { GlobalSearch } from "./GlobalSearch";
 import { HeaderAccountLink } from "./HeaderAccountLink";
 import { mobileNavigationDrawerId } from "./MobileNav";
 import type { PageHeaderConfig } from "./PageHeaderContext";
+import { useNotificationSoundPreference } from "../../lib/notificationSound";
+import { NotificationSoundWatcher } from "../notifications/NotificationSoundWatcher";
 
 export function Header({
   menuOpen,
@@ -35,6 +37,7 @@ export function Header({
   const { user } = useAuth();
   const { business } = useActiveBusiness();
   const { t } = useI18n();
+  const soundEnabled = useNotificationSoundPreference(user?.id);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [chatToastOpen, setChatToastOpen] = useState(false);
@@ -45,8 +48,8 @@ export function Header({
   const filterDrawerId = useId();
   const filterDrawerTitleId = useId();
   const notifications = useQuery({
-    queryKey: ["notifications", "bell"],
-    queryFn: () => notificationsApi.list({ surface: "bell" }),
+    queryKey: ["notifications", "bell", business?.id, user?.id],
+    queryFn: () => notificationsApi.list({ surface: "bell", business: business?.id }),
     enabled: Boolean(user) && showNotifications,
     ...realtimeQueryOptions,
   });
@@ -191,7 +194,9 @@ export function Header({
 
   return (
     <header className={`fixed left-0 right-0 top-0 z-50 border-b border-platforma-border bg-surface/92 shadow-soft backdrop-blur-xl transition-transform duration-200 ease-out lg:left-16 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
-      <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-5 lg:grid-cols-[220px_minmax(320px,560px)_auto]">
+      {soundEnabled && user && business && hasPermission(user, business.id, "notifications") ?
+        <NotificationSoundWatcher key={`${user.id}:${business.id}`} userId={user.id} businessId={business.id} /> : null}
+      <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-5 lg:grid-cols-[220px_var(--global-search-width)_minmax(0,1fr)]">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Button
             className="h-10 w-10 min-h-10 min-w-10 px-0 text-platforma-ink lg:hidden"

@@ -65,7 +65,7 @@ class ChangePasswordView(APIView):
             request.user,
             serializer.validated_data["new_password"],
         )
-        refresh = issue_session(request.user, mfa_verified=has_confirmed_mfa(request.user))
+        refresh = issue_session(request.user, mfa_verified=has_confirmed_mfa(request.user), request=request)
         record_security_event(
             request,
             user=request.user,
@@ -118,7 +118,7 @@ class SocialAuthView(APIView):
                 {**start_auth_challenge(user), "created": created, "provider": claims.provider},
                 status=202,
             )
-        refresh = issue_session(user, mfa_verified=False)
+        refresh = issue_session(user, mfa_verified=False, request=request)
         record_login(request, user=user, email=user.email, status=LoginHistory.Statuses.SUCCESS)
         response = Response(
             {
@@ -264,7 +264,7 @@ class OwnerSignupView(APIView):
                 },
                 status=202,
             )
-        refresh = issue_session(user, mfa_verified=False)
+        refresh = issue_session(user, mfa_verified=False, request=request)
         record_login(request, user=user, email=user.email, status=LoginHistory.Statuses.SUCCESS)
         response = Response(
             {

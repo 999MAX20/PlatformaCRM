@@ -37,6 +37,26 @@ Execution/gates/publication: [PRIMARY-SESSION](../testing/task-state/PRIMARY-SES
   and can be retried through the existing preview flow. Import source storage URLs
   are write-only. Generated exports are not untrusted uploaded files.
 
+## Personal account avatars — 2026-09-30
+
+The editor sends the original file and optional normalized `x`, `y`, `size`
+coordinates. The server scans the original before decoding, applies EXIF
+orientation and validates the square crop bounds before normalization. The zoom control and
+drag/keyboard positioning preview this crop; no client-side conversion bypasses scanning.
+
+`/api/auth/me/avatar/` is authenticated and always scoped to request.user; it
+accepts no target account ID. GET/POST/DELETE never serialize another user's photo.
+Uploads are limited to 5 MiB, JPEG/PNG/WebP, one frame and 16 million pixels.
+Existing ClamAV scans the original bytes before Pillow decodes them. Scanner
+failure returns a retryable 503; blocked/invalid uploads preserve the previous photo.
+Only a newly encoded 256x256 JPEG (at most 128 KiB) is stored in UserAvatar;
+original bytes, EXIF/GPS and filenames are not retained. This small personal image
+is stored in the database and included in its backups, not in public media.
+Responses use private/no-store; frontend shares the authenticated image cache
+between Account and header. Upload/remove produce audit events without image data.
+The accounts.0008_useravatar migration creates only the new table. Local application
+was explicitly authorized and backed up; cloud rollout is not implied.
+
 ## Deployment configuration
 
 The local Windows activation below was completed on 2026-09-28. Docker/cloud
