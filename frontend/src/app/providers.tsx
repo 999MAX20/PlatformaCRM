@@ -1,13 +1,13 @@
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { AppError } from "../api/appError";
 import { ActionConfirmProvider } from "../components/actions/ActionConfirmProvider";
 import { ConnectivityBanner } from "../components/ui/ConnectivityBanner";
 import { UndoToastProvider } from "../components/actions/UndoToastProvider";
 import { NotificationProvider } from "../components/notifications/NotificationProvider";
-import { AuthProvider } from "../features/auth/AuthProvider";
+import { AuthProvider, useAuth } from "../features/auth/AuthProvider";
 import { I18nProvider } from "../lib/i18n";
 
 const offlineAppError: AppError = {
@@ -63,7 +63,7 @@ function ConnectivityStatus() {
   );
 }
 
-export function AppProviders({ children }: { children: React.ReactNode }) {
+function SessionProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -74,6 +74,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
             refetchOnWindowFocus: false,
             refetchOnReconnect: true,
             retry: (failureCount, error) => {
+              if (axios.isCancel(error)) return false;
               if (axios.isAxiosError(error) && error.response?.status && error.response.status < 500) {
                 return false;
               }
@@ -83,19 +84,54 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         },
       }),
   );
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      // StrictMode replays effects without discarding this client. Only clear
+      // on an actual scope change/unmount, not that development-only replay.
+      queueMicrotask(() => {
+        if (mounted.current) return;
+        void queryClient.cancelQueries();
+        queryClient.clear();
+      });
+    };
+  }, [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
         <ConnectivityStatus />
         <ActionConfirmProvider>
           <NotificationProvider>
             <UndoToastProvider>
-              <AuthProvider>{children}</AuthProvider>
+              {children}
             </UndoToastProvider>
           </NotificationProvider>
         </ActionConfirmProvider>
-      </I18nProvider>
     </QueryClientProvider>
+  );
+}
+
+function AuthenticatedProviders({ children }: { children: React.ReactNode }) {
+  const { user, sessionGeneration } = useAuth();
+  // Scope generic query keys and pending action callbacks to identity/access.
+  // Profile/preferences changes deliberately preserve the current workspace.
+  const scope = JSON.stringify([
+    sessionGeneration, user?.id, user?.role,
+    user?.is_platform_user, user?.is_merchant_user,
+    user?.businesses.map((business) => business.id),
+    user?.memberships, user?.effective_permissions, user?.capabilities,
+  ]);
+  return <SessionProviders key={scope}>{children}</SessionProviders>;
+}
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <I18nProvider>
+      <AuthProvider>
+        <AuthenticatedProviders>{children}</AuthenticatedProviders>
+      </AuthProvider>
+    </I18nProvider>
   );
 }

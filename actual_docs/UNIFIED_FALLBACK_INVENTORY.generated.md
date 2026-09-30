@@ -4,9 +4,9 @@
 
 ## Coverage Summary
 
-- Routes: **43** (derived from the functional certification registry).
-- Distinct frontend API operations: **601** (179 queries, 422 mutations).
-- Background tasks: **13**.
+- Routes: **42** (derived from the functional certification registry).
+- Distinct frontend API operations: **608** (181 queries, 427 mutations).
+- Background tasks: **14**.
 - Async/provider status values: **83** across 15 models.
 - Stable backend/API error codes: **29**.
 - Defect precedents applied: `ZD-001`, `ZD-002`, `ZD-003`, `ZD-004`, `ZR-002`, `ZR-004`, `ZR-005`, `ZR-006`, `ZR-007`.
@@ -77,7 +77,7 @@ Detection records which fallback signals currently exist in the owning page sour
 | PUBLIC-LEGACY-REDIRECTS | /login | PublicRoute | loading:not_detected; empty:not_detected; denied:not_applicable; failure:not_detected; recovery:not_detected | authentication_flow | route_registry_only |
 | MERCHANT-SHELL | /app | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:not_detected; recovery:not_detected | owning_page_or_action | frontend/src/components/layout/AppLayout.tsx |
 | MERCHANT-DASHBOARD | /app/dashboard | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/dashboard/DashboardPage.tsx |
-| MERCHANT-ACCOUNT | /app/account | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:not_detected | owning_page_or_action | frontend/src/features/account/AccountPage.tsx |
+| MERCHANT-ACCOUNT | /app/account | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/account/AccountPage.tsx |
 | CRM-LEADS-LIST | /app/leads | leads:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:not_detected | owning_page_or_action | frontend/src/features/leads/LeadsPage.tsx |
 | CRM-LEAD-WORKSPACE | /app/leads/:id | leads:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/leads/LeadWorkspacePage.tsx |
 | CRM-DEALS-BOARD | /app/deals | deals:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/deals/DealsPage.tsx |
@@ -99,7 +99,6 @@ Detection records which fallback signals currently exist in the owning page sour
 | AI-AGENTS | /app/ai-agents | ai_automation:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/assistant/AIAgentsPage.tsx |
 | AI-AGENT-DETAIL | /app/ai-agents/:id | ai_automation:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/assistant/AIAgentsPage.tsx |
 | OPS-AUTOMATIONS | /app/automations | automations:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/automations/AutomationsPage.tsx |
-| OPS-OUTREACH | /app/outreach | notifications:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/outreach/OutreachPage.tsx |
 | SETUP-SERVICES | /app/business/services | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/services/ServicesPage.tsx |
 | SETUP-RESOURCES | /app/business/resources | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/resources/ResourcesPage.tsx |
 | SETUP-WORKING-HOURS | /app/business/working-hours | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/settings/WorkingHoursPage.tsx |
@@ -188,24 +187,31 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/appointments/:param/reschedule/ | mutation | appointments:view | none_proven | no automatic retry | calendar_or_appointment_workspace | frontend/src/api/appointments.ts:65 |
 | POST | /api/appointments/:param/restore/ | mutation | appointments:view | none_proven | no automatic retry | calendar_or_appointment_workspace | frontend/src/api/appointments.ts:39#restore |
 | GET | /api/appointments/available-slots/ | query | appointments:view | safe_read | safe read only | calendar_or_appointment_workspace | frontend/src/api/appointments.ts:75 |
+| POST | /api/auth/change-email/confirm/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:116 |
+| POST | /api/auth/change-email/request/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:112 |
 | POST | /api/auth/change-password/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:76 |
 | GET | /api/auth/login-history/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:83 |
-| POST | /api/auth/logout/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:146 |
+| POST | /api/auth/logout/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:196 |
 | GET | /api/auth/me/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:66 |
 | PATCH | /api/auth/me/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:71 |
-| POST | /api/auth/mfa/disable/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:116 |
-| POST | /api/auth/mfa/enrollment/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:178 |
-| POST | /api/auth/mfa/enrollment/start/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:163 |
-| POST | /api/auth/mfa/recovery-codes/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:111 |
-| POST | /api/auth/mfa/sessions/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:126 |
-| GET | /api/auth/mfa/status/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:98 |
-| POST | /api/auth/mfa/step-up/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:103 |
-| POST | /api/auth/mfa/verify/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:191 |
-| POST | /api/auth/password-reset/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:116 |
-| POST | /api/auth/password-reset/request/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:111 |
-| POST | /api/auth/signup/owner/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:103 |
-| POST | /api/auth/social/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:93 |
-| POST | /api/auth/token/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:85 |
+| DELETE | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:186 |
+| GET | /api/auth/me/avatar/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:177 |
+| POST | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:183 |
+| POST | /api/auth/mfa/disable/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:150 |
+| POST | /api/auth/mfa/enrollment/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:229 |
+| POST | /api/auth/mfa/enrollment/start/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:213 |
+| POST | /api/auth/mfa/recovery-codes/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:145 |
+| POST | /api/auth/mfa/sessions/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:160 |
+| GET | /api/auth/mfa/status/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:132 |
+| POST | /api/auth/mfa/step-up/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:137 |
+| POST | /api/auth/mfa/verify/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:244 |
+| POST | /api/auth/password-reset/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:163 |
+| POST | /api/auth/password-reset/request/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:158 |
+| GET | /api/auth/sessions/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:102<br>frontend/src/api/auth.ts:98 |
+| POST | /api/auth/sessions/:param/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:108 |
+| POST | /api/auth/signup/owner/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:149 |
+| POST | /api/auth/social/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:137 |
+| POST | /api/auth/token/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:127 |
 | GET | /api/automation-rules/ | query | automations:view | safe_read | safe read only | automation_run_details | frontend/src/api/automations.ts:6#list |
 | POST | /api/automation-rules/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:6#create |
 | DELETE | /api/automation-rules/:param/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:6#remove |
@@ -729,9 +735,10 @@ Detection records which fallback signals currently exist in the owning page sour
 | automations.process_due_automation_runs | automations | system | locked_due_run_claim | automation_run_details | apps/automations/tasks.py:12 |
 | bots.process_due_outbound_messages | integrations | system | locked_due_message_claim | conversation_delivery_details | apps/bots/tasks.py:15 |
 | bots.process_outbound_message | integrations | conversations:send | message_delivery_key | conversation_delivery_details | apps/bots/tasks.py:6 |
-| crm.prune_command_idempotency | default | system | bounded_expiry_delete | none | apps/core/tasks.py:19 |
-| exports.process_due_jobs | reports_exports | system | locked_due_job_claim | import_export_status | apps/core/tasks.py:13 |
-| exports.process_job | reports_exports | requesting_user | job_state_claim | import_export_status | apps/core/tasks.py:7 |
+| crm.prune_command_idempotency | default | system | bounded_expiry_delete | none | apps/core/tasks.py:25 |
+| exports.process_due_jobs | reports_exports | system | locked_due_job_claim | import_export_status | apps/core/tasks.py:19 |
+| exports.process_job | reports_exports | requesting_user | job_state_claim | import_export_status | apps/core/tasks.py:13 |
+| files.scan_due_attachments | file_scans | system | atomic_scan_token_lease_and_terminal_state | automatic_due_scan_backoff_and_attachment_status | apps/core/tasks.py:8 |
 | notifications.process_due_notifications | notifications | system | notification_delivery_state | notification_center | apps/notifications/tasks.py:7 |
 | pricing.run_kaspi_pricing_cycle | integrations | pricing_operator | rule_and_change_log_guard | pricing_operation_details | apps/pricing/tasks.py:7 |
 | routing.process_cycle | automations | system | cycle_state_guard | work_queue_status | apps/businesses/tasks.py:6 |

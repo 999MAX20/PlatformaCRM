@@ -2,7 +2,107 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Account publication + audit follow-up / IN PROGRESS, 2026-09-30
+## Account publication + audit follow-up / VERIFIED, publication pending, 2026-09-30
+
+- Performance before/after PASS: identical performance-sample.py/spec with
+  independent result directories; logs performance-before.log and
+  performance-after.log, performance-comparison.json. Initial dashboard GETs
+  11→8: leads/appointments/tasks removed only on healthy owner summary.
+  Two warm-round median action-ready times (ms), before→after: clients167→198.5,
+  leads196.5→177.5, tasks242.5→177, calendar275.5→175.5, dashboard241→159.
+  Small synthetic local Vite/SQLite sample, no throttling; the defensible result
+  is three fewer initial API reads, not a production latency/capacity claim.
+- Entire intended diff including both new browser tests reviewed; no secrets,
+  private records or unrelated WIP. git diff --check PASS. Origin main fetched
+  and unchanged at f113363; normal fast-forward publication is the next step.
+
+- Final acceptance boundary: isolated synthetic SQLite backend, local Vite and
+  providers disabled; canonical root and registered owner unchanged, branch
+  codex/ui-testing-toolkit, follow-up base f113363. No working-DB migration,
+  environment/dependency change, backend permission, notification, BusinessEvent
+  or AI behavior change in this follow-up. Clinic Q04/cloud acceptance remains.
+- Final affected rerun PASS:50 passed/4 conditional viewport skips in9.2m,
+  final-affected.log/results. Command: .venv/Scripts/python.exe
+  output/publication-20260930/final-affected.py; six suites on all three
+  viewports: dashboard-data-loading, daily-workspaces, session-cache-isolation,
+  account-mfa-qr, account-mfa-qr-recovery, pilot-auth-security. This includes
+  the final raw-token assignment guards and all three dashboard loading cases.
+- Internal matrix is CLOSED: internal-matrix-summary.json deduplicates the latest
+  result per project/file/title from original, resumed and focused logs:
+  183 unique cases =173 PASS/10 conditional viewport skips, zero unresolved
+  failures (desktop59/2, tablet58/3, mobile56/5). This is fourteen named suites,
+  not complete certification of every route. Original selector failures retained.
+- Final build/budget PASS (final-build.log, final-bundle.log; app shell283.1kB,
+  gzip87.8kB); fallback generation/check PASS (final-inventory-*.log), final
+  isolated Node tests89 PASS (node-final-latest.log). Commands: frontend npm run
+  build, check:bundle, generate:fallback-inventory, check:fallback-inventory;
+  .venv/Scripts/python.exe output/publication-20260930/node-checks.py.
+  Dependency installs/audits and Django1217/check/drift evidence from the initial
+  publication are reused: locks/backend unchanged. Final affected browser rerun
+  separately covers the latest token guards and dashboard delta.
+
+- Initial publication DONE: normal HEAD:main push and remote readback both
+  f1133632b4d5a28fcaaa07a068b35b2d3d342c36. CI36749373249 completed SUCCESS;
+  exact-SHA report ci-f1133632b4d5a28fcaaa07a068b35b2d3d342c36.json.
+- Cache implementation dirty snapshot: generation guards in storage/token/client/
+  AuthProvider, serialized cookie requests, keyed QueryClient/action providers.
+  Build PASS; two original before-fail browser regressions now PASS (cache-after
+  log). Expanded late200/normal401/refresh-logout-login/cross-tab checks running.
+  Fallback registry now records existing files.scan_due_attachments lease/backoff;
+  generator/check/tests run separately. No new backend/DB/provider operation.
+- Expanded regression: cross-tab initially FAILED as expected (old tab accepted
+  new cookie principal); added current-user consistency guard before accepting
+  refreshed access. Rapid-login test initially missed account navigation before
+  locating logout; corrected its setup, not its assertions. Final6 desktop PASS
+  (cache-final.log,1.1m). Earlier failures retained in cache-expanded-before.log
+  and cache-after-results. Build/budget PASS; 89 Node tests PASS in isolated
+  runtime (initial direct invocation lacked required gate env). Fallback final
+  report regenerated after token line changes. ZD-031 records reusable rule.
+- Internal acceptance running via internal-acceptance.py:183 cases across three
+  viewports,14 account/auth/CRM suites on same dirty frontend + unchanged backend
+  snapshot. Prior1217 backend evidence retained; no live calls or working DB.
+- Internal run paused after an obsolete MFA test selector: dialog now submits
+  via "Подключить защиту", and manage actions open via a button rather than
+  the old security summary. Updated those two selectors in pilot-auth-security;
+  persistence/recovery/disable assertions unchanged. Focused2 tests PASS/1.1m
+  (mfa-regression.log). Prior successful desktop cases remain valid; first39
+  contained two viewport skips and also the old profile Save selector failure
+  identified explicitly during final deduplication. Invitation test also passed. Continue remaining22 desktop
+  cases and full tablet/mobile groups using internal-acceptance-resume.py,
+  distinct internal-resume-* output paths. Original failure evidence retained.
+- Resume: desktop22 PASS/3.4m. Tablet27 PASS/2 viewport skips, then account
+  profile test found two valid Save buttons (profile and interface). Its old
+  page-wide selector was timing-dependent; scope to #profile without changing
+  assertions. Focused tablet profile/notification persistence PASS/58.2s.
+  Continue tablet pilot-actions + remaining four suites and full mobile via
+  internal-acceptance-resume2.py; distinct logs/results, all prior passes kept.
+- Resume2: tablet34 PASS/1 skip (includes three repeated earlier cases), mobile
+  56 PASS/5 skips. Deduplicated183-case audit correctly retains one unresolved
+  desktop profile selector result; tablet/mobile fixed selector passed, focused
+  desktop rerun required before closing matrix. Performance baseline started
+  read-only; application optimization waits for acceptance. Added an explicit
+  isolated-runtime guard to session regression tests (all evidence uses flag1).
+- Desktop profile rerun PASS/53.1s closes the last matrix case. Deduplicated
+  evidence: internal-matrix-summary.json (183 cases,173 PASS/10 conditional skips).
+  Review adds a generation recheck immediately before each raw token assignment;
+  final affected auth/MFA suites will run again with the final frontend build.
+- Performance contract: baseline performance-before.log observes11 initial GETs,
+  including three list requests used only as owner-summary fallback. Reuse
+  DashboardPage metrics/useEntityData and existing permission checks. Load those
+  lists for managers or failed owner summary; keep loading/fallback counts and
+  actions. No backend/schema/permissions/AI/events changes. Required proof:
+  healthy owner uses summary with zero list preloads, failed summary retains
+  lists/UI, manager retains its lists; same measurement after, build/budget,
+  daily-role/recovery browser checks and affected auth regression final rerun.
+- Cache/transport implementation contract: code gap reproduced above; reuse
+  AuthProvider, QueryClient and Axios/tokenStorage. New cache instance per
+  authenticated identity/access scope; cancel/discard old reads and callbacks;
+  generation guard for delayed HTTP responses/401 replay, token refresh and
+  auth acceptance. Preserve normal same-session refresh, MFA and return paths.
+  Gates: before/after browser regressions, ordinary refresh, expiry/new login,
+  late response/logout ordering, account/MFA flows, build/budget and relevant
+  existing auth policy tests. Backend authorization/schema/events/AI unchanged.
+  Follow with source-backed fallback registry repair and internal CRM suites.
 
 - Publication acceptance, 17:09 UTC: 62165bc full invocation passed Django
   check/drift, 1217 tests (1235.777s), npm ci, i18n/build/budget. Mobile manager

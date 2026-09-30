@@ -32,7 +32,7 @@ test("MFA enrollment, recovery-code login and authorized disable persist through
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Код подтверждения", { exact: true }).fill(currentTotp(enrollment.manual_key));
   const confirmed = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/auth/mfa/enrollment/confirm/"));
-  await dialog.getByRole("button", { name: "Сохранить", exact: true }).click();
+  await dialog.getByRole("button", { name: "Подключить защиту", exact: true }).click();
   const confirmation = await confirmed;
   expect(confirmation.ok()).toBeTruthy();
   const codes: string[] = (await confirmation.json()).recovery_codes;
@@ -54,7 +54,7 @@ test("MFA enrollment, recovery-code login and authorized disable persist through
   expect((await verified).ok()).toBeTruthy();
   await expect(page).toHaveURL(/\/app/);
   await page.goto("/app/account");
-  await page.locator("#security summary").filter({ hasText: "Безопасность аккаунта" }).click();
+  await page.getByRole("button", { name: "Безопасность аккаунта", exact: true }).click();
   await page.getByRole("button", { name: "Отключить MFA", exact: true }).click();
   await dialog.getByLabel("Текущий пароль", { exact: true }).fill(password);
   await dialog.getByLabel("Причина отключения", { exact: true }).fill("Synthetic pilot acceptance complete");

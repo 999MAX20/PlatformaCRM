@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 import { getAppErrorMessage, normalizeAppError } from "./appError";
-import { refreshToken } from "./token";
+import { assertCurrentSession, refreshToken } from "./token";
 import { getCurrentLanguage, translate } from "../lib/i18n";
 import { tokenStorage } from "../lib/storage";
 
@@ -74,35 +74,39 @@ export function unwrapList<T>(data: T[] | PaginatedResponse<T> | { results?: T[]
   return [];
 }
 
-apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+type SessionRequest = InternalAxiosRequestConfig & { _retry?: boolean; _sessionGeneration?: number };
+
+apiClient.interceptors.request.use((config: SessionRequest) => {
+  config._sessionGeneration ??= tokenStorage.getGeneration();
+  assertCurrentSession(config._sessionGeneration);
   const token = tokenStorage.getAccess();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
-});
-
-let refreshPromise: Promise<string> | null = null;
+}, (error) => { throw error; }, { synchronous: true });
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    assertCurrentSession((response.config as SessionRequest)._sessionGeneration);
+    return response;
+  },
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as SessionRequest | undefined;
+    if (!originalRequest) return Promise.reject(error);
+    assertCurrentSession(originalRequest._sessionGeneration);
     if (error.response?.status !== 401 || originalRequest._retry || isAuthEndpoint(originalRequest.url || "")) {
       return Promise.reject(error);
     }
 
     originalRequest._retry = true;
-    refreshPromise = refreshPromise || refreshToken().finally(() => {
-      refreshPromise = null;
-    });
-
     try {
-      const access = await refreshPromise;
+      const access = await refreshToken();
+      assertCurrentSession(originalRequest._sessionGeneration);
       originalRequest.headers.Authorization = `Bearer ${access}`;
       return apiClient(originalRequest);
     } catch (refreshError) {
-      expireBrowserSession();
+      if (originalRequest._sessionGeneration === tokenStorage.getGeneration()) expireBrowserSession();
       return Promise.reject(refreshError);
     }
   },

@@ -167,8 +167,8 @@ export async function revokeMfaSessions(code: string) {
 }
 
 export function logout() {
-  void clearRefreshCookie().catch(() => undefined);
   tokenStorage.clear();
+  void clearRefreshCookie().catch(() => undefined);
 }
 
 

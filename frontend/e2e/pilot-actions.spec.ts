@@ -175,7 +175,7 @@ test("account profile and task notification preferences survive reload", async (
   const newName = `Pilot profile ${Date.now()}`;
   await nameInput.fill(newName);
   const saved = page.waitForResponse(response => response.request().method() === "PATCH" && response.url().endsWith("/api/auth/me/"));
-  await page.getByRole("button", { name: "Сохранить", exact: true }).click();
+  await page.locator("#profile").getByRole("button", { name: "Сохранить", exact: true }).click();
   expect((await saved).ok()).toBeTruthy();
   await page.reload();
   await expect(nameInput).toHaveValue(newName);

@@ -115,6 +115,7 @@ export const idempotentMutationRules = [
 ];
 
 export const backgroundTaskPolicies = {
+  "files.scan_due_attachments": { permissionOwner: "system", idempotency: "atomic_scan_token_lease_and_terminal_state", retryLocation: "automatic_due_scan_backoff_and_attachment_status" },
   "bots.process_outbound_message": { permissionOwner: "conversations:send", idempotency: "message_delivery_key", retryLocation: "conversation_delivery_details" },
   "bots.process_due_outbound_messages": { permissionOwner: "system", idempotency: "locked_due_message_claim", retryLocation: "conversation_delivery_details" },
   "pricing.run_kaspi_pricing_cycle": { permissionOwner: "pricing_operator", idempotency: "rule_and_change_log_guard", retryLocation: "pricing_operation_details" },

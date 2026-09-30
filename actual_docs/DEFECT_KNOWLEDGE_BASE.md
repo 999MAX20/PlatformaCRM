@@ -894,6 +894,28 @@ Copy this section for every new confirmed precedent:
   server values; existing saved-preview/readiness and mobile smoke also passed.
 - Audit rule: incomplete setup is not evidence of an unsaved user edit.
 
+### ZD-031 — Account switches retained cache and replayed old requests
+
+- Confirmed 2026-09-30 in a single SPA document: owner logout followed by a
+  foreign-business owner login retained the old business/access summary. The
+  auth API returned the correct new user; the shared QueryClient retained data.
+- Separately, an intercepted delayed 401 mutation was retried with the next
+  user's token. A second browser tab could also replace the shared refresh
+  cookie and make the first tab retry as that new user. Test endpoints were
+  intercepted; no cross-account CRM write was executed.
+- Bounded fix: QueryClient and action providers scoped to session/identity/access;
+  request/response/auth generation checks; ordered refresh/logout/login cookie
+  operations; refresh principal must match the user accepted from `/auth/me/`.
+  Backend permission/tenant contracts remain authoritative and unchanged.
+- Status: FIXED_BRANCH, dependent acceptance VERIFIED; publication tracked
+  in PRIMARY-SESSION. `session-cache-isolation.spec.ts`
+  covers same-tab data, delayed200/401, normal refresh, rapid logout/login and
+  shared-cookie cross-tab switching. Build and all six cases on
+  desktop/tablet/mobile PASS, with dependent auth/MFA/CRM evidence in checkpoint.
+- Audit rule: clearing visible auth state is insufficient. Verify cache,
+  delayed callbacks, refresh-cookie ordering and replay identity across the
+  whole session boundary; never replay an old write with a new principal.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

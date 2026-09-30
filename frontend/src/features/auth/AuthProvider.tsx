@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -24,10 +25,12 @@ import {
   type SocialProvider,
   type MfaPendingResponse,
 } from "../../api/auth";
+import { assertCurrentSession } from "../../api/token";
 import { tokenStorage } from "../../lib/storage";
 import type { Business, CurrentUser } from "../../types";
 
 type AuthContextValue = {
+  sessionGeneration: number;
   isAuthenticated: boolean;
   isLoading: boolean;
   user: CurrentUser | null;
@@ -52,6 +55,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const mountedRef = useRef(false);
   const sessionRestoreStartedRef = useRef(false);
+  const sessionGeneration = tokenStorage.getGeneration();
+  const acceptUser = useCallback((currentUser: CurrentUser, generation: number) => {
+    assertCurrentSession(generation);
+    if (!mountedRef.current) throw new Error("Authentication provider unmounted");
+    setUser(currentUser);
+    setAuthenticated(true);
+    tokenStorage.setEmail(currentUser.email);
+    tokenStorage.setUserId(currentUser.id);
+    return currentUser;
+  }, []);
+  const loadCurrentUser = useCallback(async () => {
+    const generation = tokenStorage.getGeneration();
+    return acceptUser(await getCurrentUser(), generation);
+  }, [acceptUser]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -76,11 +93,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sessionRestoreStartedRef.current = true;
 
     async function loadUser() {
+      const generation = tokenStorage.getGeneration();
       if (!tokenStorage.getAccess()) {
         const hadPreviousSession = Boolean(tokenStorage.getEmail());
         try {
           await restoreSession();
         } catch (error) {
+          if (generation !== tokenStorage.getGeneration()) return;
           if (hadPreviousSession && isSessionExpiryResponse(error)) {
             expireBrowserSession();
           }
@@ -92,24 +111,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const currentUser = await getCurrentUser();
         if (!mountedRef.current) return;
-        setUser(currentUser);
-        setAuthenticated(true);
-        tokenStorage.setEmail(currentUser.email);
+        acceptUser(currentUser, generation);
       } catch {
-        if (!mountedRef.current) return;
+        if (!mountedRef.current || generation !== tokenStorage.getGeneration()) return;
         apiLogout();
         setUser(null);
         setAuthenticated(false);
+        setLoading(false);
       } finally {
-        if (mountedRef.current) setLoading(false);
+        if (mountedRef.current && generation === tokenStorage.getGeneration()) setLoading(false);
       }
     }
 
     loadUser();
-  }, []);
+  }, [acceptUser]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
+      sessionGeneration,
       isAuthenticated,
       isLoading,
       user,
@@ -119,11 +138,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isPlatformUser: Boolean(user?.is_platform_user),
       isMerchantUser: Boolean(user?.is_merchant_user),
       refreshUser: async () => {
+        const generation = tokenStorage.getGeneration();
         if (!tokenStorage.getAccess()) {
           const hadPreviousSession = Boolean(tokenStorage.getEmail());
           try {
             await restoreSession();
           } catch (error) {
+            if (generation !== tokenStorage.getGeneration()) return null;
             if (hadPreviousSession && isSessionExpiryResponse(error)) {
               expireBrowserSession();
             }
@@ -131,52 +152,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
         const currentUser = await getCurrentUser();
-        setUser(currentUser);
-        setAuthenticated(true);
-        tokenStorage.setEmail(currentUser.email);
-        return currentUser;
+        return acceptUser(currentUser, generation);
       },
       login: async (email: string, password: string) => {
         const response = await apiLogin({ email, password });
         if (isMfaPendingResponse(response)) return response;
-        const currentUser = await getCurrentUser();
-        setAuthenticated(true);
-        setUser(currentUser);
-        tokenStorage.setEmail(currentUser.email);
-        return currentUser;
+        return loadCurrentUser();
       },
       signupOwner: async (payload: OwnerSignupPayload) => {
         const response = await apiSignupOwner(payload);
         if (isMfaPendingResponse(response)) return response;
-        const currentUser = await getCurrentUser();
-        setAuthenticated(true);
-        setUser(currentUser);
-        tokenStorage.setEmail(currentUser.email);
-        return currentUser;
+        return loadCurrentUser();
       },
       loginWithSocial: async (provider: SocialProvider, idToken: string) => {
         const response = await apiSocialLogin({ provider, idToken });
         if (isMfaPendingResponse(response)) return response;
-        const currentUser = await getCurrentUser();
-        setAuthenticated(true);
-        setUser(currentUser);
-        tokenStorage.setEmail(currentUser.email);
-        return currentUser;
+        return loadCurrentUser();
       },
       completeMfaSession: async () => {
-        const currentUser = await getCurrentUser();
-        setAuthenticated(true);
-        setUser(currentUser);
-        tokenStorage.setEmail(currentUser.email);
-        return currentUser;
+        return loadCurrentUser();
       },
       logout: () => {
         apiLogout();
         setAuthenticated(false);
         setUser(null);
+        setLoading(false);
       },
     }),
-    [isAuthenticated, isLoading, user],
+    [acceptUser, isAuthenticated, isLoading, loadCurrentUser, sessionGeneration, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

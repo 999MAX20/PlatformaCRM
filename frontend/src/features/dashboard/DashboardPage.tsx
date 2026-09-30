@@ -47,18 +47,21 @@ export function DashboardPage() {
     deals: hasPermission(user, business?.id, "deals", "view"),
     integrations: hasPermission(user, business?.id, "integrations", "view"),
   };
-  const { clients, leads, appointments, services, tasks } = useEntityData({
-    clients: !isOwnerView && dailyAccess.clients,
-    leads: dailyAccess.leads,
-    appointments: dailyAccess.appointments,
-    services:
-      !isOwnerView && (dailyAccess.leads || dailyAccess.appointments),
-    tasks: dailyAccess.tasks,
-  });
   const metrics = useQuery({
     queryKey: ["owner-dashboard", business?.id],
     queryFn: () => analyticsApi.ownerDashboard(business?.id),
     enabled: Boolean(business && isOwnerView),
+  });
+  // The owner summary already supplies these counts. Fetch lists only for
+  // the manager workspace or when the summary needs its existing fallback.
+  const needsDailyLists = !isOwnerView || metrics.isError;
+  const { clients, leads, appointments, services, tasks } = useEntityData({
+    clients: !isOwnerView && dailyAccess.clients,
+    leads: dailyAccess.leads && needsDailyLists,
+    appointments: dailyAccess.appointments && needsDailyLists,
+    services:
+      !isOwnerView && (dailyAccess.leads || dailyAccess.appointments),
+    tasks: dailyAccess.tasks && needsDailyLists,
   });
   const workQueues = useQuery({
     queryKey: ["work-queues", business?.id],
@@ -86,6 +89,7 @@ export function DashboardPage() {
   const clientList = clients.data || [];
   const dashboard = metrics.data;
   const isCoreDataLoading =
+    (isOwnerView && metrics.isLoading) ||
     (!isOwnerView && dailyAccess.clients && clients.isLoading) ||
     (dailyAccess.leads && leads.isLoading) ||
     (dailyAccess.appointments && appointments.isLoading) ||
