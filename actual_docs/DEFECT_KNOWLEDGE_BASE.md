@@ -925,9 +925,9 @@ Copy this section for every new confirmed precedent:
   max(300s, three provider timeouts), without automatically replaying an uncertain
   paid request; condition late updates on the same active claim. A typed UI error
   preserves the approved unavailable/pending copy instead of generic fallback.
-- Status: FIXED_BRANCH, focused backend and three-viewport UI VERIFIED; real
-  isolated Celery stop/restart at the provider boundary VERIFIED. Final gate
-  and publication remain in PRIMARY-SESSION. No working DB or provider call.
+- Status: CLOSED in main f8aab57; focused backend, three-viewport UI, real
+  isolated Celery stop/restart, full gate and CI36774072199 PASS; evidence in
+  PRIMARY-SESSION. Recovery drill used no working DB or real provider call.
 - Audit rule: handled transient errors do not prove crash recovery. Verify
   abandoned claims, active claims, explicit user retry and obsolete completion.
 
@@ -940,8 +940,8 @@ Copy this section for every new confirmed precedent:
 - Fix captures generation for the complete polling operation, checks it before
   each read, and scopes pending-job IDs to that generation. Existing requester
   authorization and ordinary same-session retry remain unchanged.
-- Status: FIXED_BRANCH, desktop/tablet/mobile regression VERIFIED; final gate
-  and publication remain in PRIMARY-SESSION.
+- Status: CLOSED in main f8aab57; desktop/tablet/mobile regression, full gate
+  and CI36774072199 PASS; evidence in PRIMARY-SESSION.
 - Audit rule: session boundaries cover complete asynchronous operations,
   including timers and module-level caches, as well as individual HTTP requests.
 
@@ -956,8 +956,9 @@ Copy this section for every new confirmed precedent:
   session revocation. Reuse the login/logout/refresh queue for these operations;
   perform a single ordinary401 refresh outside that queue to avoid self-deadlock.
   Generation checks still guard token acceptance and session-expiry callbacks.
-- Status: VERIFIED_BRANCH, expanded75-case browser verification PASS; final gate pending
-  in PRIMARY-SESSION. No backend permissions, migrations or account policy changed.
+- Status: CLOSED in main f8aab57; expanded75-case browser verification, full
+  gate and CI36774072199 PASS in PRIMARY-SESSION. No backend permissions,
+  migrations or account policy changed.
 - Audit rule: rejecting a stale JavaScript response cannot undo its HttpOnly
   Set-Cookie. Check ordering of every endpoint that replaces or clears the cookie.
 
@@ -968,8 +969,8 @@ Copy this section for every new confirmed precedent:
   it. One preferences PATCH used the new account's authorization.
 - Capture the original session before loading the dictionary; guard the write
   and completion callbacks before refreshing the user or switching language.
-- Status: VERIFIED_BRANCH, regression and dependent account verification PASS;
-  final gate/publication in PRIMARY-SESSION.
+- Status: CLOSED in main f8aab57; regression and dependent account verification,
+  full gate and CI36774072199 PASS; evidence in PRIMARY-SESSION.
 - Audit rule: a request-level guard cannot protect work deferred before the
   request starts. Bind asynchronous preparation and completion to one session.
 

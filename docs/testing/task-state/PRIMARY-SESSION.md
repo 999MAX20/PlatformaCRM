@@ -2,7 +2,17 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Five-stage overnight acceptance + September30 audit / IN PROGRESS, 2026-10-01
+## Five-stage overnight acceptance + September30 audit / VERIFIED + PUSHED, 2026-10-01
+
+- Closure: implementation f8aab57da57765f598ccdd04b28ad653120f0bd1 is on
+  origin/main; exact-SHA CI36774072199 SUCCESS, backend and frontend jobs,
+  observed2026-09-30T20:54:21UTC. Full local gate and scoped acceptance below PASS.
+  Four defects ZD-032..035 integrated and closed for this acceptance boundary.
+  This receipt changes documentation only; application evidence remains valid.
+  Receipt publication uses static/diff/link checks and normal push, followed by
+  actual exact-SHA CI observation; the final task response records that result.
+  No next implementation phase is authorized implicitly. Remaining owner/manual/
+  environment boundaries and LOW dependency advisory are preserved below.
 
 - Source: owner explicitly authorized all five stages in one uninterrupted run,
   followed by audit of September30 work; defer unresolved owner decisions into
@@ -188,6 +198,37 @@
   Runtime diff and generated inventory reviewed; explicit paths only staged.
   Next: commit this checked repair as final candidate; full gate on original
   f9d588e base, then reviewed normal push and exact-SHA CI readback.
+- Final candidate f8aab57da57765f598ccdd04b28ad653120f0bd1: FULL PASS,
+  exit0, full-gate-final.log. Exact command:
+  .venv/Scripts/python.exe scripts/codex_verify.py --mode full --base-ref
+  f9d588e5f95ac156338588d06104c78b536d6ec3.
+  Includes1223 backend tests/937.459s, system/migration drift, lock/diff hygiene,
+  clean npm ci, i18n/type/build/widget/bundle,2 mobile role smoke checks/1.2m,
+  Python audit (no known vulnerabilities) and npm moderate-threshold audit.
+  No gate skips or relaxed assertions.89 additional Node checks also PASS.
+- npm reports one LOW advisory GHSA-p98j-92pf-mc4p in transitive
+  dompurify3.4.13 via posthog-js1.379.3. Exact same version in startingf9d588e;
+  dependency files unchanged in this task. No direct app IN_PLACE/afterSanitize
+  hook usage found; inspected PostHog tour sanitizer uses HTML input/ADD_TAGS,
+  not that mode. This does not prove universal non-exploitability. Keep the
+  advisory visible as separate dependency maintenance; required threshold passes.
+- Normal push origin HEAD:main succeeded; ls-remote main exactlyf8aab57.
+  Origin URL confirmed https://github.com/999MAX20/PlatformaCRM.git; fetched
+  main into origin/main and proved it is an ancestor before push. Clean source
+  snapshot, no other writer changes. CI36774072199 later completed SUCCESS
+  for both jobs at the exact SHA. No workflow deployment action or live migration.
+- Five-stage result: technical/synthetic CRM acceptance, actual isolated worker
+  recovery, bounded authenticated live AI, local operational drills and final
+  candidate gate completed. September30 audit confirmed two additional defects,
+  both repaired and regression-tested. Four task fixes total: ZD-032..035.
+  Remaining Q02 target operator/region/resources/budget/RPO/RTO, Q03 retention/
+  quota/deletion and Q04 human UX/screen-reader/clinical signoff are listed in
+  docs/pilot/owner-questions-2026-09-28.md; none silently treated as approved.
+  Deployment, real data, real SMTP, PostgreSQL concurrency and cloud restore
+  NOT RUN within this authorization. Docs receipt precommit static gate PASS
+  (closure-static.log); changed references/commands and entire intended diff
+  reviewed, targets present. Next: committed-range static check, publish this
+  docs-only receipt, verify its actual CI, finish.
 
 ## Account publication + audit follow-up / VERIFIED + PUSHED, 2026-09-30
 
