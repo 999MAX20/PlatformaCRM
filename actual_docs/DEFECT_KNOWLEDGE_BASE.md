@@ -907,7 +907,7 @@ Copy this section for every new confirmed precedent:
   request/response/auth generation checks; ordered refresh/logout/login cookie
   operations; refresh principal must match the user accepted from `/auth/me/`.
   Backend permission/tenant contracts remain authoritative and unchanged.
-- Status: FIXED_BRANCH, dependent acceptance VERIFIED; publication tracked
+- Status: FIXED + VERIFIED, published in6842f16; actual CI tracked
   in PRIMARY-SESSION. `session-cache-isolation.spec.ts`
   covers same-tab data, delayed200/401, normal refresh, rapid logout/login and
   shared-cookie cross-tab switching. Build and all six cases on

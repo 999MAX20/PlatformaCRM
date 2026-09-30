@@ -2,7 +2,18 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Account publication + audit follow-up / VERIFIED, publication pending, 2026-09-30
+## Account publication + audit follow-up / VERIFIED + PUSHED, 2026-09-30
+
+- Follow-up published:6842f1608d913847e49a58e39d830c56068f1ea6, normal
+  origin HEAD:main; remote SHA matches, working tree clean after implementation
+  commit. Static gate PASS on real base f113363 (followup-static.log):
+  .venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+  f1133632b4d5a28fcaaa07a068b35b2d3d342c36. Exact-SHA GitHub CI36762309501
+  observed IN_PROGRESS at18:58UTC; this is not yet a green CI claim.
+  Final delivery message records the later actual CI result. This docs receipt
+  changes no runtime inputs. Five selected audit recommendations are implemented
+  and locally verified; next product item remains clinic/manual and target-env
+  acceptance, with no additional phase started.
 
 - Performance before/after PASS: identical performance-sample.py/spec with
   independent result directories; logs performance-before.log and
