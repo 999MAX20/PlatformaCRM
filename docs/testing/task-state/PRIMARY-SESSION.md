@@ -4,6 +4,32 @@
 
 ## Account publication + audit follow-up / IN PROGRESS, 2026-09-30
 
+- Publication acceptance, 17:09 UTC: 62165bc full invocation passed Django
+  check/drift, 1217 tests (1235.777s), npm ci, i18n/build/budget. Mobile manager
+  PASS; owner initially failed clients navigation (remained in conversation).
+  Preserved trace/screenshot in mobile-owner-failure. Isolated unchanged owner
+  rerun PASS; controlled late Inbox response / held Clients module check PASS
+  (navigation-before2.log; first diagnostic had an incorrect URL matcher).
+  No production navigation bug proven and no source/assertion change made.
+  Both original mobile scenarios repeated three times: 6 PASS / 2.6m, using
+  mobile-recheck.py, mobile-repeat.log. Initial intermittent failure remains
+  recorded; do not describe the original full invocation as a clean PASS.
+  Remaining security stages run via `scripts/codex_verify.py --mode security
+  --base-ref 1e21de8`: PASS, Python/npm audits zero, security-final.log.
+  All required stages now passed on unchanged candidate inputs via full run
+  plus focused reruns; earlier account browser acceptance also retained.
+  Canonical dev Vite restored PID13048; HTML/main HTTP200. Only checkpoint/docs
+  changed since candidate. origin/main still1e21de8; normal publication next.
+
+- 16:48 UTC continuity checkpoint: candidate 62165bc (Axios follow-up to
+  6e27841), second full gate `--base-ref 1e21de8` still running; no failure so
+  far. Evidence: output/publication-20260930/full-gate-final.log. Publication
+  awaits this result; same owner/branch/root, no new source changes. Dev Vite
+  remains stopped for deterministic npm installation; restore after that stage.
+  Before-fix browser evidence also confirms a delayed 401 mutation is replayed
+  with the next account's credentials (fake intercepted endpoint, no CRM write):
+  late-request-before2.log. Cache/transport fix follows initial publication.
+
 - Owner explicitly requested publication of accumulated WIP, then the five audit
   recommendations (cache isolation, fallback registry, dependencies, internal CRM
   acceptance, evidence-based screen improvements). Same primary/canonical root;
