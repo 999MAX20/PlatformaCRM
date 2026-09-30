@@ -2,6 +2,136 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Five-stage overnight acceptance + September30 audit / IN PROGRESS, 2026-10-01
+
+- Source: owner explicitly authorized all five stages in one uninterrupted run,
+  followed by audit of September30 work; defer unresolved owner decisions into
+  a separate list and continue independent work. Requested GPT-6 Astra medium
+  reasoning for audit; no claim of a model-setting change by repository tooling.
+- Owner/root unchanged: registered primary, canonical PlatformaCRM checkout,
+  branch codex/ui-testing-toolkit, clean starting HEAD f9d588e5f95ac156338588d06104c78b536d6ec3.
+  Prior task CLOSED: exact final SHA CI36762420974 SUCCESS, both jobs; normal
+  main push/readback complete. Preserve earlier evidence and closed acceptance.
+- Mode: scoped implementation + functional acceptance + final review. Gap types:
+  evidence first, code only for reproduced in-scope defects, policy/env separately.
+  Observable results: complete CRM lifecycle/import/duplicates/archive workflows;
+  job retry/restart safety; source-grounded role-aware useful AI answers;
+  local backup/restore, monitoring, file/access protection; one exact candidate
+  full gate and subsequent audit of September30 changes with actionable findings.
+- Reuse existing domain services, CRM selectors/API/UI, automation runtime,
+  AI tool/prompt/approval layers, backup/health/antivirus tools and existing suites.
+  Start by mapping current coverage and prior closure to each requested scenario;
+  do not reopen work solely because its checklist appears again.
+- Non-goals: deployment, cloud purchase, working-DB migration/reset, real clinic
+  data, invented retention/permission policy, external integrations/billing.
+  Approved prior decisions remain authoritative; unresolved questions recorded
+  in the existing owner-questions document, no waiting for routine confirmations.
+- Acceptance/gates: isolated synthetic behavioral tests through reachable UI/API,
+  persistence, tenant/role denial, failure/retry/idempotency and AI no-data/approval;
+  disposable actual-worker restart/restore evidence where required; build/budget,
+  system/migration drift and affected suites, full gate on exact final candidate,
+  reviewed normal push + actual CI. Audit September30 commits and callers/tests
+  after stages; retain exact scope/limitations and distinguish clinic signoff.
+- Next: read current pilot closure, relevant skill/contracts and inventories;
+  build compact reused/missing evidence map before choosing implementation.
+- Writer check reconciled: parallel task "Унифицировать UI CRM-таблиц" was
+  active, so source writes paused during independent reading/isolated probes.
+  Native readback now idle/completed; HEAD and all runtime paths unchanged.
+  Only this task's STATUS/checkpoint edits exist; registered owner unchanged.
+- CRM backend baseline PASS:84 tests/63.684s, crm-backend.log; command
+  .venv/Scripts/python.exe output/pilot-20260928/focused.py
+  apps.core.tests_business_flows_e2e apps.core.tests_import_export
+  apps.core.tests_import_samples apps.clients.tests_archive_dependencies
+  apps.core.tests_archive apps.core.tests_tenant_isolation
+  apps.core.tests_crm_projection_access apps.businesses.tests_member_deactivation.
+  Prior f9d588 runtime browser matrix is applicable to unchanged CRM inputs;
+  complete UI-started client→lead→deal chain reviewed for any remaining gap.
+- Confirmed recovery gap: an AIJob with crashed-worker RUNNING claim is never
+  selected by due processing. Isolated ai-recovery-probe.py FAIL before fix
+  (ai-recovery-before.log): one-hour-old running record remains running.
+  UI polling is bounded180s but retry retains the job key, so repeats cannot
+  recover. Reuse existing status/locked_at/attempts, periodic job task and UI
+  failure/retry path. Expire abandoned claims to safe terminal failure without
+  automatically repeating an uncertain paid request; fence late completion.
+  No schema/role/approval/CRM effect change. Verify active claims, old/null
+  claims, late success/failure, user retry/API state, and real-worker restart.
+- Stage1 supplement PASS: staff-cycle.log,3 viewport checks/1.4m. New
+  pilot-staff-sales-cycle.spec.ts uses manager UI for every write from new client
+  through linked lead/deal to won result, then independent API/readback/history.
+- Stage2 AI regression before:6 cases,4 FAIL (ai-job-regression-before.log).
+  After claim expiration/fence:72 AI/automation/reminder tests PASS/24.947s
+  (job-recovery-after.log). Cutoff=max(300s,3×configured provider timeout);
+  current claims unchanged; expired running attempt fails without automatic paid
+  replay, late result/error cannot revive it. Existing transient retry unchanged.
+- Real worker drill PASS: scripts/pilot_recovery_drill.py --dependencies
+  output/pilot-seven-20260928/worker-deps, worker-recovery.log. Owned disposable
+  Celery filesystem worker stopped/restarted at automation WAIT and while a
+  synthetic AI provider boundary was held. One task per action, one reminder,
+  no repeated AI provider invocation; SQLite integrity/metadata and private file
+  byte restore PASS. No real provider, working DB or existing service touched.
+- AI UI before found two gaps (ai-ui-before.log): queued failure's safe localized
+  message was swallowed by generic error normalization; pending polling continued
+  after logout. Corrected typed AI status handling only on the AI page, scoped
+  pending-chat IDs to session generation and guarded every poll. New regression
+  verifies explicit new request/sources and no polling after logout. Matrix running.
+- AI UI after PASS:6 cases across desktop/tablet/mobile,1.3m (ai-ui-after.log).
+  Operations backend PASS:60 tests/41.005s (operations-checks.log): file scanning,
+  attachments/storage, backup readiness, observability, platform operations and
+  security. All new runtime fixes remain uncommitted; build/dependent/full gate
+  and final September30 review still pending. ZD-032/033 record confirmed gaps.
+- Next stage3: authenticated synthetic live AI sample using prior Q05 allowance
+  (OpenRouter/openai/gpt-4o-mini, cumulative $1). Existing persistent ledger
+  output/pilot-decisions-20260928/live-budget.json has6 calls/$0.15 reservations;
+  no new paid calls yet. Use isolated DB, bounded prompts/output and reservation
+  before I/O, same ledger, source/role/no-data/analyst cases; do not change .env.
+- Stage3 dependent backend PASS:85 tests/102.977s, command focused.py
+  apps.ai_core apps.conversations (ai-dependent.log). Build/i18n/bundle PASS
+  (build.log); all89 Node policy tests PASS (node-checks.log). Fallback inventory
+  regenerated only for shifted AI API source locations.
+- Live API first harness attempt stopped at DisallowedHost before provider I/O;
+  corrected the synthetic APIClient host to localhost. Six authenticated cases
+  then ran using the existing cumulative ledger: owner total10 leads (despite
+  sample8), minimum service price12000 with valid SERVICE citation despite an
+  injected note, and missing financial data all PASS. Foreign-business chat and
+  operator analyst both403 with zero provider calls. Task remained open.
+  Operator/task-action/analyst calls returned unavailable; never count these as
+  useful live answers. One diagnostic isolated provider HTTP400 Azure content
+  filtering triggered by the deliberately hostile knowledge fixture. The app
+  preserved safe unavailable handling. A separate ordinary-context sample is
+  running with that synthetic fixture inactive; production filtering unchanged.
+  Reservations remain cumulative and are never refunded for unknown attempts;
+  existing $1 cap retained. No working database or .env changes.
+- Operations docs corrected stale future-antivirus and unapproved backup targets;
+  local ClamAV activation is already accepted, so it is no longer an open question.
+  Target operator/region/budget/retention/RPO/RTO and actual alert delivery/restore
+  remain Q02/Q03; clinical/manual acceptance remains Q04. No new policy invented.
+- Final combined browser matrix running via output/overnight-20261001/final-browser.py;
+  runtime current diff unchanged. After its result and ordinary-context live sample,
+  review/commit candidate, run exact-base full gate, audit September30, normal push
+  and read actual CI. Logs above are under output/overnight-20261001/.
+- Ordinary-context live follow-up PASS (live-api-clean-results.json/log): operator
+  sees exactly own overdue task with TASK-1 citation and scoped overdue_count1;
+  owner-hidden/foreign sentinels absent from provider input. Cancellation request
+  returns no-data without claiming success and task remains open. Analyst cites
+  BE-1/BE-2 operational facts, strips financial amount from sources and produces
+  no revenue/profit conclusions. Analyst navigation remains existing server-owned
+  integrations route, not an arbitrary model URL; this sample is not evidence of
+  internal CRM events automatically feeding the integration analyst or full
+  business insight quality. Owner daily brief retains its separate CRM sources.
+  Total persistent ledger now16 attempts/$0.40 reserved (including earlier Q05),
+  reported successful-call cost$0.00206715; four uncertain/rejected reservations
+  retained. No more live calls planned. Host and UTF-8 harness errors incurred
+  no provider call. This bounded sample does not replace employee evaluation.
+- Offline captured-response validation PASS: validate-live-evidence.py (explicit
+  exit0, live-evidence-validation.log) checks the six accepted live results,
+  permission denials, sources/counts, no-data and cumulative reservation budget.
+- Candidate preparation: all intended runtime/new tests/docs reviewed, no secrets
+  or unrelated files; canonical root/branch/base and origin target rechecked.
+  Commit establishes the real range for the required full gate; publication is
+  blocked until that gate, the remaining browser matrix and audit complete.
+  Matrix already passed desktop and is progressing through tablet; its source
+  snapshot is unchanged by recording/committing this candidate.
+
 ## Account publication + audit follow-up / VERIFIED + PUSHED, 2026-09-30
 
 - Follow-up published:6842f1608d913847e49a58e39d830c56068f1ea6, normal

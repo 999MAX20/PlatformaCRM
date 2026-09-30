@@ -89,6 +89,7 @@ def run_drill(directory):
     from apps.tasks.models import Task, TaskReminderDelivery
     from apps.notifications.models import Notification
     from apps.core.models import FileAttachment
+    from apps.ai_core.models import AIJob
 
     app = configure_worker(directory)
     owner = User.objects.create_user(username="drill", email="drill@example.invalid")
@@ -131,6 +132,28 @@ def run_drill(directory):
             reminders = Notification.objects.filter(business=business, text="Напоминание: Before restart")
             assert reminders.count() == 1 and reminders.get().status == "sent"
             assert TaskReminderDelivery.objects.filter(task__business=business).count() == 1
+
+            ai_job = AIJob.objects.create(
+                business=business, user=owner, source="crm", prompt_type="crm_assistant",
+                idempotency_key="synthetic-interrupted-ai", input_json={"user_input": "Synthetic interrupted AI drill"},
+            )
+            app.send_task("ai.process_job", args=[ai_job.id], queue="ai")
+            entered = directory / "ai-provider-entered"
+            deadline = time.monotonic() + 45
+            while not entered.exists():
+                if worker.poll() is not None or time.monotonic() >= deadline:
+                    raise RuntimeError("Synthetic AI job never reached the controlled provider boundary")
+                time.sleep(0.25)
+            ai_job.refresh_from_db()
+            assert ai_job.status == "running" and ai_job.attempts == 1
+            stop_worker(worker)
+            AIJob.objects.filter(pk=ai_job.pk).update(locked_at=timezone.now() - timezone.timedelta(hours=1))
+            worker = subprocess.Popen(worker_command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+            recovery = app.send_task("ai.process_due_jobs", queue="ai")
+            wait_for_dispatch(directory, recovery, worker)
+            ai_job.refresh_from_db()
+            assert ai_job.status == "failed" and ai_job.attempts == 1 and ai_job.completed_at is not None
+            assert ai_job.result_json == {} and entered.read_text() == "1"
         except Exception:
             log.flush()
             print((directory / "worker.log").read_text(encoding="utf-8", errors="replace")[-4000:])
@@ -162,7 +185,18 @@ def run_drill(directory):
         assert restored.execute("SELECT COUNT(*) FROM tasks_taskreminderdelivery").fetchone()[0] == 1
         assert restored.execute("SELECT status, current_action_index FROM automations_automationrun WHERE id=?", (run.id,)).fetchone() == ("success", 3)
         assert restored.execute("SELECT file FROM core_fileattachment WHERE id=?", (attachment.id,)).fetchone()[0] == attachment.file.name
-    print(json.dumps({"worker_restart": "pass", "persisted_wait_resume": "pass", "duplicate_dispatch": "pass", "task_reminder_replay": "pass", "sqlite_restore": "pass", "private_file_restore": "pass", "tasks": 2, "transport": "filesystem", "production_acceptance": False}))
+    print(json.dumps({"worker_restart": "pass", "persisted_wait_resume": "pass", "duplicate_dispatch": "pass", "task_reminder_replay": "pass", "ai_interrupted_job_recovery": "pass", "sqlite_restore": "pass", "private_file_restore": "pass", "tasks": 2, "transport": "filesystem", "production_acceptance": False}))
+
+
+def hold_synthetic_ai_request(directory, **kwargs):
+    if kwargs.get("user_input") != "Synthetic interrupted AI drill":
+        raise RuntimeError("Unexpected AI request in the isolated recovery drill")
+    entered = directory / "ai-provider-entered"
+    entered.write_text(str(int(entered.read_text()) + 1) if entered.exists() else "1")
+    # The parent terminates this owned worker after observing the persisted claim.
+    # No provider connection or billable call is made by the drill.
+    time.sleep(60)
+    raise RuntimeError("Parent did not stop the synthetic AI worker")
 
 
 def main():
@@ -183,7 +217,12 @@ def main():
     if os.environ.get("PILOT_DRILL_DEPS"):
         site.addsitedir(os.environ["PILOT_DRILL_DEPS"])
     if sys.argv[1:] == ["--worker"]:
-        configure_worker(directory).worker_main(["worker", "--pool=solo", "--concurrency=1", "-Q", "automations,notifications", "--without-gossip", "--without-mingle", "--without-heartbeat", "--loglevel=WARNING"])
+        import django
+        from functools import partial
+        from unittest.mock import patch
+        django.setup()
+        with patch("apps.ai_core.services.run_ai_request", side_effect=partial(hold_synthetic_ai_request, directory)):
+            configure_worker(directory).worker_main(["worker", "--pool=solo", "--concurrency=1", "-Q", "automations,notifications,ai", "--without-gossip", "--without-mingle", "--without-heartbeat", "--loglevel=WARNING"])
     elif sys.argv[1:] == ["--drill"]:
         run_drill(directory)
     else:

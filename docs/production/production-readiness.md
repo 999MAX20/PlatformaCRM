@@ -256,6 +256,14 @@ exception text. When the database is unavailable or migrations are missing, the
 command returns a critical `database_unavailable` blocker with empty bounded
 queues instead of crashing. This blocker must never be treated as healthy.
 
+Pilot operator handoff must name the person receiving alerts and demonstrate
+delivery/acknowledgment in the selected environment. Exercise database loss,
+worker/scheduler interruption, aged queues and antivirus unavailability with
+synthetic data there, then confirm recovery in the same report. Failed AI jobs
+include expired interrupted attempts; they are not automatically replayed because
+the provider may already have accepted the original request. Local automated
+checks establish report behavior, not live alert delivery or an operator on call.
+
 ## 6. Deployment Sequence
 
 1. Build backend image.

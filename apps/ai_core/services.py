@@ -1,6 +1,7 @@
 import logging
 import uuid
 
+from django.conf import settings
 from django.db.models import F, Q
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -113,6 +114,18 @@ def create_ai_job(
 
 def process_due_ai_jobs(*, limit=100):
     now = timezone.now()
+    # A dead worker may have reached the paid provider. End the abandoned
+    # attempt visibly; only an explicit new user request may repeat that call.
+    cutoff = now - timezone.timedelta(seconds=max(300, settings.AI_HTTP_TIMEOUT_SECONDS * 3))
+    expired = AIJob.objects.filter(status=AIJob.Statuses.RUNNING).filter(
+        Q(locked_at__lte=cutoff) | Q(locked_at__isnull=True, updated_at__lte=cutoff)
+    ).update(
+        status=AIJob.Statuses.FAILED,
+        error="AI request was interrupted. Please retry or continue manually.",
+        locked_at=None, next_retry_at=None, completed_at=now, updated_at=now,
+    )
+    if expired:
+        logger.warning("ai.jobs_interrupted", extra={"expired_jobs": expired})
     job_ids = list(
         AIJob.objects.filter(
             Q(status=AIJob.Statuses.PENDING)
@@ -144,6 +157,11 @@ def process_ai_job(job_id):
     if not claimed:
         return AIJob.objects.filter(id=job_id).first()
     job = AIJob.objects.select_related("business", "user").get(id=job_id)
+    if job.status != AIJob.Statuses.RUNNING or job.locked_at != now:
+        return job
+    claim = AIJob.objects.filter(
+        pk=job.pk, status=AIJob.Statuses.RUNNING, attempts=job.attempts, locked_at=now,
+    )
     try:
         runtime_context = job.input_json.get("runtime_context") or {}
         if job.source == AIRequestLog.Sources.CRM:
@@ -159,8 +177,7 @@ def process_ai_job(job_id):
             input_json=runtime_context,
             allow_mock=False,
         )
-        job.status = AIJob.Statuses.SUCCEEDED
-        job.result_json = {
+        result_json = {
             "answer": result.output_text,
             "provider": result.provider,
             "model": result.model,
@@ -171,24 +188,20 @@ def process_ai_job(job_id):
             "sources": result.sources,
             "context": runtime_context.get("crm_context", {}).get("summary", {}),
         }
-        job.request_log = log
-        job.completed_at = timezone.now()
-        job.locked_at = None
-        job.save(
-            update_fields=["status", "result_json", "request_log", "completed_at", "locked_at", "updated_at"]
-        )
+        updates = {
+            "status": AIJob.Statuses.SUCCEEDED, "result_json": result_json,
+            "request_log": log, "completed_at": timezone.now(), "locked_at": None,
+        }
     except Exception as exc:
         logger.warning("ai.job_failed", extra={"ai_job_id": job.id, "error_type": type(exc).__name__})
-        job.error = "AI request could not be completed. Please retry or continue manually."
-        job.locked_at = None
+        updates = {"error": "AI request could not be completed. Please retry or continue manually.", "locked_at": None}
         if job.attempts < job.max_attempts and getattr(exc, "retryable", not isinstance(exc, (PermissionError, PermissionDenied, ValidationError))):
-            job.status = AIJob.Statuses.RETRY_SCHEDULED
             delay_seconds = min(3600, 60 * (2 ** max(job.attempts - 1, 0)))
-            job.next_retry_at = timezone.now() + timezone.timedelta(seconds=delay_seconds)
+            updates.update(status=AIJob.Statuses.RETRY_SCHEDULED, next_retry_at=timezone.now() + timezone.timedelta(seconds=delay_seconds))
         else:
-            job.status = AIJob.Statuses.FAILED
-            job.completed_at = timezone.now()
-        job.save(
-            update_fields=["status", "error", "locked_at", "next_retry_at", "completed_at", "updated_at"]
-        )
+            updates.update(status=AIJob.Statuses.FAILED, completed_at=timezone.now())
+    # Recovery can expire this attempt while its provider call is outstanding.
+    # A late answer/error must not replace the failed state or schedule a retry.
+    claim.update(**updates, updated_at=timezone.now())
+    job.refresh_from_db()
     return job

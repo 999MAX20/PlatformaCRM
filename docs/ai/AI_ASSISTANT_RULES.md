@@ -349,6 +349,13 @@ permanent rejection/invalid structured output stops retrying. Jobs are visible
 only to their requester, whose permissions/context are checked again on execution.
 The UI polls queued responses, preserves a pending job for a later retry and
 exposes a recoverable error instead of an obsolete answer.
+Polling and pending-job reuse are bound to the authenticated session generation;
+logout/account change stops the old continuation before another request is sent.
+An interrupted running job expires after max(300 seconds, three provider timeouts)
+and becomes failed without automatically repeating an uncertain paid call. Late
+completion cannot overwrite that terminal result. The requester can explicitly
+submit a new request; ordinary CRM remains available. Recovery tests and the
+disposable real-worker restart drill cover this boundary (ZD-032/033).
 
 Bot replies use the active profile, validated model and finite temperature 0–1.
 An empty model selection inherits environment configuration. Known OpenAI model

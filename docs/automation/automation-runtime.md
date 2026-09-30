@@ -118,6 +118,9 @@ DB, private files and filesystem broker; it never uses the working DB or Redis.
 On Windows Kombu's filesystem transport needs pywin32; optional dependencies may
 be provided with `--dependencies <isolated-install-directory>`. The current drill
 uses pywin32 311 installed only into ignored output, not application requirements.
+The drill also interrupts a claimed AI job at a synthetic provider boundary and
+checks terminal recovery without a second provider call after restart; it makes
+no paid request. AI claim expiration differs from replay-safe automation steps.
 Target Redis/PostgreSQL, backup storage, monitoring/rollback and RPO/RTO still need
 their separate environment acceptance.
 

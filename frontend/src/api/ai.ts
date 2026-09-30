@@ -1,8 +1,9 @@
 import { apiClient } from "./client";
 import { isAxiosError } from "axios";
 import { createCrudApi } from "./crud";
+import { assertCurrentSession } from "./token";
 import type { AgentProfile, ApprovalRequest, AIToolCallLog, AIToolSuggestResponse, BusinessKnowledgeItem, Id } from "../types";
-import { translate, getCurrentLanguage } from "../lib/i18n";
+import { tokenStorage } from "../lib/storage";
 
 export type AIAssistantChatResponse = {
   sources: { id: string; label: string }[];
@@ -123,6 +124,16 @@ export type AIOwnerDailyBriefResponse = {
 
 type AIJob = { id: Id; status: string; result_json: AIAssistantChatResponse };
 const pendingChats = new Map<string, Id>();
+let pendingChatGeneration = tokenStorage.getGeneration();
+
+export class AIChatStatusError extends Error {
+  readonly messageKey: "aiQuality.unavailable" | "aiQuality.pending";
+
+  constructor(state: "failed" | "pending") {
+    super(`AI request ${state}`);
+    this.messageKey = state === "failed" ? "aiQuality.unavailable" : "aiQuality.pending";
+  }
+}
 
 async function getChatJob(id: Id, key: string): Promise<AIJob> {
   try {
@@ -135,21 +146,23 @@ async function getChatJob(id: Id, key: string): Promise<AIJob> {
   }
 }
 
-async function waitForChat(job: AIJob, key: string): Promise<AIAssistantChatResponse> {
+async function waitForChat(job: AIJob, key: string, generation: number): Promise<AIAssistantChatResponse> {
   const deadline = Date.now() + 180_000;
   while (Date.now() < deadline) {
+    assertCurrentSession(generation);
     if (job.status === "succeeded") {
       pendingChats.delete(key);
       return job.result_json;
     }
     if (job.status === "failed") {
       pendingChats.delete(key);
-      throw new Error(translate(getCurrentLanguage(), "aiQuality.unavailable"));
+      throw new AIChatStatusError("failed");
     }
     await new Promise((resolve) => setTimeout(resolve, 2000));
+    assertCurrentSession(generation);
     job = await getChatJob(job.id, key);
   }
-  throw new Error(translate(getCurrentLanguage(), "aiQuality.pending"));
+  throw new AIChatStatusError("pending");
 }
 
 export const aiApi = {
@@ -160,10 +173,15 @@ export const aiApi = {
     return data;
   },
   assistantChat: async ({ business, message, prompt_type }: { business: Id; message: string; prompt_type?: string }) => {
-    const key = JSON.stringify([business, message, prompt_type]);
+    const generation = tokenStorage.getGeneration();
+    if (pendingChatGeneration !== generation) {
+      pendingChats.clear();
+      pendingChatGeneration = generation;
+    }
+    const key = JSON.stringify([generation, business, message, prompt_type]);
     const existing = pendingChats.get(key);
     if (existing) {
-      return waitForChat(await getChatJob(existing, key), key);
+      return waitForChat(await getChatJob(existing, key), key, generation);
     }
     const { data } = await apiClient.post<AIAssistantChatResponse | { job: AIJob }>("/api/ai/assistant/chat/", {
       business,
@@ -171,9 +189,10 @@ export const aiApi = {
       prompt_type,
       idempotency_key: crypto.randomUUID(),
     }, { timeout: 70_000 });
+    assertCurrentSession(generation);
     if ("job" in data) {
       pendingChats.set(key, data.job.id);
-      return waitForChat(data.job, key);
+      return waitForChat(data.job, key, generation);
     }
     return data;
   },

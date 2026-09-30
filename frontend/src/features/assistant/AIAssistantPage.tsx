@@ -18,7 +18,7 @@ import {
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
 
-import { aiApi, businessKnowledgeApi, type AIAnalystSource } from "../../api/ai";
+import { aiApi, AIChatStatusError, businessKnowledgeApi, type AIAnalystSource } from "../../api/ai";
 import type { AIToolCallLog, BusinessKnowledgeItem, Id } from "../../types";
 import { getApiErrorMessage } from "../../api/client";
 import { useActionConfirm } from "../../components/actions/ActionConfirmProvider";
@@ -457,7 +457,9 @@ export function AIAssistantPage() {
       />
 
       {briefMutation.error || memoryMutation.error || analystBrief.error || suggestActionsMutation.error || runSuggestedActionMutation.error ? (
-        <div className="mb-4"><ErrorState message={getApiErrorMessage(briefMutation.error || memoryMutation.error || analystBrief.error || suggestActionsMutation.error || runSuggestedActionMutation.error)} /></div>
+        <div className="mb-4"><ErrorState message={briefMutation.error instanceof AIChatStatusError
+          ? t(briefMutation.error.messageKey)
+          : getApiErrorMessage(briefMutation.error || memoryMutation.error || analystBrief.error || suggestActionsMutation.error || runSuggestedActionMutation.error)} /></div>
       ) : null}
 
       {aiStatus.data && !aiStatus.data.ready ? (

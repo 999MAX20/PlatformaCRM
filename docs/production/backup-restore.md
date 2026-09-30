@@ -1,6 +1,15 @@
-# Zani Backup And Restore Baseline
+# PlatformaCRM Backup And Restore Baseline
 
-Date: 2026-05-20
+Baseline: 2026-05-20. Current pilot clarification: 2026-10-01.
+
+The owner selected Yandex Cloud, but deployment, operator, region, budget,
+retention and measured RPO/RTO remain separate decisions in
+[owner questions](../pilot/owner-questions-2026-09-28.md). Numbers below are
+historical planning targets, not an accepted service commitment. The newer
+proposal is 35 days of backups, RPO <=1 hour and RTO <=4 hours; it is not approved.
+Local SQLite/private-file restore and interrupted-worker recovery are covered by
+`python scripts/pilot_recovery_drill.py`; this does not certify managed PostgreSQL,
+cloud object storage or the production restore time.
 
 This document defines the minimum backup/restore posture before production merchants.
 
@@ -52,13 +61,16 @@ For S3-compatible storage:
 - keep bucket access private;
 - document bucket name, region and endpoint in secret inventory.
 
-Future storage phase must add:
+Review the implemented storage and [antivirus](../security/file-antivirus.md)
+contracts before selecting remaining work. Private file access, scan quarantine,
+scan retries and download authorization already exist and have local evidence.
+Target-environment acceptance still must verify:
 
 - per-business prefixes;
 - storage usage accounting;
 - file retention policy;
 - sensitive download audit;
-- antivirus/provider interface.
+- antivirus service connectivity, signature freshness and quarantine recovery.
 
 ## 4. Restore Drill
 
@@ -76,7 +88,8 @@ Before paid production:
    - migrations status.
 5. Document restore time.
 
-Target early-stage RTO/RPO:
+Historical early-stage RTO/RPO proposal (superseded for planning by the newer
+owner-questions proposal; neither is a measured pilot commitment):
 
 - RPO: 24 hours for MVP, improve with PITR.
 - RTO: 4 hours for early paid beta, improve as merchant count grows.
@@ -111,6 +124,14 @@ The command checks:
 
 It does not perform a real `pg_dump` or provider restore. It is a gate that verifies prerequisites before running the provider-specific drill.
 
+For the selected pilot target, the assigned operator must record the release SHA,
+backup timestamp and storage version, restore into a separate database/private
+bucket, and verify tenant access plus file metadata/bytes and scan state before
+routing traffic. Keep the source backup intact. Measure the recoverable data age
+and elapsed restore time against the subsequently approved RPO/RTO; a successful
+readiness command alone is insufficient. Interrupted jobs and overdue queues must
+be inspected after recovery using `platform_operations_health_check --format=json`.
+
 Render/CI gate:
 
 ```bash
@@ -139,9 +160,9 @@ Use a password manager or managed secret store.
 For paid beta incidents, prepare a short merchant-facing update:
 
 ```text
-Мы обнаружили проблему с доступностью/данными Zani.
-Данные защищены, команда выполняет восстановление из резервной копии.
-Ожидаемое время восстановления: <RTO>.
+Мы обнаружили проблему с <подтверждённая область воздействия> в PlatformaCRM.
+Подтверждённое состояние данных и действия команды: <проверенные факты>.
+Ожидаемое время восстановления: <оценка или «уточняется»>.
 Следующее обновление: <time>.
 ```
 

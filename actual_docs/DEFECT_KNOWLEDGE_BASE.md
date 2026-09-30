@@ -916,6 +916,35 @@ Copy this section for every new confirmed precedent:
   delayed callbacks, refresh-cookie ordering and replay identity across the
   whole session boundary; never replay an old write with a new principal.
 
+### ZD-032 — Interrupted AI worker left a permanently running request
+
+- Confirmed 2026-10-01: periodic AI processing ignored abandoned RUNNING claims.
+  The UI's bounded polling timed out, but retries kept checking the same job.
+  Late workers could also overwrite a recovered state without a claim fence.
+- Fix reuses locked_at/attempts and FAILED: expire abandoned claims after
+  max(300s, three provider timeouts), without automatically replaying an uncertain
+  paid request; condition late updates on the same active claim. A typed UI error
+  preserves the approved unavailable/pending copy instead of generic fallback.
+- Status: FIXED_BRANCH, focused backend and three-viewport UI VERIFIED; real
+  isolated Celery stop/restart at the provider boundary VERIFIED. Final gate
+  and publication remain in PRIMARY-SESSION. No working DB or provider call.
+- Audit rule: handled transient errors do not prove crash recovery. Verify
+  abandoned claims, active claims, explicit user retry and obsolete completion.
+
+### ZD-033 — AI polling outlived the authentication session
+
+- Confirmed 2026-10-01: after a queued response and logout, the polling loop
+  issued more reads under the new generation. Generic HTTP response guards
+  cannot reject work started later by an old continuation. No data disclosure
+  or foreign write was demonstrated; the regression intercepts the job endpoint.
+- Fix captures generation for the complete polling operation, checks it before
+  each read, and scopes pending-job IDs to that generation. Existing requester
+  authorization and ordinary same-session retry remain unchanged.
+- Status: FIXED_BRANCH, desktop/tablet/mobile regression VERIFIED; final gate
+  and publication remain in PRIMARY-SESSION.
+- Audit rule: session boundaries cover complete asynchronous operations,
+  including timers and module-level caches, as well as individual HTTP requests.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.
