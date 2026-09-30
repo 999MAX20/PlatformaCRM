@@ -2,6 +2,36 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Compact account page / VERIFIED, 2026-09-30
+
+- Owner approved the account-page review proposal. Mode implementation; UI/code gap.
+- Canonical root/current primary unchanged; branch codex/ui-testing-toolkit,
+  clean base c662506. Only account UI, related verification/i18n and evidence owned.
+- Result: compact profile/security/notification sections, shared save, conditional
+  connected identities, collapsed login/security details. Remove pilot outreach
+  notification control and unused preference controls; preserve stored preferences.
+- Reuse auth/notifications API and existing MFA flows. No backend permissions,
+  DB migrations, AI, BusinessEvent or notification-delivery policy changes.
+- Acceptance: profile save, loading/errors, accessible switches, security dialogs,
+  desktop/mobile layout; frontend build/budget and focused browser evidence.
+- Read-only browser inspection uses existing demo account; no credential changes.
+
+- Implemented three compact sections (960px maximum), desktop compact controls,
+  mobile touch targets, shared dirty-aware save and accessible notification switches.
+- Stored timezone/start_page preserved; controls removed only. Existing i18n keys
+  reused. Auth/backend/security policies unchanged; hidden MFA actions still reachable.
+- Initial build caught incorrect ErrorState retry prop; changed to its supported
+  action slot, then npm --prefix frontend run build and check:bundle PASS.
+- Isolated runtime: output/account-compact-browser.py (pilot-actions account profile
+  and notifications) 3 PASS desktop/tablet/mobile; output/account-compact-mfa.py
+  (enrollment/recovery login/disable) 1 PASS desktop. Logs beside wrappers; production
+  DB never seeded/migrated. No external providers. Backend/full release gate skipped
+  because no backend contract change; this is scoped account acceptance.
+- CUA existing demo: desktop and 390x844 visual checks, password dialog open/Escape
+  with focus restored; viewport reset. Working account credentials unchanged.
+- Task diff/whitespace reviewed; base and fetched main c662506 unchanged before
+  normal publication. Actual commit/remote/CI receipt reported in task closeout.
+
 ## Outreach excluded from pilot navigation / VERIFIED, 2026-09-29
 
 - Owner explicitly requested temporary removal of Outreach links and page routes

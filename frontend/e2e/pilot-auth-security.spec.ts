@@ -54,6 +54,7 @@ test("MFA enrollment, recovery-code login and authorized disable persist through
   expect((await verified).ok()).toBeTruthy();
   await expect(page).toHaveURL(/\/app/);
   await page.goto("/app/account");
+  await page.locator("#security summary").filter({ hasText: "Безопасность аккаунта" }).click();
   await page.getByRole("button", { name: "Отключить MFA", exact: true }).click();
   await dialog.getByLabel("Текущий пароль", { exact: true }).fill(password);
   await dialog.getByLabel("Причина отключения", { exact: true }).fill("Synthetic pilot acceptance complete");

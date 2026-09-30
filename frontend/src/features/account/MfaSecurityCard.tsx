@@ -14,7 +14,6 @@ import {
 } from "../../api/auth";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
-import { Card, CardBody } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
 import { ErrorState } from "../../components/ui/StateViews";
@@ -93,45 +92,24 @@ export function MfaSecurityCard() {
 
   return (
     <>
-      <Card id="security" className="scroll-mt-24">
-        <CardBody>
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex items-start gap-3">
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-700"><ShieldCheck size={21} /></div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">{t("mfa.accountEyebrow")}</p>
-                <h2 className="mt-1 text-xl font-black text-midnight">{t("mfa.accountTitle")}</h2>
-                <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-slate-500">{t("mfa.accountText")}</p>
-              </div>
-            </div>
-            <span className={mfa?.enabled ? "rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700" : "rounded-full bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-800"}>
-              {mfa?.enabled ? t("mfa.enabled") : mfa?.required ? t("mfa.required") : t("mfa.notEnabled")}
-            </span>
+      <div className="py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div><p className="text-sm font-semibold">{t("mfa.accountTitle")}</p>
+            {mfa ? <p className="text-xs text-platforma-subtle">{mfa.enabled ? t("mfa.enabled") : mfa.required ? t("mfa.required") : t("mfa.notEnabled")}</p> : null}
           </div>
-
-          {statusQuery.error || startMutation.error || actionMutation.error ? (
-            <div className="mt-4"><ErrorState message={getApiErrorMessage(statusQuery.error || startMutation.error || actionMutation.error)} /></div>
-          ) : null}
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-slate-500">{t("mfa.method")}</p><p className="mt-1 font-black text-midnight">{mfa?.enabled ? "TOTP" : "—"}</p></div>
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-slate-500">{t("mfa.recoveryRemaining")}</p><p className="mt-1 font-black text-midnight">{mfa?.recovery_codes_remaining ?? "—"}</p></div>
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-slate-500">{t("mfa.activeSessions")}</p><p className="mt-1 font-black text-midnight">{mfa?.active_sessions ?? "—"}</p></div>
+          {statusQuery.isLoading ? <span role="status" className="text-sm">{t("common.loading")}</span> : mfa && !mfa.enabled ? <Button size="sm" type="button" isLoading={startMutation.isPending} onClick={() => startMutation.mutate()}><ShieldCheck size={16} />{t("mfa.setup")}</Button> : null}
+        </div>
+        {statusQuery.error || startMutation.error || actionMutation.error ? <div className="mt-2"><ErrorState message={getApiErrorMessage(statusQuery.error || startMutation.error || actionMutation.error)} /></div> : null}
+        {mfa?.enabled ? <details className="mt-2">
+          <summary className="cursor-pointer text-sm font-semibold">{t("mfa.accountEyebrow")}</summary>
+          <div className="my-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-platforma-subtle"><span>{t("mfa.recoveryRemaining")}: {mfa.recovery_codes_remaining}</span><span>{t("mfa.activeSessions")}: {mfa.active_sessions}</span></div>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="secondary" onClick={() => openMode("recovery")}><KeyRound size={16} />{t("mfa.newRecoveryCodes")}</Button>
+            <Button size="sm" variant="warning" onClick={() => openMode("sessions")}><LogOut size={16} />{t("mfa.revokeSessions")}</Button>
+            <Button size="sm" variant="warning" onClick={() => openMode("disable")}><ShieldOff size={16} />{t("mfa.disable")}</Button>
           </div>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            {!mfa?.enabled ? (
-              <Button type="button" isLoading={startMutation.isPending} onClick={() => startMutation.mutate()}><ShieldCheck size={17} />{t("mfa.setup")}</Button>
-            ) : (
-              <>
-                <Button type="button" variant="secondary" onClick={() => openMode("recovery")}><KeyRound size={17} />{t("mfa.newRecoveryCodes")}</Button>
-                <Button type="button" variant="warning" onClick={() => openMode("sessions")}><LogOut size={17} />{t("mfa.revokeSessions")}</Button>
-                <Button type="button" variant="warning" onClick={() => openMode("disable")}><ShieldOff size={17} />{t("mfa.disable")}</Button>
-              </>
-            )}
-          </div>
-        </CardBody>
-      </Card>
+        </details> : null}
+      </div>
 
       <Modal title={modalTitle(mode, t)} open={Boolean(mode)} onClose={closeModal}>
         <div className="grid gap-4 rounded-3xl bg-white p-4 sm:p-5">

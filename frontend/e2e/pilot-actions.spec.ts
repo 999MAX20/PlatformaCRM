@@ -175,14 +175,14 @@ test("account profile and task notification preferences survive reload", async (
   const newName = `Pilot profile ${Date.now()}`;
   await nameInput.fill(newName);
   const saved = page.waitForResponse(response => response.request().method() === "PATCH" && response.url().endsWith("/api/auth/me/"));
-  await page.getByRole("button", { name: "Сохранить профиль", exact: true }).click();
+  await page.getByRole("button", { name: "Сохранить", exact: true }).click();
   expect((await saved).ok()).toBeTruthy();
   await page.reload();
   await expect(nameInput).toHaveValue(newName);
-  const category = page.locator("#notifications p").filter({ hasText: /^Задачи$/ }).locator("../..");
+  const category = page.getByRole("switch", { name: "Задачи", exact: true });
   for (const enabled of [false, true]) {
     const changed = page.waitForResponse(response => ["POST", "PATCH"].includes(response.request().method()) && response.url().includes("/api/notification-preferences/"));
-    await category.getByRole("button").click();
+    await category.click();
     const result = await changed;
     expect(result.ok()).toBeTruthy();
     expect((await result.json()).in_app_enabled).toBe(enabled);
