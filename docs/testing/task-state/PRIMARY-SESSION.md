@@ -42,6 +42,22 @@
   next, then full gate --base-ref 1e21de8 before normal HEAD:main push; not yet
   published and no new CI result. Cache/fallback implementation not begun.
 
+- Publication candidate 6e27841 committed locally. Full gate on base 1e21de8:
+  Django check/drift and 1217 tests PASS / 1086.331s; npm ci/env/build/budget and
+  2 mobile role checks PASS; Python locks/audit PASS. Final npm audit FAILED on
+  newly reported Axios 1.18.1 advisories (earlier npm report was clean). No push.
+  Retained full-gate.log and npm-audit-full-failure.json; scope remains dependency
+  remediation before publication. Updated only Axios to 1.20.0 in existing range;
+  npm audit now zero. Build/budget and 6 focused desktop transport/MFA/session browser checks PASS
+  on Axios 1.20.0 (axios-build/bundle/ui logs); follow-up commit and full rerun next. Dev dependency audit also zero PASS.
+- Dev Vite was restored from canonical frontend on 5173, PID 28188; HTML/main.tsx HTTP 200.
+  Its verified own binding will be released for the final deterministic install.
+- Independent before-fix cache regression, ignored output test and isolated DB:
+  real owner→foreign_owner in same SPA document fails account-access-summary.
+  Auth API correctly returns user8; retained cached businesses from user2 removes
+  foreign owner's role/navigation. cache-reproducer.log and results retained.
+  This confirms stale frontend access context, not backend tenant bypass.
+
 ## Account Security redesign + device sessions / LOCAL VERIFIED AND ACTIVATED, PUBLICATION BLOCKED, 2026-09-30
 
 - Interface phase (owner annotation2026-09-30): replace User settings card with
