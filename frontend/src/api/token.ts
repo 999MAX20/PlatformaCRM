@@ -15,7 +15,7 @@ export function assertCurrentSession(generation: number | undefined) {
 // Refresh/logout/login responses all mutate the same HttpOnly cookie. Preserve
 // their order as well as guarding the in-memory token against late responses.
 let cookieOperation: Promise<unknown> = Promise.resolve();
-function sessionCookieRequest<T>(generation: number | undefined, request: () => Promise<T>) {
+export function sessionCookieRequest<T>(generation: number | undefined, request: () => Promise<T>) {
   const result = cookieOperation.then(async () => {
     if (generation !== undefined) assertCurrentSession(generation);
     const response = await request();
@@ -160,11 +160,12 @@ export async function requestPasswordReset(payload: PasswordResetRequestPayload)
 }
 
 export async function confirmPasswordReset(payload: PasswordResetConfirmPayload) {
-  const { data } = await axios.post<{ ok: boolean }>(
+  const generation = tokenStorage.getGeneration();
+  const { data } = await sessionCookieRequest(generation, () => axios.post<{ ok: boolean }>(
     `${baseURL}/api/auth/password-reset/confirm/`,
     payload,
-    { withCredentials: true },
-  );
+    cookieRequestOptions,
+  ));
   return data;
 }
 

@@ -2,6 +2,17 @@
 
 This file is the working reference for role-aware behavior in PlatformaCRM.
 
+## Browser account boundaries — 2026-10-01
+
+Within one browser page, every request that replaces or clears the HttpOnly
+refresh cookie shares the login/logout/refresh queue, including password reset,
+password/email changes and MFA disable/session revocation. Generation checks
+reject old responses and continuations after an account transition. A401 refresh
+occurs outside that queue to avoid waiting on itself. Deferred language loading
+retains the initiating generation before saving preferences or applying language.
+These frontend safeguards supplement existing backend authorization; they do
+not introduce cross-tab locking or change roles, session epochs or permissions.
+
 ## Own-device sessions — 2026-09-30
 
 `GET /api/auth/sessions/` lists only the authenticated user's device sessions.

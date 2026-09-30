@@ -1,5 +1,8 @@
-import { apiClient } from "./client";
+import axios, { type AxiosRequestConfig } from "axios";
+import { apiClient, expireBrowserSession } from "./client";
 import {
+  assertCurrentSession,
+  sessionCookieRequest,
   loginWithCredentials,
   loginWithSocial,
   requestPasswordReset as requestPasswordResetToken,
@@ -38,6 +41,32 @@ export type {
   SignupOwnerResponse,
 };
 
+// Security mutations replace the HttpOnly cookie too. Use the same queue as
+// login/logout, but refresh a rejected credential only after leaving the queue.
+// Using apiClient inside the queue would make its interceptor wait on itself.
+async function authenticatedCookieRequest<T>(request: (options: AxiosRequestConfig) => Promise<T>) {
+  const generation = tokenStorage.getGeneration();
+  const send = () => sessionCookieRequest(generation, () => request({
+    baseURL: apiClient.defaults.baseURL, timeout: apiClient.defaults.timeout,
+    withCredentials: true,
+    headers: { Authorization: `Bearer ${tokenStorage.getAccess() || ""}` },
+  }));
+  try {
+    return await send();
+  } catch (error) {
+    if (!axios.isAxiosError(error) || error.response?.status !== 401) throw error;
+    assertCurrentSession(generation);
+    try {
+      await refreshToken();
+      assertCurrentSession(generation);
+      return send();
+    } catch (refreshError) {
+      if (generation === tokenStorage.getGeneration()) expireBrowserSession();
+      throw refreshError;
+    }
+  }
+}
+
 export async function login(payload: LoginPayload) {
   return loginWithCredentials(payload);
 }
@@ -73,9 +102,7 @@ export async function updateCurrentUser(payload: Partial<Pick<CurrentUser, "full
 }
 
 export async function changePassword(payload: { current_password: string; new_password: string; mfa_code?: string }) {
-  const { data } = await apiClient.post<{ ok: boolean }>("/api/auth/change-password/", payload, {
-    withCredentials: true,
-  });
+  const { data } = await authenticatedCookieRequest(options => axios.post<{ ok: boolean }>("/api/auth/change-password/", payload, options));
   return data;
 }
 
@@ -113,7 +140,9 @@ export async function requestEmailChange(payload: { new_email: string; current_p
 }
 
 export async function confirmEmailChange(code: string) {
-  const { data } = await apiClient.post<{ ok: boolean; email: string; access: string }>("/api/auth/change-email/confirm/", { code }, { withCredentials: true });
+  const generation = tokenStorage.getGeneration();
+  const { data } = await authenticatedCookieRequest(options => axios.post<{ ok: boolean; email: string; access: string }>("/api/auth/change-email/confirm/", { code }, options));
+  assertCurrentSession(generation);
   tokenStorage.setAccess(data.access);
   return data;
 }
@@ -147,7 +176,9 @@ export async function regenerateMfaRecoveryCodes(code: string) {
 }
 
 export async function disableMfa(payload: { password: string; code: string; reason: string }) {
-  const { data } = await apiClient.post<({ ok: boolean; access: string } | (MfaPendingResponse & { ok: boolean }))>("/api/auth/mfa/disable/", payload, { withCredentials: true });
+  const generation = tokenStorage.getGeneration();
+  const { data } = await authenticatedCookieRequest(options => axios.post<({ ok: boolean; access: string } | (MfaPendingResponse & { ok: boolean }))>("/api/auth/mfa/disable/", payload, options));
+  assertCurrentSession(generation);
   if (isMfaPendingResponse(data)) {
     tokenStorage.clear();
     return data;
@@ -157,11 +188,13 @@ export async function disableMfa(payload: { password: string; code: string; reas
 }
 
 export async function revokeMfaSessions(code: string) {
-  const { data } = await apiClient.post<{ sessions_revoked: number; access: string }>(
+  const generation = tokenStorage.getGeneration();
+  const { data } = await authenticatedCookieRequest(options => axios.post<{ sessions_revoked: number; access: string }>(
     "/api/auth/mfa/sessions/revoke/",
     { code },
-    { withCredentials: true },
-  );
+    options,
+  ));
+  assertCurrentSession(generation);
   tokenStorage.setAccess(data.access);
   return data;
 }

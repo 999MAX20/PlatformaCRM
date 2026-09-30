@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { updateCurrentUser } from "../../api/auth";
 import { getApiErrorMessage } from "../../api/client";
+import { assertCurrentSession } from "../../api/token";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Select } from "../../components/ui/Select";
@@ -11,6 +12,7 @@ import { prepareLanguage, useI18n, type Language } from "../../lib/i18n";
 import { useAuth } from "../auth/AuthProvider";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { availableStartPages } from "../../lib/startPage";
+import { tokenStorage } from "../../lib/storage";
 import type { UserPreference } from "../../types";
 import { NotificationSoundControl } from "./NotificationSoundControl";
 
@@ -30,11 +32,16 @@ export function InterfaceSettingsCard() {
   }, [user?.preferences?.language, setLanguage]);
   const mutation = useMutation({
     mutationFn: async (value: Pick<UserPreference, "language" | "start_page">) => {
+      const generation = tokenStorage.getGeneration();
       await prepareLanguage(value.language);
-      return updateCurrentUser({ preferences: value });
+      assertCurrentSession(generation);
+      const updated = await updateCurrentUser({ preferences: value });
+      return { updated, generation };
     },
-    onSuccess: async (updated, value) => {
+    onSuccess: async ({ updated, generation }, value) => {
+      assertCurrentSession(generation);
       await refreshUser();
+      assertCurrentSession(generation);
       setLanguage(updated.preferences?.language || value.language);
     },
   });

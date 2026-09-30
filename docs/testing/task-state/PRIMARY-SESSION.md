@@ -131,6 +131,63 @@
   blocked until that gate, the remaining browser matrix and audit complete.
   Matrix already passed desktop and is progressing through tablet; its source
   snapshot is unchanged by recording/committing this candidate.
+- Candidate78216f00f387c1f9cdf9145b88ca7af8afda2fbf committed, not pushed. Fetched
+  FETCH_HEAD and ls-remote main both confirm previousf9d588e; origin/main was a
+  stale tracking ref because configured fetch refspec omits main (no remote drift).
+- Combined browser PASS:144 passed/6 viewport skips,23.6m (final-browser.log),
+  exit0. Skips: mobile-only role case on desktop/tablet; desktop role/command
+  palette on mobile; drag-and-drop board on tablet/mobile. No behavior failure.
+- Full gate on78216f0/basef9d588 started: diff hygiene, drift and system PASS;
+ 1223 backend tests discovered. Intentionally interrupted the owned gate process
+  tree6644/13036 while backend tests ran, because two additional session defects
+  were reproduced before publication. This is INCOMPLETE, not full PASS.
+- Audit probes: first startup exceeded120s under concurrent load, no case ran.
+  Increased only disposable server-start timeout to240s and reran serial browser
+  startup near the matrix close; assertions unchanged. session-audit-before.log:
+  two cases FAIL. Late email-confirm response restored old refresh cookie after
+  foreign login although JS promise correctly rejected. Delayed EN dictionary
+  loading caused one preferences PATCH authenticated as the next account.
+- Bounded repair contract (ZD-034/035): same authorized account/session isolation
+  acceptance, no new permission/policy/backend schema. Reuse the existing cookie
+  operation queue for account operations that replace/clear the refresh cookie,
+  retaining one ordinary401 refresh without a queue deadlock; guard language
+  preparation and its callbacks with the original generation. Add regression
+  evidence for late cookie, queued logout/login, same-session401 and language
+  continuation. Rebuild/affected auth/browser checks, then a new exact full gate.
+  Prior matrix still documents78216f0; recheck affected flows for final candidate.
+- Repair implemented: authenticated account cookie requests use raw Axios within
+  the existing sessionCookieRequest queue, with the ordinary single401 refresh
+  performed after leaving it (no recursive queue wait). Password reset's cookie
+  clear also joins that queue. Explicit generation guards precede access-token
+  acceptance; refresh failure cannot expire a newer account. Language preparation
+  and onSuccess retain original generation through refreshUser/setLanguage.
+- New account-session-continuations.spec.ts covers all five cookie mutation paths,
+  same-session401 and delayed language import. account-recovery.py now runs this
+  plus session-cache, interface, MFA QR/recovery, devices, auth-security and AI job
+  recovery across all three viewports. Build running; regenerated fallback report
+  still has608 operations (none lost through the queue wrapper). TSC PASS.
+  Runtime backend/locks remain unchanged. No new paid AI call or working DB write.
+- Build/i18n/bundle and89 Node policy checks PASS after the account repair
+  (account-recovery-build.log, node-checks-final.log). Browser desktop/tablet
+  passed; mobile is running. The permission reference now records the complete
+  single-page cookie/continuation boundary without claiming cross-tab locking.
+- September30 audit source range: c66250673c2c33fc36fed3eeee7e55ae94673ff3..
+  f9d588e5f95ac156338588d06104c78b536d6ec3, six commits/80 changed files.
+  Reviewed account/avatar/email/device-session services, views, migrations and
+  callers/tests; JWT/MFA rotation and own-user access; client/refresh/cache
+  boundaries; account UI, QR, language/start page, notification sound, header,
+  dashboard fallback; dependency/lock changes and supporting contracts.
+  Findings: ZD-034/035 reproduced before repair, corrected within this task.
+  No additional actionable defect confirmed in that bounded review. This is
+  source + synthetic runtime review, not an independent security certification;
+  no PostgreSQL concurrency, real SMTP, cloud recovery or clinic signoff claimed.
+  Existing Q02/Q03/Q04 remain explicit environment/owner/manual boundaries.
+- Account repair acceptance PASS:75 cases/8.9m, no skips, exit0,
+  account-recovery.log (account-recovery.py command above), all three viewports.
+  Includes21 new regression cases and54 dependent account/auth/AI cases.
+  Runtime diff and generated inventory reviewed; explicit paths only staged.
+  Next: commit this checked repair as final candidate; full gate on original
+  f9d588e base, then reviewed normal push and exact-SHA CI readback.
 
 ## Account publication + audit follow-up / VERIFIED + PUSHED, 2026-09-30
 

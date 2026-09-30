@@ -945,6 +945,34 @@ Copy this section for every new confirmed precedent:
 - Audit rule: session boundaries cover complete asynchronous operations,
   including timers and module-level caches, as well as individual HTTP requests.
 
+### ZD-034 — Account security responses could overwrite a later login cookie
+
+- Confirmed in the September30 audit on78216f0: a delayed email-confirm response
+  arrived after logout and foreign login. The promise was cancelled correctly,
+  but the browser applied its Set-Cookie and replaced the next account's cookie.
+  The isolated probe returned nextAccountCookiePreserved=false; no real mailbox
+  change or production account was used.
+- Same cookie boundary includes password changes/reset, MFA disable and global
+  session revocation. Reuse the login/logout/refresh queue for these operations;
+  perform a single ordinary401 refresh outside that queue to avoid self-deadlock.
+  Generation checks still guard token acceptance and session-expiry callbacks.
+- Status: VERIFIED_BRANCH, expanded75-case browser verification PASS; final gate pending
+  in PRIMARY-SESSION. No backend permissions, migrations or account policy changed.
+- Audit rule: rejecting a stale JavaScript response cannot undo its HttpOnly
+  Set-Cookie. Check ordering of every endpoint that replaces or clears the cookie.
+
+### ZD-035 — Deferred language loading saved preferences as the next account
+
+- Confirmed in the September30 audit on78216f0: pause the EN dictionary import
+  after Save, log out and sign into a different synthetic account, then release
+  it. One preferences PATCH used the new account's authorization.
+- Capture the original session before loading the dictionary; guard the write
+  and completion callbacks before refreshing the user or switching language.
+- Status: VERIFIED_BRANCH, regression and dependent account verification PASS;
+  final gate/publication in PRIMARY-SESSION.
+- Audit rule: a request-level guard cannot protect work deferred before the
+  request starts. Bind asynchronous preparation and completion to one session.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.
