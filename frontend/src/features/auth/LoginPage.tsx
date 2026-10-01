@@ -222,9 +222,9 @@ export function LoginPage() {
           <h1>{t("auth.headline")}</h1>
         </section>
 
-        <section className="serenity-login__form-area" aria-label={t("auth.signIn")}>
+        <section className="serenity-login__form-area" aria-label={t("auth.submit")}>
           <div className="serenity-login__card">
-            <h2>{t("auth.signIn")}</h2>
+            <h2>{t("auth.submit")}</h2>
             <p className="serenity-login__card-copy">{t("auth.signInCopy")}</p>
 
             {sessionExpiredNotice && !error ? (

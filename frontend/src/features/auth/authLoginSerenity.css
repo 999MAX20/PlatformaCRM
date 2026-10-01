@@ -409,6 +409,21 @@
   min-width: 0;
 }
 
+.serenity-login.serenity-login--signal-field {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.serenity-login--signal-field .serenity-login__header {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 72px;
+}
+
+.serenity-login--signal-field .serenity-login__layout {
+  height: 100%;
+  padding-block: 72px;
+}
+
 .serenity-login__badge {
   display: inline-flex;
   width: fit-content;

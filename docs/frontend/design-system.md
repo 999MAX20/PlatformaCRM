@@ -4,6 +4,10 @@ Last updated: 2026-07-17
 
 ## Auth header logo — 2026-10-01
 
+Login centers the left story and right card on the full viewport height, with its
+header positioned independently. The card heading uses the concise localized
+sign-in action (`auth.submit`). Signup retains its separate natural-flow layout.
+
 Login and Sign Up use `frontend/public/brand/platforma-crm-logo-transparent.png`,
 a transparent-background edit of the supplied logo; the original PNG is retained.
 Actual alpha replaces the opaque white rectangle, with no CSS color blending.

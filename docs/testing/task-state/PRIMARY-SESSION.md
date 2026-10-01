@@ -2,6 +2,27 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Login viewport centering and concise heading / LOCALLY VERIFIED, 2026-10-01
+
+- Owner screenshot requests vertically centering the left story and right login
+  card in the viewport and shortening the heading to Войти. Clean base6abec9d;
+  same registered primary/canonical root/codex/ui-testing-toolkit.
+- Reuse login-only signal-field modifier and existing auth.submit locale key.
+  Keep signup unchanged. No auth/API/permission/data/AI/migration impact.
+  Gates: build/bundle, read-only browser geometry/visual check, diff/static,
+  normal push main and actual CI. No working DB writes.
+- Login-only header is positioned above a full-height layout with symmetric
+  padding, so its story/card center on the viewport rather than remaining space
+  below the header. Heading/region use existing localized auth.submit.
+- `.venv/Scripts/python.exe output/login-center-20261001/verify.py build` PASS
+  using isolated_runtime/Vite policy (`build.log`); frontend `npm run check:bundle`
+  PASS (`bundle.log`); `node --test scripts/tests/login-page-policy.test.mjs`:
+  15 PASS (`node.log`). Backend/migrations/full local gate skipped: CSS/copy only.
+- Read-only browser screenshots and geometry:1280x720 story center360/card359.994;
+  mobile393x852 card425.994, document height852. Heading Войти, all controls visible.
+  Temporary viewport reset after inspection. No new tests for reversible styling.
+- Next: static committed range/normal push main/actual CI; final receipt in response.
+
 ## Auth logo background removal / LOCALLY VERIFIED, 2026-10-01
 
 - Owner screenshot proves white PNG rectangle covers the auth background; remove
