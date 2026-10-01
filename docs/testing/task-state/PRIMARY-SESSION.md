@@ -2,8 +2,31 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## CRM workspace reference redesign / IN PROGRESS, 2026-10-01
+## CRM workspace reference redesign / VERIFIED + PUSHED, CI PENDING, 2026-10-01
 
+- Final candidate: de81c595c2e44d4176e4d07a2f00af8f5aa39670, normal-pushed
+  to origin/main and exact remote SHA read back at2026-10-01T04:32UTC.
+  Full gate PASS: `.venv/Scripts/python.exe scripts/codex_verify.py --mode full
+  --base-ref c38a15b85a41f1d0f6b25ee1b6c9bf469bc75bd2`;
+  `output/crm-redesign-20261001/full-gate-final.log`.1230 backend tests in845.303s,
+  migration drift/system checks, deterministic frontend install/build/i18n/types/
+  bundle,2 mobile role smoke checks and dependency audits PASS. Python audit clean;
+  existing DOMPurify/PostHog low advisory remains below the moderate gate threshold.
+  Earlier failed full gate and correction evidence below are retained.
+- Browser acceptance: merged11-spec responsive/role matrix102 PASS/30 conditional
+  viewport/role skips, `output/crm-redesign-20261001/browser-matrix.json`.
+  Final projection recheck5 PASS via `.venv/Scripts/python.exe
+  output/crm-redesign-20261001/browser-projection-final.py` (projection-ui-final.log).
+  Targeted selector/permission/performance suite66 PASS;89 Node checks PASS.
+  All three desktop/mobile screenshots inspected; actual API data intentionally
+  differs from synthetic reference examples. No working DB migration/seed,
+  external provider, deployment or new phase. Exact-SHA CI is pending; closure
+  receipt uses docs-only static/link/diff checks, retaining this runtime evidence.
+  CI36815585542 frontend SUCCESS, backend running when receipt was prepared:
+  https://github.com/999MAX20/PlatformaCRM/actions/runs/36815585542.
+  The final task response reports exact-SHA CI after the receipt publication;
+  this is a point-in-time record, not a claim that pending CI has passed.
+  No implementation or UI acceptance remains; only publication receipt/CI.
 - Source: owner-authorized transfer from existing task «Унифицировать UI
   CRM-таблиц» (01a0f32f-7d02-7263-a53d-496c8f9787f5): implement the complete
   approved redesign of /app/leads, /app/deals and /app/clients in this primary

@@ -982,8 +982,9 @@ Copy this section for every new confirmed precedent:
 - Scoped read projections now expose readable lead tasks and existing client
   manager names; actual related update times determine last activity. Undated
   actions remain undated. Related Business and resource permissions still apply.
-- Status: FIXED_BRANCH; 62 isolated projection/client/lead checks PASS. Integration
-  and final UI evidence remain in PRIMARY-SESSION.
+- Status: INTEGRATED in main de81c59; 66 isolated projection/permission/
+  performance checks and full local gate PASS. Final UI evidence and pending
+  exact-SHA CI are recorded in PRIMARY-SESSION.
 - Audit rule: never label an update timestamp as a deadline or future due date
   as past contact; do not fetch a forbidden team directory to display read fields.
 
@@ -995,8 +996,9 @@ Copy this section for every new confirmed precedent:
 - Stage loading now uses API offsets and preserves its originating query key.
   Reveal count grows on both local reveal and server fetch. Table pages use the
   real result count. Separate viewport sizing avoids conflicting utility classes.
-- Status: FIXED_BRANCH; 51 cards and mobile footer reachability verified; complete
-  transition/table regression and integration are tracked in PRIMARY-SESSION.
+- Status: INTEGRATED in main de81c59; 51 cards, mobile footer,
+  transitions and table pagination verified in the final responsive matrix.
+  Full local gate PASS; exact-SHA CI tracked in PRIMARY-SESSION.
 - Audit rule: test one item beyond server limits, excess stage columns and footer
   geometry against persistent mobile navigation, not just DOM visibility.
 
@@ -1007,7 +1009,8 @@ Copy this section for every new confirmed precedent:
   and therefore treated equally sized different pages as already selected.
 - Ignore editable/control/dialog targets and prevented events; select/deselect
   the current page by IDs while preserving other selections.
-- Status: FIXED_BRANCH; focused browser regression and integration pending in
+- Status: INTEGRATED in main de81c59; focused keyboard/cross-page
+  selection regressions and full local gate PASS; exact-SHA CI tracked in
   PRIMARY-SESSION. Archive still requires its existing confirmation and reason.
 - Audit rule: keyboard shortcuts must respect focused controls; bulk selection
   semantics must be based on identities, not lengths.

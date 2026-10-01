@@ -3,14 +3,17 @@
 ## CRM workspace reference redesign — 2026-10-01
 
 Owner-authorized refinement of the existing leads/deals/clients workspaces is
-in progress. Shared search/filter/column controls and full-height geometry reuse
+implemented, locally verified and integrated in main as de81c59. Shared
+search/filter/column controls and full-height geometry reuse
 the existing workflows; deals gain complete stage loading and real table pages.
 Read projections supply permission-scoped next tasks and manager names, real
 activity timestamps and server quick-view counts. No new lifecycle, permission,
 notification, BusinessEvent, AI approval, migration or deployment policy.
 The approved references and UI contract are in the
 [design system](../frontend/design-system.md#crm-list-and-board-reference-contract--2026-10-01);
-checks, remaining acceptance and publication are tracked in the existing
+Full local gate and responsive UI acceptance passed; exact-SHA CI was still
+running when this receipt was prepared. Checks and publication are tracked in the
+existing
 [primary checkpoint](../testing/task-state/PRIMARY-SESSION.md). Historical closures
 below remain unchanged.
 
