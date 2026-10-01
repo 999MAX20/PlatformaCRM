@@ -743,6 +743,7 @@ export type Client = {
   source_context_json: Record<string, unknown>;
   notes: string;
   manager_user_id?: number | null;
+  manager_name?: string | null;
   is_active?: boolean;
   has_no_reply?: boolean;
   is_vip?: boolean;
@@ -753,6 +754,7 @@ export type Client = {
   conversations_count?: number;
   last_activity_at?: string | null;
   next_step_title?: string;
+  next_step_kind?: "task" | "reply" | "appointment" | "contact";
   next_step_date?: string | null;
   next_step_priority?: Task["priority"] | "";
   is_archived?: boolean;
@@ -796,6 +798,9 @@ export type Lead = {
   lost_at?: string | null;
   lost_by?: Id | null;
   responsible_user: Id | null;
+  next_task_id?: Id | null;
+  next_task_title?: string | null;
+  next_task_due_at?: string | null;
   responsible_name?: string;
   responsible_email?: string;
   ai_score?: number;

@@ -6,6 +6,7 @@ import type { LeadAiInsight, LeadFilter, Translate } from "../types";
 type LeadSummary = {
   total?: number;
   new?: number;
+  in_progress?: number;
   hot?: number;
   unanswered?: number;
   attention?: number;
@@ -38,6 +39,7 @@ export function useLeadsWorkspaceDisplay({
   const filters = useMemo(() => [
     { value: "all" as LeadFilter, label: t("leads.filterAll"), count: leadSummary?.total ?? totalLeadCount },
     { value: "new" as LeadFilter, label: t("leads.filterNew"), count: leadSummary?.new ?? allLeads.filter((lead) => lead.status === "new").length },
+    { value: "in_progress" as LeadFilter, label: t("leads.statusInProgress"), count: leadSummary?.in_progress ?? allLeads.filter((lead) => ["contacted", "in_progress"].includes(lead.status)).length },
     { value: "hot" as LeadFilter, label: t("leads.filterHot"), count: leadSummary?.hot ?? allLeads.filter((lead) => lead.status === "new" && !lead.responsible_user).length },
     { value: "unanswered" as LeadFilter, label: t("leads.filterUnanswered"), count: leadSummary?.unanswered ?? allLeads.filter((lead) => !lead.responsible_user).length },
     { value: "attention" as LeadFilter, label: t("leads.filterAttention"), count: leadSummary?.attention ?? allLeads.filter((lead) => {

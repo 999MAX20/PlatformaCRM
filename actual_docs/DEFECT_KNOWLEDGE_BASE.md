@@ -974,6 +974,44 @@ Copy this section for every new confirmed precedent:
 - Audit rule: a request-level guard cannot protect work deferred before the
   request starts. Bind asynchronous preparation and completion to one session.
 
+### ZD-036 — Workspace previews invented dates and lost real assignee names
+
+- Confirmed against c38a15b during the approved reference redesign: lead next-step
+  cells reused updated_at, undated client tasks showed Today, client activity
+  preferred task deadlines and manager IDs appeared in place of available names.
+- Scoped read projections now expose readable lead tasks and existing client
+  manager names; actual related update times determine last activity. Undated
+  actions remain undated. Related Business and resource permissions still apply.
+- Status: FIXED_BRANCH; 62 isolated projection/client/lead checks PASS. Integration
+  and final UI evidence remain in PRIMARY-SESSION.
+- Audit rule: never label an update timestamp as a deadline or future due date
+  as past contact; do not fetch a forbidden team directory to display read fields.
+
+### ZD-037 — CRM workspace pagination was incomplete or obscured
+
+- Confirmed during redesign: the original board requested increasing limits from
+  an API capped at50; the new regression creates51 deals and eight stages. Mobile
+  bottom navigation also overlapped the workspace pagination.
+- Stage loading now uses API offsets and preserves its originating query key.
+  Reveal count grows on both local reveal and server fetch. Table pages use the
+  real result count. Separate viewport sizing avoids conflicting utility classes.
+- Status: FIXED_BRANCH; 51 cards and mobile footer reachability verified; complete
+  transition/table regression and integration are tracked in PRIMARY-SESSION.
+- Audit rule: test one item beyond server limits, excess stage columns and footer
+  geometry against persistent mobile navigation, not just DOM visibility.
+
+### ZD-038 — Deal selection shortcuts intercepted editing
+
+- Confirmed by code review in the modified DealsPage: global Delete processed
+  selected rows even while typing into search; select-all compared only row counts
+  and therefore treated equally sized different pages as already selected.
+- Ignore editable/control/dialog targets and prevented events; select/deselect
+  the current page by IDs while preserving other selections.
+- Status: FIXED_BRANCH; focused browser regression and integration pending in
+  PRIMARY-SESSION. Archive still requires its existing confirmation and reason.
+- Audit rule: keyboard shortcuts must respect focused controls; bulk selection
+  semantics must be based on identities, not lengths.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

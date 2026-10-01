@@ -1,9 +1,12 @@
+import { useI18n } from "../../../lib/i18n";
+import { ActionMenu } from "../../../components/ui/ActionMenu";
+import { CrmWorkspacePopover } from "../../../components/crm/CrmWorkspacePopover";
+import { CrmWorkspaceToolbar } from "../../../components/crm/CrmWorkspaceToolbar";
 import {
   Columns3,
   Download,
   Filter,
   Flame,
-  Search,
   Share2,
   Upload,
 } from "lucide-react";
@@ -88,182 +91,39 @@ export function LeadsToolbar({
   onShareView: () => void;
   onOpenImport: () => void;
 }) {
+  const { t } = useI18n();
   return (
-    <>
-      <div
-        className="grid gap-2 xl:grid-cols-[minmax(220px,0.75fr)_minmax(170px,220px)_minmax(160px,210px)_auto] xl:items-center"
-        data-testid="leads-filter-toolbar"
-      >
-        <label className="relative block min-w-0">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-platforma-muted"
-            size={18}
-          />
-          <input
-            data-testid="leads-search-input"
-            className="h-9 w-full rounded-control border border-platforma-border bg-surface-card px-9 text-sm font-semibold text-platforma-text outline-none transition placeholder:text-platforma-muted focus:border-brand-300 focus:ring-4 focus:ring-[var(--platforma-focus-ring)]"
-            placeholder={labels.search}
-            value={search}
-            onChange={(event) => onSearchChange(event.target.value)}
-          />
-        </label>
-        <Select
-          data-testid="leads-status-filter"
-          className="h-9 text-xs"
-          value={filter}
-          onChange={(event) => onFilterChange(event.target.value as LeadFilter)}
-          aria-label={labels.status}
-          options={filters.map((item) => ({
-            value: item.value,
-            label: `${item.label} · ${item.count}`,
-          }))}
-        />
-        <Select
-          data-testid="leads-source-filter"
-          className="h-9 text-xs"
-          value={source}
-          onChange={(event) => onSourceChange(event.target.value)}
-          aria-label={labels.source}
-          options={sourceOptions}
-        />
-        <div className="flex min-w-0 flex-wrap items-center justify-start gap-1.5 xl:justify-end">
-          <Button
-            variant="secondary"
-            size="sm"
-            className="h-9 rounded-control px-3"
-            onClick={onToggleSavedFilters}
-          >
-            <Filter size={16} />
-            {labels.filters}
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="h-9 rounded-control px-3"
-            onClick={onToggleMoreMenu}
-          >
-            <Columns3 size={16} />
-            {labels.columns}
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="h-9 rounded-control px-3"
-            onClick={onExportCsv}
-          >
-            <Download size={16} />
-            {labels.exportCsv}
-          </Button>
-          <Button
-            data-testid="leads-import"
-            variant="secondary"
-            size="sm"
-            className="h-9 rounded-control px-3"
-            onClick={onOpenImport}
-          >
-            <Upload size={16} />
-            {labels.import}
-          </Button>
-        </div>
-      </div>
-      {savedFiltersOpen ? (
-        <div data-testid="lead-saved-filters-panel">
-        <div className="mt-3 rounded-card border border-platforma-border bg-surface-muted p-3">
-          <div className="flex min-w-0 items-center gap-2 overflow-x-auto pb-2">
-            {filterPresets.length ? (
-              filterPresets.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  className="shrink-0 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-xs font-bold text-platforma-text hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
-                  onClick={() => onApplyPreset(preset)}
-                >
-                  {preset.name}
-                </button>
-              ))
-            ) : (
-              <span className="py-2 text-xs font-semibold text-platforma-muted">
-                {labels.noSavedFilters}
-              </span>
-            )}
-          </div>
-          <div className="mt-2 flex gap-2 border-t border-platforma-border pt-3">
-            <input
-              className="h-9 min-w-0 flex-1 rounded-control border border-platforma-border bg-surface-card px-3 text-sm font-semibold text-platforma-text outline-none focus:border-brand-300 focus:ring-4 focus:ring-[var(--platforma-focus-ring)]"
-              placeholder={labels.filterPresetName}
-              value={presetName}
-              onChange={(event) => onPresetNameChange(event.target.value)}
-            />
-            <Button
-              variant="secondary"
-              size="sm"
-              className="shrink-0 rounded-control"
-              onClick={onSavePreset}
-            >
-              {labels.saveFilter}
-            </Button>
-          </div>
-        </div>
-        </div>
-      ) : null}
-      {moreMenuOpen ? (
-        <div className="mt-3 grid gap-3 rounded-card border border-platforma-border bg-surface-muted p-3 lg:grid-cols-[minmax(0,1fr)_auto]">
-          <div className="min-w-0">
-            <div className="mb-2 flex items-center gap-2 text-sm font-bold text-platforma-text">
-              <Columns3 size={16} /> {labels.columns}
+    <div data-testid="leads-filter-toolbar">
+      <CrmWorkspaceToolbar search={search} searchLabel={labels.search} searchTestId="leads-search-input" onSearchChange={onSearchChange}
+        value={filter} tabs={filters} onChange={onFilterChange} ariaLabel={labels.status}
+        activeFilters={source ? [{ id: "source", label: labels.source, value: sourceOptions.find((item) => item.value === source)?.label || source }] : []}
+        onClearFilter={() => onSourceChange("")}
+        actions={<>
+          <CrmWorkspacePopover label={labels.filters} icon={<Filter size={16} />} open={savedFiltersOpen} onToggle={onToggleSavedFilters} count={Number(Boolean(source))}>
+            <div data-testid="lead-saved-filters-panel" className="space-y-3">
+              <Select data-testid="leads-status-filter" value={filter} onChange={(event) => onFilterChange(event.target.value as LeadFilter)} aria-label={labels.status} options={filters.map((item) => ({ value: item.value, label: `${item.label} · ${item.count}` }))} />
+              <Select data-testid="leads-source-filter" value={source} onChange={(event) => onSourceChange(event.target.value)} aria-label={labels.source} options={sourceOptions} />
+              <div className="flex flex-wrap gap-2">
+                {filterPresets.length ? filterPresets.map((preset) => <Button key={preset.id} size="sm" variant="secondary" onClick={() => onApplyPreset(preset)}>{preset.name}</Button>) : <span className="text-xs text-platforma-muted">{labels.noSavedFilters}</span>}
+              </div>
+              <input className="platforma-focus-ring h-9 w-full rounded-control border border-platforma-border px-3 text-sm" aria-label={labels.filterPresetName} placeholder={labels.filterPresetName} value={presetName} onChange={(event) => onPresetNameChange(event.target.value)} />
+              <Button size="sm" variant="secondary" onClick={onSavePreset}>{labels.saveFilter}</Button>
             </div>
-            <div className="flex min-w-0 flex-wrap gap-2">
-              {columnOrder.map((column) => (
-                <label
-                  key={column}
-                  className="inline-flex h-8 cursor-pointer items-center gap-2 rounded-control border border-platforma-border bg-surface-card px-3 text-xs font-bold text-platforma-text hover:border-brand-100 hover:bg-surface-warm"
-                >
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns[column]}
-                    onChange={() => onToggleColumn(column)}
-                  />
-                  <span className="truncate">{labels.column(column)}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-wrap items-start gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              className="rounded-control"
-              onClick={onToggleSortByAi}
-            >
-              <Flame size={15} /> {labels.sortByHeat}
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="rounded-control"
-              onClick={onExportCsv}
-            >
-              <Download size={15} /> CSV
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="rounded-control"
-              onClick={onExportExcel}
-            >
-              {labels.exportExcel}
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="rounded-control"
-              onClick={onShareView}
-            >
-              <Share2 size={15} /> {labels.shareView}
-            </Button>
-          </div>
-        </div>
-      ) : null}
-    </>
+          </CrmWorkspacePopover>
+          <CrmWorkspacePopover label={labels.columns} icon={<Columns3 size={16} />} open={moreMenuOpen} onToggle={onToggleMoreMenu}>
+            {columnOrder.map((column) => <label key={column} className="flex items-center gap-3 rounded-control px-2 py-2 text-sm hover:bg-surface-muted">
+              <input type="checkbox" checked={visibleColumns[column]} disabled={column === "lead"} onChange={() => onToggleColumn(column)} />{labels.column(column)}
+            </label>)}
+          </CrmWorkspacePopover>
+          <ActionMenu label={t("leads.moreActions")} items={[
+            { key: "import", label: labels.import, icon: Upload, onSelect: onOpenImport },
+            { key: "csv", label: labels.exportCsv, icon: Download, onSelect: onExportCsv },
+            { key: "excel", label: labels.exportExcel, icon: Download, onSelect: onExportExcel },
+            { key: "sort", label: labels.sortByHeat, icon: Flame, onSelect: onToggleSortByAi },
+            { key: "share", label: labels.shareView, icon: Share2, onSelect: onShareView },
+          ]} />
+        </>}
+      />
+    </div>
   );
 }

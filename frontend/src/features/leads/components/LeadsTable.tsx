@@ -9,6 +9,8 @@ import {
   CRM_TABLE_ROW_GRID_CLASS,
   CRM_TABLE_WIDE_MIN_WIDTH,
 } from "../../../components/crm";
+import { useAuth } from "../../auth/AuthProvider";
+import { hasPermission } from "../../../lib/permissions";
 import { cn } from "../../../lib/cn";
 import { formatDateTime } from "../../../lib/format";
 import type { Client, Id, Lead, Service } from "../../../types";
@@ -75,6 +77,8 @@ function LeadTableRow({
   onContextMenu: (event: React.MouseEvent) => void;
   t: Translate;
 }) {
+  const { user } = useAuth();
+  const canAssign = hasPermission(user, lead.business, "leads", "update") && teamList.length > 0;
   const title = client?.full_name || t("leads.leadFallback", { id: lead.id });
   const isHot = lead.status === "new" && !lead.responsible_user;
   const activeColumns = columnOrder.filter((column) => visibleColumns[column]);
@@ -100,7 +104,7 @@ function LeadTableRow({
             {title}
           </TruncatedText>
           <TruncatedText className="text-xs font-semibold text-platforma-muted">
-            {service?.name || getSourceLabel(lead.source, t)}
+            {service?.name || lead.message || getSourceLabel(lead.source, t)}
           </TruncatedText>
         </span>
       </button>
@@ -144,12 +148,12 @@ function LeadTableRow({
     ),
     manager: (
       <span
-        className="flex items-center gap-2"
+        className="flex min-w-0 items-center gap-2 pr-3"
         onClick={(event) => event.stopPropagation()}
       >
         <ManagerAvatar name={responsibleName} />
-        <select
-          className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent text-xs font-bold text-platforma-muted outline-none hover:border-platforma-border hover:bg-surface-card"
+        {canAssign ? <select
+          className="w-0 min-w-0 flex-1 truncate rounded-lg border border-transparent bg-transparent text-xs font-bold text-platforma-muted outline-none hover:border-platforma-border hover:bg-surface-card"
           value={lead.responsible_user ? String(lead.responsible_user) : ""}
           onChange={(event) =>
             onAssign(
@@ -164,7 +168,7 @@ function LeadTableRow({
               {member.user.full_name || member.user.email}
             </option>
           ))}
-        </select>
+        </select> : <span className="min-w-0 truncate text-sm text-platforma-subtle" title={responsibleName}>{responsibleName || t("leads.withoutManager")}</span>}
       </span>
     ),
     activity: (
@@ -175,10 +179,10 @@ function LeadTableRow({
     next: (
       <span className="min-w-0">
         <TruncatedText className="font-bold text-platforma-text">
-          {nextAction(lead, t)}
+          {lead.next_task_title || nextAction(lead, t)}
         </TruncatedText>
         <span className="block truncate text-xs text-platforma-muted">
-          {formatDateTime(lead.updated_at)}
+          {lead.next_task_due_at ? formatDateTime(lead.next_task_due_at) : null}
         </span>
       </span>
     ),
@@ -206,7 +210,7 @@ function LeadTableRow({
         onClick={(event) => event.stopPropagation()}
       >
         <input
-          className="sr-only"
+          className="peer sr-only"
           type="checkbox"
           checked={bulkSelected}
           onChange={onToggleBulk}
@@ -214,7 +218,7 @@ function LeadTableRow({
         />
         <span
           className={cn(
-            "grid h-5 w-5 place-items-center rounded border",
+            "grid h-5 w-5 place-items-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500",
             bulkSelected
               ? "border-brand-500 bg-brand-500 text-platforma-ink"
               : "border-platforma-border bg-surface-card",
@@ -301,7 +305,7 @@ export function VirtualizedLeadTableRows({
   const gridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeColumns.map((column) => leadColumnWidths[column]).join(" ")} 56px`;
 
   return (
-    <div className="hidden overflow-x-auto lg:block">
+    <div className="hidden lg:block">
       <div
         className="min-w-0"
         style={{
@@ -319,7 +323,7 @@ export function VirtualizedLeadTableRows({
                 client={getClient(lead, clientList)}
                 service={getService(lead, serviceList)}
                 responsibleName={
-                  responsible?.user.full_name || responsible?.user.email
+                  lead.responsible_name || lead.responsible_email || responsible?.user.full_name || responsible?.user.email
                 }
                 aiInsight={
                   aiInsights.get(lead.id) ||

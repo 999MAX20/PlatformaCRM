@@ -1,6 +1,6 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef, useState } from "react";
-import { MousePointer2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronsUpDown, MousePointer2, X } from "lucide-react";
 
 import {
   CrmDataTable,
@@ -14,6 +14,8 @@ import { ClientRow } from "./ClientRow";
 
 export function ClientsTable({
   rows,
+  ordering,
+  onOrderingChange,
   selectedClientId,
   onSelectClient,
   onOpenClient,
@@ -27,6 +29,8 @@ export function ClientsTable({
   t,
 }: {
   rows: ClientTableRow[];
+  ordering: string;
+  onOrderingChange: (ordering: string) => void;
   selectedClientId: number | null;
   onSelectClient: (id: number) => void;
   onOpenClient: (id: number) => void;
@@ -83,9 +87,17 @@ export function ClientsTable({
     setCheckedRows(new Set());
   }
 
+  function sortHeader(field: string, label: string) {
+    const active = ordering.replace(/^-/, "") === field;
+    const Icon = active ? ordering.startsWith("-") ? ArrowDown : ArrowUp : ChevronsUpDown;
+    return <button type="button" className="platforma-focus-ring inline-flex items-center gap-1 rounded-control text-left" onClick={() => onOrderingChange(ordering === field ? `-${field}` : field)}>
+      {label}<Icon size={13} aria-hidden="true" />
+    </button>;
+  }
+
   return (
     <CrmDataTable
-      className={CRM_TABLE_EMBEDDED_CLASS}
+      className={`${CRM_TABLE_EMBEDDED_CLASS} flex-none md:flex-1`}
       contentClassName={CRM_TABLE_CONTENT_CLASS}
       toolbar={
         checkedRows.size ? (
@@ -120,14 +132,14 @@ export function ClientsTable({
     >
       <div
         ref={scrollRef}
-        className="hidden min-h-0 flex-1 overflow-y-auto overflow-x-hidden md:block"
+        className="hidden min-h-0 flex-1 overflow-auto md:block"
         aria-label={t("clients.tableScrollArea")}
       >
         <table
           role="grid"
           aria-label={t("clients.tableAriaLabel")}
           aria-describedby="clients-table-description"
-          className="w-full table-fixed border-separate border-spacing-0 text-sm"
+          className="w-full min-w-[1040px] table-fixed border-separate border-spacing-0 text-sm [&_tbody_td]:border-b [&_tbody_td]:border-platforma-border"
         >
           <caption id="clients-table-description" className="sr-only">
             {t("clients.tableDescription")}
@@ -147,28 +159,28 @@ export function ClientsTable({
                   aria-label={t("clients.selectAllPage")}
                 />
               </th>
-              <th role="columnheader" className="w-[32%] px-2 py-2">
-                {t("clients.client")}
+              <th role="columnheader" className="w-[24%] px-2 py-2">
+                {sortHeader("full_name", t("clients.client"))}
               </th>
               {visibleColumns.has("source") ? (
                 <th role="columnheader" className="w-[12%] px-2 py-2">
-                  {t("clients.source")}
+                  {sortHeader("source", t("clients.source"))}
                 </th>
               ) : null}
               <th role="columnheader" className="w-[12%] px-2 py-2">
-                {t("clients.status")}
+                {sortHeader("list_status", t("clients.status"))}
+              </th>
+              <th role="columnheader" className="w-[15%] px-2 py-2">
+                {sortHeader("last_activity_at", t("clients.lastContact"))}
+              </th>
+              <th role="columnheader" className="px-2 py-2">
+                {sortHeader("next_step_date", t("clients.nextStep"))}
               </th>
               {visibleColumns.has("manager") ? (
                 <th role="columnheader" className="w-[15%] px-2 py-2">
-                  {t("clients.manager")}
+                  {sortHeader("manager_name", t("clients.manager"))}
                 </th>
               ) : null}
-              <th role="columnheader" className="w-[15%] px-2 py-2">
-                {t("clients.lastContact")}
-              </th>
-              <th role="columnheader" className="px-2 py-2">
-                {t("clients.nextStep")}
-              </th>
               <th
                 role="columnheader"
                 className="w-14 px-2 py-2 text-right"
@@ -219,6 +231,8 @@ export function ClientsTable({
       ) : null}
 
       <CrmPagination
+        numbered
+        pageSizeAriaLabel={t("leads.pageSize")}
         shown={rows.length}
         total={totalClients}
         page={page}

@@ -85,6 +85,9 @@ class LeadSerializer(serializers.ModelSerializer):
 
 
 class LeadListSerializer(serializers.ModelSerializer):
+    next_task_id = serializers.IntegerField(read_only=True, allow_null=True)
+    next_task_title = serializers.CharField(read_only=True, allow_null=True)
+    next_task_due_at = serializers.DateTimeField(read_only=True, allow_null=True)
     client_name = serializers.CharField(source="client.full_name", read_only=True)
     client_phone = serializers.CharField(source="client.phone", read_only=True)
     client_email = serializers.CharField(source="client.email", read_only=True)
@@ -112,6 +115,9 @@ class LeadListSerializer(serializers.ModelSerializer):
             "responsible_user",
             "responsible_name",
             "responsible_email",
+            "next_task_id",
+            "next_task_title",
+            "next_task_due_at",
             "ai_score",
             "loss_risk",
             "recommended_action",

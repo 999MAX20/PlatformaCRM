@@ -105,7 +105,7 @@ export function AppLayout() {
   const usesWideCrmWorkspace = /^\/app\/(leads|clients|deals|ai-agents)(?:\/|$)/.test(
     location.pathname,
   );
-  const usesEdgeToEdgeDeals = /^\/app\/deals\/?$/.test(location.pathname);
+  const usesEdgeToEdgeDeals = /^\/app\/(leads|clients|deals)\/?$/.test(location.pathname);
   const aiAgentWorkspaceKey = location.pathname.match(/^\/app\/ai-agents(?:\/[^/]+)?/)?.[0];
   const workspaceAnimationKey = aiAgentWorkspaceKey || location.pathname;
 

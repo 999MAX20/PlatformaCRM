@@ -78,6 +78,77 @@ class CrmProjectionAccessTests(TestCase):
     def setUp(self):
         self.api = APIClient()
 
+    def test_lead_list_next_task_is_scoped_and_dated_independently_of_lead_update(self):
+        due_at = timezone.now() + timedelta(days=7)
+        Task.objects.filter(pk=self.visible_task.pk).update(due_at=due_at)
+        Task.objects.create(
+            business=self.business, lead=self.visible_lead, title='hidden-earlier-task',
+            assignee=self.owner, created_by=self.owner, due_at=timezone.now(),
+        )
+        self.api.force_authenticate(self.operator)
+        response = self.api.get('/api/leads/')
+        self.assertEqual(response.status_code, 200)
+        row = next(item for item in response.data['results'] if item['id'] == self.visible_lead.id)
+        self.assertEqual(row['next_task_id'], self.visible_task.id)
+        self.assertEqual(row['next_task_title'], self.visible_task.title)
+        self.assertEqual(row['next_task_due_at'], due_at.isoformat().replace('+00:00', 'Z'))
+        self.assertNotIn('hidden-earlier-task', json.dumps(response.data))
+
+    def test_lead_list_next_task_excludes_foreign_archived_and_completed_tasks(self):
+        Task.objects.filter(pk=self.visible_task.pk).update(status=Task.Statuses.DONE)
+        Task.objects.create(business=self.foreign, lead=self.visible_lead, title='foreign-task', assignee=self.other_owner)
+        Task.objects.create(business=self.business, lead=self.visible_lead, title='archived-task', is_archived=True)
+        self.api.force_authenticate(self.owner)
+        response = self.api.get('/api/leads/')
+        row = next(item for item in response.data['results'] if item['id'] == self.visible_lead.id)
+        self.assertIsNone(row['next_task_id'])
+        self.assertIsNone(row['next_task_due_at'])
+        self.assertNotIn('foreign-task', json.dumps(response.data))
+
+    def test_disabled_tasks_do_not_reenter_lead_list_next_step(self):
+        BusinessCapability.objects.update_or_create(business=self.business, module_key='tasks', defaults={'is_enabled': False})
+        self.api.force_authenticate(self.owner)
+        response = self.api.get('/api/leads/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(all(row['next_task_id'] is None for row in response.data['results']))
+
+    def test_client_list_manager_name_and_activity_preserve_related_entity_scope(self):
+        self.operator.full_name = 'Visible Operator'
+        self.operator.save(update_fields=['full_name'])
+        self.owner.full_name = 'Hidden Owner'
+        self.owner.save(update_fields=['full_name'])
+        Task.objects.filter(pk=self.visible_task.pk).update(due_at=timezone.now() + timedelta(days=30))
+        self.api.force_authenticate(self.operator)
+        response = self.api.get('/api/clients/')
+        self.assertEqual(response.status_code, 200)
+        row = next(item for item in response.data['results'] if item['id'] == self.customer.id)
+        self.assertEqual(row['manager_name'], 'Visible Operator')
+        self.assertLessEqual(row['last_activity_at'], timezone.now().isoformat().replace('+00:00', 'Z'))
+        self.assertNotIn('Hidden Owner', json.dumps(response.data))
+
+    def test_client_workspace_sorting_and_counts_are_server_scoped(self):
+        self.api.force_authenticate(self.owner)
+        Client.objects.create(business=self.business, full_name='AAA first', source='website')
+        Client.objects.create(business=self.business, full_name='ZZZ last', source='manual')
+        Client.objects.create(business=self.foreign, full_name='AAA foreign')
+        first = self.api.get('/api/clients/', {'ordering': 'full_name', 'page_size': 1})
+        last = self.api.get('/api/clients/', {'ordering': '-full_name', 'page_size': 1})
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(first.data['results'][0]['full_name'], 'AAA first')
+        self.assertEqual(last.data['results'][0]['full_name'], 'ZZZ last')
+        self.assertEqual(first.data['summary']['total'], 3)
+        self.assertEqual(first.data['summary']['new'], 2)
+        self.assertNotIn('AAA foreign', json.dumps(first.data))
+        self.assertEqual(first.data['results'][0]['next_step_kind'], 'contact')
+        self.assertEqual(self.api.get('/api/clients/', {'ordering': '--full_name'}).status_code, 200)
+
+    def test_undated_lead_task_is_not_replaced_by_a_fake_deadline(self):
+        self.api.force_authenticate(self.operator)
+        response = self.api.get('/api/leads/')
+        row = next(item for item in response.data['results'] if item['id'] == self.visible_lead.id)
+        self.assertEqual(row['next_task_title'], self.visible_task.title)
+        self.assertIsNone(row['next_task_due_at'])
+
     def card(self, actor, kind='clients', obj=None):
         self.api.force_authenticate(actor)
         response = self.api.get(f'/api/{kind}/{(obj or self.customer).id}/crm-card/')

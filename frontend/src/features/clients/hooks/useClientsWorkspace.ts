@@ -53,12 +53,22 @@ export function useClientsWorkspace({
   const [source, setSource] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [selectedSegment, setSelectedSegment] = useState("");
+  const [ordering, setOrdering] = useState("-created_at");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_CLIENTS_PAGE_SIZE);
   const [quickFilter, setQuickFilter] = useState<ClientQuickFilter>("all");
   const [visibleClientColumns, setVisibleClientColumns] = useState<
     Set<ClientTableColumn>
-  >(() => new Set(["source"]));
+  >(() => {
+    try {
+      const saved: unknown = JSON.parse(localStorage.getItem("platforma.clients.columns") || "null");
+      if (Array.isArray(saved)) return new Set(saved.filter((item): item is ClientTableColumn => item === "source" || item === "manager"));
+    } catch { /* Use the default view when stored preferences cannot be read. */ }
+    return new Set(["source", "manager"]);
+  });
+  useEffect(() => {
+    localStorage.setItem("platforma.clients.columns", JSON.stringify([...visibleClientColumns]));
+  }, [visibleClientColumns]);
   const [tagDraft, setTagDraft] = useState("");
   const [segmentDraft, setSegmentDraft] = useState<SegmentDraft>({
     name: "",
@@ -77,12 +87,14 @@ export function useClientsWorkspace({
       selectedTag,
       selectedSegment,
       quickFilter,
+      ordering,
       page,
       pageSize,
     ],
     queryFn: () =>
       clientsApi.listFiltered({
         q: debouncedSearch || undefined,
+        ordering,
         source: source || undefined,
         tag: selectedTag || undefined,
         segment: selectedSegment || undefined,
@@ -150,6 +162,7 @@ export function useClientsWorkspace({
 
   const clearAllFilters = useCallback(() => {
     clearSearchFilter();
+    setQuickFilter("all");
     setSource("");
     setSelectedTag("");
     setSelectedSegment("");
@@ -239,7 +252,7 @@ export function useClientsWorkspace({
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, source, selectedTag, selectedSegment, quickFilter]);
+  }, [debouncedSearch, source, selectedTag, selectedSegment, quickFilter, ordering]);
 
   useEffect(() => {
     const safePage = Math.min(page, totalPages);
@@ -306,6 +319,8 @@ export function useClientsWorkspace({
 
   return {
     actionClient,
+    ordering,
+    setOrdering,
     clearAllFilters,
     clearCreateParam,
     clearSearchFilter,

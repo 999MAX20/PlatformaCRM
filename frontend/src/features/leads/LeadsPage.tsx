@@ -8,6 +8,7 @@ import {
 } from "../../components/crm/CrmEntityDrawer";
 import { useNotification } from "../../components/notifications/NotificationProvider";
 import { ErrorState, PageSkeleton } from "../../components/ui/StateViews";
+import { Button } from "../../components/ui/Button";
 import { Modal } from "../../components/ui/Modal";
 import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
@@ -122,6 +123,7 @@ export function LeadsPage() {
     services,
     tasks,
     pageError,
+    retryWorkspace,
     pageErrorMessage,
     isPageLoading,
     allLeads,
@@ -231,12 +233,12 @@ export function LeadsPage() {
   if (createContext.error) return <ErrorState message={createContext.error} />;
   if (createContext.isLoading) return <PageSkeleton />;
   if (isPageLoading) return <PageSkeleton />;
-  if (pageError) return <ErrorState message={pageErrorMessage} />;
+  if (pageError) return <ErrorState message={pageErrorMessage} action={<Button variant="secondary" onClick={retryWorkspace}>{t("common.retry")}</Button>} />;
 
   return (
     <CrmWorkspacePage
-      className="h-auto min-h-[calc(100vh-5.5rem)] overflow-visible"
-      contentClassName="flex-none gap-3"
+        heightClassName="h-[calc(100dvh-10.5rem)] min-h-[360px] lg:h-[calc(100dvh-5.5rem)] lg:min-h-0"
+      contentClassName="gap-3"
       maxWidthClassName="max-w-none"
       testId="leads-workspace-ready"
     >

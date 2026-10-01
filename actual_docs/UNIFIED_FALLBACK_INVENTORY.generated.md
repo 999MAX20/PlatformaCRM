@@ -78,11 +78,11 @@ Detection records which fallback signals currently exist in the owning page sour
 | MERCHANT-SHELL | /app | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:not_detected; recovery:not_detected | owning_page_or_action | frontend/src/components/layout/AppLayout.tsx |
 | MERCHANT-DASHBOARD | /app/dashboard | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/dashboard/DashboardPage.tsx |
 | MERCHANT-ACCOUNT | /app/account | MerchantRoute | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/account/AccountPage.tsx |
-| CRM-LEADS-LIST | /app/leads | leads:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:not_detected | owning_page_or_action | frontend/src/features/leads/LeadsPage.tsx |
+| CRM-LEADS-LIST | /app/leads | leads:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/leads/LeadsPage.tsx |
 | CRM-LEAD-WORKSPACE | /app/leads/:id | leads:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/leads/LeadWorkspacePage.tsx |
 | CRM-DEALS-BOARD | /app/deals | deals:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/deals/DealsPage.tsx |
 | CRM-DEAL-WORKSPACE | /app/deals/:id | deals:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/deals/DealWorkspacePage.tsx |
-| CRM-CLIENTS-LIST | /app/clients | clients:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:not_detected | owning_page_or_action | frontend/src/features/clients/ClientsPage.tsx |
+| CRM-CLIENTS-LIST | /app/clients | clients:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/clients/ClientsPage.tsx |
 | CRM-CLIENT-WORKSPACE | /app/clients/:id | clients:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/clients/ClientWorkspacePage.tsx |
 | EXEC-TASKS-LIST | /app/tasks | tasks:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/tasks/TasksPage.tsx |
 | EXEC-TASK-WORKSPACE | /app/tasks/:id | tasks:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/tasks/TaskWorkspacePage.tsx |
@@ -336,17 +336,17 @@ Detection records which fallback signals currently exist in the owning page sour
 | GET | /api/client-payments/ | query | payments:view/create/manage by operation + clients:view + linked_entity_scope | safe_read | safe read only | manual_payment_ledger | frontend/src/api/payments.ts:23 |
 | POST | /api/client-payments/ | mutation | payments:view/create/manage by operation + clients:view + linked_entity_scope | business_submission_id_and_request_hash | no automatic retry | manual_payment_ledger | frontend/src/api/payments.ts:27 |
 | GET | /api/client-payments/link-options/ | query | payments:view/create/manage by operation + clients:view + linked_entity_scope | safe_read | safe read only | manual_payment_ledger | frontend/src/api/payments.ts:31 |
-| GET | /api/clients/ | query | clients:view | safe_read | safe read only | client_list_or_workspace | frontend/src/api/clients.ts:74#list<br>frontend/src/api/clients.ts:83 |
-| POST | /api/clients/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:74#create |
-| DELETE | /api/clients/:param/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:74#remove |
-| GET | /api/clients/:param/ | query | clients:view | safe_read | safe read only | client_list_or_workspace | frontend/src/api/clients.ts:74#retrieve |
-| PATCH | /api/clients/:param/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:74#update |
-| POST | /api/clients/:param/archive/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:74#archive |
+| GET | /api/clients/ | query | clients:view | safe_read | safe read only | client_list_or_workspace | frontend/src/api/clients.ts:78#list<br>frontend/src/api/clients.ts:87 |
+| POST | /api/clients/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:78#create |
+| DELETE | /api/clients/:param/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:78#remove |
+| GET | /api/clients/:param/ | query | clients:view | safe_read | safe read only | client_list_or_workspace | frontend/src/api/clients.ts:78#retrieve |
+| PATCH | /api/clients/:param/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:78#update |
+| POST | /api/clients/:param/archive/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:78#archive |
 | GET | /api/clients/:param/crm-card/ | query | entity_view_permission | safe_read | safe read only | crm_entity_drawer | frontend/src/api/crmCards.ts:13 |
-| POST | /api/clients/:param/merge-dry-run/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:121 |
-| POST | /api/clients/:param/merge/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:117 |
-| POST | /api/clients/:param/restore/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:74#restore |
-| POST | /api/clients/check-duplicates/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:113 |
+| POST | /api/clients/:param/merge-dry-run/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:125 |
+| POST | /api/clients/:param/merge/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:121 |
+| POST | /api/clients/:param/restore/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:78#restore |
+| POST | /api/clients/check-duplicates/ | mutation | clients:view | none_proven | no automatic retry | client_list_or_workspace | frontend/src/api/clients.ts:117 |
 | GET | /api/connector-credentials/ | query | integrations:view | safe_read | safe read only | integration_details | frontend/src/api/connectors.ts:357#list |
 | POST | /api/connector-credentials/ | mutation | integrations:view | none_proven | no automatic retry | integration_details | frontend/src/api/connectors.ts:357#create |
 | DELETE | /api/connector-credentials/:param/ | mutation | integrations:view | none_proven | no automatic retry | integration_details | frontend/src/api/connectors.ts:357#remove |

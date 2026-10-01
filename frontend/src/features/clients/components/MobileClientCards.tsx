@@ -20,7 +20,7 @@ export function MobileClientCards({
   t: Translate;
 }) {
   return (
-    <div className="space-y-3 p-3 md:hidden">
+    <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 md:hidden">
       {rows.map((row) => (
         <article
           key={row.client.id}

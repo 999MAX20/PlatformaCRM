@@ -4,7 +4,6 @@ import { CheckCheck, Plus, SlidersHorizontal } from "lucide-react";
 import {
   CrmDataTable,
   CrmTableSurface,
-  CRM_TABLE_ACTIONS_COLUMN,
   CRM_TABLE_CHECKBOX_COLUMN,
   CRM_TABLE_HEADER_GRID_CLASS,
   CRM_TABLE_MIN_WIDTH,
@@ -147,7 +146,7 @@ export function LeadsWorkspaceTable({
   const activeTableColumns = columnOrder.filter(
     (column) => visibleColumns[column],
   );
-  const tableGridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeTableColumns.map((column) => leadColumnWidths[column]).join(" ")} ${CRM_TABLE_ACTIONS_COLUMN}`;
+  const tableGridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeTableColumns.map((column) => leadColumnWidths[column]).join(" ")} 56px`;
   const tableGridMinWidth =
     activeTableColumns.length > 5
       ? CRM_TABLE_WIDE_MIN_WIDTH
@@ -170,7 +169,7 @@ export function LeadsWorkspaceTable({
 
   return (
     <CrmTableSurface
-      className="flex-none overflow-visible rounded-card border border-platforma-border bg-surface-card shadow-card"
+      className="rounded-card border border-platforma-border bg-surface-card shadow-card"
       filtersClassName="border-b border-platforma-border bg-surface-card px-4 py-3"
       filters={
         <LeadsToolbar
@@ -222,10 +221,11 @@ export function LeadsWorkspaceTable({
       }
     >
       <CrmDataTable
-        className="rounded-none border-0 bg-transparent shadow-none"
-        contentClassName="min-h-0"
+        className="flex min-h-0 flex-1 flex-col rounded-none border-0 bg-transparent shadow-none"
+        contentClassName="flex min-h-0 flex-1 flex-col"
       >
-        <div className="hidden shrink-0 overflow-x-auto lg:block">
+        <div className="min-h-0 flex-1 overflow-auto">
+        <div className="sticky top-0 z-10 hidden bg-surface-card lg:block">
           <div
             className={CRM_TABLE_HEADER_GRID_CLASS}
             style={{
@@ -235,7 +235,7 @@ export function LeadsWorkspaceTable({
           >
             <label className="flex h-5 w-5 items-center justify-center">
               <input
-                className="sr-only"
+                className="peer sr-only"
                 type="checkbox"
                 checked={allPageRowsSelected}
                 onChange={onToggleAllPageRows}
@@ -243,7 +243,7 @@ export function LeadsWorkspaceTable({
               />
               <span
                 className={cn(
-                  "grid h-5 w-5 place-items-center rounded border",
+                  "grid h-5 w-5 place-items-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500",
                   allPageRowsSelected
                     ? "border-brand-500 bg-brand-500 text-platforma-ink"
                     : "border-platforma-border bg-surface-card",
@@ -258,7 +258,7 @@ export function LeadsWorkspaceTable({
             <span>{t("leads.actions")}</span>
           </div>
         </div>
-        <div className="min-h-0 overflow-visible">
+        <div className="min-h-0">
           {!rows.length ? (
             <div className="grid h-full min-h-[320px] place-items-center p-5">
               <div className="max-w-sm text-center">
@@ -352,12 +352,12 @@ export function LeadsWorkspaceTable({
             </>
           )}
         </div>
+        </div>
         <LeadsPagination
           page={safePage}
-          pageCount={pageCount}
           pageSize={pageSize}
-          pageSizeOptions={[10, 25, 50]}
-          visiblePages={visiblePages}
+          total={totalLeadCount}
+          shown={pageRows.length}
           label={t("leads.tableShowingRange", {
             start: pageStart,
             end: pageEnd,

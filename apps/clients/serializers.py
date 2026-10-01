@@ -7,6 +7,7 @@ from apps.core.permissions import accessible_businesses
 
 class ClientSerializer(serializers.ModelSerializer):
     manager_user_id = serializers.IntegerField(read_only=True, allow_null=True)
+    manager_name = serializers.CharField(read_only=True, allow_null=True, allow_blank=True)
     is_active = serializers.BooleanField(read_only=True)
     has_no_reply = serializers.BooleanField(read_only=True)
     is_vip = serializers.BooleanField(read_only=True)
@@ -17,6 +18,7 @@ class ClientSerializer(serializers.ModelSerializer):
     conversations_count = serializers.IntegerField(read_only=True)
     last_activity_at = serializers.DateTimeField(read_only=True, allow_null=True)
     next_step_title = serializers.CharField(read_only=True, allow_blank=True)
+    next_step_kind = serializers.CharField(read_only=True)
     next_step_date = serializers.DateTimeField(read_only=True, allow_null=True)
     next_step_priority = serializers.CharField(read_only=True, allow_blank=True)
 
@@ -42,6 +44,7 @@ class ClientSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "manager_user_id",
+            "manager_name",
             "is_active",
             "has_no_reply",
             "is_vip",
@@ -52,6 +55,7 @@ class ClientSerializer(serializers.ModelSerializer):
             "conversations_count",
             "last_activity_at",
             "next_step_title",
+            "next_step_kind",
             "next_step_date",
             "next_step_priority",
         ]

@@ -3,6 +3,8 @@ import { Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useSearchParams } from "react-router";
 
+import { getApiErrorMessage } from "../../api/client";
+import { Button } from "../../components/ui/Button";
 import { dealsApi } from "../../api/deals";
 import {
   CrmEntityDrawer,
@@ -10,6 +12,7 @@ import {
 } from "../../components/crm/CrmEntityDrawer";
 import {
   CrmDataTable,
+  CrmPagination,
   CrmTableSurface,
   CrmWorkspacePage,
   CRM_TABLE_CONTENT_CLASS,
@@ -49,6 +52,9 @@ export function DealsPage() {
   const { notifyError } = useActionFeedback();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [viewMode, setViewMode] = useState<"table" | "kanban">(() => localStorage.getItem("platforma.deals.view") === "table" ? "table" : "kanban");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const { filters, updateFilters, resetFilters, activeFilterCount } =
     useDealFilters();
   const {
@@ -63,7 +69,10 @@ export function DealsPage() {
     boardHasMoreByStage,
     boardIsFetchingMore,
     loadMoreBoardDeals,
-  } = useDeals(filters);
+    boardLoadMoreError,
+    retryBoard,
+  } = useDeals(filters, viewMode, page, pageSize);
+  useEffect(() => setPage(1), [filters, pageSize]);
   const { activePipeline, activeStages, rows } = useDealMetrics(
     data,
     filters,
@@ -77,7 +86,7 @@ export function DealsPage() {
   }, [rows]);
   const quickCounts = useMemo(
     () => ({
-      all: data.deals.length,
+      all: summary.data?.total ?? 0,
       mine: summary.data?.mine ?? 0,
       hot:
         summary.data?.hot ??
@@ -92,7 +101,7 @@ export function DealsPage() {
         ).length,
     }),
     [
-      data.deals.length,
+      summary.data?.total,
       rows,
       summary.data?.hot,
       summary.data?.mine,
@@ -187,6 +196,8 @@ export function DealsPage() {
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      const target = event.target;
+      if (event.defaultPrevented || (target instanceof Element && target.closest('input, textarea, select, button, [contenteditable="true"], [role="dialog"]'))) return;
       const index = sortedRows.findIndex(
         (deal) => deal.id === selection.selectedDealId,
       );
@@ -249,6 +260,7 @@ export function DealsPage() {
     queries.pipelineStages.error ||
     deals.error ||
     board.error ||
+    boardLoadMoreError ||
     summary.error ||
     teamMembers.error;
   const dealWorkspaceReady =
@@ -260,19 +272,29 @@ export function DealsPage() {
   return (
     <>
       <CrmWorkspacePage
-        className="px-0 py-2 sm:px-0"
+        heightClassName="h-[calc(100dvh-10.5rem)] min-h-[360px] lg:h-[calc(100dvh-5.5rem)] lg:min-h-0"
         contentClassName="gap-0"
         maxWidthClassName="max-w-none"
         testId={dealWorkspaceReady ? "deals-workspace-ready" : undefined}
       >
+        {dealWorkspaceError ? <ErrorState message={getApiErrorMessage(dealWorkspaceError)} action={<Button variant="secondary" onClick={() => {
+          void Promise.all([
+            viewMode === "table" ? deals.refetch() : retryBoard(),
+            summary.refetch(), queries.clients.refetch(), queries.pipelines.refetch(), queries.pipelineStages.refetch(),
+            hasPermission(user, business.id, "team") ? teamMembers.refetch() : undefined,
+          ]);
+        }}>{t("common.retry")}</Button>} /> : null}
         {!data.pipelines.length ? (
           <ErrorState message={t("deals.noPipeline")} />
         ) : (
           <CrmTableSurface
-            filtersClassName="border-b-0 p-0"
             filters={
                 <DealsFilters
                   filters={filters}
+                  pipelines={data.pipelines}
+                  activePipeline={activePipeline}
+                  viewMode={viewMode}
+                  onViewModeChange={(value) => { setViewMode(value); localStorage.setItem("platforma.deals.view", value); }}
                   stages={activeStages}
                   teamMembers={data.teamMembers}
                   quickCounts={quickCounts}
@@ -288,7 +310,7 @@ export function DealsPage() {
               >
                 <DealsList
                   rows={sortedRows}
-                  viewMode="kanban"
+                  viewMode={viewMode}
                   stages={activeStages}
                   selectedDealId={selection.selectedDealId}
                   selectedIds={selection.selectedIds}
@@ -301,12 +323,16 @@ export function DealsPage() {
                   onResetFilters={resetFilters}
                   onMore={openDealDrawer}
                   onStageChange={actions.handleStageChange}
+                  stageCounts={new Map((board.data?.stages || []).map((stage) => [String(stage.id), stage.count]))}
                   hasMoreByStage={boardHasMoreByStage}
                   onLoadMoreStage={loadMoreBoardDeals}
                   isLoadingMore={boardIsFetchingMore}
                   t={t}
                 />
               </CrmDataTable>
+              {viewMode === "table" ? <CrmPagination numbered shown={rows.length} total={deals.data?.count || 0} page={page} pageSize={pageSize} onPageChange={setPage} onPageSizeChange={setPageSize}
+                rangeLabel={t("leads.tableShowingRange", { start: rows.length ? (page - 1) * pageSize + 1 : 0, end: (page - 1) * pageSize + rows.length, total: deals.data?.count || 0 })}
+                previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")} pageSizeAriaLabel={t("leads.pageSize")} pageSizeLabel={(size) => String(size)} /> : null}
           </CrmTableSurface>
         )}
       </CrmWorkspacePage>

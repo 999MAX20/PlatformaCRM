@@ -40,8 +40,7 @@ export function useLeadsTableState({
   const [visibleColumns, setVisibleColumns] = useState<Record<LeadColumnKey, boolean>>(() => {
     const saved = loadJson<Partial<Record<LeadColumnKey, boolean>>>(LEAD_COLUMNS_KEY, {});
     const next = { ...defaultVisibleColumns, ...saved };
-    const visibleCount = leadColumnOrder.filter((column) => next[column]).length;
-    return visibleCount > 5 ? defaultVisibleColumns : next;
+    return { ...next, lead: true };
   });
   const [columnOrder, setColumnOrder] = useState<LeadColumnKey[]>(() => {
     const saved = loadJson<LeadColumnKey[]>(LEAD_COLUMN_ORDER_KEY, leadColumnOrder);

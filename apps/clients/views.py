@@ -27,7 +27,7 @@ class ClientViewSet(TenantModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset(apply_quick_filter=False))
-        summary = build_client_summary(queryset)
+        summary = build_client_summary(queryset, user=request.user)
         response = super().list(request, *args, **kwargs)
         if isinstance(response.data, dict):
             response.data["summary"] = {
@@ -35,6 +35,9 @@ class ClientViewSet(TenantModelViewSet):
                 "active": summary["active"],
                 "no_reply": summary["no_reply"],
                 "repeat": summary["repeat"],
+                "new": summary["new"],
+                "vip": summary["vip"],
+                "mine": summary["mine"],
             }
             response.data["facets"] = build_client_facets(queryset)
         return response

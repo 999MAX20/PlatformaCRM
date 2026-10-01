@@ -1,15 +1,21 @@
-import { Search, X } from "lucide-react";
+import { SlidersHorizontal, Columns3, List } from "lucide-react";
 
-import { CrmFilterChips, type CrmActiveFilter } from "../../../components/crm";
+import { type CrmActiveFilter } from "../../../components/crm";
+import { CrmWorkspaceToolbar } from "../../../components/crm/CrmWorkspaceToolbar";
+import { CrmWorkspacePopover } from "../../../components/crm/CrmWorkspacePopover";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
-import type { PipelineStage, TeamMember } from "../../../types";
+import type { Pipeline, PipelineStage, TeamMember } from "../../../types";
 import type { DealFiltersState, DealQuickFilter, DealStatusFilter, Translate } from "../types";
 import { dealStageLabel, sourceLabel } from "../utils/dealHelpers";
 
 type DealsFiltersProps = {
   filters: DealFiltersState;
+  pipelines: Pipeline[];
+  activePipeline: number;
+  viewMode: "table" | "kanban";
+  onViewModeChange: (value: "table" | "kanban") => void;
   stages: PipelineStage[];
   teamMembers: TeamMember[];
   quickCounts: Record<DealQuickFilter, number>;
@@ -43,7 +49,7 @@ function quickLabel(value: DealQuickFilter, t: Translate) {
   return labels[value];
 }
 
-export function DealsFilters({ filters, stages, teamMembers, quickCounts, onChange, onReset, t }: DealsFiltersProps) {
+export function DealsFilters({ filters, pipelines, activePipeline, viewMode, onViewModeChange, stages, teamMembers, quickCounts, onChange, onReset, t }: DealsFiltersProps) {
   const activeFilters: CrmActiveFilter[] = [
     filters.search ? { id: "search", label: t("common.search"), value: filters.search } : null,
     filters.statusFilter !== "open" ? { id: "statusFilter", label: t("deals.status"), value: statusLabel(filters.statusFilter, t) } : null,
@@ -69,18 +75,13 @@ export function DealsFilters({ filters, stages, teamMembers, quickCounts, onChan
   }
 
   return (
-    <CrmFilterChips
-      compact
-      testId="deals-filter-bar"
-      value={filters.quickFilter}
-      options={quickFilters.map((value) => ({ value, label: quickLabel(value, t), count: quickCounts[value] }))}
-      onChange={(quickFilter) => onChange({ quickFilter })}
-      advancedLabel={t("deals.filters")}
-      activeFilters={activeFilters}
-      onClearFilter={clearFilter}
-      onClearAll={onReset}
-      ariaLabel={t("deals.filters")}
-      advanced={
+    <div data-testid="deals-filter-bar">
+      <CrmWorkspaceToolbar search={filters.search} searchLabel={t("deals.queueSearch")} searchTestId="deals-search-input" onSearchChange={(search) => onChange({ search })}
+        value={filters.quickFilter} tabs={quickFilters.map((value) => ({ value, label: quickLabel(value, t), count: quickCounts[value] }))}
+        onChange={(quickFilter) => onChange({ quickFilter })} activeFilters={activeFilters} onClearFilter={clearFilter} onClearAll={onReset} clearAllLabel={t("deals.reset")} ariaLabel={t("deals.filters")}
+        actions={<>
+          <Select value={String(activePipeline)} onChange={(event) => onChange({ pipelineId: event.target.value, stageFilter: "all" })} options={pipelines.map((pipeline) => ({ value: String(pipeline.id), label: pipeline.name }))} aria-label={t("deals.pipeline")} className="h-10 max-w-48" />
+          <CrmWorkspacePopover label={t("deals.filters")} icon={<SlidersHorizontal size={16} />} count={activeFilters.filter((item) => item.id !== "search").length}>
         <div className="grid gap-2">
           <div className="grid gap-2 md:grid-cols-2">
             <Select data-testid="deals-status-filter" value={filters.statusFilter} onChange={(event) => onChange({ statusFilter: event.target.value as DealStatusFilter })} options={statusFilters.map((value) => ({ value, label: statusLabel(value, t) }))} className="h-9 text-xs" aria-label={t("deals.status")} />
@@ -106,20 +107,13 @@ export function DealsFilters({ filters, stages, teamMembers, quickCounts, onChan
             </Button>
           </div>
         </div>
-      }
-    >
-      <div className="relative w-full min-w-[210px] md:w-[270px]">
-        <Input
-          data-testid="deals-search-input"
-          value={filters.search}
-          onChange={(event) => onChange({ search: event.target.value })}
-          placeholder={t("deals.queueSearch")}
-          leftIcon={<Search size={15} />}
-          rightIcon={filters.search ? <button type="button" onClick={() => onChange({ search: "" })} className="rounded-full p-1 text-platforma-faint hover:bg-surface-muted hover:text-platforma-text" aria-label={t("deals.clearSearch")}><X size={13} /></button> : null}
-          className="h-8 min-h-8 text-xs"
-          aria-label={t("common.search")}
-        />
-      </div>
-    </CrmFilterChips>
+          </CrmWorkspacePopover>
+          <div role="group" aria-label={t("deals.viewTable")} className="flex overflow-hidden rounded-control border border-platforma-border">
+            <Button variant={viewMode === "kanban" ? "secondary" : "ghost"} className="h-10 rounded-none" aria-pressed={viewMode === "kanban"} onClick={() => onViewModeChange("kanban")}><Columns3 size={16} />{t("deals.viewKanban")}</Button>
+            <Button variant={viewMode === "table" ? "secondary" : "ghost"} className="h-10 rounded-none" aria-pressed={viewMode === "table"} onClick={() => onViewModeChange("table")}><List size={16} />{t("deals.viewTable")}</Button>
+          </div>
+        </>}
+      />
+    </div>
   );
 }

@@ -70,7 +70,8 @@ test("deal kanban exposes one dense localized canonical pipeline", async ({
     };
   });
   expect(layoutMetrics).not.toBeNull();
-  expect(layoutMetrics!.filterHeight).toBeLessThanOrEqual(50);
+  // Approved October1 reference has a toolbar plus a separate quick-view row.
+  expect(layoutMetrics!.filterHeight).toBeLessThanOrEqual(104);
   expect(layoutMetrics!.boardWidth).toBeGreaterThan(
     layoutMetrics!.viewportWidth * 0.92,
   );

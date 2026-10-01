@@ -26,6 +26,7 @@ from apps.core.viewsets import TenantModelViewSet
 from apps.core.work_queues import stale_leads_queryset
 from apps.leads.forms_service import log_lead_form_submission_error, submit_lead_form
 from apps.leads.models import Lead, LeadForm, LeadFormField, LeadFormSubmission, LeadFormSubmissionError
+from apps.leads.selectors import annotate_lead_next_task
 from apps.leads.serializers import (
     CreateAppointmentFromLeadSerializer,
     CreateTaskFromLeadSerializer,
@@ -78,6 +79,8 @@ class LeadViewSet(TenantModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        if self.action == "list":
+            queryset = annotate_lead_next_task(queryset, actor=self.request.user)
         client_ids = self.parse_query_id_list("client_ids")
         if client_ids:
             queryset = queryset.filter(client_id__in=client_ids)

@@ -39,6 +39,9 @@ export type ClientTableRow = {
 };
 
 export type ClientKpi = {
+  new?: number;
+  vip?: number;
+  mine?: number;
   total: number;
   active: number;
   noReply: number;

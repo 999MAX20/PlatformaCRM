@@ -7,6 +7,9 @@ export type ClientListSummary = {
   active: number;
   no_reply: number;
   repeat: number;
+  new?: number;
+  vip?: number;
+  mine?: number;
 };
 
 export type ClientListFacets = {
@@ -21,6 +24,7 @@ export type ClientListFacets = {
 
 type ClientListFilterParams = {
   q?: string;
+  ordering?: string;
   source?: string;
   tag?: Id | string;
   segment?: Id | string;

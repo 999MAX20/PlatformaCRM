@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
+import { Button } from "../../components/ui/Button";
 import { PaymentsJournal } from "../payments/PaymentsJournal";
 import { hasPermission } from "../../lib/permissions";
 
@@ -42,6 +43,8 @@ export function ClientsPage() {
     null,
   );
   const {
+    ordering,
+    setOrdering,
     clearAllFilters,
     clearCreateParam,
     clearSearchFilter,
@@ -61,6 +64,7 @@ export function ClientsPage() {
     quickFilter,
     rows,
     search,
+    setSearch,
     segmentDraft,
     segmentOpen,
     segmentOptions,
@@ -294,12 +298,13 @@ export function ClientsPage() {
     <>
       {paymentsOpen && <PaymentsJournal key={business.id} onClose={() => setPaymentsOpen(false)} />}
       <CrmWorkspacePage
+        heightClassName="h-[calc(100dvh-10.5rem)] min-h-[360px] lg:h-[calc(100dvh-5.5rem)] lg:min-h-0"
         maxWidthClassName="max-w-none"
         testId={pageError ? undefined : "clients-workspace-ready"}
       >
         {pageError ? (
           <div className="mb-3">
-            <ErrorState message={getApiErrorMessage(pageError)} />
+            <ErrorState message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />
           </div>
         ) : null}
 
@@ -311,6 +316,7 @@ export function ClientsPage() {
                   quickFilter={quickFilter}
                   onQuickFilterChange={setQuickFilter}
                   search={search}
+                  onSearchChange={setSearch}
                   source={source}
                   onSourceChange={setSource}
                   selectedTag={selectedTag}
@@ -339,6 +345,8 @@ export function ClientsPage() {
               />
               <ClientsTable
                 rows={rows}
+                ordering={ordering}
+                onOrderingChange={setOrdering}
                 selectedClientId={selectedClientId}
                 onSelectClient={selectClient}
                 onOpenClient={(id) => openClientCard(id)}

@@ -51,7 +51,7 @@ test.describe("FC-002 shared search and filter contracts", () => {
         route: "/app/deals",
         ready: "deals-workspace-ready",
         input: "deals-search-input",
-        endpoint: /\/api\/deals\/(?:\?.*)?$/,
+        endpoint: /\/api\/deals\/board\/(?:\?.*)?$/,
       },
       {
         route: "/app/tasks",
@@ -112,11 +112,13 @@ test.describe("FC-002 shared search and filter contracts", () => {
 
     const status = page.getByTestId("leads-status-filter");
     const search = page.getByTestId("leads-search-input");
+    await page.getByTestId("leads-filter-toolbar").getByRole("button", { name: /Фильтры/ }).click();
     await status.selectOption("new");
+    await page.keyboard.press("Escape");
     await typeOneCharacterAtATime(search, "alpha");
     await page.waitForTimeout(700);
 
-    await expect(status).toHaveValue("new");
+    await expect(page.getByTestId("leads-filter-toolbar").getByRole("button", { name: /^Новые/ })).toHaveAttribute("aria-pressed", "true");
     await expect(search).toHaveValue("alpha");
     await expect(search).toBeFocused();
   });

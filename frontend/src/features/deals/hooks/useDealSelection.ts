@@ -25,7 +25,9 @@ export function useDealSelection(rows: DealRow[]) {
 
   function selectAll() {
     setSelectedIds((current) =>
-      current.length === rows.length ? [] : rows.map((deal) => deal.id),
+      rows.every((deal) => current.includes(deal.id))
+        ? current.filter((id) => !rows.some((deal) => deal.id === id))
+        : [...new Set([...current, ...rows.map((deal) => deal.id)])],
     );
   }
 

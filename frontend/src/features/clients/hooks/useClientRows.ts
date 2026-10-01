@@ -21,6 +21,9 @@ export function useClientRows({
     active: number;
     no_reply: number;
     repeat: number;
+    new?: number;
+    vip?: number;
+    mine?: number;
   };
 }) {
   const tableRows = useMemo<ClientTableRow[]>(() => {
@@ -53,11 +56,13 @@ export function useClientRows({
         status,
         lastContactAt: client.last_activity_at || client.updated_at || null,
         nextStep: {
-          title: client.next_step_title || "",
+          title: client.next_step_kind && client.next_step_kind !== "task"
+            ? t(`clients.nextStepKind.${client.next_step_kind}`)
+            : client.next_step_title || "",
           date: client.next_step_date || null,
           priority: (client.next_step_priority || "normal") as Task["priority"],
         },
-        manager: latestManagerId ? t("clients.managerWithId", { id: latestManagerId }) : "",
+        manager: client.manager_name || (latestManagerId ? t("clients.managerWithId", { id: latestManagerId }) : ""),
         managerUserId: isMine ? currentUserId || null : (latestManagerId ? Number(latestManagerId) : null),
       };
     });
@@ -69,6 +74,9 @@ export function useClientRows({
 
   const kpi = useMemo<ClientKpi>(
     () => ({
+      new: serverSummary?.new,
+      vip: serverSummary?.vip,
+      mine: serverSummary?.mine,
       total: serverSummary?.total ?? (typeof totalOverride === "number" ? totalOverride : tableRows.length),
       active: serverSummary?.active ?? tableRows.filter((row) => row.status === "active" || row.status === "vip").length,
       noReply: serverSummary?.no_reply ?? tableRows.filter((row) => row.status === "no_reply").length,

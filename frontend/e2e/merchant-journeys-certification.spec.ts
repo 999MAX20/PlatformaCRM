@@ -336,7 +336,8 @@ test.describe("FC-006 pilot merchant journeys", () => {
 
     await page.goto("/app/leads");
     await expect(page.getByTestId("leads-workspace-ready")).toBeVisible();
-    await page.getByTestId("leads-import").click();
+    await page.getByTestId("leads-filter-toolbar").getByTestId("row-actions-trigger").click();
+    await page.getByRole("menuitem", { name: /Импорт/ }).click();
     await expect(page.getByTestId("leads-import-modal")).toBeVisible();
 
     const csv = [

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { dealsApi, type DealListParams } from "../../../api/deals";
@@ -7,11 +7,14 @@ import { useActiveBusiness } from "../../../hooks/useBusiness";
 import { useEntityData } from "../../../hooks/useEntityData";
 import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import type { ActivityEvent, BotConversation, Id, Lead, Task } from "../../../types";
+import { useDealBoard } from "./useDealBoard";
+import { useAuth } from "../../auth/AuthProvider";
+import { hasPermission } from "../../../lib/permissions";
 import type { DealFiltersState } from "../types";
 
-export function useDeals(filters?: DealFiltersState) {
+export function useDeals(filters?: DealFiltersState, viewMode: "table" | "kanban" = "kanban", page = 1, pageSize = 20) {
   const { business } = useActiveBusiness();
-  const [boardLimit, setBoardLimit] = useState(25);
+  const { user } = useAuth();
   const debouncedSearch = useDebouncedValue(filters?.search || "", 300);
   const entityData = useEntityData({
     clients: true,
@@ -21,7 +24,7 @@ export function useDeals(filters?: DealFiltersState) {
   const teamMembers = useQuery({
     queryKey: ["team-members", business?.id],
     queryFn: () => teamApi.members(business?.id),
-    enabled: Boolean(business),
+    enabled: hasPermission(user, business?.id, "team"),
     retry: false,
   });
 
@@ -30,7 +33,8 @@ export function useDeals(filters?: DealFiltersState) {
   const listParams = useMemo<DealListParams>(() => {
     const params: DealListParams = {
       pipeline: activePipeline || undefined,
-      page_size: 100,
+      page_size: pageSize,
+      page,
       ordering: "-updated_at",
     };
     if (!filters) return params;
@@ -39,33 +43,28 @@ export function useDeals(filters?: DealFiltersState) {
     if (filters.ownerFilter) params.owner = filters.ownerFilter;
     if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
     if (filters.quickFilter !== "all") params.quick = filters.quickFilter;
+    if (filters.quickFilter === "mine") params.mine = true;
     if (filters.sourceFilter) params.source = filters.sourceFilter;
     if (filters.minAmount) params.amount_min = filters.minAmount;
     if (filters.maxAmount) params.amount_max = filters.maxAmount;
     if (filters.dateFrom) params.created_from = filters.dateFrom;
     if (filters.dateTo) params.created_to = filters.dateTo;
     return params;
-  }, [activePipeline, debouncedSearch, filters]);
+  }, [activePipeline, debouncedSearch, filters, page, pageSize]);
 
   const deals = useQuery({
     queryKey: ["deals", "paginated", business?.id, listParams],
     queryFn: () => dealsApi.listPaginated(listParams),
-    enabled: Boolean(business && activePipeline),
+    enabled: Boolean(business && activePipeline && viewMode === "table"),
     retry: false,
     placeholderData: keepPreviousData,
   });
 
-  const board = useQuery({
-    queryKey: ["deals", "board", business?.id, listParams, boardLimit],
-    queryFn: () => dealsApi.board({ ...listParams, limit_per_stage: boardLimit }),
-    enabled: Boolean(business && activePipeline),
-    retry: false,
-    placeholderData: keepPreviousData,
-  });
+  const { board, loadingMore, loadMoreError, loadMore, retryBoard } = useDealBoard(business?.id, listParams, viewMode === "kanban");
 
   const summary = useQuery({
     queryKey: ["deals", "summary", business?.id, listParams],
-    queryFn: () => dealsApi.summary(listParams),
+    queryFn: () => dealsApi.summary({ ...listParams, mine: undefined }),
     enabled: Boolean(business && activePipeline),
     retry: false,
     placeholderData: keepPreviousData,
@@ -75,7 +74,7 @@ export function useDeals(filters?: DealFiltersState) {
   const stageMap = useMemo(() => new Map((entityData.pipelineStages.data || []).map((stage) => [stage.id, stage])), [entityData.pipelineStages.data]);
   const boardDeals = useMemo(() => board.data?.stages.flatMap((stage) => stage.deals) || [], [board.data?.stages]);
   const boardHasMoreByStage = useMemo(() => new Map((board.data?.stages || []).map((stage) => [String(stage.id), stage.has_more])), [board.data?.stages]);
-  const displayDeals = boardDeals.length ? boardDeals : deals.data?.results || [];
+  const displayDeals = viewMode === "kanban" ? boardDeals : deals.data?.results || [];
 
   const tasksByDeal = useMemo(() => {
     const map = new Map<Id, Task[]>();
@@ -127,8 +126,10 @@ export function useDeals(filters?: DealFiltersState) {
     deals,
     board,
     boardHasMoreByStage,
-    boardIsFetchingMore: board.isFetching && !board.isLoading,
-    loadMoreBoardDeals: () => setBoardLimit((value) => value + 25),
+    boardIsFetchingMore: loadingMore,
+    boardLoadMoreError: loadMoreError,
+    loadMoreBoardDeals: loadMore,
+    retryBoard,
     summary,
     data: {
       clients: entityData.clients.data || [],

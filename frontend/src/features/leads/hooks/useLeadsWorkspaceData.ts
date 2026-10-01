@@ -7,6 +7,7 @@ import { teamApi } from "../../../api/team";
 import { useActiveBusiness } from "../../../hooks/useBusiness";
 import { useEntityData } from "../../../hooks/useEntityData";
 import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
+import { hasPermission } from "../../../lib/permissions";
 import { useAuth } from "../../auth/AuthProvider";
 import type { Id } from "../../../types";
 import type { LeadAiInsight, LeadFilter, Translate } from "../types";
@@ -55,7 +56,7 @@ export function useLeadsWorkspaceData({
   const teamMembers = useQuery({
     queryKey: ["team-members", business?.id],
     queryFn: () => teamApi.members(business?.id),
-    enabled: Boolean(business),
+    enabled: hasPermission(user, business?.id, "team"),
     retry: false,
   });
   const leadListParams = useMemo(() => {
@@ -68,6 +69,7 @@ export function useLeadsWorkspaceData({
     if (trimmedSearch) params.search = trimmedSearch;
     if (source) params.source = source;
     if (filter === "new") params.status = "new";
+    if (filter === "in_progress") params.status = ["contacted", "in_progress"];
     if (filter === "hot") {
       params.status = "new";
       params.unassigned = true;
@@ -169,6 +171,7 @@ export function useLeadsWorkspaceData({
     resources,
     tasks,
     leads,
+    retryWorkspace: () => { void Promise.all([clients.refetch(), services.refetch(), leads.refetch(), leadSummary.refetch()]); },
     pageError: clients.error || services.error || leads.error,
     pageErrorMessage: getApiErrorMessage(clients.error || services.error || leads.error),
     isPageLoading: leads.isLoading || clients.isLoading || services.isLoading || tasks.isLoading,

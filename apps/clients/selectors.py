@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import BooleanField, Case, CharField, Count, DateTimeField, Exists, F, IntegerField, OuterRef, Q, Subquery, Value, When
-from django.db.models.functions import Cast, Coalesce
+from django.db.models.functions import Cast, Coalesce, Greatest, NullIf
 
 from apps.activities.models import Segment, TaggedObject
 from apps.activities.segments import evaluate_segment_queryset
@@ -31,6 +31,9 @@ def client_queryset_for_request(queryset, request, *, client_ids=None, apply_qui
     queryset = annotate_client_list_queryset(queryset, related_querysets=related)
     if apply_quick_filter:
         queryset = apply_client_quick_filter(queryset, request)
+    ordering = request.query_params.get("ordering", "")
+    if ordering.removeprefix("-") in {"full_name", "source", "list_status", "last_activity_at", "next_step_date", "manager_name"}:
+        queryset = queryset.order_by(ordering, "pk")
     return queryset.distinct()
 
 
@@ -147,7 +150,7 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
         latest_conversation_manager_id=Subquery(latest_conversation.values("assigned_to_id")[:1]),
         latest_lead_at=Subquery(latest_lead.values("updated_at")[:1], output_field=DateTimeField()),
         latest_deal_at=Subquery(latest_deal.values("updated_at")[:1], output_field=DateTimeField()),
-        latest_task_at=Subquery(latest_task.values("due_at")[:1], output_field=DateTimeField()),
+        latest_task_at=Subquery(latest_task.values("updated_at")[:1], output_field=DateTimeField()),
         latest_conversation_at=Subquery(latest_conversation.values("updated_at")[:1], output_field=DateTimeField()),
         latest_task_title=Subquery(latest_task.values("title")[:1]),
         latest_task_due_at=Subquery(latest_task.values("due_at")[:1], output_field=DateTimeField()),
@@ -186,6 +189,13 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
             default=Value(False),
             output_field=BooleanField(),
         ),
+        list_status=Case(
+            When(is_archived=True, then=Value("archived")),
+            When(is_vip=True, then=Value("vip")),
+            When(has_no_reply=True, then=Value("no_reply")),
+            When(is_active=True, then=Value("active")),
+            default=Value("new"), output_field=CharField(),
+        ),
         manager_user_id=Case(
             When(latest_task_manager_id__isnull=False, then=F("latest_task_manager_id")),
             When(latest_deal_owner_id__isnull=False, then=F("latest_deal_owner_id")),
@@ -194,13 +204,27 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
             default=Value(None),
             output_field=IntegerField(),
         ),
-        last_activity_at=Case(
-            When(latest_conversation_at__isnull=False, then=F("latest_conversation_at")),
-            When(latest_task_at__isnull=False, then=F("latest_task_at")),
-            When(latest_deal_at__isnull=False, then=F("latest_deal_at")),
-            When(latest_lead_at__isnull=False, then=F("latest_lead_at")),
-            default=F("updated_at"),
-            output_field=DateTimeField(),
+        manager_name=Case(
+            When(latest_task_manager_id__isnull=False, then=Subquery(latest_task.annotate(
+                display_name=Coalesce(NullIf("assignee__full_name", Value("")), "assignee__email", output_field=CharField()),
+            ).values("display_name")[:1])),
+            When(latest_deal_owner_id__isnull=False, then=Subquery(latest_deal.annotate(
+                display_name=Coalesce(NullIf("owner__full_name", Value("")), "owner__email", output_field=CharField()),
+            ).values("display_name")[:1])),
+            When(latest_lead_manager_id__isnull=False, then=Subquery(latest_lead.annotate(
+                display_name=Coalesce(NullIf("responsible_user__full_name", Value("")), "responsible_user__email", output_field=CharField()),
+            ).values("display_name")[:1])),
+            When(latest_conversation_manager_id__isnull=False, then=Subquery(latest_conversation.annotate(
+                display_name=Coalesce(NullIf("assigned_to__full_name", Value("")), "assigned_to__email", output_field=CharField()),
+            ).values("display_name")[:1])),
+            default=Value(""), output_field=CharField(),
+        ),
+        last_activity_at=Greatest(
+            "updated_at",
+            Coalesce("latest_conversation_at", "updated_at"),
+            Coalesce("latest_task_at", "updated_at"),
+            Coalesce("latest_deal_at", "updated_at"),
+            Coalesce("latest_lead_at", "updated_at"),
         ),
         next_step_title=Case(
             When(latest_task_title__isnull=False, then=F("latest_task_title")),
@@ -208,6 +232,12 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
             When(has_appointment=True, then=Value("Подтвердить запись")),
             default=Value("Связаться с клиентом"),
             output_field=CharField(),
+        ),
+        next_step_kind=Case(
+            When(latest_task_title__isnull=False, then=Value("task")),
+            When(has_no_reply=True, then=Value("reply")),
+            When(has_appointment=True, then=Value("appointment")),
+            default=Value("contact"), output_field=CharField(),
         ),
         next_step_date=Case(
             When(latest_task_due_at__isnull=False, then=F("latest_task_due_at")),
@@ -253,18 +283,21 @@ def apply_client_quick_filter(queryset, request):
     return queryset
 
 
-def build_client_summary(queryset):
+def build_client_summary(queryset, *, user=None):
     return queryset.aggregate(
         total=Count("id"),
         active=Count("id", filter=Q(is_active=True) | Q(is_vip=True)),
         no_reply=Count("id", filter=Q(has_no_reply=True)),
         repeat=Count("id", filter=Q(has_multiple_deals=True) | Q(has_multiple_appointments=True)),
+        new=Count("id", filter=Q(is_archived=False, is_vip=False, has_no_reply=False, is_active=False)),
+        vip=Count("id", filter=Q(is_vip=True)),
+        mine=Count("id", filter=Q(manager_user_id=user.pk)) if user else Count("id", filter=Q(pk__in=[])),
     )
 
 
 def build_client_facets(queryset):
     return {
-        "source": {item["source"] or "manual": item["count"] for item in queryset.values("source").annotate(count=Count("id", distinct=True))},
+        "source": {item["source"] or "manual": item["count"] for item in queryset.order_by().values("source").annotate(count=Count("id", distinct=True))},
         "activity": {
             "active": queryset.filter(is_active=True).count(),
             "vip": queryset.filter(is_vip=True).count(),

@@ -31,6 +31,7 @@ export const ClientRow = memo(function ClientRow({
   t: Translate;
 }) {
   function handleKeyDown(event: React.KeyboardEvent<HTMLTableRowElement>) {
+    if (event.target !== event.currentTarget) return;
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
     onSelect();
@@ -93,6 +94,23 @@ export const ClientRow = memo(function ClientRow({
       <td role="gridcell" className="overflow-hidden px-2 py-2">
         <ClientStatusBadge status={row.status} t={t} />
       </td>
+      <td role="gridcell" className="overflow-hidden px-2 py-2">
+        <p className="truncate text-sm font-medium text-platforma-text">
+          {row.lastContactAt
+            ? formatDateTime(row.lastContactAt)
+            : t("clients.noContact")}
+        </p>
+      </td>
+      <td role="gridcell" className="overflow-hidden px-2 py-2">
+        <p className="truncate text-sm font-medium text-platforma-text">
+          {row.nextStep.title}
+        </p>
+        <p className="mt-0.5 text-xs font-medium text-platforma-muted">
+          {row.nextStep.date
+            ? formatDate(row.nextStep.date)
+            : null}
+        </p>
+      </td>
       {visibleColumns.has("manager") ? (
         <td role="gridcell" className="overflow-hidden px-2 py-2">
           {!row.managerUserId ? (
@@ -114,23 +132,6 @@ export const ClientRow = memo(function ClientRow({
           )}
         </td>
       ) : null}
-      <td role="gridcell" className="overflow-hidden px-2 py-2">
-        <p className="truncate text-sm font-medium text-platforma-text">
-          {row.lastContactAt
-            ? formatDateTime(row.lastContactAt)
-            : t("clients.noContact")}
-        </p>
-      </td>
-      <td role="gridcell" className="overflow-hidden px-2 py-2">
-        <p className="truncate text-sm font-medium text-platforma-text">
-          {row.nextStep.title}
-        </p>
-        <p className="mt-0.5 text-xs font-medium text-platforma-muted">
-          {row.nextStep.date
-            ? formatDate(row.nextStep.date)
-            : t("common.today")}
-        </p>
-      </td>
       <td role="gridcell" className="w-14 px-2 py-2 text-right">
         <div className="flex items-center justify-end gap-1">
           <button

@@ -2,6 +2,101 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## CRM workspace reference redesign / IN PROGRESS, 2026-10-01
+
+- Source: owner-authorized transfer from existing task «Унифицировать UI
+  CRM-таблиц» (01a0f32f-7d02-7263-a53d-496c8f9787f5): implement the complete
+  approved redesign of /app/leads, /app/deals and /app/clients in this primary
+  task. All three generated PNGs opened and visually inspected; preserve their
+  originals and retain reviewed copies under references/main_references/
+  crm-workspaces-20261001. No new task, successor or ownership transfer.
+- Owner/root: registered primary unchanged, generation2/idle; source task idle
+  and explicitly no writes. Canonical C:/Users/user/Desktop/PlatformaCRM,
+  branch codex/ui-testing-toolkit, clean base c38a15b85a41f1d0f6b25ee1b6c9bf469bc75bd2.
+  Prior five-stage/audit CLOSED; final receipt CI36776072979 SUCCESS both jobs,
+  observed2026-09-30T21:11:37UTC; remote SHA and clean tree verified.
+- Mode: frontend implementation with necessary real API/projection wiring;
+  gap types: design/interaction, proven rendering/data gaps only. Observable
+  result: all three coherent, complete workspaces matching approved references
+  while preserving existing creation, opening, filters, sorting, columns/views,
+  import/export, pagination, actions, role checks and actual pipeline transitions.
+- Design contract: ivory app background, white full-height work surface, shared
+  insets and dense52–56px desktop table rows, entity search left and filters/
+  columns/view/more right, compact quick views and applied-filter chips, bounded
+  overlay filters, sticky headings/footer. Kanban uses actual pipeline stages,
+  compact real cards with next action/date/assignee; target5–7 cards vertically
+  on the reference desktop and horizontal scrolling for excess stages. Preserve
+  existing logo/navigation/header rules; image numbers/names/statuses are sample
+  content, never working DB seeds or a new lifecycle policy. No concept caption.
+- Reuse CrmWorkspacePage/TableSurface/DataTable/ControlBar/Pagination, existing
+  entity hooks/services/selectors, drawers/modals, shared overlays and i18n.
+  Inspect current data contracts before adding projections; no duplicate models.
+  Any missing assignee/count/next-step data must be permission-scoped, truthful
+  and recoverable. Address unresolved business decisions to owner while doing
+  independent work; routine components/wiring do not need another design approval.
+- Scope: three list/board pages and necessary reusable components/API/projection
+  adapters/tests; no clinical/domain lifecycle rewrite, new permission framework,
+  billing, deployment, working DB migration/seed or unrelated dependency upgrade.
+  Backend permissions remain mandatory. Notification/BusinessEvent/AI semantics
+  unchanged unless a separately evidenced in-scope requirement is recorded.
+- Acceptance: working populated/loading/empty/error/forbidden states, filter
+  application/reset and real quick views, column/view persistence, pagination,
+  entity creation/open/actions, Kanban transitions/recovery, keyboard/focus,
+  responsive and RU/KK/EN. Comparable screenshots at1672×941 and tablet/mobile,
+  inspect against all three PNGs and record intentional data/navigation differences.
+- Required checks: isolated baseline capture/repro; targeted UI/API regressions
+  plus affected shared consumers; build/i18n/type/bundle, targeted backend tenant/
+  permission tests if projections change, full candidate gate on this real base;
+  diff/reference review, normal push and exact-SHA actual CI. No live provider.
+- Baseline: isolated real API fixtures at1672x941 reproduced a short leads
+  surface (bottom772 rather than901+), mismatched header/action columns, missing
+  clients search, and false next-step/last-activity dates. Three source screenshots
+  retained in ignored output/crm-redesign-20261001/baseline. Iteration1 browser
+  geometry PASS (1 check); all three screenshots inspected, further acceptance
+  remains. Runtime changes are local/uncommitted; no working DB changed.
+- Read projection delta: LeadListSerializer gains permission-scoped next task
+  ID/title/deadline; clients gains name of the already-scoped manager and uses
+  actual update timestamps for last activity (never future task due date).
+  Existing readable_across_businesses/capability/Business scope is mandatory;
+  new endpoint regressions cover scope, foreign/archived/completed tasks,
+  disabled capability and actual dates. No lifecycle, permissions, notification,
+  BusinessEvent, AI approval, migration or environment policy changes.
+- Implementation: shared toolbar/popovers, aligned full-height surfaces, sticky
+  tables/numbered pagination, persisted columns/view and real client sorting.
+  Deals load stages by offset, keep extra stages horizontal and use server table
+  pages; Mine applies before pagination. Stage money is omitted for partial,
+  mixed-currency or redacted rows. Existing transition guards remain unchanged.
+- Verification so far:62 isolated projection/client/lead checks PASS; build,
+  i18n/type and bundle budgets PASS;89 Node checks PASS in isolated gate env.
+  New reference/API/browser suite iteration5:19 PASS/4 conditional skips; its one
+  failure was the existing next-action guard during drag, now explicitly exercised
+  and passing in the wider run. Earlier evidence found/fixed mobile footer
+  overlap, offset/reveal boundary, missing translation key and checkbox keyboard
+  bubbling. Wide run also exposed the old search assertion against the inactive
+  table endpoint; assertion now observes the board endpoint.
+- Desktop reference screenshots for all three pages inspected at1672x941:
+  common surface bounds, no global-header changes, five full Kanban cards plus
+  scrollable continuation; sample content differs intentionally because API data
+  is authoritative. Manager RU/KK/EN, client sorting/counts,51-deal/eight-stage
+  board, guarded drag,20/20/11 table pages and view persistence passed.
+- Current acceptance: wide11-spec responsive/role matrix plus final targeted
+  recheck running in disposable databases; final62-check backend rerun running.
+  Output:output/crm-redesign-20261001/{wide-1,final-targeted,projection-final-review}.log.
+  Node initial failures were a stale generated inventory (regenerated) and running
+  gate-env assertion without isolated env (corrected runner,89/89 PASS).
+  ZD-036..038 recorded; no integration/CI closure claimed yet. All dirty paths
+  task-owned from clean c38a15b; no commit/push, worker/working DB/live changes.
+- Final review:62 backend checks PASS again after rejecting malformed sort
+  prefixes; corrected Mine pagination, cross-page selection and manager recovery
+  regressions passed in final targeted desktop run. Full intended diff/new files
+  and three synthetic reference images reviewed. Canonical owner/branch/base and
+  remote main=c38a15b verified; origin/main local tracking ref is stale, FETCH_HEAD
+  and ls-remote are authoritative for publication. Sole push workflow is CI.
+- A local candidate commit establishes the real c38a15b..candidate range required
+  by the testing guide; it is not permission to publish before remaining checks.
+  Next: finish mobile/wide evidence and the full candidate gate, then normal push
+  and exact-SHA CI. No application edits planned unless a remaining check fails.
+
 ## Five-stage overnight acceptance + September30 audit / VERIFIED + PUSHED, 2026-10-01
 
 - Closure: implementation f8aab57da57765f598ccdd04b28ad653120f0bd1 is on

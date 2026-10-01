@@ -77,6 +77,7 @@ export function DealsList({
   onMore,
   onStageChange,
   hasMoreByStage,
+  stageCounts,
   onLoadMoreStage,
   isLoadingMore,
   t,
@@ -95,6 +96,7 @@ export function DealsList({
   onResetFilters: () => void;
   onMore: (deal: DealRow) => void;
   onStageChange: (deal: DealRow, stageId: number) => void;
+  stageCounts?: Map<string, number>;
   hasMoreByStage?: Map<string, boolean>;
   onLoadMoreStage?: (stageId: string) => void;
   isLoadingMore?: boolean;
@@ -146,14 +148,15 @@ export function DealsList({
 
   if (viewMode === "table") {
     return (
-      <div className="min-h-0 overflow-auto">
+      <div className="min-h-0 flex-1 overflow-auto">
         <table className="w-full min-w-[860px] border-separate border-spacing-0 text-left text-sm">
           <thead className="sticky top-0 z-10 bg-surface-muted text-xs font-semibold text-platforma-muted">
             <tr className="h-10">
               <th className="w-12 border-b border-platforma-border px-3 py-2">
                 <input
                   type="checkbox"
-                  checked={selectedIds.length === rows.length}
+                  aria-label={t("leads.selectAll")}
+                  checked={rows.every((deal) => selectedIds.includes(deal.id))}
                   onChange={onSelectAll}
                 />
               </th>
@@ -191,6 +194,8 @@ export function DealsList({
                 <td className="border-b border-platforma-border px-3 py-2">
                   <input
                     type="checkbox"
+                    aria-label={t("deals.openDealContext", { title: deal.title })}
+                    onClick={(event) => event.stopPropagation()}
                     checked={selectedIds.includes(deal.id)}
                     onChange={() => onCheck(deal)}
                   />
@@ -199,7 +204,7 @@ export function DealsList({
                   className="border-b border-platforma-border px-3 py-2 font-bold text-platforma-text"
                   onDoubleClick={() => onOpen(deal)}
                 >
-                  {deal.title}
+                  <button type="button" className="platforma-focus-ring rounded-control text-left" onClick={(event) => { event.stopPropagation(); onOpen(deal); }}>{deal.title}</button>
                 </td>
                 <td className="border-b border-platforma-border px-3 py-2 text-platforma-muted">
                   {deal.clientEntity?.full_name || t("deals.clientMissing")}
@@ -231,13 +236,13 @@ export function DealsList({
     return (
       <div
         data-testid="deals-kanban-board"
-        className="grid min-h-[520px] flex-1 auto-cols-[minmax(238px,1fr)] grid-flow-col gap-1.5 overflow-x-auto overscroll-x-contain p-1.5 [scrollbar-gutter:stable] 2xl:auto-cols-auto 2xl:grid-flow-row 2xl:grid-cols-6"
+        className="grid min-h-0 flex-1 auto-cols-[minmax(238px,1fr)] grid-flow-col gap-2 overflow-x-auto overscroll-x-contain p-3 [scrollbar-gutter:stable]"
       >
         {groups.map((group) => (
           <section
             key={group.id}
             data-testid={`deals-kanban-stage-${group.id}`}
-            className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-card border border-platforma-border bg-surface-muted shadow-soft"
+            className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-card bg-surface-muted"
             onDragOver={(event) => event.preventDefault()}
             onDrop={(event) => {
               const deal = dealMap.get(
@@ -247,34 +252,28 @@ export function DealsList({
                 onStageChange(deal, Number(group.id));
             }}
           >
-            <header className="shrink-0 bg-surface-card px-3 py-2.5">
+            <header className="shrink-0 px-3 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="truncate text-[13px] font-bold text-platforma-text">
+                  <h3 className="flex items-center gap-2 truncate text-sm font-semibold text-platforma-text">
+                    <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: group.color }} />
                     {group.name}
                   </h3>
-                  <p className="mt-1 text-[12px] font-bold text-platforma-text">
+                  {!hasMoreByStage?.get(group.id) && group.rows.every((deal) => deal.amount != null) && new Set(group.rows.map((deal) => deal.currency)).size <= 1 ? <p className="mt-1 text-[12px] font-bold text-platforma-text">
                     {money(
                       group.rows.reduce(
                         (sum, deal) => sum + Number(deal.amount || 0),
                         0,
                       ),
+                      group.rows[0]?.currency || "KZT",
                     )}
-                  </p>
+                  </p> : null}
                 </div>
                 <span className="rounded-full bg-surface-card px-2 py-0.5 text-[11px] font-bold text-platforma-text ring-1 ring-platforma-border">
-                  {group.rows.length}
+                  {stageCounts?.get(group.id) ?? group.rows.length}
                 </span>
               </div>
-              <div className="mt-2 h-0.5 rounded-full bg-surface-muted">
-                <div
-                  className="h-0.5 rounded-full"
-                  style={{
-                    width: group.rows.length ? "62%" : "18%",
-                    backgroundColor: group.color,
-                  }}
-                />
-              </div>
+
             </header>
             <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto bg-surface-muted p-1.5">
               {group.rows
@@ -304,12 +303,11 @@ export function DealsList({
                     className="w-full rounded-md px-2 py-2 text-left text-xs font-bold text-brand-700 hover:bg-brand-50"
                     disabled={isLoadingMore}
                     onClick={() => {
-                      if (hiddenCount)
-                        setVisibleByStage((state) => ({
-                          ...state,
-                          [group.id]: (state[group.id] || 10) + 10,
-                        }));
-                      else onLoadMoreStage?.(group.id);
+                      setVisibleByStage((state) => ({
+                        ...state,
+                        [group.id]: (state[group.id] || 10) + 10,
+                      }));
+                      if (!hiddenCount) onLoadMoreStage?.(group.id);
                     }}
                   >
                     +{" "}
