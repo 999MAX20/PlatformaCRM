@@ -2,6 +2,57 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Legal document placeholders and signup acknowledgements / LOCALLY VERIFIED, 2026-10-01
+
+- Owner explicitly requested document names and empty pages only; lawyer supplies
+  content later. No entity details, legal drafting or jurisdiction decision needed.
+  Public /documents index and individual pages, linked from unchecked required
+  signup boxes and account-page bottom; no global footer/sidebar navigation.
+- Implementation/code gap, same primary/root/branch; clean starting HEAD fea09b1,
+  prior session task CLOSED with exact CI36852181495 SUCCESS. Reuse signup
+  serializer, shared API/types/i18n, public router, account layout and audit log.
+- Signup must reject missing acknowledgements in UI/API. Record technical
+  placeholder acknowledgements, never claim acceptance of unpublished legal text.
+  Four proposed document titles reused; page bodies deliberately empty. No new
+  pricing/legal rules, CRM roles, notifications, BusinessEvents or AI behavior.
+- Gates: isolated signup/MFA regression and rejection/no-partial-user checks;
+  build/budget, public document links, account links and signup checks desktop/
+  mobile; Django checks/drift, diff/range review, commit/normal push main and CI.
+  No working-DB migration/seed/deployment.
+- Implemented the four public title-only pages/index, shared document registry,
+  required signup controls, API rejection and atomic existing-audit recording;
+  added account-only footer links. No legal text, company details or jurisdiction
+  claims. Fixed signup scrolling/checkbox sizing after inspecting the new form.
+- Local evidence under ignored `output/legal-documents-20261001/` uses the
+  runner's `isolated_runtime` and Vite environment policy, disposable DB/ports,
+  synthetic accounts, disabled provider calls. Exact focused commands:
+  - `.venv/Scripts/python.exe output/legal-documents-20261001/verify.py backend
+    apps.accounts`:80 PASS (`backend.log`). Includes all missing/partial/invalid
+    document combinations, no partial account creation, actor/business audit,
+    password/security/MFA regressions.
+  - Same helper `build`: `npm run build` PASS (`build-final.log`);
+    frontend `npm run check:bundle` PASS (largest chunk395.4kB, shell297.1kB).
+  - Frontend `node --test scripts/tests/functional-certification-registry.test.mjs
+    scripts/tests/login-page-policy.test.mjs scripts/tests/auth-return-path.test.mjs`:
+    19 PASS (`node-final.log`). `node scripts/check-functional-certification.mjs`
+    PASS:44 entries,84 declared/81 unique routes.
+  - `manage.py check` and `makemigrations --check --dry-run` inside the same
+    isolated runtime PASS (`system-drift.log`), no migrations.
+- Browser command: same helper `final-<project> e2e/legal-documents.spec.ts
+  e2e/pilot-auth.spec.ts e2e/pilot-auth-security.spec.ts
+  e2e/pilot-password-reset.spec.ts --project=<project>`, sequential fresh runtimes
+  for desktop-chromium/tablet-chromium/mobile-chromium:7+7+7 PASS, respectively
+  1.8/2.5/1.7min (`final-<project>.log`). Screenshots retained with each run;
+  final desktop/mobile signup and desktop account footer visually checked.
+- Failed iterations retained: initial shared three-viewport run15 PASS/3 FAIL/
+  3 not run due to real signup/password-reset429 limits; no limits/assertions
+  weakened. First isolated desktop6 PASS/1 initial-navigation ERR_ABORTED during
+  concurrent build; rerun after build completed passed all7. Initial route registry
+  check found missing action outcomes; added contracts and verified19 Node tests.
+- Boundary: focused local auth/UI gate, not a full local release gate or deployed
+  legal readiness. Next: review/commit, static range,
+  normal push main and exact-SHA CI readback.
+
 ## Persistent browser sessions / VERIFIED + PUSHED, CI PENDING, 2026-10-01
 
 - Publication receipt: implementation8da37f4851b6cd51770afcfff2775b6186b16a2e

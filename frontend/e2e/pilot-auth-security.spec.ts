@@ -20,7 +20,7 @@ test("MFA enrollment, recovery-code login and authorized disable persist through
   const email = `pilot-mfa-${Date.now()}@example.com`;
   const password = "PilotMfaAccount928!";
   const registered = await page.request.post(`${api}/api/auth/signup/owner/`, {
-    data: { email, password, full_name: "Pilot MFA owner", business_name: `Pilot MFA ${Date.now()}`, phone: "+77770009911" },
+    data: { accepted_documents: ["terms", "privacy", "personal-data", "company-data"], email, password, full_name: "Pilot MFA owner", business_name: `Pilot MFA ${Date.now()}`, phone: "+77770009911" },
   });
   expect(registered.status()).toBe(201);
   await page.goto("/app/account");
@@ -77,7 +77,7 @@ test("existing MFA account returns to its invitation and accepts the intended bu
   const password = "PilotInviteMfa928!";
   const signup = async (address: string) => {
     const response = await page.request.post(`${api}/api/auth/signup/owner/`, {
-      data: { email: address, password, full_name: "Pilot invited owner", business_name: address, phone: "+77770009922" },
+      data: { accepted_documents: ["terms", "privacy", "personal-data", "company-data"], email: address, password, full_name: "Pilot invited owner", business_name: address, phone: "+77770009922" },
     });
     expect(response.status()).toBe(201);
     return response.json();

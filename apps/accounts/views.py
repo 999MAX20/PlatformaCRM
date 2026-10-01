@@ -1,5 +1,6 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
+from django.db import transaction
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.encoding import force_str
@@ -24,6 +25,7 @@ from apps.accounts.serializers import (
     SocialAuthSerializer,
 )
 from apps.accounts.models import User
+from apps.accounts.legal_documents import record_signup_acknowledgements
 from apps.accounts.session_security import update_password_and_revoke_sessions
 from apps.accounts.social_auth import get_or_create_social_user, verify_social_id_token
 from apps.businesses.access import ensure_default_roles, ensure_owner_memberships_for_user
@@ -212,6 +214,7 @@ class OwnerSignupView(APIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "auth_signup"
 
+    @transaction.atomic
     def post(self, request):
         serializer = OwnerSignupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -255,6 +258,7 @@ class OwnerSignupView(APIView):
             business_role=owner_role,
             is_active=True,
         )
+        record_signup_acknowledgements(request, user, data["accepted_documents"])
         if requires_mfa(user):
             return Response(
                 {

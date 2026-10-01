@@ -806,6 +806,8 @@
 }
 
 .serenity-login--signup .serenity-login__layout {
+  overflow-y: auto;
+  align-items: safe center;
   width: min(1760px, calc(100% - 72px));
   grid-template-columns: minmax(0, 1fr) minmax(560px, 760px);
   gap: clamp(38px, 4.6vw, 78px);
@@ -896,6 +898,12 @@
   .serenity-login__card {
     padding: 24px 21px;
   }
+}
+
+.serenity-login--signup .serenity-login__card input[type="checkbox"] {
+  min-height: 16px;
+  height: 16px;
+  width: 16px;
 }
 
 @media (max-width: 900px), (pointer: coarse) {

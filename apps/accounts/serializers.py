@@ -2,6 +2,7 @@ from django.db.models import Prefetch
 from rest_framework import serializers
 
 from apps.accounts.models import SocialIdentity, User, UserPreference
+from apps.accounts.legal_documents import REQUIRED_DOCUMENT_IDS
 from apps.accounts.passwords import enforce_password_policy
 from apps.businesses.access import effective_permissions_for, owner_business_role, user_is_business_owner
 from apps.businesses.capabilities import capability_payload
@@ -175,6 +176,13 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
 
 class OwnerSignupSerializer(serializers.Serializer):
+    accepted_documents = serializers.ListField(child=serializers.ChoiceField(choices=REQUIRED_DOCUMENT_IDS), allow_empty=False)
+
+    def validate_accepted_documents(self, value):
+        if set(value) != set(REQUIRED_DOCUMENT_IDS):
+            raise serializers.ValidationError("Acknowledge every required document.")
+        return list(REQUIRED_DOCUMENT_IDS)
+
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
     full_name = serializers.CharField(required=False, allow_blank=True, max_length=255)

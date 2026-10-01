@@ -2,6 +2,17 @@
 
 This file is the working reference for role-aware behavior in PlatformaCRM.
 
+## Signup document placeholders — 2026-10-01
+
+Owner signup requires `accepted_documents` containing all four IDs: `terms`,
+`privacy`, `personal-data`, `company-data`. Missing, partial or unknown IDs return
+400 before account/business creation. The existing audit log records the actor,
+business, time and IDs with `content_status: placeholder`; this is a technical
+acknowledgement, not evidence of accepting published legal text. Signup and this
+audit record share a transaction. No migration or existing-user reacceptance.
+The public `/documents` and `/documents/:documentId` pages expose only document
+titles and empty bodies until the owner supplies lawyer-approved content.
+
 ## Browser account boundaries — 2026-10-01
 
 Every request that replaces or clears the HttpOnly

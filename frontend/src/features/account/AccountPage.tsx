@@ -23,6 +23,7 @@ import { MfaSecurityCard } from "./MfaSecurityCard";
 import { AccountSectionNav } from "./AccountSectionNav";
 import { InterfaceSettingsCard } from "./InterfaceSettingsCard";
 import { AccountAccessSummary } from "./AccountAccessSummary";
+import { DocumentLinks } from "../documents/DocumentLinks";
 import "./accountPage.css";
 
 const notificationCategories: Array<{ category: Notification["category"]; titleKey: string; descriptionKey: string }> = [
@@ -191,6 +192,7 @@ export function AccountPage() {
         </div>}
       </Card>
 
+      <DocumentLinks />
       <Modal
         title={t("account.changePassword")}
         open={passwordModalOpen}

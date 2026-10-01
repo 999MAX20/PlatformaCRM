@@ -13,7 +13,7 @@ test("password reset link changes credentials once and rejects token replay", as
   const password = "PilotResetInitial928!";
   const replacement = "PilotResetChanged928!";
   const created = await page.request.post(`${api}/api/auth/signup/owner/`, {
-    data: { email, password, full_name: "Pilot reset owner", business_name: "Reset fixture", phone: "+77770009944" },
+    data: { accepted_documents: ["terms", "privacy", "personal-data", "company-data"], email, password, full_name: "Pilot reset owner", business_name: "Reset fixture", phone: "+77770009944" },
   });
   expect(created.status()).toBe(201);
   const account = await created.json();

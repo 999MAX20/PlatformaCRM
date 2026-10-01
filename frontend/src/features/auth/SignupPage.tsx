@@ -14,6 +14,7 @@ import { LanguageSelector } from "../../components/layout/LanguageSelector";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "./AuthProvider";
 import { PasswordVisibilityToggle } from "./PasswordVisibilityToggle";
+import { documentPath, legalDocuments } from "../documents/documents";
 import "./authLoginSerenity.css";
 
 type FormValues = {
@@ -24,6 +25,7 @@ type FormValues = {
   password_confirm: string;
   business_name: string;
   business_type: string;
+  accepted_documents: string[];
 };
 
 export function SignupPage() {
@@ -41,6 +43,7 @@ export function SignupPage() {
     password_confirm: z.string().min(1, t("passwordReset.repeatPasswordRequired")),
     business_name: z.string().min(2, t("validation.businessName")),
     business_type: z.string().min(1),
+    accepted_documents: z.array(z.string()).refine(values => legalDocuments.every(document => values.includes(document.id)), t("documents.required")),
   }).refine((values) => values.password === values.password_confirm, {
     message: t("passwordReset.passwordMismatch"),
     path: ["password_confirm"],
@@ -60,11 +63,14 @@ export function SignupPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { business_type: "beauty" },
+    defaultValues: { business_type: "beauty", accepted_documents: [] },
   });
+  const acceptedDocuments = watch("accepted_documents");
+  const allDocumentsAccepted = legalDocuments.every(document => acceptedDocuments.includes(document.id));
 
   async function onSubmit(values: FormValues) {
     setError(null);
@@ -76,6 +82,7 @@ export function SignupPage() {
         password: values.password,
         business_name: values.business_name,
         business_type: values.business_type,
+        accepted_documents: values.accepted_documents,
       });
       if (isMfaPendingResponse(response)) {
         sessionStorage.setItem("zani_mfa_pending", JSON.stringify(response));
@@ -189,13 +196,23 @@ export function SignupPage() {
                 />
               </div>
               <Select label={t("signup.businessType")} placement="top" options={businessTypeOptions} error={errors.business_type?.message} {...register("business_type")} />
-              <Button className="serenity-login__primary" type="submit" isLoading={isSubmitting}>
+              <fieldset className="space-y-3" data-testid="signup-documents">
+                <legend className="mb-3 text-sm font-semibold">{t("documents.title")}</legend>
+                {legalDocuments.map(document => <div key={document.id} className="flex items-start gap-3 text-sm leading-5">
+                  <input id={`accept-${document.id}`} type="checkbox" value={document.id} {...register("accepted_documents")} required className="platforma-focus-ring mt-0.5 h-4 w-4 shrink-0 accent-brand-600" aria-describedby={errors.accepted_documents ? "documents-error" : undefined} />
+                  <label htmlFor={`accept-${document.id}`}>
+                    {t(document.id === "privacy" ? "documents.read" : "documents.accept")} {" "}
+                    <Link to={documentPath(document.id)} target="_blank" rel="noopener noreferrer" className="platforma-focus-ring rounded underline underline-offset-4">{t(document.titleKey)}</Link>
+                  </label>
+                </div>)}
+                {errors.accepted_documents ? <p id="documents-error" role="alert" className="text-sm text-red-700">{errors.accepted_documents.message}</p> : null}
+              </fieldset>
+              <Button className="serenity-login__primary" type="submit" disabled={!allDocumentsAccepted} isLoading={isSubmitting}>
                 {t("signup.freeSubmit")}
                 <ArrowRight size={18} />
               </Button>
             </form>
 
-            <p className="serenity-login__terms">{t("signup.terms")}</p>
           </div>
         </section>
       </div>

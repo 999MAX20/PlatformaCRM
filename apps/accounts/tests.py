@@ -305,6 +305,7 @@ class AuthSecurityBaselineTests(TestCase):
         response = self.api.post(
             "/api/auth/signup/owner/",
             {
+                "accepted_documents": ["terms", "privacy", "personal-data", "company-data"],
                 "email": "new-owner@example.com",
                 "password": "StrongPass123",
                 "full_name": "New Owner",
@@ -330,6 +331,7 @@ class AuthSecurityBaselineTests(TestCase):
         response = self.api.post(
             "/api/auth/signup/owner/",
             {
+                "accepted_documents": ["terms", "privacy", "personal-data", "company-data"],
                 "email": "weak-owner@example.com",
                 "password": "password",
                 "business_name": "Weak Password Business",

@@ -47,6 +47,7 @@ const SignupPage = lazy(() =>
     default: module.SignupPage,
   })),
 );
+const DocumentsPage = lazy(() => import("../features/documents/DocumentsPage").then(module => ({ default: module.DocumentsPage })));
 const ForgotPasswordPage = lazy(() =>
   import("../features/auth/ForgotPasswordPage").then((module) => ({
     default: module.ForgotPasswordPage,
@@ -824,6 +825,8 @@ const legacyMerchantRoutes = [
 ];
 
 const router = createBrowserRouter([
+  { path: "/documents", element: <PageLoader><DocumentsPage /></PageLoader> },
+  { path: "/documents/:documentId", element: <PageLoader><DocumentsPage /></PageLoader> },
   {
     path: "/",
     errorElement: <RouteErrorBoundary />,

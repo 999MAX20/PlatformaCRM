@@ -1,6 +1,14 @@
 import { ru } from "./ru";
 
 export const en: Record<string, string> = {
+  "documents.title": "Documents",
+  "documents.terms": "Terms of use / public offer",
+  "documents.privacy": "Privacy policy",
+  "documents.personalData": "Consent to personal data processing",
+  "documents.companyData": "Company and client data processing terms",
+  "documents.accept": "I accept:",
+  "documents.read": "I have read:",
+  "documents.required": "Acknowledge every required document.",
   "teamAccess.disable": "Disable company access",
   "teamAccess.enable": "Enable company access",
   "teamAccess.disableText": "Disable {name}'s access to this company? History, tasks and appointments will remain. The specialist's schedule stays active; a manager reassigns work manually when needed.",

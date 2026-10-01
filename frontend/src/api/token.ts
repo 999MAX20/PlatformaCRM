@@ -98,6 +98,7 @@ export type SocialLoginResponse = TokenPair & {
 };
 
 export type OwnerSignupPayload = {
+  accepted_documents: string[];
   email: string;
   password: string;
   full_name?: string;

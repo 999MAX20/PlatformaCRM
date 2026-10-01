@@ -6,6 +6,8 @@ function define(actions, expected) {
     outcomes[action] = expected;
   }
 }
+
+define("open_document open_documents_index", "Public document names and empty page bodies are reachable without login; signup/account links preserve the source form in its original tab.");
 define("login", "Valid credentials establish the intended user session; reload retains it; invalid credentials do not enter CRM.");
 define("continue_mfa verify_totp", "The challenge requires a valid current second factor before issuing an authenticated session; invalid/replayed codes are rejected.");
 define("verify_recovery_code", "An unused recovery code completes only its own challenge; the consumed code cannot authenticate again.");

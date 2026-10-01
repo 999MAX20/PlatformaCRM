@@ -328,6 +328,7 @@ class PrivilegedMfaTests(TestCase):
         response = self.client.post(
             "/api/auth/signup/owner/",
             {
+                "accepted_documents": ["terms", "privacy", "personal-data", "company-data"],
                 "email": "new-owner@example.com",
                 "password": self.password,
                 "full_name": "New Owner",
