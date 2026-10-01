@@ -349,7 +349,7 @@ Recommended default:
 ```css
 font-family:
   "Manrope Variable",
-  "Noto Sans",
+  "Noto Sans Variable",
   Inter,
   ui-sans-serif,
   system-ui,
@@ -358,9 +358,14 @@ font-family:
   sans-serif;
 ```
 
-Use Manrope Variable as the primary authenticated-app font if Cyrillic, Kazakh, and mixed numeric content pass visual QA. Manrope is preferred because it feels warmer and more human than a purely neutral enterprise font while still staying professional.
+Use Manrope Variable as the primary font for Russian and English interfaces.
 
-Use Noto Sans as the safety fallback for Cyrillic/Kazakh coverage and rare glyphs. Use Inter as the secondary UI fallback and as the backup primary choice if Manrope fails visual QA on real Russian/Kazakh CRM screens.
+Use the bundled Noto Sans Variable as the primary family for the entire Kazakh
+interface (`html:lang(kk)`) and as Manrope's fallback for other locales. Manrope's
+installed files omit ӘәҒғҚқҢңҰұ, so per-character system fallback mixes families
+and weights inside words. The i18n provider keeps the document language aligned
+with the selected locale; both app and Storybook import the same font packages.
+RU/EN retain Manrope as primary. Inter remains a secondary system fallback.
 
 Do not introduce decorative, serif, display, or brand-only fonts inside the authenticated app. The CRM should feel stable and readable over long sessions.
 

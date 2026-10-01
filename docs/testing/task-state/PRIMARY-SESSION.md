@@ -2,6 +2,45 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Kazakh font consistency / LOCALLY VERIFIED, 2026-10-01
+
+- Owner screenshot: Kazakh-specific letters appear heavier within words; inspect
+  overall cause and fix shared typography. Same primary/root/branch, clean base
+  7e296b834f07bfb6c1ea50d9e1d6159cff6e1df4. No overlapping changes.
+- Confirmed installed Manrope5.3.0 actual cmap lacks ӘәҒғҚқҢңҰұ (despite broad
+  CSS unicode ranges). Browser CDP on forgot-password heading shows23 Manrope
+  custom glyphs plus3 system NotoSans-Bold glyphs. Noto fallback is not bundled.
+- Reuse design system's approved Noto Sans: self-host variable Noto, use it for
+  the entire KK interface via correct document language; keep Manrope for RU/EN.
+  Apply consistent fallback in app/catalog, preserve language switching drafts.
+  No API/auth/permission/AI/migration/data changes. Package/lockfile change scoped
+  to font. Gates: glyph coverage, actual browser font families/weights, language
+  switching and affected pages, build/budget, static, normal push main/actual CI.
+  No working DB writes.
+- Implemented pinned @fontsource-variable/noto-sans5.3.0 (OFL-1.1), shared CSS
+  locale selection and html language synchronization. Actual font cmap covers
+  all18 Kazakh-specific uppercase/lowercase letters. No external font service.
+- First isolated browser run:2 PASS/3 FAIL/4 not run. Public language selector
+  reproduced draft loss on uncached dictionary load; reuse existing prepareLanguage
+  before switching. CRM test incorrectly assumed an h1; second run6 PASS/3 FAIL
+  because responsive primary actions share a test ID. Correct test target to the
+  visible localized Filters button; assertions on actual fonts remain unchanged.
+- Final commands/evidence are under ignored output/kazakh-font-20261001.
+  `.venv/Scripts/python.exe output/kazakh-font-20261001/verify.py browser-final
+  e2e/kazakh-typography.spec.ts`:9 PASS, desktop/tablet/mobile, no skips.
+  Screenshots of recovery desktop/mobile and CRM inspected: consistent letters,
+  controls fit. Font checks use Chromium CDP, not computed CSS alone.
+  `.venv/Scripts/python.exe output/kazakh-font-20261001/verify.py build` PASS
+  (`build-final.log`, includes TypeScript/i18n/app/widget); frontend
+  `npm run check:bundle` PASS (`bundle-final.log`);
+  `node --test scripts/tests/login-page-policy.test.mjs`:15 PASS (`node.log`).
+  Backend, migration and full local suites skipped: typography/locale presentation
+  only; browser login/CRM use disposable SQLite and disabled providers, not working
+  data. Permission/notification/BusinessEvent/AI/env contracts unchanged.
+- Reviewed task-owned source/docs/new test and lockfile; no unrelated WIP.
+  Next: commit, static gate against captured7e296b8 base, normal push HEAD:main,
+  read back remote SHA and actual CI. Publication receipt belongs in task response.
+
 ## Login viewport centering and concise heading / LOCALLY VERIFIED, 2026-10-01
 
 - Owner screenshot requests vertically centering the left story and right login

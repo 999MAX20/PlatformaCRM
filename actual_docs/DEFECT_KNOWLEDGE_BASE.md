@@ -1065,6 +1065,24 @@ Copy this section for every new confirmed precedent:
   exercise cookie delivery ordering, sibling tabs, startup failure and drafts,
   not merely one successful login/refresh call.
 
+### ZD-042 — Kazakh letters rendered with a heavier system fallback
+
+- Confirmed: installed Manrope lacks ӘәҒғҚқҢңҰұ despite its CSS unicode ranges.
+  Browser font inspection on password recovery showed Manrope plus system
+  NotoSans-Bold within one heading; declaring an unbundled fallback was insufficient.
+- Correction: bundle Noto Sans Variable for the entire KK interface and shared
+  fallback, synchronize document language through I18nProvider, import fonts in
+  app and catalog. Russian and English retain Manrope as primary.
+- Related regression found during verification: the public language selector
+  unloaded the form while fetching a new dictionary. Reuse prepareLanguage before
+  applying the locale, preserving the login draft.
+- Evidence: kazakh-typography.spec.ts inspects actual browser font families for
+  all 18 Kazakh-specific characters at weights400–800, language switching with
+  draft preservation, password recovery and authenticated CRM. Exact results and
+  publication receipt are in PRIMARY-SESSION/the task response.
+- Reusable rule: inspect font-file cmap and actual rendered fonts; a font-family
+  declaration or broad unicode-range does not prove that glyphs exist.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

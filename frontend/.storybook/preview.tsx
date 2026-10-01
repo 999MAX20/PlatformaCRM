@@ -3,6 +3,7 @@ import type { Preview } from "@storybook/react-vite";
 import { catalogModes } from "./modes";
 import { I18nProvider, useI18n, type Language } from "../src/lib/i18n";
 import "@fontsource-variable/manrope";
+import "@fontsource-variable/noto-sans";
 import "../src/styles.css";
 
 function CatalogLocale({ language, children }: { language: Language; children: ReactNode }) {

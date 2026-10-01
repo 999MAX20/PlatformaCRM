@@ -2,7 +2,7 @@ import { Languages } from "lucide-react";
 
 import { Select } from "../ui/Select";
 import { cn } from "../../lib/cn";
-import { useI18n } from "../../lib/i18n";
+import { prepareLanguage, useI18n } from "../../lib/i18n";
 
 const languageOptions = [
   { value: "ru", label: "RU" },
@@ -24,7 +24,11 @@ export function LanguageSelector({ className }: { className?: string }) {
       <Select
         className="platforma-language-selector__control min-h-8 w-[5.25rem] border-0 bg-transparent px-1.5 py-1 text-sm shadow-none hover:bg-surface-muted"
         value={language}
-        onChange={(event) => setLanguage(event.target.value as typeof language)}
+        onChange={async (event) => {
+          const nextLanguage = event.target.value as typeof language;
+          await prepareLanguage(nextLanguage);
+          setLanguage(nextLanguage);
+        }}
         aria-label={t("common.language")}
         options={[...languageOptions]}
       />

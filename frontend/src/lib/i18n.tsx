@@ -74,6 +74,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [dictionary, setDictionary] = useState<Dictionary | null>(() => dictionaryCache[getInitialLanguage()] || null);
 
   useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
+  useEffect(() => {
     let cancelled = false;
     loadDictionary(language).then((loadedDictionary) => {
       dictionaryCache[language] = loadedDictionary;

@@ -6,6 +6,7 @@ import { AppRouter } from "./app/router";
 import { AppErrorBoundary } from "./components/ui/AppErrorBoundary";
 import { initFrontendMonitoring } from "./lib/monitoring";
 import "@fontsource-variable/manrope";
+import "@fontsource-variable/noto-sans";
 import "./styles.css";
 
 initFrontendMonitoring();
