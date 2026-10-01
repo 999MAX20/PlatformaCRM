@@ -22,13 +22,13 @@ function formatMoney(value: string | number | null | undefined) {
 
 function changeStatusClass(status: KaspiPriceChangeLog["status"]) {
   const classes: Record<KaspiPriceChangeLog["status"], string> = {
-    simulated: "bg-blue-50 text-blue-700",
-    queued: "bg-violet-50 text-violet-700",
-    applied: "bg-emerald-50 text-emerald-700",
-    blocked: "bg-amber-50 text-amber-700",
-    failed: "bg-red-50 text-red-700",
+    simulated: "bg-[var(--platforma-info-soft)] text-platforma-info",
+    queued: "bg-[var(--platforma-info-soft)] text-platforma-info",
+    applied: "bg-[var(--platforma-success-soft)] text-platforma-success",
+    blocked: "bg-[var(--platforma-warning-soft)] text-platforma-warning",
+    failed: "bg-[var(--platforma-danger-soft)] text-platforma-danger",
   };
-  return classes[status] || "bg-slate-100 text-slate-700";
+  return classes[status] || "bg-surface-muted text-platforma-subtle";
 }
 
 export function PricingPage() {
@@ -316,18 +316,18 @@ export function PricingPage() {
 
       {error ? <ErrorState message={getApiErrorMessage(error)} /> : null}
 
-      <section className={control?.emergency_stop_enabled ? "rounded-[2rem] border border-red-200 bg-red-50 p-5 shadow-soft" : "rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft"}>
+      <section className={control?.emergency_stop_enabled ? "rounded-[2rem] border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] p-5 shadow-soft" : "rounded-[2rem] border border-platforma-border bg-white p-5 shadow-soft"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-start gap-3">
-            <AlertTriangle className={control?.emergency_stop_enabled ? "mt-1 text-red-600" : "mt-1 text-amber-500"} size={22} />
+            <AlertTriangle className={control?.emergency_stop_enabled ? "mt-1 text-platforma-danger" : "mt-1 text-platforma-warning"} size={22} />
             <div>
               <h2 className="text-lg font-black text-midnight">{t("pricing.safetyTitle")}</h2>
-              <p className="mt-1 text-sm font-semibold text-slate-600">
+              <p className="mt-1 text-sm font-semibold text-platforma-subtle">
                 {control?.emergency_stop_enabled
                   ? t("pricing.agentStopped", { reason: control.emergency_stop_reason || t("pricing.noReason") })
                   : t("pricing.agentActive")}
               </p>
-              {alerts.length ? <p className="mt-1 text-sm font-bold text-amber-700">{t("pricing.openSignals", { count: alerts.length })}</p> : null}
+              {alerts.length ? <p className="mt-1 text-sm font-bold text-platforma-warning">{t("pricing.openSignals", { count: alerts.length })}</p> : null}
             </div>
           </div>
           {control?.emergency_stop_enabled ? (
@@ -342,17 +342,17 @@ export function PricingPage() {
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft">
+      <section className="rounded-[2rem] border border-platforma-border bg-white p-5 shadow-soft">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-black text-midnight">{t("pricing.catalogTitle")}</h2>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{t("pricing.catalogText")}</p>
+            <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("pricing.catalogText")}</p>
           </div>
           <Button variant="secondary" disabled={!canManage || !business?.id} isLoading={syncCatalog.isPending} onClick={() => syncCatalog.mutate()}>
             {t("pricing.refreshCatalog")}
           </Button>
         </div>
-        <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+        <div className="mt-4 rounded-2xl border border-platforma-border bg-surface-muted p-4">
           <div className="grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
             <Input label={t("pricing.bulkMinPrice")} value={bulkMinPrice} onChange={(event) => setBulkMinPrice(event.target.value)} type="number" />
             <Input label={t("pricing.step")} value={bulkStepAmount} onChange={(event) => setBulkStepAmount(event.target.value)} type="number" />
@@ -384,11 +384,11 @@ export function PricingPage() {
         {catalogQuery.isLoading ? <LoadingState label={t("pricing.loadingCatalog")} /> : null}
         <div className="mt-4 grid gap-3">
           {catalogItems.map((item) => (
-            <article key={item.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <article key={item.id} className="rounded-2xl border border-platforma-border bg-surface-muted p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
                   <input
-                    className="mt-1 h-5 w-5 rounded border-slate-300"
+                    className="mt-1 h-5 w-5 rounded border-platforma-control"
                     type="checkbox"
                     checked={selectedCatalogIds.includes(String(item.id))}
                     disabled={Boolean(item.rule_id)}
@@ -400,7 +400,7 @@ export function PricingPage() {
                   />
                   <div>
                   <p className="text-base font-black text-midnight">{item.name || item.sku}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-500">
+                  <p className="mt-1 text-sm font-semibold text-platforma-faint">
                     {t("pricing.catalogItemMeta", {
                       source: item.source,
                       sku: item.sku,
@@ -410,7 +410,7 @@ export function PricingPage() {
                   </p>
                   </div>
                 </div>
-                <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-600">
+                <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-platforma-subtle">
                   {item.rule_id ? t("pricing.ruleMode", { mode: item.rule_mode || "" }) : t("pricing.notConnected")}
                 </span>
               </div>
@@ -435,11 +435,11 @@ export function PricingPage() {
           ))}
         </div>
         {!catalogQuery.isLoading && catalogItems.length === 0 ? (
-          <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">{t("pricing.emptyCatalog")}</div>
+          <div className="mt-4 rounded-2xl bg-surface-muted px-4 py-3 text-sm font-semibold text-platforma-faint">{t("pricing.emptyCatalog")}</div>
         ) : null}
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft">
+      <section className="rounded-[2rem] border border-platforma-border bg-white p-5 shadow-soft">
         <div className="flex items-center gap-2">
           <ShieldCheck className="text-brand-700" size={20} />
           <h2 className="text-lg font-black text-midnight">{t("pricing.newRule")}</h2>
@@ -465,9 +465,9 @@ export function PricingPage() {
         </Button>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft">
+      <section className="rounded-[2rem] border border-platforma-border bg-white p-5 shadow-soft">
         <h2 className="text-lg font-black text-midnight">{t("pricing.rules")}</h2>
-        <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+        <div className="mt-4 rounded-2xl border border-platforma-border bg-surface-muted p-4">
           <div className="grid gap-3 md:grid-cols-[1fr_1fr_1fr_1fr_auto]">
             <Select
               label={t("pricing.status")}
@@ -497,8 +497,8 @@ export function PricingPage() {
               {t("pricing.updateSelected", { count: selectedRuleIds.length })}
             </Button>
           </div>
-          <label className="mt-3 flex items-center gap-2 text-sm font-bold text-slate-600">
-            <input className="h-4 w-4 rounded border-slate-300" type="checkbox" checked={bulkRuleDisableAutopilot} onChange={(event) => setBulkRuleDisableAutopilot(event.target.checked)} />
+          <label className="mt-3 flex items-center gap-2 text-sm font-bold text-platforma-subtle">
+            <input className="h-4 w-4 rounded border-platforma-control" type="checkbox" checked={bulkRuleDisableAutopilot} onChange={(event) => setBulkRuleDisableAutopilot(event.target.checked)} />
             {t("pricing.disableAutopilotSelected")}
           </label>
         </div>
@@ -508,11 +508,11 @@ export function PricingPage() {
             const latest = latestRecommendations.get(String(rule.id));
             const latestOffer = latestOffers.get(String(rule.id));
             return (
-              <article key={rule.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <article key={rule.id} className="rounded-2xl border border-platforma-border bg-surface-muted p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
                     <input
-                      className="mt-1 h-5 w-5 rounded border-slate-300"
+                      className="mt-1 h-5 w-5 rounded border-platforma-control"
                       type="checkbox"
                       checked={selectedRuleIds.includes(String(rule.id))}
                       onChange={(event) => {
@@ -523,12 +523,12 @@ export function PricingPage() {
                     />
                     <div>
                       <p className="text-base font-black text-midnight">{rule.product_name || rule.product_sku}</p>
-                      <p className="mt-1 text-sm font-semibold text-slate-500">
+                      <p className="mt-1 text-sm font-semibold text-platforma-faint">
                         {t("pricing.ruleMeta", { sku: rule.product_sku, current: formatMoney(rule.current_price), min: formatMoney(rule.min_price) })}
                       </p>
                     </div>
                   </div>
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">{rule.mode} · {rule.status}</span>
+                  <span className="rounded-full bg-[var(--platforma-success-soft)] px-3 py-1 text-xs font-black text-platforma-success">{rule.mode} · {rule.status}</span>
                 </div>
                 <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto_auto_auto]">
                   <Input
@@ -548,7 +548,7 @@ export function PricingPage() {
                   </Button>
                 </div>
                 {latestOffer ? (
-                  <div className="mt-3 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-slate-600">
+                  <div className="mt-3 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-platforma-subtle">
                     {t("pricing.foundPrice", {
                       price: formatMoney(latestOffer.price),
                       competitor: latestOffer.competitor_name || t("pricing.competitor"),
@@ -557,15 +557,15 @@ export function PricingPage() {
                   </div>
                 ) : null}
                 {latest ? (
-                  <div className="mt-3 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-slate-600">
+                  <div className="mt-3 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-platforma-subtle">
                     {t("pricing.recommendationLine", { price: formatMoney(latest.target_price), reason: latest.reason, status: latest.status })}
                   </div>
                 ) : null}
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-3">
+                <div className="mt-4 rounded-2xl border border-platforma-border bg-white p-3">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-black text-midnight">{t("pricing.autopilot")}</p>
-                      <p className="mt-1 text-sm font-semibold text-slate-500">
+                      <p className="mt-1 text-sm font-semibold text-platforma-faint">
                         {rule.mode === "autopilot"
                           ? t("pricing.autopilotEnabledText")
                           : t("pricing.autopilotCheckText")}
@@ -581,14 +581,14 @@ export function PricingPage() {
                       </Button>
                     )}
                   </div>
-                  <div className="mt-3 grid gap-2 text-sm font-semibold text-slate-600 md:grid-cols-4">
-                    <span className="rounded-xl bg-slate-50 px-3 py-2">{t("pricing.minPriceValue", { price: formatMoney(rule.min_price) })}</span>
-                    <span className="rounded-xl bg-slate-50 px-3 py-2">{t("pricing.limitValue", { count: rule.max_changes_per_day })}</span>
-                    <span className="rounded-xl bg-slate-50 px-3 py-2">{t("pricing.monitoringValue", { status: latestOffer ? t("pricing.priceFound") : t("pricing.collectPricesFirst") })}</span>
-                    <span className="rounded-xl bg-slate-50 px-3 py-2">{t("pricing.kaspiWriteFlag")}</span>
+                  <div className="mt-3 grid gap-2 text-sm font-semibold text-platforma-subtle md:grid-cols-4">
+                    <span className="rounded-xl bg-surface-muted px-3 py-2">{t("pricing.minPriceValue", { price: formatMoney(rule.min_price) })}</span>
+                    <span className="rounded-xl bg-surface-muted px-3 py-2">{t("pricing.limitValue", { count: rule.max_changes_per_day })}</span>
+                    <span className="rounded-xl bg-surface-muted px-3 py-2">{t("pricing.monitoringValue", { status: latestOffer ? t("pricing.priceFound") : t("pricing.collectPricesFirst") })}</span>
+                    <span className="rounded-xl bg-surface-muted px-3 py-2">{t("pricing.kaspiWriteFlag")}</span>
                   </div>
                   {rule.autopilot_confirmed_at ? (
-                    <p className="mt-2 text-xs font-bold text-emerald-700">{t("pricing.confirmedAt", { date: new Date(rule.autopilot_confirmed_at).toLocaleString("ru-KZ") })}</p>
+                    <p className="mt-2 text-xs font-bold text-platforma-success">{t("pricing.confirmedAt", { date: new Date(rule.autopilot_confirmed_at).toLocaleString("ru-KZ") })}</p>
                   ) : null}
                 </div>
               </article>
@@ -597,13 +597,13 @@ export function PricingPage() {
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft">
+      <section className="rounded-[2rem] border border-platforma-border bg-white p-5 shadow-soft">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-black text-midnight">{t("pricing.historyTitle")}</h2>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{t("pricing.historyText")}</p>
+            <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("pricing.historyText")}</p>
           </div>
-          <span className="rounded-full bg-slate-50 px-3 py-1 text-xs font-black text-slate-500">{t("pricing.recordsCount", { count: changeLogs.length })}</span>
+          <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-black text-platforma-faint">{t("pricing.recordsCount", { count: changeLogs.length })}</span>
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <Input data-testid="pricing-history-search-input" label={t("common.search")} value={changeSearch} onChange={(event) => setChangeSearch(event.target.value)} placeholder={t("pricing.historySearchPlaceholder")} />
@@ -622,25 +622,25 @@ export function PricingPage() {
           />
         </div>
         {changeLogsQuery.isLoading ? <LoadingState label={t("pricing.loadingHistory")} /> : null}
-        <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100">
+        <div className="mt-4 overflow-hidden rounded-2xl border border-platforma-border">
           {changeLogs.map((log) => (
-            <article key={log.id} className="grid gap-3 border-b border-slate-100 bg-slate-50 px-4 py-3 last:border-b-0 md:grid-cols-[1.2fr_1fr_auto] md:items-center">
+            <article key={log.id} className="grid gap-3 border-b border-platforma-border bg-surface-muted px-4 py-3 last:border-b-0 md:grid-cols-[1.2fr_1fr_auto] md:items-center">
               <div>
                 <p className="text-sm font-black text-midnight">{log.product_name || log.product_sku}</p>
-                <p className="mt-1 text-xs font-semibold text-slate-500">SKU {log.product_sku} · {new Date(log.created_at).toLocaleString("ru-KZ")}</p>
+                <p className="mt-1 text-xs font-semibold text-platforma-faint">SKU {log.product_sku} · {new Date(log.created_at).toLocaleString("ru-KZ")}</p>
               </div>
               <div className="text-sm font-black text-midnight">
                 {formatMoney(log.old_price)} → {formatMoney(log.new_price)}
-                {log.error ? <p className="mt-1 text-xs font-semibold text-red-600">{t("pricing.changeFailed")}</p> : null}
+                {log.error ? <p className="mt-1 text-xs font-semibold text-platforma-danger">{t("pricing.changeFailed")}</p> : null}
               </div>
               <div className="flex flex-wrap items-center gap-2 md:justify-end">
                 <span className={`rounded-full px-3 py-1 text-xs font-black ${changeStatusClass(log.status)}`}>{t(`pricing.changeStatus.${log.status}`)}</span>
-                <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500">{log.mode || "approval"}</span>
+                <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-platforma-faint">{log.mode || "approval"}</span>
               </div>
             </article>
           ))}
           {!changeLogsQuery.isLoading && changeLogs.length === 0 ? (
-            <div className="bg-slate-50 px-4 py-5 text-sm font-semibold text-slate-500">{t("pricing.emptyHistory")}</div>
+            <div className="bg-surface-muted px-4 py-5 text-sm font-semibold text-platforma-faint">{t("pricing.emptyHistory")}</div>
           ) : null}
         </div>
       </section>

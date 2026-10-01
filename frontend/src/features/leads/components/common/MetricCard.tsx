@@ -6,11 +6,11 @@ import { cn } from "../../../../lib/cn";
 type MetricVariant = "default" | "success" | "info" | "danger" | "warning";
 
 const variantClass: Record<MetricVariant, string> = {
-  default: "bg-slate-100 text-slate-600 ring-slate-500",
-  success: "bg-emerald-50 text-emerald-700 ring-emerald-500",
-  info: "bg-blue-50 text-blue-700 ring-blue-500",
-  danger: "bg-red-50 text-red-700 ring-red-500",
-  warning: "bg-amber-50 text-amber-700 ring-amber-500",
+  default: "bg-surface-muted text-platforma-subtle ring-platforma-muted",
+  success: "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success",
+  info: "bg-[var(--platforma-info-soft)] text-platforma-info ring-platforma-info",
+  danger: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger",
+  warning: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning",
 };
 
 export const MetricCard = memo(function MetricCard({
@@ -31,7 +31,7 @@ export const MetricCard = memo(function MetricCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-slate-200 bg-white p-4 shadow-soft transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md",
+        "rounded-xl border border-platforma-border bg-white p-4 shadow-soft transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md",
         shouldHighlight && "ring-2 ring-offset-2 ring-brand-500/20",
       )}
     >
@@ -40,9 +40,9 @@ export const MetricCard = memo(function MetricCard({
           <Icon size={20} />
         </span>
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.04em] text-slate-500">{label}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.04em] text-platforma-faint">{label}</p>
           <p className="mt-1 text-xl font-bold leading-none text-midnight">{value}</p>
-          {delta ? <p className="mt-1 text-xs font-semibold text-emerald-700">{delta}</p> : null}
+          {delta ? <p className="mt-1 text-xs font-semibold text-platforma-success">{delta}</p> : null}
         </div>
       </div>
     </div>

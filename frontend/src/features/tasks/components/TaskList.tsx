@@ -284,7 +284,7 @@ function TaskTableFilters({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder={t("search.placeholder.tasks")}
             leftIcon={<Search size={15} />}
-            rightIcon={searchQuery ? <button type="button" onClick={() => onSearchChange("")} className="rounded-full p-1 text-platforma-muted hover:bg-surface-muted" aria-label={t("search.close")}><X size={13} /></button> : null}
+            rightIcon={searchQuery ? <button type="button" onClick={() => onSearchChange("")} className="rounded-full p-1 text-platforma-muted hover:bg-surface-hover" aria-label={t("search.close")}><X size={13} /></button> : null}
             aria-label={t("common.search")}
           />
           {showTeamControls ? <Select
@@ -559,6 +559,6 @@ function priorityLabel(priority: Task["priority"], t: (key: string) => string) {
 function priorityDotClass(priority: Task["priority"]) {
   if (priority === "urgent") return "bg-platforma-danger";
   if (priority === "high") return "bg-platforma-danger";
-  if (priority === "low") return "bg-purple-500";
+  if (priority === "low") return "bg-platforma-faint";
   return "bg-platforma-warning";
 }

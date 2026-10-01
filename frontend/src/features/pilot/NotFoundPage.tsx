@@ -21,7 +21,7 @@ export function NotFoundPage() {
             </div>
             <p className="mt-6 text-xs font-black uppercase tracking-[0.2em] text-brand-700">{t("notFound.eyebrow")}</p>
             <h1 className="mt-3 text-3xl font-black tracking-tight text-midnight sm:text-4xl">{t("notFound.title")}</h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-600">
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-platforma-subtle">
               {t("notFound.text")}
             </p>
             <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">

@@ -1,6 +1,59 @@
 # PlatformaCRM Design System Notes
 
-Last updated: 2026-07-17
+Last updated: 2026-10-02
+
+## Shared neutral / emerald colors — 2026-10-02
+
+The owner-approved shared palette is version1 of
+[`semantic-tokens.json`](../../frontend/src/theme/semantic-tokens.json).
+Its35 values match the approved CRM/Market proposal exactly. The former proposal
+status is superseded by implementation approval. JSON takes precedence over the
+generated reference images; their invented records, fields and labels are not
+product requirements. This replaces the previous warm/peach direction without
+changing geometry, workflows, logos, locales or the RU/EN Manrope and KK Noto fonts.
+
+Tailwind's adapter emits the semantic CSS variables and RGB channels from this
+single file; opacity modifiers remain supported. `styles.css` contains legacy
+`--platforma-*` aliases rather than a second copy of color values.
+
+| Existing adapter | Shared meaning |
+| --- | --- |
+| platforma-bg/page, surface/page | surface.canvas |
+| surface-card, platforma-surface, cards/dialogs | surface.default |
+| surface-muted/warm, interior blocks | surface.subtle |
+| hover:bg-surface-hover | surface.hover |
+| platforma-border / platforma-control | border.default / border.control |
+| platforma-text/ink / subtle / faint | text.primary / secondary / muted |
+| brand/primary500 /600 /800 | brand.default / hover / pressed |
+| brand50 /100 /700 | brand.soft / border / content |
+| brand300 | brand.accent; decoration/indicators only, never small text |
+| platforma-{success,warning,danger,info}, ai600 | corresponding content role |
+| disabled-{surface,content,border} | disabled roles, opacity1 |
+
+Filled brand/danger/AI controls use white text. Caution remains warning, not
+destructive: soft background plus warning content, with4%/8% content mixed into
+the soft surface for hover/pressed. These are derived states, not new palette
+values. Solid focus ring and translucent focus halo have separate roles.
+Disabled/loading controls preserve their behavior and share explicit neutral
+tokens instead of reducing opacity. Native checkbox/radio accents use brand;
+their native disabled drawing may additionally reflect browser/platform behavior.
+Existing discovery colors and the AI border are compatibility extensions outside
+the35 shared values. Provider logos, user stage/tag colors, QR codes and content
+media retain their meaning; new UI defaults use the semantic source.
+
+Implementation and separate whole-route audit coverage/evidence are recorded in
+the [color audit](../testing/color-system-audit-20261002.md) and
+[primary checkpoint](../testing/task-state/PRIMARY-SESSION.md).
+
+### Contrast pairing and alpha utilities
+
+`text.muted` is suitable on white/default surfaces. On `surface.hover`, use
+`text.secondary` for small metadata: the approved muted/hover pair is only
+4.47:1. Do not reduce opacity on semantic text or an entire unavailable card;
+use disabled tokens only on the actual disabled controls. Nonstandard Tailwind
+alpha values use brackets (`bg-surface-card/[0.96]`), and alpha-modified semantic
+soft backgrounds need RGB-aware aliases rather than a hex-valued CSS variable.
+
 
 ## Auth header logo — 2026-10-01
 
@@ -66,8 +119,8 @@ PlatformaCRM is an AI-first CRM and business control layer for SMB. Authenticate
 The desired visual direction is:
 
 ```txt
-Warm Premium CRM
-Warm ivory workspace + soft peach actions + plum AI accent
+Neutral / Emerald CRM
+Neutral workspace + emerald actions + violet AI accent
 ```
 
 This direction applies to the authenticated app. Public landing pages are intentionally out of scope for this document until the landing system is redesigned separately.
@@ -78,7 +131,7 @@ The public `/login` route may use a restrained animated brand background as a
 separate product-entry mode. Keep it lightweight and subordinate to the sign-in
 form:
 
-- use up to five clearly separable, soft peach, light-orange, coral, and warm-gold radial-gradient fields;
+- use up to five clearly separable, emerald and light-green radial-gradient fields drawn from semantic tokens;
 - do not add grids, orbit lines, outlined circles, nodes, dots, particles, canvas, or WebGL;
 - animate only `transform` and `opacity`, with no more than five fields on desktop;
 - distribute the paths so at least three color fields remain visible through the full desktop cycle;
@@ -91,44 +144,44 @@ For the agreed redesign brief and implementation guardrails, see `docs/WARM_PREM
 
 ## Core Visual Goals
 
-- Premium, warm, relaxed SaaS feeling.
+- Calm, neutral SaaS surfaces with emerald actions.
 - No blue-tinted page background in the CRM workspace.
-- Soft peach stays as the PlatformaCRM brand action color, with a dark brand-content token for readable emphasis and focus.
+- Emerald is the PlatformaCRM brand action color, with a dark brand-content token for readable emphasis.
 - Brand must not become every semantic color in the product.
 - AI must stay visually distinct from ordinary CRM actions.
 - Status colors must communicate state, not decoration.
 - Daily screens must be dense, scannable, and low-fatigue.
 - Avoid decorative gradients, nested cards, and multiple competing page backgrounds.
 
-## Warm Premium Color System
+## Shared Semantic Color System
 
 ### Light Theme
 
 ```txt
-App Background:     #F7F3EE
-Page Soft:          #F4EEE7
+App Background:     #F6F8F7
+Page Soft:          #F6F8F7
 Surface:            #FFFFFF
-Surface Warm:       #FFFCF8
-Surface Muted:      #F2EDE6
-Border:             #E6DDD2
+Surface Warm:       #F0F4F2
+Surface Muted:      #F0F4F2
+Border:             #D7E1DC
 
-Text Primary:       #17120F
-Text Secondary:     #5F554D
-Text Muted:         #8A7B70
+Text Primary:       #17201E
+Text Secondary:     #4F5E58
+Text Muted:         #607169
 ```
 
 ### Brand / Primary Actions
 
 ```txt
-Brand Primary:      #F5B37A
-Primary Hover:      #EE995A
-Primary Pressed:    #DF813F
-Brand Content:      #A4470D
-Primary Soft:       #FFF3EA
-Focus Ring:         rgba(164, 71, 13, 0.42)
+Brand Primary:      #007A59
+Primary Hover:      #00664B
+Primary Pressed:    #00543E
+Brand Content:      #00543E
+Primary Soft:       #E4F3ED
+Focus Ring:         #007A59 (solid); halo rgba(0,122,89,0.22)
 ```
 
-Use the filled peach brand for:
+Use the filled emerald brand for:
 
 - primary CTA buttons;
 - small brand marks.
@@ -156,7 +209,7 @@ Do not use brand for:
 
 ### AI Accent
 
-AI must not be orange. Use a separate plum/violet accent so AI recommendations do not look like ordinary CRM actions.
+AI uses its own semantic role. Use a separate plum/violet accent so AI recommendations do not look like ordinary CRM actions.
 
 ```txt
 AI Accent:          #6F4CC3
@@ -170,25 +223,25 @@ Use AI colors only for AI assistant, AI analyst, AI draft, generation, summariza
 ### Status Colors
 
 ```txt
-Success:            #15803D
-Success Soft:       #ECFDF3
+Success:            #237A4A
+Success Soft:       #EEF8F2
 
-Warning Content:    #975A16
-Warning Soft:       #FFF7E6
-Warning Bold:       #F4C04F
-Warning Hover:      #E9AC2D
-Warning Pressed:    #D99616
+Warning Content:    #9A5A13
+Warning Soft:       #FFF5E8
+Warning Bold:       #FFF5E8 (legacy alias for warning.soft)
+Warning Hover:      4% warning.content + 96% warning.soft
+Warning Pressed:    8% warning.content + 92% warning.soft
 
-Danger:             #C2410C
-Danger Soft:        #FFF1ED
-Danger Hover:       #9A3412
-Danger Pressed:     #7C2D12
+Danger:             #A33B35
+Danger Soft:        #FFF0EE
+Danger Hover:       #8F302B
+Danger Pressed:     #762620
 
-Info:               #0E7490
-Info Soft:          #EAF9FC
+Info:               #245E8A
+Info Soft:          #EDF5FF
 
-Neutral:            #6B625A
-Neutral Soft:       #F2EDE6
+Neutral:            #607169
+Neutral Soft:       #F0F4F2
 ```
 
 Status colors are semantic. Do not use them as generic decoration.
@@ -212,7 +265,7 @@ AI:            PlatformaCRM AI recommendations, drafts and assistant surfaces
 
 Brand and semantic status colors must not be substituted for one another. In particular, `in_progress`, `queued` and `syncing` use information; warning is reserved for caution; AI remains violet.
 
-### Dark Theme
+### Historical Dark Theme Proposal (not implemented or changed in this scope)
 
 Dark mode should feel warm and premium, not blue-black or crypto-dashboard-like.
 
@@ -260,7 +313,7 @@ Primary work areas use:
 
 ```txt
 Surface:       white / #FFFFFF
-Surface Warm:  #FFFCF8 when a warmer panel is needed
+Surface Subtle: #F0F4F2 for a neutral interior panel
 ```
 
 Examples:
@@ -277,7 +330,7 @@ Examples:
 Muted backgrounds are allowed inside a white surface for grouping, but only sparingly:
 
 ```txt
-Surface Muted: #F2EDE6
+Surface Muted: #F0F4F2
 ```
 
 Use muted blocks for:
@@ -340,7 +393,7 @@ Recommended page-specific cleanup:
 
 ## Typography
 
-Typography should support the Warm Premium CRM feeling: calm, soft, readable, and dense enough for daily operational work. The app must not feel like a marketing site, a heavy ERP, or a decorative dashboard.
+Typography should support the neutral/emerald CRM direction: calm, soft, readable, and dense enough for daily operational work. The app must not feel like a marketing site, a heavy ERP, or a decorative dashboard.
 
 ### Font Stack
 
@@ -433,15 +486,15 @@ Button radius:      10px
 Modal radius:       16px
 Sidebar shell:      20-24px only when visually framed
 Border:             1px solid var(--platforma-border)
-Card shadow:        0 4px 12px rgba(23, 18, 15, 0.05)
-Panel shadow:       0 16px 40px rgba(23, 18, 15, 0.10)
+Card shadow:        0 4px 12px rgba(23, 32, 30, 0.05)
+Panel shadow:       0 16px 40px rgba(23, 32, 30, 0.10)
 ```
 
 Keep shadows soft. Expensive SaaS does not need heavy floating cards everywhere.
 
 ## Component Interaction Contract
 
-The Warm Premium CRM design must be implemented through shared primitives first. New pages must not hand-roll local buttons, toggles, inputs, badges, modals, drawers, table rows, or card shells unless the shared primitive cannot support the workflow and is intentionally extended.
+The shared semantic design must be implemented through shared primitives first. New pages must not hand-roll local buttons, toggles, inputs, badges, modals, drawers, table rows, or card shells unless the shared primitive cannot support the workflow and is intentionally extended.
 
 The default component behavior should feel calm and precise:
 
@@ -530,20 +583,20 @@ Long button labels:
 Button states:
 
 ```txt
-primary default:     Brand Primary (#F5B37A) background, dark PlatformaCRM Ink text for contrast
+primary default:     Brand Primary (#007A59) background, white text for contrast
 primary hover:       Primary Hover background, slightly stronger shadow
 primary active:      Primary Pressed background, optional scale 0.99
 primary focus:       4px Focus Ring, 2px offset when outside dense surfaces
 primary disabled:    muted surface, muted text, no hover, cursor not-allowed
 
 secondary default:   Surface background, Border, Text Primary
-secondary hover:     Surface Muted, neutral border, Text Primary
+secondary hover:     Surface Hover, neutral border, Text Primary
 secondary active:    Surface Muted, neutral border
 
 ghost default:       transparent, Text Secondary
-ghost hover:         Surface Muted, Text Primary
+ghost hover:         Surface Hover, Text Primary
 
-warning default:     Warning Bold background, PlatformaCRM Ink text
+warning default:     Warning Soft background, Warning Content text
 warning hover:       Warning Hover background
 warning active:      Warning Pressed background
 
@@ -570,11 +623,11 @@ Switch rules:
 - default size: track 48px x 28px, knob 22px;
 - dense size: track 40px x 24px, knob 18px;
 - click/touch target must be at least 44px high;
-- active ordinary business setting uses Brand Content when the track itself needs a high-contrast state;
+- active ordinary business setting uses Brand Primary with a white knob;
 - active AI setting may use AI Accent;
 - verified connection status may use Success, but only when the state means "connected/healthy";
 - off state uses neutral muted surface, not red;
-- disabled state uses opacity around 0.55 and no hover;
+- disabled state uses explicit disabled surface/content/border at opacity1 and no hover;
 - loading state disables interaction and shows either a subtle spinner or busy affordance.
 
 Use switches for persistent on/off settings such as channel enabled, AI tool enabled, rule active, notification enabled, or business setting active.
@@ -590,7 +643,7 @@ Checkbox box:        16px x 16px desktop, 18px x 18px touch-heavy forms
 Checkbox target:     minimum 44px row height when clickable as a row
 Checked color:       Brand Primary
 Indeterminate:       Brand Primary with horizontal mark
-Disabled:            Surface Muted + Text Muted
+Disabled:            Disabled Surface + Disabled Content
 ```
 
 Radio controls are for mutually exclusive choices when all options should be visible. Use segmented controls for 2-4 high-frequency mode switches; use radio groups for longer or form-like option sets.
@@ -603,7 +656,7 @@ Default control anatomy:
 
 - min-height 44px;
 - radius 10px;
-- border `Border`;
+- border `Border Control` (#83988D);
 - background `Surface`;
 - text 14px / 20-22px;
 - label 13-14px, weight 600;
@@ -615,11 +668,11 @@ Default control anatomy:
 Input states:
 
 ```txt
-default:     Surface + Border
-hover:       Brand border at low intensity
-focus:       Brand border + 4px Focus Ring
+default:     Surface + Border Control
+hover:       Brand border
+focus:       solid2px Focus Ring with2px offset and4px halo
 error:       Danger border + Danger Soft helper area if needed
-disabled:    Surface Muted + Text Muted
+disabled:    Disabled Surface + Disabled Content + Disabled Border
 readonly:    Surface Warm + Text Secondary, no strong hover
 ```
 
@@ -651,7 +704,7 @@ Segmented control:
 - option min-height 36-40px;
 - active option uses Surface + Brand text + subtle shadow or Brand Soft;
 - inactive option uses Text Secondary;
-- hover uses Surface Warm or Primary Soft;
+- hover uses Surface Hover or Primary Soft;
 - counts use neutral small badges unless the count is itself a semantic status.
 
 Tabs:
@@ -685,7 +738,7 @@ Rules:
 - `primary` badge is for selected/active/product state, not generic decoration;
 - `ai` badge is only for AI-generated, AI-assisted, or AI-recommended content;
 - success/warning/danger/info are semantic only;
-- do not map all attention states to orange just because orange is the brand;
+- do not map all attention states to emerald just because emerald is the brand;
 - avoid uppercase by default; use it only for compact technical labels where space is tight.
 
 ### Cards, Surfaces, And Sections
@@ -698,7 +751,7 @@ Surface rules:
 Primary surface:    Surface or Surface Warm, border, soft card shadow
 Outlined surface:   Surface, border, no shadow
 Muted surface:      Surface Muted, used sparingly for grouping
-Interactive card:   Surface, border, hover Brand border / Surface Warm
+Interactive card:   Surface, border, hover Brand border / Surface Hover
 AI surface:         AI Soft, AI Border, no orange
 Danger surface:     Danger Soft, Danger border, only for real risk/error
 ```
@@ -724,8 +777,8 @@ Dense row height:       44px
 Cell horizontal px:     12px
 Header text:            12px / 16px, weight 600
 Body text:              13px / 20px or 14px / 20px
-Divider:                Border or lighter warm divider
-Hover row:              Surface Warm or very subtle Primary Soft
+Divider:                Border or lighter neutral divider
+Hover row:              Surface Hover or very subtle Primary Soft
 Selected row:           Primary Soft + left Brand indicator
 ```
 
@@ -781,7 +834,7 @@ Sidebar item:
 - icon 18px desktop, 20px mobile/touch-heavy;
 - active state uses Primary Soft + Brand text + optional left indicator;
 - inactive uses Text Secondary;
-- hover uses Surface Warm or Primary Soft at low intensity;
+- hover uses Surface Hover or Primary Soft at low intensity;
 - badge/counter uses semantic color only when the count is urgent or error-related.
 
 Desktop sidebar compaction:
@@ -875,7 +928,7 @@ and danger feedback. `InlineFallback`, `PageFallback`, `PermissionFallback`,
 toasts must compose or delegate to this primitive rather than recreate local
 border, background, icon, title, description, action, or live-region styles.
 
-Status colors remain semantic: brand orange is not an error color. Merchant
+Status colors remain semantic: brand emerald is not an error color. Merchant
 surfaces must never render backend `detail`, `reason`, `last_error`,
 `error_code`, import-row messages, runtime `error.message`, route `statusText`,
 provider payloads, stack traces, paths, tokens, or secrets directly. Translate
@@ -889,7 +942,7 @@ When a new authenticated page is created:
 1. Start from shared layout primitives, not page-local wrappers.
 2. Use shared `Button`, `Input`, `Textarea`, `Select`, `Switch`, `Tabs`, `Badge`, `StatusBadge`, `Card`, `Surface`, table, modal, drawer, popover, toast, and state-view primitives.
 3. Do not use hard-coded `bg-slate-*`, `bg-blue-*`, random gradients, `font-black`, `rounded-3xl`, or hover translate unless the design system explicitly allows that case.
-4. Use CSS variables or Tailwind aliases mapped to Warm Premium tokens.
+4. Use CSS variables or Tailwind aliases mapped to the versioned semantic tokens.
 5. Check long Russian/Kazakh labels, mobile width, keyboard focus, disabled/loading states, and dark-theme readiness before marking the page visually aligned.
 
 ## Forms
@@ -953,7 +1006,7 @@ Before a page is considered visually aligned:
 - The main work area has one clear primary surface model.
 - There are no more than two neutral background planes visible in the normal state.
 - Nested muted blocks are used only where they improve comprehension.
-- Brand peach is used for actions/selected context, not generic decoration.
+- Brand emerald is used for actions/selected context, not generic decoration.
 - AI colors are separate from ordinary CRM actions.
 - Status colors are semantic and consistent.
 - Text contrast is readable on all backgrounds.

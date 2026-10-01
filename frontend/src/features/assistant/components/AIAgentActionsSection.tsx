@@ -33,8 +33,8 @@ export function AgentActionsSection({
       <Card variant="outlined">
         <CardBody>
           <h3 className="text-xl font-black text-midnight">{t("aiAgents.authority.title")}</h3>
-          <p className="mt-1 text-sm font-semibold text-slate-500">{t("aiAgents.authority.text")}</p>
-          <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-slate-50 px-4">
+          <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.authority.text")}</p>
+          <div className="mt-4 divide-y divide-platforma-border rounded-2xl border border-platforma-border bg-surface-muted px-4">
             <AuthorityRow label={t("aiAgents.authority.suggestions")} value={t("aiAgents.authority.suggestOnly")} />
             <AuthorityRow
               label={t("aiAgents.authority.leadTask")}
@@ -63,7 +63,7 @@ export function AgentActionsSection({
 function AuthorityRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 py-3 text-sm">
-      <span className="font-bold text-slate-700">{label}</span>
+      <span className="font-bold text-platforma-subtle">{label}</span>
       <span className="text-right font-black text-midnight">{value}</span>
     </div>
   );
@@ -82,7 +82,7 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
       <CardBody>
         <div className="mb-5">
           <h3 className="text-xl font-black text-midnight">{t("aiAgents.control.pipelineTitle")}</h3>
-          <p className="mt-1 text-sm font-semibold text-slate-500">{t("aiAgents.control.pipelineText")}</p>
+          <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.control.pipelineText")}</p>
         </div>
 
         <Select
@@ -108,10 +108,10 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
             ["create_appointment", t("aiAgents.control.appointmentTitle"), t("aiAgents.control.appointmentText")],
             ["auto_send_reply", t("aiAgents.control.autoReplyTitle"), t("aiAgents.control.autoReplyText")],
           ].map(([key, title, text]) => (
-            <div key={key} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div key={key} className="flex items-center justify-between gap-4 rounded-2xl border border-platforma-border bg-surface-muted p-4">
               <div>
                 <h4 className="font-black text-midnight">{title}</h4>
-                <p className="mt-1 text-sm font-semibold text-slate-500">{text}</p>
+                <p className="mt-1 text-sm font-semibold text-platforma-faint">{text}</p>
               </div>
               <ToggleSwitch
                 checked={Boolean(config[key as keyof typeof config])}
@@ -124,7 +124,7 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
           ))}
         </div>
 
-        <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <div className="mt-5 rounded-2xl border border-platforma-border bg-surface-muted p-4">
           <button
             type="button"
             className="flex w-full items-center justify-between gap-3 text-left"
@@ -134,7 +134,7 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
           >
             <div>
               <h4 className="font-black text-midnight">{t("aiAgents.control.advancedTitle")}</h4>
-              <p className="mt-1 text-sm font-semibold leading-5 text-slate-500">{t("aiAgents.control.advancedText")}</p>
+              <p className="mt-1 text-sm font-semibold leading-5 text-platforma-faint">{t("aiAgents.control.advancedText")}</p>
             </div>
             <ChevronRight size={18} className={cn("shrink-0 text-platforma-faint transition", showAdvanced && "rotate-90 text-ai-700")} />
           </button>
@@ -154,12 +154,12 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
                 <FieldHint>{t("aiAgents.hint.maxReplyChars")}</FieldHint>
               </div>
               <label className="block">
-                <span className="mb-2 block text-sm font-bold text-slate-700">{t("aiAgents.control.leadConfidence", { value: config.min_lead_confidence.toFixed(1) })}</span>
+                <span className="mb-2 block text-sm font-bold text-platforma-subtle">{t("aiAgents.control.leadConfidence", { value: config.min_lead_confidence.toFixed(1) })}</span>
                 <input className="w-full accent-ai-600" type="range" min="0.1" max="1" step="0.1" value={config.min_lead_confidence} disabled={!canManage} onChange={(event) => setConfig((current) => ({ ...current, min_lead_confidence: Number(event.target.value) }))} />
                 <FieldHint>{t("aiAgents.hint.leadConfidence")}</FieldHint>
               </label>
               <label className="block md:col-span-2">
-                <span className="mb-2 block text-sm font-bold text-slate-700">{t("aiAgents.control.dealConfidence", { value: config.min_deal_confidence.toFixed(1) })}</span>
+                <span className="mb-2 block text-sm font-bold text-platforma-subtle">{t("aiAgents.control.dealConfidence", { value: config.min_deal_confidence.toFixed(1) })}</span>
                 <input className="w-full accent-ai-600" type="range" min="0.1" max="1" step="0.1" value={config.min_deal_confidence} disabled={!canManage} onChange={(event) => setConfig((current) => ({ ...current, min_deal_confidence: Number(event.target.value) }))} />
                 <FieldHint>{t("aiAgents.hint.dealConfidence")}</FieldHint>
               </label>

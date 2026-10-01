@@ -125,7 +125,7 @@ export function ClientsFilters({
       actions={<>
         <CrmWorkspacePopover label={t("clients.filters")} icon={<SlidersHorizontal size={16} />} count={activeFilters.filter((item) => item.id !== "search").length}>{advancedContent}</CrmWorkspacePopover>
         <CrmWorkspacePopover label={t("clients.columns")} icon={<Columns3 size={16} />}>
-          {columnOptions.map((column) => <label key={column.id} className="flex items-center gap-3 rounded-control px-2 py-2 text-sm hover:bg-surface-muted">
+          {columnOptions.map((column) => <label key={column.id} className="flex items-center gap-3 rounded-control px-2 py-2 text-sm hover:bg-surface-hover">
             <input type="checkbox" checked={visibleColumns.has(column.id)} onChange={() => onToggleColumn(column.id)} />{column.label}
           </label>)}
         </CrmWorkspacePopover>

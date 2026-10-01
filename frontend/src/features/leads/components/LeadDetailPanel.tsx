@@ -192,26 +192,26 @@ export function LeadDetailPanel({
   }
 
   return (
-    <div className="flex h-full min-h-0 w-96 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_4px_18px_rgba(15,23,42,0.04)] transition-all duration-200">
+    <div className="flex h-full min-h-0 w-96 flex-col overflow-hidden rounded-xl border border-platforma-border bg-white shadow-[0_4px_18px_rgb(var(--color-text-primary-rgb)/0.04)] transition-all duration-200">
       <LeadContactSummary selected={selected} selectedClient={selectedClient} selectedService={selectedService} clientList={clientList} onWhatsAppTemplate={onWhatsAppTemplate} onToggleCollapsed={onToggleCollapsed} onClose={onClose} t={t} />
 
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4 pr-2">
-        <section className="rounded-xl border border-slate-200 bg-white p-3">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.aiConversationSummary")}</p>
+        <section className="rounded-xl border border-platforma-border bg-white p-3">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.aiConversationSummary")}</p>
           <p className="mt-2 text-sm font-bold leading-6 text-midnight">{aiInsight.summary}</p>
-          <div className="mt-3 grid gap-2 text-xs font-semibold text-slate-600">
-            <p><span className="font-black text-slate-400">{t("leads.aiIntent")}:</span> {aiInsight.intent}</p>
-            <p><span className="font-black text-slate-400">{t("leads.aiNextBestAction")}:</span> {aiInsight.recommendation}</p>
+          <div className="mt-3 grid gap-2 text-xs font-semibold text-platforma-subtle">
+            <p><span className="font-black text-platforma-faint">{t("leads.aiIntent")}:</span> {aiInsight.intent}</p>
+            <p><span className="font-black text-platforma-faint">{t("leads.aiNextBestAction")}:</span> {aiInsight.recommendation}</p>
           </div>
         </section>
 
         {(aiInsight.stale || aiInsight.duplicateClients.length) ? (
-          <section className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-            <p className="text-sm font-black text-amber-900">{aiInsight.stale ? t("leads.staleLeadTitle") : t("leads.duplicatesTitle")}</p>
-            {aiInsight.stale ? <p className="mt-1 text-xs font-semibold leading-5 text-amber-800">{t("leads.staleLeadText")}</p> : null}
+          <section className="rounded-xl border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] p-3">
+            <p className="text-sm font-black text-platforma-warning">{aiInsight.stale ? t("leads.staleLeadTitle") : t("leads.duplicatesTitle")}</p>
+            {aiInsight.stale ? <p className="mt-1 text-xs font-semibold leading-5 text-platforma-warning">{t("leads.staleLeadText")}</p> : null}
             {aiInsight.duplicateClients.length ? (
               <div className="mt-3 space-y-2">
-                <p className="text-xs font-semibold text-amber-800">{t("leads.duplicatesText", { count: aiInsight.duplicateClients.length })}</p>
+                <p className="text-xs font-semibold text-platforma-warning">{t("leads.duplicatesText", { count: aiInsight.duplicateClients.length })}</p>
                 {aiInsight.duplicateClients.slice(0, 3).map((duplicate) => (
                   <div key={duplicate.id} className="flex items-center justify-between gap-2 rounded-lg bg-white px-2 py-2">
                     <span className="min-w-0 truncate text-xs font-bold text-midnight">{duplicate.full_name}</span>
@@ -234,12 +234,12 @@ export function LeadDetailPanel({
         ) : null}
 
         <section>
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.clientRequest")}</p>
-          <p className="mt-2 line-clamp-3 rounded-xl bg-slate-50 p-3 text-sm font-semibold leading-6 text-slate-700">{selected.message || t("leads.noLeadComment")}</p>
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.clientRequest")}</p>
+          <p className="mt-2 line-clamp-3 rounded-xl bg-surface-muted p-3 text-sm font-semibold leading-6 text-platforma-subtle">{selected.message || t("leads.noLeadComment")}</p>
         </section>
 
         <section className="space-y-2">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.control")}</p>
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.control")}</p>
           <Select
             label={t("leads.responsible")}
             value={selected.responsible_user ? String(selected.responsible_user) : ""}
@@ -289,22 +289,22 @@ export function LeadDetailPanel({
         </section>
 
         <section>
-          <div className="rounded-xl bg-slate-50 p-3">
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.history")}</p>
+          <div className="rounded-xl bg-surface-muted p-3">
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.history")}</p>
             <div className="mt-3 space-y-3">
               <div className="flex gap-3">
                 <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[var(--platforma-brand-content)]" />
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-midnight">{t("leads.leadCreated")}</p>
-                  <p className="mt-1 text-xs text-slate-500">{formatDateTime(selected.created_at)}</p>
+                  <p className="mt-1 text-xs text-platforma-faint">{formatDateTime(selected.created_at)}</p>
                 </div>
               </div>
               {selectedNextTask ? (
                 <div className="flex gap-3">
-                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-platforma-warning" />
                   <div className="min-w-0">
                     <TruncatedText className="text-sm font-bold text-midnight">{selectedNextTask.title}</TruncatedText>
-                    <p className="mt-1 text-xs text-slate-500">{formatDateTime(selectedNextTask.due_at)}</p>
+                    <p className="mt-1 text-xs text-platforma-faint">{formatDateTime(selectedNextTask.due_at)}</p>
                   </div>
                 </div>
               ) : null}
@@ -313,7 +313,7 @@ export function LeadDetailPanel({
         </section>
 
         <section>
-          <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.quickActions")}</p>
+          <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.quickActions")}</p>
           <div className="grid grid-cols-2 gap-2">
             <Button variant="secondary" className="h-14 flex-col rounded-xl px-1 text-xs" disabled={!selectedClient?.phone} onClick={() => selectedClient?.phone && (window.location.href = `tel:${selectedClient.phone}`)}>
               <Phone size={16} /> {t("leads.call")}
@@ -335,37 +335,37 @@ export function LeadDetailPanel({
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-3">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.internalNotes")}</p>
+        <section className="rounded-xl border border-platforma-border bg-white p-3">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.internalNotes")}</p>
           <div className="relative">
             <textarea
-              className="mt-3 min-h-20 w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-brand-300 focus:bg-white"
+              className="mt-3 min-h-20 w-full resize-none rounded-xl border border-platforma-border bg-surface-muted px-3 py-2 text-sm font-semibold text-platforma-subtle outline-none focus:border-brand-500 focus:bg-white"
               placeholder={t("leads.notePlaceholder")}
               value={noteDraft}
               onChange={(event) => setNoteDraft(event.target.value)}
             />
             {mentionSuggestions.length || templateSuggestions.length ? (
-              <div className="absolute inset-x-2 top-full z-20 mt-1 rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
+              <div className="absolute inset-x-2 top-full z-20 mt-1 rounded-xl border border-platforma-border bg-white p-2 shadow-xl">
                 {mentionSuggestions.map((member) => (
                   <button
                     key={member.user.id}
                     type="button"
-                    className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50"
+                    className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm font-bold text-platforma-subtle hover:bg-surface-hover"
                     onClick={() => replaceCommand(/@([\p{L}\d._-]*)$/u, `@${(member.user.full_name || member.user.email).replace(/\s+/g, "_")} `)}
                   >
                     <span className="truncate">{member.user.full_name || member.user.email}</span>
-                    <span className="text-xs text-slate-400">@</span>
+                    <span className="text-xs text-platforma-faint">@</span>
                   </button>
                 ))}
                 {templateSuggestions.map((template) => (
                   <button
                     key={template.id}
                     type="button"
-                    className="w-full rounded-lg px-2 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50"
+                    className="w-full rounded-lg px-2 py-2 text-left text-sm font-bold text-platforma-subtle hover:bg-surface-hover"
                     onClick={() => replaceCommand(/(?:^|\s)\/([\p{L}\d_-]*)$/u, ` ${template.text}`)}
                   >
                     {template.label}
-                    <span className="block truncate text-xs font-semibold text-slate-400">{template.text}</span>
+                    <span className="block truncate text-xs font-semibold text-platforma-faint">{template.text}</span>
                   </button>
                 ))}
               </div>
@@ -374,10 +374,10 @@ export function LeadDetailPanel({
           {attachedFiles.length ? (
             <div className="mt-2 flex flex-wrap gap-2">
               {attachedFiles.map((file) => (
-                <span key={`${file.name}-${file.size}`} className="inline-flex max-w-full items-center gap-2 rounded-lg bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600">
+                <span key={`${file.name}-${file.size}`} className="inline-flex max-w-full items-center gap-2 rounded-lg bg-surface-muted px-2 py-1 text-xs font-bold text-platforma-subtle">
                   <span className="truncate">{file.name}</span>
-                  <span className="shrink-0 text-slate-400">{formatFileSize(file.size)}</span>
-                  <button type="button" className="shrink-0 text-slate-400 hover:text-red-600" onClick={() => setAttachedFiles((value) => value.filter((item) => item !== file))}>
+                  <span className="shrink-0 text-platforma-faint">{formatFileSize(file.size)}</span>
+                  <button type="button" className="shrink-0 text-platforma-faint hover:text-platforma-danger" onClick={() => setAttachedFiles((value) => value.filter((item) => item !== file))}>
                     <XCircle size={13} />
                   </button>
                 </span>
@@ -401,7 +401,7 @@ export function LeadDetailPanel({
               </label>
               <button
                 type="button"
-                className={cn("inline-flex items-center gap-1 text-xs font-bold", recording ? "text-red-600" : "text-brand-700 hover:text-brand-800")}
+                className={cn("inline-flex items-center gap-1 text-xs font-bold", recording ? "text-platforma-danger" : "text-brand-700 hover:text-brand-800")}
                 onClick={recording ? stopVoiceNote : startVoiceNote}
               >
                 <Mic size={14} /> {recording ? t("leads.voiceStop") : t("leads.voiceRecord")}
@@ -419,35 +419,35 @@ export function LeadDetailPanel({
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-3">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.templates")}</p>
+        <section className="rounded-xl border border-platforma-border bg-white p-3">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.templates")}</p>
           <div className="mt-3 grid gap-2">
             {templates.map((template) => (
               <button
                 key={template.id}
                 type="button"
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-left text-sm font-bold text-midnight hover:border-brand-200 hover:bg-brand-50"
+                className="rounded-xl border border-platforma-border bg-surface-muted px-3 py-2 text-left text-sm font-bold text-midnight hover:border-brand-200 hover:bg-brand-50"
                 onClick={() => onWhatsAppTemplate(selected, template.text)}
               >
                 {template.label}
-                <span className="mt-1 block truncate text-xs font-semibold text-slate-500">{template.text}</span>
+                <span className="mt-1 block truncate text-xs font-semibold text-platforma-faint">{template.text}</span>
               </button>
             ))}
           </div>
         </section>
 
         <section className="grid grid-cols-3 gap-2 text-center">
-          <div className="rounded-xl bg-slate-50 p-2">
+          <div className="rounded-xl bg-surface-muted p-2">
             <p className="text-base font-black text-midnight">{selectedDeals.length}</p>
-            <p className="truncate text-[10px] font-bold text-slate-400">{t("leads.relatedDeals")}</p>
+            <p className="truncate text-[10px] font-bold text-platforma-faint">{t("leads.relatedDeals")}</p>
           </div>
-          <div className="rounded-xl bg-slate-50 p-2">
+          <div className="rounded-xl bg-surface-muted p-2">
             <p className="text-base font-black text-midnight">{selectedAppointments.length}</p>
-            <p className="truncate text-[10px] font-bold text-slate-400">{t("leads.relatedBookings")}</p>
+            <p className="truncate text-[10px] font-bold text-platforma-faint">{t("leads.relatedBookings")}</p>
           </div>
-          <div className="rounded-xl bg-slate-50 p-2">
+          <div className="rounded-xl bg-surface-muted p-2">
             <p className="text-base font-black text-midnight">{selectedConversations.length}</p>
-            <p className="truncate text-[10px] font-bold text-slate-400">{t("leads.relatedConversations")}</p>
+            <p className="truncate text-[10px] font-bold text-platforma-faint">{t("leads.relatedConversations")}</p>
           </div>
         </section>
 
@@ -461,7 +461,7 @@ export function LeadDetailPanel({
         </div>
 
         {selected.lost_reason ? (
-          <div className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">
+          <div className="rounded-xl bg-[var(--platforma-danger-soft)] p-3 text-sm font-semibold text-platforma-danger">
             <AlertTriangle aria-hidden="true" size={16} className="mb-2" />
             {selected.lost_reason}
           </div>

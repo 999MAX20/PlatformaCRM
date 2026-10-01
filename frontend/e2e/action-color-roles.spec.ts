@@ -17,12 +17,15 @@ test.describe("semantic action color matrix", () => {
     expect(new Set(backgrounds).size).toBe(5);
 
     const warning = page.getByTestId("tone-warning");
-    await expect(warning).toHaveCSS("background-color", "rgb(244, 192, 79)");
+    await expect(warning).toHaveCSS("background-color", "rgb(255, 245, 232)");
     await warning.hover();
-    await expect(warning).toHaveCSS("background-color", "rgb(233, 172, 45)");
+    await expect(warning).not.toHaveCSS("background-color", "rgb(255, 245, 232)");
     await warning.focus();
-    await expect(warning).toHaveCSS("box-shadow", /rgba\(164, 71, 13, 0\.42\)/);
-    await expect(page.getByTestId("tone-warning-disabled")).toHaveCSS("opacity", "0.6");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(warning).toHaveCSS("box-shadow", /rgb\(0, 122, 89\)/);
+    await expect(page.getByTestId("tone-warning-disabled")).toHaveCSS("opacity", "1");
+    await expect(page.getByTestId("tone-warning-disabled")).toHaveCSS("background-color", "rgb(238, 241, 239)");
 
     const overflow = await page.locator("body").evaluate((body) => body.scrollWidth - body.clientWidth);
     expect(overflow).toBeLessThanOrEqual(1);

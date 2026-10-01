@@ -55,7 +55,7 @@ function ClientCardContent({ data, entity }: { data: CrmCardPayload; entity: Crm
             <span
               key={item.id}
               className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold"
-              style={{ backgroundColor: `${item.tag_color || "#2563eb"}18`, color: item.tag_color || "#2563eb" }}
+              style={{ backgroundColor: item.tag_color ? `${item.tag_color}18` : "var(--platforma-brand-soft)", color: item.tag_color || "var(--platforma-brand-content)" }}
             >
               <Tags size={13} /> {item.tag_name}
             </span>

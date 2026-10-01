@@ -59,7 +59,7 @@ export function CrmEntityTabs({ active, onChange, data }: { active: CrmCardTab; 
             data-testid={`crm-entity-tab-${tab.id}`}
             className={cn(
               "flex shrink-0 items-center gap-2 rounded-card px-4 py-2 text-sm font-bold transition",
-              active === tab.id ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "bg-surface-card text-platforma-muted hover:bg-surface-warm hover:text-platforma-ink",
+              active === tab.id ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "bg-surface-card text-platforma-muted hover:bg-surface-hover hover:text-platforma-ink",
             )}
             onClick={() => onChange(tab.id)}
           >

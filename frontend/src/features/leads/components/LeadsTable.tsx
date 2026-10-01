@@ -194,7 +194,7 @@ function LeadTableRow({
         CRM_TABLE_ROW_GRID_CLASS,
         selected && "bg-brand-50/70 shadow-[inset_3px_0_0_var(--platforma-brand)]",
         bulkSelected && "bg-surface-muted",
-        aiInsight.stale && !selected && "bg-[var(--platforma-warning-soft)]/45",
+        aiInsight.stale && !selected && "bg-platforma-warningSoft/[0.45]",
       )}
       style={{
         gridTemplateColumns,
@@ -220,8 +220,8 @@ function LeadTableRow({
           className={cn(
             "grid h-5 w-5 place-items-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500",
             bulkSelected
-              ? "border-brand-500 bg-brand-500 text-platforma-ink"
-              : "border-platforma-border bg-surface-card",
+              ? "border-brand-500 bg-brand-500 text-white"
+              : "border-platforma-control bg-surface-card",
           )}
         >
           {bulkSelected ? <CheckCheck size={13} /> : null}

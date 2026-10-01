@@ -29,9 +29,9 @@ export type WorkbenchMetricItem = {
 const metricToneClasses: Record<NonNullable<WorkbenchMetricItem["tone"]>, string> = {
   neutral: "border-platforma-border bg-surface-card text-platforma-text",
   brand: "border-brand-100 bg-brand-50 text-brand-700",
-  success: "border-[rgba(21,128,61,0.18)] bg-[var(--platforma-success-soft)] text-platforma-success",
-  warning: "border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)] text-platforma-warning",
-  danger: "border-[rgba(194,65,12,0.2)] bg-[var(--platforma-danger-soft)] text-platforma-danger",
+  success: "border-platforma-success/[0.18] bg-[var(--platforma-success-soft)] text-platforma-success",
+  warning: "border-platforma-warning/[0.22] bg-[var(--platforma-warning-soft)] text-platforma-warning",
+  danger: "border-platforma-danger/20 bg-[var(--platforma-danger-soft)] text-platforma-danger",
   ai: "border-ai-100 bg-ai-50 text-ai-700",
 };
 
@@ -67,9 +67,9 @@ export function MetricStrip({ children, className }: WorkbenchSectionProps) {
 export function WorkbenchMetric({ label, value, detail, tone = "neutral" }: WorkbenchMetricItem) {
   return (
     <div className={cn("min-w-0 rounded-card border px-3 py-2.5 shadow-soft", metricToneClasses[tone])}>
-      <p className="truncate text-xs font-semibold opacity-75">{label}</p>
+      <p className="truncate text-xs font-semibold">{label}</p>
       <p className="mt-1 truncate text-xl font-semibold tracking-tight">{value}</p>
-      {detail ? <p className="mt-1 truncate text-xs font-semibold opacity-70">{detail}</p> : null}
+      {detail ? <p className="mt-1 truncate text-xs font-semibold">{detail}</p> : null}
     </div>
   );
 }

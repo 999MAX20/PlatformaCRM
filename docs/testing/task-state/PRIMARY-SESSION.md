@@ -2,6 +2,57 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Shared emerald palette and interaction states / LOCALLY VERIFIED, 2026-10-02
+
+- Authorization: owner-approved implementation relayed by coordination task
+  01a0f32f-7d02-7263-a53d-496c8f9787f5 to this existing CRM primary. Coordinator
+  does not write source; Market has its separate executor/repository.
+- Mode: implementation; gap: CSS/Tailwind palette drift and local bypasses.
+  Result: versioned shared semantic colors and consistent default/hover/pressed/
+  focus-visible/selected/disabled/loading across existing CRM components.
+- Owner: registered primary generation2, canonical C:/Users/user/Desktop/PlatformaCRM,
+  branch codex/ui-testing-toolkit, clean base10abfbe3a670ecc2e2f875193fffe7545ded483d.
+  No other WIP/writer found; preserve branch. Previous typography task is closed.
+- Source: approved proposed-tokens.json in coordinator visualization directory
+  2026/09/30/01a0f32f-7d02-7263-a53d-496c8f9787f5/design-token-comparison.
+  Historical PROPOSAL_NOT_IMPLEMENTED label is superseded by current approval.
+  JSON wins over images. All six supplied references reviewed; generated data,
+  text, logos, gradients and invented fields are not implementation requirements.
+- Reuse CSS variables/Tailwind and shared controls: buttons, fields/selects,
+  checkbox/switch, tabs/filters/tables/cards/dialogs. Verify Leads/Deals/Clients
+  and dependent existing screens. Keep geometry, business behavior and RU/KK/EN
+  typography/localization. No new framework, dark-theme project, backend/API,
+  permissions, notifications, BusinessEvents, AI behavior, data or migrations.
+- Gates: build/budget, targeted state/contrast/keyboard tests, desktop/mobile
+  browser evidence on existing scenarios using isolated disposable runtime,
+  committed-range static, reviewed commit/normal push main and actual CI.
+  Working DB/seed/deployment are not authorized; fixtures only in disposable DB.
+- Owner follow-up relayed2026-10-02: after implementation, separately audit the
+  complete route/component color application, including all public/auth routes,
+  internal role variants and overlays/states. Inventory real routes and local
+  color bypasses, distinguish browser/static coverage and justified exceptions,
+  fix in-scope defects, repeat affected gates. No new task/owner/data/external effects.
+- Implementation complete: versioned exact semantic values, CSS/Tailwind/widget
+  adapters, shared and local interaction states; no product geometry or business
+  rules changed. Final build/budget and component/Node checks passed. Full route
+  collection found and repaired text-opacity, hover contrast, unsupported alpha
+  utilities and remaining local disabled colors. Source exceptions are explicit.
+- Separate whole-CRM audit and route/component matrix:
+  [color-system-audit-20261002](../color-system-audit-20261002.md). That report owns
+  detailed commands, counts, failed/intermediate runs and uninspected boundaries.
+  Broad process PASS was not mistaken for contrast acceptance: strict follow-up
+  assertions cover the repaired surfaces and actual AI/conversation IDs.
+- Combined browser acceptance and focused completion prove62 distinct applicable
+  scenarios, with13 conditional skips. Component/widget8 and Node34 also PASS.
+  The hidden responsive test locator was corrected; password-reset assertions
+  pass in fresh smaller runtimes without changing production throttling.
+  Build/budget PASS; all strict contrast snapshots pass. Exact commands, failed
+  attempts, counts and source/browser limits belong to the report. Own runs ended.
+- Remote main readback still matches starting10abfbe; local branch/HEAD unchanged.
+  No commit/publication for this package yet. Next: review final diff/evidence,
+  commit, run exact-base static gate, normal-push main
+  and inspect actual CI. Working DB, deployment and external actions remain out.
+
 ## Kazakh font consistency / LOCALLY VERIFIED, 2026-10-01
 
 - Owner screenshot: Kazakh-specific letters appear heavier within words; inspect

@@ -45,7 +45,7 @@ export function ConversationComposer({
         </button>
         <button
           type="button"
-          className="mb-1 inline-flex h-8 shrink-0 items-center gap-1.5 rounded-control px-2.5 text-xs font-bold text-platforma-muted hover:bg-surface-hover hover:text-platforma-text disabled:cursor-not-allowed disabled:opacity-50"
+          className="mb-1 inline-flex h-8 shrink-0 items-center gap-1.5 rounded-control px-2.5 text-xs font-bold text-platforma-muted hover:bg-surface-hover hover:text-platforma-text disabled:cursor-not-allowed disabled:bg-disabled-surface disabled:text-disabled-content disabled:ring-1 disabled:ring-disabled-border disabled:opacity-100"
           disabled={selected.status === "closed"}
           onClick={onOpenQuickReplies}
           title={t("conversations.quickReplies")}
@@ -56,7 +56,7 @@ export function ConversationComposer({
           data-testid="inbox-action-composer"
           ref={composerRef}
           rows={1}
-          className="max-h-28 min-h-10 min-w-0 flex-1 resize-none bg-transparent py-2 text-sm text-platforma-text outline-none placeholder:text-platforma-muted"
+          className="platforma-focus-ring max-h-28 min-h-10 min-w-0 flex-1 resize-none bg-transparent py-2 text-sm text-platforma-text outline-none placeholder:text-platforma-muted disabled:bg-disabled-surface disabled:text-disabled-content disabled:placeholder:text-disabled-content disabled:opacity-100"
           disabled={selected.status === "closed" || sendPending}
           placeholder={t("conversations.replyPlaceholder")}
           value={draft}

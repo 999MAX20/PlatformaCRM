@@ -164,7 +164,7 @@ export function DealDrawerContent({ data, entity, onTabChange }: { data: CrmCard
         <div className={drawerSurfaceClass}>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("clients.notes")}</p>
           {deal.notes ? <p className="text-sm leading-6 text-platforma-text">{deal.notes}</p> : <p className="text-sm leading-6 text-platforma-muted">{t("crmCard.noNotesText")}</p>}
-          {deal.lost_reason ? <p className="mt-3 rounded-card bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">{t("deals.lostReasonPrompt")}: {deal.lost_reason}</p> : null}
+          {deal.lost_reason ? <p className="mt-3 rounded-card bg-[var(--platforma-danger-soft)] px-3 py-2 text-sm font-semibold text-platforma-danger">{t("deals.lostReasonPrompt")}: {deal.lost_reason}</p> : null}
         </div>
 
         <EntityCustomFieldsPanel data={data} entity={entity} />

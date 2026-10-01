@@ -76,7 +76,7 @@ function ChannelsSection({
           const channel = channelByName(item.key);
           const connected = channel?.status === "active";
           return (
-            <article key={item.key} className="min-h-[142px] rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <article key={item.key} className="min-h-[142px] rounded-2xl border border-platforma-border bg-white p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <LogoMark logo={item.logo} label={item.title} />
                 <div className="flex shrink-0 items-center gap-2">
@@ -123,7 +123,7 @@ function ChannelsSection({
                     {channelStatus(channel, t)}
                   </span>
                 </div>
-                <p className="mt-2 text-sm font-semibold leading-5 text-slate-500">{item.description}</p>
+                <p className="mt-2 text-sm font-semibold leading-5 text-platforma-faint">{item.description}</p>
                 <FieldHint>{t(`aiAgents.hint.channel.${item.key}`)}</FieldHint>
               </div>
             </article>
@@ -157,16 +157,16 @@ function WebsiteSetup({ bot, channel }: { bot: BotType; channel?: BotChannel }) 
   const snippet = channel ? `<script src=\"/widget/platformacrm-widget.js\" data-platforma-token=\"${channel.public_token}\" data-platforma-api=\"${widgetApiBase}\"></script>` : "";
   return (
     <div className="space-y-4">
-      <div className="rounded-card border border-slate-200 bg-white p-4">
+      <div className="rounded-card border border-platforma-border bg-white p-4">
         <h3 className="text-lg font-black text-midnight">{t("aiAgents.websiteSetupTitle")}</h3>
-        <p className="mt-1 text-sm font-semibold leading-6 text-slate-500">
+        <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">
           {t("aiAgents.websiteSetupText", { name: bot.name })}
         </p>
       </div>
       {channel ? (
-        <pre className="max-h-56 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs font-semibold leading-6 text-white">{snippet}</pre>
+        <pre className="max-h-56 overflow-auto rounded-2xl bg-platforma-ink p-4 text-xs font-semibold leading-6 text-white">{snippet}</pre>
       ) : (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-500">
+        <div className="rounded-2xl border border-dashed border-platforma-border bg-surface-muted p-4 text-sm font-semibold text-platforma-faint">
           {t("aiAgents.websiteSetupEmpty")}
         </div>
       )}

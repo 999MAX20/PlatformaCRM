@@ -15,18 +15,18 @@ export function PlatformPlaceholderPage({ titleKey, eyebrowKey, descriptionKey, 
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <section className="rounded-[2rem] border border-platforma-border bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">{t(eyebrowKey)}</p>
             <h1 className="mt-3 text-4xl font-semibold tracking-tight text-midnight sm:text-5xl">{t(titleKey)}</h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">{t(descriptionKey)}</p>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-platforma-subtle">{t(descriptionKey)}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <div className="rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
+            <div className="rounded-3xl border border-platforma-success/20 bg-[var(--platforma-success-soft)] px-4 py-3 text-sm font-semibold text-platforma-success">
               {t("platform.placeholder.accessLayerActive")}
             </div>
-            <div className="rounded-3xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+            <div className="rounded-3xl border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] px-4 py-3 text-sm font-semibold text-platforma-warning">
               {t("platform.placeholder.internalOnly")}
             </div>
           </div>
@@ -37,15 +37,15 @@ export function PlatformPlaceholderPage({ titleKey, eyebrowKey, descriptionKey, 
         <Card>
           <CardBody className="p-6">
             <div className="flex items-start gap-4">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-slate-900 text-white">
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-platforma-ink text-white">
                 <ShieldCheck size={23} />
               </div>
               <div>
                 <h2 className="text-xl font-semibold tracking-tight text-midnight">{t("platform.placeholder.placeholderOnly")}</h2>
-                <p className="mt-2 leading-7 text-slate-600">
+                <p className="mt-2 leading-7 text-platforma-subtle">
                   {t("platform.placeholder.placeholderText")}
                 </p>
-                <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold leading-6 text-amber-800">
+                <p className="mt-3 rounded-2xl border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] px-3 py-2 text-sm font-semibold leading-6 text-platforma-warning">
                   {t("platform.placeholder.notMerchantFeature")}
                 </p>
               </div>
@@ -58,8 +58,8 @@ export function PlatformPlaceholderPage({ titleKey, eyebrowKey, descriptionKey, 
             <h2 className="text-xl font-semibold tracking-tight text-midnight">{t("platform.placeholder.readiness")}</h2>
             <div className="mt-4 space-y-3">
               {statusItems.map((item) => (
-                <div key={item} className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700">
-                  <CheckCircle2 className="mt-0.5 shrink-0 text-emerald-500" size={18} />
+                <div key={item} className="flex items-start gap-3 rounded-2xl border border-platforma-border bg-surface-muted px-3 py-3 text-sm font-semibold text-platforma-subtle">
+                  <CheckCircle2 className="mt-0.5 shrink-0 text-platforma-success" size={18} />
                   {t(item)}
                 </div>
               ))}
@@ -75,10 +75,10 @@ export function PlatformPlaceholderPage({ titleKey, eyebrowKey, descriptionKey, 
               <Clock3 className="mt-1 text-brand-600" size={21} />
               <div>
                 <h2 className="text-lg font-semibold text-midnight">{t("platform.placeholder.nextRoadmapStep")}</h2>
-                <p className="mt-1 text-sm leading-6 text-slate-500">{t("platform.placeholder.nextRoadmapText")}</p>
+                <p className="mt-1 text-sm leading-6 text-platforma-faint">{t("platform.placeholder.nextRoadmapText")}</p>
               </div>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-2xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600">
+            <div className="inline-flex items-center gap-2 rounded-2xl bg-surface-muted px-4 py-2 text-sm font-semibold text-platforma-subtle">
               {t("platform.placeholder.stageControlled")}
               <ArrowRight size={16} />
             </div>

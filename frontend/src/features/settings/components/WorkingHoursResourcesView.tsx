@@ -93,7 +93,7 @@ export function WorkingHoursResourcesView({
                 key={item.resource.id}
                 type="button"
                 data-focus-return-id={`working-hours-resource-${item.resource.id}`}
-                className="platforma-focus-ring flex w-full items-center gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-3 text-left hover:bg-surface-warm"
+                className="platforma-focus-ring flex w-full items-center gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-3 text-left hover:bg-surface-hover"
                 onClick={() => onOpen(item.resource)}
               >
                 <div className="min-w-0 flex-1">
@@ -122,7 +122,7 @@ export function WorkingHoursResourcesView({
                     tabIndex={0}
                     aria-label={t("workingHours.openResourceSchedule").replace("{name}", item.resource.name)}
                     data-focus-return-id={`working-hours-resource-${item.resource.id}`}
-                    className="platforma-focus-ring cursor-pointer outline-none transition hover:bg-surface-warm"
+                    className="platforma-focus-ring cursor-pointer outline-none transition hover:bg-surface-hover"
                     onClick={() => onOpen(item.resource)}
                     onKeyDown={(event) => {
                       if (event.key !== "Enter" && event.key !== " ") return;

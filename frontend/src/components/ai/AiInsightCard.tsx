@@ -6,9 +6,9 @@ import { cn } from "../../lib/cn";
 export type AiInsightSeverity = "critical" | "warning" | "good" | "info";
 
 const iconTone: Record<AiInsightSeverity, string> = {
-  critical: "border-[rgba(194,65,12,0.2)] bg-[var(--platforma-danger-soft)] text-platforma-danger",
-  warning: "border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)] text-platforma-warning",
-  good: "border-[rgba(21,128,61,0.18)] bg-[var(--platforma-success-soft)] text-platforma-success",
+  critical: "border-platforma-danger/20 bg-[var(--platforma-danger-soft)] text-platforma-danger",
+  warning: "border-platforma-warning/[0.22] bg-[var(--platforma-warning-soft)] text-platforma-warning",
+  good: "border-platforma-success/[0.18] bg-[var(--platforma-success-soft)] text-platforma-success",
   info: "border-ai-100 bg-ai-50 text-ai-700",
 };
 

@@ -204,7 +204,7 @@ export function Sidebar({
         "relative z-[60] shrink-0 border-r border-platforma-border bg-surface-card transition-[width,box-shadow,background-color,backdrop-filter] duration-200 ease-out",
         forceVisible && "h-dvh max-h-dvh w-[min(360px,94vw)] bg-surface-card shadow-premium backdrop-blur-2xl",
         !forceVisible && cn(
-          "hidden bg-surface-card/92 backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:block",
+          "hidden bg-surface-card/[0.92] backdrop-blur-2xl lg:fixed lg:inset-y-0 lg:left-0 lg:block",
           isExpanded ? "lg:w-[224px] lg:bg-surface-card lg:shadow-panel lg:backdrop-blur-2xl" : "lg:w-16",
         ),
         !forceVisible && "hidden lg:block",
@@ -233,7 +233,7 @@ export function Sidebar({
             return (
             <section key={group.id}>
               {mobileDrawer ? <div
-                className="mb-1 flex min-h-7 w-full items-center justify-between rounded-control px-3 text-left text-[10px] font-semibold text-platforma-faint transition-colors hover:bg-surface-muted hover:text-platforma-subtle"
+                className="mb-1 flex min-h-7 w-full items-center justify-between rounded-control px-3 text-left text-[10px] font-semibold text-platforma-faint transition-colors hover:bg-surface-hover hover:text-platforma-subtle"
               >
                 <span>{t(group.titleKey)}</span>
               </div> : null}

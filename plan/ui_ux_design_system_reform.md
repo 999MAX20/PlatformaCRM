@@ -1,5 +1,10 @@
 # UI/UX Design System Reform
 
+> Color update2026-10-02: the owner-approved neutral/emerald palette in
+> [design-system.md](../docs/frontend/design-system.md#shared-neutral--emerald-colors--2026-10-02)
+> supersedes the historical warm/peach values below. Geometry, business behavior
+> and unrelated reform scope are unchanged. Execution: PRIMARY-SESSION.
+
 Дата: 2026-06-09
 
 Цель: зафиксировать единый визуальный стандарт ZANI перед полной реформой страниц, чтобы новые экраны не проектировались разрозненно.

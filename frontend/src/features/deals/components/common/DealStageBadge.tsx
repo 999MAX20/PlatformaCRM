@@ -13,7 +13,7 @@ export function DealStageBadge({
     <span className="inline-flex max-w-full items-center gap-2 rounded-lg bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-700">
       <span
         className="h-2 w-2 shrink-0 rounded-full"
-        style={{ backgroundColor: stage?.color || "#F5B37A" }}
+        style={{ backgroundColor: stage?.color || "var(--platforma-brand)" }}
       />
       <span className="truncate">{stage?.name || fallback}</span>
     </span>

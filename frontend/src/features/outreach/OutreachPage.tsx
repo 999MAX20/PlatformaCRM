@@ -386,7 +386,7 @@ export function OutreachPage() {
             ))}
           </div>
           {appointmentAutomation.data.failed_notifications.length ? (
-            <Surface className="mt-4 border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)]" padding="sm">
+            <Surface className="mt-4 border-platforma-warning/[0.22] bg-[var(--platforma-warning-soft)]" padding="sm">
               <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-platforma-warning">{t("outreach.deliveryErrorsTitle")}</p>
@@ -425,7 +425,7 @@ export function OutreachPage() {
                 <button
                   key={campaign.id}
                   type="button"
-                  className={`w-full rounded-card border p-4 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 ${active ? "border-brand-200 bg-brand-50 shadow-sm" : "border-platforma-border bg-surface-card hover:border-brand-100 hover:bg-surface-warm"}`}
+                  className={`w-full rounded-card border p-4 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${active ? "border-brand-200 bg-brand-50 shadow-sm" : "border-platforma-border bg-surface-card hover:border-brand-100 hover:bg-surface-hover"}`}
                   onClick={() => setSelectedId(campaign.id)}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -500,7 +500,7 @@ export function OutreachPage() {
               </div>
 
               {launchChecklist.data ? (
-                <Surface className={`mt-4 ${launchChecklist.data.can_launch ? "border-[rgba(21,128,61,0.18)] bg-[var(--platforma-success-soft)]" : "border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)]"}`}>
+                <Surface className={`mt-4 ${launchChecklist.data.can_launch ? "border-platforma-success/[0.18] bg-[var(--platforma-success-soft)]" : "border-platforma-warning/[0.22] bg-[var(--platforma-warning-soft)]"}`}>
                   <div className="flex items-center justify-between gap-3">
                     <h3 className={`text-sm font-semibold ${launchChecklist.data.can_launch ? "text-platforma-success" : "text-platforma-warning"}`}>{t("outreach.prelaunchCheck")}</h3>
                     <Badge variant={launchChecklist.data.can_launch ? "success" : "warning"}>
@@ -510,7 +510,7 @@ export function OutreachPage() {
                   <div className="mt-3 grid gap-2 md:grid-cols-2">
                     {launchChecklist.data.checks.map((check) => (
                       <div key={check.key} className="flex items-center gap-2 text-sm font-semibold text-platforma-subtle">
-                        <span className={`h-2.5 w-2.5 rounded-full ${check.ok ? "bg-emerald-500" : "bg-amber-500"}`} />
+                        <span className={`h-2.5 w-2.5 rounded-full ${check.ok ? "bg-platforma-success" : "bg-platforma-warning"}`} />
                         {check.label}
                       </div>
                     ))}
@@ -519,7 +519,7 @@ export function OutreachPage() {
               ) : null}
 
               {stats.data?.errors?.length ? (
-                <Surface className="mt-4 border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)]">
+                <Surface className="mt-4 border-platforma-warning/[0.22] bg-[var(--platforma-warning-soft)]">
                   <h3 className="text-sm font-semibold text-platforma-warning">{t("outreach.errorReasons")}</h3>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {stats.data.errors.map((error) => (
@@ -589,7 +589,7 @@ export function OutreachPage() {
                           {recipient.status}
                         </Badge>
                         {recipient.skipped_reason ? <span className="text-xs font-semibold text-platforma-warning">{t("outreach.recipientSkipped")}</span> : null}
-                        {recipient.error_code ? <span className="text-xs font-semibold text-rose-700">{t("outreach.recipientDeliveryFailed")}</span> : null}
+                        {recipient.error_code ? <span className="text-xs font-semibold text-platforma-danger">{t("outreach.recipientDeliveryFailed")}</span> : null}
                       </div>
                     ))}
                     {!recipients.isLoading && !(recipients.data || []).length ? <p className="text-sm font-medium text-platforma-subtle">{t("outreach.queueEmpty")}</p> : null}
@@ -810,12 +810,12 @@ function ManualAudiencePicker({
               type="button"
               disabled={disabled}
               onClick={() => onToggle(Number(client.id))}
-              className={`rounded-card border px-3 py-2 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 ${selected ? "border-brand-200 bg-brand-50 text-brand-900" : "border-platforma-border bg-surface-muted text-platforma-subtle"} ${disabled ? "cursor-not-allowed opacity-50" : "hover:border-brand-100 hover:bg-surface-card"}`}
+              className={`rounded-card border px-3 py-2 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${selected ? "border-brand-200 bg-brand-50 text-brand-900" : "border-platforma-border bg-surface-muted text-platforma-subtle"} ${disabled ? "cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content" : "hover:border-brand-100 hover:bg-surface-card"}`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{client.full_name}</p>
-                  <p className="mt-0.5 truncate text-xs font-semibold opacity-70">{recipientId || t("outreach.noChannelId")}</p>
+                  <p className="mt-0.5 truncate text-xs font-semibold">{recipientId || t("outreach.noChannelId")}</p>
                 </div>
                 <Badge variant={selected ? "primary" : "neutral"} size="sm">{selected ? t("outreach.selected") : channelLabels[campaign.channel]}</Badge>
               </div>

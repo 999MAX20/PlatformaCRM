@@ -947,7 +947,7 @@ export function CalendarPage() {
                             "absolute left-0 right-0 border-t border-platforma-border text-left transition",
                             isWorking
                               ? "hover:bg-brand-50"
-                              : "cursor-not-allowed bg-surface-muted opacity-70",
+                              : "cursor-not-allowed bg-disabled-surface text-disabled-content",
                           )}
                           style={{
                             top: `${(hour - dayStartHour) * hourHeight}px`,
@@ -1148,7 +1148,7 @@ export function CalendarPage() {
                                 "absolute left-0 right-0 border-t border-platforma-border transition",
                                 isWorking
                                   ? "hover:bg-brand-50"
-                                  : "cursor-not-allowed bg-surface-muted opacity-70",
+                                  : "cursor-not-allowed bg-disabled-surface text-disabled-content",
                               )}
                               style={{
                                 top: `${(hour - dayStartHour) * hourHeight}px`,
@@ -1296,7 +1296,7 @@ export function CalendarPage() {
                             <button
                               key={appointment.id}
                               type="button"
-                              className="w-full truncate rounded-control border border-brand-100 bg-platforma-card px-2 py-1 text-left text-xs font-bold text-brand-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-50"
+                              className="w-full truncate rounded-control border border-brand-100 bg-platforma-card px-2 py-1 text-left text-xs font-bold text-brand-700 shadow-sm transition hover:border-brand-500 hover:bg-brand-50"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 selectAppointment(appointment);

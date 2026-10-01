@@ -246,7 +246,7 @@ export function GlobalSearch() {
           }}
         />
         {query || mobileExpanded ? (
-          <button type="button" className="platforma-focus-ring grid h-8 w-8 place-items-center rounded-control text-platforma-faint hover:bg-surface-muted hover:text-platforma-text" onClick={query ? clearSearch : closeSearch} aria-label={t("search.close")}>
+          <button type="button" className="platforma-focus-ring grid h-8 w-8 place-items-center rounded-control text-platforma-faint hover:bg-surface-hover hover:text-platforma-text" onClick={query ? clearSearch : closeSearch} aria-label={t("search.close")}>
             <X size={20} />
           </button>
         ) : null}
@@ -274,7 +274,7 @@ export function GlobalSearch() {
                   key={item.id}
                   to={item.to}
                   onClick={closeSearch}
-                  className="platforma-focus-ring flex min-h-[62px] items-start gap-3 rounded-control px-3 py-3 transition hover:bg-surface-muted active:scale-[0.99]"
+                  className="platforma-focus-ring flex min-h-[62px] items-start gap-3 rounded-control px-3 py-3 transition hover:bg-surface-hover active:scale-[0.99]"
                 >
                   <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-surface-muted text-platforma-subtle">
                     <Icon size={18} />

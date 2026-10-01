@@ -231,7 +231,7 @@ export function WhatsAppInlineSetup({
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="min-w-0">
               <p className="text-sm font-black text-midnight">{t("integrations.whatsapp.metaConnection")}</p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-slate-500">
+              <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">
                 {t("integrations.whatsapp.metaDescription")}
               </p>
             </div>
@@ -240,8 +240,8 @@ export function WhatsAppInlineSetup({
             </Button>
           </div>
           {hasSignupResult ? (
-            <div className="rounded-2xl bg-blue-50 p-3">
-              <p className="text-sm font-black text-blue-950">{t("integrations.whatsapp.metaConfirmed")}</p>
+            <div className="rounded-2xl bg-[var(--platforma-info-soft)] p-3">
+              <p className="text-sm font-black text-platforma-info">{t("integrations.whatsapp.metaConfirmed")}</p>
             </div>
           ) : null}
           {hasSignupResult ? (

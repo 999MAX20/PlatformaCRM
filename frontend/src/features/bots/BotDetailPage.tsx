@@ -134,20 +134,20 @@ export function BotDetailPage() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-midnight">{t("botDetail.profileTitle")}</h2>
-                <p className="text-sm text-slate-500">{t("botDetail.language", { language: bot.data.default_language.toUpperCase() })}</p>
+                <p className="text-sm text-platforma-faint">{t("botDetail.language", { language: bot.data.default_language.toUpperCase() })}</p>
               </div>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
-                <span className="text-sm font-semibold text-slate-600">{t("botDetail.status")}</span>
+              <div className="flex items-center justify-between rounded-2xl bg-surface-muted p-4">
+                <span className="text-sm font-semibold text-platforma-subtle">{t("botDetail.status")}</span>
                 <StatusBadge status={bot.data.status} />
               </div>
-              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
-                <span className="text-sm font-semibold text-slate-600">{t("botDetail.channels")}</span>
+              <div className="flex items-center justify-between rounded-2xl bg-surface-muted p-4">
+                <span className="text-sm font-semibold text-platforma-subtle">{t("botDetail.channels")}</span>
                 <span className="font-bold text-midnight">{channels.length}</span>
               </div>
-              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
-                <span className="text-sm font-semibold text-slate-600">{t("botDetail.messages")}</span>
+              <div className="flex items-center justify-between rounded-2xl bg-surface-muted p-4">
+                <span className="text-sm font-semibold text-platforma-subtle">{t("botDetail.messages")}</span>
                 <span className="font-bold text-midnight">{messages.length}</span>
               </div>
             </div>
@@ -159,19 +159,19 @@ export function BotDetailPage() {
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-midnight">{t("botDetail.channels")}</h2>
-                <p className="text-sm text-slate-500">{t("botDetail.secretsSafe")}</p>
+                <p className="text-sm text-platforma-faint">{t("botDetail.secretsSafe")}</p>
               </div>
             </div>
             <div className="grid gap-3">
               {channels.map((channel) => (
-                <div key={channel.id} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white/70 p-4">
+                <div key={channel.id} className="flex items-center justify-between rounded-2xl border border-platforma-border bg-white/70 p-4">
                   <div className="flex items-center gap-3">
                     <div className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-50 text-brand-700">
                       <Radio size={18} />
                     </div>
                     <div>
                       <p className="font-semibold text-midnight">{t(`botDetail.channel.${channel.channel}`)}</p>
-                      <p className="text-sm text-slate-500">{channel.external_id || t("botDetail.externalIdMissing")}</p>
+                      <p className="text-sm text-platforma-faint">{channel.external_id || t("botDetail.externalIdMissing")}</p>
                       {channel.channel === "website" ? (
                         <p className="mt-1 text-xs font-semibold text-brand-700">{t("botDetail.widgetCodeConfigured")}</p>
                       ) : null}
@@ -181,7 +181,7 @@ export function BotDetailPage() {
                 </div>
               ))}
               {!channels.length ? (
-                <div className="rounded-3xl border border-dashed border-slate-200 bg-white/70 p-6 text-center text-sm text-slate-500">
+                <div className="rounded-3xl border border-dashed border-platforma-border bg-white/70 p-6 text-center text-sm text-platforma-faint">
                   {t("botDetail.noChannels")}
                 </div>
               ) : null}
@@ -199,7 +199,7 @@ export function BotDetailPage() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-midnight">{t("aiAgents.channelsTitle")}</h2>
-                <p className="mt-1 text-sm font-semibold leading-6 text-slate-500">{t("aiAgents.onboarding.channels.helpText")}</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">{t("aiAgents.onboarding.channels.helpText")}</p>
               </div>
             </div>
             <Link to={`/app/ai-agents/${bot.data.id}/channels`}>
@@ -218,7 +218,7 @@ export function BotDetailPage() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-midnight">{t("botDetail.websitePreviewTitle")}</h2>
-                <p className="text-sm text-slate-500">{t("botDetail.websitePreviewDescription")}</p>
+                <p className="text-sm text-platforma-faint">{t("botDetail.websitePreviewDescription")}</p>
               </div>
             </div>
             {websiteChannel ? (
@@ -228,7 +228,7 @@ export function BotDetailPage() {
                     <p className="font-black">{t("botDetail.widgetInstallCode")}</p>
                     <StatusBadge status={websiteChannel.status} />
                   </div>
-	                  <pre className="mt-3 overflow-auto rounded-2xl bg-white/80 p-3 text-xs text-slate-700">{widgetSnippet}</pre>
+	                  <pre className="mt-3 overflow-auto rounded-2xl bg-white/80 p-3 text-xs text-platforma-subtle">{widgetSnippet}</pre>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Button
                       type="button"
@@ -260,7 +260,7 @@ export function BotDetailPage() {
                 <Button type="submit" variant="primary" isLoading={previewMutation.isPending}><Send size={16} />{t("botDetail.createTestConversation")}</Button>
               </form>
               {previewConversationId ? (
-                <div className="rounded-3xl border border-slate-100 bg-white/80 p-4">
+                <div className="rounded-3xl border border-platforma-border bg-white/80 p-4">
                   <p className="text-sm font-black text-midnight">{t("botDetail.followUpStepTitle")}</p>
                   <Textarea
                     className="mt-3"
@@ -281,7 +281,7 @@ export function BotDetailPage() {
               ) : null}
               </div>
             ) : (
-              <div className="rounded-3xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-500">
+              <div className="rounded-3xl border border-dashed border-platforma-border bg-white/70 p-6 text-sm text-platforma-faint">
                 {t("botDetail.addWebsiteFirst")}
               </div>
             )}
@@ -291,10 +291,10 @@ export function BotDetailPage() {
         <Card>
           <CardBody>
             <h2 className="text-lg font-bold text-midnight">{t("botDetail.previewResultTitle")}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-500">
+            <p className="mt-2 text-sm leading-6 text-platforma-faint">
               {t("botDetail.previewResultDescription")}
             </p>
-            <div className="mt-5 rounded-3xl bg-slate-50 p-4 text-sm font-semibold text-slate-700">
+            <div className="mt-5 rounded-3xl bg-surface-muted p-4 text-sm font-semibold text-platforma-subtle">
               {previewResult || t("botDetail.noPreviewMessages")}
             </div>
           </CardBody>
@@ -307,7 +307,7 @@ export function BotDetailPage() {
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-bold text-midnight">{t("botDetail.aiReplyTitle")}</h2>
-                <p className="text-sm text-slate-500">{t("botDetail.aiReplyDescription")}</p>
+                <p className="text-sm text-platforma-faint">{t("botDetail.aiReplyDescription")}</p>
               </div>
               <Button
                 variant="ai"
@@ -321,18 +321,18 @@ export function BotDetailPage() {
             {latestConversation ? (
               <div className="space-y-3">
                 {latestConversationMessages.length ? latestConversationMessages.map((message) => (
-                  <div key={message.id} className="rounded-2xl bg-slate-50 p-3">
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{message.direction}</p>
-                    <p className="mt-1 text-sm leading-6 text-slate-700">{message.text || t("botDetail.emptyMessage")}</p>
+                  <div key={message.id} className="rounded-2xl bg-surface-muted p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-platforma-faint">{message.direction}</p>
+                    <p className="mt-1 text-sm leading-6 text-platforma-subtle">{message.text || t("botDetail.emptyMessage")}</p>
                   </div>
                 )) : (
-                  <div className="rounded-3xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-500">
+                  <div className="rounded-3xl border border-dashed border-platforma-border bg-white/70 p-6 text-sm text-platforma-faint">
                     {t("botDetail.noMessagesInLatest")}
                   </div>
                 )}
               </div>
             ) : (
-              <div className="rounded-3xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-500">
+              <div className="rounded-3xl border border-dashed border-platforma-border bg-white/70 p-6 text-sm text-platforma-faint">
                 {t("botDetail.createConversationFirst")}
               </div>
             )}
@@ -346,7 +346,7 @@ export function BotDetailPage() {
               {suggestedReply?.suggested_reply || t("botDetail.draftReplyEmpty")}
             </div>
             {suggestedReply ? (
-              <p className="mt-3 text-xs font-semibold text-slate-400">
+              <p className="mt-3 text-xs font-semibold text-platforma-faint">
                 {t("botDetail.draftMeta", { id: suggestedReply.log_id, mode: suggestedReply.is_mock ? t("botDetail.mockMode") : t("botDetail.aiMode"), count: suggestedReply.messages_used })}
               </p>
             ) : null}

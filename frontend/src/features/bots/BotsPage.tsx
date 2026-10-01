@@ -83,26 +83,26 @@ export function BotsPage() {
                       </div>
                       <div>
                         <h2 className="text-lg font-bold text-midnight">{bot.name}</h2>
-                        <p className="text-sm text-slate-500">{t("bots.defaultLanguage")}: {bot.default_language.toUpperCase()}</p>
+                        <p className="text-sm text-platforma-faint">{t("bots.defaultLanguage")}: {bot.default_language.toUpperCase()}</p>
                       </div>
                     </div>
                     <StatusBadge status={bot.status} />
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-slate-100 bg-white/70 p-3">
+                    <div className="rounded-2xl border border-platforma-border bg-white/70 p-3">
                       <Radio className="mb-2 text-brand-600" size={18} />
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{t("bots.channels")}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-platforma-faint">{t("bots.channels")}</p>
                       <p className="mt-1 text-xl font-bold text-midnight">{channels.length}</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-100 bg-white/70 p-3">
+                    <div className="rounded-2xl border border-platforma-border bg-white/70 p-3">
                       <MessageSquareText className="mb-2 text-ai-600" size={18} />
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{t("bots.dialogs")}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-platforma-faint">{t("bots.dialogs")}</p>
                       <p className="mt-1 text-xl font-bold text-midnight">{conversations.length}</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-100 bg-white/70 p-3">
-                      <Settings2 className="mb-2 text-slate-600" size={18} />
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{t("bots.mode")}</p>
+                    <div className="rounded-2xl border border-platforma-border bg-white/70 p-3">
+                      <Settings2 className="mb-2 text-platforma-subtle" size={18} />
+                      <p className="text-xs font-semibold uppercase tracking-wide text-platforma-faint">{t("bots.mode")}</p>
                       <p className="mt-1 text-xl font-bold text-midnight">{t("bots.manual")}</p>
                     </div>
                   </div>

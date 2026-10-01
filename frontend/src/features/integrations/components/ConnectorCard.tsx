@@ -43,12 +43,12 @@ function merchantStatus(connector: BusinessConnector | undefined, capability: Co
 function merchantStatusUi(status: string, t: (key: string) => string) {
   const classes: Record<string, string> = {
     available: "bg-brand-50 text-brand-700 ring-brand-100",
-    connected: "bg-[var(--platforma-success-soft)] text-platforma-success ring-[rgba(21,128,61,0.18)]",
-    setup_required: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-[rgba(151,90,22,0.24)]",
+    connected: "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/[0.18]",
+    setup_required: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/[0.24]",
     pending_request: "bg-ai-50 text-ai-700 ring-ai-100",
     coming_soon: "bg-surface-muted text-platforma-subtle ring-platforma-border",
-    unavailable_on_plan: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-[rgba(151,90,22,0.24)]",
-    error: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-[rgba(194,65,12,0.2)]",
+    unavailable_on_plan: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/[0.24]",
+    error: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/20",
     disconnected: "bg-surface-muted text-platforma-subtle ring-platforma-border",
   };
   return { label: t(`integrations.merchantStatus.${status}`) || status, className: classes[status] || classes.coming_soon };

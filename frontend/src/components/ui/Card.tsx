@@ -8,7 +8,7 @@ const surfaceVariants = {
   outlined: "rounded-card border border-platforma-border bg-surface-card",
   muted: "rounded-card border border-platforma-border bg-surface-muted",
   ai: "platforma-ai-surface rounded-card",
-  danger: "rounded-card border border-[rgba(194,65,12,0.2)] bg-[var(--platforma-danger-soft)] shadow-sm",
+  danger: "rounded-card border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] shadow-sm",
 };
 
 const surfacePaddings = {
@@ -24,7 +24,7 @@ type SurfacePadding = keyof typeof surfacePaddings;
 export const surfaceClass = surfaceVariants.default;
 export const mutedSurfaceClass = surfaceVariants.muted;
 export const outlinedSurfaceClass = surfaceVariants.outlined;
-export const interactiveSurfaceClass = `${surfaceVariants.default} transition hover:border-brand-100 hover:bg-surface-warm hover:shadow-card`;
+export const interactiveSurfaceClass = `${surfaceVariants.default} transition hover:border-brand-100 hover:bg-surface-hover hover:shadow-card`;
 
 type CardProps = HTMLAttributes<HTMLElement> & {
   children: ReactNode;
@@ -49,7 +49,7 @@ type SurfaceProps = HTMLAttributes<HTMLElement> & {
 export function Surface({ as: Component = "div", className, children, interactive = false, variant = "default", padding = "md", ...props }: SurfaceProps) {
   return (
     <Component
-      className={cn(surfaceVariants[variant], surfacePaddings[padding], interactive && "transition hover:border-brand-100 hover:bg-surface-warm hover:shadow-card", className)}
+      className={cn(surfaceVariants[variant], surfacePaddings[padding], interactive && "transition hover:border-brand-100 hover:bg-surface-hover hover:shadow-card", className)}
       {...props}
     >
       {children}

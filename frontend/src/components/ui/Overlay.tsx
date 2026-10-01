@@ -34,7 +34,7 @@ function CloseButton({ onClose }: { onClose: () => void }) {
   return (
     <button
       type="button"
-      className="platforma-focus-ring platforma-touch-target inline-flex shrink-0 items-center justify-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
+      className="platforma-focus-ring platforma-touch-target inline-flex shrink-0 items-center justify-center rounded-control text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
       onClick={onClose}
       aria-label={t("common.close")}
     >

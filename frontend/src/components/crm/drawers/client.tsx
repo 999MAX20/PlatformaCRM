@@ -48,7 +48,7 @@ export function ClientDrawerContent({ data, entity, actions }: { data: CrmCardPa
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-platforma-muted">{getChannelLabel(client.source, t)}</span>
             {client.is_vip ? <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">VIP</span> : null}
-            {client.has_no_reply ? <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">{t("conversations.noReply")}</span> : null}
+            {client.has_no_reply ? <span className="rounded-full bg-[var(--platforma-danger-soft)] px-3 py-1 text-xs font-semibold text-platforma-danger">{t("conversations.noReply")}</span> : null}
           </div>
           <h3 className="truncate text-xl font-semibold text-platforma-ink">{client.full_name}</h3>
           <p className="mt-1 break-words text-sm font-semibold text-platforma-muted">{[client.phone, client.email].filter(Boolean).join(" · ") || t("crmCard.noContacts")}</p>
@@ -168,7 +168,7 @@ export function ClientDrawerContent({ data, entity, actions }: { data: CrmCardPa
           <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><Tags size={14} /> {t("clients.tags")}</p>
           <div className="flex flex-wrap gap-2">
             {data.tags.map((item) => (
-              <span key={item.id} className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold" style={{ backgroundColor: `${item.tag_color || "#2563eb"}18`, color: item.tag_color || "#2563eb" }}>
+              <span key={item.id} className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold" style={{ backgroundColor: item.tag_color ? `${item.tag_color}18` : "var(--platforma-brand-soft)", color: item.tag_color || "var(--platforma-brand-content)" }}>
                 {item.tag_name}
               </span>
             ))}

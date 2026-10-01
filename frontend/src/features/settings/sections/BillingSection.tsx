@@ -87,7 +87,7 @@ export function BillingSection({
                 : t("settings.billingNoSubscription")}
             </p>
             {subscription?.requested_plan ? (
-              <p className="mt-2 text-sm font-bold text-amber-700">
+              <p className="mt-2 text-sm font-bold text-platforma-warning">
                 {t("settings.requestedPlan", {
                   id: subscription.requested_plan,
                 })}

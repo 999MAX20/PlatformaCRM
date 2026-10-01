@@ -135,8 +135,8 @@ function SummaryLink({
 
 function toneDot(tone: "brand" | "ai" | "green" | "amber" | "slate") {
   if (tone === "ai") return "bg-ai-600";
-  if (tone === "green") return "bg-green-600";
-  if (tone === "amber") return "bg-amber-500";
+  if (tone === "green") return "bg-platforma-success";
+  if (tone === "amber") return "bg-platforma-warning";
   if (tone === "brand") return "bg-[var(--platforma-brand-content)]";
   return "bg-platforma-border";
 }

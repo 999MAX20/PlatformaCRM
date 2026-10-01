@@ -30,7 +30,7 @@ export function AvatarCropper({ src, dimensions, zoom, position, disabled, onPos
   };
   return <div
     role="group" aria-label={t("account.avatarDrag")} tabIndex={disabled ? -1 : 0}
-    className="platforma-focus-ring relative mx-auto touch-none select-none overflow-hidden rounded-lg bg-slate-900 cursor-grab active:cursor-grabbing"
+    className="platforma-focus-ring relative mx-auto touch-none select-none overflow-hidden rounded-lg bg-platforma-ink cursor-grab active:cursor-grabbing"
     data-testid="avatar-crop-preview"
     style={ready ? { aspectRatio: `${width} / ${height}`, width: `min(100%, ${320 * width / height}px)` } : { height: 240 }}
     onPointerDown={event => {

@@ -71,7 +71,7 @@ export function SettingsNavigation({
                 >
                   <button
                     type="button"
-                    className="flex min-h-8 w-full items-center justify-between gap-3 rounded-control px-2.5 text-left text-[11px] font-semibold uppercase text-platforma-faint transition hover:bg-surface-warm hover:text-platforma-text"
+                    className="flex min-h-8 w-full items-center justify-between gap-3 rounded-control px-2.5 text-left text-[11px] font-semibold uppercase text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
                     onClick={() =>
                       setOpenSettingsGroups((current) => ({
                         ...current,
@@ -97,7 +97,7 @@ export function SettingsNavigation({
                             className={`block rounded-lg px-2.5 py-2 text-sm font-bold transition ${
                               active
                                 ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
-                                : "text-platforma-subtle hover:bg-surface-warm hover:text-platforma-text"
+                                : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text"
                             }`}
                             onClick={() => setActiveSettingsSection(section.id)}
                           >

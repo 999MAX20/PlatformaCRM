@@ -131,7 +131,7 @@ function DashboardMetric({
         size={16}
         className="mt-1 shrink-0 text-platforma-faint transition-transform group-hover:translate-x-0.5 group-hover:text-brand-700"
       />
-      <span className="col-span-3 block text-xs font-medium text-platforma-faint">{hint}</span>
+      <span className="col-span-3 block text-xs font-medium text-platforma-subtle">{hint}</span>
     </Surface>
   );
 }
@@ -160,7 +160,7 @@ function AttentionList({ items }: { items: AttentionItem[] }) {
               <Link
                 key={item.key}
                 to={item.href}
-                className="group flex min-h-14 items-center gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-2.5 transition hover:border-brand-100 hover:bg-surface-warm"
+                className="group flex min-h-14 items-center gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-2.5 transition hover:border-brand-100 hover:bg-surface-hover"
               >
                 <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${toneDot(item.tone)}`} />
                 <Icon aria-hidden="true" className="shrink-0 text-platforma-subtle" size={18} />
@@ -562,7 +562,7 @@ export function OwnerDashboard({
     <div className="space-y-4 pb-8" data-testid="dashboard-workspace-ready">
       {metricsError ? (
         <Surface
-          className="border-[rgba(151,90,22,0.24)] bg-[var(--platforma-warning-soft)] px-4 py-3 text-sm font-semibold text-platforma-warning"
+          className="border-platforma-warning/[0.24] bg-[var(--platforma-warning-soft)] px-4 py-3 text-sm font-semibold text-platforma-warning"
           padding="none"
         >
           {t("dashboard.ownerAnalyticsError")}

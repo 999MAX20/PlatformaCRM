@@ -47,7 +47,7 @@ export function AiNavigatorWidget({ signals }: { signals: AiNavigatorSignal[] })
             </div>
             <button
               type="button"
-              className="platforma-focus-ring grid h-9 w-9 place-items-center rounded-control bg-surface-card text-platforma-muted transition hover:bg-surface-muted hover:text-platforma-text"
+              className="platforma-focus-ring grid h-9 w-9 place-items-center rounded-control bg-surface-card text-platforma-muted transition hover:bg-surface-hover hover:text-platforma-text"
               onClick={() => setIsOpen(false)}
               aria-label={t("common.close")}
             >
@@ -57,7 +57,7 @@ export function AiNavigatorWidget({ signals }: { signals: AiNavigatorSignal[] })
           <div className="space-y-2">
             {visibleSignals.map((signal) => {
               const content = (
-                <div className="flex gap-3 rounded-card bg-surface-card p-3 ring-1 ring-ai-100 transition hover:bg-surface-warm">
+                <div className="flex gap-3 rounded-card bg-surface-card p-3 ring-1 ring-ai-100 transition hover:bg-surface-hover">
                   <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${toneClasses[signal.tone || "info"]}`} />
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold text-platforma-ink">{signal.title}</span>

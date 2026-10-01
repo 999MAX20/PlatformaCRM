@@ -134,7 +134,7 @@ export function MfaPage() {
             {recoveryCodes.length ? (
               <div className="grid gap-4">
                 <StatusNotice tone="warning" title={t("mfa.recoveryWarning")} />
-                <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-950 p-4 font-mono text-sm text-white">
+                <div className="grid grid-cols-2 gap-2 rounded-2xl bg-platforma-ink p-4 font-mono text-sm text-white">
                   {recoveryCodes.map((recoveryCode) => <span key={recoveryCode}>{recoveryCode}</span>)}
                 </div>
                 <Button type="button" variant="secondary" onClick={() => navigator.clipboard.writeText(recoveryCodes.join("\n"))}>
@@ -160,7 +160,7 @@ export function MfaPage() {
                   required
                 />
                 </div>
-                {pending.code !== "mfa_enrollment_required" ? <p className="text-xs font-semibold leading-5 text-slate-500">{t("mfa.recoveryHint")}</p> : null}
+                {pending.code !== "mfa_enrollment_required" ? <p className="text-xs font-semibold leading-5 text-platforma-faint">{t("mfa.recoveryHint")}</p> : null}
                 <Button type="submit" isLoading={loading} disabled={pending.code === "mfa_enrollment_required" && !enrollment}>
                   {pending.code === "mfa_enrollment_required" ? t("mfa.enable") : t("mfa.verify")}
                   <ArrowRight size={18} />

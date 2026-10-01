@@ -49,7 +49,7 @@ export function LeadQueueItem({
       type="button"
       data-testid="lead-mobile-row-open"
       className={cn(
-        "group relative w-full touch-pan-y overflow-hidden border-b border-platforma-border px-5 py-4 text-left transition hover:bg-surface-warm",
+        "group relative w-full touch-pan-y overflow-hidden border-b border-platforma-border px-5 py-4 text-left transition hover:bg-surface-hover",
         selected ? "bg-brand-50/80" : "bg-surface-card",
       )}
       onClick={onClick}
@@ -98,11 +98,11 @@ export function LeadQueueItem({
             <p className="min-w-0 flex-1 truncate font-bold text-platforma-text">
               {title}
             </p>
-            <span className="shrink-0 text-xs font-bold text-platforma-muted">
+            <span className="shrink-0 text-xs font-bold text-platforma-subtle">
               {formatDateTime(lead.created_at)}
             </span>
           </div>
-          <p className="mt-1 truncate text-sm font-medium text-platforma-muted">
+          <p className="mt-1 truncate text-sm font-medium text-platforma-subtle">
             {client?.phone || t("leads.noPhoneLower")} ·{" "}
             {service?.name || getSourceLabel(lead.source, t)}
           </p>
@@ -110,11 +110,11 @@ export function LeadQueueItem({
             <Pill className={statusClass[lead.status]}>
               {getStatusLabel(lead.status, t)}
             </Pill>
-            <span className="text-xs font-bold text-platforma-muted">
+            <span className="text-xs font-bold text-platforma-subtle">
               {nextAction(lead, t)}
             </span>
           </div>
-          <p className="mt-2 text-[11px] font-bold text-platforma-muted lg:hidden">
+          <p className="mt-2 text-[11px] font-bold text-platforma-subtle lg:hidden">
             {t("leads.mobileSwipeHint")}
           </p>
         </div>

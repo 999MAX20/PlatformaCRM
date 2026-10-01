@@ -16,7 +16,7 @@ export function EmptyAgentsState({ canManage, onCreate }: { canManage: boolean; 
           <Bot size={24} />
         </div>
         <h3 className="mt-4 text-2xl font-black text-midnight">{t("aiAgents.emptyAgentsTitle")}</h3>
-        <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-slate-500">
+        <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-platforma-faint">
           {t("aiAgents.emptyAgentsText")}
         </p>
         {canManage ? (
@@ -39,7 +39,7 @@ export function HelpCard({ title, text, recommendation }: { title: string; text:
         </div>
         <div>
           <h3 className="font-black text-midnight">{title}</h3>
-          <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">{text}</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-platforma-subtle">{text}</p>
           <p className="mt-2 text-sm font-black leading-6 text-ai-700">{recommendation}</p>
         </div>
       </div>
@@ -48,7 +48,7 @@ export function HelpCard({ title, text, recommendation }: { title: string; text:
 }
 
 export function FieldHint({ children }: { children: ReactNode }) {
-  return <p className="mt-2 text-xs font-semibold leading-5 text-slate-500">{children}</p>;
+  return <p className="mt-2 text-xs font-semibold leading-5 text-platforma-faint">{children}</p>;
 }
 
 export function OnboardingProgress({
@@ -62,7 +62,7 @@ export function OnboardingProgress({
   const doneCount = steps.filter((step) => step.done).length;
   const progress = steps.length ? Math.round((doneCount / steps.length) * 100) : 0;
   return (
-    <div className={cn("rounded-2xl border border-slate-200 bg-white p-4", compact ? "mt-5" : "shadow-sm")}>
+    <div className={cn("rounded-2xl border border-platforma-border bg-white p-4", compact ? "mt-5" : "shadow-sm")}>
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.16em] text-ai-700">{t("aiAgents.firstLaunch")}</p>
@@ -70,7 +70,7 @@ export function OnboardingProgress({
         </div>
         <span className="rounded-full bg-ai-50 px-3 py-1 text-sm font-black text-ai-700 ring-1 ring-ai-100">{doneCount}/{steps.length}</span>
       </div>
-      <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-surface-muted">
         <div className="h-full rounded-full bg-ai-600 transition-all" style={{ width: `${progress}%` }} />
       </div>
       <div className="mt-4 space-y-2">
@@ -78,14 +78,14 @@ export function OnboardingProgress({
           <Link
             key={step.title}
             to={step.href}
-            className="flex gap-3 rounded-xl p-2 transition hover:bg-slate-50"
+            className="flex gap-3 rounded-xl p-2 transition hover:bg-surface-hover"
           >
-            <span className={cn("mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-white", step.done ? "bg-emerald-500" : "bg-slate-300")}>
+            <span className={cn("mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-white", step.done ? "bg-platforma-success" : "bg-platforma-control")}>
               <CheckCircle2 size={14} />
             </span>
             <span className="min-w-0">
               <span className="block text-sm font-black text-midnight">{step.title}</span>
-              {!compact ? <span className="mt-1 block text-xs font-semibold leading-5 text-slate-500">{step.text}</span> : null}
+              {!compact ? <span className="mt-1 block text-xs font-semibold leading-5 text-platforma-faint">{step.text}</span> : null}
             </span>
           </Link>
         ))}

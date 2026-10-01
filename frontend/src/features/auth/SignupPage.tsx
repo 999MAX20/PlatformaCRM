@@ -199,7 +199,7 @@ export function SignupPage() {
                     <Link to={documentPath(document.id)} target="_blank" rel="noopener noreferrer" className="platforma-focus-ring rounded underline underline-offset-4">{t(document.titleKey)}</Link>
                   </label>
                 </div>)}
-                {errors.accepted_documents ? <p id="documents-error" role="alert" className="text-sm text-red-700">{errors.accepted_documents.message}</p> : null}
+                {errors.accepted_documents ? <p id="documents-error" role="alert" className="text-sm text-platforma-danger">{errors.accepted_documents.message}</p> : null}
               </fieldset>
               <Button className="serenity-login__primary" type="submit" disabled={!allDocumentsAccepted} isLoading={isSubmitting}>
                 {t("signup.freeSubmit")}

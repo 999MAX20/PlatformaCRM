@@ -117,7 +117,7 @@ export function TelegramInlineSetup({
         <div className="space-y-4">
           <div>
             <p className="text-sm font-black text-midnight">{t("integrations.telegram.botKey")}</p>
-            <p className="mt-1 text-xs font-semibold text-slate-500">
+            <p className="mt-1 text-xs font-semibold text-platforma-faint">
               {tokenConfigured ? t("integrations.telegram.tokenSavedPrivate") : t("integrations.telegram.tokenInstruction")}
             </p>
           </div>

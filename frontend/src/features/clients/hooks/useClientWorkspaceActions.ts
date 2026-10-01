@@ -10,6 +10,7 @@ import { useUndoToast } from "../../../components/actions/UndoToastProvider";
 import { useActiveBusiness } from "../../../hooks/useBusiness";
 import { useI18n } from "../../../lib/i18n";
 import type { Client, Id } from "../../../types";
+import palette from "../../../theme/semantic-tokens.json";
 
 export function useClientWorkspaceActions(clientId: Id | null) {
   const { t } = useI18n();
@@ -63,7 +64,7 @@ export function useClientWorkspaceActions(clientId: Id | null) {
         (await tagsApi.create({
           business: business.id,
           name: tagName,
-          color: "#F5B37A",
+          color: palette.tokens["brand.default"],
           source: "manual",
         }));
       return taggedObjectsApi.create({

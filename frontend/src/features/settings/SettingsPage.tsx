@@ -947,7 +947,7 @@ export function SettingsPage() {
                             className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold transition ${
                               enabled
                                 ? "bg-[var(--platforma-success-soft)] text-platforma-success hover:brightness-95"
-                                : "bg-surface-card text-platforma-subtle hover:bg-surface-warm"
+                                : "bg-surface-card text-platforma-subtle hover:bg-surface-hover"
                             }`}
                           >
                             {enabled
@@ -1404,7 +1404,7 @@ export function SettingsPage() {
                       </div>
                     </form>
                     {lastCreatedInvite ? (
-                      <div className="mt-4 rounded-card border border-[rgba(21,128,61,0.18)] bg-[var(--platforma-success-soft)] p-4">
+                      <div className="mt-4 rounded-card border border-platforma-success/[0.18] bg-[var(--platforma-success-soft)] p-4">
                         <p className="font-semibold text-platforma-success">
                           {t("settings.inviteCreatedTitle")}
                         </p>
@@ -1466,7 +1466,7 @@ export function SettingsPage() {
                                   href={inviteShareUrl(invitation)}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-500 px-4 py-2 text-sm font-bold text-platforma-ink transition hover:bg-brand-600"
+                                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-brand-600"
                                 >
                                   {t("settings.send")}
                                 </a>
@@ -1609,7 +1609,7 @@ export function SettingsPage() {
                   </div>
                 </div>
                 {securityRisk.error || auditLogs.error || loginHistory.error ? (
-                  <div className="mb-4 rounded-card border border-[rgba(151,90,22,0.24)] bg-[var(--platforma-warning-soft)] p-4">
+                  <div className="mb-4 rounded-card border border-platforma-warning/[0.24] bg-[var(--platforma-warning-soft)] p-4">
                     <div className="flex gap-3">
                       <ShieldAlert
                         className="mt-0.5 text-platforma-warning"
@@ -1814,7 +1814,7 @@ export function SettingsPage() {
                             className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold transition ${
                               enabled
                                 ? "bg-[var(--platforma-success-soft)] text-platforma-success hover:brightness-95"
-                                : "bg-surface-card text-platforma-subtle hover:bg-surface-warm"
+                                : "bg-surface-card text-platforma-subtle hover:bg-surface-hover"
                             }`}
                           >
                             {enabled
@@ -2303,7 +2303,7 @@ export function SettingsPage() {
                   />
                 </div>
               ) : null}
-              <div className="mb-4 rounded-card border border-[rgba(151,90,22,0.24)] bg-[var(--platforma-warning-soft)] p-4">
+              <div className="mb-4 rounded-card border border-platforma-warning/[0.24] bg-[var(--platforma-warning-soft)] p-4">
                 <p className="font-semibold text-platforma-warning">
                   {t("settings.customFieldsGuardTitle")}
                 </p>

@@ -46,7 +46,7 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
         side="left"
         size="custom"
         testId="mobile-navigation-drawer"
-        backdropClassName="bg-[rgba(23,18,15,0.38)] backdrop-blur-md lg:hidden"
+        backdropClassName="bg-platforma-ink/[0.38] backdrop-blur-md lg:hidden"
         className="relative max-w-[min(390px,94vw)] rounded-none border-y-0 border-l-0 lg:hidden"
       >
         <div className="absolute right-3 top-3 z-[90]">
@@ -62,7 +62,7 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
         <Sidebar forceVisible mobileDrawer onNavigate={onClose} />
       </Drawer>
 
-      <nav className="fixed inset-x-2 bottom-2 z-[60] grid grid-cols-5 rounded-card border border-platforma-border bg-surface-card/96 p-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] shadow-premium backdrop-blur-2xl lg:hidden">
+      <nav className="fixed inset-x-2 bottom-2 z-[60] grid grid-cols-5 rounded-card border border-platforma-border bg-surface-card/[0.96] p-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] shadow-premium backdrop-blur-2xl lg:hidden">
         {visibleBottomItems.slice(0, 4).map((item) => {
           const Icon = item.icon;
           return (
@@ -99,7 +99,7 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
           aria-expanded={open}
           data-testid="bottom-mobile-menu-trigger"
           className={cn(
-            "platforma-focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-0.5 py-2 text-center text-[10px] font-semibold leading-none transition hover:bg-surface-muted hover:text-platforma-text active:scale-[0.98]",
+            "platforma-focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-0.5 py-2 text-center text-[10px] font-semibold leading-none transition hover:bg-surface-hover hover:text-platforma-text active:scale-[0.98]",
             open
               ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
               : "text-platforma-faint",

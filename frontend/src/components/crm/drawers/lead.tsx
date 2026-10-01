@@ -167,7 +167,7 @@ export function LeadDrawerContent({ data, entity }: { data: CrmCardPayload; enti
                   <span>{lossRisk}%</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
-                  <div className="h-full rounded-full bg-red-400" style={{ width: `${Math.min(100, Math.max(0, lossRisk))}%` }} />
+                  <div className="h-full rounded-full bg-platforma-danger" style={{ width: `${Math.min(100, Math.max(0, lossRisk))}%` }} />
                 </div>
               </div>
             </div>
@@ -181,7 +181,7 @@ export function LeadDrawerContent({ data, entity }: { data: CrmCardPayload; enti
         <div className={drawerSurfaceClass}>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("crmCard.messageNote")}</p>
           <p className="text-sm leading-6 text-platforma-text">{lead.message || t("crmCard.noLeadMessage")}</p>
-          {lead.lost_reason ? <p className="mt-3 rounded-card bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">{t("leads.lostReason")}: {lead.lost_reason}</p> : null}
+          {lead.lost_reason ? <p className="mt-3 rounded-card bg-[var(--platforma-danger-soft)] px-3 py-2 text-sm font-semibold text-platforma-danger">{t("leads.lostReason")}: {lead.lost_reason}</p> : null}
         </div>
 
         <div className="grid gap-3 lg:grid-cols-3">

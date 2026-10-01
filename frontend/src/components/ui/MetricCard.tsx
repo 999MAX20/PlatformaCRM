@@ -44,7 +44,7 @@ export function MetricCard({ label, value, hint, icon: Icon, tone = "brand", hre
   const classNames = cn(
     "rounded-card border border-platforma-border bg-surface-card shadow-card transition-colors duration-150",
     compact ? "p-3" : "p-4",
-    href && "hover:border-brand-100 hover:bg-surface-warm",
+    href && "hover:border-brand-100 hover:bg-surface-hover",
     className,
   );
 

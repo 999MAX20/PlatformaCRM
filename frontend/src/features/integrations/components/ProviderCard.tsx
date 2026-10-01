@@ -313,9 +313,8 @@ export function ProviderCard({
   return (
     <article
       className={cn(
-        "rounded-card border border-platforma-border bg-surface-card p-3 shadow-card transition hover:border-brand-100 hover:bg-surface-warm",
+        "rounded-card border border-platforma-border bg-surface-card p-3 shadow-card transition hover:border-brand-100 hover:bg-surface-hover",
         "min-h-[82px]",
-        isUnavailable && "opacity-60",
       )}
     >
       {frontContent}

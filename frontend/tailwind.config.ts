@@ -1,4 +1,32 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+import palette from "./src/theme/semantic-tokens.json";
+
+type Token = keyof typeof palette.tokens;
+const color = (token: Token) => `rgb(var(--color-${token.replaceAll(".", "-")}-rgb) / <alpha-value>)`;
+const brand = {
+  50: color("brand.soft"),
+  100: color("brand.border"),
+  200: color("brand.border"),
+  300: color("brand.accent"),
+  500: color("brand.default"),
+  600: color("brand.hover"),
+  700: color("brand.content"),
+  800: color("brand.pressed"),
+  900: color("brand.pressed"),
+};
+
+// One versioned value source for CSS, Tailwind and alpha-modified utilities.
+const semanticVariables = Object.fromEntries(
+  Object.entries(palette.tokens).flatMap(([name, value]) => {
+    const variable = `--color-${name.replaceAll(".", "-")}`;
+    const entries = [[variable, value]];
+    if (/^#[0-9a-f]{6}$/i.test(value)) {
+      entries.push([`${variable}-rgb`, [1, 3, 5].map((offset) => parseInt(value.slice(offset, offset + 2), 16)).join(" ")]);
+    }
+    return entries;
+  }),
+);
 
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
@@ -6,53 +34,41 @@ export default {
     extend: {
       colors: {
         platforma: {
-          bg: "#F7F3EE",
-          page: "#F4EEE7",
-          surface: "#FFFFFF",
-          surfaceWarm: "#FFFCF8",
-          card: "#FFFFFF",
-          muted: "#6B625A",
-          mutedSoft: "#8A7B70",
-          border: "#E6DDD2",
-          text: "#17120F",
-          ink: "#17120F",
-          subtle: "#5F554D",
-          faint: "#6B625A",
-          primary: "#F5B37A",
-          secondary: "#6F4CC3",
-          success: "#15803D",
-          warning: "#975A16",
-          danger: "#C2410C",
-          info: "#0E7490",
+          bg: color("surface.canvas"),
+          page: color("surface.canvas"),
+          surface: color("surface.default"),
+          surfaceWarm: color("surface.subtle"),
+          card: color("surface.default"),
+          muted: color("text.muted"),
+          mutedSoft: color("text.muted"),
+          border: color("border.default"),
+          control: color("border.control"),
+          text: color("text.primary"),
+          ink: color("text.primary"),
+          subtle: color("text.secondary"),
+          faint: color("text.muted"),
+          primary: color("brand.default"),
+          secondary: color("ai.content"),
+          success: color("success.content"),
+          warning: color("warning.content"),
+          warningSoft: color("warning.soft"),
+          danger: color("danger.content"),
+          dangerSoft: color("danger.soft"),
+          info: color("info.content"),
         },
-        primary: {
-          50: "#FFF3EA",
-          100: "#F9D6BA",
-          200: "#F3C09A",
-          300: "#EDAA79",
-          500: "#F5B37A",
-          600: "#EE995A",
-          700: "#A4470D",
-          800: "#8B3A0A",
-          900: "#6B2A07",
+        disabled: {
+          surface: color("disabled.surface"),
+          content: color("disabled.content"),
+          border: color("disabled.border"),
         },
-        brand: {
-          50: "#FFF3EA",
-          100: "#F9D6BA",
-          200: "#F3C09A",
-          300: "#EDAA79",
-          500: "#F5B37A",
-          600: "#EE995A",
-          700: "#A4470D",
-          800: "#8B3A0A",
-          900: "#6B2A07",
-        },
+        primary: brand,
+        brand,
         ai: {
-          50: "#F4F0FF",
+          50: color("ai.soft"),
           100: "#DDD2FF",
-          500: "#6F4CC3",
-          600: "#6F4CC3",
-          700: "#5E3CAE",
+          500: color("ai.content"),
+          600: color("ai.content"),
+          700: color("ai.hover"),
         },
         discovery: {
           50: "#EEF2FF",
@@ -61,23 +77,23 @@ export default {
           700: "#4338CA",
         },
         surface: {
-          DEFAULT: "#F7F3EE",
-          page: "#F4EEE7",
-          muted: "#F2EDE6",
-          card: "#FFFFFF",
-          warm: "#FFFCF8",
-          hover: "#FFFCF8",
+          DEFAULT: color("surface.canvas"),
+          page: color("surface.canvas"),
+          muted: color("surface.subtle"),
+          card: color("surface.default"),
+          warm: color("surface.subtle"),
+          hover: color("surface.hover"),
         },
-        ink: "#17120F",
-        midnight: "#17120F",
+        ink: color("text.primary"),
+        midnight: color("text.primary"),
       },
       boxShadow: {
-        soft: "0 1px 3px rgba(23, 18, 15, 0.06)",
-        card: "0 4px 12px rgba(23, 18, 15, 0.05)",
-        panel: "0 12px 28px rgba(23, 18, 15, 0.10)",
-        glow: "0 12px 32px rgba(255, 122, 26, 0.18)",
-        premium: "0 10px 15px rgba(23, 18, 15, 0.10)",
-        "platforma-card": "0 4px 12px rgba(23, 18, 15, 0.05)",
+        soft: "0 1px 3px rgba(23, 32, 30, 0.06)",
+        card: "0 4px 12px rgba(23, 32, 30, 0.05)",
+        panel: "0 12px 28px rgba(23, 32, 30, 0.10)",
+        glow: "0 12px 32px rgba(0, 122, 89, 0.18)",
+        premium: "0 10px 15px rgba(23, 32, 30, 0.10)",
+        "platforma-card": "0 4px 12px rgba(23, 32, 30, 0.05)",
       },
       fontSize: {
         "crm-caption": ["0.75rem", { lineHeight: "1rem" }],
@@ -92,13 +108,13 @@ export default {
         "3xl": "1rem",
       },
       backgroundImage: {
-        "primary-gradient": "linear-gradient(135deg, #F5B37A 0%, #EE995A 100%)",
-        "dashboard-gradient": "linear-gradient(135deg, #FFFCF8 0%, #F2EDE6 100%)",
-        "ai-gradient": "linear-gradient(135deg, #6F4CC3 0%, #5E3CAE 100%)",
+        "primary-gradient": "linear-gradient(135deg, var(--color-brand-default) 0%, var(--color-brand-hover) 100%)",
+        "dashboard-gradient": "linear-gradient(135deg, var(--color-surface-default) 0%, var(--color-surface-subtle) 100%)",
+        "ai-gradient": "linear-gradient(135deg, var(--color-ai-content) 0%, var(--color-ai-hover) 100%)",
         "sidebar-depth":
-          "linear-gradient(180deg, #FFFCF8 0%, #F7F3EE 100%)",
+          "linear-gradient(180deg, var(--color-surface-default) 0%, var(--color-surface-canvas) 100%)",
         "soft-mesh":
-          "linear-gradient(180deg, #F7F3EE 0%, #F4EEE7 100%)",
+          "linear-gradient(180deg, var(--color-surface-canvas) 0%, var(--color-surface-subtle) 100%)",
       },
       keyframes: {
         float: {
@@ -121,5 +137,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [plugin(({ addBase }) => addBase({ ":root": semanticVariables }))],
 } satisfies Config;

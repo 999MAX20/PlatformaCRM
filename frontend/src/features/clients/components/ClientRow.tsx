@@ -43,7 +43,7 @@ export const ClientRow = memo(function ClientRow({
       aria-selected={selected}
       tabIndex={0}
       className={cn(
-        "group cursor-pointer border-b border-platforma-border bg-surface-card transition-colors hover:bg-surface-warm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
+        "group cursor-pointer border-b border-platforma-border bg-surface-card transition-colors hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
         selected &&
           "bg-brand-50/80 shadow-[inset_5px_0_0_var(--platforma-brand)] hover:bg-brand-50/80",
       )}

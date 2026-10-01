@@ -140,7 +140,7 @@ export function OperationalInspector({
         </div>
         <button
           type="button"
-          className="platforma-focus-ring platforma-touch-target inline-grid shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
+          className="platforma-focus-ring platforma-touch-target inline-grid shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
           aria-label={t("common.close")}
           onClick={onClose}
         >

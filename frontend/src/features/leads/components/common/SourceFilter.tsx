@@ -26,8 +26,8 @@ export function SourceFilter({
     <button
       type="button"
       className={cn(
-        "grid h-8 w-8 place-items-center rounded-lg border border-gray-200 bg-white transition focus-visible-ring",
-        active ? "opacity-100 ring-2 ring-blue-500" : "opacity-50 hover:opacity-100",
+        "grid h-8 w-8 place-items-center rounded-lg border border-platforma-border transition focus-visible-ring",
+        active ? "bg-brand-50 text-brand-700 ring-2 ring-brand-500" : "bg-white text-platforma-subtle hover:bg-surface-hover",
       )}
       onClick={onClick}
       title={t(`leads.source${source[0].toUpperCase()}${source.slice(1)}`)}

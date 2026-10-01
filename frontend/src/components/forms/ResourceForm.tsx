@@ -127,7 +127,7 @@ export function ResourceForm({
         )}
       />
       <label className="flex items-center gap-2 text-sm font-semibold text-platforma-subtle">
-        <input disabled={disabled} type="checkbox" className="h-4 w-4 rounded border-platforma-border accent-brand-500 disabled:cursor-not-allowed disabled:opacity-60" {...form.register("is_active")} />
+        <input disabled={disabled} type="checkbox" className="h-4 w-4 rounded border-platforma-border accent-brand-500 disabled:cursor-not-allowed disabled:opacity-100" {...form.register("is_active")} />
         {t("resources.available")}
       </label>
       {showSubmit ? <Button type="submit" disabled={disabled} isLoading={form.formState.isSubmitting}>{submitLabel || t("resources.save")}</Button> : null}

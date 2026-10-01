@@ -193,7 +193,7 @@ export function Header({
   }, [showNotifications]);
 
   return (
-    <header className={`fixed left-0 right-0 top-0 z-50 border-b border-platforma-border bg-surface/92 shadow-soft backdrop-blur-xl transition-transform duration-200 ease-out lg:left-16 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
+    <header className={`fixed left-0 right-0 top-0 z-50 border-b border-platforma-border bg-surface/[0.92] shadow-soft backdrop-blur-xl transition-transform duration-200 ease-out lg:left-16 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
       {soundEnabled && user && business && hasPermission(user, business.id, "notifications") ?
         <NotificationSoundWatcher key={`${user.id}:${business.id}`} userId={user.id} businessId={business.id} /> : null}
       <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-5 lg:grid-cols-[220px_var(--global-search-width)_minmax(0,1fr)]">
@@ -250,7 +250,7 @@ export function Header({
                     titleId={filterDrawerTitleId}
                     size="custom"
                     testId="header-filter-drawer"
-                    backdropClassName="bg-[rgba(23,18,15,0.28)] backdrop-blur-[1px]"
+                    backdropClassName="bg-platforma-ink/[0.28] backdrop-blur-[1px]"
                     className="max-w-[min(420px,calc(100vw-1rem))] rounded-none border-y-0 border-r-0 shadow-premium"
                   >
                     <div className="flex h-14 items-center justify-between gap-3 border-b border-platforma-border px-5">
@@ -263,7 +263,7 @@ export function Header({
                       </div>
                       <button
                         type="button"
-                        className="platforma-focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
+                        className="platforma-focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
                         onClick={() => setShowFilters(false)}
                         aria-label={t("common.close")}
                       >
@@ -338,7 +338,7 @@ export function Header({
             >
               <Bell aria-hidden="true" size={24} strokeWidth={2.1} />
               {unreadCount ? (
-                <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold text-platforma-ink ring-2 ring-surface">
+                <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold text-white ring-2 ring-surface">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               ) : null}
@@ -415,7 +415,7 @@ export function Header({
                 <Link
                   to="/app/tasks"
                   onClick={() => setShowNotifications(false)}
-                  className="platforma-focus-ring mt-4 block rounded-control bg-brand-500 px-4 py-3 text-center text-sm font-semibold text-platforma-ink ring-1 ring-brand-600/10 transition hover:bg-brand-600"
+                  className="platforma-focus-ring mt-4 block rounded-control bg-brand-500 px-4 py-3 text-center text-sm font-semibold text-white ring-1 ring-brand-600/10 transition hover:bg-brand-600"
                 >
                   {t("header.openTasks")}
                 </Link>
@@ -424,7 +424,7 @@ export function Header({
           </div>
           <HeaderAccountLink user={user} membership={activeMembership} />
           {chatToastOpen ? (
-            <div className="fixed right-4 top-20 z-[90] w-[min(360px,calc(100vw-2rem))] rounded-card border border-platforma-border bg-surface-card p-4 shadow-premium ring-1 ring-[rgba(194,65,12,0.16)]">
+            <div className="fixed right-4 top-20 z-[90] w-[min(360px,calc(100vw-2rem))] rounded-card border border-platforma-border bg-surface-card p-4 shadow-premium ring-1 ring-platforma-danger/[0.16]">
               <div className="flex items-start gap-3">
                 <div className="grid h-11 w-11 shrink-0 place-items-center rounded-card bg-[var(--platforma-danger-soft)] text-platforma-danger">
                   <MessageSquareText size={21} />
@@ -436,7 +436,7 @@ export function Header({
                   </p>
                   <button
                     type="button"
-                    className="platforma-focus-ring mt-3 rounded-control bg-brand-500 px-3 py-2 text-xs font-semibold text-platforma-ink ring-1 ring-brand-600/10 transition hover:bg-brand-600"
+                    className="platforma-focus-ring mt-3 rounded-control bg-brand-500 px-3 py-2 text-xs font-semibold text-white ring-1 ring-brand-600/10 transition hover:bg-brand-600"
                     onClick={() => {
                       setChatToastOpen(false);
                       navigate("/app/conversations?unread=true");
@@ -447,7 +447,7 @@ export function Header({
                 </div>
                 <button
                   type="button"
-                  className="platforma-focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
+                  className="platforma-focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
                   onClick={() => setChatToastOpen(false)}
                   aria-label={t("common.close")}
                 >
@@ -459,7 +459,7 @@ export function Header({
         </div>
       </div>
       {pageHeader?.activeFilters ? (
-        <div className="border-t border-platforma-border bg-surface/92 px-4 py-1.5 sm:px-6">
+        <div className="border-t border-platforma-border bg-surface/[0.92] px-4 py-1.5 sm:px-6">
           <div className="flex min-w-0 items-center gap-2 overflow-x-auto pb-1">{pageHeader.activeFilters}</div>
         </div>
       ) : null}

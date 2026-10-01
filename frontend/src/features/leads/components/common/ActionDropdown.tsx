@@ -39,14 +39,14 @@ export function ActionDropdown({
         <MoreHorizontal size={18} />
       </Button>
       {open ? (
-        <div className="absolute right-0 top-11 z-10 w-56 rounded-lg border border-gray-200 bg-white py-2 shadow-lg">
+        <div className="absolute right-0 top-11 z-10 w-56 rounded-lg border border-platforma-border bg-white py-2 shadow-lg">
           {items.map((item) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.label}
                 type="button"
-                className={`flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-gray-700 hover:bg-gray-50 ${item.separated ? "mt-1 border-t border-gray-100 pt-3" : ""}`}
+                className={`flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-platforma-subtle hover:bg-surface-hover ${item.separated ? "mt-1 border-t border-platforma-border pt-3" : ""}`}
                 onClick={item.action}
               >
                 <Icon size={16} className="mr-2" />

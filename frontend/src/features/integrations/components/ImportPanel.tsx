@@ -235,7 +235,7 @@ export function ImportPanel({
               key={job.id}
               type="button"
               onClick={() => setActiveJob(job)}
-              className="w-full rounded-control bg-surface-muted px-3 py-2 text-left text-sm transition hover:bg-surface-warm"
+              className="w-full rounded-control bg-surface-muted px-3 py-2 text-left text-sm transition hover:bg-surface-hover"
             >
               <span className="font-semibold text-platforma-ink">#{job.id} {job.entity_type}</span>
               <span className="ml-2 text-platforma-muted">{importStatusLabel(job.status, t)} · {job.imported_count}/{job.total_rows}</span>

@@ -416,7 +416,7 @@ export function AnalyticsPage() {
         {teamPerformance.error ? (
           <Card>
             <CardBody className="flex items-start gap-3">
-              <ShieldAlert className="mt-1 text-amber-600" size={22} />
+              <ShieldAlert className="mt-1 text-platforma-warning" size={22} />
               <div>
                 <h3 className="font-bold text-platforma-ink">{t("analytics.teamHidden")}</h3>
                 <p className="mt-1 text-sm leading-6 text-platforma-subtle">
@@ -492,19 +492,19 @@ export function AnalyticsPage() {
                       <Link
                         key={`${action.user_id}-${action.type}`}
                         to={action.route}
-                        className={action.severity === "critical" ? "block rounded-2xl border border-red-200 bg-red-50 p-3 transition hover:shadow-card" : "block rounded-2xl border border-amber-200 bg-amber-50 p-3 transition hover:shadow-card"}
+                        className={action.severity === "critical" ? "block rounded-2xl border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] p-3 transition hover:shadow-card" : "block rounded-2xl border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] p-3 transition hover:shadow-card"}
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div>
-                            <p className={action.severity === "critical" ? "font-semibold text-red-900" : "font-semibold text-amber-900"}>{t(`analytics.action.${action.type}.title`)}</p>
+                            <p className={action.severity === "critical" ? "font-semibold text-platforma-danger" : "font-semibold text-platforma-warning"}>{t(`analytics.action.${action.type}.title`)}</p>
                             <p className="mt-1 text-xs leading-5 text-platforma-subtle">{t(`analytics.action.${action.type}.description`, { count: action.count })}</p>
                           </div>
-                          <span className={action.severity === "critical" ? "rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-red-700" : "rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-amber-700"}>{action.count}</span>
+                          <span className={action.severity === "critical" ? "rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-danger" : "rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-warning"}>{action.count}</span>
                         </div>
                       </Link>
                     ))}
                     {!teamPerformanceActions.length ? (
-                      <div className="rounded-2xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-800">{t("analytics.noTeamActions")}</div>
+                      <div className="rounded-2xl bg-[var(--platforma-success-soft)] p-3 text-sm font-semibold text-platforma-success">{t("analytics.noTeamActions")}</div>
                     ) : null}
                   </div>
 
@@ -545,7 +545,7 @@ export function AnalyticsPage() {
 function MiniMetric({ label, value, danger }: { label: string; value: number | string; danger?: boolean }) {
   return (
     <div className={danger ? "rounded-control bg-[var(--platforma-danger-soft)] px-3 py-2 text-platforma-danger" : "rounded-control bg-surface-muted px-3 py-2 text-platforma-subtle"}>
-      <p className="text-[11px] font-bold uppercase tracking-[0.12em] opacity-70">{label}</p>
+      <p className="text-[11px] font-bold uppercase tracking-[0.12em]">{label}</p>
       <p className="mt-1 text-lg font-bold">{value}</p>
     </div>
   );

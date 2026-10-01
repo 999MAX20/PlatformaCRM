@@ -80,7 +80,7 @@ export function CrmPagination({
           disabled={page <= 1}
           aria-label={previousLabel}
           className={cn(
-            "platforma-focus-ring rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-semibold text-platforma-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50",
+            "platforma-focus-ring rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-semibold text-platforma-text transition hover:bg-surface-hover disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content disabled:opacity-100",
             isToolbar && "min-h-11 w-11 shrink-0 px-0 sm:min-h-9 sm:w-auto sm:px-3",
             numbered && "grid h-9 w-9 place-items-center p-0",
           )}
@@ -94,7 +94,7 @@ export function CrmPagination({
           {pages.map((value, index) => <span key={value} className="inline-flex items-center gap-1">
             {index > 0 && value - pages[index - 1] > 1 ? <span aria-hidden="true" className="px-1">…</span> : null}
             <button type="button" aria-current={page === value ? "page" : undefined} onClick={() => onPageChange(value)}
-              className={cn("platforma-focus-ring h-9 min-w-9 rounded-control px-2 text-sm tabular-nums", page === value ? "border border-brand-300 bg-brand-50 text-platforma-text" : "hover:bg-surface-muted")}>
+              className={cn("platforma-focus-ring h-9 min-w-9 rounded-control px-2 text-sm tabular-nums", page === value ? "border border-brand-100 bg-brand-50 text-platforma-text" : "hover:bg-surface-hover")}>
               {value}
             </button>
           </span>)}
@@ -113,7 +113,7 @@ export function CrmPagination({
           disabled={page >= totalPages}
           aria-label={nextLabel}
           className={cn(
-            "platforma-focus-ring rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-semibold text-platforma-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50",
+            "platforma-focus-ring rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-semibold text-platforma-text transition hover:bg-surface-hover disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content disabled:opacity-100",
             isToolbar && "min-h-11 w-11 shrink-0 px-0 sm:min-h-9 sm:w-auto sm:px-3",
             numbered && "grid h-9 w-9 place-items-center p-0",
           )}

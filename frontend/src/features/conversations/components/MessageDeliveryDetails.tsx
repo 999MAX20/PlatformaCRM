@@ -45,9 +45,9 @@ function statusIcon(status: DeliveryStatus) {
 }
 
 function statusClass(status: DeliveryStatus) {
-  if (status === "delivered") return "bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]";
-  if (status === "failed") return "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-[rgba(185,28,28,0.18)]";
-  if (status === "delayed" || status === "retrying") return "bg-platforma-warning-soft text-platforma-text ring-[rgba(183,121,31,0.22)]";
+  if (status === "delivered") return "bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]";
+  if (status === "failed") return "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/[0.18]";
+  if (status === "delayed" || status === "retrying") return "bg-platforma-warning-soft text-platforma-text ring-platforma-warning/[0.22]";
   return "bg-surface-muted text-platforma-muted ring-platforma-border";
 }
 

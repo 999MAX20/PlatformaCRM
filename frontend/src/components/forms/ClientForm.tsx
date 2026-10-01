@@ -103,7 +103,7 @@ export function ClientForm({
           description={t("clients.duplicateText")}
           details={<div className="space-y-2">
             {duplicates.slice(0, 3).map((client) => (
-              <div key={client.id} className="flex flex-wrap items-center justify-between gap-2 rounded-control border border-[rgba(151,90,22,0.18)] bg-surface-card p-3">
+              <div key={client.id} className="flex flex-wrap items-center justify-between gap-2 rounded-control border border-platforma-warning/[0.18] bg-surface-card p-3">
                 <span className="font-semibold">{client.full_name} · {client.phone || client.email || t("clients.noContact")}</span>
                 {onOpenClient ? (
                   <Button type="button" variant="secondary" className="h-9 rounded-xl px-3 text-xs" onClick={() => onOpenClient(client.id)}>

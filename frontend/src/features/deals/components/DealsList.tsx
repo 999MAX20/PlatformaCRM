@@ -14,12 +14,12 @@ import { dealStageLabel, money } from "../utils/dealHelpers";
 
 type StageGroup = { id: string; name: string; color: string; rows: DealRow[] };
 const stageFallbackColors = [
-  "#F5B37A",
-  "#B7791F",
-  "#15803D",
-  "#0E7490",
-  "#6F4CC3",
-  "#C2410C",
+  "var(--platforma-brand)",
+  "var(--platforma-warning)",
+  "var(--platforma-success)",
+  "var(--platforma-info)",
+  "var(--platforma-ai)",
+  "var(--platforma-danger)",
 ];
 
 function EmptyDeals({
@@ -129,7 +129,7 @@ export function DealsList({
           {
             id: "none",
             name: t("deals.noStage"),
-            color: "#8A7B70",
+            color: "var(--platforma-muted-soft)",
             rows: withoutStage,
           },
         ]
@@ -185,7 +185,7 @@ export function DealsList({
               <tr
                 key={deal.id}
                 className={cn(
-                  "cursor-pointer hover:bg-surface-warm",
+                  "cursor-pointer hover:bg-surface-hover",
                   selectedDealId === deal.id && "bg-brand-50",
                 )}
                 style={{ minHeight: CRM_TABLE_ROW_HEIGHT }}

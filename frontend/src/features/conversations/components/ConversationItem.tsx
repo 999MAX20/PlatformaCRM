@@ -63,7 +63,7 @@ export function ConversationItem({
           {initials || <MessageSquare size={16} />}
           <span className={cn("absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full border-2 border-platforma-card", conversation.channel === "telegram" ? "bg-sky-500" : conversation.channel === "whatsapp" ? "bg-emerald-500" : conversation.channel === "instagram" ? "bg-pink-500" : "bg-platforma-muted")} />
           {unread > 0 ? (
-            <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-platforma-ink">
+            <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">
               {unread}
             </span>
           ) : null}
@@ -76,9 +76,9 @@ export function ConversationItem({
           <p className="mt-0.5 truncate text-xs font-semibold leading-5 text-platforma-muted">{preview}</p>
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-[10px] font-bold text-platforma-muted">{channelLabel(conversation.channel, t)}</span>
-            {conversation.handoff_required ? <span className="rounded-full bg-red-50 px-1.5 py-0.5 text-[10px] font-bold text-red-700">{t("conversations.noReply")}</span> : null}
+            {conversation.handoff_required ? <span className="rounded-full bg-[var(--platforma-danger-soft)] px-1.5 py-0.5 text-[10px] font-bold text-platforma-danger">{t("conversations.noReply")}</span> : null}
             {isSlaOverdue ? <span className="rounded-full bg-[var(--platforma-danger-soft)] px-1.5 py-0.5 text-[10px] font-bold text-platforma-danger">{t("conversations.slaOverdue")}</span> : null}
-            {!conversation.handoff_required && !conversation.bot_enabled ? <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-800">{t("conversations.paused")}</span> : null}
+            {!conversation.handoff_required && !conversation.bot_enabled ? <span className="rounded-full bg-[var(--platforma-warning-soft)] px-1.5 py-0.5 text-[10px] font-bold text-platforma-warning">{t("conversations.paused")}</span> : null}
             {conversation.status === "closed" ? <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-[10px] font-bold text-platforma-muted">{t("status.closed")}</span> : null}
           </div>
         </div>

@@ -108,7 +108,7 @@ export function ClientsTable({
               </span>
               <button
                 type="button"
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-platforma-border bg-surface-card px-3 text-xs font-semibold text-platforma-text transition hover:bg-surface-warm"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-platforma-border bg-surface-card px-3 text-xs font-semibold text-platforma-text transition hover:bg-surface-hover"
                 onClick={() =>
                   firstCheckedRow && onOpenClient(firstCheckedRow.client.id)
                 }
@@ -119,7 +119,7 @@ export function ClientsTable({
               </button>
               <button
                 type="button"
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-platforma-muted transition hover:bg-surface-muted hover:text-platforma-text"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-platforma-muted transition hover:bg-surface-hover hover:text-platforma-text"
                 onClick={clearCheckedRows}
               >
                 <X size={14} />

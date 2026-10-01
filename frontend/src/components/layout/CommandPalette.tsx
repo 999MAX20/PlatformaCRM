@@ -113,7 +113,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     .map((item) => item.command);
 
   return (
-    <div className="fixed inset-0 z-[80] bg-[rgba(23,18,15,0.35)] p-4 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-[80] bg-platforma-ink/[0.35] p-4 backdrop-blur-sm" onClick={onClose}>
       <div className="mx-auto mt-20 max-w-xl overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-premium" onClick={(event) => event.stopPropagation()}>
         <div className="flex items-center gap-3 border-b border-platforma-border px-4 py-3">
           <Search size={18} className="text-platforma-faint" />
@@ -124,7 +124,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
-          <button type="button" className="platforma-focus-ring grid h-8 w-8 place-items-center rounded-control text-platforma-faint hover:bg-surface-muted hover:text-platforma-ink" onClick={onClose}>
+          <button type="button" className="platforma-focus-ring grid h-8 w-8 place-items-center rounded-control text-platforma-faint hover:bg-surface-hover hover:text-platforma-ink" onClick={onClose}>
             <X size={17} />
           </button>
         </div>
@@ -136,7 +136,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                 key={command.id}
                 data-testid={`command-${command.id}`}
                 type="button"
-                className={cn("platforma-focus-ring flex w-full items-center gap-3 rounded-control px-3 py-3 text-left transition", index === 0 ? "bg-brand-50" : "hover:bg-surface-muted")}
+                className={cn("platforma-focus-ring flex w-full items-center gap-3 rounded-control px-3 py-3 text-left transition", index === 0 ? "bg-brand-50" : "hover:bg-surface-hover")}
                 onClick={() => {
                   navigate(command.to);
                   onClose();

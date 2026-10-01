@@ -41,7 +41,7 @@ export function SearchableCalendarFilter({
         type="button"
         className={cn(
           "flex h-10 w-full items-center justify-between gap-2 rounded-control border border-platforma-border bg-platforma-card px-3 text-left text-sm font-bold text-platforma-text shadow-sm transition hover:border-brand-200 hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-brand-100",
-          disabled && "cursor-not-allowed bg-surface-muted text-platforma-muted hover:border-platforma-border hover:bg-surface-muted",
+          disabled && "cursor-not-allowed bg-surface-muted text-platforma-muted hover:border-platforma-border hover:bg-surface-hover",
         )}
         disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}

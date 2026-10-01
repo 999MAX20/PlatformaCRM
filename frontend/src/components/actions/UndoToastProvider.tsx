@@ -65,7 +65,7 @@ export function UndoToastProvider({ children }: { children: React.ReactNode }) {
           </Button>
           <button
             type="button"
-            className="platforma-focus-ring rounded-control p-1 text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text"
+            className="platforma-focus-ring rounded-control p-1 text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
             aria-label={t("common.close")}
             onClick={() => setItem(null)}
           >

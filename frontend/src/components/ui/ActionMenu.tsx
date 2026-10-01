@@ -10,7 +10,7 @@ import { PopoverSurface } from "./Overlay";
 
 const actionMenuToneClasses: Record<ActionTone, string> = {
   brand: "text-[var(--platforma-brand-content)] hover:bg-brand-50",
-  neutral: "text-platforma-text hover:bg-surface-warm",
+  neutral: "text-platforma-text hover:bg-surface-hover",
   warning: "text-platforma-warning hover:bg-[var(--platforma-warning-soft)]",
   danger: "text-platforma-danger hover:bg-[var(--platforma-danger-soft)]",
   ai: "text-ai-700 hover:bg-ai-50",
@@ -155,7 +155,7 @@ export function ActionMenu({
                 data-action-key={item.key}
                 disabled={item.disabled}
                 className={cn(
-                  "platforma-focus-ring flex min-h-10 w-full items-center gap-2 rounded-control px-3 py-2 text-left text-sm font-semibold transition disabled:pointer-events-none disabled:opacity-50",
+                  "platforma-focus-ring flex min-h-10 w-full items-center gap-2 rounded-control px-3 py-2 text-left text-sm font-semibold transition disabled:pointer-events-none disabled:bg-disabled-surface disabled:text-disabled-content disabled:ring-1 disabled:ring-disabled-border disabled:opacity-100",
                   actionMenuToneClasses[item.tone || "neutral"],
                 )}
                 onClick={() => {

@@ -19,11 +19,11 @@ function formatMoney(value?: string) {
 }
 
 function statusClass(status?: string | null) {
-  if (status === "active" || status === "healthy") return "bg-emerald-50 text-emerald-700 border-emerald-100";
-  if (status === "trial" || status === "setup") return "bg-violet-50 text-violet-700 border-violet-100";
-  if (status === "attention") return "bg-amber-50 text-amber-700 border-amber-100";
-  if (status === "blocked" || status === "cancelled" || status === "overdue" || status === "risk") return "bg-red-50 text-red-700 border-red-100";
-  return "bg-slate-100 text-slate-600 border-slate-200";
+  if (status === "active" || status === "healthy") return "bg-[var(--platforma-success-soft)] text-platforma-success border-platforma-success/20";
+  if (status === "trial" || status === "setup") return "bg-discovery-50 text-discovery-700 border-discovery-100";
+  if (status === "attention") return "bg-[var(--platforma-warning-soft)] text-platforma-warning border-platforma-warning/20";
+  if (status === "blocked" || status === "cancelled" || status === "overdue" || status === "risk") return "bg-[var(--platforma-danger-soft)] text-platforma-danger border-platforma-danger/20";
+  return "bg-surface-muted text-platforma-subtle border-platforma-border";
 }
 
 function usageText(merchant: PlatformMerchant, t: (key: string, vars?: Record<string, string | number>) => string) {
@@ -62,17 +62,17 @@ export function PlatformMerchantsPage() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">{t("platform.merchants.eyebrow")}</p>
             <h1 className="mt-3 text-4xl font-semibold tracking-tight text-midnight sm:text-5xl">{t("platform.merchants.title")}</h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
+            <p className="mt-4 max-w-3xl text-base leading-7 text-platforma-subtle">
               {t("platform.merchants.description")}
             </p>
           </div>
-          <div className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white/85 px-4 py-3 shadow-sm">
-            <Search size={18} className="text-slate-400" />
+          <div className="flex items-center gap-2 rounded-2xl border border-platforma-border/80 bg-white/85 px-4 py-3 shadow-sm">
+            <Search size={18} className="text-platforma-faint" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t("platform.merchants.search")}
-              className="w-full min-w-[220px] bg-transparent text-sm font-semibold text-midnight outline-none placeholder:text-slate-400"
+              className="w-full min-w-[220px] bg-transparent text-sm font-semibold text-midnight outline-none placeholder:text-platforma-faint"
             />
           </div>
         </div>
@@ -85,7 +85,7 @@ export function PlatformMerchantsPage() {
           <CardBody className="overflow-x-auto p-0">
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-xs font-bold uppercase tracking-[0.14em] text-slate-400">
+                <tr className="border-b border-platforma-border text-xs font-bold uppercase tracking-[0.14em] text-platforma-faint">
                   <th className="px-5 py-4">{t("platform.merchants.merchant")}</th>
                   <th className="px-5 py-4">{t("platform.merchants.owner")}</th>
                   <th className="px-5 py-4">{t("platform.merchants.status")}</th>
@@ -99,7 +99,7 @@ export function PlatformMerchantsPage() {
               </thead>
               <tbody>
                 {filtered.map((merchant) => (
-                  <tr key={merchant.id} className="border-b border-slate-100/80 last:border-0">
+                  <tr key={merchant.id} className="border-b border-platforma-border/80 last:border-0">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         <div className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-700">
@@ -109,16 +109,16 @@ export function PlatformMerchantsPage() {
                           <Link to={`/platform/merchants/${merchant.id}`} className="font-bold text-midnight hover:text-brand-700">
                             {merchant.name}
                           </Link>
-                          <p className="mt-1 text-xs font-semibold text-slate-400">ID {merchant.id}</p>
+                          <p className="mt-1 text-xs font-semibold text-platforma-faint">ID {merchant.id}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="flex items-center gap-2 text-slate-600">
-                        <UserRound size={17} className="text-slate-400" />
+                      <div className="flex items-center gap-2 text-platforma-subtle">
+                        <UserRound size={17} className="text-platforma-faint" />
                         <div>
                           <p className="font-semibold text-midnight">{merchant.owner.full_name || t("platform.common.noName")}</p>
-                          <p className="text-xs text-slate-500">{merchant.owner.email}</p>
+                          <p className="text-xs text-platforma-faint">{merchant.owner.email}</p>
                         </div>
                       </div>
                     </td>
@@ -134,10 +134,10 @@ export function PlatformMerchantsPage() {
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
-                        <CreditCard size={17} className="text-slate-400" />
+                        <CreditCard size={17} className="text-platforma-faint" />
                         <div>
                           <p className="font-semibold text-midnight">{merchant.plan?.name || t("platform.merchants.noPlan")}</p>
-                          <p className="text-xs text-slate-500">{merchant.plan ? t("platform.merchants.planPrice", { price: formatMoney(merchant.plan.monthly_price) }) : "—"}</p>
+                          <p className="text-xs text-platforma-faint">{merchant.plan ? t("platform.merchants.planPrice", { price: formatMoney(merchant.plan.monthly_price) }) : "—"}</p>
                         </div>
                       </div>
                     </td>
@@ -145,36 +145,36 @@ export function PlatformMerchantsPage() {
                       <div className="min-w-[220px]">
                         <div className="flex items-center gap-2">
                           {merchant.health?.status === "healthy" ? (
-                            <CheckCircle2 size={17} className="text-emerald-500" />
+                            <CheckCircle2 size={17} className="text-platforma-success" />
                           ) : (
-                            <AlertTriangle size={17} className="text-amber-500" />
+                            <AlertTriangle size={17} className="text-platforma-warning" />
                           )}
                           <span className={cn("inline-flex w-fit rounded-full border px-3 py-1 text-xs font-bold", statusClass(merchant.health?.status))}>
                             {merchant.health?.status || t("platform.common.unknown")} · {merchant.health?.score ?? 0}%
                           </span>
                         </div>
-                        <p className="mt-2 text-xs font-semibold text-slate-500">{merchant.health?.next_action || t("platform.merchants.checkPilot")}</p>
+                        <p className="mt-2 text-xs font-semibold text-platforma-faint">{merchant.health?.next_action || t("platform.merchants.checkPilot")}</p>
                         {!!merchant.health?.blockers?.length && (
-                          <p className="mt-1 line-clamp-2 text-xs text-amber-700">{merchant.health.blockers.join(" · ")}</p>
+                          <p className="mt-1 line-clamp-2 text-xs text-platforma-warning">{merchant.health.blockers.join(" · ")}</p>
                         )}
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="min-w-[180px] text-xs font-semibold leading-6 text-slate-600">
+                      <div className="min-w-[180px] text-xs font-semibold leading-6 text-platforma-subtle">
                         <p>{t("platform.merchants.opsLeads", { leads: merchant.operations?.lead_count ?? 0, new: merchant.operations?.new_leads ?? 0 })}</p>
                         <p>{t("platform.merchants.opsInbox", { unread: merchant.operations?.unread_conversations ?? 0, handoff: merchant.operations?.handoff_conversations ?? 0 })}</p>
                         <p>{t("platform.merchants.opsSources", { ok: merchant.operations?.connected_connectors ?? 0, fail: merchant.operations?.failed_connectors ?? 0 })}</p>
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="min-w-[240px] rounded-3xl border border-slate-100 bg-slate-50/80 p-3">
+                      <div className="min-w-[240px] rounded-3xl border border-platforma-border bg-surface-muted/80 p-3">
                         <div className="flex items-center gap-2">
-                          <Headphones size={16} className={merchant.support_workflow?.priority === "high" ? "text-red-500" : merchant.support_workflow?.priority === "medium" ? "text-amber-500" : "text-emerald-500"} />
+                          <Headphones size={16} className={merchant.support_workflow?.priority === "high" ? "text-platforma-danger" : merchant.support_workflow?.priority === "medium" ? "text-platforma-warning" : "text-platforma-success"} />
                           <span className={cn("inline-flex w-fit rounded-full border px-2.5 py-1 text-[11px] font-bold", statusClass(merchant.support_workflow?.priority === "high" ? "risk" : merchant.support_workflow?.priority === "medium" ? "attention" : "healthy"))}>
                             {t("platform.merchants.supportPriority", { priority: merchant.support_workflow?.priority || "low" })}
                           </span>
                         </div>
-                        <p className="mt-2 text-xs font-semibold leading-5 text-slate-600">{merchant.support_workflow?.summary || merchant.health?.next_action || t("platform.merchants.monitorPilot")}</p>
+                        <p className="mt-2 text-xs font-semibold leading-5 text-platforma-subtle">{merchant.support_workflow?.summary || merchant.health?.next_action || t("platform.merchants.monitorPilot")}</p>
                         {!!merchant.support_workflow?.next_steps?.length && (
                           <p className="mt-1 line-clamp-2 text-[11px] font-semibold text-brand-700">
                             {merchant.support_workflow.next_steps.map((step) => step.label).join(" · ")}
@@ -189,14 +189,14 @@ export function PlatformMerchantsPage() {
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="flex items-center gap-2 text-slate-600">
-                        <Activity size={17} className="text-slate-400" />
+                      <div className="flex items-center gap-2 text-platforma-subtle">
+                        <Activity size={17} className="text-platforma-faint" />
                         <span className="font-semibold">{usageText(merchant, t)}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-4 font-semibold text-slate-500">
+                    <td className="px-5 py-4 font-semibold text-platforma-faint">
                       <p>{merchant.created_at ? formatDate(merchant.created_at, locale) : "—"}</p>
-                      {merchant.latest_activity_at && <p className="mt-1 text-xs text-slate-400">{t("platform.merchants.lastActivity", { date: formatDate(merchant.latest_activity_at, locale) })}</p>}
+                      {merchant.latest_activity_at && <p className="mt-1 text-xs text-platforma-faint">{t("platform.merchants.lastActivity", { date: formatDate(merchant.latest_activity_at, locale) })}</p>}
                     </td>
                   </tr>
                 ))}

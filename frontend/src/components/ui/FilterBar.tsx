@@ -27,7 +27,7 @@ export function FilterBar<TValue extends string>({ options, value, onChange, ari
             aria-selected={active}
             className={cn(
               "platforma-focus-ring inline-flex min-h-9 shrink-0 items-center justify-center gap-2 rounded-control px-3 text-sm font-semibold transition",
-              active ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-warm hover:text-platforma-text",
+              active ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
             )}
             onClick={() => onChange(item.value)}
           >

@@ -6,10 +6,10 @@ export type BadgeSize = "sm" | "md" | "lg";
 export const badgeVariants: Record<BadgeVariant, string> = {
   neutral: "bg-surface-muted text-platforma-subtle ring-platforma-border",
   primary: "bg-brand-50 text-brand-700 ring-brand-100",
-  success: "bg-[var(--platforma-success-soft)] text-platforma-success ring-[rgba(21,128,61,0.18)]",
-  warning: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-[rgba(151,90,22,0.24)]",
-  danger: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-[rgba(194,65,12,0.2)]",
-  info: "bg-[var(--platforma-info-soft)] text-platforma-info ring-[rgba(14,116,144,0.2)]",
+  success: "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/[0.18]",
+  warning: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/[0.24]",
+  danger: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/20",
+  info: "bg-[var(--platforma-info-soft)] text-platforma-info ring-platforma-info/20",
   discovery: "bg-discovery-50 text-discovery-700 ring-discovery-100",
   ai: "bg-ai-50 text-ai-700 ring-ai-100",
 };

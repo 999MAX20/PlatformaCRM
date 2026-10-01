@@ -136,7 +136,7 @@ export function AccountPage() {
           <Button size="sm" variant="ghost" data-testid="merchant-logout" onClick={logout}><LogOut size={16} />{t("header.logout")}</Button>
         </div>
         {profileMutation.error ? <ErrorState message={getApiErrorMessage(profileMutation.error)} /> : null}
-        {profileSaved ? <p role="status" className="mb-3 text-sm text-emerald-700">{t("account.saved")}</p> : null}
+        {profileSaved ? <p role="status" className="mb-3 text-sm text-platforma-success">{t("account.saved")}</p> : null}
         <div className="grid gap-5 sm:grid-cols-[160px_minmax(0,1fr)]">
           <AvatarEditor user={user} />
         <form className="grid max-w-[560px] gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]" onSubmit={(event) => { event.preventDefault(); profileMutation.mutate(); }}>
@@ -152,7 +152,7 @@ export function AccountPage() {
 
       <Card id="security" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <h2 className="mb-3 text-base font-bold">{t("account.loginHistoryEyebrow")}</h2>
-        {passwordSaved ? <p role="status" className="mb-3 text-sm text-emerald-700">{t("account.passwordSaved")}</p> : null}
+        {passwordSaved ? <p role="status" className="mb-3 text-sm text-platforma-success">{t("account.passwordSaved")}</p> : null}
         <div className="divide-y divide-platforma-border">
           <EmailSecurityRow />
           <SecuritySettingRow icon={<KeyRound size={18} />} title={t("account.passwordLabel")}
@@ -184,8 +184,8 @@ export function AccountPage() {
             const enabled = preferenceByCategory.get(item.category)?.in_app_enabled !== false;
             return <div key={item.category} className="flex items-center justify-between gap-3 py-2">
               <span className="text-sm" title={t(item.descriptionKey)}>{t(item.titleKey)}</span>
-              <button type="button" role="switch" aria-checked={enabled} aria-label={t(item.titleKey)} disabled={notificationPreferenceMutation.isPending || notificationPreferences.isFetching} onClick={() => notificationPreferenceMutation.mutate({ category: item.category, enabled: !enabled })} className="platforma-focus-ring flex w-12 shrink-0 items-center justify-center rounded-control disabled:opacity-50">
-                <span aria-hidden="true" className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors ${enabled ? "bg-brand-500" : "bg-slate-300"}`}><span className={`h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${enabled ? "translate-x-4" : "translate-x-0"}`} /></span>
+              <button type="button" role="switch" aria-checked={enabled} aria-label={t(item.titleKey)} disabled={notificationPreferenceMutation.isPending || notificationPreferences.isFetching} onClick={() => notificationPreferenceMutation.mutate({ category: item.category, enabled: !enabled })} className="platforma-focus-ring group flex w-12 shrink-0 items-center justify-center rounded-control disabled:opacity-100">
+                <span aria-hidden="true" className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors group-disabled:bg-disabled-surface group-disabled:ring-1 group-disabled:ring-disabled-border ${enabled ? "bg-brand-500" : "bg-platforma-control"}`}><span className={`h-4 w-4 rounded-full bg-white shadow-sm transition-transform group-disabled:bg-disabled-content ${enabled ? "translate-x-4" : "translate-x-0"}`} /></span>
               </button>
             </div>;
           })}
@@ -209,7 +209,7 @@ export function AccountPage() {
             </div>
             <div>
               <p className="text-sm font-black text-midnight">{t("account.securityTitle")}</p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-slate-500">{t("account.securityText")}</p>
+              <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">{t("account.securityText")}</p>
             </div>
           </div>
           {passwordMutation.error ? <div className="mb-4"><ErrorState message={getApiErrorMessage(passwordMutation.error)} /></div> : null}

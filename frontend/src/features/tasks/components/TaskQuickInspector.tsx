@@ -163,8 +163,8 @@ export function TaskQuickInspector({
         </div>
 
         {task.cancel_reason ? (
-          <section className="rounded-card border border-red-100 bg-red-50 p-3 text-sm font-semibold text-red-700">
-            <p className="mb-1 text-xs font-bold text-red-500">{t("tasks.cancelReasonLabel")}</p>
+          <section className="rounded-card border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] p-3 text-sm font-semibold text-platforma-danger">
+            <p className="mb-1 text-xs font-bold text-platforma-danger">{t("tasks.cancelReasonLabel")}</p>
             {task.cancel_reason}
           </section>
         ) : null}

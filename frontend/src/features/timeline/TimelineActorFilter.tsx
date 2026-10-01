@@ -123,7 +123,7 @@ export function TimelineActorFilter({
                       type="button"
                       disabled={changing}
                       aria-pressed={value === String(actor.id)}
-                      className="platforma-focus-ring min-h-11 w-full break-words rounded-control px-3 py-2 text-left hover:bg-surface-muted"
+                      className="platforma-focus-ring min-h-11 w-full break-words rounded-control px-3 py-2 text-left hover:bg-surface-hover"
                       onClick={() => select(String(actor.id))}
                     >
                       {actor.name || t("timeline.unknownActor")}

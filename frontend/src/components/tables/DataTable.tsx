@@ -172,7 +172,7 @@ export function DataTable<T>({
                   data-focus-return-id={rowFocusReturnId?.(row)}
                   data-testid={rowTestId?.(row)}
                   className={cn(
-                    "transition hover:bg-surface-warm",
+                    "transition hover:bg-surface-hover",
                     onRowSelect && "cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
                     selected && "bg-brand-50/80 shadow-[inset_5px_0_0_var(--platforma-brand)] hover:bg-brand-50/80",
                     rowClassName?.(row),

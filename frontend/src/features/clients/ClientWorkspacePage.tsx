@@ -279,13 +279,13 @@ export function ClientWorkspacePage() {
                       </span>
                     ))
                   ) : (
-                    <span className="text-sm font-semibold text-[#8A7B70]">
+                    <span className="text-sm font-semibold text-platforma-faint">
                       {t("clients.noTagsYet")}
                     </span>
                   )}
                 </div>
                 {client.notes ? (
-                  <p className="rounded-control bg-[#F2EDE6] p-3 text-sm font-medium leading-6 text-[#5F554D]">
+                  <p className="rounded-control bg-surface-muted p-3 text-sm font-medium leading-6 text-platforma-subtle">
                     {client.notes}
                   </p>
                 ) : null}

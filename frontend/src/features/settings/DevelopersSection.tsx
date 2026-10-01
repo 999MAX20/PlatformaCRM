@@ -175,11 +175,11 @@ export function DevelopersSection() {
           </div>
         ) : null}
         {lastToken ? (
-          <div className="mb-4 rounded-card border border-emerald-200 bg-emerald-50 p-4">
-            <p className="font-semibold text-emerald-900">
+          <div className="mb-4 rounded-card border border-platforma-success/20 bg-[var(--platforma-success-soft)] p-4">
+            <p className="font-semibold text-platforma-success">
               {t("developers.copyNow")}
             </p>
-            <p className="mt-1 text-sm text-emerald-800">
+            <p className="mt-1 text-sm text-platforma-success">
               {t("developers.copyNowText")}
             </p>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
@@ -258,7 +258,7 @@ export function DevelopersSection() {
                     <span
                       className={
                         token.is_active
-                          ? "rounded-full bg-green-50 px-2.5 py-1 text-xs font-bold text-green-700"
+                          ? "rounded-full bg-[var(--platforma-success-soft)] px-2.5 py-1 text-xs font-bold text-platforma-success"
                           : "rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-platforma-subtle"
                       }
                     >
@@ -476,7 +476,7 @@ function DeliveryRow({
             {formatDate(delivery.created_at)}
           </p>
           {delivery.error ? (
-            <p className="mt-1 text-xs font-semibold text-red-600">
+            <p className="mt-1 text-xs font-semibold text-platforma-danger">
               {merchantSafeIntegrationError(delivery.error, t)}
             </p>
           ) : null}
@@ -527,9 +527,9 @@ function deliveryStatusClass(status: WebhookDeliveryLog["status"]) {
   const classes: Record<WebhookDeliveryLog["status"], string> = {
     pending:
       "rounded-full bg-surface-card px-2.5 py-1 text-xs font-semibold text-platforma-subtle",
-    sent: "rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700",
+    sent: "rounded-full bg-[var(--platforma-success-soft)] px-2.5 py-1 text-xs font-semibold text-platforma-success",
     failed:
-      "rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700",
+      "rounded-full bg-[var(--platforma-danger-soft)] px-2.5 py-1 text-xs font-semibold text-platforma-danger",
   };
   return classes[status];
 }

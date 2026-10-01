@@ -82,7 +82,7 @@ export function SearchableSelect({
         type="button"
         disabled={disabled}
         className={cn(
-          "platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-sm transition hover:border-brand-100 hover:bg-surface-warm disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-platforma-faint",
+          "platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-sm transition hover:border-brand-500 hover:bg-surface-hover disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content disabled:opacity-100",
           value && "pr-16",
         )}
         aria-labelledby={label ? `${labelId} ${valueId}` : valueId}
@@ -111,7 +111,7 @@ export function SearchableSelect({
           type="button"
           disabled={disabled}
           className={cn(
-            "platforma-focus-ring absolute right-9 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-muted hover:text-platforma-text disabled:cursor-not-allowed",
+            "platforma-focus-ring absolute right-9 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text disabled:cursor-not-allowed",
             label ? "top-[calc(50%+0.75rem)]" : "top-1/2",
           )}
           aria-label={`${t("common.clearSelection")}: ${label || displayPlaceholder}`}
@@ -141,7 +141,7 @@ export function SearchableSelect({
                     selectValue(filteredOptions[0].value);
                   }
                 }}
-                className="platforma-focus-ring h-10 w-full rounded-control border border-platforma-border bg-surface-card pl-9 pr-3 text-sm font-semibold text-platforma-text placeholder:text-platforma-faint"
+                className="platforma-focus-ring h-10 w-full rounded-control border border-platforma-control bg-surface-card pl-9 pr-3 text-sm font-semibold text-platforma-text placeholder:text-platforma-faint"
                 placeholder={t("common.search")}
                 aria-label={t("common.search")}
                 aria-controls={listboxId}
@@ -155,7 +155,7 @@ export function SearchableSelect({
               aria-selected={!value}
               className={cn(
                 "platforma-focus-ring flex w-full items-center justify-between gap-3 rounded-control px-3 py-2.5 text-left text-sm font-semibold transition",
-                !value ? "bg-brand-50 text-brand-700 ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-muted hover:text-platforma-text",
+                !value ? "bg-brand-50 text-brand-700 ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
               )}
               onClick={() => selectValue("")}
             >
@@ -172,7 +172,7 @@ export function SearchableSelect({
                   aria-selected={isSelected}
                   className={cn(
                     "platforma-focus-ring flex w-full items-start justify-between gap-3 rounded-control px-3 py-2.5 text-left text-sm font-semibold transition",
-                    isSelected ? "bg-brand-50 text-brand-700 ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-muted hover:text-platforma-text",
+                    isSelected ? "bg-brand-50 text-brand-700 ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
                   )}
                   onClick={() => selectValue(option.value)}
                 >

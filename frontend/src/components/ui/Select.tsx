@@ -105,8 +105,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           role="combobox"
           disabled={disabled}
           className={cn(
-            "platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-sm transition hover:border-brand-100 hover:bg-surface-warm disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-platforma-faint",
-            error && "border-platforma-danger focus-visible:border-platforma-danger focus-visible:ring-[rgba(194,65,12,0.18)]",
+            "platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-sm transition hover:border-brand-500 hover:bg-surface-hover disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content disabled:opacity-100",
+            error && "border-platforma-danger hover:border-platforma-danger focus-visible:border-platforma-danger focus-visible:ring-platforma-danger/[0.18]",
             className,
           )}
           aria-label={
@@ -202,7 +202,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                       ? "bg-brand-50 text-brand-700 ring-1 ring-brand-100"
                       : activeIndex === optionIndex
                         ? "bg-surface-muted text-platforma-text"
-                        : "text-platforma-subtle hover:bg-surface-muted hover:text-platforma-text",
+                        : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
                   )}
                   onClick={() => selectValue(option.value)}
                   onMouseEnter={() => setActiveIndex(optionIndex)}

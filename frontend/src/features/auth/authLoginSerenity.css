@@ -1,11 +1,11 @@
 .serenity-login {
-  --serenity-ink: #1f1711;
-  --serenity-copy: #675b51;
-  --serenity-muted: #8c7d70;
-  --serenity-line: rgba(105, 72, 48, 0.15);
-  --serenity-orange: #ff7a1a;
-  --serenity-orange-hover: #ff6a00;
-  --serenity-orange-deep: #c84d00;
+  --serenity-ink: var(--color-text-primary);
+  --serenity-copy: var(--color-text-secondary);
+  --serenity-muted: var(--color-text-muted);
+  --serenity-line: rgb(var(--color-text-primary-rgb) / 0.15);
+  --serenity-orange: var(--color-brand-default);
+  --serenity-orange-hover: var(--color-brand-hover);
+  --serenity-orange-deep: var(--color-brand-content);
   position: relative;
   display: grid;
   height: 100dvh;
@@ -13,9 +13,9 @@
   grid-template-rows: 72px minmax(0, 1fr);
   overflow: hidden;
   background:
-    radial-gradient(circle at 16% 18%, rgba(255, 183, 119, 0.3), transparent 26rem),
-    radial-gradient(circle at 88% 72%, rgba(255, 106, 0, 0.13), transparent 28rem),
-    linear-gradient(135deg, #fffaf5 0%, #fff6ef 48%, #f7eee7 100%);
+    radial-gradient(circle at 16% 18%, rgb(var(--color-brand-accent-rgb) / 0.3), transparent 26rem),
+    radial-gradient(circle at 88% 72%, rgb(var(--color-brand-default-rgb) / 0.13), transparent 28rem),
+    linear-gradient(135deg, var(--color-surface-canvas) 0%, var(--color-surface-canvas) 48%, var(--color-surface-canvas) 100%);
   color: var(--serenity-ink);
   isolation: isolate;
 }
@@ -26,8 +26,8 @@
   z-index: -2;
   inset: 0;
   background-image:
-    linear-gradient(rgba(127, 85, 54, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(127, 85, 54, 0.045) 1px, transparent 1px);
+    linear-gradient(rgb(var(--color-text-primary-rgb) / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--color-text-primary-rgb) / 0.045) 1px, transparent 1px);
   background-size: 68px 68px;
   mask-image: radial-gradient(circle at 42% 44%, #000 0%, transparent 72%);
 }
@@ -41,7 +41,7 @@
   width: min(58vw, 900px);
   aspect-ratio: 1;
   border-radius: 999px;
-  background: rgba(255, 122, 26, 0.13);
+  background: rgb(var(--color-brand-default-rgb) / 0.13);
   filter: blur(70px);
 }
 
@@ -62,8 +62,8 @@
   left: 51%;
   width: 190px;
   height: 190px;
-  border: 1px solid rgba(255, 122, 26, 0.14);
-  box-shadow: 0 0 0 62px rgba(255, 122, 26, 0.025);
+  border: 1px solid rgb(var(--color-brand-default-rgb) / 0.14);
+  box-shadow: 0 0 0 62px rgb(var(--color-brand-default-rgb) / 0.025);
 }
 
 .serenity-login__ambient span:nth-child(2) {
@@ -71,7 +71,7 @@
   bottom: 4%;
   width: 310px;
   height: 310px;
-  background: rgba(255, 166, 89, 0.12);
+  background: rgb(var(--color-brand-accent-rgb) / 0.12);
   filter: blur(18px);
 }
 
@@ -80,18 +80,18 @@
   right: 42%;
   width: 9px;
   height: 9px;
-  background: #ff9b4a;
+  background: var(--color-brand-default);
   box-shadow:
-    -31vw 36vh 0 1px rgba(255, 122, 26, 0.22),
-    23vw 30vh 0 rgba(255, 122, 26, 0.2);
+    -31vw 36vh 0 1px rgb(var(--color-brand-default-rgb) / 0.22),
+    23vw 30vh 0 rgb(var(--color-brand-default-rgb) / 0.2);
 }
 
 .serenity-login--signal-field {
   background:
-    radial-gradient(circle at 8% 14%, rgba(255, 183, 119, 0.16) 0%, rgba(255, 250, 245, 0) 30%),
-    radial-gradient(circle at 52% 48%, rgba(255, 209, 102, 0.1) 0%, rgba(255, 250, 245, 0) 27%),
-    radial-gradient(circle at 92% 84%, rgba(255, 122, 26, 0.13) 0%, rgba(255, 250, 245, 0) 32%),
-    linear-gradient(135deg, #fffaf5 0%, #fff8f2 46%, #f9efe7 100%);
+    radial-gradient(circle at 8% 14%, rgb(var(--color-brand-accent-rgb) / 0.16) 0%, rgb(var(--color-surface-default-rgb) / 0) 30%),
+    radial-gradient(circle at 52% 48%, rgb(var(--color-brand-accent-rgb) / 0.1) 0%, rgb(var(--color-surface-default-rgb) / 0) 27%),
+    radial-gradient(circle at 92% 84%, rgb(var(--color-brand-default-rgb) / 0.13) 0%, rgb(var(--color-surface-default-rgb) / 0) 32%),
+    linear-gradient(135deg, var(--color-surface-canvas) 0%, var(--color-surface-canvas) 46%, var(--color-surface-canvas) 100%);
 }
 
 .serenity-login--signal-field::before,
@@ -121,9 +121,9 @@
   height: clamp(350px, 38vw, 620px);
   background: radial-gradient(
     circle at center,
-    rgba(255, 183, 119, 0.62) 0%,
-    rgba(255, 154, 76, 0.32) 35%,
-    rgba(255, 250, 245, 0) 72%
+    rgb(var(--color-brand-accent-rgb) / 0.62) 0%,
+    rgb(var(--color-brand-accent-rgb) / 0.32) 35%,
+    rgb(var(--color-surface-default-rgb) / 0) 72%
   );
   animation: serenity-signal-drift-one 24s ease-in-out -4s infinite;
 }
@@ -135,9 +135,9 @@
   height: clamp(370px, 40vw, 650px);
   background: radial-gradient(
     circle at center,
-    rgba(255, 122, 26, 0.56) 0%,
-    rgba(255, 155, 74, 0.29) 36%,
-    rgba(255, 250, 245, 0) 73%
+    rgb(var(--color-brand-default-rgb) / 0.56) 0%,
+    rgb(var(--color-brand-accent-rgb) / 0.29) 36%,
+    rgb(var(--color-surface-default-rgb) / 0) 73%
   );
   animation: serenity-signal-drift-two 28s ease-in-out -11s infinite;
 }
@@ -149,9 +149,9 @@
   height: clamp(320px, 32vw, 520px);
   background: radial-gradient(
     circle at center,
-    rgba(255, 209, 102, 0.5) 0%,
-    rgba(255, 143, 96, 0.25) 37%,
-    rgba(255, 250, 245, 0) 71%
+    rgb(var(--color-brand-accent-rgb) / 0.5) 0%,
+    rgb(var(--color-brand-default-rgb) / 0.25) 37%,
+    rgb(var(--color-surface-default-rgb) / 0) 71%
   );
   animation: serenity-signal-drift-three 31s ease-in-out -19s infinite;
 }
@@ -163,9 +163,9 @@
   height: clamp(300px, 30vw, 480px);
   background: radial-gradient(
     circle at center,
-    rgba(255, 143, 96, 0.5) 0%,
-    rgba(255, 190, 134, 0.26) 36%,
-    rgba(255, 250, 245, 0) 72%
+    rgb(var(--color-brand-default-rgb) / 0.5) 0%,
+    rgb(var(--color-brand-accent-rgb) / 0.26) 36%,
+    rgb(var(--color-surface-default-rgb) / 0) 72%
   );
   animation: serenity-signal-drift-four 26s ease-in-out -15s infinite;
 }
@@ -177,9 +177,9 @@
   height: clamp(280px, 28vw, 440px);
   background: radial-gradient(
     circle at center,
-    rgba(255, 173, 92, 0.48) 0%,
-    rgba(255, 210, 122, 0.23) 38%,
-    rgba(255, 250, 245, 0) 72%
+    rgb(var(--color-brand-accent-rgb) / 0.48) 0%,
+    rgb(var(--color-brand-accent-rgb) / 0.23) 38%,
+    rgb(var(--color-surface-default-rgb) / 0) 72%
   );
   animation: serenity-signal-drift-five 34s ease-in-out -27s infinite;
 }
@@ -322,22 +322,22 @@
   display: inline-flex;
   min-height: 42px;
   align-items: center;
-  border: 1px solid rgba(200, 77, 0, 0.2);
+  border: 1px solid rgb(var(--color-brand-default-rgb) / 0.2);
   border-radius: 11px;
   padding: 0 17px;
-  background: rgba(255, 253, 250, 0.78);
-  color: #aa4304;
+  background: rgb(var(--color-surface-default-rgb) / 0.78);
+  color: var(--color-brand-content);
   font-weight: 760;
   white-space: nowrap;
   text-decoration: none;
-  box-shadow: 0 8px 24px rgba(100, 59, 30, 0.05);
+  box-shadow: 0 8px 24px rgb(var(--color-text-primary-rgb) / 0.05);
   transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
 }
 
 .serenity-login__signup-link:hover {
-  border-color: rgba(200, 77, 0, 0.38);
-  background: #fff8f1;
-  color: #883604;
+  border-color: rgb(var(--color-brand-default-rgb) / 0.38);
+  background: var(--color-surface-hover);
+  color: var(--color-brand-content);
 }
 
 .serenity-login__language {
@@ -345,53 +345,53 @@
   min-height: 42px;
   align-items: center;
   padding: 0 7px 0 12px;
-  border-color: rgba(105, 72, 48, 0.16);
-  background: rgba(255, 253, 250, 0.8);
-  color: #3b2f27;
-  box-shadow: 0 8px 24px rgba(100, 59, 30, 0.05);
+  border-color: var(--color-border-control);
+  background: rgb(var(--color-surface-default-rgb) / 0.8);
+  color: var(--color-text-primary);
+  box-shadow: 0 8px 24px rgb(var(--color-text-primary-rgb) / 0.05);
 }
 
 .serenity-login__language .platforma-language-selector__icon {
-  color: #c84d00;
+  color: var(--color-brand-content);
 }
 
 .serenity-login__language .platforma-language-selector__control {
   min-height: 32px;
   border: 0;
   background: transparent;
-  color: #3b2f27;
+  color: var(--color-text-primary);
   box-shadow: none;
 }
 
 .serenity-login__language .platforma-language-selector__control:hover,
 .serenity-login__language .platforma-language-selector__control[aria-expanded="true"] {
-  background: rgba(255, 240, 224, 0.82);
-  color: #9a3c03;
+  background: rgb(var(--color-surface-default-rgb) / 0.82);
+  color: var(--color-brand-content);
 }
 
 .serenity-login__language [role="listbox"] {
   min-width: 92px;
-  border-color: rgba(200, 77, 0, 0.2);
-  background: rgba(255, 253, 250, 0.98);
-  box-shadow: 0 18px 42px rgba(98, 52, 22, 0.16);
+  border-color: rgb(var(--color-brand-default-rgb) / 0.2);
+  background: rgb(var(--color-surface-default-rgb) / 0.98);
+  box-shadow: 0 18px 42px rgb(var(--color-text-primary-rgb) / 0.16);
   backdrop-filter: blur(18px);
 }
 
 .serenity-login__language [role="option"] {
-  color: #5c4638;
+  color: var(--color-text-secondary);
 }
 
 .serenity-login__language [role="option"]:hover,
 .serenity-login__language [role="option"][aria-selected="true"] {
-  background: #fff0e2;
-  color: #a94306;
+  background: var(--color-brand-soft);
+  color: var(--color-brand-content);
 }
 
 .serenity-login__brand:focus-visible,
 .serenity-login__signup-link:focus-visible,
 .serenity-login__links a:focus-visible {
   border-radius: 8px;
-  outline: 3px solid rgba(255, 122, 26, 0.24);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 4px;
 }
 
@@ -437,20 +437,20 @@
   width: fit-content;
   align-items: center;
   gap: 9px;
-  border: 1px solid rgba(216, 91, 9, 0.18);
+  border: 1px solid rgb(var(--color-brand-default-rgb) / 0.18);
   border-radius: 999px;
   padding: 8px 13px;
-  background: rgba(255, 246, 237, 0.8);
-  color: #a94306;
+  background: rgb(var(--color-surface-default-rgb) / 0.8);
+  color: var(--color-brand-content);
   font-size: 12px;
   font-weight: 760;
-  box-shadow: 0 8px 22px rgba(111, 65, 32, 0.05);
+  box-shadow: 0 8px 22px rgb(var(--color-text-primary-rgb) / 0.05);
 }
 
 .serenity-login__story h1 {
   max-width: 720px;
   margin: 0;
-  color: #211812;
+  color: var(--color-text-primary);
   font-size: clamp(42px, 4.2vw, 66px);
   font-weight: 780;
   letter-spacing: 0;
@@ -488,8 +488,8 @@
   border: 1px solid var(--serenity-line);
   border-radius: 14px;
   padding: 10px 11px;
-  background: rgba(255, 253, 250, 0.72);
-  box-shadow: 0 12px 30px rgba(100, 59, 30, 0.05);
+  background: rgb(var(--color-surface-default-rgb) / 0.72);
+  box-shadow: 0 12px 30px rgb(var(--color-text-primary-rgb) / 0.05);
 }
 
 .serenity-login__benefits article > span {
@@ -498,8 +498,8 @@
   height: 36px;
   place-items: center;
   border-radius: 12px;
-  background: #fff0e4;
-  color: #e75b00;
+  background: var(--color-brand-soft);
+  color: var(--color-brand-content);
 }
 
 .serenity-login__benefits h2,
@@ -510,7 +510,7 @@
 }
 
 .serenity-login__benefits h2 {
-  color: #33261e;
+  color: var(--color-text-primary);
   font-size: 12px;
   font-weight: 760;
   white-space: nowrap;
@@ -518,7 +518,7 @@
 
 .serenity-login__benefits p {
   margin-top: 2px;
-  color: #85766b;
+  color: var(--color-text-muted);
   font-size: 10.5px;
   font-weight: 560;
   white-space: nowrap;
@@ -536,17 +536,17 @@
   min-height: 38px;
   align-items: center;
   gap: 8px;
-  border: 1px solid rgba(105, 72, 48, 0.13);
+  border: 1px solid rgb(var(--color-text-primary-rgb) / 0.13);
   border-radius: 999px;
   padding: 0 13px;
-  background: rgba(255, 253, 250, 0.74);
-  color: #55473c;
+  background: rgb(var(--color-surface-default-rgb) / 0.74);
+  color: var(--color-text-secondary);
   font-size: 12px;
   font-weight: 700;
 }
 
 .serenity-login__trustline svg {
-  color: #e75b00;
+  color: var(--color-brand-content);
 }
 
 .serenity-login__form-area {
@@ -557,13 +557,13 @@
 .serenity-login__card {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(105, 72, 48, 0.17);
+  border: 1px solid rgb(var(--color-text-primary-rgb) / 0.17);
   border-radius: 22px;
   padding: clamp(26px, 2.6vw, 36px);
-  background: rgba(255, 253, 250, 0.96);
+  background: rgb(var(--color-surface-default-rgb) / 0.96);
   box-shadow:
-    0 30px 88px rgba(100, 57, 27, 0.14),
-    0 1px 0 rgba(255, 255, 255, 0.94) inset;
+    0 30px 88px rgb(var(--color-text-primary-rgb) / 0.14),
+    0 1px 0 rgb(var(--color-surface-default-rgb) / 0.94) inset;
 }
 
 .serenity-login__card--signup {
@@ -580,20 +580,20 @@
   left: 32px;
   height: 3px;
   border-radius: 0 0 999px 999px;
-  background: linear-gradient(90deg, transparent, #ff8a2a 22%, #ff6a00 74%, transparent);
+  background: linear-gradient(90deg, transparent, var(--color-brand-default) 22%, var(--color-brand-default) 74%, transparent);
 }
 
 .serenity-login__eyebrow {
   display: block;
   margin-top: 16px;
-  color: #ba4a06;
+  color: var(--color-brand-content);
   font-size: 12px;
   font-weight: 760;
 }
 
 .serenity-login__card h2 {
   margin: 0;
-  color: #251b15;
+  color: var(--color-text-primary);
   font-size: clamp(29px, 2.2vw, 34px);
   font-weight: 790;
   letter-spacing: 0;
@@ -602,7 +602,7 @@
 
 .serenity-login__card-copy {
   margin: 8px 0 18px;
-  color: #75685e;
+  color: var(--color-text-secondary);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -615,15 +615,15 @@
 
 .serenity-login__social {
   min-height: 44px;
-  border-color: rgba(105, 72, 48, 0.16);
-  background: rgba(249, 245, 240, 0.92);
-  color: #40332b;
+  border-color: var(--color-border-control);
+  background: rgb(var(--color-surface-default-rgb) / 0.92);
+  color: var(--color-text-primary);
   box-shadow: none;
 }
 
 .serenity-login__social:not(:disabled):hover {
-  border-color: rgba(216, 91, 9, 0.3);
-  background: #fff7ef;
+  border-color: rgb(var(--color-brand-default-rgb) / 0.3);
+  background: var(--color-surface-hover);
 }
 
 .serenity-login__provider-mark {
@@ -631,10 +631,10 @@
   width: 22px;
   height: 22px;
   place-items: center;
-  border: 1px solid rgba(93, 64, 43, 0.13);
+  border: 1px solid rgb(var(--color-text-primary-rgb) / 0.13);
   border-radius: 999px;
   background: #ffffff;
-  color: #2b211a;
+  color: var(--color-text-primary);
   font-size: 12px;
   font-weight: 800;
 }
@@ -654,7 +654,7 @@
 .serenity-login__divider::after {
   content: "";
   height: 1px;
-  background: rgba(105, 72, 48, 0.14);
+  background: rgb(var(--color-text-primary-rgb) / 0.14);
 }
 
 .serenity-login__form {
@@ -673,36 +673,40 @@
 }
 
 .serenity-login__card label > span:first-child {
-  color: #40332b;
+  color: var(--color-text-primary);
   font-weight: 720;
 }
 
 .serenity-login__card input,
 .serenity-login__card [role="combobox"] {
   min-height: 46px;
-  border-color: rgba(105, 72, 48, 0.18);
-  background: rgba(255, 252, 248, 0.92);
-  color: #281e18;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.86) inset;
+  border-color: var(--color-border-control);
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 0 rgb(var(--color-surface-default-rgb) / 0.86) inset;
 }
 
 .serenity-login__card input::placeholder {
-  color: #a19388;
+  color: var(--color-text-muted);
 }
 
 .serenity-login__card input:hover,
 .serenity-login__card [role="combobox"]:hover {
-  border-color: rgba(216, 91, 9, 0.34);
+  border-color: var(--color-brand-default);
 }
 
 .serenity-login__card input:focus-visible,
 .serenity-login__card [role="combobox"]:focus-visible {
   border-color: var(--serenity-orange);
-  box-shadow: 0 0 0 4px rgba(255, 122, 26, 0.16);
+  box-shadow: 0 0 0 4px var(--color-focus-halo);
+}
+
+.serenity-login__card input[aria-invalid="true"] {
+  border-color: var(--color-danger-content);
 }
 
 .serenity-login__card label span:last-child:not(:first-child) {
-  color: #c2410c;
+  color: var(--color-danger-content);
 }
 
 .serenity-login__links {
@@ -715,14 +719,14 @@
 }
 
 .serenity-login__links a {
-  color: #ad4505;
+  color: var(--color-brand-content);
   font-weight: 700;
   text-decoration: none;
   text-underline-offset: 4px;
 }
 
 .serenity-login__links a:hover {
-  color: #853503;
+  color: var(--color-brand-content);
   text-decoration: underline;
 }
 
@@ -734,18 +738,18 @@
   border: 0;
   border-radius: 9px;
   background: transparent;
-  color: #8b7d72;
+  color: var(--color-text-muted);
   cursor: pointer;
   transition: background 160ms ease, color 160ms ease;
 }
 
 .serenity-login__password-toggle:hover {
-  background: rgba(255, 241, 230, 0.9);
-  color: #ad4505;
+  background: rgb(var(--color-surface-default-rgb) / 0.9);
+  color: var(--color-brand-content);
 }
 
 .serenity-login__password-toggle:focus-visible {
-  outline: 3px solid rgba(255, 122, 26, 0.24);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -753,25 +757,36 @@
   min-height: 48px;
   width: 100%;
   margin-top: 2px;
-  border: 1px solid rgba(255, 106, 0, 0.22);
-  background: linear-gradient(105deg, #ff8a2a 0%, #ff6a00 100%);
+  border: 1px solid rgb(var(--color-brand-default-rgb) / 0.22);
+  background: var(--color-brand-default);
   color: #ffffff;
-  box-shadow: 0 16px 34px rgba(255, 106, 0, 0.24);
+  box-shadow: 0 16px 34px rgb(var(--color-brand-default-rgb) / 0.24);
   transition: background 160ms ease, box-shadow 160ms ease, transform 120ms ease;
 }
 
+.serenity-login__primary:disabled,
+.serenity-login__card input:disabled,
+.serenity-login__card [role="combobox"]:disabled {
+  border-color: var(--color-disabled-border);
+  background: var(--color-disabled-surface);
+  color: var(--color-disabled-content);
+  box-shadow: none;
+  opacity: 1;
+}
+
 .serenity-login__primary:not(:disabled):hover {
-  background: linear-gradient(105deg, #ff7a1a 0%, #f06400 100%);
-  box-shadow: 0 18px 38px rgba(255, 106, 0, 0.3);
+  background: var(--color-brand-hover);
+  box-shadow: 0 18px 38px rgb(var(--color-brand-default-rgb) / 0.3);
 }
 
 .serenity-login__primary:not(:disabled):active {
+  background: var(--color-brand-pressed);
   transform: scale(0.99);
 }
 
 .serenity-login__primary:focus-visible,
 .serenity-login__social:focus-visible {
-  outline: 3px solid rgba(255, 122, 26, 0.24);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 3px;
 }
 
@@ -781,18 +796,18 @@
   justify-content: center;
   gap: 8px;
   margin-top: 15px;
-  color: #8b7d72;
+  color: var(--color-text-muted);
   font-size: 12px;
   font-weight: 650;
 }
 
 .serenity-login__trust svg {
-  color: #ba4a06;
+  color: var(--color-brand-content);
 }
 
 .serenity-login__terms {
   margin: 12px 0 0;
-  color: #8b7d72;
+  color: var(--color-text-muted);
   font-size: 11.5px;
   font-weight: 600;
   line-height: 1.42;

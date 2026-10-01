@@ -336,7 +336,7 @@ export function ServicesPage() {
               rowAriaLabel={(service) => t("services.selectService", { name: service.name })}
               rowFocusReturnId={(service) => `service-row-${service.id}`}
               rowTestId={() => "service-row"}
-              rowClassName={(service) => service.is_archived ? "opacity-70" : undefined}
+              rowClassName={(service) => service.is_archived ? "bg-surface-muted" : undefined}
               tableLabel={t("services.tableLabel")}
               hideFooter
               emptyTitle={hasFilters ? t("services.noResultsTitle") : t("services.emptyTitle")}

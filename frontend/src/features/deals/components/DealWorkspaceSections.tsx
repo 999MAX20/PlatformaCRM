@@ -24,13 +24,13 @@ export function DealClientPanel({ deal, client }: { deal: Deal; client: Client |
   const phoneDigits = phone.replace(/\D/g, "");
   return (
     <div className="grid gap-3">
-      <div className="flex min-w-0 items-center gap-3 rounded-control bg-[#F2EDE6] px-3 py-2">
+      <div className="flex min-w-0 items-center gap-3 rounded-control bg-surface-muted px-3 py-2">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-brand-50 text-sm font-black text-brand-700">
           {initials(client?.full_name || deal.client_name)}
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-black text-[#17120F]">{client?.full_name || deal.client_name || t("deals.clientMissing")}</p>
-          <p className="mt-0.5 truncate text-xs font-semibold text-[#8A7B70]">{phone || client?.email || deal.client_email || t("deals.noContacts")}</p>
+          <p className="truncate text-sm font-black text-platforma-text">{client?.full_name || deal.client_name || t("deals.clientMissing")}</p>
+          <p className="mt-0.5 truncate text-xs font-semibold text-platforma-faint">{phone || client?.email || deal.client_email || t("deals.noContacts")}</p>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2">
@@ -46,7 +46,7 @@ export function DealClientPanel({ deal, client }: { deal: Deal; client: Client |
       {client ? (
         <Link
           to={`/app/clients/${client.id}`}
-          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-control border border-platforma-border bg-surface-card px-4 py-2 text-sm font-semibold text-platforma-text shadow-sm transition duration-150 hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--platforma-focus-ring)] focus-visible:ring-offset-2"
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-control border border-platforma-border bg-surface-card px-4 py-2 text-sm font-semibold text-platforma-text shadow-sm transition duration-150 hover:border-brand-500 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--platforma-focus-ring)] focus-visible:ring-offset-2"
         >
           {t("leads.openClient")}
         </Link>
@@ -66,34 +66,34 @@ export function DealOverviewPanel({ deal, stage }: { deal: Deal; stage?: Pipelin
       <MetaRow label={t("deals.source")} value={sourceLabel(deal.source, t)} />
       <MetaRow label={t("deals.responsible")} value={deal.owner_name || t("deals.unassigned")} />
       <MetaRow label={t("deals.closing")} value={deal.expected_close_at ? formatDate(deal.expected_close_at) : t("deals.notSet")} />
-      <div className="flex items-center justify-between gap-3 rounded-control bg-[#F2EDE6] px-3 py-2">
-        <span className="text-xs font-semibold text-[#8A7B70]">{t("deals.status")}</span>
+      <div className="flex items-center justify-between gap-3 rounded-control bg-surface-muted px-3 py-2">
+        <span className="text-xs font-semibold text-platforma-faint">{t("deals.status")}</span>
         <StatusBadge status={deal.status} />
       </div>
-      {deal.notes ? <p className="rounded-control bg-[#F2EDE6] p-3 text-sm font-semibold leading-6 text-[#5F554D]">{deal.notes}</p> : null}
+      {deal.notes ? <p className="rounded-control bg-surface-muted p-3 text-sm font-semibold leading-6 text-platforma-subtle">{deal.notes}</p> : null}
     </div>
   );
 }
 
 export function DealLinkedLeadPanel({ lead }: { lead: Lead | null }) {
   const { t } = useI18n();
-  if (!lead) return <p className="text-sm font-semibold text-[#8A7B70]">{t("deals.notLinked")}</p>;
+  if (!lead) return <p className="text-sm font-semibold text-platforma-faint">{t("deals.notLinked")}</p>;
   return (
-    <Link to={`/app/leads/${lead.id}`} className="block rounded-control border border-[#E6DDD2] bg-[#F2EDE6] px-3 py-2 transition hover:border-brand-200 hover:bg-brand-50">
+    <Link to={`/app/leads/${lead.id}`} className="block rounded-control border border-platforma-border bg-surface-muted px-3 py-2 transition hover:border-brand-200 hover:bg-brand-50">
       <div className="flex items-start justify-between gap-3">
-        <p className="min-w-0 truncate text-sm font-bold text-[#17120F]">{lead.client_name || t("crmCard.leadNumber", { id: lead.id })}</p>
+        <p className="min-w-0 truncate text-sm font-bold text-platforma-text">{lead.client_name || t("crmCard.leadNumber", { id: lead.id })}</p>
         <StatusBadge status={lead.status} />
       </div>
-      <p className="mt-1 text-xs font-semibold text-[#8A7B70]">{sourceLabel(lead.source, t)} / {formatDateTime(lead.created_at)}</p>
+      <p className="mt-1 text-xs font-semibold text-platforma-faint">{sourceLabel(lead.source, t)} / {formatDateTime(lead.created_at)}</p>
     </Link>
   );
 }
 
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex min-w-0 items-center justify-between gap-3 rounded-control bg-[#F2EDE6] px-3 py-2">
-      <span className="shrink-0 text-xs font-semibold text-[#8A7B70]">{label}</span>
-      <span className="min-w-0 truncate text-sm font-bold text-[#17120F]">{value}</span>
+    <div className="flex min-w-0 items-center justify-between gap-3 rounded-control bg-surface-muted px-3 py-2">
+      <span className="shrink-0 text-xs font-semibold text-platforma-faint">{label}</span>
+      <span className="min-w-0 truncate text-sm font-bold text-platforma-text">{value}</span>
     </div>
   );
 }

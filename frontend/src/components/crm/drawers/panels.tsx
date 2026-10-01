@@ -230,7 +230,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                 {formatAttachmentSize(file.size)}
                 <button
                   type="button"
-                  className="grid h-7 w-7 place-items-center rounded-md text-platforma-faint transition hover:bg-red-50 hover:text-red-600"
+                  className="grid h-7 w-7 place-items-center rounded-md text-platforma-faint transition hover:bg-[var(--platforma-danger-soft)] hover:text-platforma-danger"
                   onClick={() => setSelectedFiles((current) => current.filter((item) => item !== file))}
                   aria-label={t("crmCard.removeFile")}
                 >
@@ -267,7 +267,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
               </div>
               <button
                 type="button"
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-control border border-platforma-border bg-surface-card text-platforma-muted shadow-sm transition hover:bg-surface-muted hover:text-platforma-ink"
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-control border border-platforma-border bg-surface-card text-platforma-muted shadow-sm transition hover:bg-surface-hover hover:text-platforma-ink"
                 onClick={() => setOpenAttachmentMenuId((current) => (current === attachment.id ? null : attachment.id))}
                 aria-label={t("crmCard.fileActions")}
               >
@@ -279,7 +279,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                   <PopoverSurface className="absolute right-3 top-12 z-10 w-48 p-1">
                     <button
                       type="button"
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-hover disabled:cursor-not-allowed disabled:bg-disabled-surface disabled:text-disabled-content disabled:ring-1 disabled:ring-disabled-border disabled:opacity-100"
                       disabled={!isPreviewableAttachment(attachment)}
                       onClick={() => {
                         setOpenAttachmentMenuId(null);
@@ -291,7 +291,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                     </button>
                     <button
                       type="button"
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-muted"
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-hover"
                       onClick={() => {
                         renameMutation.reset();
                         setOpenAttachmentMenuId(null);
@@ -305,7 +305,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                     <button
                       type="button"
                       disabled={attachment.scan_status !== "clean"}
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-muted"
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-hover"
                       onClick={() => {
                         setOpenAttachmentMenuId(null);
                         downloadAttachment(attachment);
@@ -317,7 +317,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                     <button
                       type="button"
                       disabled={attachment.scan_status !== "clean"}
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-muted"
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-hover"
                       onClick={() => {
                         setOpenAttachmentMenuId(null);
                         shareAttachment(attachment);

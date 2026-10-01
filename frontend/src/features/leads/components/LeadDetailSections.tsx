@@ -26,7 +26,7 @@ export function CollapsedLeadDetailPanel({
   t: Translate;
 }) {
   return (
-    <div className="flex h-full w-16 flex-col items-center gap-3 rounded-xl border border-slate-200 bg-white py-3 shadow-[0_4px_18px_rgba(15,23,42,0.04)] transition-all duration-200">
+    <div className="flex h-full w-16 flex-col items-center gap-3 rounded-xl border border-platforma-border bg-white py-3 shadow-[0_4px_18px_rgb(var(--color-text-primary-rgb)/0.04)] transition-all duration-200">
       <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg px-0" onClick={onToggleCollapsed} aria-label={t("leads.expandPanel")}>
         <ChevronLeft size={18} />
       </Button>
@@ -64,7 +64,7 @@ export function LeadContactSummary({
   t: Translate;
 }) {
   return (
-    <div className="shrink-0 border-b border-slate-100 p-4">
+    <div className="shrink-0 border-b border-platforma-border p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="truncate text-lg font-black text-midnight" title={leadTitle(selected, clientList, t)}>{leadTitle(selected, clientList, t)}</h2>
@@ -86,7 +86,7 @@ export function LeadContactSummary({
           ) : null}
         </div>
       </div>
-      <div className="mt-3 grid gap-2 text-sm font-semibold text-slate-600">
+      <div className="mt-3 grid gap-2 text-sm font-semibold text-platforma-subtle">
         <div className="flex min-w-0 items-center gap-2"><Phone size={16} /> <span className="truncate">{selectedClient?.phone || t("leads.phoneMissing")}</span></div>
         <div className="flex min-w-0 items-center gap-2"><Mail size={16} /> <span className="truncate">{selectedClient?.email || t("leads.emailMissing")}</span></div>
         <div className="flex min-w-0 items-center gap-2"><Tag size={16} /> <span className="truncate">{selectedService?.name || getSourceLabel(selected.source, t)}</span></div>
@@ -99,10 +99,10 @@ export function LeadContactSummary({
           <MessageCircle size={15} /> WhatsApp
         </Button>
       </div>
-      <div className="mt-3 rounded-xl bg-slate-50 p-3">
-        <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">{t("leads.nextStep")}</p>
+      <div className="mt-3 rounded-xl bg-surface-muted p-3">
+        <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.nextStep")}</p>
         <TruncatedText className="mt-1 text-sm font-bold text-midnight">{nextAction(selected, t)}</TruncatedText>
-        <p className="mt-1 text-xs text-slate-500">{formatDateTime(selected.updated_at)}</p>
+        <p className="mt-1 text-xs text-platforma-faint">{formatDateTime(selected.updated_at)}</p>
       </div>
     </div>
   );

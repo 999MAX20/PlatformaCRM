@@ -10,9 +10,9 @@ import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
 
 function statusTone(status: string) {
-  if (["healthy", "ready", "pass"].includes(status)) return "bg-emerald-50 text-emerald-700 border-emerald-100";
-  if (["warning", "warn"].includes(status)) return "bg-amber-50 text-amber-700 border-amber-100";
-  return "bg-red-50 text-red-700 border-red-100";
+  if (["healthy", "ready", "pass"].includes(status)) return "bg-[var(--platforma-success-soft)] text-platforma-success border-platforma-success/20";
+  if (["warning", "warn"].includes(status)) return "bg-[var(--platforma-warning-soft)] text-platforma-warning border-platforma-warning/20";
+  return "bg-[var(--platforma-danger-soft)] text-platforma-danger border-platforma-danger/20";
 }
 
 function StatusPill({ status }: { status: string }) {
@@ -20,7 +20,7 @@ function StatusPill({ status }: { status: string }) {
 }
 
 function EmptyLine({ label }: { label: string }) {
-  return <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">{label}</p>;
+  return <p className="rounded-2xl border border-dashed border-platforma-border bg-surface-muted px-4 py-3 text-sm font-semibold text-platforma-faint">{label}</p>;
 }
 
 export function PlatformOperationsPage() {
@@ -50,7 +50,7 @@ export function PlatformOperationsPage() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">{t("platform.operations.eyebrow")}</p>
             <h1 className="mt-3 text-4xl font-semibold tracking-tight text-midnight sm:text-5xl">{t("platform.operations.title")}</h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
+            <p className="mt-4 max-w-3xl text-base leading-7 text-platforma-subtle">
               {t("platform.operations.description")}
             </p>
           </div>
@@ -61,30 +61,30 @@ export function PlatformOperationsPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardBody className="p-5">
-            <AlertTriangle className="text-red-600" size={22} />
+            <AlertTriangle className="text-platforma-danger" size={22} />
             <p className="mt-4 text-3xl font-black text-midnight">{data.summary.critical}</p>
-            <p className="text-sm font-semibold text-slate-500">{t("platform.operations.critical")}</p>
+            <p className="text-sm font-semibold text-platforma-faint">{t("platform.operations.critical")}</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="p-5">
-            <CircleDot className="text-amber-600" size={22} />
+            <CircleDot className="text-platforma-warning" size={22} />
             <p className="mt-4 text-3xl font-black text-midnight">{data.summary.warning}</p>
-            <p className="text-sm font-semibold text-slate-500">{t("platform.operations.warnings")}</p>
+            <p className="text-sm font-semibold text-platforma-faint">{t("platform.operations.warnings")}</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="p-5">
             <ShieldCheck className="text-brand-600" size={22} />
             <p className="mt-4 text-3xl font-black text-midnight">{data.summary.active_support_grants}</p>
-            <p className="text-sm font-semibold text-slate-500">{t("platform.operations.supportGrants")}</p>
+            <p className="text-sm font-semibold text-platforma-faint">{t("platform.operations.supportGrants")}</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="p-5">
-            <PlugZap className="text-violet-600" size={22} />
+            <PlugZap className="text-platforma-info" size={22} />
             <p className="mt-4 text-3xl font-black text-midnight">{data.summary.connector_requests}</p>
-            <p className="text-sm font-semibold text-slate-500">{t("platform.operations.connectorWorkItems")}</p>
+            <p className="text-sm font-semibold text-platforma-faint">{t("platform.operations.connectorWorkItems")}</p>
           </CardBody>
         </Card>
       </div>
@@ -95,28 +95,28 @@ export function PlatformOperationsPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-black text-midnight">{t("platform.operations.queueRuntime")}</h2>
-                <p className="mt-1 text-sm text-slate-500">{t("platform.operations.queueRuntimeText")}</p>
+                <p className="mt-1 text-sm text-platforma-faint">{t("platform.operations.queueRuntimeText")}</p>
               </div>
               <StatusPill status={data.runtime.queue.status} />
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4">
+              <div className="rounded-3xl border border-platforma-border bg-surface-muted p-4">
                 <ServerCog size={20} className="text-brand-600" />
                 <p className="mt-3 text-2xl font-black text-midnight">{data.runtime.queue.automation_runs.pending}</p>
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{t("platform.operations.pending")}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">{t("platform.operations.pending")}</p>
               </div>
-              <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4">
-                <Workflow size={20} className="text-amber-600" />
+              <div className="rounded-3xl border border-platforma-border bg-surface-muted p-4">
+                <Workflow size={20} className="text-platforma-warning" />
                 <p className="mt-3 text-2xl font-black text-midnight">{data.runtime.queue.automation_runs.running}</p>
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{t("platform.operations.running")}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">{t("platform.operations.running")}</p>
               </div>
-              <div className="rounded-3xl border border-slate-100 bg-slate-50 p-4">
-                <AlertTriangle size={20} className="text-red-600" />
+              <div className="rounded-3xl border border-platforma-border bg-surface-muted p-4">
+                <AlertTriangle size={20} className="text-platforma-danger" />
                 <p className="mt-3 text-2xl font-black text-midnight">{data.runtime.queue.automation_runs.failed}</p>
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{t("platform.operations.failed")}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">{t("platform.operations.failed")}</p>
               </div>
             </div>
-            <p className="mt-4 text-sm leading-6 text-slate-500">
+            <p className="mt-4 text-sm leading-6 text-platforma-faint">
               {t("platform.operations.broker", {
                 broker: data.runtime.queue.broker_configured ? t("platform.operations.configured") : t("platform.operations.notConfigured"),
                 inline: String(data.runtime.queue.automation_inline),
@@ -129,16 +129,16 @@ export function PlatformOperationsPage() {
         <Card>
           <CardBody className="p-6">
             <h2 className="text-xl font-black text-midnight">{t("platform.operations.productionGates")}</h2>
-            <p className="mt-1 text-sm text-slate-500">{t("platform.operations.productionGatesText")}</p>
+            <p className="mt-1 text-sm text-platforma-faint">{t("platform.operations.productionGatesText")}</p>
             <div className="mt-5 space-y-3">
               {failedItems.length ? failedItems.map((item) => (
-                <div key={item.key} className="rounded-3xl border border-red-100 bg-red-50/60 p-4">
+                <div key={item.key} className="rounded-3xl border border-platforma-danger/20 bg-platforma-dangerSoft/60 p-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="font-black text-red-900">{item.title || item.key}</p>
+                    <p className="font-black text-platforma-danger">{item.title || item.key}</p>
                     <StatusPill status={item.status} />
                   </div>
-                  <p className="mt-2 text-sm text-red-800">{item.detail}</p>
-                  <p className="mt-2 text-xs font-semibold text-red-700">{item.action}</p>
+                  <p className="mt-2 text-sm text-platforma-danger">{item.detail}</p>
+                  <p className="mt-2 text-xs font-semibold text-platforma-danger">{item.action}</p>
                 </div>
               )) : <EmptyLine label={t("platform.operations.noProductionBlockers")} />}
             </div>
@@ -149,18 +149,18 @@ export function PlatformOperationsPage() {
       <Card>
         <CardBody className="p-6">
           <h2 className="text-xl font-black text-midnight">{t("platform.operations.providerRollout")}</h2>
-          <p className="mt-1 text-sm text-slate-500">{t("platform.operations.providerRolloutText")}</p>
+          <p className="mt-1 text-sm text-platforma-faint">{t("platform.operations.providerRolloutText")}</p>
           <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {providerRolloutItems.map((provider) => (
-              <div key={provider.provider} className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+              <div key={provider.provider} className="rounded-3xl border border-platforma-border bg-white p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">#{provider.order} {provider.provider}</p>
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-platforma-faint">#{provider.order} {provider.provider}</p>
                     <h3 className="mt-1 font-black text-midnight">{provider.title}</h3>
                   </div>
                   <StatusPill status={provider.status} />
                 </div>
-                <p className="mt-3 text-sm text-slate-500">{t("platform.operations.enabled", { value: String(provider.enabled) })}</p>
+                <p className="mt-3 text-sm text-platforma-faint">{t("platform.operations.enabled", { value: String(provider.enabled) })}</p>
               </div>
             ))}
           </div>
@@ -173,10 +173,10 @@ export function PlatformOperationsPage() {
             <h2 className="text-lg font-black text-midnight">{t("platform.operations.connectorQueue")}</h2>
             <div className="mt-4 space-y-3">
               {connectorRequests.length ? connectorRequests.map((item) => (
-                <Link key={item.id} to={`/platform/merchants/${item.business_id}`} className="block rounded-3xl border border-slate-100 bg-slate-50 p-4 transition hover:border-brand-200 hover:bg-white">
+                <Link key={item.id} to={`/platform/merchants/${item.business_id}`} className="block rounded-3xl border border-platforma-border bg-surface-muted p-4 transition hover:border-brand-200 hover:bg-white">
                   <p className="font-black text-midnight">{item.business_name}</p>
-                  <p className="mt-1 text-sm text-slate-500">{item.provider} · {item.status}</p>
-                  {item.last_error ? <p className="mt-2 text-xs font-semibold text-red-600">{t("platform.operations.failureRecorded")}</p> : null}
+                  <p className="mt-1 text-sm text-platforma-faint">{item.provider} · {item.status}</p>
+                  {item.last_error ? <p className="mt-2 text-xs font-semibold text-platforma-danger">{t("platform.operations.failureRecorded")}</p> : null}
                 </Link>
               )) : <EmptyLine label={t("platform.operations.noConnectorRequests")} />}
             </div>
@@ -188,10 +188,10 @@ export function PlatformOperationsPage() {
             <h2 className="text-lg font-black text-midnight">{t("platform.operations.automationFailures")}</h2>
             <div className="mt-4 space-y-3">
               {failedAutomationRuns.length ? failedAutomationRuns.map((item) => (
-                <Link key={item.id} to={`/platform/merchants/${item.business_id}`} className="block rounded-3xl border border-slate-100 bg-slate-50 p-4 transition hover:border-brand-200 hover:bg-white">
+                <Link key={item.id} to={`/platform/merchants/${item.business_id}`} className="block rounded-3xl border border-platforma-border bg-surface-muted p-4 transition hover:border-brand-200 hover:bg-white">
                   <p className="font-black text-midnight">{item.business_name}</p>
-                  <p className="mt-1 text-sm text-slate-500">{item.trigger_type} · {t("platform.operations.attempts", { attempts: item.attempts, max: item.max_attempts })}</p>
-                  {item.error ? <p className="mt-2 text-xs font-semibold text-red-600">{t("platform.operations.failureRecorded")}</p> : null}
+                  <p className="mt-1 text-sm text-platforma-faint">{item.trigger_type} · {t("platform.operations.attempts", { attempts: item.attempts, max: item.max_attempts })}</p>
+                  {item.error ? <p className="mt-2 text-xs font-semibold text-platforma-danger">{t("platform.operations.failureRecorded")}</p> : null}
                 </Link>
               )) : <EmptyLine label={t("platform.operations.noFailedAutomationRuns")} />}
             </div>
@@ -203,10 +203,10 @@ export function PlatformOperationsPage() {
             <h2 className="text-lg font-black text-midnight">{t("platform.operations.integrationFailures")}</h2>
             <div className="mt-4 space-y-3">
               {failedIntegrationEvents.length ? failedIntegrationEvents.map((item) => (
-                <Link key={item.id} to={item.business_id ? `/platform/merchants/${item.business_id}` : "/platform/operations"} className="block rounded-3xl border border-slate-100 bg-slate-50 p-4 transition hover:border-brand-200 hover:bg-white">
+                <Link key={item.id} to={item.business_id ? `/platform/merchants/${item.business_id}` : "/platform/operations"} className="block rounded-3xl border border-platforma-border bg-surface-muted p-4 transition hover:border-brand-200 hover:bg-white">
                   <p className="font-black text-midnight">{item.business_name || t("platform.operations.noBusiness")}</p>
-                  <p className="mt-1 text-sm text-slate-500">{item.provider} · {item.direction}</p>
-                  {item.error ? <p className="mt-2 text-xs font-semibold text-red-600">{t("platform.operations.failureRecorded")}</p> : null}
+                  <p className="mt-1 text-sm text-platforma-faint">{item.provider} · {item.direction}</p>
+                  {item.error ? <p className="mt-2 text-xs font-semibold text-platforma-danger">{t("platform.operations.failureRecorded")}</p> : null}
                 </Link>
               )) : <EmptyLine label={t("platform.operations.noFailedIntegrationEvents")} />}
             </div>

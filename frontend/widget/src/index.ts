@@ -1,3 +1,5 @@
+import palette from "../../src/theme/semantic-tokens.json";
+
 type PlatformaCRMWidgetOptions = {
   publicToken: string;
   apiUrl?: string;
@@ -20,30 +22,37 @@ declare global {
   }
 }
 
+const colorVariables = Object.entries(palette.tokens).map(([name, value]) => `--color-${name.replaceAll(".", "-")}:${value}`).join(";");
+
 const styles = `
-.platforma-widget-root{position:fixed;z-index:2147483000;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.platforma-widget-root{${colorVariables};position:fixed;z-index:2147483000;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--color-text-primary)}
 .platforma-widget-root[data-position="right"]{right:22px;bottom:22px}
 .platforma-widget-root[data-position="left"]{left:22px;bottom:22px}
-.platforma-bubble{display:grid;place-items:center;width:64px;height:64px;border:0;border-radius:24px;background:linear-gradient(135deg,#0ea5e9,#4f46e5,#7c3aed);color:white;box-shadow:0 18px 45px rgba(79,70,229,.35);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
-.platforma-bubble:hover{transform:translateY(-2px);box-shadow:0 22px 60px rgba(79,70,229,.42)}
-.platforma-panel{position:absolute;right:0;bottom:78px;width:min(380px,calc(100vw - 32px));overflow:hidden;border:1px solid rgba(226,232,240,.9);border-radius:28px;background:rgba(255,255,255,.96);box-shadow:0 28px 90px rgba(15,23,42,.22);backdrop-filter:blur(18px)}
+.platforma-bubble{display:grid;place-items:center;width:64px;height:64px;border:0;border-radius:24px;background:var(--color-brand-default);color:var(--color-text-inverse);box-shadow:0 18px 45px var(--color-focus-halo);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+.platforma-bubble:hover{transform:translateY(-2px);background:var(--color-brand-hover);box-shadow:0 22px 60px var(--color-focus-halo)}
+.platforma-panel{position:absolute;right:0;bottom:78px;width:min(380px,calc(100vw - 32px));overflow:hidden;border:1px solid var(--color-border-default);border-radius:28px;background:var(--color-surface-default);box-shadow:0 28px 90px color-mix(in srgb,var(--color-text-primary) 22%,transparent);backdrop-filter:blur(18px)}
 .platforma-widget-root[data-position="left"] .platforma-panel{left:0;right:auto}
 .platforma-panel[hidden]{display:none}
-.platforma-header{padding:18px 18px 14px;background:linear-gradient(135deg,#0f172a,#1d4ed8);color:white}
+.platforma-header{padding:18px 18px 14px;background:var(--color-brand-pressed);color:var(--color-text-inverse)}
 .platforma-title{margin:0;font-size:16px;font-weight:800}
-.platforma-subtitle{margin:4px 0 0;font-size:13px;color:rgba(255,255,255,.72)}
-.platforma-body{display:grid;gap:10px;max-height:360px;overflow:auto;padding:16px;background:linear-gradient(180deg,#fff,#f8fafc)}
+.platforma-subtitle{margin:4px 0 0;font-size:13px;color:var(--color-text-inverse)}
+.platforma-body{display:grid;gap:10px;max-height:360px;overflow:auto;padding:16px;background:var(--color-surface-canvas)}
 .platforma-message{max-width:86%;border-radius:18px;padding:10px 12px;font-size:13px;line-height:1.45}
-.platforma-message.system{background:#eef2ff;color:#3730a3}
-.platforma-message.user{justify-self:end;background:#0f172a;color:white}
-.platforma-message.status{background:#f1f5f9;color:#475569}
-.platforma-form{display:grid;gap:8px;padding:14px;border-top:1px solid #e2e8f0;background:white}
-.platforma-input{min-height:42px;border:1px solid #dbe3ef;border-radius:16px;padding:0 12px;font:inherit;font-size:14px;outline:none}
-.platforma-input:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.platforma-message.system{background:var(--color-info-soft);color:var(--color-info-content)}
+.platforma-message.user{justify-self:end;background:var(--color-brand-default);color:var(--color-text-inverse)}
+.platforma-message.status{background:var(--color-surface-subtle);color:var(--color-text-secondary)}
+.platforma-form{display:grid;gap:8px;padding:14px;border-top:1px solid var(--color-border-default);background:var(--color-surface-default)}
+.platforma-input{min-height:42px;border:1px solid var(--color-border-control);border-radius:16px;padding:0 12px;font:inherit;font-size:14px;background:var(--color-surface-default);color:var(--color-text-primary);outline:none}
+.platforma-input::placeholder{color:var(--color-text-muted)}
+.platforma-input:hover{border-color:var(--color-brand-default)}
+.platforma-input:focus{border-color:var(--color-focus-ring);box-shadow:0 0 0 4px var(--color-focus-halo)}
 .platforma-actions{display:flex;gap:8px}
 .platforma-actions .platforma-input{flex:1}
-.platforma-send{min-width:92px;border:0;border-radius:16px;background:#0f172a;color:white;font-weight:800;cursor:pointer}
-.platforma-send:disabled{opacity:.55;cursor:not-allowed}
+.platforma-send{min-width:92px;border:0;border-radius:16px;background:var(--color-brand-default);color:var(--color-text-inverse);font-weight:800;cursor:pointer}
+.platforma-send:hover{background:var(--color-brand-hover)}
+.platforma-send:active,.platforma-bubble:active{background:var(--color-brand-pressed)}
+.platforma-send:focus-visible,.platforma-bubble:focus-visible,.platforma-input:focus-visible{outline:2px solid var(--color-focus-ring);outline-offset:2px}
+.platforma-send:disabled{background:var(--color-disabled-surface);color:var(--color-disabled-content);box-shadow:inset 0 0 0 1px var(--color-disabled-border);opacity:1;cursor:not-allowed}
 `;
 
 class PlatformaCRMWidgetController {

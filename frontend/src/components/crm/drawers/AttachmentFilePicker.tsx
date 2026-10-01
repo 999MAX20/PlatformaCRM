@@ -66,7 +66,7 @@ export function AttachmentFilePicker({
         }}
         className={`mb-4 flex w-full cursor-pointer flex-col items-center justify-center rounded-card border border-dashed px-4 py-5 text-center transition ${
           isDragging
-            ? "border-brand-300 bg-brand-50 text-brand-700"
+            ? "border-brand-100 bg-brand-50 text-brand-700"
             : "border-platforma-border bg-surface-muted text-platforma-muted hover:border-brand-200 hover:bg-surface-card"
         }`}
       >

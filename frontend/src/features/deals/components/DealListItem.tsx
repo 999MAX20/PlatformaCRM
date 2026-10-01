@@ -21,7 +21,7 @@ export const DealListItem = memo(function DealListItem({ deal, selected, onSelec
   const nextTitle = deal.nextTask?.title || t("deals.noTasksFilter");
   return (
     <article draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", String(deal.id))}
-      className={cn("group relative rounded-control border border-platforma-border bg-surface-card p-2.5 transition hover:border-brand-200 hover:shadow-soft", selected && "border-brand-300 bg-brand-50 ring-2 ring-[var(--platforma-focus-ring)]")}>
+      className={cn("group relative rounded-control border border-platforma-border bg-surface-card p-2.5 transition hover:border-brand-200 hover:shadow-soft", selected && "border-brand-100 bg-brand-50 ring-2 ring-[var(--platforma-focus-ring)]")}>
       <button type="button" className="platforma-focus-ring block w-full min-w-0 rounded-control text-left" onClick={() => onSelect(deal)} onDoubleClick={() => onOpen(deal)}>
         <h3 className="truncate pr-6 text-[13px] font-semibold leading-5 text-platforma-text" title={deal.title}>{deal.title}</h3>
         <div className="mt-0.5 flex items-center justify-between gap-2">

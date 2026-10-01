@@ -15,22 +15,22 @@ type ToneDefinition = {
 export const statusNoticeTones: Record<StatusNoticeTone, ToneDefinition> = {
   success: {
     Icon: CheckCircle2,
-    container: "border-[rgba(21,128,61,0.18)] bg-[var(--platforma-success-soft)]",
+    container: "border-platforma-success/[0.18] bg-[var(--platforma-success-soft)]",
     icon: "text-platforma-success",
   },
   info: {
     Icon: Info,
-    container: "border-[rgba(14,116,144,0.18)] bg-[var(--platforma-info-soft)]",
+    container: "border-platforma-info/[0.18] bg-[var(--platforma-info-soft)]",
     icon: "text-platforma-info",
   },
   warning: {
     Icon: AlertTriangle,
-    container: "border-[rgba(183,121,31,0.22)] bg-[var(--platforma-warning-soft)]",
+    container: "border-platforma-warning/[0.22] bg-[var(--platforma-warning-soft)]",
     icon: "text-platforma-warning",
   },
   danger: {
     Icon: AlertCircle,
-    container: "border-[rgba(194,65,12,0.2)] bg-[var(--platforma-danger-soft)]",
+    container: "border-platforma-danger/20 bg-[var(--platforma-danger-soft)]",
     icon: "text-platforma-danger",
   },
 };

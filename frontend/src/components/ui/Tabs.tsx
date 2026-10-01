@@ -47,7 +47,7 @@ export function Tabs<T extends string>({
                 ? tone === "ai"
                   ? "bg-ai-50 text-ai-700 shadow-sm ring-1 ring-ai-100"
                   : "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
-                : "text-platforma-subtle hover:bg-surface-warm hover:text-platforma-text",
+                : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
             )}
             role="tab"
             id={idPrefix ? `${idPrefix}-tab-${option.value}` : undefined}

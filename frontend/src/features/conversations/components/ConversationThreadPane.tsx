@@ -109,7 +109,7 @@ export function ConversationThreadPane({
                     {channelLabel(selected.channel, t)}
                   </Pill>
                   {selected.bot_enabled ? (
-                    <Pill className="bg-emerald-50 text-emerald-700 ring-emerald-200">
+                    <Pill className="bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/20">
                       {t("conversations.botActive")}
                     </Pill>
                   ) : (
@@ -118,7 +118,7 @@ export function ConversationThreadPane({
                     </Pill>
                   )}
                   {selected.handoff_required ? (
-                    <Pill className="bg-amber-50 text-amber-700 ring-amber-200">
+                    <Pill className="bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/20">
                       {t("conversations.needsOperator")}
                     </Pill>
                   ) : null}

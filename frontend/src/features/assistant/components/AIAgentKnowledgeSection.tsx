@@ -70,11 +70,11 @@ export function KnowledgeSection({ businessId, items, canManage }: { businessId:
           title={t("aiAgents.knowledgeSharedScopeTitle")}
           description={t("aiAgents.knowledgeCompanyText")}
         />
-        <div className="rounded-card border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="rounded-card border border-platforma-border bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="text-xl font-black text-midnight">{t("aiAgents.knowledgeCompany")}</h3>
-              <p className="mt-1 text-sm font-semibold text-slate-500">{t("aiAgents.knowledgeCompanyText")}</p>
+              <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.knowledgeCompanyText")}</p>
             </div>
             <Button type="button" disabled={!canManage} onClick={() => openEditor()}>
               <Plus size={16} /> {t("aiAgents.knowledge.add")}
@@ -91,11 +91,11 @@ export function KnowledgeSection({ businessId, items, canManage }: { businessId:
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">{t(`aiAgents.knowledge.category.${item.category || "business"}`)}</p>
                     <h3 className="mt-2 text-lg font-black text-midnight">{item.title}</h3>
                   </div>
-                  <span className={cn("rounded-full px-2.5 py-1 text-xs font-black", item.is_active ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500")}>
+                  <span className={cn("rounded-full px-2.5 py-1 text-xs font-black", item.is_active ? "bg-[var(--platforma-success-soft)] text-platforma-success" : "bg-surface-muted text-platforma-faint")}>
                     {item.is_active ? t("aiAgents.knowledge.active") : t("aiAgents.knowledge.off")}
                   </span>
                 </div>
-                <p className="mt-3 line-clamp-4 text-sm font-semibold leading-6 text-slate-500">{item.content}</p>
+                <p className="mt-3 line-clamp-4 text-sm font-semibold leading-6 text-platforma-faint">{item.content}</p>
                 <Button className="mt-4" type="button" variant="secondary" disabled={!canManage} onClick={() => openEditor(item)}>
                   <Settings size={16} /> {t("aiAgents.configure")}
                 </Button>
@@ -106,18 +106,18 @@ export function KnowledgeSection({ businessId, items, canManage }: { businessId:
               <CardBody>
                 <BookOpen className="text-brand-600" size={26} />
                 <h3 className="mt-4 text-lg font-black text-midnight">{t("aiAgents.knowledge.emptyTitle")}</h3>
-                <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">{t("aiAgents.knowledge.emptyText")}</p>
+                <p className="mt-2 text-sm font-semibold leading-6 text-platforma-faint">{t("aiAgents.knowledge.emptyText")}</p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {knowledgeTemplates.map((template) => (
                     <button
                       key={template.title}
                       type="button"
                       disabled={!canManage}
-                      className="rounded-2xl border border-slate-200 bg-white p-3 text-left transition hover:border-brand-200 hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="group rounded-2xl border border-platforma-border bg-white p-3 text-left transition hover:border-brand-200 hover:bg-brand-50 disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:opacity-100"
                       onClick={() => openTemplate(template)}
                     >
-                      <span className="text-sm font-black text-midnight">{template.title}</span>
-                      <span className="mt-1 block text-xs font-semibold leading-5 text-slate-500">{t(`aiAgents.knowledge.category.${template.category}`)}</span>
+                      <span className="text-sm font-black text-midnight group-disabled:text-disabled-content">{template.title}</span>
+                      <span className="mt-1 block text-xs font-semibold leading-5 text-platforma-subtle group-disabled:text-disabled-content">{t(`aiAgents.knowledge.category.${template.category}`)}</span>
                     </button>
                   ))}
                 </div>
@@ -142,7 +142,7 @@ export function KnowledgeSection({ businessId, items, canManage }: { businessId:
           <FieldHint>{t("aiAgents.hint.knowledgeCategory")}</FieldHint>
           <Textarea label={t("aiAgents.knowledge.content")} value={draft.content} onChange={(event) => setDraft((current) => ({ ...current, content: event.target.value }))} />
           <FieldHint>{t("aiAgents.hint.knowledgeContent")}</FieldHint>
-          <label className="inline-flex items-center gap-2 text-sm font-bold text-slate-600">
+          <label className="inline-flex items-center gap-2 text-sm font-bold text-platforma-subtle">
             <input type="checkbox" checked={draft.is_active} onChange={(event) => setDraft((current) => ({ ...current, is_active: event.target.checked }))} />
             {t("aiAgents.knowledge.useInContext")}
           </label>

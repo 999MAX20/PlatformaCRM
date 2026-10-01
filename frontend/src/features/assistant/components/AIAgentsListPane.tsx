@@ -92,7 +92,7 @@ export function AIAgentsListPane({
                   "platforma-focus-ring group flex min-h-[76px] items-start gap-3 rounded-control border px-3 py-3 transition",
                   selected
                     ? "border-ai-200 bg-ai-50 shadow-sm"
-                    : "border-transparent bg-surface-card hover:border-platforma-border hover:bg-surface-warm",
+                    : "border-transparent bg-surface-card hover:border-platforma-border hover:bg-surface-hover",
                 )}
               >
                 <span

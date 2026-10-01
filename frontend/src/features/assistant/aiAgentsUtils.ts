@@ -103,10 +103,10 @@ export function channelStatus(channel: BotChannel | undefined, t: (key: string) 
 }
 
 export function channelStatusClass(channel?: BotChannel) {
-  if (!channel) return "bg-slate-100 text-slate-700 ring-slate-200";
-  if (channel.status === "active") return "bg-emerald-50 text-emerald-700 ring-emerald-100";
-  if (channel.status === "error") return "bg-red-50 text-red-700 ring-red-100";
-  return "bg-amber-50 text-amber-700 ring-amber-100";
+  if (!channel) return "bg-surface-muted text-platforma-subtle ring-platforma-border";
+  if (channel.status === "active") return "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/20";
+  if (channel.status === "error") return "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/20";
+  return "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/20";
 }
 
 export function agentStatusLabel(bot: BotType, t: (key: string) => string) {

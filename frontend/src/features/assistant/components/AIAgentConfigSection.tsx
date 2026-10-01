@@ -42,7 +42,7 @@ export function ProfileManagerSection({
           >
             <div>
               <h3 className="text-lg font-black text-midnight">{t("aiSetup.advanced")}</h3>
-              <p className="mt-1 text-sm font-semibold text-slate-500">{t("aiSetup.advancedText")}</p>
+              <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiSetup.advancedText")}</p>
             </div>
             <ChevronRight size={18} className={cn("shrink-0 text-platforma-faint transition", showQuality && "rotate-90 text-ai-700")} />
           </button>
@@ -123,7 +123,7 @@ function PromptingSection({
     <Card variant="outlined">
       <CardBody>
         <div className="mb-5 flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 text-slate-700">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-surface-muted text-platforma-subtle">
             <FileText size={22} />
           </div>
           <div>
@@ -202,7 +202,7 @@ function ModelsSection({ draft, setDraft, canManage }: { draft: BotDraftState; s
           />
           <FieldHint>{t("aiAgents.hint.responseMode")}</FieldHint>
           <label className="block">
-            <span className="mb-2 block text-sm font-bold text-slate-700">{t("aiAgents.responseFreedom", { value: temperature.toFixed(1) })}</span>
+            <span className="mb-2 block text-sm font-bold text-platforma-subtle">{t("aiAgents.responseFreedom", { value: temperature.toFixed(1) })}</span>
             <input className="w-full accent-ai-600" type="range" min="0" max="1" step="0.1" value={temperature} disabled={!canManage} onChange={(event) => setTemperature(Number(event.target.value))} />
             <FieldHint>{t("aiAgents.hint.temperature")}</FieldHint>
           </label>

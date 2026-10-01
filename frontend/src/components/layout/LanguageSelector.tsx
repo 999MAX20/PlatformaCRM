@@ -22,7 +22,7 @@ export function LanguageSelector({ className }: { className?: string }) {
     >
       <Languages size={16} className="platforma-language-selector__icon shrink-0 text-brand-600" aria-hidden="true" />
       <Select
-        className="platforma-language-selector__control min-h-8 w-[5.25rem] border-0 bg-transparent px-1.5 py-1 text-sm shadow-none hover:bg-surface-muted"
+        className="platforma-language-selector__control min-h-8 w-[5.25rem] border-0 bg-transparent px-1.5 py-1 text-sm shadow-none hover:bg-surface-hover"
         value={language}
         onChange={async (event) => {
           const nextLanguage = event.target.value as typeof language;

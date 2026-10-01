@@ -97,7 +97,7 @@ export function MfaSecurityCard() {
     <>
       <div>
         <SecuritySettingRow icon={<ShieldCheck size={18} />} title={t("mfa.accountTitle")}
-          value={mfa ? <span className={mfa.enabled ? "text-emerald-700" : "text-platforma-subtle"}>{mfa.enabled ? t("mfa.enabled") : mfa.required ? t("mfa.required") : t("mfa.notEnabled")}</span> : undefined}
+          value={mfa ? <span className={mfa.enabled ? "text-platforma-success" : "text-platforma-subtle"}>{mfa.enabled ? t("mfa.enabled") : mfa.required ? t("mfa.required") : t("mfa.notEnabled")}</span> : undefined}
           action={statusQuery.isLoading ? <span role="status" className="text-sm">{t("common.loading")}</span> : mfa ? <Button size="sm" variant="secondary" aria-label={t(mfa.enabled ? "mfa.accountEyebrow" : "mfa.setup")} isLoading={startMutation.isPending} onClick={() => mfa.enabled ? setManageOpen(value => !value) : startMutation.mutate()}>{t(mfa.enabled ? "account.securityManage" : "account.securityConnect")}</Button> : <Button size="sm" variant="secondary" onClick={() => void statusQuery.refetch()}>{t("common.retry")}</Button>} />
         {statusQuery.error || startMutation.error ? <div className="mt-2"><ErrorState message={getApiErrorMessage(statusQuery.error || startMutation.error)} /></div> : null}
         {mfa?.enabled && manageOpen ? <div className="pb-3 pl-12">
@@ -114,7 +114,7 @@ export function MfaSecurityCard() {
           {recoveryCodes.length ? (
             <>
               <StatusNotice tone="warning" title={t("mfa.recoveryWarning")} />
-              <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-950 p-4 font-mono text-sm text-white">{recoveryCodes.map((item) => <span key={item}>{item}</span>)}</div>
+              <div className="grid grid-cols-2 gap-2 rounded-2xl bg-platforma-ink p-4 font-mono text-sm text-white">{recoveryCodes.map((item) => <span key={item}>{item}</span>)}</div>
               <Button type="button" variant="secondary" onClick={() => navigator.clipboard.writeText(recoveryCodes.join("\n"))}><Copy size={17} />{t("mfa.copyCodes")}</Button>
               <Button type="button" onClick={closeModal}>{t("common.close")}</Button>
             </>

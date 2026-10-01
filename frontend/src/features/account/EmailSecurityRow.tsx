@@ -27,7 +27,7 @@ export function EmailSecurityRow() {
   return <>
     <SecuritySettingRow icon={<Mail size={18} />} title={t("account.emailLogin")} value={user?.email}
       action={<Button size="sm" variant="secondary" aria-label={t("account.emailChange")} onClick={() => { setSent(false); setSaved(false); request.reset(); confirm.reset(); setOpen(true); }}>{t("account.securityEdit")}</Button>} />
-    {saved ? <p role="status" className="mb-3 text-sm text-emerald-700">{t("account.emailSaved")}</p> : null}
+    {saved ? <p role="status" className="mb-3 text-sm text-platforma-success">{t("account.emailSaved")}</p> : null}
     <Modal title={t("account.emailChange")} open={open} onClose={close} size="sm">
       <form className="space-y-4" onSubmit={event => { event.preventDefault(); if (sent) confirm.mutate(); else request.mutate(); }}>
         {sent ? <>

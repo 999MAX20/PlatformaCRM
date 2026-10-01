@@ -70,7 +70,7 @@ export function LeadContextMenu({
               key={item.label}
               type="button"
               className={cn(
-                "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold hover:bg-surface-warm",
+                "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold hover:bg-surface-hover",
                 item.tone === "warning" ? "text-platforma-warning hover:bg-[var(--platforma-warning-soft)]" : "text-platforma-text",
               )}
               onClick={() => {

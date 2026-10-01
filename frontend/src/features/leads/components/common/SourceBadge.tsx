@@ -15,9 +15,9 @@ function SourceIcon({ source }: { source: string }) {
 export function SourceBadge({ source, t }: { source: string; t: Translate }) {
   const sourceTone: Record<string, string> = {
     whatsapp:
-      "bg-[var(--platforma-success-soft)] text-platforma-success ring-[rgba(21,128,61,0.18)]",
+      "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/[0.18]",
     telegram:
-      "bg-[var(--platforma-info-soft)] text-platforma-info ring-[rgba(14,116,144,0.18)]",
+      "bg-[var(--platforma-info-soft)] text-platforma-info ring-platforma-info/[0.18]",
     instagram: "bg-ai-50 text-ai-700 ring-ai-100",
     website: "bg-surface-muted text-platforma-muted ring-platforma-border",
     landing: "bg-brand-50 text-brand-700 ring-brand-100",

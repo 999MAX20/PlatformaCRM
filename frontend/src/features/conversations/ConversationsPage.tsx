@@ -1480,7 +1480,7 @@ export function ConversationsPage() {
                       </p>
                       <button
                         type="button"
-                        className="grid h-7 w-7 shrink-0 place-items-center rounded-control text-platforma-muted hover:bg-surface-hover hover:text-platforma-text disabled:cursor-not-allowed disabled:opacity-40"
+                        className="grid h-7 w-7 shrink-0 place-items-center rounded-control text-platforma-muted hover:bg-surface-hover hover:text-platforma-text disabled:cursor-not-allowed disabled:bg-disabled-surface disabled:text-disabled-content disabled:ring-1 disabled:ring-disabled-border disabled:opacity-100"
                         aria-label={t("conversations.openClientContext", {
                           title: selected.client_name || conversationTitle(selected, t),
                         })}
@@ -1498,7 +1498,7 @@ export function ConversationsPage() {
                         t("conversations.noContact")}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <Pill className="bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]">
+                      <Pill className="bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]">
                         {selected.client
                           ? t("common.client")
                           : t("conversations.newContact")}
@@ -1612,7 +1612,7 @@ export function ConversationsPage() {
                       <Pill
                         className={
                           selected.client
-                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]"
+                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]"
                             : "bg-surface-muted text-platforma-muted ring-platforma-border"
                         }
                       >
@@ -1665,7 +1665,7 @@ export function ConversationsPage() {
                       <Pill
                         className={
                           selected.lead
-                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]"
+                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]"
                             : "bg-surface-muted text-platforma-muted ring-platforma-border"
                         }
                       >
@@ -1716,7 +1716,7 @@ export function ConversationsPage() {
                       <Pill
                         className={
                           selected.deal
-                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-[rgba(21,128,61,0.18)]"
+                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]"
                             : "bg-surface-muted text-platforma-muted ring-platforma-border"
                         }
                       >

@@ -28,7 +28,7 @@ export function HeaderAccountLink({
       data-testid="header-account-link"
       className={({ isActive }) =>
         cn(
-          "platforma-focus-ring group flex h-10 min-w-10 max-w-[200px] items-center justify-center gap-2 rounded-control px-1 text-left transition-colors hover:bg-surface-muted 2xl:justify-start 2xl:pr-3",
+          "platforma-focus-ring group flex h-10 min-w-10 max-w-[200px] items-center justify-center gap-2 rounded-control px-1 text-left transition-colors hover:bg-surface-hover 2xl:justify-start 2xl:pr-3",
           isActive && "bg-brand-50 ring-1 ring-brand-100",
         )
       }

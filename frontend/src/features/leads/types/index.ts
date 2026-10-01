@@ -142,14 +142,14 @@ export const statusLabels: Record<Lead["status"], string> = {
 };
 
 export const statusClass: Record<Lead["status"], string> = {
-  new: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-[rgba(183,121,31,0.22)]",
+  new: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/[0.22]",
   contacted:
-    "bg-[var(--platforma-info-soft)] text-platforma-info ring-[rgba(14,116,144,0.18)]",
+    "bg-[var(--platforma-info-soft)] text-platforma-info ring-platforma-info/[0.18]",
   in_progress: "bg-ai-50 text-ai-700 ring-ai-100",
   appointment_created:
-    "bg-[var(--platforma-success-soft)] text-platforma-success ring-[rgba(21,128,61,0.18)]",
+    "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/[0.18]",
   closed: "bg-brand-50 text-brand-700 ring-brand-100",
-  lost: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-[rgba(194,65,12,0.2)]",
+  lost: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/[0.2]",
 };
 
 export const sourceLabels: Record<string, string> = {

@@ -589,7 +589,7 @@ export function AutomationsPage() {
           </Surface>
 
           {preview ? (
-            <div className="rounded-card border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+            <div className="rounded-card border border-platforma-success/20 bg-[var(--platforma-success-soft)] p-4 text-sm text-platforma-success">
               <p className="font-bold">{t("automations.previewOk", { name: preview.name })}</p>
               <p className="mt-1">{preview.will_run_when}</p>
               <p className="mt-2 font-semibold">{t("automations.previewMeta", { conditions: preview.conditions_count, actions: preview.actions_count })}</p>

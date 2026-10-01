@@ -749,7 +749,7 @@ export function AIAssistantPage() {
                             <p className="mt-1 text-sm font-semibold leading-6 text-platforma-subtle">{action.description}</p>
                             <SourceChips sourceIds={action.source_ids} sourcesById={analystSourcesById} />
                           </div>
-                          <Link to={action.href} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-bold text-platforma-text transition hover:border-brand-100 hover:bg-surface-warm hover:shadow-card">
+                          <Link to={action.href} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm font-bold text-platforma-text transition hover:border-brand-100 hover:bg-surface-hover hover:shadow-card">
                             {t("common.open")} <ExternalLink size={15} />
                           </Link>
                         </div>
@@ -850,7 +850,7 @@ export function AIAssistantPage() {
                     key={item.id}
                     type="button"
                     onClick={() => { setEditingMemory(item); setMemoryDraft(memoryDraftFromItem(item)); setMemoryOpen(true); }}
-                    className="w-full rounded-card border border-platforma-border bg-surface-muted p-4 text-left transition hover:border-brand-100 hover:bg-surface-warm hover:shadow-card"
+                    className="w-full rounded-card border border-platforma-border bg-surface-muted p-4 text-left transition hover:border-brand-100 hover:bg-surface-hover hover:shadow-card"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">

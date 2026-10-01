@@ -244,8 +244,8 @@ export function LeadsWorkspaceTable({
                 className={cn(
                   "grid h-5 w-5 place-items-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500",
                   allPageRowsSelected
-                    ? "border-brand-500 bg-brand-500 text-platforma-ink"
-                    : "border-platforma-border bg-surface-card",
+                    ? "border-brand-500 bg-brand-500 text-white"
+                    : "border-platforma-control bg-surface-card",
                 )}
               >
                 {allPageRowsSelected ? <CheckCheck size={13} /> : null}

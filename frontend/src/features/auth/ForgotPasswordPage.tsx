@@ -42,11 +42,11 @@ export function ForgotPasswordPage() {
     <main className="grid min-h-screen place-items-center bg-soft-mesh px-4 py-8">
       <section className="glass-panel w-full max-w-lg rounded-[2rem] p-6 sm:p-8">
         <div className="mb-7">
-          <div className="mb-4 grid h-14 w-14 place-items-center rounded-3xl bg-ai-gradient text-white shadow-glow">
+          <div className="mb-4 grid h-14 w-14 place-items-center rounded-3xl bg-brand-500 text-white shadow-glow">
             <KeyRound size={25} />
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-midnight">{t("passwordReset.requestTitle")}</h1>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-platforma-faint">
             {t("passwordReset.requestText")}
           </p>
         </div>
@@ -62,7 +62,7 @@ export function ForgotPasswordPage() {
           </Button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-slate-500">
+        <p className="mt-5 text-center text-sm text-platforma-faint">
           {t("passwordReset.remembered")}{" "}
           <Link className="font-bold text-brand-700 hover:text-brand-800" to="/login">
             {t("auth.submit")}

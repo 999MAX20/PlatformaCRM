@@ -47,7 +47,7 @@ export function ActiveSessions() {
         <div className="flex min-w-0 items-center gap-3">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-platforma-bg text-platforma-subtle" aria-hidden="true">{/Android|iPhone|iPad/.test(session.user_agent) ? <Smartphone size={19} /> : <Monitor size={19} />}</span>
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1"><span className="text-sm font-medium">{deviceName(session.user_agent, t("account.sessionsUnknown"))}</span>{session.is_current ? <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">{t("account.sessionsCurrent")}</span> : null}</div>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1"><span className="text-sm font-medium">{deviceName(session.user_agent, t("account.sessionsUnknown"))}</span>{session.is_current ? <span className="rounded-full bg-[var(--platforma-success-soft)] px-2 py-0.5 text-xs font-medium text-platforma-success">{t("account.sessionsCurrent")}</span> : null}</div>
             <p className="mt-1 text-xs text-platforma-subtle">{t("account.sessionsLastSeen")}: {formatDateTime(session.last_seen_at)}</p>
             {session.ip_address ? <p className="mt-0.5 break-all text-xs text-platforma-subtle">IP: {session.ip_address}</p> : null}
           </div>

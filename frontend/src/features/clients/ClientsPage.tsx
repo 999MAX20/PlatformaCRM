@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { Button } from "../../components/ui/Button";
 import { PaymentsJournal } from "../payments/PaymentsJournal";
 import { hasPermission } from "../../lib/permissions";
+import palette from "../../theme/semantic-tokens.json";
 
 import { clientsApi, type ClientMergeDryRun } from "../../api/clients";
 import { getApiErrorMessage } from "../../api/client";
@@ -199,7 +200,7 @@ export function ClientsPage() {
         (await tagsApi.create({
           business: business!.id,
           name: tagName,
-          color: "#F5B37A",
+          color: palette.tokens["brand.default"],
           source: "manual",
         }));
       return taggedObjectsApi.create({

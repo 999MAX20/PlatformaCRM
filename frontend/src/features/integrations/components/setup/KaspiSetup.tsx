@@ -87,29 +87,29 @@ export function KaspiInlineSetup({
   const runsInMockMode = status.data ? !status.data.kaspi_enabled : false;
 
   return (
-    <div className="w-full space-y-4 rounded-card border border-slate-200 bg-slate-50 p-4">
+    <div className="w-full space-y-4 rounded-card border border-platforma-border bg-surface-muted p-4">
       {error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
 
       <div className="grid gap-2 sm:grid-cols-3">
         <div className="rounded-2xl bg-white p-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{t("integrations.setupMetric.access")}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.setupMetric.access")}</p>
           <p className="mt-1 text-sm font-black text-midnight">{tokenConfigured ? t("integrations.setupMetric.saved") : t("integrations.setupMetric.required")}</p>
         </div>
         <div className="rounded-2xl bg-white p-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{t("integrations.setupMetric.mode")}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.setupMetric.mode")}</p>
           <p className="mt-1 text-sm font-black text-midnight">{runsInMockMode ? t("integrations.setupMetric.demoReadOnly") : t("integrations.setupMetric.readOnly")}</p>
         </div>
         <div className="rounded-2xl bg-white p-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{t("integrations.kaspi.orders")}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.kaspi.orders")}</p>
           <p className="mt-1 text-sm font-black text-midnight">{status.data?.last_sync_at ? t("integrations.kaspi.ordersLoadedBefore") : t("integrations.setupMetric.notYet")}</p>
         </div>
       </div>
       {runsInMockMode ? <StatusNotice compact tone="warning" title={t("integrations.mock.providerDisabledNotice")} /> : null}
 
       {!showAccessSetup ? (
-        <div className="rounded-card border border-blue-100 bg-blue-50 p-4">
-          <p className="text-sm font-black text-blue-950">{t("integrations.kaspi.connectionTitle")}</p>
-          <p className="mt-1 text-sm font-semibold leading-6 text-blue-800">
+        <div className="rounded-card border border-platforma-info/20 bg-[var(--platforma-info-soft)] p-4">
+          <p className="text-sm font-black text-platforma-info">{t("integrations.kaspi.connectionTitle")}</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-platforma-info">
             {t("integrations.kaspi.connectionDescription")}
           </p>
           <Button type="button" className="mt-3" disabled={!canManage} onClick={() => setShowAccessSetup(true)}>
@@ -166,7 +166,7 @@ export function KaspiInlineSetup({
         </Button>
       </div>
 
-      <p className="text-xs font-semibold leading-5 text-slate-500">
+      <p className="text-xs font-semibold leading-5 text-platforma-faint">
         {t("integrations.kaspi.readOnlyNotice")}
       </p>
     </div>

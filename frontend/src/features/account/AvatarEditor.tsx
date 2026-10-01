@@ -56,7 +56,7 @@ export function AvatarEditor({ user }: { user: CurrentUser | null }) {
             if (image.naturalWidth * image.naturalHeight > 16_000_000) { setFileError(true); setFile(null); return; }
             setDimensions({ width: image.naturalWidth, height: image.naturalHeight });
           }} onError={() => { setFileError(true); setFile(null); }} /> : <UserAvatar user={user} className="mx-auto h-32 w-32 text-4xl" />}
-        {file && dimensions.width > 0 ? <label className="block text-sm">{t("account.avatarZoom")}<input disabled={mutation.isPending} className="block w-full accent-orange-500" type="range" min="1" max="3" step="0.01" value={zoom} onChange={event => setZoom(Number(event.target.value))} /></label> : null}
+        {file && dimensions.width > 0 ? <label className="block text-sm">{t("account.avatarZoom")}<input disabled={mutation.isPending} className="block w-full accent-brand-500" type="range" min="1" max="3" step="0.01" value={zoom} onChange={event => setZoom(Number(event.target.value))} /></label> : null}
         {fileError ? <p role="alert" className="text-sm text-platforma-danger">{t("account.avatarInvalid")}</p> : null}
         {mutation.error || avatar.error ? <p role="alert" className="text-sm text-platforma-danger">{getApiErrorMessage(mutation.error || avatar.error)}</p> : null}
         <div className="flex flex-wrap justify-center gap-2">

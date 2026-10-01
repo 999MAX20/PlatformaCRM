@@ -195,7 +195,7 @@ export function TaskDrawer({
     <>
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-[rgba(23,18,15,0.35)] backdrop-blur-sm transition-opacity duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "fixed inset-0 z-50 bg-platforma-ink/[0.35] backdrop-blur-sm transition-opacity duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         )}
         onMouseDown={onClose}
@@ -216,7 +216,7 @@ export function TaskDrawer({
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <StatusBadge status={task.priority} />
                   <StatusBadge status={task.status} />
-                  {task.due_at ? <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">{t("tasks.due")} {formatDateTime(task.due_at)}</span> : null}
+                  {task.due_at ? <span className="rounded-full bg-[var(--platforma-warning-soft)] px-3 py-1 text-xs font-semibold text-platforma-warning">{t("tasks.due")} {formatDateTime(task.due_at)}</span> : null}
                 </div>
                 <h2 id={titleId} className="truncate text-2xl font-semibold tracking-tight text-platforma-ink">{task.title}</h2>
                 <p className="mt-1 text-sm font-semibold text-platforma-muted">
@@ -254,7 +254,7 @@ export function TaskDrawer({
               </div>
             </section>
 
-            <div className="sticky top-0 z-10 -mx-5 mt-4 border-y border-platforma-border bg-surface-muted/92 px-5 py-2 backdrop-blur sm:-mx-7 sm:px-7">
+            <div className="sticky top-0 z-10 -mx-5 mt-4 border-y border-platforma-border bg-surface-muted/[0.92] px-5 py-2 backdrop-blur sm:-mx-7 sm:px-7">
               <div className="grid grid-cols-3 gap-1 rounded-control bg-surface-muted p-1">
                 <TaskDrawerTabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")}>
                   {t("tasks.drawerOverviewTab")}
@@ -394,8 +394,8 @@ export function TaskDrawer({
                 </div>
 
                 {task.cancel_reason ? (
-                  <div className="rounded-card border border-red-100 bg-red-50 p-4 text-sm font-semibold text-red-700">
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-red-400">{t("tasks.cancelReasonLabel")}</p>
+                  <div className="rounded-card border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] p-4 text-sm font-semibold text-platforma-danger">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-danger">{t("tasks.cancelReasonLabel")}</p>
                     {task.cancel_reason}
                   </div>
                 ) : null}

@@ -58,7 +58,7 @@ export function UsageSection({
                   />
                 </div>
                 {item.is_over_limit ? (
-                  <p className="mt-2 text-xs font-semibold text-red-600">
+                  <p className="mt-2 text-xs font-semibold text-platforma-danger">
                     {t("settings.limitReached")}
                   </p>
                 ) : null}

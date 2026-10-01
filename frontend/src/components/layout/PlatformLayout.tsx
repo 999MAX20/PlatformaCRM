@@ -43,7 +43,7 @@ export function PlatformLayout() {
               <ShieldCheck size={23} />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">PlatformaCRM</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">PlatformaCRM</p>
               <h1 className="text-lg font-semibold tracking-tight">{t("platform.title")}</h1>
             </div>
           </div>
@@ -65,10 +65,10 @@ export function PlatformLayout() {
                 >
                   {({ isActive }) => (
                     <>
-                      <Icon size={20} className={cn("mt-0.5 shrink-0", isActive ? "text-brand-600" : "text-white/45 group-hover:text-white")} />
+                      <Icon size={20} className={cn("mt-0.5 shrink-0", isActive ? "text-brand-600" : "text-white/70 group-hover:text-white")} />
                       <span>
                         <span className="block">{t(item.label)}</span>
-                        <span className={cn("mt-1 block text-xs font-medium", isActive ? "text-slate-500" : "text-white/35")}>{t(item.description)}</span>
+                        <span className={cn("mt-1 block text-xs font-medium", isActive ? "text-platforma-faint" : "text-white/70")}>{t(item.description)}</span>
                       </span>
                     </>
                   )}
@@ -79,7 +79,7 @@ export function PlatformLayout() {
 
           <div className="mt-auto rounded-3xl border border-white/10 bg-white/5 p-4">
             <p className="text-sm font-semibold">{t("platform.protectedTitle")}</p>
-            <p className="mt-2 text-xs leading-5 text-white/45">{t("platform.protectedText")}</p>
+            <p className="mt-2 text-xs leading-5 text-white/70">{t("platform.protectedText")}</p>
           </div>
         </aside>
 
@@ -90,18 +90,18 @@ export function PlatformLayout() {
                 <ShieldCheck size={22} />
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">{t("platform.admin")}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-platforma-faint">{t("platform.admin")}</p>
                 <h2 className="text-xl font-semibold tracking-tight text-midnight">{t("platform.controlCenter")}</h2>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <div className="hidden min-w-[260px] items-center gap-2 rounded-2xl border border-slate-200/80 bg-white/80 px-3 py-2 text-sm text-slate-400 md:flex">
+              <div className="hidden min-w-[260px] items-center gap-2 rounded-2xl border border-platforma-border/80 bg-white/80 px-3 py-2 text-sm text-platforma-faint md:flex">
                 <Search size={17} />
                 {t("platform.search")}
               </div>
               <div className="hidden text-right sm:block">
                 <p className="text-sm font-semibold text-midnight">{user?.email}</p>
-                <p className="text-xs text-slate-500">{user?.role}</p>
+                <p className="text-xs text-platforma-faint">{user?.role}</p>
               </div>
               <Button
                 variant="secondary"
@@ -127,7 +127,7 @@ export function PlatformLayout() {
                   end={item.end}
                   className={({ isActive }) =>
                     cn(
-                      "flex items-center gap-2 rounded-2xl border border-white/70 bg-white/70 px-3 py-3 text-sm font-semibold text-slate-600 shadow-sm backdrop-blur-xl",
+                      "flex items-center gap-2 rounded-2xl border border-white/70 bg-white/70 px-3 py-3 text-sm font-semibold text-platforma-subtle shadow-sm backdrop-blur-xl",
                       isActive && "bg-midnight text-white",
                     )
                   }

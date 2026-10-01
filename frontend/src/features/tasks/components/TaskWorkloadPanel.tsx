@@ -61,7 +61,7 @@ function WorkloadAssigneeCard({
     <button
       type="button"
       className={`min-h-[168px] rounded-lg border p-4 text-left transition ${
-        isSelected ? "border-brand-300 bg-brand-50 shadow-sm" : "border-platforma-border bg-surface-muted hover:border-brand-200 hover:bg-platforma-card"
+        isSelected ? "border-brand-100 bg-brand-50 shadow-sm" : "border-platforma-border bg-surface-muted hover:border-brand-200 hover:bg-platforma-card"
       }`}
       onClick={() => onSelectAssignee(isSelected ? "" : assigneeValue)}
     >
@@ -121,8 +121,8 @@ function capacityLabel(status: string, t: (key: string) => string) {
 }
 
 function capacityClass(status: string) {
-  if (status === "overloaded") return "shrink-0 rounded-full bg-[var(--platforma-danger-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-danger ring-1 ring-[rgba(194,65,12,0.2)]";
-  if (status === "busy") return "shrink-0 rounded-full bg-[var(--platforma-warning-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-warning ring-1 ring-[rgba(151,90,22,0.24)]";
+  if (status === "overloaded") return "shrink-0 rounded-full bg-[var(--platforma-danger-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-danger ring-1 ring-platforma-danger/20";
+  if (status === "busy") return "shrink-0 rounded-full bg-[var(--platforma-warning-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-warning ring-1 ring-platforma-warning/[0.24]";
   if (status === "idle") return "shrink-0 rounded-full bg-surface-muted px-2 py-1 text-[10px] font-bold uppercase text-platforma-muted ring-1 ring-platforma-border";
-  return "shrink-0 rounded-full bg-[var(--platforma-success-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-success ring-1 ring-[rgba(21,128,61,0.18)]";
+  return "shrink-0 rounded-full bg-[var(--platforma-success-soft)] px-2 py-1 text-[10px] font-bold uppercase text-platforma-success ring-1 ring-platforma-success/[0.18]";
 }

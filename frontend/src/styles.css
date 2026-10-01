@@ -3,52 +3,52 @@
 @tailwind utilities;
 
 :root {
-  --platforma-bg: #f7f3ee;
-  --platforma-page-soft: #f4eee7;
-  --platforma-surface: #ffffff;
-  --platforma-surface-warm: #fffcf8;
-  --platforma-surface-muted: #f2ede6;
-  --platforma-surface-raised: rgba(255, 252, 248, 0.96);
-  --platforma-brand: #f5b37a;
-  --platforma-brand-hover: #ee995a;
-  --platforma-brand-strong: #df813f;
-  --platforma-brand-content: #a4470d;
-  --platforma-brand-soft: #fff3ea;
-  --platforma-focus-ring: rgba(164, 71, 13, 0.42);
-  --platforma-text-inverse: #ffffff;
+  --platforma-bg: var(--color-surface-canvas);
+  --platforma-page-soft: var(--color-surface-canvas);
+  --platforma-surface: var(--color-surface-default);
+  --platforma-surface-warm: var(--color-surface-subtle);
+  --platforma-surface-muted: var(--color-surface-subtle);
+  --platforma-surface-raised: var(--color-surface-default);
+  --platforma-brand: var(--color-brand-default);
+  --platforma-brand-hover: var(--color-brand-hover);
+  --platforma-brand-strong: var(--color-brand-pressed);
+  --platforma-brand-content: var(--color-brand-content);
+  --platforma-brand-soft: var(--color-brand-soft);
+  --platforma-focus-ring: var(--color-focus-ring);
+  --platforma-text-inverse: var(--color-text-inverse);
   --platforma-discovery: #4f46e5;
   --platforma-discovery-soft: #eef2ff;
   --platforma-discovery-border: #c7d2fe;
-  --platforma-ai: #6f4cc3;
-  --platforma-ai-hover: #5e3cae;
-  --platforma-ai-soft: #f4f0ff;
+  --platforma-ai: var(--color-ai-content);
+  --platforma-ai-hover: var(--color-ai-hover);
+  --platforma-ai-soft: var(--color-ai-soft);
   --platforma-ai-border: #ddd2ff;
-  --platforma-ai-end: #5e3cae;
-  --platforma-success: #15803d;
-  --platforma-success-soft: #ecfdf3;
-  --platforma-warning: #975a16;
-  --platforma-warning-soft: #fff7e6;
-  --platforma-warning-bold: #f4c04f;
-  --platforma-warning-bold-hover: #e9ac2d;
-  --platforma-warning-bold-pressed: #d99616;
-  --platforma-danger: #c2410c;
-  --platforma-danger-soft: #fff1ed;
-  --platforma-danger-hover: #9a3412;
-  --platforma-danger-pressed: #7c2d12;
-  --platforma-info: #0e7490;
-  --platforma-info-soft: #eaf9fc;
-  --platforma-neutral: #6b625a;
-  --platforma-neutral-soft: #f2ede6;
-  --platforma-ink: #17120f;
-  --platforma-midnight: #17120f;
-  --platforma-muted: #5f554d;
-  --platforma-muted-soft: #6b625a;
-  --platforma-border: #e6ddd2;
-  --platforma-shadow-soft: 0 1px 3px rgba(23, 18, 15, 0.06);
-  --platforma-shadow-elevated: 0 4px 12px rgba(23, 18, 15, 0.05);
-  --platforma-shadow-card: 0 4px 12px rgba(23, 18, 15, 0.05);
-  --platforma-shadow-panel: 0 16px 40px rgba(23, 18, 15, 0.1);
-  --platforma-shadow-premium: 0 16px 40px rgba(23, 18, 15, 0.1);
+  --platforma-ai-end: var(--color-ai-hover);
+  --platforma-success: var(--color-success-content);
+  --platforma-success-soft: var(--color-success-soft);
+  --platforma-warning: var(--color-warning-content);
+  --platforma-warning-soft: var(--color-warning-soft);
+  --platforma-warning-bold: var(--color-warning-soft);
+  --platforma-warning-bold-hover: color-mix(in srgb, var(--color-warning-content) 4%, var(--color-warning-soft));
+  --platforma-warning-bold-pressed: color-mix(in srgb, var(--color-warning-content) 8%, var(--color-warning-soft));
+  --platforma-danger: var(--color-danger-content);
+  --platforma-danger-soft: var(--color-danger-soft);
+  --platforma-danger-hover: var(--color-danger-hover);
+  --platforma-danger-pressed: var(--color-danger-pressed);
+  --platforma-info: var(--color-info-content);
+  --platforma-info-soft: var(--color-info-soft);
+  --platforma-neutral: var(--color-text-muted);
+  --platforma-neutral-soft: var(--color-surface-subtle);
+  --platforma-ink: var(--color-text-primary);
+  --platforma-midnight: var(--color-text-primary);
+  --platforma-muted: var(--color-text-secondary);
+  --platforma-muted-soft: var(--color-text-muted);
+  --platforma-border: var(--color-border-default);
+  --platforma-shadow-soft: 0 1px 3px rgba(23, 32, 30, 0.06);
+  --platforma-shadow-elevated: 0 4px 12px rgba(23, 32, 30, 0.05);
+  --platforma-shadow-card: 0 4px 12px rgba(23, 32, 30, 0.05);
+  --platforma-shadow-panel: 0 16px 40px rgba(23, 32, 30, 0.1);
+  --platforma-shadow-premium: 0 16px 40px rgba(23, 32, 30, 0.1);
   --platforma-radius-card: 12px;
   --platforma-radius-control: 10px;
   --platforma-radius-modal: 16px;
@@ -101,7 +101,25 @@ select {
 }
 
 ::selection {
-  background: rgba(245, 179, 122, 0.36);
+  background: var(--color-brand-border);
+}
+
+@layer base {
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-brand-default);
+  }
+
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled {
+    accent-color: var(--color-disabled-content);
+  }
 }
 
 @layer components {
@@ -134,7 +152,7 @@ select {
   }
 
   .platforma-overlay-backdrop {
-    background: rgba(23, 18, 15, 0.46);
+    background: rgba(23, 32, 30, 0.46);
     backdrop-filter: blur(10px);
   }
 
@@ -185,8 +203,9 @@ select {
   }
 
   .platforma-focus-ring:focus-visible {
-    border-color: var(--platforma-brand-content);
-    box-shadow: 0 0 0 4px var(--platforma-focus-ring);
+    outline: 2px solid var(--platforma-focus-ring);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--color-focus-halo);
   }
 
   .platforma-ai-surface {
@@ -274,16 +293,16 @@ select {
 
 .custom-scrollbar::-webkit-scrollbar-track {
   border-radius: 4px;
-  background: #f2ede6;
+  background: var(--platforma-surface-muted);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  background: #d4c7ba;
+  background: var(--color-border-control);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #bda898;
+  background: var(--platforma-muted);
 }
 
 .focus-visible-ring:focus-visible {

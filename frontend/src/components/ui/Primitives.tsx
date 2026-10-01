@@ -12,9 +12,9 @@ export type UiTone = "brand" | "ai" | "green" | "amber" | "red" | "slate";
 const toneClasses: Record<UiTone, string> = {
   brand: "bg-brand-50 text-brand-700 ring-brand-100",
   ai: "bg-ai-50 text-ai-700 ring-ai-100",
-  green: "bg-[var(--platforma-success-soft)] text-platforma-success ring-[rgba(21,128,61,0.18)]",
-  amber: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-[rgba(183,121,31,0.22)]",
-  red: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-[rgba(194,65,12,0.2)]",
+  green: "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/[0.18]",
+  amber: "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/[0.22]",
+  red: "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/20",
   slate: "bg-surface-muted text-platforma-text ring-platforma-border",
 };
 
@@ -97,7 +97,7 @@ export function ProductionKpiCard({
   );
 
   const baseClassName = cn(
-    "rounded-card border border-platforma-border bg-surface-card p-4 shadow-card transition-colors hover:border-brand-100 hover:bg-surface-warm",
+    "rounded-card border border-platforma-border bg-surface-card p-4 shadow-card transition-colors hover:border-brand-100 hover:bg-surface-hover",
     className,
   );
 
@@ -126,7 +126,7 @@ export function SegmentedControl<T extends string>({
             type="button"
             className={cn(
               "platforma-focus-ring min-h-8 rounded-control px-3 text-sm font-semibold transition",
-              active ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-warm hover:text-platforma-text",
+              active ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100" : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
             )}
             onClick={() => onChange(option.value)}
           >
@@ -162,7 +162,7 @@ export function FilterChips<T extends string>({
               "platforma-focus-ring inline-flex min-h-9 shrink-0 items-center gap-2 rounded-control border px-3 text-sm font-semibold transition",
               active
                 ? "border-brand-200 bg-brand-50 text-brand-700 ring-1 ring-brand-100"
-                : "border-platforma-border bg-surface-card text-platforma-subtle hover:border-brand-100 hover:bg-surface-warm hover:text-platforma-text",
+                : "border-platforma-border bg-surface-card text-platforma-subtle hover:border-brand-100 hover:bg-surface-hover hover:text-platforma-text",
             )}
             onClick={() => onChange(option.value)}
           >
@@ -191,7 +191,7 @@ export function FloatingActionButton({
     <button
       type="button"
       className={cn(
-        "fixed bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] right-5 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-brand-500 text-platforma-ink shadow-panel transition hover:bg-brand-600 sm:hidden",
+        "fixed bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] right-5 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-brand-500 text-white shadow-panel transition hover:bg-brand-600 sm:hidden",
         className,
       )}
       onClick={onClick}
@@ -254,7 +254,7 @@ export function BottomSheet({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end bg-[rgba(23,18,15,0.46)] backdrop-blur-sm xl:hidden">
+    <div className="fixed inset-0 z-50 flex items-end bg-platforma-ink/[0.46] backdrop-blur-sm xl:hidden">
       <button className="absolute inset-0 cursor-default" type="button" aria-label={t("common.close")} onClick={onClose} />
       <section className="relative max-h-[86dvh] w-full overflow-hidden rounded-t-[1.25rem] border border-platforma-border bg-surface-card shadow-panel">
         <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-surface-muted" />
@@ -311,7 +311,7 @@ export function EntityListItem({
 
   const baseClassName = cn(
     "flex min-h-[4.25rem] w-full items-center gap-3 rounded-card border bg-surface-card px-3.5 py-3 text-left shadow-sm transition-colors",
-    selected ? "border-brand-100 bg-brand-50 ring-2 ring-brand-100" : "border-platforma-border hover:border-brand-100 hover:bg-surface-warm",
+    selected ? "border-brand-100 bg-brand-50 ring-2 ring-brand-100" : "border-platforma-border hover:border-brand-100 hover:bg-surface-hover",
     className,
   );
 

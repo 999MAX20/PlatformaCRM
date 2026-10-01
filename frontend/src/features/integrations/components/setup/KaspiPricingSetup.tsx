@@ -85,14 +85,14 @@ export function KaspiPricingInlineSetup({ businessId, canManage }: { businessId:
   const stopped = Boolean(control.data?.emergency_stop_enabled);
 
   return (
-    <div className="w-full space-y-4 rounded-card border border-slate-200 bg-slate-50 p-4">
+    <div className="w-full space-y-4 rounded-card border border-platforma-border bg-surface-muted p-4">
       {error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
 
-      <div className="rounded-card border border-amber-200 bg-amber-50 p-4">
+      <div className="rounded-card border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] p-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-sm font-black text-amber-950">{t("integrations.kaspiPricing.productTitle")}</p>
-            <p className="mt-1 text-sm font-semibold leading-6 text-amber-800">
+            <p className="text-sm font-black text-platforma-warning">{t("integrations.kaspiPricing.productTitle")}</p>
+            <p className="mt-1 text-sm font-semibold leading-6 text-platforma-warning">
               {t("integrations.kaspiPricing.productDescription")}
             </p>
           </div>
@@ -106,28 +106,28 @@ export function KaspiPricingInlineSetup({ businessId, canManage }: { businessId:
 
       <div className="grid gap-2 sm:grid-cols-4">
         <div className="rounded-2xl bg-white p-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{t("integrations.kaspiPricing.rules")}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.kaspiPricing.rules")}</p>
           <p className="mt-1 text-sm font-black text-midnight">{ruleList.length}</p>
         </div>
         <div className="rounded-2xl bg-white p-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{t("integrations.kaspiPricing.activeRules")}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.kaspiPricing.activeRules")}</p>
           <p className="mt-1 text-sm font-black text-midnight">{activeCount}</p>
         </div>
         <div className="rounded-2xl bg-white p-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{t("integrations.kaspiPricing.autopilot")}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.kaspiPricing.autopilot")}</p>
           <p className="mt-1 text-sm font-black text-midnight">{autopilotCount}</p>
         </div>
         <div className="rounded-2xl bg-white p-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{t("integrations.kaspiPricing.signals")}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-platforma-faint">{t("integrations.kaspiPricing.signals")}</p>
           <p className="mt-1 text-sm font-black text-midnight">{alertList.length}</p>
         </div>
       </div>
 
-      <div className={cn("rounded-card border p-4", stopped ? "border-red-200 bg-red-50" : "border-emerald-200 bg-emerald-50")}>
+      <div className={cn("rounded-card border p-4", stopped ? "border-platforma-danger/20 bg-[var(--platforma-danger-soft)]" : "border-platforma-success/20 bg-[var(--platforma-success-soft)]")}>
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className={cn("text-sm font-black", stopped ? "text-red-950" : "text-emerald-950")}>{stopped ? t("integrations.kaspiPricing.agentStopped") : t("integrations.kaspiPricing.agentReady")}</p>
-            <p className={cn("mt-1 text-sm font-semibold leading-6", stopped ? "text-red-800" : "text-emerald-800")}>
+            <p className={cn("text-sm font-black", stopped ? "text-platforma-danger" : "text-platforma-success")}>{stopped ? t("integrations.kaspiPricing.agentStopped") : t("integrations.kaspiPricing.agentReady")}</p>
+            <p className={cn("mt-1 text-sm font-semibold leading-6", stopped ? "text-platforma-danger" : "text-platforma-success")}>
               {stopped ? control.data?.emergency_stop_reason || t("integrations.kaspiPricing.priceApplyBlocked") : t("integrations.kaspiPricing.emergencyStopDescription")}
             </p>
           </div>
@@ -143,7 +143,7 @@ export function KaspiPricingInlineSetup({ businessId, canManage }: { businessId:
         </div>
       </div>
 
-      <div className="rounded-card border border-slate-200 bg-white p-4">
+      <div className="rounded-card border border-platforma-border bg-white p-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-black text-midnight">{t("integrations.kaspiPricing.latestChange")}</p>
           <Link to="/app/pricing">
@@ -153,15 +153,15 @@ export function KaspiPricingInlineSetup({ businessId, canManage }: { businessId:
           </Link>
         </div>
         {latestLog ? (
-          <div className="mt-3 rounded-2xl bg-slate-50 p-3">
+          <div className="mt-3 rounded-2xl bg-surface-muted p-3">
             <p className="text-sm font-black text-midnight">{latestLog.product_name || latestLog.product_sku}</p>
-            <p className="mt-1 text-sm font-semibold text-slate-600">
+            <p className="mt-1 text-sm font-semibold text-platforma-subtle">
               {Number(latestLog.old_price).toLocaleString("ru-KZ")} ₸ → {Number(latestLog.new_price).toLocaleString("ru-KZ")} ₸ · {readableStatus(latestLog.status, t)}
             </p>
-            {latestLog.error ? <p className="mt-1 text-xs font-semibold text-red-600">{merchantSafeIntegrationError(latestLog.error, t)}</p> : null}
+            {latestLog.error ? <p className="mt-1 text-xs font-semibold text-platforma-danger">{merchantSafeIntegrationError(latestLog.error, t)}</p> : null}
           </div>
         ) : (
-          <p className="mt-3 rounded-2xl bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-500">{t("integrations.kaspiPricing.noChanges")}</p>
+          <p className="mt-3 rounded-2xl bg-surface-muted px-3 py-2 text-sm font-semibold text-platforma-faint">{t("integrations.kaspiPricing.noChanges")}</p>
         )}
       </div>
     </div>

@@ -76,12 +76,12 @@ export function InviteAcceptPage() {
     <main className="min-h-screen bg-soft-mesh px-4 py-8">
       <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-xl items-center">
         <div className="glass-panel w-full rounded-[2rem] p-6 sm:p-8">
-          <div className="mb-6 grid h-14 w-14 place-items-center rounded-3xl bg-ai-gradient text-white shadow-glow">
+          <div className="mb-6 grid h-14 w-14 place-items-center rounded-3xl bg-brand-500 text-white shadow-glow">
             <KeyRound size={24} />
           </div>
           <p className="text-sm font-black uppercase tracking-[0.16em] text-brand-700">{t("invite.eyebrow")}</p>
           <h1 className="mt-2 text-3xl font-black text-midnight">{preview.data?.business_name || "PlatformaCRM"}</h1>
-          <p className="mt-3 text-sm leading-6 text-slate-500">
+          <p className="mt-3 text-sm leading-6 text-platforma-faint">
             {t("invite.description")}
           </p>
 
@@ -98,7 +98,7 @@ export function InviteAcceptPage() {
             <div className="mt-5 rounded-3xl border border-brand-100 bg-brand-50/70 p-4">
               <p className="text-xs font-black uppercase tracking-[0.14em] text-brand-700">{t("invite.assignedRole")}</p>
               <p className="mt-1 text-lg font-black text-midnight">{t(`settings.role.${preview.data.role}`)}</p>
-              <p className="mt-1 text-sm leading-6 text-slate-500">{t(`settings.roleDescription.${preview.data.role}`)}</p>
+              <p className="mt-1 text-sm leading-6 text-platforma-faint">{t(`settings.roleDescription.${preview.data.role}`)}</p>
             </div>
           ) : null}
           {acceptMutation.error ? <div className="mt-5"><ErrorState message={getApiErrorMessage(acceptMutation.error)} /></div> : null}
@@ -108,11 +108,11 @@ export function InviteAcceptPage() {
               <Input label={t("invite.email")} value={preview.data?.email || ""} readOnly />
               {!isAuthenticated ? (
                 <>
-                  <p className="text-sm leading-6 text-slate-600">{t("invite.existingAccount")}</p>
+                  <p className="text-sm leading-6 text-platforma-subtle">{t("invite.existingAccount")}</p>
                   <Link
                     to="/login"
                     state={{ from: location }}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-ai-gradient px-5 py-3 text-sm font-black text-white shadow-glow"
+                    className="platforma-focus-ring flex w-full items-center justify-center gap-2 rounded-2xl hover:bg-brand-600 active:bg-brand-800 bg-brand-500 px-5 py-3 text-sm font-black text-white shadow-glow"
                   >
                     {t("invite.signInToAccept")}
                     <ArrowRight size={18} />
