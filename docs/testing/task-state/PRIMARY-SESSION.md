@@ -2,6 +2,25 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Local dev restart / RUNNING, 2026-10-01
+
+- Owner request: «подними dev». Environment-only action, same registered primary,
+  canonical root and codex/ui-testing-toolkit, clean starting HEAD b0716dc.
+  No source implementation, schema migration, seed or deployment scope.
+- No listeners on5173/8000 and no app Python processes before restart. Hidden
+  Django runserver127.0.0.1:8000 launched from canonical root (parent9068,
+  child9420); Vite127.0.0.1:5173 strictPort from canonical frontend (PID11244).
+  Existing approved local antivirus runtime restarted through its start.ps1:
+  supervisor14164, scanner11408, worker4196, beat8744. Other processes untouched.
+- PASS: frontend HTML and src/main.tsx HTTP200; backend /health/ and /health/db/
+  HTTP200; proxied /api/clients/ HTTP401 as expected without authentication.
+  file_antivirus read-only readiness: ClamAV1.5.4/28139; fresh runtime heartbeat;
+  file worker scan_due_attachments successful, processed0. Logs are in ignored
+  output/dev-20261001 and output/local-file-antivirus. No application test/build
+  rerun required for starting existing services. Services intentionally remain up.
+- Previous redesign final receipt b0716dc CI36816413385 SUCCESS for both jobs,
+  remote SHA matched; this confirms the formerly pending point-in-time record below.
+
 ## CRM workspace reference redesign / VERIFIED + PUSHED, CI PENDING, 2026-10-01
 
 - Final candidate: de81c595c2e44d4176e4d07a2f00af8f5aa39670, normal-pushed
