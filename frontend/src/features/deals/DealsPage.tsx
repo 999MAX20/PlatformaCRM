@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Navigate, useSearchParams } from "react-router";
+import { Navigate, useNavigate, useSearchParams } from "react-router";
 
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
@@ -51,6 +51,7 @@ export function DealsPage() {
   const showNotification = useNotification();
   const { notifyError } = useActionFeedback();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"table" | "kanban">(() => localStorage.getItem("platforma.deals.view") === "table" ? "table" : "kanban");
   const [page, setPage] = useState(1);
@@ -78,6 +79,11 @@ export function DealsPage() {
     filters,
     t,
   );
+  useEffect(() => {
+    if (data.pipelines.length && filters.pipelineId && !data.pipelines.some((pipeline) => String(pipeline.id) === filters.pipelineId)) {
+      updateFilters({ pipelineId: String(activePipeline), stageFilter: "all" });
+    }
+  }, [data.pipelines, filters.pipelineId, activePipeline, updateFilters]);
   const sortedRows = useMemo(() => {
     return [...rows].sort(
       (a, b) =>
@@ -272,7 +278,8 @@ export function DealsPage() {
   return (
     <>
       <CrmWorkspacePage
-        heightClassName="h-[calc(100dvh-10.5rem)] min-h-[360px] lg:h-[calc(100dvh-5.5rem)] lg:min-h-0"
+        edgeToEdge
+        heightClassName="h-[calc(100dvh-var(--app-header-height)-5.5rem-env(safe-area-inset-bottom))] min-h-[320px] lg:h-[calc(100dvh-var(--app-header-height))] lg:min-h-0"
         contentClassName="gap-0"
         maxWidthClassName="max-w-none"
         testId={dealWorkspaceReady ? "deals-workspace-ready" : undefined}
@@ -288,6 +295,7 @@ export function DealsPage() {
           <ErrorState message={t("deals.noPipeline")} />
         ) : (
           <CrmTableSurface
+            frameless
             filters={
                 <DealsFilters
                   filters={filters}
@@ -345,6 +353,7 @@ export function DealsPage() {
         stages={stagesForForm}
         isPending={actions.createMutation.isPending}
         onClose={() => actions.setCreateOpen(false)}
+        onCreateClient={hasPermission(user, business.id, "clients", "create") ? () => navigate("/app/clients?create=1") : undefined}
         onFormChange={actions.setForm}
         onSubmit={() =>
           actions.createMutation.mutate({

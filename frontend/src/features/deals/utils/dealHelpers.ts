@@ -1,5 +1,15 @@
-import type { Deal, PipelineStage, Task } from "../../../types";
+import type { Deal, Pipeline, PipelineStage, Task } from "../../../types";
 import type { Translate } from "../types";
+
+export function selectDealPipeline(pipelines: Pipeline[], requestedId?: string) {
+  return pipelines.find((pipeline) => String(pipeline.id) === requestedId)
+    || pipelines.find((pipeline) => pipeline.is_default) || pipelines[0];
+}
+
+export function dealPipelineLabel(pipeline: Pipeline, t: Translate) {
+  return pipeline.template_key === "smb_default" && pipeline.name === "Sales pipeline"
+    ? t("deals.defaultPipeline") : pipeline.name;
+}
 
 export function money(value: string | number, currency = "KZT") {
   return `${Number(value || 0).toLocaleString("ru-RU")} ${currency}`;

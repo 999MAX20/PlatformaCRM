@@ -1,0 +1,36 @@
+import { expect, test } from "@playwright/test";
+import { representativeWorkspace } from "./support/crm-workspace";
+
+test("six Kanban columns fit desktop and wheel scrolling stays in its column", async ({ page }, testInfo) => {
+  test.skip(process.env.ZANI_QUALITY_GATE !== "1" || testInfo.project.name !== "desktop-chromium", "Disposable desktop geometry");
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width: 1536, height: 696 });
+  const session = await representativeWorkspace(page);
+  await page.goto(`/app/deals?pipeline=${session.pipeline.id}`);
+  const board = page.getByTestId("deals-kanban-board");
+  await expect(board).toBeVisible();
+  const stages = board.locator("section");
+  await expect(stages).toHaveCount(6);
+  const bounds = await board.boundingBox();
+  const last = await stages.last().boundingBox();
+  expect(last!.x + last!.width).toBeLessThanOrEqual(bounds!.x + bounds!.width + 1);
+  expect(await board.evaluate(element => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+  const scrolls = board.locator('[data-testid^="deals-kanban-scroll-"]');
+  const first = scrolls.first();
+  const second = scrolls.nth(1);
+  await expect(first).toHaveCSS("scrollbar-width", "none");
+  await expect(first).toHaveCSS("overscroll-behavior-y", "contain");
+  expect(await first.evaluate(element => element.scrollHeight > element.clientHeight)).toBeTruthy();
+  const headerBefore = await stages.first().locator("header").boundingBox();
+  await first.hover();
+  await page.mouse.wheel(0, 420);
+  await expect.poll(() => first.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+  expect(await second.evaluate(element => element.scrollTop)).toBe(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  const headerAfter = await stages.first().locator("header").boundingBox();
+  expect(headerAfter!.y).toBe(headerBefore!.y);
+  await page.screenshot({ path: testInfo.outputPath("six-columns-independent-scroll.png"), animations: "disabled" });
+  await page.setViewportSize({ width: 1280, height: 720 });
+  expect(await board.evaluate(element => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+  expect((await stages.first().boundingBox())!.width).toBeGreaterThanOrEqual(180);
+});

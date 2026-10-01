@@ -8,7 +8,7 @@ import type {
   DealRow,
   Translate,
 } from "../types";
-import { dealRisk, dealStageLabel, nextOpenTask } from "../utils/dealHelpers";
+import { dealRisk, dealStageLabel, nextOpenTask, selectDealPipeline } from "../utils/dealHelpers";
 import type { Client, PipelineStage, Task, TeamMember } from "../../../types";
 
 export function useDealMetrics(
@@ -17,12 +17,7 @@ export function useDealMetrics(
   t: Translate,
 ) {
   const { user } = useAuth();
-  const activePipeline = Number(
-    filters.pipelineId ||
-      data.pipelines.find((pipeline) => pipeline.is_default)?.id ||
-      data.pipelines[0]?.id ||
-      0,
-  );
+  const activePipeline = selectDealPipeline(data.pipelines, filters.pipelineId)?.id || 0;
   const activeStages = useMemo(
     () =>
       data.stages

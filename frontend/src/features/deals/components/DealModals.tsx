@@ -12,7 +12,7 @@ import type {
   TeamMember,
 } from "../../../types";
 import type { DealActionFlow, DealCreateForm, Translate } from "../types";
-import { dealStageLabel, money } from "../utils/dealHelpers";
+import { dealPipelineLabel, dealStageLabel, money } from "../utils/dealHelpers";
 
 export function CreateDealModal({
   open,
@@ -23,6 +23,7 @@ export function CreateDealModal({
   stages,
   isPending,
   onClose,
+  onCreateClient,
   onFormChange,
   onSubmit,
   t,
@@ -35,6 +36,7 @@ export function CreateDealModal({
   stages: PipelineStage[];
   isPending: boolean;
   onClose: () => void;
+  onCreateClient?: () => void;
   onFormChange: (form: DealCreateForm) => void;
   onSubmit: () => void;
   t: Translate;
@@ -49,7 +51,8 @@ export function CreateDealModal({
           onSubmit();
         }}
       >
-        {!clients.length ? <StatusNotice tone="warning" title={t("deals.needClientFirst")} /> : null}
+        {!clients.length ? <StatusNotice tone="warning" title={t("deals.needClientFirst")}
+          action={onCreateClient ? <Button type="button" size="sm" variant="secondary" onClick={onCreateClient}>{t("clients.create")}</Button> : undefined} /> : null}
         <Input
           placeholder={t("deals.titlePlaceholder")}
           value={form.title}
@@ -78,7 +81,7 @@ export function CreateDealModal({
           }
           options={pipelines.map((pipeline) => ({
             value: String(pipeline.id),
-            label: pipeline.name,
+            label: dealPipelineLabel(pipeline, t),
           }))}
         />
         <Select

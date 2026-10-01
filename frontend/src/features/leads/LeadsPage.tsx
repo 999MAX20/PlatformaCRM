@@ -237,7 +237,8 @@ export function LeadsPage() {
 
   return (
     <CrmWorkspacePage
-        heightClassName="h-[calc(100dvh-10.5rem)] min-h-[360px] lg:h-[calc(100dvh-5.5rem)] lg:min-h-0"
+        edgeToEdge
+        heightClassName="h-[calc(100dvh-var(--app-header-height)-5.5rem-env(safe-area-inset-bottom))] min-h-[320px] lg:h-[calc(100dvh-var(--app-header-height))] lg:min-h-0"
       contentClassName="gap-3"
       maxWidthClassName="max-w-none"
       testId="leads-workspace-ready"

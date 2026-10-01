@@ -4567,6 +4567,7 @@ export const ru: Record<string, string> = {
   "deals.notSet": "Не задано",
   "deals.lostReasonAfterClose":
     "Причина потери появится после закрытия сделки.",
+  "deals.defaultPipeline": "Основная воронка",
   "deals.pipeline": "Воронка",
   "deals.responsible": "Ответственный",
   "deals.unassigned": "Не назначен",

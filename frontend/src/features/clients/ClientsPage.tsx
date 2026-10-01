@@ -298,7 +298,8 @@ export function ClientsPage() {
     <>
       {paymentsOpen && <PaymentsJournal key={business.id} onClose={() => setPaymentsOpen(false)} />}
       <CrmWorkspacePage
-        heightClassName="h-[calc(100dvh-10.5rem)] min-h-[360px] lg:h-[calc(100dvh-5.5rem)] lg:min-h-0"
+        edgeToEdge
+        heightClassName="h-[calc(100dvh-var(--app-header-height)-5.5rem-env(safe-area-inset-bottom))] min-h-[320px] lg:h-[calc(100dvh-var(--app-header-height))] lg:min-h-0"
         maxWidthClassName="max-w-none"
         testId={pageError ? undefined : "clients-workspace-ready"}
       >
@@ -310,6 +311,7 @@ export function ClientsPage() {
 
         <main className="min-h-0 min-w-0 flex-1">
             <CrmTableSurface
+              frameless
               className="h-full"
               filters={
                 <ClientsFilters

@@ -4585,6 +4585,7 @@ export const en: Record<string, string> = {
   "deals.notSet": "Not set",
   "deals.lostReasonAfterClose":
     "The loss reason will appear after the deal is closed.",
+  "deals.defaultPipeline": "Main pipeline",
   "deals.pipeline": "Pipeline",
   "deals.responsible": "Responsible",
   "deals.selectedDeal": "Selected deal",

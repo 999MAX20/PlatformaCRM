@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import type { CrmActiveFilter, CrmControlTab } from "./CrmControlBar";
 
-export function CrmWorkspaceToolbar<T extends string>({ search, searchLabel, onSearchChange, searchTestId, value, tabs, onChange, actions, activeFilters = [], onClearFilter, onClearAll, clearAllLabel, ariaLabel }: {
+export function CrmWorkspaceToolbar<T extends string>({ search, searchLabel, onSearchChange, searchTestId, value, tabs, onChange, actions, secondaryActions, activeFilters = [], onClearFilter, onClearAll, clearAllLabel, ariaLabel }: {
   search: string;
   searchLabel: string;
   onSearchChange: (value: string) => void;
@@ -12,6 +12,7 @@ export function CrmWorkspaceToolbar<T extends string>({ search, searchLabel, onS
   tabs: CrmControlTab<T>[];
   onChange: (value: T) => void;
   actions?: ReactNode;
+  secondaryActions?: ReactNode;
   activeFilters?: CrmActiveFilter[];
   onClearFilter?: (id: string) => void;
   onClearAll?: () => void;
@@ -34,6 +35,7 @@ export function CrmWorkspaceToolbar<T extends string>({ search, searchLabel, onS
           {tab.label}{typeof tab.count === "number" ? <span className="rounded bg-black/[0.04] px-1.5 text-xs font-normal tabular-nums">{tab.count}</span> : null}
         </button>)}
       </div>
+      {secondaryActions}
       {activeFilters.length ? <div className="flex flex-wrap items-center gap-2">
         {activeFilters.map((filter) => <span key={filter.id} className="inline-flex min-h-8 items-center gap-2 rounded-full bg-surface-muted px-3 text-xs text-platforma-text">
           {filter.label}: {filter.value}

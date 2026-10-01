@@ -6,14 +6,22 @@ Last updated: 2026-07-17
 
 The owner-approved references for leads, deals and clients are retained in
 `references/main_references/crm-workspaces-20261001` (repository root).
-These three workspaces share a full-height white surface, ivory surroundings,
-aligned insets, entity search, compact quick views, removable filter chips and
+Owner follow-up on2026-10-01 removes the parent card on all three list routes:
+the workspace fills the area below the57px header without outer border, shadow,
+rounding or page insets. Shared components retain framed defaults elsewhere.
+These three workspaces share a full-height white surface,
+entity search, compact quick views, removable filter chips and
 bounded filter/column popovers. Tables retain sticky headings and numbered
 pagination; mobile height reserves space for the existing bottom navigation.
 Existing navigation, logo and global search remain separate from entity search.
 
 Kanban keeps actual pipeline stages in one horizontal row, with vertically
-scrollable cards and incremental loading per stage. Cards use real assignee,
+scrollable cards and incremental loading per stage. Up to six columns fit the
+desktop width from1280px; narrower screens and extra stages scroll horizontally.
+Each column scrolls independently with hidden vertical scrollbars and a fixed
+stage header. Empty boards retain their actual stage columns. Pipeline/client
+choices are scoped to the current business; the standard pipeline label is
+localized while custom names remain unchanged. Cards use real assignee,
 amount and next action/deadline. Never substitute an update/creation timestamp
 for a deadline. Stage money is shown only when the entire stage is loaded and
 every amount is visible in one currency; counts come from the scoped API.

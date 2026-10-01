@@ -105,20 +105,20 @@ export function AppLayout() {
   const usesWideCrmWorkspace = /^\/app\/(leads|clients|deals|ai-agents)(?:\/|$)/.test(
     location.pathname,
   );
-  const usesEdgeToEdgeDeals = /^\/app\/(leads|clients|deals)\/?$/.test(location.pathname);
+  const usesEdgeToEdgeCrm = /^\/app\/(leads|clients|deals)\/?$/.test(location.pathname);
   const aiAgentWorkspaceKey = location.pathname.match(/^\/app\/ai-agents(?:\/[^/]+)?/)?.[0];
   const workspaceAnimationKey = aiAgentWorkspaceKey || location.pathname;
 
   return (
-    <div className="min-h-screen bg-surface text-ink [--account-content-width:min(960px,calc(100vw_-_2rem))] [--global-search-width:calc(var(--account-content-width)*0.5)] sm:[--account-content-width:min(960px,calc(100vw_-_3rem))] lg:[--account-content-width:min(960px,calc(100vw_-_7rem))]">
+    <div className="min-h-screen bg-surface text-ink [--app-header-height:57px] [--account-content-width:min(960px,calc(100vw_-_2rem))] [--global-search-width:calc(var(--account-content-width)*0.5)] sm:[--account-content-width:min(960px,calc(100vw_-_3rem))] lg:[--account-content-width:min(960px,calc(100vw_-_7rem))]">
       <PageHeaderContext.Provider value={pageHeaderActions}>
         <div className="relative flex min-h-screen">
           <DesktopSidebar />
-          <div className="flex min-w-0 flex-1 flex-col pb-28 lg:pb-0">
+          <div className={`flex min-w-0 flex-1 flex-col ${usesEdgeToEdgeCrm ? "pb-[calc(5.5rem+env(safe-area-inset-bottom))]" : "pb-28"} lg:pb-0`}>
             <WorkspaceNavigation pageHeader={pageHeader} />
             <main
               key={workspaceAnimationKey}
-              className={`animate-fade-in mx-auto w-full flex-1 ${usesEdgeToEdgeDeals ? "px-2 pb-2" : "px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6"} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"} ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`}
+              className={`animate-fade-in mx-auto w-full flex-1 ${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}
             >
               <MeasuredWorkspaceOutlet />
             </main>

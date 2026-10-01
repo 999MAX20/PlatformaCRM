@@ -4571,6 +4571,7 @@ export const kk: Record<string, string> = {
   "deals.notSet": "Көрсетілмеген",
   "deals.lostReasonAfterClose":
     "Жоғалту себебі мәміле жабылғаннан кейін пайда болады.",
+  "deals.defaultPipeline": "Негізгі воронка",
   "deals.pipeline": "Воронка",
   "deals.responsible": "Жауапты",
   "deals.selectedDeal": "Таңдалған мәміле",

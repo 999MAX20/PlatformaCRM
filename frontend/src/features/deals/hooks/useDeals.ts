@@ -11,6 +11,7 @@ import { useDealBoard } from "./useDealBoard";
 import { useAuth } from "../../auth/AuthProvider";
 import { hasPermission } from "../../../lib/permissions";
 import type { DealFiltersState } from "../types";
+import { selectDealPipeline } from "../utils/dealHelpers";
 
 export function useDeals(filters?: DealFiltersState, viewMode: "table" | "kanban" = "kanban", page = 1, pageSize = 20) {
   const { business } = useActiveBusiness();
@@ -28,8 +29,10 @@ export function useDeals(filters?: DealFiltersState, viewMode: "table" | "kanban
     retry: false,
   });
 
-  const defaultPipeline = entityData.pipelines.data?.find((pipeline) => pipeline.is_default) || entityData.pipelines.data?.[0];
-  const activePipeline = Number(filters?.pipelineId || defaultPipeline?.id || 0);
+  const clients = useMemo(() => (entityData.clients.data || []).filter((client) => client.business === business?.id), [entityData.clients.data, business?.id]);
+  const pipelines = useMemo(() => (entityData.pipelines.data || []).filter((pipeline) => pipeline.business === business?.id), [entityData.pipelines.data, business?.id]);
+  const stages = useMemo(() => (entityData.pipelineStages.data || []).filter((stage) => stage.business === business?.id), [entityData.pipelineStages.data, business?.id]);
+  const activePipeline = selectDealPipeline(pipelines, filters?.pipelineId)?.id || 0;
   const listParams = useMemo<DealListParams>(() => {
     const params: DealListParams = {
       pipeline: activePipeline || undefined,
@@ -70,8 +73,8 @@ export function useDeals(filters?: DealFiltersState, viewMode: "table" | "kanban
     placeholderData: keepPreviousData,
   });
 
-  const clientMap = useMemo(() => new Map((entityData.clients.data || []).map((client) => [client.id, client])), [entityData.clients.data]);
-  const stageMap = useMemo(() => new Map((entityData.pipelineStages.data || []).map((stage) => [stage.id, stage])), [entityData.pipelineStages.data]);
+  const clientMap = useMemo(() => new Map(clients.map((client) => [client.id, client])), [clients]);
+  const stageMap = useMemo(() => new Map(stages.map((stage) => [stage.id, stage])), [stages]);
   const boardDeals = useMemo(() => board.data?.stages.flatMap((stage) => stage.deals) || [], [board.data?.stages]);
   const boardHasMoreByStage = useMemo(() => new Map((board.data?.stages || []).map((stage) => [String(stage.id), stage.has_more])), [board.data?.stages]);
   const displayDeals = viewMode === "kanban" ? boardDeals : deals.data?.results || [];
@@ -132,10 +135,10 @@ export function useDeals(filters?: DealFiltersState, viewMode: "table" | "kanban
     retryBoard,
     summary,
     data: {
-      clients: entityData.clients.data || [],
+      clients,
       leads: [] as Lead[],
-      pipelines: entityData.pipelines.data || [],
-      stages: entityData.pipelineStages.data || [],
+      pipelines,
+      stages,
       deals: displayDeals,
       tasks: Array.from(tasksByDeal.values()).flat(),
       activityEvents: [] as ActivityEvent[],

@@ -2,6 +2,76 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Deals workspace follow-up / VERIFIED LOCALLY, PUBLICATION PENDING, 2026-10-01
+
+- Demo seed completed through existing Client/Deal API views and lifecycle
+  services:30 deals IDs40–69,10 synthetic clients IDs139–148 in Business2.
+  Counts by template stage: new10, qualification8, proposal5, negotiation3,
+  won2, lost2. Batch marker demo-deals-20261001-business2; every title/name
+  starts with Демо. No contact details, payments or appointments created.
+  Online backup, batch script and manifest are in ignored
+  output/deals-followup-20261001. Second execution proved idempotence with
+  identical IDs/counts; all other businesses' deal IDs/timestamps unchanged.
+  Terminal status/reason/stage invariants asserted inside the transaction.
+- Final production build (build-frameless.log) and npm run check:bundle PASS.
+  After owner login, Chrome verification shows all30 cards and all six columns
+  at1536x696. The new deliverable tab has status=all; default open filter shows26.
+- Final targeted UI matrix29 PASS/10 conditional viewport/role skips:
+  `.venv/Scripts/python.exe output/deals-followup-20261001/verify.py
+  e2e/deals-workspace-density.spec.ts e2e/deals-empty-workspace.spec.ts
+  e2e/crm-workspaces-reference.spec.ts` (23/4, frameless.log), then the same
+  runner with e2e/crm-workspaces-deals.spec.ts e2e/crm-workspaces-data.spec.ts
+  (6/6, final-data-flows.log). Disposable databases/ports, real local API.
+  The latter covers51-card pagination/eight stages, transitions, managers and
+  locales.89 Node checks PASS (node.log); unchanged Node inputs reused.
+  Build command: same isolated runner with argument build; bundle command:
+  `npm run check:bundle` in frontend. No npm ci against the running dev server.
+  Full local backend suite not repeated: no backend/schema contract changed;
+  exact-candidate GitHub CI remains required. No deployment/provider acceptance.
+- Base d136f9f CI36840188356 confirmed SUCCESS. Remote main readback matches
+  d136f9f; fetch refspec excludes main, so use explicit main tracking fetch
+  for publication. No remote drift or concurrent writer detected.
+- Owner clarified: remove the parent card on all three CRM pages. Seed30 demo
+  deals in the existing local Zani E2E Demo (Business2), without renaming it.
+  Senim Dent was the requested display name but is absent; the user explicitly
+  selected Business2 after UI settings and DB confirmed the discrepancy.
+- Scope extension from owner: fit six desktop Kanban columns, independent column
+  scrolling with hidden scrollbars; inspect page/header/padding efficiency across
+  deals/leads/clients and consider removing the outer card. After UI work create
+  20–30 clearly marked synthetic deals in the explicitly selected local company.
+  Company and layout clarification resolved by the owner above. Earlier checks
+  remain evidence for their unchanged inputs, not the expanded layout acceptance.
+- Owner request: add client-creation navigation to the missing-client notice;
+  investigate empty Kanban and duplicate Sales pipeline choices; compare all
+  three approved references again and correct evidenced omissions in this flow.
+- Same primary/canonical root/branch; clean base d136f9fd6e479f78d245829d4ec19a1dfb04f5dc.
+  Mode: focused frontend correction and authorized local demo-data creation. Reuse
+  StatusNotice action, clients?create=1, existing Kanban and permission helpers.
+- Reproduced in source/screenshots: empty rows bypass both display modes;
+  missing-client notice has no action; view selection lacks reference highlight.
+  Pipeline records1/2 have identical default names but different businesses;
+  useDeals consumes an unfiltered accessible-business catalogue. Backend scope
+  must remain intact; restrict this workspace to its current business.
+- Acceptance: empty board keeps actual stage columns; table empty state works;
+  permission-aware client CTA opens the existing creation form; current-business
+  pipeline/client/stage data and invalid URL handling; visible selected view;
+  representative populated pages compared against all three PNGs.
+- Required: isolated targeted desktop/mobile browser and API flow checks,
+  frontend build/i18n/type/budget, static committed-range hygiene, normal push
+  and actual CI. No backend contract/schema/lifecycle change planned; backend
+  suites only if investigation requires such a change. Authorized working-DB
+  seed only for Business2:30 marked demo deals and necessary synthetic clients,
+  no real contact details; no pipeline deletion/merge, migrations or deployment.
+- Seed impact: existing API serializers/permissions and terminal action services;
+  owner2 is active, Business2 has zero deals and zero active automation rules.
+  SQLite online backup before writes; one transaction and unique batch markers.
+  Existing activity/audit remain enabled; no external messages, provider calls,
+  payments, appointments or AI actions. Permissions and API contracts unchanged.
+- Expanded layout verification:23 PASS/4 conditional skips, frameless.log,
+  including independent wheel scrolling, all six columns fitting1280/1536px,
+  all three pages flush under57px header, responsive controls and real API
+  client/deal creation from the missing-client flow. Screenshots inspected.
+
 ## Local dev restart / RUNNING, 2026-10-01
 
 - Owner request: «подними dev». Environment-only action, same registered primary,

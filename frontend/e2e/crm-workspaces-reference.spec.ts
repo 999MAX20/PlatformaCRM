@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { crmSession, representativeWorkspace } from "./support/crm-workspace";
 
-test("the three real CRM workspaces share reference-sized surfaces", async ({ page }, testInfo) => {
+test("the three real CRM workspaces fill the area below the header without outer cards", async ({ page }, testInfo) => {
   test.skip(process.env.ZANI_QUALITY_GATE !== "1", "Requires disposable synthetic CRM data");
   test.skip(testInfo.project.name !== "desktop-chromium", "Reference viewport; other projects have responsive coverage below");
   test.setTimeout(180_000);
@@ -22,8 +22,10 @@ test("the three real CRM workspaces share reference-sized surfaces", async ({ pa
   }
   await testInfo.attach("workspace-geometry", { body: JSON.stringify(boxes, null, 2), contentType: "application/json" });
   for (const box of boxes) {
-    expect(box.y + box.height).toBeLessThanOrEqual(941 - 8);
-    expect(box.y + box.height).toBeGreaterThanOrEqual(941 - 40);
+    expect(Math.abs(box.y + box.height - 941)).toBeLessThanOrEqual(2);
+    expect(Math.abs(box.x - 64)).toBeLessThanOrEqual(2);
+    expect(Math.abs(box.y - 57)).toBeLessThanOrEqual(2);
+    expect(Math.abs(box.width - (1672 - 64))).toBeLessThanOrEqual(2);
     expect(Math.abs(box.x - boxes[0].x)).toBeLessThanOrEqual(2);
     expect(Math.abs(box.y - boxes[0].y)).toBeLessThanOrEqual(2);
     expect(Math.abs(box.width - boxes[0].width)).toBeLessThanOrEqual(2);

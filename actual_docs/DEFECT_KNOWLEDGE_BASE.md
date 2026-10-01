@@ -1015,6 +1015,31 @@ Copy this section for every new confirmed precedent:
 - Audit rule: keyboard shortcuts must respect focused controls; bulk selection
   semantics must be based on identities, not lengths.
 
+### ZD-039 — Empty deal board and missing client creation path
+
+- Confirmed: the empty-row return bypassed Kanban entirely; the missing-client
+  notice in deal creation offered no route to create the required client.
+- Keep actual stage columns in empty Kanban; retain the table empty state.
+  Reuse clients?create=1 from the notice only with clients:create permission.
+- Status: VERIFIED locally in the2026-10-01 follow-up. Desktop/tablet/mobile
+  checks create a real client and then a deal through the reachable UI/API.
+  Publication and exact-SHA CI are tracked in PRIMARY-SESSION.
+- Audit rule: an empty collection must not remove the selected workspace mode;
+  required prerequisites should offer the existing permitted action.
+
+### ZD-040 — Deal workspace mixed accessible businesses' catalogues
+
+- Confirmed: two default Sales pipeline records belonged to different businesses.
+  The workspace consumed both, and foreign clients masked its empty-client state.
+- Scope pipelines, stages and clients to the current business; normalize an
+  invalid/foreign pipeline URL before requesting its board. Backend permission
+  scope is unchanged; no records are merged or deleted.
+- Status: VERIFIED locally against one account with two businesses and a client
+  only in the other business. Pipeline options, outgoing board requests and the
+  client/deal creation result are asserted. Publication is in PRIMARY-SESSION.
+- Audit rule: accessible-business catalogues are not current-business catalogues;
+  test a multi-business account and stale URL selection explicitly.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

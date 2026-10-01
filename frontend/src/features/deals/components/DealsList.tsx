@@ -1,5 +1,5 @@
 import { ChevronDown, FolderSearch, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 
 import { Button } from "../../../components/ui/Button";
 import { CRM_TABLE_ROW_HEIGHT } from "../../../components/crm";
@@ -136,7 +136,7 @@ export function DealsList({
       : active;
   }, [rows, stages, t]);
 
-  if (!rows.length)
+  if (!rows.length && (viewMode !== "kanban" || !groups.length))
     return (
       <EmptyDeals
         hasFilters={hasFilters}
@@ -236,7 +236,8 @@ export function DealsList({
     return (
       <div
         data-testid="deals-kanban-board"
-        className="grid min-h-0 flex-1 auto-cols-[minmax(238px,1fr)] grid-flow-col gap-2 overflow-x-auto overscroll-x-contain p-3 [scrollbar-gutter:stable]"
+        className={cn("grid min-h-0 flex-1 auto-cols-[minmax(210px,1fr)] grid-flow-col gap-2 overflow-x-auto overscroll-x-contain p-2", groups.length <= 6 && "xl:grid-cols-[repeat(var(--kanban-stage-count),minmax(0,1fr))]")}
+        style={{ "--kanban-stage-count": groups.length } as CSSProperties}
       >
         {groups.map((group) => (
           <section
@@ -259,7 +260,7 @@ export function DealsList({
                     <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: group.color }} />
                     {group.name}
                   </h3>
-                  {!hasMoreByStage?.get(group.id) && group.rows.every((deal) => deal.amount != null) && new Set(group.rows.map((deal) => deal.currency)).size <= 1 ? <p className="mt-1 text-[12px] font-bold text-platforma-text">
+                  {group.rows.length > 0 && !hasMoreByStage?.get(group.id) && group.rows.every((deal) => deal.amount != null) && new Set(group.rows.map((deal) => deal.currency)).size <= 1 ? <p className="mt-1 text-[12px] font-bold text-platforma-text">
                     {money(
                       group.rows.reduce(
                         (sum, deal) => sum + Number(deal.amount || 0),
@@ -275,7 +276,11 @@ export function DealsList({
               </div>
 
             </header>
-            <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto bg-surface-muted p-1.5">
+            <div data-testid={`deals-kanban-scroll-${group.id}`} className="no-scrollbar min-h-0 flex-1 space-y-1.5 overflow-y-auto overscroll-y-contain bg-surface-muted p-1.5">
+              {!group.rows.length ? <div className="px-2 py-3 text-center">
+                <p className="text-xs text-platforma-muted">{t("deals.notFoundTitle")}</p>
+                {hasFilters ? <Button type="button" size="sm" variant="ghost" className="mt-2" onClick={onResetFilters}>{t("tasks.resetFilters")}</Button> : null}
+              </div> : null}
               {group.rows
                 .slice(0, visibleByStage[group.id] || 10)
                 .map((deal) => (

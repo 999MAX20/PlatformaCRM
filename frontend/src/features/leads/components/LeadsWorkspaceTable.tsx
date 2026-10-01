@@ -169,8 +169,7 @@ export function LeadsWorkspaceTable({
 
   return (
     <CrmTableSurface
-      className="rounded-card border border-platforma-border bg-surface-card shadow-card"
-      filtersClassName="border-b border-platforma-border bg-surface-card px-4 py-3"
+      frameless
       filters={
         <LeadsToolbar
           filters={filters}

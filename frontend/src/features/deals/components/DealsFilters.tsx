@@ -8,7 +8,7 @@ import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import type { Pipeline, PipelineStage, TeamMember } from "../../../types";
 import type { DealFiltersState, DealQuickFilter, DealStatusFilter, Translate } from "../types";
-import { dealStageLabel, sourceLabel } from "../utils/dealHelpers";
+import { dealPipelineLabel, dealStageLabel, sourceLabel } from "../utils/dealHelpers";
 
 type DealsFiltersProps = {
   filters: DealFiltersState;
@@ -40,7 +40,7 @@ function statusLabel(value: DealStatusFilter, t: Translate) {
 
 function quickLabel(value: DealQuickFilter, t: Translate) {
   const labels: Record<DealQuickFilter, string> = {
-    all: t("deals.allStatuses"),
+    all: t("common.all"),
     mine: t("deals.filterMine"),
     hot: t("deals.hot"),
     overdue: t("deals.overdue"),
@@ -79,8 +79,8 @@ export function DealsFilters({ filters, pipelines, activePipeline, viewMode, onV
       <CrmWorkspaceToolbar search={filters.search} searchLabel={t("deals.queueSearch")} searchTestId="deals-search-input" onSearchChange={(search) => onChange({ search })}
         value={filters.quickFilter} tabs={quickFilters.map((value) => ({ value, label: quickLabel(value, t), count: quickCounts[value] }))}
         onChange={(quickFilter) => onChange({ quickFilter })} activeFilters={activeFilters} onClearFilter={clearFilter} onClearAll={onReset} clearAllLabel={t("deals.reset")} ariaLabel={t("deals.filters")}
+        secondaryActions={<Select value={String(activePipeline)} onChange={(event) => onChange({ pipelineId: event.target.value, stageFilter: "all" })} options={pipelines.map((pipeline) => ({ value: String(pipeline.id), label: dealPipelineLabel(pipeline, t) }))} aria-label={t("deals.pipeline")} className="h-9 max-w-56" />}
         actions={<>
-          <Select value={String(activePipeline)} onChange={(event) => onChange({ pipelineId: event.target.value, stageFilter: "all" })} options={pipelines.map((pipeline) => ({ value: String(pipeline.id), label: pipeline.name }))} aria-label={t("deals.pipeline")} className="h-10 max-w-48" />
           <CrmWorkspacePopover label={t("deals.filters")} icon={<SlidersHorizontal size={16} />} count={activeFilters.filter((item) => item.id !== "search").length}>
         <div className="grid gap-2">
           <div className="grid gap-2 md:grid-cols-2">
@@ -109,8 +109,8 @@ export function DealsFilters({ filters, pipelines, activePipeline, viewMode, onV
         </div>
           </CrmWorkspacePopover>
           <div role="group" aria-label={t("deals.viewTable")} className="flex overflow-hidden rounded-control border border-platforma-border">
-            <Button variant={viewMode === "kanban" ? "secondary" : "ghost"} className="h-10 rounded-none" aria-pressed={viewMode === "kanban"} onClick={() => onViewModeChange("kanban")}><Columns3 size={16} />{t("deals.viewKanban")}</Button>
-            <Button variant={viewMode === "table" ? "secondary" : "ghost"} className="h-10 rounded-none" aria-pressed={viewMode === "table"} onClick={() => onViewModeChange("table")}><List size={16} />{t("deals.viewTable")}</Button>
+            <Button variant="ghost" className="h-10 rounded-none aria-pressed:bg-brand-50 aria-pressed:text-platforma-text" aria-pressed={viewMode === "kanban"} onClick={() => onViewModeChange("kanban")}><Columns3 size={16} />{t("deals.viewKanban")}</Button>
+            <Button variant="ghost" className="h-10 rounded-none aria-pressed:bg-brand-50 aria-pressed:text-platforma-text" aria-pressed={viewMode === "table"} onClick={() => onViewModeChange("table")}><List size={16} />{t("deals.viewTable")}</Button>
           </div>
         </>}
       />
