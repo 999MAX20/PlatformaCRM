@@ -1021,7 +1021,7 @@ Copy this section for every new confirmed precedent:
   notice in deal creation offered no route to create the required client.
 - Keep actual stage columns in empty Kanban; retain the table empty state.
   Reuse clients?create=1 from the notice only with clients:create permission.
-- Status: VERIFIED locally in the2026-10-01 follow-up. Desktop/tablet/mobile
+- Status: INTEGRATED in main a234bfd. Desktop/tablet/mobile
   checks create a real client and then a deal through the reachable UI/API.
   Publication and exact-SHA CI are tracked in PRIMARY-SESSION.
 - Audit rule: an empty collection must not remove the selected workspace mode;
@@ -1034,7 +1034,7 @@ Copy this section for every new confirmed precedent:
 - Scope pipelines, stages and clients to the current business; normalize an
   invalid/foreign pipeline URL before requesting its board. Backend permission
   scope is unchanged; no records are merged or deleted.
-- Status: VERIFIED locally against one account with two businesses and a client
+- Status: INTEGRATED in main a234bfd; verified against one account with two businesses and a client
   only in the other business. Pipeline options, outgoing board requests and the
   client/deal creation result are asserted. Publication is in PRIMARY-SESSION.
 - Audit rule: accessible-business catalogues are not current-business catalogues;

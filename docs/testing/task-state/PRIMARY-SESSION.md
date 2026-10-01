@@ -2,8 +2,17 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Deals workspace follow-up / VERIFIED LOCALLY, PUBLICATION PENDING, 2026-10-01
+## Deals workspace follow-up / VERIFIED + PUSHED, CI PENDING, 2026-10-01
 
+- Implementation a234bfdf3fd00a1366d6bc0d6e7e1f00651b7a15 normal-pushed to
+  origin/main; exact remote SHA read back. Static committed-range gate PASS:
+  `.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+  d136f9fd6e479f78d245829d4ec19a1dfb04f5dc` (static-final.log), including
+  system/migration-drift and all diff boundaries. Entire intended24-file patch,
+  untracked tests and outgoing range reviewed; no secrets/private seed DB included.
+  This receipt is docs-only; it reuses unchanged application acceptance and
+  receives static/diff checks. Final exact-SHA CI is reported in the task response.
+  No further implementation remains; local dev services are intentionally up.
 - Demo seed completed through existing Client/Deal API views and lifecycle
   services:30 deals IDs40–69,10 synthetic clients IDs139–148 in Business2.
   Counts by template stage: new10, qualification8, proposal5, negotiation3,
