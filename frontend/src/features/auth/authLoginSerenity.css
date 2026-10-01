@@ -805,9 +805,17 @@
   text-align: center;
 }
 
+.serenity-login--signup {
+  height: auto;
+  min-height: 100dvh;
+  max-height: none;
+  overflow: clip;
+}
+
 .serenity-login--signup .serenity-login__layout {
-  overflow-y: auto;
+  overflow: visible;
   align-items: safe center;
+  padding-block: 12px;
   width: min(1760px, calc(100% - 72px));
   grid-template-columns: minmax(0, 1fr) minmax(560px, 760px);
   gap: clamp(38px, 4.6vw, 78px);
@@ -898,6 +906,31 @@
   .serenity-login__card {
     padding: 24px 21px;
   }
+}
+
+.serenity-login--signup .serenity-login__card {
+  padding: 20px 28px;
+}
+
+.serenity-login--signup .serenity-login__card h2 {
+  font-size: clamp(25px, 2vw, 30px);
+}
+
+.serenity-login--signup .serenity-login__form--signup {
+  gap: 8px;
+}
+
+.serenity-login--signup .serenity-login__field-grid > label > span:first-child {
+  margin-bottom: 4px;
+}
+
+.serenity-login__documents {
+  display: grid;
+  gap: 6px;
+}
+
+.serenity-login__documents legend {
+  margin-bottom: 8px;
 }
 
 .serenity-login--signup .serenity-login__card input[type="checkbox"] {
@@ -1053,6 +1086,21 @@
 
   .serenity-login--signup .serenity-login__benefits {
     display: none;
+  }
+}
+
+@media (max-height: 660px) and (min-width: 901px) {
+  .serenity-login--signup .serenity-login__card {
+    padding-block: 16px;
+  }
+
+  .serenity-login--signup .serenity-login__card input:not([type="checkbox"]),
+  .serenity-login--signup .serenity-login__card [role="combobox"] {
+    min-height: 40px;
+  }
+
+  .serenity-login--signup .serenity-login__documents {
+    gap: 4px;
   }
 }
 

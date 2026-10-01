@@ -6,11 +6,15 @@ Last updated: 2026-07-17
 
 The public `/documents` index links to four empty document pages (`terms`,
 `privacy`, `personal-data`, `company-data`). Titles use shared RU/KK/EN keys;
-legal bodies await owner-provided lawyer text. Signup has four initially unchecked,
+the index group is centered horizontally and vertically within the viewport.
+Legal bodies await owner-provided lawyer text. Signup has four initially unchecked,
 individually required boxes; every title opens its page in a new tab, preserving
 the registration form. Submission stays disabled until all boxes are checked;
 the API independently enforces the same required IDs. The account page ends with
 the index and four document links. These links are not a global footer/sidebar.
+Signup uses compact spacing and natural page flow, with no internally scrolling
+form/layout. Standard desktop windows display the complete form; small screens,
+zoom and validation messages can extend the page without clipping any controls.
 
 ## CRM list and board reference contract — 2026-10-01
 

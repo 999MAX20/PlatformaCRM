@@ -2,6 +2,43 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Documents centering and signup fit / LOCALLY VERIFIED, 2026-10-01
+
+- Owner screenshots request: center the Documents list in the viewport and remove
+  signup's internal scrolling introduced by the four acknowledgement rows.
+  Approved UI refinement of the previous closed task75b0fc3/CI36857625649 SUCCESS.
+- Same registered primary, canonical root, codex/ui-testing-toolkit; clean base
+  75b0fc343f85e5bff1510c65cd8745f17afd97c4. Reuse document page, signup markup/CSS.
+  Compact spacing and keep all four required controls/links readable and reachable;
+  natural page flow on small screens/validation overflow, no clipped controls.
+- No API, permissions, migration, legal copy, audit, notifications, BusinessEvent
+  or AI changes. Gates: build/bundle, focused document/signup E2E plus desktop
+  viewport-fit and centered geometry, mobile reachability, diff/static range,
+  normal push main and actual CI. No working DB changes.
+- Implemented: viewport-centered document index, compact signup spacing/title/
+  document rows and an additional compact rule for desktop heights <=660px.
+  Signup now grows naturally with content, without a nested scrolling container;
+  smaller screens or errors may scroll the page rather than clip controls.
+- Isolated evidence under ignored `output/documents-layout-20261001/` uses the
+  existing `isolated_runtime`/Vite env policy (disposable DB/ports, no providers).
+  `.venv/Scripts/python.exe output/documents-layout-20261001/verify.py build`
+  PASS (`build-final.log`); frontend `npm run check:bundle` PASS
+  (`bundle-final.log`). Frontend `node --test scripts/tests/login-page-policy.test.mjs
+  scripts/tests/functional-certification-registry.test.mjs`:16 PASS.
+- Same helper `layout e2e/legal-documents.spec.ts e2e/pilot-auth.spec.ts`:
+  12 PASS across desktop/tablet/mobile,2 intentionally skipped desktop-only fit
+  copies,1 fit failure at1366x618 (bottom641.67). Added the height-specific rule;
+  same helper `final e2e/legal-documents.spec.ts --project=desktop-chromium`:
+  all3 PASS (`browser-final.log`). Unchanged mobile/tablet and normal desktop
+  behavior reuse their passed evidence. Fit matrix1280x720,1366x618,1536x696,
+  1920x870 now passes with full card inside viewport and no page/internal scroll.
+  Document group center asserted within2px on all three device projects.
+  Final screenshots for1366x618,1536x696 and Documents visually checked.
+- Server code/contracts unchanged: backend suites, migration checks and full local
+  release gate not rerun for this presentation-only refinement. Final commit,
+  normal-push receipt, static range and actual CI are reported in the task response.
+  Next: reviewed commit, static range, normal push main and CI readback.
+
 ## Legal document placeholders and signup acknowledgements / VERIFIED + PUSHED, CI PENDING, 2026-10-01
 
 - Publication: implementation ae6d0c60f89a5d9596225151a205269f1494f637 normal-pushed

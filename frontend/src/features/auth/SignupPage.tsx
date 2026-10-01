@@ -196,8 +196,8 @@ export function SignupPage() {
                 />
               </div>
               <Select label={t("signup.businessType")} placement="top" options={businessTypeOptions} error={errors.business_type?.message} {...register("business_type")} />
-              <fieldset className="space-y-3" data-testid="signup-documents">
-                <legend className="mb-3 text-sm font-semibold">{t("documents.title")}</legend>
+              <fieldset className="serenity-login__documents" data-testid="signup-documents">
+                <legend className="text-sm font-semibold">{t("documents.title")}</legend>
                 {legalDocuments.map(document => <div key={document.id} className="flex items-start gap-3 text-sm leading-5">
                   <input id={`accept-${document.id}`} type="checkbox" value={document.id} {...register("accepted_documents")} required className="platforma-focus-ring mt-0.5 h-4 w-4 shrink-0 accent-brand-600" aria-describedby={errors.accepted_documents ? "documents-error" : undefined} />
                   <label htmlFor={`accept-${document.id}`}>
