@@ -2,7 +2,15 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Persistent browser sessions / LOCAL VERIFIED, 2026-10-01
+## Persistent browser sessions / VERIFIED + PUSHED, CI PENDING, 2026-10-01
+
+- Publication receipt: implementation8da37f4851b6cd51770afcfff2775b6186b16a2e
+  normal-pushed to origin/main, exact remote SHA read back. Real committed-range
+  `.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+  d4acb8ead1282b0cf82e1dcd0e966379ee509ac8` PASS (`static-committed.log`).
+  GitHub run36852040479 started for that SHA. This receipt is docs-only and reuses
+  unchanged application evidence; final exact-SHA CI outcome is in the task's
+  final response. No further product implementation remains; only CI readback.
 
 - Implemented: merchant7-day idle/30-day absolute policy on AccountSession,
   activity recorded atomically with refresh-cookie renewal; background reads and
@@ -49,8 +57,8 @@
   Locks provides cross-tab coordination, unsupported environments keep page queue.
 - Review: canonical root/owner/branch/base unchanged; all intended paths and new
   files inspected, no unrelated WIP or private runtime outputs included. Fetched
-  origin/main=d4acb8e; next is conventional commit, real-range static gate,
-  normal fast-forward push and exact-SHA CI readback.
+  origin/main=d4acb8e before publication; normal fast-forward verified, working
+  tree clean after implementation commit. Publication receipt is above.
 
 - Source: owner accepted the proposed7-day idle /30-day absolute merchant
   session policy and requested implementation in this chat. Same registered
