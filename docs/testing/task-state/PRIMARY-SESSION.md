@@ -2,7 +2,15 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Legal document placeholders and signup acknowledgements / LOCALLY VERIFIED, 2026-10-01
+## Legal document placeholders and signup acknowledgements / VERIFIED + PUSHED, CI PENDING, 2026-10-01
+
+- Publication: implementation ae6d0c60f89a5d9596225151a205269f1494f637 normal-pushed
+  to origin/main; remote SHA read back exactly, canonical branch/root unchanged.
+  `.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+  fea09b163d92248f05cdeb5f5de5eec170a71946` PASS (`static-committed.log`).
+  GitHub CI36857560338 started for that SHA. This documentation-only receipt
+  reuses unchanged application evidence; final exact-SHA CI is reported in the
+  task response. No implementation remains; only CI readback.
 
 - Owner explicitly requested document names and empty pages only; lawyer supplies
   content later. No entity details, legal drafting or jurisdiction decision needed.
@@ -50,8 +58,7 @@
   concurrent build; rerun after build completed passed all7. Initial route registry
   check found missing action outcomes; added contracts and verified19 Node tests.
 - Boundary: focused local auth/UI gate, not a full local release gate or deployed
-  legal readiness. Next: review/commit, static range,
-  normal push main and exact-SHA CI readback.
+  legal readiness. Next: exact-SHA CI readback after this documentation receipt.
 
 ## Persistent browser sessions / VERIFIED + PUSHED, CI PENDING, 2026-10-01
 
