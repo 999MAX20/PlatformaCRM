@@ -6,7 +6,10 @@ Last updated: 2026-07-17
 
 Login centers the left story and right card on the full viewport height, with its
 header positioned independently. The card heading uses the concise localized
-sign-in action (`auth.submit`). Signup retains its separate natural-flow layout.
+sign-in action (`auth.submit`) centered inside the card. Both auth header logos
+are centered on page width independently of right-side actions. At mobile widths
+up to560px actions move below the logo to prevent overlap. Signup retains its
+separate natural-flow layout.
 
 Login and Sign Up use `frontend/public/brand/platforma-crm-logo-transparent.png`,
 a transparent-background edit of the supplied logo; the original PNG is retained.

@@ -8,7 +8,9 @@
   card in the viewport and shortening the heading to Войти. Clean base6abec9d;
   same registered primary/canonical root/codex/ui-testing-toolkit.
 - Reuse login-only signal-field modifier and existing auth.submit locale key.
-  Keep signup unchanged. No auth/API/permission/data/AI/migration impact.
+  Owner follow-up also centers the heading inside the card and both Login/Sign Up
+  header logos horizontally; this extends the same authorized presentation scope.
+  No auth/API/permission/data/AI/migration impact.
   Gates: build/bundle, read-only browser geometry/visual check, diff/static,
   normal push main and actual CI. No working DB writes.
 - Login-only header is positioned above a full-height layout with symmetric
@@ -22,6 +24,15 @@
   mobile393x852 card425.994, document height852. Heading Войти, all controls visible.
   Temporary viewport reset after inspection. No new tests for reversible styling.
 - Next: static committed range/normal push main/actual CI; final receipt in response.
+- Follow-up completed: heading text-align center; brand positioned at50% of header
+  width independently of right-side actions. At<=560px actions occupy a lower row
+  in108px header to prevent overlap with centered logo. Signup remains natural-flow.
+  Final build/budget/15 Node PASS (`build-final.log`, `bundle-final.log`,
+  `node-final.log`); built CSS contains the final108px rule. Read-only screenshots:
+  desktop Login/Sign Up logo center640/page center640; Login heading center aligned.
+  Mobile signup logo centered in usable page width (excluding scrollbar), bottom46,
+  actions top60; no overlap. Temporary viewport reset. First commit f597bda was
+  local only when follow-up arrived; publish both reviewed commits normally.
 
 ## Auth logo background removal / LOCALLY VERIFIED, 2026-10-01
 

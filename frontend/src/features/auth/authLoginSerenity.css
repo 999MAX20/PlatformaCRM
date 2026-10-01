@@ -287,6 +287,9 @@
 }
 
 .serenity-login__brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   width: 240px;
   height: 52px;
@@ -305,6 +308,7 @@
 }
 
 .serenity-login__header-actions {
+  margin-left: auto;
   display: flex;
   min-width: 0;
   align-items: center;
@@ -422,6 +426,10 @@
 .serenity-login--signal-field .serenity-login__layout {
   height: 100%;
   padding-block: 72px;
+}
+
+.serenity-login--signal-field .serenity-login__card h2 {
+  text-align: center;
 }
 
 .serenity-login__badge {
@@ -948,9 +956,27 @@
 }
 
 @media (max-width: 560px) {
+  .serenity-login--signup {
+    grid-template-rows: 108px minmax(0, 1fr);
+  }
+
+  .serenity-login--signal-field .serenity-login__header {
+    height: 108px;
+  }
+
+  .serenity-login--signal-field .serenity-login__layout {
+    padding-block: 108px;
+  }
+
   .serenity-login__brand {
+    top: 6px;
     width: 160px;
     height: 40px;
+  }
+
+  .serenity-login__header-actions {
+    align-self: flex-end;
+    margin-bottom: 8px;
   }
 
   .serenity-login__card-copy,
