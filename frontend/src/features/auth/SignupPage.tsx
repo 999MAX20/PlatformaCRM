@@ -105,7 +105,7 @@ export function SignupPage() {
 
       <header className="serenity-login__header">
         <Link className="serenity-login__brand" to="/login">
-          <img className="serenity-login__brand-logo" src="/brand/platforma-crm-logo.png" alt="PlatformaCRM" width={4096} height={1366} />
+          <img className="serenity-login__brand-logo" src="/brand/platforma-crm-logo-transparent.png" alt="PlatformaCRM" width={2170} height={725} />
         </Link>
 
         <div className="serenity-login__header-actions">

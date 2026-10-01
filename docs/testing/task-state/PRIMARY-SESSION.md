@@ -2,6 +2,30 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Auth logo background removal / LOCALLY VERIFIED, 2026-10-01
+
+- Owner screenshot proves white PNG rectangle covers the auth background; remove
+  it on Login/Sign Up while preserving supplied logo/colors and current footprint.
+- Same primary/root/branch; clean base5efed69c809ad57598dccff08935b720506d59a3.
+  Minimal asset correction; no auth/API/domain/permission/migration changes.
+  Use transparent edited asset, verify alpha/visual fidelity and both pages,
+  build/bundle plus static range, normal push main and actual CI. No working DB.
+- Built-in image edit produced `platforma-crm-logo-transparent.png` (2170x725 RGBA,
+  360846bytes); original supplied PNG retained. Alpha range0..255, all four corners
+  fully transparent,1259326 fully transparent pixels. Both pages use the new URL
+  and correct intrinsic dimensions; existing240/160px header footprint retained.
+  Removed ineffective `mix-blend-mode`; no CSS/background trick required.
+- Read-only in-app browser screenshots on `/login` and `/signup` confirm the
+  background remains visible around/between logo shapes, no white rectangle;
+  shape/text/colors inspected against supplied image at actual header size.
+- `.venv/Scripts/python.exe output/auth-logo-transparent-20261001/verify.py build`
+  (existing isolated_runtime/Vite policy) PASS (`build.log`); frontend
+  `npm run check:bundle` PASS (`bundle.log`). Focused read-only Pillow inspection
+  verifies genuine alpha; no image processing outside the image editing tool.
+- No new tests for this reversible asset fix. Backend/migrations/full local suite
+  skipped because no behavior/contracts changed. Next: static committed range,
+  normal push main and actual CI; exact receipt/status in final response.
+
 ## Auth header supplied logo / LOCALLY VERIFIED, 2026-10-01
 
 - Owner requests replacing lightning/text/tagline on Login and Sign Up with the

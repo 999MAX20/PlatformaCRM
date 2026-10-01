@@ -4,8 +4,10 @@ Last updated: 2026-07-17
 
 ## Auth header logo — 2026-10-01
 
-Login and Sign Up use the owner-supplied `frontend/public/brand/platforma-crm-logo.png`
-unchanged, replacing the lightning icon and textual wordmark/tagline. The shared
+Login and Sign Up use `frontend/public/brand/platforma-crm-logo-transparent.png`,
+a transparent-background edit of the supplied logo; the original PNG is retained.
+Actual alpha replaces the opaque white rectangle, with no CSS color blending.
+The logo replaces the lightning icon and textual wordmark/tagline. The shared
 header link remains accessible as PlatformaCRM and points to `/login`; its frame
 is240x52px on desktop and160x40px on mobile, preserving the image aspect ratio.
 
