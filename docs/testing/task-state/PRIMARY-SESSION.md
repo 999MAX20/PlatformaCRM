@@ -2,6 +2,35 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Auth header supplied logo / LOCALLY VERIFIED, 2026-10-01
+
+- Owner requests replacing lightning/text/tagline on Login and Sign Up with the
+  supplied Platforma_CRM_Logo_4K.png, retaining roughly the existing header footprint.
+- Same primary/root/branch; clean base bf14e156fc136dcd06ee48f1895ffc70396929bc,
+  prior layout task CLOSED with CI36861158906 SUCCESS. Reuse header link/styles;
+  copy supplied asset unchanged, retain accessible brand name and login navigation.
+- Presentation only; no API, auth logic, legal acknowledgement, permissions,
+  migration, notification, BusinessEvent or AI changes. Build/bundle, scoped
+  desktop/mobile visual/flow checks, diff/static, normal push main and actual CI.
+  No working DB operations.
+- Implemented unchanged supplied PNG in `frontend/public/brand/platforma-crm-logo.png`;
+  source/destination SHA256 matchD5179D90991C971A09DEFB313879D10FD969BF5F938B7E2DF9497E2B5C6A3463.
+  Header frames240x52px desktop/160x40px mobile, image aspect ratio retained;
+  obsolete lightning/text/tagline styles removed, navigation/alt name retained.
+- Isolated helper `.venv/Scripts/python.exe output/auth-logo-20261001/verify.py`
+  reuses runner isolated_runtime/Vite policy, disposable DB/ports and no providers.
+  `build`:PASS (`build.log`); `browser e2e/legal-documents.spec.ts
+  e2e/pilot-auth.spec.ts`:13 PASS/2 intentional non-desktop fit skips in2.5min
+  (`browser.log`). Includes registration/document links and four desktop fit sizes.
+  Frontend `npm run check:bundle` PASS (`bundle.log`);
+  `node --test scripts/tests/login-page-policy.test.mjs`:15 PASS (`node.log`).
+- Visually inspected original PNG, actual Login/Sign Up in in-app browser and
+  isolated mobile Sign Up screenshot. Chrome tab selection timed out; used in-app
+  browser instead. No product failures. No backend/migration suite rerun for an
+  asset/markup-only change. Full local release gate not claimed.
+- Next: reviewed commit/static range/normal push main and CI. Exact publication
+  and actual CI are recorded in the final task response.
+
 ## Documents centering and signup fit / LOCALLY VERIFIED, 2026-10-01
 
 - Owner screenshots request: center the Documents list in the viewport and remove

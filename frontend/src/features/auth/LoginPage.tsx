@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowRight,
-  Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -210,13 +209,7 @@ export function LoginPage() {
 
       <header className="serenity-login__header">
         <Link className="serenity-login__brand" to="/login">
-          <span className="serenity-login__brand-mark" aria-hidden="true">
-            <Zap size={20} />
-          </span>
-          <span className="serenity-login__brand-copy">
-            <strong>PlatformaCRM</strong>
-            <small>{t("auth.brandTagline")}</small>
-          </span>
+          <img className="serenity-login__brand-logo" src="/brand/platforma-crm-logo.png" alt="PlatformaCRM" width={4096} height={1366} />
         </Link>
 
         <div className="serenity-login__header-actions">

@@ -288,49 +288,21 @@
 
 .serenity-login__brand {
   display: inline-flex;
+  width: 240px;
+  height: 52px;
   min-width: 0;
   align-items: center;
-  gap: 12px;
+  overflow: hidden;
   color: var(--serenity-ink);
   text-decoration: none;
 }
 
-.serenity-login__brand-mark {
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 122, 26, 0.28);
-  background: linear-gradient(145deg, #fff5eb, #ffd7b7);
-  color: #e75b00;
-  box-shadow: 0 14px 34px rgba(216, 91, 9, 0.13);
-}
-
-.serenity-login__brand-mark {
-  width: 42px;
-  height: 42px;
+.serenity-login__brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
   flex: 0 0 auto;
-  border-radius: 13px;
-}
-
-.serenity-login__brand-copy {
-  display: grid;
-  min-width: 0;
-  gap: 1px;
-}
-
-.serenity-login__brand-copy strong {
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  line-height: 1;
-}
-
-.serenity-login__brand-copy small {
-  overflow: hidden;
-  color: var(--serenity-copy);
-  font-size: 11px;
-  font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  mix-blend-mode: multiply;
 }
 
 .serenity-login__header-actions {
@@ -962,7 +934,11 @@
 }
 
 @media (max-width: 560px) {
-  .serenity-login__brand-copy small,
+  .serenity-login__brand {
+    width: 160px;
+    height: 40px;
+  }
+
   .serenity-login__card-copy,
   .serenity-login__trust {
     display: none;
