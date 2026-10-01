@@ -86,19 +86,19 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
     latest_lead = related["leads"].filter(
         client_id=OuterRef("id"),
         is_archived=False,
-    ).order_by("-updated_at")
+    ).order_by("-updated_at", "-pk")
     latest_deal = related["deals"].filter(
         client_id=OuterRef("id"),
         is_archived=False,
-    ).order_by("-updated_at")
+    ).order_by("-updated_at", "-pk")
     latest_task = related["tasks"].filter(
         client_id=OuterRef("id"),
         is_archived=False,
-    ).exclude(status__in=[Task.Statuses.DONE, Task.Statuses.CANCELLED]).order_by("-updated_at")
+    ).exclude(status__in=[Task.Statuses.DONE, Task.Statuses.CANCELLED]).order_by("-updated_at", "-pk")
     latest_conversation = related["conversations"].filter(
         client_id=OuterRef("id"),
         is_archived=False,
-    ).order_by("-updated_at")
+    ).order_by("-updated_at", "-pk")
     has_open_deal = related["deals"].filter(
         client_id=OuterRef("id"),
         is_archived=False,
@@ -189,35 +189,25 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
             default=Value(False),
             output_field=BooleanField(),
         ),
-        list_status=Case(
-            When(is_archived=True, then=Value("archived")),
-            When(is_vip=True, then=Value("vip")),
-            When(has_no_reply=True, then=Value("no_reply")),
-            When(is_active=True, then=Value("active")),
-            default=Value("new"), output_field=CharField(),
-        ),
-        manager_user_id=Case(
-            When(latest_task_manager_id__isnull=False, then=F("latest_task_manager_id")),
-            When(latest_deal_owner_id__isnull=False, then=F("latest_deal_owner_id")),
-            When(latest_lead_manager_id__isnull=False, then=F("latest_lead_manager_id")),
-            When(latest_conversation_manager_id__isnull=False, then=F("latest_conversation_manager_id")),
-            default=Value(None),
+        manager_user_id=Coalesce(
+            "latest_task_manager_id", "latest_deal_owner_id",
+            "latest_lead_manager_id", "latest_conversation_manager_id",
             output_field=IntegerField(),
         ),
-        manager_name=Case(
-            When(latest_task_manager_id__isnull=False, then=Subquery(latest_task.annotate(
+        manager_name=Coalesce(
+            Subquery(latest_task.annotate(
                 display_name=Coalesce(NullIf("assignee__full_name", Value("")), "assignee__email", output_field=CharField()),
-            ).values("display_name")[:1])),
-            When(latest_deal_owner_id__isnull=False, then=Subquery(latest_deal.annotate(
+            ).values("display_name")[:1]),
+            Subquery(latest_deal.annotate(
                 display_name=Coalesce(NullIf("owner__full_name", Value("")), "owner__email", output_field=CharField()),
-            ).values("display_name")[:1])),
-            When(latest_lead_manager_id__isnull=False, then=Subquery(latest_lead.annotate(
+            ).values("display_name")[:1]),
+            Subquery(latest_lead.annotate(
                 display_name=Coalesce(NullIf("responsible_user__full_name", Value("")), "responsible_user__email", output_field=CharField()),
-            ).values("display_name")[:1])),
-            When(latest_conversation_manager_id__isnull=False, then=Subquery(latest_conversation.annotate(
+            ).values("display_name")[:1]),
+            Subquery(latest_conversation.annotate(
                 display_name=Coalesce(NullIf("assigned_to__full_name", Value("")), "assigned_to__email", output_field=CharField()),
-            ).values("display_name")[:1])),
-            default=Value(""), output_field=CharField(),
+            ).values("display_name")[:1]),
+            Value(""), output_field=CharField(),
         ),
         last_activity_at=Greatest(
             "updated_at",
@@ -248,6 +238,15 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
             When(latest_task_priority__isnull=False, then=F("latest_task_priority")),
             default=Value("normal"),
             output_field=CharField(),
+        ),
+    ).alias(
+        # Sorting needs this expression, but serializers do not need it in SELECT.
+        list_status=Case(
+            When(is_archived=True, then=Value("archived")),
+            When(is_vip=True, then=Value("vip")),
+            When(has_no_reply=True, then=Value("no_reply")),
+            When(is_active=True, then=Value("active")),
+            default=Value("new"), output_field=CharField(),
         ),
     )
 

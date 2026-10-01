@@ -96,6 +96,32 @@
   by the testing guide; it is not permission to publish before remaining checks.
   Next: finish mobile/wide evidence and the full candidate gate, then normal push
   and exact-SHA CI. No application edits planned unless a remaining check fails.
+- Hour checkpoint: local candidate9ebf038711339bd1522da2bebc20fcd4cf53d906,
+  full gate running with basec38a15b (full-gate.log). Final targeted browser
+  suite PASS34/11 viewport-specific skips, including latest Mine/cross-page
+  selection/manager recovery changes. Wide matrix is finishing; its sole old
+  endpoint assertion failure passed in the final targeted run. Mobile screenshots
+  for all three routes inspected: pagination clear of bottom nav, intended board
+  horizontal scrolling, no document overflow. No application changes after9ebf038.
+- Full gate9ebf038 FAILED at one of1229 tests after913.326s:
+  B301MeasuredPerformanceTests.test_crm_card_related_predicate_remains_database_bounded_as_rows_grow.
+  SQL18109 exceeded the existing15000 budget, reproduced alone with unchanged
+  inputs (performance-repro.log). Query count32→33 stayed bounded at60→300 related
+  rows. Failure is caused by the new client projections, not a baseline waiver.
+  Minimal correction keeps the identical scoped related querysets and assignee
+  precedence: Coalesce avoids duplicate null-check subqueries; the sort-only status
+  expression is an alias rather than an unused SELECT field. Projection/permission/
+  performance suites and explicit null-assignee/email-fallback regression running.
+  Do not publish9ebf038; commit the verified correction and repeat full gate.
+- Corrected selector verification:66 tests PASS in50.010s (performance-final.log).
+  SQL14977 at both60 and300 rows;32→33 queries unchanged. Null task-assignee
+  correctly falls back to the deal owner, task assignee takes precedence, and an
+  empty full name uses the same user's email. The new test initially used equal
+  timestamps; diagnostic showed the tie, fixture now sets an explicit later time.
+  Latest-related selectors also order by PK on timestamp ties so ID/name queries
+  choose the same record. No threshold or permission assertion changed.
+  Browser API/projection recheck running; unchanged frontend retains102 PASS/30
+  conditional skips from the merged wide/final-targeted matrix.
 
 ## Five-stage overnight acceptance + September30 audit / VERIFIED + PUSHED, 2026-10-01
 

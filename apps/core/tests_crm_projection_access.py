@@ -142,6 +142,23 @@ class CrmProjectionAccessTests(TestCase):
         self.assertEqual(first.data['results'][0]['next_step_kind'], 'contact')
         self.assertEqual(self.api.get('/api/clients/', {'ordering': '--full_name'}).status_code, 200)
 
+    def test_client_manager_name_follows_id_precedence_and_email_fallback(self):
+        self.api.force_authenticate(self.owner)
+        now = timezone.now()
+        Task.objects.filter(client=self.customer).update(assignee=None)
+        Deal.objects.filter(pk=self.visible_deal.pk).update(owner=self.manager, updated_at=now)
+        self.manager.full_name = 'Manager from deal'
+        self.manager.save(update_fields=['full_name'])
+        row = self.api.get(f'/api/clients/{self.customer.pk}/').data
+        self.assertEqual(row['manager_user_id'], self.manager.pk)
+        self.assertEqual(row['manager_name'], 'Manager from deal')
+        Task.objects.filter(pk=self.visible_task.pk).update(assignee=self.operator, updated_at=now + timedelta(seconds=1))
+        self.operator.full_name = ''
+        self.operator.save(update_fields=['full_name'])
+        row = self.api.get(f'/api/clients/{self.customer.pk}/').data
+        self.assertEqual(row['manager_user_id'], self.operator.pk)
+        self.assertEqual(row['manager_name'], self.operator.email)
+
     def test_undated_lead_task_is_not_replaced_by_a_fake_deadline(self):
         self.api.force_authenticate(self.operator)
         response = self.api.get('/api/leads/')
