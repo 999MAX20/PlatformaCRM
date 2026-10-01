@@ -1,5 +1,5 @@
 import axios, { type AxiosRequestConfig } from "axios";
-import { apiClient, expireBrowserSession } from "./client";
+import { apiClient, handleSessionRecoveryError } from "./client";
 import {
   assertCurrentSession,
   sessionCookieRequest,
@@ -61,7 +61,7 @@ async function authenticatedCookieRequest<T>(request: (options: AxiosRequestConf
       assertCurrentSession(generation);
       return send();
     } catch (refreshError) {
-      if (generation === tokenStorage.getGeneration()) expireBrowserSession();
+      if (generation === tokenStorage.getGeneration()) handleSessionRecoveryError(refreshError);
       throw refreshError;
     }
   }
@@ -88,7 +88,11 @@ export async function confirmPasswordReset(payload: PasswordResetConfirmPayload)
 }
 
 export async function restoreSession() {
-  return refreshToken();
+  return refreshToken({ activity: document.visibilityState === "visible" && navigator.onLine });
+}
+
+export async function recordSessionActivity() {
+  await refreshToken({ activity: true });
 }
 
 export async function getCurrentUser() {
@@ -200,6 +204,7 @@ export async function revokeMfaSessions(code: string) {
 }
 
 export function logout() {
+  tokenStorage.broadcastLogout();
   tokenStorage.clear();
   void clearRefreshCookie().catch(() => undefined);
 }

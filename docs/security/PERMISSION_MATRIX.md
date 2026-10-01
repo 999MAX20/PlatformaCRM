@@ -4,14 +4,34 @@ This file is the working reference for role-aware behavior in PlatformaCRM.
 
 ## Browser account boundaries — 2026-10-01
 
-Within one browser page, every request that replaces or clears the HttpOnly
+Every request that replaces or clears the HttpOnly
 refresh cookie shares the login/logout/refresh queue, including password reset,
 password/email changes and MFA disable/session revocation. Generation checks
 reject old responses and continuations after an account transition. A401 refresh
 occurs outside that queue to avoid waiting on itself. Deferred language loading
 retains the initiating generation before saving preferences or applying language.
-These frontend safeguards supplement existing backend authorization; they do
-not introduce cross-tab locking or change roles, session epochs or permissions.
+Web Locks serialize those operations across tabs on supported secure origins
+(HTTPS or localhost); without Web Locks, the existing per-page queue remains.
+BroadcastChannel propagates refreshed access credentials in memory and current
+session logout. It does not persist credentials or silently switch an open page
+to another account. These safeguards supplement backend authorization without
+changing roles or permission grants.
+
+Merchant browser sessions expire after7 days without foreground use or30 days
+from the original login, whichever comes first. Server settings
+`AUTH_SESSION_IDLE_DAYS=7` and `AUTH_SESSION_ABSOLUTE_DAYS=30` own those limits.
+Access lifetime remains15 minutes. Login, visible restoration, interaction and
+visible focus/online resume record activity through refresh with `activity:true`;
+interaction is limited to once per minute. Background API reads/refreshes cannot
+extend idle time. The signed original auth_time survives legacy adoption.
+Privileged platform-session lifetime policy is unchanged.
+
+Temporary network/429/5xx errors preserve the current account and mounted draft;
+startup retains the URL and offers retry. Recovery uses bounded backoff and
+Retry-After. Invalid/expired credentials still require login. Recovery does not
+replay failed business mutations. A rejected stale refresh cannot clear a newer
+shared cookie. Ordinary tracked-session logout revokes only that device;
+password/MFA/security epoch changes retain their existing broader revocation.
 
 ## Own-device sessions — 2026-09-30
 
@@ -27,19 +47,22 @@ IP, bounded User-Agent, creation/last-active/expiry/revocation times. Browser/OS
 labels are derived from User-Agent, not verified device identity or geolocation.
 Access JWTs and every refresh rotation check `sid` revocation and expiry; rotations
 retain the session ID. Account-wide epoch revocation still supersedes all sessions.
-Last-active writes are limited to once per minute per session. IP is REMOTE_ADDR,
+Merchant last-active records foreground use as above. IP is REMOTE_ADDR,
 which may be the reverse proxy rather than a physical device's public address.
 
-Rollout: apply accounts.0010 (depends on0009), then explicitly enable
-`AUTH_DEVICE_SESSIONS_ENABLED=True`. Default False keeps the pre-migration local
-runtime working. Once a token has sid, its revocation is checked even if the flag
+Rollout requires accounts.0010 (depends on0009), already present in the schema;
+`AUTH_DEVICE_SESSIONS_ENABLED=True` is now the default and is required for the
+persistent merchant policy. No new migration is introduced. Once a token has sid,
+its revocation is checked even if the flag
 is subsequently disabled. Pre-rollout tokens have no sid: valid refresh adopts a
 tracked session with currently observed metadata; other old sessions appear as a
 legacy count, not invented devices. Previously issued sid-less access remains
 epoch-governed until its normal expiry (15min default). Use the existing
 all-session revoke to end legacy access immediately; the initiating browser gets
 a replacement session. The UI action is labelled "End other sessions" because
-that browser stays signed in. Ordinary logout semantics are unchanged.
+that browser stays signed in. Direct logout with a legacy sid-less refresh retains
+account-wide revocation to invalidate its untracked access immediately; normal
+browser restoration adopts a tracked session first.
 
 ## Own-account email/login change — 2026-09-30
 

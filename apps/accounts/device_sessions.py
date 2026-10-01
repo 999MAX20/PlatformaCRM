@@ -13,6 +13,7 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.models import AccountSession, User
+from apps.accounts.session_policy import assert_session_policy, session_deadline, uses_persistent_session_policy
 
 
 def _request_metadata(request):
@@ -35,9 +36,17 @@ def attach_device_session(user, refresh, request=None):
         expires_at=datetime.fromtimestamp(refresh["exp"], tz=dt_timezone.utc),
         **_request_metadata(request),
     )
+    # Adoption must not restart the absolute lifetime of a previously issued login.
+    authenticated_at = refresh.payload.get("auth_time", refresh["iat"])
+    session.created_at = datetime.fromtimestamp(authenticated_at, tz=dt_timezone.utc)
+    AccountSession.objects.filter(pk=session.pk).update(created_at=session.created_at)
     refresh["sid"] = str(session.pk)
+    if uses_persistent_session_policy(user):
+        session.expires_at = session_deadline(session)
+        session.save(update_fields=["expires_at"])
+        refresh["exp"] = int(session.expires_at.timestamp())
     # for_user() saves before custom claims are attached. Persist the final token.
-    OutstandingToken.objects.filter(jti=refresh["jti"]).update(token=str(refresh))
+    OutstandingToken.objects.filter(jti=refresh["jti"]).update(token=str(refresh), expires_at=session.expires_at)
 
 
 def active_device_session(user, token, *, lock=False):
@@ -57,6 +66,7 @@ def active_device_session(user, token, *, lock=False):
     session = query.first()
     if session is None:
         raise TokenError("Device session is no longer active.")
+    assert_session_policy(user, session)
     return session
 
 
@@ -65,7 +75,7 @@ def validate_access_device(user, token):
     if not token.payload.get("sid"):
         return
     session = active_device_session(user, token)
-    if session.last_seen_at < timezone.now() - timedelta(minutes=1):
+    if not uses_persistent_session_policy(user) and session.last_seen_at < timezone.now() - timedelta(minutes=1):
         AccountSession.objects.filter(pk=session.pk, revoked_at__isnull=True).update(last_seen_at=timezone.now())
 
 
@@ -80,7 +90,7 @@ def refresh_browser_session(request, data, serializer):
         return serializer.validated_data
     refresh = RefreshToken(raw)
     user = User.objects.select_for_update().filter(pk=refresh.payload.get(api_settings.USER_ID_CLAIM)).first()
-    if not user or not token_matches_auth_epoch(user, refresh):
+    if not user or not user.is_active or not token_matches_auth_epoch(user, refresh):
         raise TokenError("Session epoch is no longer valid.")
     if requires_mfa(user) and not refresh.payload.get("mfa_verified"):
         raise TokenError("MFA verification is required.")
@@ -91,13 +101,29 @@ def refresh_browser_session(request, data, serializer):
         attach_device_session(user, refresh, request)
         serializer.initial_data["refresh"] = str(refresh)
         session = active_device_session(user, refresh, lock=True)
+    if session and data.get("activity") is True and uses_persistent_session_policy(user):
+        # One atomic rotation records foreground use and renews the browser cookie.
+        # Ordinary background refreshes omit this signal and cannot extend idle time.
+        session.last_seen_at = timezone.now()
+        session.expires_at = session_deadline(session)
     serializer.is_valid(raise_exception=True)
     result = dict(serializer.validated_data)
     if session:
         rotated = RefreshToken(result.get("refresh", str(refresh)))
+        if uses_persistent_session_policy(user):
+            # Background refresh can rotate credentials, never extend user activity.
+            rotated["exp"] = int(min(session.expires_at, session_deadline(session)).timestamp())
+            result["refresh"] = str(rotated)
+            access = rotated.access_token
+            access["exp"] = min(access["exp"], rotated["exp"])
+            result["access"] = str(access)
+            OutstandingToken.objects.filter(jti=rotated["jti"]).update(
+                token=str(rotated), expires_at=datetime.fromtimestamp(rotated["exp"], tz=dt_timezone.utc),
+            )
         session.refresh_jti = rotated["jti"]
         session.expires_at = datetime.fromtimestamp(rotated["exp"], tz=dt_timezone.utc)
-        session.last_seen_at = timezone.now()
+        if not uses_persistent_session_policy(user):
+            session.last_seen_at = timezone.now()
         session.save(update_fields=["refresh_jti", "expires_at", "last_seen_at"])
     return result
 

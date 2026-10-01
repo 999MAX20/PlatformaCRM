@@ -5,7 +5,7 @@ from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from apps.accounts.models import User
+from apps.accounts.models import AccountSession, User
 
 
 def token_matches_auth_epoch(user, token):
@@ -17,8 +17,9 @@ def token_matches_auth_epoch(user, token):
     return token_epoch == int(user.auth_epoch)
 
 
+@transaction.atomic
 def blacklist_refresh_token(raw_token):
-    """Resolve a valid refresh credential and revoke every session for its user."""
+    """End the presented browser session without signing out other devices."""
     if not raw_token:
         return None, False
 
@@ -36,8 +37,23 @@ def blacklist_refresh_token(raw_token):
         _, created = refresh.blacklist()
         return None, int(created)
 
-    revoked_sessions = revoke_user_refresh_sessions(user)
-    return user, revoked_sessions
+    user = User.objects.select_for_update().get(pk=user.pk)
+    sid = refresh.payload.get("sid")
+    if sid:
+        session = AccountSession.objects.select_for_update().filter(
+            pk=sid, user=user, auth_epoch=user.auth_epoch, revoked_at__isnull=True,
+        ).first()
+        if session is None:
+            return user, 0
+        session.revoked_at = timezone.now()
+        session.save(update_fields=["revoked_at"])
+        outstanding = OutstandingToken.objects.filter(user=user, jti=session.refresh_jti).first()
+        if outstanding:
+            BlacklistedToken.objects.get_or_create(token=outstanding)
+        return user, 1
+    # Old, untracked credentials retain the established immediate-revocation
+    # guarantee. A refresh upgrades them before normal browser use.
+    return user, revoke_user_refresh_sessions(user)
 
 
 @transaction.atomic

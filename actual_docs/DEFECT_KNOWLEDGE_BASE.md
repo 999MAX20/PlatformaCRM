@@ -566,6 +566,7 @@ These rules are inputs to future functional certification and browser audits.
 | ZR-007 Success-path preservation | After a defect fix, prove the original normal action still completes | Every remediated interaction |
 | ZR-008 Canonical route and information budget | Assert one canonical URL, safe aliases and one unique decision per dashboard surface | Dashboard, overview and landing workspaces |
 | ZR-009 Server-owned connector authority | Reject foreign bindings and forged verification; delayed writes/results must not overwrite newer setup; verify allowed dedicated setup | Channel/connector APIs, credential rotation, OAuth and provider webhook resolution |
+| ZR-010 Session recovery continuity | Distinguish network/429/5xx from invalid credentials; retain drafts, serialize tab cookie changes, reject old-account continuations and verify current-device logout | Shared auth/API client, startup, account security and every authenticated form |
 | AUD-027 Nested read parity | Compare direct denial with card/list/board/history, counts, limits, field visibility and next-task preview; retain permitted siblings | CRM cards, client annotations, deal previews/boards, activity history |
 
 ## Audit Expansion Matrix
@@ -1039,6 +1040,30 @@ Copy this section for every new confirmed precedent:
   client/deal creation result are asserted. Publication is in PRIMARY-SESSION.
 - Audit rule: accessible-business catalogues are not current-business catalogues;
   test a multi-business account and stale URL selection explicitly.
+
+### ZD-041 — Temporary auth recovery failures ended valid browser sessions
+
+- Symptom: returning to CRM could require login after a short break; a temporary
+  refresh/current-user failure discarded the account and startup could call logout.
+- Cause: transient network/429/5xx errors shared the invalid-session path;
+  refresh-cookie rotation was serialized only inside one page. An old rejected
+  refresh response could also clear a newer cookie shared by sibling tabs.
+- Scope: shared browser authentication, all authenticated CRM routes and account
+  security mutations; server authorization/epoch/MFA checks remain authoritative.
+- Correction: separate recoverable failures, preserve mounted forms/return URL,
+  retry restoration, serialize cookie operations using Web Locks, propagate
+  same-session access/logout through memory-only BroadcastChannel. Rejected
+  refreshes do not clear cookies; anonymous requests cannot acquire another
+  account's credentials through automatic mutation retry. Avoid redundant
+  post-login activity rotation immediately before navigation.
+- Product decision in the same bounded task: merchant idle7 days/absolute30 days,
+  foreground-only renewal and current-device logout; see permission matrix.
+- Regression evidence: `tests_session_policy.py`, `session-persistence.spec.ts`
+  plus account-continuation/cache-isolation suites. Exact candidate, failed
+  iterations, final gates and publication are recorded in PRIMARY-SESSION.
+- Reusable rule: distinguish expired credentials from unavailable verification;
+  exercise cookie delivery ordering, sibling tabs, startup failure and drafts,
+  not merely one successful login/refresh call.
 
 ## Maintenance Contract
 

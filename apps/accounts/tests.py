@@ -88,7 +88,7 @@ class AuthSecurityBaselineTests(TestCase):
         self.assertEqual(reused_refresh_response.status_code, 401)
         self.assertEqual(reused_refresh_response.data["detail"], "Session expired or invalid.")
         self.assertNotIn(old_refresh, str(reused_refresh_response.data))
-        self.assertEqual(reused_refresh_response.cookies["zani_refresh"]["max-age"], 0)
+        self.assertNotIn("zani_refresh", reused_refresh_response.cookies)
 
     def test_refresh_cookie_restores_session_and_logout_revokes_it(self):
         login_response = self.login()
@@ -147,7 +147,7 @@ class AuthSecurityBaselineTests(TestCase):
                 self.assertEqual(response.status_code, 401)
                 self.assertEqual(response.data["detail"], "Session expired or invalid.")
                 self.assertNotIn(raw_token, str(response.data))
-                self.assertEqual(response.cookies["zani_refresh"]["max-age"], 0)
+                self.assertNotIn("zani_refresh", response.cookies)
 
     def test_legacy_and_stale_epoch_tokens_are_rejected(self):
         legacy_refresh = RefreshToken.for_user(self.user)

@@ -2,6 +2,84 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Persistent browser sessions / LOCAL VERIFIED, 2026-10-01
+
+- Implemented: merchant7-day idle/30-day absolute policy on AccountSession,
+  activity recorded atomically with refresh-cookie renewal; background reads and
+  refreshes do not extend idle time. Original signed auth_time survives legacy
+  adoption; inactive/expired/epoch/MFA/revoked sessions remain denied.
+- Browser: Web Locks coordinate cookie mutations across tabs; BroadcastChannel
+  keeps same-session access in memory and propagates logout. User/session identity
+  and generation guards stop cross-account continuations. Network/429/5xx recovery
+  retains mounted forms, startup URL and cookie; retries use bounded backoff.
+  Current-device logout preserves separate devices; explicit broader security
+  revocation stays unchanged. Permission matrix and ZD-041 contain the contract.
+- Exact local commands used `.venv/Scripts/python.exe
+  output/session-persistence-20261001/verify.py` with runner `isolated_runtime`
+  and Vite env-policy validation (disposable DB/ports, synthetic accounts,
+  provider calls disabled), modes/arguments:
+  - `backend apps.accounts`:78 PASS in179.123s (`backend-accepted.log`).
+  - `backend apps.core.tests_security apps.core.tests_b0_security
+    apps.core.tests_tenant_isolation`:36 PASS (`backend-dependent.log`).
+  - `backend apps.accounts.tests_session_policy`:9 PASS (`backend-policy-final.log`).
+  - `build`: `npm run build` PASS (`build-accepted.log`); separately frontend
+    `npm run check:bundle` PASS (`bundle-accepted.log`).
+  - `accepted e2e/session-persistence.spec.ts e2e/session-cache-isolation.spec.ts
+    e2e/account-session-continuations.spec.ts --project=desktop-chromium`:
+    24 PASS in3.6min (`browser-accepted.log`). Includes actual offline/online,
+    browser-context restart with persistent cookies, expired-access recovery,
+    multi-tab serialization/logout, separate-device preservation,503/429,
+    startup profile failure, unsaved form and invalid-session return route.
+  - Frontend `node --test scripts/tests/auth-return-path.test.mjs
+    scripts/tests/login-page-policy.test.mjs scripts/tests/app-error-normalization.test.mjs`:
+    24 PASS (`node-final.log`).
+  - `manage.py check` and `makemigrations --check --dry-run` through isolated
+    runtime PASS (`system-drift.log`); no migration changes. Working diff check PASS.
+- Failed iterations retained: initial build caught Web Locks generic return type,
+  corrected; initial browser3 failures exposed redundant immediate post-login
+  rotation and its request ordering, final suites pass. Second run19 PASS,
+  extended run22 PASS, final24 PASS. A transient Vite parse error occurred while
+  the source file was being patched during the second run; final run used stable
+  inputs. Accounts run77/78 exposed a test submitting multipart string activity
+  instead of JSON boolean; corrected wire format, focused9 and full78 now PASS.
+- Boundaries: scoped local gate, not a full local release-candidate gate; no
+  live production or additional browser-engine claim. New migrations, working
+  DB writes, seed/reset, deployments and new privileged/shared-PC policy skipped
+  because outside scope. Existing local dev stays up; modern secure-origin Web
+  Locks provides cross-tab coordination, unsupported environments keep page queue.
+- Review: canonical root/owner/branch/base unchanged; all intended paths and new
+  files inspected, no unrelated WIP or private runtime outputs included. Fetched
+  origin/main=d4acb8e; next is conventional commit, real-range static gate,
+  normal fast-forward push and exact-SHA CI readback.
+
+- Source: owner accepted the proposed7-day idle /30-day absolute merchant
+  session policy and requested implementation in this chat. Same registered
+  primary, canonical C:\Users\user\Desktop\PlatformaCRM, generation2/idle,
+  branch codex/ui-testing-toolkit, clean starting base d4acb8ead1282b0cf82e1dcd0e966379ee509ac8.
+- Result: breaks/sleep/browser restart preserve valid login; network/429/5xx
+  do not revoke it; tabs coordinate cookie mutations; ordinary logout ends only
+  the current device, existing revoke-other-sessions/security actions remain.
+- Reuse AccountSession, auth_epoch/MFA guards, token API/queue, AuthProvider,
+  existing recovery/return-route UI. Merchant idle activity must not be extended
+  by background polling. Access lifetime stays15min; server enforces idle/absolute.
+  Shared-computer lock mode and a new privileged-platform policy are non-goals.
+- Confirmed defect: runtime refresh200 followed within0.2s by401 then400;
+  failed refresh clears shared cookie, per-tab queue does not coordinate tabs;
+  frontend logs out on transient refresh/current-user errors. Specific browser
+  race is a hypothesis until reproduced in isolated multi-page tests.
+- Existing local accounts.0010 is applied and AUTH_DEVICE_SESSIONS_ENABLED=True;
+  reuse table/fields if sufficient. No working DB migration/seed/reset, production
+  deployment or provider calls authorized. No CRM domain/BusinessEvent/AI changes.
+  Security audit and explicit credential/role/MFA revocation stay mandatory.
+- Gates: isolated auth/device/MFA/email and dependent backend regressions, Django
+  system/drift; frontend build/budget/Node; multi-tab refresh/login/logout, offline/
+  429/5xx recovery, startup retry, sleep/resume, idle7d/absolute30d boundaries and
+  no-background-extension; existing account-continuation/cache-isolation suites.
+  Review full intended range/secrets, normal push main, exact-candidate CI.
+  No local full-suite requirement unless dependency investigation warrants it;
+  tests use disposable DB/ports, live dev remains up. Before first commit use
+  documented focused isolated runner (base equals HEAD), then real range gate.
+
 ## Deals workspace follow-up / VERIFIED + PUSHED, CI PENDING, 2026-10-01
 
 - Implementation a234bfdf3fd00a1366d6bc0d6e7e1f00651b7a15 normal-pushed to

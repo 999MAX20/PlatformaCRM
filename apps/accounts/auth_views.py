@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
+from django.utils import timezone
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
@@ -8,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.models import User
 from apps.accounts.device_sessions import refresh_browser_session
@@ -23,7 +25,7 @@ def set_refresh_cookie(response, refresh_token):
     response.set_cookie(
         settings.AUTH_REFRESH_COOKIE_NAME,
         refresh_token,
-        max_age=int(settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"].total_seconds()),
+        max_age=max(0, int(RefreshToken(refresh_token)["exp"] - timezone.now().timestamp())),
         httponly=True,
         secure=settings.AUTH_REFRESH_COOKIE_SECURE,
         samesite=settings.AUTH_REFRESH_COOKIE_SAMESITE,
@@ -114,11 +116,10 @@ class ThrottledTokenRefreshView(TokenRefreshView):
         try:
             response_data = refresh_browser_session(request, data, serializer)
         except TokenError:
-            return clear_refresh_cookie(
-                Response(
-                    {"detail": "Session expired or invalid.", "code": "token_not_valid"},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
+            # A rejected stale request must not erase a newer cookie set by another tab.
+            return Response(
+                {"detail": "Session expired or invalid.", "code": "token_not_valid"},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
         rotated_refresh = response_data.pop("refresh", None)
         response = Response(response_data)

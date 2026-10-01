@@ -2,11 +2,13 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 import { getAppErrorMessage, normalizeAppError } from "./appError";
 import { assertCurrentSession, refreshToken } from "./token";
+import { SessionIdentityChangedError } from "./sessionIdentity";
 import { getCurrentLanguage, translate } from "../lib/i18n";
-import { tokenStorage } from "../lib/storage";
+import { AUTH_EXPIRED_EVENT, tokenStorage } from "../lib/storage";
 
 const baseURL = import.meta.env.VITE_API_URL || "";
-export const AUTH_EXPIRED_EVENT = "zani:auth-expired";
+export { AUTH_EXPIRED_EVENT };
+export const AUTH_RECOVERY_EVENT = "platforma:auth-recovery";
 export const SESSION_EXPIRED_NOTICE_KEY = "zani:session-expired";
 export const SESSION_EXPIRED_RETURN_TO_KEY = "zani:session-expired-return-to";
 
@@ -30,6 +32,7 @@ function notifyAuthExpired() {
 }
 
 export function isSessionExpiryResponse(error: unknown) {
+  if (error instanceof SessionIdentityChangedError) return true;
   if (!axios.isAxiosError(error)) return false;
   return error.response?.status === 400 || error.response?.status === 401;
 }
@@ -37,6 +40,12 @@ export function isSessionExpiryResponse(error: unknown) {
 export function expireBrowserSession() {
   tokenStorage.clear();
   notifyAuthExpired();
+}
+
+export function handleSessionRecoveryError(error: unknown) {
+  if (axios.isCancel(error)) return;
+  if (isSessionExpiryResponse(error)) expireBrowserSession();
+  else window.dispatchEvent(new CustomEvent(AUTH_RECOVERY_EVENT, { detail: error }));
 }
 
 function isAuthEndpoint(url = "") {
@@ -95,7 +104,7 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as SessionRequest | undefined;
     if (!originalRequest) return Promise.reject(error);
     assertCurrentSession(originalRequest._sessionGeneration);
-    if (error.response?.status !== 401 || originalRequest._retry || isAuthEndpoint(originalRequest.url || "")) {
+    if (error.response?.status !== 401 || originalRequest._retry || !originalRequest.headers.Authorization || isAuthEndpoint(originalRequest.url || "")) {
       return Promise.reject(error);
     }
 
@@ -106,7 +115,7 @@ apiClient.interceptors.response.use(
       originalRequest.headers.Authorization = `Bearer ${access}`;
       return apiClient(originalRequest);
     } catch (refreshError) {
-      if (originalRequest._sessionGeneration === tokenStorage.getGeneration()) expireBrowserSession();
+      if (originalRequest._sessionGeneration === tokenStorage.getGeneration()) handleSessionRecoveryError(refreshError);
       return Promise.reject(refreshError);
     }
   },

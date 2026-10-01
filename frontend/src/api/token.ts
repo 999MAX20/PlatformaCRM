@@ -2,6 +2,7 @@ import axios from "axios";
 
 import { tokenStorage } from "../lib/storage";
 import type { Business, CurrentUser } from "../types";
+import { readSessionIdentity, SessionIdentityChangedError } from "./sessionIdentity";
 
 const baseURL = import.meta.env.VITE_API_URL || "";
 const cookieRequestOptions = { withCredentials: true, timeout: 20_000 };
@@ -16,11 +17,15 @@ export function assertCurrentSession(generation: number | undefined) {
 // their order as well as guarding the in-memory token against late responses.
 let cookieOperation: Promise<unknown> = Promise.resolve();
 export function sessionCookieRequest<T>(generation: number | undefined, request: () => Promise<T>) {
-  const result = cookieOperation.then(async () => {
+  const execute = async () => {
     if (generation !== undefined) assertCurrentSession(generation);
     const response = await request();
     if (generation !== undefined) assertCurrentSession(generation);
     return response;
+  };
+  const result = cookieOperation.then(async (): Promise<T> => {
+    if (navigator.locks) return await navigator.locks.request(`platforma:auth-cookie:${baseURL}`, execute);
+    return await execute();
   });
   cookieOperation = result.catch(() => undefined);
   return result;
@@ -31,7 +36,12 @@ function beginLogin() {
   return tokenStorage.getGeneration();
 }
 
-function assertSameRefreshUser(access: string) {
+function assertSameRefreshUser(access: string, originalAccess: string | null) {
+  const previous = readSessionIdentity(originalAccess);
+  const incoming = readSessionIdentity(access);
+  if (previous?.sessionId && previous.sessionId !== incoming?.sessionId) {
+    throw new SessionIdentityChangedError("Refresh device session changed");
+  }
   const expected = tokenStorage.getUserId();
   if (expected === null) return;
   let refreshedUser: unknown;
@@ -39,11 +49,11 @@ function assertSameRefreshUser(access: string) {
     const payload = access.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
     refreshedUser = JSON.parse(atob(payload)).user_id;
   } catch {
-    throw new axios.CanceledError("Invalid refresh identity");
+    throw new SessionIdentityChangedError("Invalid refresh identity");
   }
   // Client consistency only; signature validation and authorization remain on
   // the server. A cookie changed in another tab must not silently switch users.
-  if (String(refreshedUser) !== expected) throw new axios.CanceledError("Refresh identity changed");
+  if (String(refreshedUser) !== expected) throw new SessionIdentityChangedError("Refresh identity changed");
 }
 
 export type LoginPayload = {
@@ -169,27 +179,41 @@ export async function confirmPasswordReset(payload: PasswordResetConfirmPayload)
   return data;
 }
 
-let refreshSession: { generation: number; promise: Promise<string> } | null = null;
+let refreshSession: { generation: number; activity: boolean; promise: Promise<string> } | null = null;
 
-export function refreshToken() {
+export function refreshToken({ activity = false }: { activity?: boolean } = {}): Promise<string> {
   const generation = tokenStorage.getGeneration();
-  if (refreshSession?.generation === generation) return refreshSession.promise;
-  const promise = sessionCookieRequest(generation, () => axios
+  if (refreshSession?.generation === generation) {
+    if (activity && !refreshSession.activity) return refreshSession.promise.then(() => {
+      assertCurrentSession(generation);
+      return refreshToken({ activity: true });
+    });
+    return refreshSession.promise;
+  }
+  const originalAccess = tokenStorage.getAccess();
+  const promise = sessionCookieRequest(generation, async () => {
+    const current = tokenStorage.getAccess();
+    // A sibling tab may have completed the same refresh while this one waited.
+    if (!activity && current !== originalAccess && (readSessionIdentity(current)?.expiresAt || 0) > Date.now() + 60_000) {
+      return { data: { access: current! } };
+    }
+    return axios
       .post<{ access: string }>(
         `${baseURL}/api/auth/token/refresh/`,
-        {},
+        activity ? { activity: true } : {},
         cookieRequestOptions,
-      ))
+      );
+  })
       .then(({ data }) => {
         assertCurrentSession(generation);
-        assertSameRefreshUser(data.access);
+        assertSameRefreshUser(data.access, originalAccess);
         tokenStorage.setAccess(data.access);
         return data.access;
       })
       .finally(() => {
         if (refreshSession?.generation === generation) refreshSession = null;
       });
-  refreshSession = { generation, promise };
+  refreshSession = { generation, activity, promise };
   return promise;
 }
 
