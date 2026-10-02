@@ -2,7 +2,7 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## AI-agent navigation / COMMON HEADER AND LEFT PANEL LOCALLY VERIFIED, 2026-10-02
+## AI-agent navigation / COMMON HEADER AND LEFT PANEL PUBLISHED, CI IN PROGRESS, 2026-10-02
 
 - Direct owner requirement after centered-width closure: global search must use
   the same position as other pages; move creation and existing-agent navigation
@@ -50,7 +50,18 @@
 - Reviewed desktop wide/rail, mobile and representative long-list/channel
   screenshots. Five external policy files remain excluded. Source HEAD and
   fetched/remote main still028898d; no concurrent writer or root drift.
-  Next: reviewed commit/static/push and actual new CI; no new product phase.
+- Reviewed13 task-owned paths, including the intentional picker-to-navigation
+  replacement; links, new-file content, credential markers and diff hygiene PASS.
+  All five external policy hashes match the original reviewed snapshot and remain
+  unstaged. No unrelated work was published.
+- Code253fcb95e0e06106390e384faba871d0459b15cd normal-pushed to origin/main;
+  exact remote SHA verified. `scripts/codex_verify.py --mode static --base-ref
+  028898ddf381c69432a7bb38c224a388d82f3eb9` PASS: working/index/range hygiene,
+  isolated migration drift (none), Django system check (no issues).
+- Actual CI36993252325 inspected at2026-10-02 10:03UTC: IN_PROGRESS, conclusion
+  null. No CI success/deployment claim. This documentation receipt changes no
+  application inputs; check its diff/range and normal-push. Remaining external
+  observation is CI completion; no new product work or background monitor implied.
 
 ## Reference-led AI-agent redesign / CENTERED WIDTH PUBLISHED, CI IN PROGRESS, 2026-10-02
 
