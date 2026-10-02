@@ -162,6 +162,44 @@ commands, results, skipped checks/reasons, environment, coverage and commit or d
 snapshot. Distinguish implemented, verified, committed, integrated and deployed.
 If `.git` is absent, say branch/publication operations cannot be proven locally.
 
+### Proportional verification — owner decision 2026-10-02
+
+Choose checks by behavior, blast radius and failure impact, not file count. Before
+implementation record a short plan: changed behavior, risk, focused checks and
+completion checks. These are verification levels, not extra approval phases.
+
+- Docs/rules: diff hygiene, links, examples and consistency only; no app installs,
+  builds, database or browser suites just for Markdown.
+- Local visual/copy change: inspect existing tokens, typography, spacing, sizes
+  and layout; verify the affected component/page at relevant viewport/locale and
+  keyboard states. Do not audit/redesign unrelated pages or create E2E tests that
+  merely mirror CSS. Run frontend build/types once at completion where required.
+- Functional frontend: targeted component/interaction tests and the changed
+  reachable flow, including applicable loading/error/empty/recovery states.
+  Use targeted browser tests for critical flows, not the whole E2E suite.
+- Backend: after each coherent service/API/state transition, run focused automated
+  tests before building dependent behavior. Never defer backend validation until
+  the entire backend or a large phase is written. At completion run affected and
+  dependent suites plus required system/schema/migration checks in isolation.
+  Prove happy path and invalid input; where applicable prove role denial, tenant
+  isolation, lifecycle invariants, transaction rollback, money/stock correctness,
+  concurrency, idempotency, retries and recovery. UI screenshots do not prove these.
+- Shared tokens/components/contracts: inspect callers and test representative
+  affected consumers. Broaden only for demonstrated shared impact; auth, permissions,
+  payments, migrations and shared infrastructure are high risk even in a one-line diff.
+- Full-project/E2E gates: release candidates, explicitly authorized comprehensive
+  certification, or a documented cross-cutting risk needing that scope. A routine
+  task completion, commit, push or context restoration alone is not that reason.
+
+Reuse PASS only while relevant code, dependencies, configuration and fixtures are
+unchanged. Run affected checks again after relevant fixes; do not repeat unaffected
+suites. Do not reinstall dependencies locally if the validated environment and lock
+inputs are unchanged; retain deterministic installation in clean CI. Prefer concise
+success summaries and bounded failure logs. Read the selected checkpoint and relevant
+contracts, not entire historical records. Keep required failures visible; these rules
+do not waive existing release acceptance or retroactively turn a failed gate green.
+
+
 ## 6. Verified commit and normal push
 
 Standing owner authorization (2026-09-21): after an approved implementation/docs

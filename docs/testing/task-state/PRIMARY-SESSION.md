@@ -2,6 +2,40 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Policy publication and explicit handoff, 2026-10-02
+
+- Owner explicitly requested: publish all remaining uncommitted changes, then move
+  to a new chat. Mode docs/publication then managed handoff; no new product scope.
+- Starting root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+  HEAD32dcb5dbc234c82515e900b70cf48a6c352a6fc5; source primary generation2
+  01a0d6c1-3ee4-7f92-b94c-0242bb2eb35e. Exactly five remaining owner-approved
+  policy files: AGENTS.md, testing.md, CODEX_TASK_TEMPLATE.md, frontend and
+  verification skills. Full diff reviewed; hashes in output/handoff-20261002/policy-start.json.
+- Observable result: proportional verification policy published, then one validated
+  successor in the same saved local project. Gate: docs diff/index/real-range hygiene,
+  skill frontmatter/references, instruction consistency and publication SHA readback.
+  Docs-only: no install/build/DB/browser tests. No permissions, AI, events, notification,
+  migration/environment or executable runner/CI changes.
+- Review scenarios: visual changes use affected viewport/focus plus completion build;
+  backend slices receive focused tests before dependent changes; auth/money/shared
+  changes expand by demonstrated risk; release requirements and failed gates remain.
+  Skills and testing matrix agree. New text introduces no new links/commands;
+  referenced skill files exist. Working/index diff hygiene PASS; no untracked source.
+- Prior UI scope closed: exact32dcb5d CI36993394556 completed SUCCESS, both frontend
+  and backend jobs, observed2026-10-02T10:21:06Z. Saved sanitized evidence:
+  output/git-publication-20260921/ci-32dcb5dbc234c82515e900b70cf48a6c352a6fc5.json.
+  Existing10 browser checks, build/bundle/static evidence remains valid.
+- Native project listing matches saved project local-3368c3df041be97f9549005fc6749ad2.
+  Its old Desktop/Zani path is a verified junction to canonical PlatformaCRM.
+  Only this source is active in CRM; UI coordinator is idle, orchestrator notLoaded.
+  No own unfinished application operations. Existing dev servers are preserved;
+  handoff does not authorize starting/stopping them, deployment or a new phase.
+- Remote main readback and FETCH_HEAD equal32dcb5d. origin/main tracking ref is stale
+  because configured fetch refspecs omit main; this is not remote history drift.
+  Use explicit main refspec and ls-remote for publication; do not alter histories.
+- Next: commit/push reviewed docs, then prepare generation2→3 metadata, create exactly
+  one read-only successor, validate comprehension, transfer ownership and archive source.
+
 ## AI-agent navigation / COMMON HEADER AND LEFT PANEL PUBLISHED, CI IN PROGRESS, 2026-10-02
 
 - Direct owner requirement after centered-width closure: global search must use

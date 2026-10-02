@@ -12,7 +12,7 @@ Treat verification as evidence for the requested behavior, not as a ceremonial c
 1. Read `AGENTS.md`, `docs/testing/testing.md`, and the current task contract or checkpoint. On resume, inspect the relevant delta rather than restarting discovery.
 2. Inventory changed or investigated areas: backend, frontend, CRM lifecycle, permissions, tenant isolation, integration, AI, migration, environment, and docs.
 3. Start with the narrowest command that can reproduce or validate the behavior.
-4. Expand to the required scoped or project gate after the focused check passes.
+4. At completion run the affected/dependent gate selected by the testing matrix. Expand to a full-project gate only for release/certification or documented cross-cutting risk, not automatically after each focused PASS. Backend service/API behavior must receive focused automated verification as each coherent slice is implemented, before dependent work accumulates.
 5. Use [references/verification-commands.md](references/verification-commands.md) for PowerShell-compatible commands and selection rules.
 
 ## Preserve test integrity

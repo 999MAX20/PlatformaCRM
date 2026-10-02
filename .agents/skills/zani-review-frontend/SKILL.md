@@ -15,7 +15,7 @@ description: Implement or review authenticated ZANI React UI for real business d
 6. Treat frontend role hiding as UX only; preserve backend enforcement and handle forbidden responses.
 7. Implement loading, error, empty, forbidden, success, and disabled states as applicable. Check keyboard use, labels, focus, contrast, and desktop/mobile behavior.
 8. Source visible text from existing i18n/constants or approved task copy; update supported locales consistently.
-9. Add or update focused component/E2E coverage and run the frontend build through `$zani-run-verification`.
+9. Select checks by changed behavior under `docs/testing/testing.md`. For visual/copy changes inspect the affected component/page against existing tokens, typography, spacing and responsive/accessibility states; do not add tests that mirror CSS or audit unrelated screens. For behavior changes add/update focused regression coverage; use targeted browser tests for critical flows. Run the frontend build once at completion, reusing unchanged evidence; no full-project E2E by default.
 
 Read [references/frontend-checklist.md](references/frontend-checklist.md) before finishing.
 

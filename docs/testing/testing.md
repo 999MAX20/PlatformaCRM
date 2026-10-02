@@ -45,9 +45,57 @@ writer. Isolate test databases, loopback ports and worker queues, not source edi
 Never use an existing merchant
 database, real credentials or someone else's server as a convenient test fixture.
 
+### Proportional verification — owner decision 2026-10-02
+
+Choose checks by behavior, blast radius and failure impact, not file count. Before
+implementation record a short plan: changed behavior, risk, focused checks and
+completion checks. These are verification levels, not extra approval phases.
+
+- Docs/rules: diff hygiene, links, examples and consistency only; no app installs,
+  builds, database or browser suites just for Markdown.
+- Local visual/copy change: inspect existing tokens, typography, spacing, sizes
+  and layout; verify the affected component/page at relevant viewport/locale and
+  keyboard states. Do not audit/redesign unrelated pages or create E2E tests that
+  merely mirror CSS. Run frontend build/types once at completion where required.
+- Functional frontend: targeted component/interaction tests and the changed
+  reachable flow, including applicable loading/error/empty/recovery states.
+  Use targeted browser tests for critical flows, not the whole E2E suite.
+- Backend: after each coherent service/API/state transition, run focused automated
+  tests before building dependent behavior. Never defer backend validation until
+  the entire backend or a large phase is written. At completion run affected and
+  dependent suites plus required system/schema/migration checks in isolation.
+  Prove happy path and invalid input; where applicable prove role denial, tenant
+  isolation, lifecycle invariants, transaction rollback, money/stock correctness,
+  concurrency, idempotency, retries and recovery. UI screenshots do not prove these.
+- Shared tokens/components/contracts: inspect callers and test representative
+  affected consumers. Broaden only for demonstrated shared impact; auth, permissions,
+  payments, migrations and shared infrastructure are high risk even in a one-line diff.
+- Full-project/E2E gates: release candidates, explicitly authorized comprehensive
+  certification, or a documented cross-cutting risk needing that scope. A routine
+  task completion, commit, push or context restoration alone is not that reason.
+
+Reuse PASS only while relevant code, dependencies, configuration and fixtures are
+unchanged. Run affected checks again after relevant fixes; do not repeat unaffected
+suites. Do not reinstall dependencies locally if the validated environment and lock
+inputs are unchanged; retain deterministic installation in clean CI. Prefer concise
+success summaries and bounded failure logs. Read the selected checkpoint and relevant
+contracts, not entire historical records. Keep required failures visible; these rules
+do not waive existing release acceptance or retroactively turn a failed gate green.
+
+Commands must name the intended mode explicitly. The runner currently defaults to
+`full`; that default is not a task requirement. `backend` without targets runs all
+backend tests: select actual affected test labels. Inspect command composition before
+running it; frontend/browser modes currently also install dependencies and perform
+Django checks. Use the documented isolated focused path for narrow iterations.
+CI currently runs broad checks on every main/master push; report actual CI separately,
+without duplicating its full scope locally for an unrelated small change. This policy
+update does not change executable runner or CI behavior.
+
 ## Deterministic Local Quality Gate
 
-The cross-platform gate is the single local entrypoint for acceptance checks:
+For release-candidate integration, the cross-platform full gate is shown below.
+For ordinary tasks, choose the matrix row and an explicit scoped mode or the
+documented isolated focused path; do not copy this full command by default:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\codex_verify.py --mode full --base-ref <task-base-sha>

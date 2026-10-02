@@ -11,6 +11,13 @@ approval of this form. Mark irrelevant fields `N/A` with a short reason.
 For resumed work, update the checkpoint and inspect the relevant delta instead
 of repeating the entire discovery or a repository-wide audit.
 
+Choose verification by risk under `testing.md`: docs-only, local visual,
+functional frontend, backend/shared behavior, or release/cross-cutting scope.
+For backend, name the focused tests run after each coherent service/API slice and
+the affected/dependent completion gate. For frontend, name the affected page or
+component and any critical browser flow. State a concrete reason for full-project
+checks; task size alone, commit/push or context restoration is insufficient.
+
 ## Default Prompt Shape
 
 ```text
