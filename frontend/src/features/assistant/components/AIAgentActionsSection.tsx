@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { ChevronRight, FunctionSquare } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
-import { Card, CardBody } from "../../../components/ui/Card";
 import { Input } from "../../../components/ui/Input";
 import { Textarea } from "../../../components/ui/Textarea";
 import { Select } from "../../../components/ui/Select";
@@ -29,12 +28,12 @@ export function AgentActionsSection({
   const toolEnabled = (tool: string) => form.allowed_tools.includes(tool);
   const proposesWork = runtime.enabled && (runtime.mode === "lead_task" || runtime.mode === "draft_deal");
   return (
-    <div className="space-y-5">
-      <Card variant="outlined">
-        <CardBody>
-          <h3 className="text-xl font-black text-midnight">{t("aiAgents.authority.title")}</h3>
+    <div className="space-y-4">
+      <section className="border-b border-platforma-border pb-4 last:border-0">
+        <div>
+          <h3 className="text-base font-semibold text-midnight">{t("aiAgents.authority.title")}</h3>
           <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.authority.text")}</p>
-          <div className="mt-4 divide-y divide-platforma-border rounded-2xl border border-platforma-border bg-surface-muted px-4">
+          <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:divide-x lg:divide-platforma-border">
             <AuthorityRow label={t("aiAgents.authority.suggestions")} value={t("aiAgents.authority.suggestOnly")} />
             <AuthorityRow
               label={t("aiAgents.authority.leadTask")}
@@ -49,22 +48,22 @@ export function AgentActionsSection({
               value={t("aiAgents.authority.staffBooking")}
             />
           </div>
-        </CardBody>
-      </Card>
+        </div>
+      </section>
       <ControlSection botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
-      <Card variant="outlined"><CardBody>
-        <Textarea label={t("aiSetup.handoffRules")} value={form.escalation_text} disabled={!canManage} onChange={(event) => setForm((current) => ({ ...current, escalation_text: event.target.value }))} />
-      </CardBody></Card>
       <FunctionsSection form={form} setForm={setForm} canManage={canManage} />
+      <section className="border-b border-platforma-border pb-4 last:border-0"><div>
+        <Textarea className="min-h-20 py-2" rows={2} label={t("aiSetup.handoffRules")} value={form.escalation_text} disabled={!canManage} onChange={(event) => setForm((current) => ({ ...current, escalation_text: event.target.value }))} />
+      </div></section>
     </div>
   );
 }
 
 function AuthorityRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-3 text-sm">
-      <span className="font-bold text-platforma-subtle">{label}</span>
-      <span className="text-right font-black text-midnight">{value}</span>
+    <div className="flex flex-col gap-1 text-sm lg:px-3 lg:first:pl-0">
+      <span className="font-semibold text-platforma-subtle">{label}</span>
+      <span className="font-semibold text-midnight">{value}</span>
     </div>
   );
 }
@@ -78,14 +77,16 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
   }));
 
   return (
-    <Card variant="outlined">
-      <CardBody>
-        <div className="mb-5">
-          <h3 className="text-xl font-black text-midnight">{t("aiAgents.control.pipelineTitle")}</h3>
+    <section className="border-b border-platforma-border pb-4 last:border-0">
+      <div>
+        <div className="mb-3">
+          <h3 className="text-base font-semibold text-midnight">{t("aiAgents.control.pipelineTitle")}</h3>
           <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.control.pipelineText")}</p>
         </div>
 
+        <div className="grid items-end gap-x-5 gap-y-1 lg:grid-cols-[minmax(240px,480px)_minmax(0,1fr)]">
         <Select
+          className="sm:min-h-10"
           label={t("aiAgents.control.mode")}
           value={config.mode}
           disabled={!canManage}
@@ -101,18 +102,18 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
           ]}
         />
         <FieldHint>{t("aiAgents.hint.pipelineMode")}</FieldHint>
+        </div>
 
-        <div className="mt-5 grid gap-3">
+        <div className="mt-3 divide-y divide-platforma-border">
           {[
             ["require_review_on_fallback", t("aiAgents.control.reviewFallbackTitle"), t("aiAgents.control.reviewFallbackText")],
             ["create_appointment", t("aiAgents.control.appointmentTitle"), t("aiAgents.control.appointmentText")],
             ["auto_send_reply", t("aiAgents.control.autoReplyTitle"), t("aiAgents.control.autoReplyText")],
           ].map(([key, title, text]) => (
-            <div key={key} className="flex items-center justify-between gap-4 rounded-2xl border border-platforma-border bg-surface-muted p-4">
-              <div>
-                <h4 className="font-black text-midnight">{title}</h4>
-                <p className="mt-1 text-sm font-semibold text-platforma-faint">{text}</p>
-              </div>
+            <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-2 lg:grid-cols-[240px_minmax(0,1fr)_auto]">
+              <h4 className="text-sm font-semibold text-midnight">{title}</h4>
+              <p className="col-start-1 row-start-2 text-sm leading-5 text-platforma-subtle lg:col-start-2 lg:row-start-1">{text}</p>
+              <div className="col-start-2 row-span-2 row-start-1 flex min-h-11 items-center lg:col-start-3 lg:row-span-1">
               <ToggleSwitch
                 checked={Boolean(config[key as keyof typeof config])}
                 disabled={!canManage || config.mode === "off"}
@@ -120,27 +121,28 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
                 tone="ai"
                 onChange={(next) => setConfig((current) => ({ ...current, [key]: next }))}
               />
+              </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-5 rounded-2xl border border-platforma-border bg-surface-muted p-4">
+        <div className="mt-2">
           <button
             type="button"
-            className="flex w-full items-center justify-between gap-3 text-left"
+            className="platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 text-left"
             onClick={() => setShowAdvanced((value) => !value)}
             aria-expanded={showAdvanced}
             aria-controls="ai-agent-pipeline-advanced"
           >
             <div>
-              <h4 className="font-black text-midnight">{t("aiAgents.control.advancedTitle")}</h4>
+              <h4 className="font-semibold text-midnight">{t("aiAgents.control.advancedTitle")}</h4>
               <p className="mt-1 text-sm font-semibold leading-5 text-platforma-faint">{t("aiAgents.control.advancedText")}</p>
             </div>
             <ChevronRight size={18} className={cn("shrink-0 text-platforma-faint transition", showAdvanced && "rotate-90 text-ai-700")} />
           </button>
 
           {showAdvanced ? (
-            <div id="ai-agent-pipeline-advanced" className="mt-5 grid gap-4 md:grid-cols-2">
+            <div id="ai-agent-pipeline-advanced" className="mt-3 grid gap-3 md:grid-cols-2">
               <div>
                 <Input
                   label={t("aiAgents.control.maxReplyChars")}
@@ -154,20 +156,20 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
                 <FieldHint>{t("aiAgents.hint.maxReplyChars")}</FieldHint>
               </div>
               <label className="block">
-                <span className="mb-2 block text-sm font-bold text-platforma-subtle">{t("aiAgents.control.leadConfidence", { value: config.min_lead_confidence.toFixed(1) })}</span>
+                <span className="mb-2 block text-sm font-semibold text-platforma-subtle">{t("aiAgents.control.leadConfidence", { value: config.min_lead_confidence.toFixed(1) })}</span>
                 <input className="w-full accent-ai-600" type="range" min="0.1" max="1" step="0.1" value={config.min_lead_confidence} disabled={!canManage} onChange={(event) => setConfig((current) => ({ ...current, min_lead_confidence: Number(event.target.value) }))} />
                 <FieldHint>{t("aiAgents.hint.leadConfidence")}</FieldHint>
               </label>
               <label className="block md:col-span-2">
-                <span className="mb-2 block text-sm font-bold text-platforma-subtle">{t("aiAgents.control.dealConfidence", { value: config.min_deal_confidence.toFixed(1) })}</span>
+                <span className="mb-2 block text-sm font-semibold text-platforma-subtle">{t("aiAgents.control.dealConfidence", { value: config.min_deal_confidence.toFixed(1) })}</span>
                 <input className="w-full accent-ai-600" type="range" min="0.1" max="1" step="0.1" value={config.min_deal_confidence} disabled={!canManage} onChange={(event) => setConfig((current) => ({ ...current, min_deal_confidence: Number(event.target.value) }))} />
                 <FieldHint>{t("aiAgents.hint.dealConfidence")}</FieldHint>
               </label>
             </div>
           ) : null}
         </div>
-      </CardBody>
-    </Card>
+      </div>
+    </section>
   );
 }
 
@@ -197,24 +199,20 @@ function FunctionsSection({
   };
 
   return (
-    <Card variant="outlined">
-      <CardBody>
+    <section className="border-b border-platforma-border pb-4 last:border-0">
+      <div>
+        <h3 className="mb-3 text-base font-semibold text-platforma-ink">{t("aiAgents.functionsTitle")}</h3>
         <div className="divide-y divide-platforma-border">
         {tools.map(([key, title, text]) => {
           const enabled = form.allowed_tools.includes(key);
           return (
-            <div key={key} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex min-w-0 items-start gap-3">
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-ai-50 text-ai-700 ring-1 ring-ai-100">
-                  <FunctionSquare size={18} />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-platforma-ink">{title}</h3>
-                  <p className="mt-1 text-sm leading-5 text-platforma-subtle">{text}</p>
-                  <FieldHint>{t(`aiAgents.hint.tool.${key}`)}</FieldHint>
-                </div>
+            <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1 py-2 lg:grid-cols-[240px_minmax(0,1fr)_auto]">
+              <h4 className="text-sm font-semibold leading-6 text-platforma-ink">{title}</h4>
+              <div className="col-start-1 row-start-2 min-w-0 lg:col-start-2 lg:row-start-1">
+                <p className="text-sm leading-5 text-platforma-subtle">{text}</p>
+                <FieldHint>{t(`aiAgents.hint.tool.${key}`)}</FieldHint>
               </div>
-              <div className="flex shrink-0 items-center justify-between gap-3 sm:justify-end">
+              <div className="col-start-2 row-span-2 row-start-1 flex min-h-11 shrink-0 items-center gap-2 lg:col-start-3 lg:row-span-1">
                 <span className="text-xs font-semibold text-platforma-subtle">{enabled ? t("aiAgents.functions.enabled") : t("aiAgents.functions.disabled")}</span>
                 <ToggleSwitch checked={enabled} disabled={!canManage} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />
               </div>
@@ -222,7 +220,7 @@ function FunctionsSection({
           );
         })}
         </div>
-      </CardBody>
-    </Card>
+      </div>
+    </section>
   );
 }

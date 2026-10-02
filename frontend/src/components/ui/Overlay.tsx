@@ -91,8 +91,8 @@ function restoreDialogFocus(
   focusReturnId: string | null,
 ) {
   function tryRestore() {
-    if (focusAndConfirm(opener)) return true;
-    return focusAndConfirm(findVisibleFocusReturnTarget(focusReturnId));
+    if (focusAndConfirm(findVisibleFocusReturnTarget(focusReturnId))) return true;
+    return focusAndConfirm(opener);
   }
 
   if (tryRestore()) return;

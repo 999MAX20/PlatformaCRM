@@ -1,12 +1,12 @@
-import { Bot, MessageSquareText } from "lucide-react";
-import type { ReactNode } from "react";
+import { MessageSquareText } from "lucide-react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 
 import { Badge } from "../../../components/ui/Badge";
 import { Button } from "../../../components/ui/Button";
 import { Switch } from "../../../components/ui/Switch";
 import { Tabs } from "../../../components/ui/Tabs";
 import { useI18n } from "../../../lib/i18n";
-import type { AgentProfile, Bot as BotType } from "../../../types";
+import type { Bot as BotType } from "../../../types";
 import type { AgentSection } from "../aiAgentsTypes";
 import { agentStatusLabel, sections } from "../aiAgentsUtils";
 
@@ -21,7 +21,6 @@ function statusVariant(status: BotType["status"], runtimeBlocked: boolean) {
 
 export function AIAgentEditorShell({
   bot,
-  profile,
   activeSection,
   canManage,
   activationBlocked,
@@ -38,7 +37,6 @@ export function AIAgentEditorShell({
   children,
 }: {
   bot: BotType;
-  profile: AgentProfile | null;
   activeSection: AgentSection;
   canManage: boolean;
   activationBlocked: boolean;
@@ -55,40 +53,39 @@ export function AIAgentEditorShell({
   children: ReactNode;
 }) {
   const { t } = useI18n();
+  const headerRef = useRef<HTMLElement>(null);
   const runtimeBlocked = bot.status === "active" && Boolean(bot.readiness && !bot.readiness.is_ready);
   const statusLabel = agentStatusLabel(bot, t);
   const nextSection = sections[sections.findIndex((section) => section.id === activeSection) + 1];
+  useLayoutEffect(() => {
+    const list = headerRef.current?.querySelector<HTMLElement>('[role="tablist"]');
+    const tab = list?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!list || !tab) return;
+    const parent = list.getBoundingClientRect();
+    const selected = tab.getBoundingClientRect();
+    if (selected.right > parent.right) list.scrollLeft += selected.right - parent.right;
+    else if (selected.left < parent.left) list.scrollLeft += selected.left - parent.left;
+  }, [activeSection]);
 
   return (
     <section
-      className="flex min-h-[680px] min-w-0 flex-col overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-card lg:min-h-0"
+      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface-card"
       aria-label={t("aiAgents.editorAria", { name: bot.name })}
       data-testid="ai-agent-editor"
     >
-      <header className="shrink-0 border-b border-platforma-border bg-surface-card px-4 py-4 sm:px-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex min-w-0 items-start gap-3">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-control bg-ai-50 text-ai-700 ring-1 ring-ai-100">
-              <Bot aria-hidden="true" size={23} />
-            </span>
-            <div className="min-w-0">
-              <div className="flex min-w-0 flex-wrap items-center gap-2">
-                <h2 className="min-w-0 truncate text-xl font-semibold text-platforma-ink">{bot.name}</h2>
-                <Badge size="sm" variant={statusVariant(bot.status, runtimeBlocked)}>{statusLabel}</Badge>
-              </div>
-              <p className="mt-1 line-clamp-2 max-w-3xl text-sm font-medium leading-5 text-platforma-subtle">
-                {profile?.role_description || t("aiAgents.purposeMissing")}
-              </p>
-            </div>
+      <header ref={headerRef} className="shrink-0 px-3 pt-2 sm:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <div className="flex min-w-0 flex-1 basis-full items-center gap-3 sm:basis-auto">
+            <h2 className="min-w-0 truncate text-lg font-semibold text-platforma-ink" title={bot.name}>{bot.name}</h2>
+            <Badge size="sm" variant={statusVariant(bot.status, runtimeBlocked)}>{statusLabel}</Badge>
           </div>
 
           <div className="flex shrink-0 flex-wrap items-center gap-2">
-            <Button type="button" size="sm" variant="secondary" onClick={onOpenMessages}>
+            <Button type="button" size="sm" className="min-h-11 sm:min-h-9" variant="secondary" onClick={onOpenMessages}>
               <MessageSquareText aria-hidden="true" size={16} />
               {t("aiAgents.openMessages")}
             </Button>
-            <div className="flex min-h-9 items-center gap-2 rounded-control border border-platforma-border bg-surface-warm px-3">
-              <span className="text-xs font-semibold text-platforma-subtle">{statusLabel}</span>
+            <div className="flex min-h-11 items-center gap-2 sm:min-h-9">
               <Switch
                 checked={bot.status === "active"}
                 disabled={!canManage || activationBlocked || (dirty && bot.status !== "active")}
@@ -106,8 +103,9 @@ export function AIAgentEditorShell({
         <Tabs
           ariaLabel={t("aiAgents.editorTabsAria")}
           idPrefix="ai-agent-editor"
-          className="mt-4 bg-transparent p-0"
+          className="mt-2 [&_[role=tab]]:min-h-11 sm:[&_[role=tab]]:min-h-10"
           tone="ai"
+          appearance="underline"
           value={activeSection}
           onChange={onSectionChange}
           options={sections.map((section) => ({
@@ -121,28 +119,28 @@ export function AIAgentEditorShell({
         id={`ai-agent-editor-panel-${activeSection}`}
         role="tabpanel"
         aria-labelledby={`ai-agent-editor-tab-${activeSection}`}
-        className="min-h-0 flex-1 overflow-visible bg-surface-warm p-3 sm:p-4 xl:overflow-y-auto"
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 sm:px-5 sm:py-4"
       >
-        <fieldset disabled={isSaving} className="mx-auto min-w-0 w-full max-w-[1280px]">{children}</fieldset>
+        <fieldset disabled={isSaving} className={`min-w-0 w-full ${activeSection === "test" ? "h-full" : ""}`}>{children}</fieldset>
       </div>
 
       {canManage && (showFooter || nextSection) ? (
-        <footer className="flex shrink-0 flex-col gap-3 border-t border-platforma-border bg-surface-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-          <p className="min-h-5 text-xs font-medium text-platforma-subtle" aria-live="polite">
+        <footer className="flex shrink-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 border-t border-platforma-border bg-surface-card px-3 py-2 sm:px-5">
+          <p className="mr-auto text-xs font-medium text-platforma-subtle" aria-live="polite">
             {dirty
               ? t("aiAgents.unsavedIndicator")
               : saveState === "saved"
                 ? t("aiAgents.savedIndicator")
                 : ""}
           </p>
-          <div className="grid grid-cols-2 gap-2 sm:flex">
-            {showFooter ? <><Button type="button" variant="secondary" disabled={!dirty || isSaving} onClick={onReset}>
+          <div className="flex flex-wrap justify-end gap-2">
+            {showFooter ? <><Button type="button" className="min-h-11 sm:min-h-10" variant="secondary" disabled={!dirty || isSaving} onClick={onReset}>
               {t("common.cancel")}
             </Button>
-            <Button type="button" disabled={!dirty || saveDisabled} isLoading={isSaving} onClick={onSave}>
+            <Button type="button" className="min-h-11 sm:min-h-10" disabled={!dirty || saveDisabled} isLoading={isSaving} onClick={onSave}>
               {t("aiAgents.saveChanges")}
             </Button></> : null}
-            {nextSection ? <Button type="button" variant="secondary" disabled={isSaving} onClick={() => onSectionChange(nextSection.id)}>{t("aiSetup.next", { section: t(nextSection.labelKey) })}</Button> : null}
+            {nextSection ? <Button type="button" className="min-h-11 sm:min-h-10" variant="secondary" disabled={isSaving} onClick={() => onSectionChange(nextSection.id)}>{t("aiSetup.next", { section: t(nextSection.labelKey) })}</Button> : null}
           </div>
         </footer>
       ) : null}

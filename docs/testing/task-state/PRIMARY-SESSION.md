@@ -2,6 +2,90 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Reference-led AI-agent redesign / LOCALLY VERIFIED, 2026-10-02
+
+- New explicit owner-authorized implementation relayed by coordinator
+  01a0f32f-7d02-7263-a53d-496c8f9787f5 after cancellation below. This is the
+  complete replacement requirement, not resumption of the cancelled variant.
+- Same registered primary; canonical C:/Users/user/Desktop/PlatformaCRM,
+  branch codex/ui-testing-toolkit, base0521f03788783540894388518692f168fe9c4323.
+  Source is clean; only own STATUS/checkpoint cancellation/dev receipts dirty.
+  Coordinator read-only; one writer, no alternate checkout or agent delegation.
+- All three owner references viewed: generated_images coordinator folder,
+  exec-9a41a71a-4e2f-449c-9ebe-5b543d817f74.png (profile),
+  exec-19697b0b-21e0-43cb-8c79-191ee7a7f129.png (actions),
+  exec-5ca69c4b-441a-43d9-973a-c43d3a3a81b4.png (channels).
+- Observable result: flat full-width five-tab editor with compact forms,
+  permission/action rows, channel list/table, knowledge toolbar/list and test
+  conversation; relevant dialogs consistent. No persistent inner agent list.
+  Header selector centered between title/search on wide screens, fixed-width
+  ellipsis, name/role search, real status/readiness, scroll, keyboard/focus,
+  loading/error/empty/no-results. Responsive row when width is insufficient.
+- Explicit corrections override images: preserve global navigation/logo/search,
+  separate create action, tokens/fonts; no invented status/counter/text limit,
+  no generated auto-reply policy. Internal agent copy localized RU/KK/EN;
+  global header/sidebar retain AI-agents title. All functional fields remain.
+- Reuse PageHeaderContext, shared controls/popover, API/query hooks, canonical
+  routing and unchanged draft/navigation guard/readiness/permission services.
+  Gap: layout and selector UX. No backend/domain/permission/notification/
+  BusinessEvent/AI-execution changes, migrations or working-data mutations.
+- Acceptance/gates: before/after five-tab screenshots1280x720/1600x900/mobile,
+  reference differences, long multilingual names/list, selector search/select/
+  focus/keyboard, dirty guard/save/reset, readiness/permissions/recovery/states;
+  focused browser+build/budget+affected Node, exact-base static and reviewed
+  conventional commit/normal-push main/actual CI. Disposable fixtures only;
+  no real channels/activation/live AI. Existing unchanged0521f03 baseline
+  screenshots may be reused from output/ai-agent-layout-20261002/browser-before.
+- Implemented: flat five-tab editor, header search picker, responsive second
+  header row, preserved draft guard/fields/readiness, explicit dialog focus return.
+  [Scope, reference interpretation and evidence](../ai-agent-reference-redesign-20261002.md).
+- Final focused checks: picker desktop4/mobile4, existing setup4, layout3 plus
+  shared dialog/drawer4 (5 viewport-specific skips), shared CRM geometry1 PASS;
+  final mobile search offset recheck1 PASS. Node action-colors/feedback/daily
+  workspaces14 PASS; i18n/types/app+widget build and bundle budget PASS.
+  Exact commands, failed initial focus attempt and local screenshot paths in report.
+- Initial build/layout were repeated only after relevant fixes; no full-project
+  local run, live provider/activation, working-DB changes or dependency reinstall.
+- 08:11 UTC external verification-policy edits appeared in AGENTS.md,
+  docs/testing/testing.md, docs/testing/CODEX_TASK_TEMPLATE.md and two skills
+  (zani-review-frontend/zani-run-verification). Source writes paused; owner
+  explicitly confirmed they are approved and must remain outside this commit.
+  HEAD/branch and affected app paths did not drift. Independent checks continued;
+  implementation resumed after that confirmation. Preserve all five policy files.
+- Next: review/stage only this change, commit, exact-base static gate, normal
+  push to origin/main and inspect actual CI. Final publication SHA/status in task reply.
+
+## Compact AI-agent workspace / CANCELLED BY OWNER, 2026-10-02
+
+- Direct owner instruction: cancel the latest /ai-agents redesign code changes,
+  explicitly including Overlay.tsx missed by the app undo operation.
+- All12 task-owned application files restored to unchanged HEAD0521f03;
+  two task-created untracked browser specs removed. No redesign commit/push.
+- Previous palette/fonts and pre-existing dev-runtime receipts preserved.
+  Same canonical root and branch codex/ui-testing-toolkit; no unrelated changes.
+- Own test processes have ended. Intermediate local screenshots/logs remain in
+  ignored output/ai-agent-layout-20261002 as historical evidence only.
+  Required redesign gates/publication cancelled, not reported as passed.
+- Next: await a new owner instruction. Do not resume this cancelled redesign.
+
+## Local dev restart / RUNNING, 2026-10-02
+
+- Owner: «Подними дивсеры». Environment-only action, registered primary,
+  canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+  clean starting0521f03788783540894388518692f168fe9c4323. No implementation,
+  migrations, seed, reset or deployment scope; existing local profile reused.
+- Hidden Django runserver127.0.0.1:8000 (parent2100, listener7424) and Vite
+ 127.0.0.1:5173 strictPort (11740) started from canonical root/frontend.
+  Existing file-scanning runtime start.ps1 launched supervisor9320,
+  scanner7788, worker8824 and beat7764; fresh heartbeat observed.
+- HTTP PASS: frontend and src/main.tsx200, backend health/db200,
+  proxied clients401 without authentication. Scanner initialization was still
+  in progress at initial listener check. Logs: output/dev-20261002 and
+  output/local-file-antivirus. Services intentionally remain running.
+  No build/test rerun needed for starting existing services. Runtime receipt only.
+- Previous palette task0521f03 is published to main, remote SHA confirmed;
+  static gate PASS and CI36934990817 completed SUCCESS for both jobs.
+
 ## Shared emerald palette and interaction states / LOCALLY VERIFIED, 2026-10-02
 
 - Authorization: owner-approved implementation relayed by coordination task

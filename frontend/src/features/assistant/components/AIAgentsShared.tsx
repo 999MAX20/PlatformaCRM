@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
-import { Bot, CheckCircle2, Plus, Sparkles } from "lucide-react";
+import { Bot, CheckCircle2, Circle, Plus, Sparkles } from "lucide-react";
 
 import { Card, CardBody } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
@@ -61,6 +61,20 @@ export function OnboardingProgress({
   const { t } = useI18n();
   const doneCount = steps.filter((step) => step.done).length;
   const progress = steps.length ? Math.round((doneCount / steps.length) * 100) : 0;
+  if (compact) {
+    return (
+      <nav aria-label={t("aiAgents.firstLaunchTitle")} className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1 border-b border-platforma-border pb-2">
+        <span className="text-sm font-semibold text-platforma-subtle">{doneCount}/{steps.length}</span>
+        {steps.map(step => {
+          const Icon = step.done ? CheckCircle2 : Circle;
+          return <Link key={step.title} to={step.href} title={step.text} className="platforma-focus-ring flex min-h-11 items-center gap-2 text-sm text-platforma-text sm:min-h-9">
+            <Icon aria-hidden="true" size={16} className={step.done ? "text-platforma-success" : "text-platforma-subtle"} />
+            {step.title}
+          </Link>;
+        })}
+      </nav>
+    );
+  }
   return (
     <div className={cn("rounded-2xl border border-platforma-border bg-white p-4", compact ? "mt-5" : "shadow-sm")}>
       <div className="flex items-center justify-between gap-3">

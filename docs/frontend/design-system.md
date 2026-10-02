@@ -994,6 +994,22 @@ Avoid hero blocks on authenticated CRM screens.
 
 ## Shared UI Helpers
 
+### AI-agent workspace
+
+The agent editor uses one full-width surface beneath the global header. A compact
+180px header selector replaces the inner agent sidebar; it searches names/roles
+and shows operational status separately from readiness. On narrow screens it
+moves to the second header row. Keep creation as a separate action and preserve
+the unsaved-change guard when selecting another agent.
+
+Use the optional underline Tabs appearance for its five sections. Forms and
+setting rows use dividers rather than nested cards; channels use aligned
+name/status/action columns. Advanced settings and provider help stay reachable
+through disclosures. Test shows readiness and AI usage before the trial dialogue.
+See [verification and reference differences](../testing/ai-agent-reference-redesign-20261002.md).
+
+### Surface reuse
+
 - Prefer shared `Surface`, `Card`, `CrmTableSurface`, `CrmDataTable`, and drawer surface helpers before adding page-local background wrappers.
 - New shared surfaces should map to semantic tokens, not hard-coded `bg-slate-*` or `bg-white/*` classes.
 - Page-local background classes are allowed only when they represent a specific semantic state or selected/hover behavior.

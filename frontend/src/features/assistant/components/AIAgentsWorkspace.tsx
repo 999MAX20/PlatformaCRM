@@ -3,7 +3,6 @@ import type { ComponentProps, Dispatch, SetStateAction } from "react";
 import { getApiErrorMessage } from "../../../api/client";
 import { CrmWorkspacePage } from "../../../components/crm";
 import { Button } from "../../../components/ui/Button";
-import { Select } from "../../../components/ui/Select";
 import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import { useI18n } from "../../../lib/i18n";
 import type {
@@ -14,10 +13,9 @@ import type {
   Id,
 } from "../../../types";
 import type { AgentFormState, AgentSection, BotDraftState } from "../aiAgentsTypes";
-import { agentStatusLabel, getOnboardingSteps } from "../aiAgentsUtils";
+import { getOnboardingSteps } from "../aiAgentsUtils";
 import { AIAgentEditorShell } from "./AIAgentEditorShell";
 import { CreateAgentModal, UnsavedAgentChangesModal } from "./AIAgentModals";
-import { AIAgentsListPane } from "./AIAgentsListPane";
 import {
   AgentActionsSection,
   ChannelManagerSection,
@@ -35,7 +33,6 @@ export function AIAgentsWorkspace({
   addChannel,
   botChannels,
   botDraft,
-  bots,
   businessId,
   canManage,
   canManageChannels,
@@ -56,7 +53,6 @@ export function AIAgentsWorkspace({
   onDiscardAndContinue,
   onSaveAndContinue,
   onNavigateSection,
-  onSelectAgent,
   onOpenMessages,
   onOpenCreate,
   onReset,
@@ -67,7 +63,6 @@ export function AIAgentsWorkspace({
   onToggleStatus,
   pageError,
   profileForm,
-  profiles,
   saveState,
   sectionError,
   sectionLoading,
@@ -81,7 +76,6 @@ export function AIAgentsWorkspace({
   addChannel: AddChannelMutation;
   botChannels: BotChannel[];
   botDraft: BotDraftState;
-  bots: Bot[];
   businessId: Id;
   canManage: boolean;
   canManageChannels: boolean;
@@ -102,7 +96,6 @@ export function AIAgentsWorkspace({
   onDiscardAndContinue: () => void;
   onSaveAndContinue: () => void;
   onNavigateSection: (section: AgentSection) => void;
-  onSelectAgent: (id: Id) => void;
   onOpenMessages: () => void;
   onOpenCreate: () => void;
   onReset: () => void;
@@ -113,7 +106,6 @@ export function AIAgentsWorkspace({
   onToggleStatus: (active: boolean) => void;
   pageError: unknown;
   profileForm: AgentFormState;
-  profiles: AgentProfile[];
   saveState: ComponentProps<typeof AIAgentEditorShell>["saveState"];
   sectionError: unknown;
   sectionLoading: boolean;
@@ -158,37 +150,16 @@ export function AIAgentsWorkspace({
 
   return (
     <CrmWorkspacePage
-      className="h-auto min-h-0 xl:h-[calc(100dvh-5.5rem)] xl:min-h-[620px]"
-      maxWidthClassName="max-w-[1720px]"
+      edgeToEdge
+      heightClassName="h-[calc(100dvh-var(--app-header-height)-5.5rem-env(safe-area-inset-bottom))] min-h-[320px] lg:h-[calc(100dvh-var(--app-header-height))] lg:min-h-0"
+      maxWidthClassName="max-w-none"
       testId="ai-agents-workspace-ready"
     >
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-visible xl:grid-cols-[clamp(260px,18vw,300px)_minmax(0,1fr)] xl:overflow-hidden">
-        <AIAgentsListPane
-          bots={bots}
-          profiles={profiles}
-          selectedBotId={selectedBot?.id}
-          activeSection={activeSection}
-          className="hidden xl:flex"
-        />
-
-        {selectedBot ? (
-          <div className="xl:hidden">
-            <Select
-              aria-label={t("aiAgents.agentPickerAria")}
-              value={selectedBot.id}
-              onChange={(event) => onSelectAgent(Number(event.target.value))}
-              options={bots.map((bot) => ({
-                value: bot.id,
-                label: `${bot.name} · ${agentStatusLabel(bot, t)}`,
-              }))}
-            />
-          </div>
-        ) : null}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-surface-card">
 
         {selectedBot ? (
           <AIAgentEditorShell
             bot={selectedBot}
-            profile={selectedProfile}
             activeSection={activeSection}
             canManage={canManage}
             activationBlocked={selectedBot.status !== "active" && !launchReady}

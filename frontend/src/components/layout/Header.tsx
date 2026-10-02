@@ -196,8 +196,10 @@ export function Header({
     <header className={`fixed left-0 right-0 top-0 z-50 border-b border-platforma-border bg-surface/[0.92] shadow-soft backdrop-blur-xl transition-transform duration-200 ease-out lg:left-16 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
       {soundEnabled && user && business && hasPermission(user, business.id, "notifications") ?
         <NotificationSoundWatcher key={`${user.id}:${business.id}`} userId={user.id} businessId={business.id} /> : null}
-      <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-5 lg:grid-cols-[220px_var(--global-search-width)_minmax(0,1fr)]">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+      <div className={pageHeader?.contextControl
+        ? "grid grid-cols-[auto_1fr_auto] grid-rows-[56px_48px] items-center gap-x-3 px-3 sm:px-5 lg:grid-cols-[140px_var(--global-search-width)_minmax(0,1fr)] xl:grid-cols-[auto_minmax(180px,1fr)_var(--global-search-width)_auto] xl:grid-rows-[56px]"
+        : "grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-5 lg:grid-cols-[220px_var(--global-search-width)_minmax(0,1fr)]"}>
+        <div className={`flex min-w-0 items-center gap-2 sm:gap-3 ${pageHeader?.contextControl ? "relative" : ""}`}>
           <Button
             className="h-10 w-10 min-h-10 min-w-10 px-0 text-platforma-ink lg:hidden"
             variant="ghost"
@@ -212,16 +214,23 @@ export function Header({
           <div className="hidden min-w-0 items-center gap-4 lg:flex">
             <span className="max-w-[220px] truncate text-[21px] font-semibold leading-7 text-platforma-text">{currentPageTitle}</span>
           </div>
-          <div className={pageHeader ? "min-w-0 flex-1 lg:hidden" : "lg:hidden"}>
+          <div className={pageHeader ? `min-w-0 flex-1 lg:hidden ${pageHeader.contextControl ? "[&>.absolute]:left-[3.35rem]" : ""}` : "lg:hidden"}>
             <GlobalSearch />
           </div>
         </div>
+
+        {pageHeader?.contextControl ? (
+          <div data-testid="header-context-control" className="col-span-3 row-start-2 flex min-w-0 items-center justify-between gap-3 lg:justify-center xl:col-span-1 xl:col-start-2 xl:row-start-1">
+            <span className="min-w-0 truncate text-base font-semibold text-platforma-text lg:hidden">{currentPageTitle}</span>
+            {pageHeader.contextControl}
+          </div>
+        ) : null}
 
         <div className="hidden min-w-0 justify-self-center lg:block lg:w-full">
           <GlobalSearch />
         </div>
 
-        <div className="flex min-w-0 items-center justify-end gap-1.5 sm:gap-2">
+        <div className={`flex min-w-0 items-center justify-end gap-1.5 sm:gap-2 ${pageHeader?.contextControl ? "col-start-3 row-start-1 xl:col-start-4" : ""}`}>
           {pageHeader ? (
             <div className="hidden min-w-0 items-center justify-end gap-2 lg:flex">
               {pageHeader.filters ? (

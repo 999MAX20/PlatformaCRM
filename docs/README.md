@@ -96,6 +96,7 @@ Use `testing/` for test strategy, Codex task format, regression reports and scal
 - `testing/testing.md`
 - `testing/ui-testing-toolkit.md` — local component QA and guarded visual-service setup.
 - [Whole-CRM color audit, 2026-10-02](testing/color-system-audit-20261002.md) — semantic palette, route/component coverage, state checks and explicit exceptions.
+- [AI-agent reference redesign, 2026-10-02](testing/ai-agent-reference-redesign-20261002.md) — header picker, five-tab editor, focused interaction and responsive evidence.
 - `testing/CODEX_TASK_TEMPLATE.md`
 - `testing/regression-report.md` — archive redirect; historical regression evidence.
 - `testing/e2e-scale-baseline.md`

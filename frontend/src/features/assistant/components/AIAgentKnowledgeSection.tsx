@@ -5,13 +5,10 @@ import { BookOpen, Plus, Save, Settings } from "lucide-react";
 import { businessKnowledgeApi } from "../../../api/ai";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
-import { Card, CardBody } from "../../../components/ui/Card";
 import { Input } from "../../../components/ui/Input";
 import { Modal } from "../../../components/ui/Modal";
-import { Select } from "../../../components/ui/Select";
 import { Textarea } from "../../../components/ui/Textarea";
 import { ErrorState } from "../../../components/ui/StateViews";
-import { StatusNotice } from "../../../components/ui/StatusNotice";
 import { cn } from "../../../lib/cn";
 import { useI18n } from "../../../lib/i18n";
 import type { BusinessKnowledgeItem, Id } from "../../../types";
@@ -62,70 +59,55 @@ export function KnowledgeSection({ businessId, items, canManage }: { businessId:
 
   return (
     <>
-      <div className="space-y-4">
-        <StatusNotice compact tone="info" title={t("aiSetup.sourceTitle")} description={t("aiSetup.sourceText")} />
-        <StatusNotice
-          compact
-          tone="info"
-          title={t("aiAgents.knowledgeSharedScopeTitle")}
-          description={t("aiAgents.knowledgeCompanyText")}
-        />
-        <div className="rounded-card border border-platforma-border bg-white p-4 shadow-sm">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h3 className="text-xl font-black text-midnight">{t("aiAgents.knowledgeCompany")}</h3>
-              <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.knowledgeCompanyText")}</p>
-            </div>
-            <Button type="button" disabled={!canManage} onClick={() => openEditor()}>
-              <Plus size={16} /> {t("aiAgents.knowledge.add")}
-            </Button>
-          </div>
+      <section className="space-y-3">
+        <header className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-base font-semibold text-platforma-ink">{t("aiAgents.knowledgeCompany")}</h3>
+          <Button type="button" className="min-h-11 sm:min-h-10" disabled={!canManage} onClick={() => openEditor()}>
+            <Plus size={16} /> {t("aiAgents.knowledge.add")}
+          </Button>
+        </header>
+        <div className="border-b border-platforma-border pb-3 text-sm leading-5 text-platforma-subtle">
+          <p>{t("aiSetup.sourceText")}</p>
+          <p className="mt-1 font-semibold">{t("aiAgents.knowledgeSharedScopeTitle")}</p>
         </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {items.length ? items.map((item) => (
-            <Card key={item.id}>
-              <CardBody>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">{t(`aiAgents.knowledge.category.${item.category || "business"}`)}</p>
-                    <h3 className="mt-2 text-lg font-black text-midnight">{item.title}</h3>
-                  </div>
-                  <span className={cn("rounded-full px-2.5 py-1 text-xs font-black", item.is_active ? "bg-[var(--platforma-success-soft)] text-platforma-success" : "bg-surface-muted text-platforma-faint")}>
+        <div className="divide-y divide-platforma-border">
+          {items.length ? items.map(item => (
+            <article key={item.id} className="flex flex-wrap items-start justify-between gap-3 py-3 first:pt-0">
+              <div className="min-w-0 flex-1 basis-48">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h4 className="break-words text-sm font-semibold text-platforma-ink">{item.title}</h4>
+                  <span className={cn("rounded-full px-2 py-0.5 text-xs font-semibold", item.is_active ? "bg-[var(--platforma-success-soft)] text-platforma-success" : "bg-surface-muted text-platforma-subtle")}>
                     {item.is_active ? t("aiAgents.knowledge.active") : t("aiAgents.knowledge.off")}
                   </span>
                 </div>
-                <p className="mt-3 line-clamp-4 text-sm font-semibold leading-6 text-platforma-faint">{item.content}</p>
-                <Button className="mt-4" type="button" variant="secondary" disabled={!canManage} onClick={() => openEditor(item)}>
-                  <Settings size={16} /> {t("aiAgents.configure")}
-                </Button>
-              </CardBody>
-            </Card>
+                <p className="mt-1 text-xs text-platforma-subtle">{t(`aiAgents.knowledge.category.${item.category || "business"}`)}</p>
+                <p className="mt-1 line-clamp-2 whitespace-pre-wrap break-words text-sm leading-5 text-platforma-subtle">{item.content}</p>
+              </div>
+              <Button type="button" className="min-h-11 sm:min-h-10" variant="secondary" disabled={!canManage} onClick={() => openEditor(item)}>
+                <Settings size={16} /> {t("aiAgents.configure")}
+              </Button>
+            </article>
           )) : (
-            <Card className="md:col-span-2">
-              <CardBody>
-                <BookOpen className="text-brand-600" size={26} />
-                <h3 className="mt-4 text-lg font-black text-midnight">{t("aiAgents.knowledge.emptyTitle")}</h3>
-                <p className="mt-2 text-sm font-semibold leading-6 text-platforma-faint">{t("aiAgents.knowledge.emptyText")}</p>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {knowledgeTemplates.map((template) => (
-                    <button
-                      key={template.title}
-                      type="button"
-                      disabled={!canManage}
-                      className="group rounded-2xl border border-platforma-border bg-white p-3 text-left transition hover:border-brand-200 hover:bg-brand-50 disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:opacity-100"
-                      onClick={() => openTemplate(template)}
-                    >
-                      <span className="text-sm font-black text-midnight group-disabled:text-disabled-content">{template.title}</span>
-                      <span className="mt-1 block text-xs font-semibold leading-5 text-platforma-subtle group-disabled:text-disabled-content">{t(`aiAgents.knowledge.category.${template.category}`)}</span>
-                    </button>
-                  ))}
-                </div>
-              </CardBody>
-            </Card>
+            <div className="py-3">
+              <div className="flex items-center gap-2">
+                <BookOpen className="text-brand-600" size={20} />
+                <h4 className="text-sm font-semibold text-platforma-ink">{t("aiAgents.knowledge.emptyTitle")}</h4>
+              </div>
+              <p className="mt-2 text-sm leading-5 text-platforma-subtle">{t("aiAgents.knowledge.emptyText")}</p>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                {knowledgeTemplates.map(template => (
+                  <button key={template.title} type="button" disabled={!canManage}
+                    className="platforma-focus-ring group min-h-11 rounded-control border border-platforma-border p-3 text-left transition hover:border-brand-200 hover:bg-brand-50 disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface"
+                    onClick={() => openTemplate(template)}>
+                    <span className="text-sm font-semibold text-platforma-ink group-disabled:text-disabled-content">{template.title}</span>
+                    <span className="mt-1 block text-xs text-platforma-subtle group-disabled:text-disabled-content">{t(`aiAgents.knowledge.category.${template.category}`)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
         </div>
-      </div>
+      </section>
 
       <Modal title={editing ? t("aiAgents.knowledge.editTitle") : t("aiAgents.knowledge.newTitle")} open={open} onClose={() => setOpen(false)}>
         <form

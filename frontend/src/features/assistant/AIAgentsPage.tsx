@@ -14,6 +14,7 @@ import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
 import type { AgentProfile, Bot as BotType, BotChannel, BusinessKnowledgeItem } from "../../types";
 import { AIAgentsWorkspace } from "./components/AIAgentsWorkspace";
+import { AgentHeaderPicker } from "./components/AgentHeaderPicker";
 import { jsonFromLines } from "./aiAgentsUtils";
 import { useAIAgentEditorDrafts } from "./useAIAgentEditorDrafts";
 import { useCanonicalAIAgentRoute } from "./useCanonicalAIAgentRoute";
@@ -43,7 +44,8 @@ export function AIAgentsPage() {
   const [newAgentName, setNewAgentName] = useState(() => t("aiAgents.defaultNewAgentName"));
   useMetaOAuthCallbackBridge();
 
-  const botList = bots.data || [];
+  const botList = useMemo(() => bots.data || [], [bots.data]);
+  const profileList = useMemo(() => profiles.data || [], [profiles.data]);
   const isPageLoading = isBusinessLoading
     || bots.isLoading
     || profiles.isLoading;
@@ -189,6 +191,12 @@ export function AIAgentsPage() {
   useEffect(() => {
     setPageHeader({
       title: t("nav.aiAgents"),
+      contextControl: <AgentHeaderPicker
+        bots={botList} profiles={profileList} selectedBot={selectedBot}
+        isLoading={isPageLoading} error={bots.error || profiles.error}
+        onRetry={() => void Promise.all([bots.refetch(), profiles.refetch()])}
+        onSelect={id => navigate(`/app/ai-agents/${id}/${activeSection}`)}
+      />,
       primaryAction: canManage
         ? {
             label: t("aiAgents.createAgent"),
@@ -201,7 +209,7 @@ export function AIAgentsPage() {
         : undefined,
     });
     return () => setPageHeader(null);
-  }, [canManage, editorDirty, setPageHeader, t]);
+  }, [activeSection, botList, bots.error, bots.refetch, canManage, editorDirty, isPageLoading, navigate, profileList, profiles.error, profiles.refetch, selectedBot, setPageHeader, t]);
 
   if (isPageLoading) {
     return <LoadingState label={t("aiAgents.loading")} />;
@@ -251,7 +259,6 @@ export function AIAgentsPage() {
       addChannel={addChannel}
       botChannels={botChannels.data || []}
       botDraft={botDraft}
-      bots={botList}
       businessId={business.id}
       canManage={canManage}
       canManageChannels={canManageChannels}
@@ -274,7 +281,6 @@ export function AIAgentsPage() {
         void saveAndContinue().catch(() => undefined);
       }}
       onNavigateSection={(section) => navigate(`/app/ai-agents/${selectedBot?.id}/${section}`)}
-      onSelectAgent={(id) => navigate(`/app/ai-agents/${id}/${activeSection}`)}
       onOpenMessages={() => navigate("/app/conversations")}
       onOpenCreate={() => setCreateOpen(true)}
       onReset={resetEditorDrafts}
@@ -291,7 +297,6 @@ export function AIAgentsPage() {
       onToggleStatus={(active) => toggleBotStatus.mutate(active)}
       pageError={pageError}
       profileForm={profileForm}
-      profiles={profiles.data || []}
       saveState={saveState}
       sectionError={sectionError}
       sectionLoading={sectionLoading}

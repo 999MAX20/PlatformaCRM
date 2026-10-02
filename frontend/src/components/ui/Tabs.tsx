@@ -10,6 +10,7 @@ export function Tabs<T extends string>({
   className,
   idPrefix,
   tone = "brand",
+  appearance = "pill",
 }: {
   value: T;
   options: Array<{ value: T; label: string; count?: number }>;
@@ -18,6 +19,7 @@ export function Tabs<T extends string>({
   className?: string;
   idPrefix?: string;
   tone?: "brand" | "ai";
+  appearance?: "pill" | "underline";
 }) {
   const selectFromKeyboard = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     let nextIndex: number | null = null;
@@ -34,7 +36,7 @@ export function Tabs<T extends string>({
   };
 
   return (
-    <div className={cn("flex gap-1 overflow-x-auto rounded-control bg-surface-muted p-1 no-scrollbar", className)} role="tablist" aria-label={ariaLabel}>
+    <div className={cn("flex gap-1 overflow-x-auto no-scrollbar", appearance === "underline" ? "border-b border-platforma-border" : "rounded-control bg-surface-muted p-1", className)} role="tablist" aria-label={ariaLabel}>
       {options.map((option, index) => {
         const active = option.value === value;
         return (
@@ -42,8 +44,13 @@ export function Tabs<T extends string>({
             key={option.value}
             type="button"
             className={cn(
-              "platforma-focus-ring inline-flex min-h-9 flex-1 shrink-0 items-center justify-center gap-2 rounded-control px-3 text-sm font-semibold transition",
-              active
+              "platforma-focus-ring inline-flex min-h-9 shrink-0 items-center justify-center gap-2 px-3 text-sm font-semibold transition",
+              appearance === "underline" ? "border-b-2 py-2" : "flex-1 rounded-control",
+              appearance === "underline"
+                ? active
+                  ? tone === "ai" ? "border-ai-600 text-ai-700" : "border-brand-500 text-brand-700"
+                  : "border-transparent text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text"
+                : active
                 ? tone === "ai"
                   ? "bg-ai-50 text-ai-700 shadow-sm ring-1 ring-ai-100"
                   : "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"

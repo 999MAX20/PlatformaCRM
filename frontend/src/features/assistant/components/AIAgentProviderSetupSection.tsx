@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Radio } from "lucide-react";
 
 import { botChannelsApi } from "../../../api/bots";
 import { Button } from "../../../components/ui/Button";
@@ -14,7 +13,7 @@ import { LogoMark } from "../../integrations/components/setup/IntegrationSetupUi
 import { TelegramInlineSetup } from "../../integrations/components/setup/TelegramSetup";
 import { WhatsAppInlineSetup } from "../../integrations/components/setup/WhatsAppSetup";
 import { channelStatus, channelStatusClass } from "../aiAgentsUtils";
-import { HelpCard, FieldHint } from "./AIAgentsShared";
+import { FieldHint } from "./AIAgentsShared";
 export function ChannelManagerSection(props: {
   businessId: Id;
   bot: BotType;
@@ -27,16 +26,17 @@ export function ChannelManagerSection(props: {
   const hasAnyChannel = (["website", "telegram", "whatsapp", "instagram"] as const)
     .some((channel) => props.channelByName(channel));
   return (
-    <div className="space-y-5">
-      {!hasAnyChannel ? (
-        <HelpCard
-          title={t("aiAgents.onboarding.channels.helpTitle")}
-          text={t("aiAgents.onboarding.channels.helpText")}
-          recommendation={t("aiAgents.onboarding.channels.recommendation")}
-        />
-      ) : null}
+    <section className="space-y-3">
+      <h3 className="text-base font-semibold text-platforma-ink">{t("aiAgents.channelsTitle")}</h3>
       <ChannelsSection {...props} />
-    </div>
+      {!hasAnyChannel ? (
+        <details className="border-t border-platforma-border pt-2 text-sm text-platforma-subtle">
+          <summary className="platforma-focus-ring min-h-11 cursor-pointer py-2 font-semibold">{t("aiAgents.onboarding.channels.helpTitle")}</summary>
+          <p className="pb-2 leading-5">{t("aiAgents.onboarding.channels.helpText")}</p>
+          <p className="pb-2 leading-5">{t("aiAgents.onboarding.channels.recommendation")}</p>
+        </details>
+      ) : null}
+    </section>
   );
 }
 
@@ -71,18 +71,33 @@ function ChannelsSection({
 
   return (
     <>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div>
+        <div className="hidden grid-cols-[minmax(0,1fr)_145px_180px] gap-3 border-b border-platforma-border bg-surface-muted px-3 py-2 text-xs font-semibold text-platforma-subtle sm:grid">
+          <span>{t("conversations.channel")}</span><span>{t("aiAgents.statusLabel")}</span><span>{t("aiAgents.section.actions")}</span>
+        </div>
         {channelCards.map((item) => {
           const channel = channelByName(item.key);
           const connected = channel?.status === "active";
           return (
-            <article key={item.key} className="min-h-[142px] rounded-2xl border border-platforma-border bg-white p-4 shadow-sm">
-              <div className="flex items-start justify-between gap-3">
-                <LogoMark logo={item.logo} label={item.title} />
-                <div className="flex shrink-0 items-center gap-2">
+            <article key={item.key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-platforma-border px-1 py-3 sm:grid-cols-[minmax(0,1fr)_145px_180px] sm:px-3">
+              <div className="flex min-w-0 items-start gap-3">
+                <LogoMark compact logo={item.logo} label={item.title} />
+                <div className="min-w-0">
+                  <h4 className="text-sm font-semibold text-platforma-ink">{item.title}</h4>
+                  <details className="mt-1 text-sm leading-5 text-platforma-subtle">
+                    <summary className="platforma-focus-ring cursor-pointer py-1">{item.description}</summary>
+                    <FieldHint>{t(`aiAgents.hint.channel.${item.key}`)}</FieldHint>
+                  </details>
+                </div>
+              </div>
+              <span className={cn("mt-1 w-fit rounded-full px-2 py-0.5 text-xs font-semibold ring-1", channelStatusClass(channel))}>
+                {channelStatus(channel, t)}
+              </span>
+              <div className="col-span-2 flex min-h-10 items-center gap-2 sm:col-span-1">
                   <Button
                     type="button"
-                    className="h-9 min-w-[118px] rounded-xl px-4 text-sm"
+                    className="min-h-11 min-w-[120px] sm:min-h-10"
+                    variant={channel ? "secondary" : "primary"}
                     data-focus-return-id={`ai-agent-channel-${bot.id}-${item.key}`}
                     disabled={!canManage || addChannel.isPending}
                     isLoading={addChannel.isPending && connectingChannel === item.key}
@@ -114,17 +129,6 @@ function ChannelsSection({
                       onChange={(checked) => toggleChannel.mutate({ channel, status: checked ? "active" : "paused" })}
                     />
                   ) : null}
-                </div>
-              </div>
-              <div className="mt-4 min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-lg font-black text-midnight">{item.title}</h3>
-                  <span className={cn("shrink-0 rounded-full px-2.5 py-1 text-xs font-black ring-1", channelStatusClass(channel))}>
-                    {channelStatus(channel, t)}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm font-semibold leading-5 text-platforma-faint">{item.description}</p>
-                <FieldHint>{t(`aiAgents.hint.channel.${item.key}`)}</FieldHint>
               </div>
             </article>
           );
@@ -157,8 +161,8 @@ function WebsiteSetup({ bot, channel }: { bot: BotType; channel?: BotChannel }) 
   const snippet = channel ? `<script src=\"/widget/platformacrm-widget.js\" data-platforma-token=\"${channel.public_token}\" data-platforma-api=\"${widgetApiBase}\"></script>` : "";
   return (
     <div className="space-y-4">
-      <div className="rounded-card border border-platforma-border bg-white p-4">
-        <h3 className="text-lg font-black text-midnight">{t("aiAgents.websiteSetupTitle")}</h3>
+      <div className="border-b border-platforma-border pb-3">
+        <h3 className="text-base font-semibold text-midnight">{t("aiAgents.websiteSetupTitle")}</h3>
         <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">
           {t("aiAgents.websiteSetupText", { name: bot.name })}
         </p>

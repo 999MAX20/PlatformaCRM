@@ -15,6 +15,7 @@ export type PageHeaderAction = {
 
 export type PageHeaderConfig = {
   title: string;
+  contextControl?: ReactNode;
   primaryAction?: PageHeaderAction;
   secondaryActions?: PageHeaderAction[];
   filterLabel?: string;
