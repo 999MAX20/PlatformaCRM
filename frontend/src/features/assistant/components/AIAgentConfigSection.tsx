@@ -24,9 +24,9 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
 
   return (
     <div className="divide-y divide-platforma-border">
-      <section className="pb-4">
+      <section className="pb-5">
         <h3 className="mb-3 text-base font-semibold text-platforma-ink">{t("aiAgents.generalSettings")}</h3>
-        <div className="grid items-start gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid items-start gap-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <Input className="sm:min-h-10" label={t("aiAgents.name")} value={botDraft.name} disabled={!canManage} onChange={event => {
             const name = event.target.value;
             setBotDraft(current => ({ ...current, name }));
@@ -47,7 +47,7 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
         </div>
       </section>
 
-      <section className="py-4">
+      <section className="py-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-base font-semibold text-platforma-ink">{t("aiAgents.instructionTitle")}</h3>
           <Button type="button" className="min-h-11 w-fit sm:min-h-10" variant="secondary" disabled={!canManage} onClick={() => setForm(current => ({
@@ -55,11 +55,11 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
             rules_text: t("aiAgents.defaultRules"), escalation_text: t("aiSetup.dentalEscalation"),
           }))}>{t("aiSetup.applyDentalRole")}</Button>
         </div>
-        <Textarea className="min-h-20 py-2" rows={3} label={t("aiAgents.roleDescription")} value={form.role_description} disabled={!canManage}
+        <Textarea className="h-20 !min-h-20 py-2" rows={3} label={t("aiAgents.roleDescription")} value={form.role_description} disabled={!canManage}
           onChange={event => setForm(current => ({ ...current, role_description: event.target.value }))} />
       </section>
 
-      <section className="pt-3">
+      <section className="pt-4">
         <button type="button" className="platforma-focus-ring flex min-h-11 items-center gap-2 text-left" onClick={() => setShowQuality(value => !value)}
           aria-expanded={showQuality} aria-controls="ai-agent-quality-settings">
           <span className="text-base font-semibold text-platforma-ink">{t("aiSetup.advanced")}</span>

@@ -69,11 +69,11 @@ export function AIAgentEditorShell({
 
   return (
     <section
-      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface-card"
+      className="min-w-0"
       aria-label={t("aiAgents.editorAria", { name: bot.name })}
       data-testid="ai-agent-editor"
     >
-      <header ref={headerRef} className="shrink-0 px-3 pt-2 sm:px-5">
+      <header ref={headerRef}>
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <div className="flex min-w-0 flex-1 basis-full items-center gap-3 sm:basis-auto">
             <h2 className="min-w-0 truncate text-lg font-semibold text-platforma-ink" title={bot.name}>{bot.name}</h2>
@@ -103,7 +103,7 @@ export function AIAgentEditorShell({
         <Tabs
           ariaLabel={t("aiAgents.editorTabsAria")}
           idPrefix="ai-agent-editor"
-          className="mt-2 [&_[role=tab]]:min-h-11 sm:[&_[role=tab]]:min-h-10"
+          className="mt-4 [&_[role=tab]]:min-h-11 sm:[&_[role=tab]]:min-h-10"
           tone="ai"
           appearance="underline"
           value={activeSection}
@@ -119,13 +119,13 @@ export function AIAgentEditorShell({
         id={`ai-agent-editor-panel-${activeSection}`}
         role="tabpanel"
         aria-labelledby={`ai-agent-editor-tab-${activeSection}`}
-        className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 sm:px-5 sm:py-4"
+        className="min-w-0 py-5"
       >
-        <fieldset disabled={isSaving} className={`min-w-0 w-full ${activeSection === "test" ? "h-full" : ""}`}>{children}</fieldset>
+        <fieldset disabled={isSaving} className="min-w-0 w-full">{children}</fieldset>
       </div>
 
       {canManage && (showFooter || nextSection) ? (
-        <footer className="flex shrink-0 flex-wrap items-center justify-end gap-x-3 gap-y-1 border-t border-platforma-border bg-surface-card px-3 py-2 sm:px-5">
+        <footer className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2 border-t border-platforma-border pt-4">
           <p className="mr-auto text-xs font-medium text-platforma-subtle" aria-live="polite">
             {dirty
               ? t("aiAgents.unsavedIndicator")

@@ -151,11 +151,12 @@ export function AIAgentsWorkspace({
   return (
     <CrmWorkspacePage
       edgeToEdge
-      heightClassName="h-[calc(100dvh-var(--app-header-height)-5.5rem-env(safe-area-inset-bottom))] min-h-[320px] lg:h-[calc(100dvh-var(--app-header-height))] lg:min-h-0"
-      maxWidthClassName="max-w-none"
+      className="px-3 py-5 sm:px-6 sm:py-6"
+      heightClassName="h-auto min-h-0"
+      maxWidthClassName="max-w-[960px]"
       testId="ai-agents-workspace-ready"
     >
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-surface-card">
+      <div className="min-w-0">
 
         {selectedBot ? (
           <AIAgentEditorShell

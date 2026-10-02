@@ -21,7 +21,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
   });
   const disabled = blocked || !canTest || preview.isPending;
   return (
-    <section className="flex min-h-0 flex-1 flex-col gap-3">
+    <section className="flex flex-col gap-3">
         <h3 className="text-base font-semibold">{t("aiSetup.previewTitle")}</h3>
         <p className="text-sm text-platforma-subtle">{t("aiSetup.previewScope")}</p>
         {!canTest ? <ErrorState message={t("aiSetup.previewForbidden")} /> : blocked ? (
@@ -34,7 +34,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
             </Button>
           ))}
         </div>
-        <div role="log" aria-label={t("aiSetup.previewTitle")} className="min-h-32 flex-1 space-y-3 rounded-control bg-surface-muted p-3">
+        <div role="log" aria-label={t("aiSetup.previewTitle")} className="max-h-80 min-h-32 space-y-3 overflow-y-auto overscroll-contain rounded-control bg-surface-muted p-3">
           {messages.map((message, index) => (
             <div key={index} className="border-b border-platforma-border pb-2 last:border-0 last:pb-0">
               <p className="text-xs font-semibold text-platforma-subtle">{t(message.direction === "inbound" ? "aiAgents.client" : "aiAgents.reply")}</p>

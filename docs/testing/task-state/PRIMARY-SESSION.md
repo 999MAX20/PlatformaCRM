@@ -2,6 +2,56 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## Reference-led AI-agent redesign / CENTERED WIDTH LOCALLY VERIFIED, 2026-10-02
+
+- Owner explicitly rejected the full-width forms and approved three replacement
+  references, relayed by coordinator 01a0f32f-7d02-7263-a53d-496c8f9787f5.
+  Continue the same task; no general re-audit or new product phase.
+- Same registered primary and canonical C:/Users/user/Desktop/PlatformaCRM,
+  branch codex/ui-testing-toolkit; starting/base6a3f39f5dbeba8d1340208208ceb207e7175c040.
+  Prior implementation committed and normal-pushed to main, remote SHA verified;
+  actual CI36983828025 completed SUCCESS.
+- Starting app/source clean. Five owner-approved verification-policy files
+  remain dirty and excluded: AGENTS.md, testing.md, task template and the
+  frontend/verification skills. Preserve them; coordinator does not edit code.
+- New references viewed: coordinator generated_images folder,
+  exec-6c222231-e48b-4a54-8e22-23c0a17c84a3.png (profile),
+  exec-75d61268-dbff-4318-954d-1c1d87bcfcd0.png (channels),
+  exec-03381f80-b882-4cfc-93a2-bf61b8c68a00.png (actions).
+- Mode implementation; gap layout. Observable result: one centered max960px
+  container for agent heading/actions, five tabs, content and bottom actions.
+  Equal margins relative to the area right of the sidebar; responsive padding,
+  natural content height, no viewport footer/spacer or decorative outer card.
+  Desktop controls36–40px, role textarea80px initially and resizable; section
+  spacing20–24px; preserve the light shell and existing header selector/menu.
+- Reuse existing workspace/editor/shared fields and unchanged API/draft hooks.
+  No backend/domain/permission/readiness/notification/BusinessEvent/AI execution,
+  environment, working DB or real channel/agent activation changes.
+- Acceptance: before/after all five tabs at1280x720,1600x900,1848x1000/mobile;
+  real browser geometry for centered width, aligned toolbar/tabs/form/actions,
+  control heights, content-following footer and long-form/action reachability.
+  Reuse unchanged evidence; focused layout plus existing picker/dialog/save
+  regression, build/budget, diff/static, reviewed commit/normal push/actual CI.
+- Implemented centered max960px natural flow in six agent components; global
+  layout/header/picker/shared primitives unchanged. Compact action-row help is
+  available in native disclosures; role textarea80px requires a local minimum
+  override because the shared class joiner retains both utilities.
+- Eight applicable browser cases PASS: tablet layout; desktop layout and two
+  picker/dialog cases; mobile layout and two picker/dialog cases; mobile saved
+  setup/preview/recovery/readiness. Initial failures and harness corrections are
+  recorded in the amended report with exact commands and retained output logs.
+- Final isolated `verify.py build` PASS (i18n, TypeScript, app and widget);
+  `npm run check:bundle` PASS: agent chunk70.4kB/gzip17.5kB, shell298.4kB.
+  No full local suite/reinstall/working-DB or real provider/activation operations.
+- Visually reviewed all five tabs at1600/mobile, wide profile and representative
+  dialogs/help. JSON proves960px and equal workspace margins128/288/412px at
+ 1280/1600/1848. Local comparison.html has15 before/after pairs;1848 after-only.
+- Own scope: six agent components, two existing E2E specs, design-system/report,
+  STATUS and this checkpoint. Five external policy files match their original
+  SHA256 snapshot and stay excluded. Root/owner/branch/HEAD unchanged;
+  fetched main and remote readback both6a3f39f. Next: reviewed commit/static/push
+  and actual CI inspection. No further product scope is authorized by completion.
+
 ## Reference-led AI-agent redesign / LOCALLY VERIFIED, 2026-10-02
 
 - New explicit owner-authorized implementation relayed by coordinator

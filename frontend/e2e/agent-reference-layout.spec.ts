@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { crmSession } from "./support/crm-workspace";
 
-test("reference agent workspace keeps five sections and header usable across sizes and languages", async ({ page }, testInfo) => {
+test("centered agent workspace keeps natural flow and all five sections usable across sizes and languages", async ({ page }, testInfo) => {
   test.skip(process.env.ZANI_QUALITY_GATE !== "1", "Requires disposable fixtures");
   test.setTimeout(240_000);
   const session = await crmSession(page);
@@ -15,7 +15,7 @@ test("reference agent workspace keeps five sections and header usable across siz
   });
   const sizes = testInfo.project.name === "mobile-chromium" ? [{ width: 393, height: 851 }]
     : testInfo.project.name === "tablet-chromium" ? [{ width: 1024, height: 768 }]
-    : [{ width: 1280, height: 720 }, { width: 1600, height: 900 }];
+    : [{ width: 1280, height: 720 }, { width: 1600, height: 900 }, { width: 1848, height: 1000 }];
   const evidence = [];
   for (const size of sizes) {
     await page.setViewportSize(size);
@@ -27,22 +27,33 @@ test("reference agent workspace keeps five sections and header usable across siz
       await page.evaluate(() => document.fonts.ready);
       const geometry = await editor.evaluate(node => {
         const bounds = (element: Element | null) => element?.getBoundingClientRect().toJSON();
-        return { editor: bounds(node), header: bounds(node.querySelector("header")), footer: bounds(node.querySelector("footer")), panel: bounds(node.querySelector('[role="tabpanel"]')), overflow: document.documentElement.scrollWidth - innerWidth };
+        return { editor: bounds(node), header: bounds(node.querySelector("header")), footer: bounds(node.querySelector("footer")), panel: bounds(node.querySelector('[role="tabpanel"]')), fields: bounds(node.querySelector("fieldset")), tabs: bounds(node.querySelector('[role="tablist"]')), overflow: document.documentElement.scrollWidth - innerWidth };
       });
       const selected = await editor.getByRole("tab", { selected: true }).boundingBox();
       const tabs = await editor.getByRole("tablist").boundingBox();
       expect(selected!.x).toBeGreaterThanOrEqual(tabs!.x - 1);
       expect(selected!.x + selected!.width).toBeLessThanOrEqual(tabs!.x + tabs!.width + 1);
       expect(geometry.overflow).toBeLessThanOrEqual(1);
-      expect(geometry.editor.bottom).toBeLessThanOrEqual(size.height + 1);
+      const workspaceLeft = size.width >= 1024 ? 64 : 0;
+      const leftMargin = geometry.editor.x - workspaceLeft;
+      const rightMargin = size.width - geometry.editor.right;
+      expect(Math.abs(leftMargin - rightMargin)).toBeLessThanOrEqual(1);
+      expect(geometry.editor.width).toBeLessThanOrEqual(960);
+      expect(leftMargin).toBeGreaterThanOrEqual(12);
+      for (const aligned of [geometry.header, geometry.tabs, geometry.panel, geometry.fields, geometry.footer].filter(Boolean)) {
+        expect(Math.abs(aligned.x - geometry.editor.x)).toBeLessThanOrEqual(1);
+        expect(Math.abs(aligned.width - geometry.editor.width)).toBeLessThanOrEqual(1);
+      }
+      if (geometry.footer) {
+        expect(Math.abs(geometry.footer.y - geometry.panel.bottom)).toBeLessThanOrEqual(1);
+        expect(geometry.panel.bottom - geometry.fields.bottom).toBeLessThanOrEqual(24);
+      }
       const violations = (await new AxeBuilder({ page }).withRules(["color-contrast"]).analyze()).violations;
       expect(violations, `${size.width}/${section}`).toEqual([]);
       evidence.push({ size, section, geometry, violations });
       if (size.width >= 1280) {
         expect(geometry.header.height).toBeLessThanOrEqual(105);
-        expect(geometry.panel.height).toBeGreaterThanOrEqual(490);
-        expect(geometry.editor.x).toBe(64);
-        expect(geometry.editor.width).toBe(size.width - 64);
+        expect(geometry.editor.width).toBe(960);
         const picker = await page.getByTestId("agent-header-picker").boundingBox();
         const title = await page.getByRole("banner").getByText("ИИ-агенты", { exact: true }).filter({ visible: true }).boundingBox();
         const search = await page.getByRole("banner").getByRole("textbox", { name: "Поиск", exact: true }).boundingBox();
@@ -51,14 +62,42 @@ test("reference agent workspace keeps five sections and header usable across siz
         expect(picker!.x + picker!.width).toBeLessThan(search!.x);
         if (section === "profile") {
           const preset = await editor.getByRole("button", { name: "Применить роль администратора стоматологии", exact: true }).boundingBox();
-          expect(preset!.height).toBeLessThanOrEqual(42);
+          expect(preset!.height).toBeGreaterThanOrEqual(36);
+          expect(preset!.height).toBeLessThanOrEqual(40);
+          const role = editor.getByRole("textbox", { name: "Описание роли", exact: true });
+          expect((await role.boundingBox())!.height).toBe(80);
+          expect(await role.evaluate(element => getComputedStyle(element).resize)).toBe("vertical");
+          for (const name of ["Название", "Язык", "Тон"]) {
+            const control = editor.getByLabel(name, { exact: true });
+            const box = (await control.boundingBox())!;
+            expect(box.height).toBeGreaterThanOrEqual(36);
+            expect(box.height).toBeLessThanOrEqual(40);
+          }
         }
         if (section === "test") {
           const submit = await editor.getByRole("button", { name: "Проверить ответ", exact: true }).boundingBox();
           expect(submit!.y + submit!.height).toBeLessThanOrEqual(size.height);
         }
       }
-      await page.screenshot({ path: testInfo.outputPath(`${size.width}-${section}.png`), animations: "disabled" });
+      await page.screenshot({ path: testInfo.outputPath(`${size.width}-${section}.png`), animations: "disabled", fullPage: true });
+      if (section === "actions") {
+        const descriptions = editor.locator("details");
+        await expect(descriptions).toHaveCount(7);
+        for (const detail of await descriptions.all()) {
+          await detail.locator("summary").click();
+          await expect(detail.locator("p").first()).toBeVisible();
+        }
+        await page.screenshot({ path: testInfo.outputPath(`${size.width}-actions-help.png`), fullPage: true });
+        for (const detail of await descriptions.all()) await detail.locator("summary").click();
+      }
+      if (geometry.footer) {
+        const lastAction = editor.locator("footer").getByRole("button").last();
+        await lastAction.evaluate(element => element.scrollIntoView({ block: "center" }));
+        await expect(lastAction).toBeInViewport();
+        const actionBox = (await lastAction.boundingBox())!;
+        expect(actionBox.y + actionBox.height).toBeLessThanOrEqual(size.height - (size.width < 1024 ? 88 : 0));
+        await page.evaluate(() => window.scrollTo(0, 0));
+      }
       if (size.width < 1024 && section === "profile") {
         const banner = page.getByRole("banner");
         await banner.getByRole("button", { name: "Поиск", exact: true }).click();
@@ -74,7 +113,13 @@ test("reference agent workspace keeps five sections and header usable across siz
       if (section === "profile") {
         await editor.getByRole("button", { name: "Дополнительные настройки", exact: true }).click();
         await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toBeEnabled();
-        await page.screenshot({ path: testInfo.outputPath(`${size.width}-profile-advanced.png`) });
+        await page.screenshot({ path: testInfo.outputPath(`${size.width}-profile-advanced.png`), fullPage: true });
+        const save = editor.getByRole("button", { name: "Сохранить изменения", exact: true });
+        await save.evaluate(element => element.scrollIntoView({ block: "center" }));
+        await expect(save).toBeInViewport();
+        await editor.getByRole("textbox", { name: "Главная инструкция", exact: true }).fill(`Проверка длинной формы ${size.width}`);
+        await save.click();
+        await expect(save).toBeDisabled();
       }
     }
   }

@@ -28,8 +28,8 @@ export function AgentActionsSection({
   const toolEnabled = (tool: string) => form.allowed_tools.includes(tool);
   const proposesWork = runtime.enabled && (runtime.mode === "lead_task" || runtime.mode === "draft_deal");
   return (
-    <div className="space-y-4">
-      <section className="border-b border-platforma-border pb-4 last:border-0">
+    <div className="space-y-5">
+      <section className="border-b border-platforma-border pb-5 last:border-0">
         <div>
           <h3 className="text-base font-semibold text-midnight">{t("aiAgents.authority.title")}</h3>
           <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.authority.text")}</p>
@@ -52,7 +52,7 @@ export function AgentActionsSection({
       </section>
       <ControlSection botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
       <FunctionsSection form={form} setForm={setForm} canManage={canManage} />
-      <section className="border-b border-platforma-border pb-4 last:border-0"><div>
+      <section className="border-b border-platforma-border pb-5 last:border-0"><div>
         <Textarea className="min-h-20 py-2" rows={2} label={t("aiSetup.handoffRules")} value={form.escalation_text} disabled={!canManage} onChange={(event) => setForm((current) => ({ ...current, escalation_text: event.target.value }))} />
       </div></section>
     </div>
@@ -77,7 +77,7 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
   }));
 
   return (
-    <section className="border-b border-platforma-border pb-4 last:border-0">
+    <section className="border-b border-platforma-border pb-5 last:border-0">
       <div>
         <div className="mb-3">
           <h3 className="text-base font-semibold text-midnight">{t("aiAgents.control.pipelineTitle")}</h3>
@@ -110,17 +110,19 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
             ["create_appointment", t("aiAgents.control.appointmentTitle"), t("aiAgents.control.appointmentText")],
             ["auto_send_reply", t("aiAgents.control.autoReplyTitle"), t("aiAgents.control.autoReplyText")],
           ].map(([key, title, text]) => (
-            <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-2 lg:grid-cols-[240px_minmax(0,1fr)_auto]">
-              <h4 className="text-sm font-semibold text-midnight">{title}</h4>
-              <p className="col-start-1 row-start-2 text-sm leading-5 text-platforma-subtle lg:col-start-2 lg:row-start-1">{text}</p>
-              <div className="col-start-2 row-span-2 row-start-1 flex min-h-11 items-center lg:col-start-3 lg:row-span-1">
-              <ToggleSwitch
-                checked={Boolean(config[key as keyof typeof config])}
-                disabled={!canManage || config.mode === "off"}
-                label={title}
-                tone="ai"
-                onChange={(next) => setConfig((current) => ({ ...current, [key]: next }))}
-              />
+            <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-1">
+              <details className="text-sm">
+                <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 font-semibold text-midnight sm:min-h-9 sm:py-2">{title}</summary>
+                <p className="pb-2 leading-5 text-platforma-subtle">{text}</p>
+              </details>
+              <div className="flex min-h-11 items-center sm:min-h-9">
+                <ToggleSwitch
+                  checked={Boolean(config[key as keyof typeof config])}
+                  disabled={!canManage || config.mode === "off"}
+                  label={title}
+                  tone="ai"
+                  onChange={(next) => setConfig((current) => ({ ...current, [key]: next }))}
+                />
               </div>
             </div>
           ))}
@@ -134,15 +136,13 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
             aria-expanded={showAdvanced}
             aria-controls="ai-agent-pipeline-advanced"
           >
-            <div>
-              <h4 className="font-semibold text-midnight">{t("aiAgents.control.advancedTitle")}</h4>
-              <p className="mt-1 text-sm font-semibold leading-5 text-platforma-faint">{t("aiAgents.control.advancedText")}</p>
-            </div>
+            <h4 className="font-semibold text-midnight">{t("aiAgents.control.advancedTitle")}</h4>
             <ChevronRight size={18} className={cn("shrink-0 text-platforma-faint transition", showAdvanced && "rotate-90 text-ai-700")} />
           </button>
 
           {showAdvanced ? (
             <div id="ai-agent-pipeline-advanced" className="mt-3 grid gap-3 md:grid-cols-2">
+              <p className="text-sm leading-5 text-platforma-subtle md:col-span-2">{t("aiAgents.control.advancedText")}</p>
               <div>
                 <Input
                   label={t("aiAgents.control.maxReplyChars")}
@@ -199,20 +199,22 @@ function FunctionsSection({
   };
 
   return (
-    <section className="border-b border-platforma-border pb-4 last:border-0">
+    <section className="border-b border-platforma-border pb-5 last:border-0">
       <div>
         <h3 className="mb-3 text-base font-semibold text-platforma-ink">{t("aiAgents.functionsTitle")}</h3>
         <div className="divide-y divide-platforma-border">
         {tools.map(([key, title, text]) => {
           const enabled = form.allowed_tools.includes(key);
           return (
-            <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1 py-2 lg:grid-cols-[240px_minmax(0,1fr)_auto]">
-              <h4 className="text-sm font-semibold leading-6 text-platforma-ink">{title}</h4>
-              <div className="col-start-1 row-start-2 min-w-0 lg:col-start-2 lg:row-start-1">
-                <p className="text-sm leading-5 text-platforma-subtle">{text}</p>
-                <FieldHint>{t(`aiAgents.hint.tool.${key}`)}</FieldHint>
-              </div>
-              <div className="col-start-2 row-span-2 row-start-1 flex min-h-11 shrink-0 items-center gap-2 lg:col-start-3 lg:row-span-1">
+            <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-1">
+              <details className="min-w-0 text-sm">
+                <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 font-semibold text-platforma-ink sm:min-h-9 sm:py-2">{title}</summary>
+                <div className="pb-2">
+                  <p className="leading-5 text-platforma-subtle">{text}</p>
+                  <FieldHint>{t(`aiAgents.hint.tool.${key}`)}</FieldHint>
+                </div>
+              </details>
+              <div className="flex min-h-11 shrink-0 items-center gap-2 sm:min-h-9">
                 <span className="text-xs font-semibold text-platforma-subtle">{enabled ? t("aiAgents.functions.enabled") : t("aiAgents.functions.disabled")}</span>
                 <ToggleSwitch checked={enabled} disabled={!canManage} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />
               </div>

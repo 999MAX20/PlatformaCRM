@@ -11,7 +11,7 @@ export function TestAndLaunchSection({ bot, onboardingSteps, launchReady, dirty,
   const { t } = useI18n();
   const notice = statusNoticeTones[launchReady ? "success" : "warning"];
   const NoticeIcon = notice.Icon;
-  return <div className="flex min-h-full flex-col gap-3">
+  return <div className="flex flex-col gap-3">
     <details className={`rounded-control border px-3 py-2 text-sm ${notice.container}`}>
       <summary className="platforma-focus-ring min-h-7 cursor-pointer py-1 font-semibold">
         <NoticeIcon aria-hidden="true" size={18} className={`mr-2 inline-block align-text-bottom ${notice.icon}`} />

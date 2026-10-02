@@ -55,6 +55,8 @@ test("saved agent setup, draft preview, recovery and readiness", async ({ page }
     await initialSave.click();
     await expect(initialSave).toBeDisabled();
   }
+  // Saving a long, document-scrolling form leaves the global header above it.
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.getByRole("button", { name: "Создать агента", exact: true }).first().click();
   const modal = page.getByRole("dialog");
   await modal.getByRole("textbox").fill(`Setup ${testInfo.project.name}`);

@@ -1,5 +1,110 @@
 # AI-agent reference redesign — 2026-10-02
 
+## Owner-approved centered-width correction
+
+The owner subsequently rejected viewport-wide forms and approved replacement
+profile/channel/action references. This amendment supersedes the full-width
+layout statements below; their original verification remains historical evidence
+for6a3f39f. That commit was normal-pushed to main and CI36983828025 completed
+successfully. Correction base: `6a3f39f5dbeba8d1340208208ceb207e7175c040`.
+
+All five tabs now share one centered max960px container with responsive outer
+padding, measured relative to the area right of the global sidebar. Heading,
+tabs, sections and bottom actions have aligned edges. The container has no outer
+card or border. Page content sets its height; the document scrolls, and bottom
+actions immediately follow the form. The preview log has bounded scrolling;
+it no longer grows to consume unused viewport height. The role textarea starts
+at80px and remains resizable. Desktop controls stay36–40px; touch controls keep
+their existing accessible sizing. The compact action rows expose their existing
+explanations through native disclosures; no safeguard or setting was removed.
+
+The generated references' dark sidebar, replacement logos/search/avatar, status
+values and switch positions do not alter the approved global shell or business
+rules. No internal sidebar was restored. Backend, API, permissions, readiness,
+save/dirty guard and AI-execution contracts are unchanged.
+
+Correction verification uses the same isolated helper mechanism under
+`output/ai-agent-centered-20261002`. The updated existing layout spec checks all
+five tabs at1280×720,1600×900,1848×1000,1024×768 and393×851, plus RU/KK/EN. It
+measures left/right margins, maximum width, aligned heading/tabs/fields/actions,
+content-following footer, desktop control and textarea heights, resizability,
+long-form save reachability, action descriptions and mobile search separation.
+Relevant existing picker/dialog/save tests and build/budget complete the boundary;
+results and exact commands are in the current checkpoint. No unrelated CRM audit
+or full local suite is triggered by this correction.
+
+Before screenshots for all five tabs reuse unchanged6a3f39f evidence under
+`output/ai-agent-reference-20261002/browser-layout-final` and its final mobile
+offset run. After screenshots and measured JSON are under
+`output/ai-agent-centered-20261002/browser-desktop-layout-final` and
+`browser-mobile-final`; unchanged tablet evidence remains in `browser-layout-final`.
+Images include entire long forms and separate expanded-help/advanced-field states.
+The local `comparison.html` presents all five tabs before/after at 1280, 1600 and
+393 px. Additional 1848 px after-images verify the wider-screen layout; no archived
+1848 px before-image existed, and the old source was not restored to fabricate one.
+
+The initial correction layout run passed tablet/mobile but failed desktop on
+the role textarea (96px instead of80px). The shared class joiner preserves both
+minimum-height utilities; a local explicit override fixes it without changing
+shared Textarea behavior. A concurrent interaction-run environment startup timed
+out before tests. Subsequent browser runs are serialized; neither attempt is
+counted as a passed final gate.
+The next layout attempt exposed two harness assumptions: CSS reports vertical
+resize as `vertical`, and nearest scrolling can leave a button behind the fixed
+mobile navigation after collapsing content. The harness now checks the actual
+CSS value and scrolls the action into the central visible area before measuring
+reachability. The no-overlap assertion remains in place. Only failed desktop/mobile
+targets are repeated; the unchanged tablet PASS is reused.
+The desktop interaction run passed both existing picker/dialog tests. Its layout
+case then attempted to save the same fixture value at a second viewport; the
+correctly disabled save button timed out. The fixture now uses a unique value per
+viewport. Only that layout case is repeated, without rerunning the passed tests.
+The existing mobile setup test also needed to scroll back to the page top after
+saving the long initial form: its subsequent Create-agent click targeted a header
+hidden by scroll. The trace confirmed the target was outside the viewport. The
+harness now returns to the top before that click; no product assertion was removed.
+
+### Correction verification receipt
+
+Canonical checkout and branch are unchanged. Commands below use
+`.venv/Scripts/python.exe output/ai-agent-centered-20261002/verify.py` as their
+prefix. That helper delegates to `scripts.codex_verify.isolated_runtime`, validates
+Vite environment policy, uses disposable SQLite/ports and the existing installed
+dependencies. Real provider calls and working-DB changes are excluded.
+
+| Arguments after helper | Result and boundary |
+| --- | --- |
+| `layout-final e2e/agent-reference-layout.spec.ts` | Tablet PASS, reused for unchanged inputs; failed desktop/mobile cases superseded below. |
+| `desktop-final e2e/agent-reference-layout.spec.ts e2e/agent-header-picker.spec.ts --project=desktop-chromium --grep 'centered agent\|header picker searches\|knowledge and channel'` | Two picker/dialog tests PASS; fixture-related layout timeout superseded below. |
+| `desktop-layout-final e2e/agent-reference-layout.spec.ts --project=desktop-chromium` | PASS: 1280×720, 1600×900, 1848×1000; five tabs and RU/KK/EN. |
+| `mobile-final e2e/agent-reference-layout.spec.ts e2e/agent-header-picker.spec.ts --project=mobile-chromium --grep 'centered agent\|header picker searches\|knowledge and channel'` | Three PASS: layout/locales, picker/dirty guard, knowledge/channel dialogs and failed-save recovery. |
+| `preview-mobile-final e2e/agent-setup.spec.ts --project=mobile-chromium --grep 'saved agent setup'` | PASS: persisted settings, preview, injected provider-error recovery, reset and readiness. |
+
+Eight applicable browser cases passed across these runs. Earlier failed attempts
+are retained in the logs and explained above, not counted as green runs. Browser
+evidence covers both empty and populated knowledge states, long forms, all seven
+action descriptions, menu/dialog focus and zero measured horizontal overflow.
+Contrast checks pass for the five sections at each tested viewport.
+
+Measured desktop width is 960 px throughout. Equal margins inside the workspace
+are 128/288/412 px at viewport widths 1280/1600/1848, respectively. Profile footer
+ends at y=663 in all three cases, independent of viewport height. Tablet and mobile
+retain responsive padding; long forms scroll naturally with reachable actions.
+The author visually reviewed all five tabs at 1600 px and mobile, wide profile,
+expanded settings/help, and representative picker/channel/knowledge dialogs.
+
+Full local backend/E2E, dependency reinstall, working-DB migrations and live
+activation were not run: this correction changes only agent layout/disclosures
+and associated browser fixtures. Existing API/domain/authorization contracts and
+global shared primitives remain unchanged. This is local scoped evidence, not
+live-provider or deployment certification.
+
+Final `verify.py build` passed i18n validation, TypeScript and app/widget production
+builds. `npm run check:bundle` passed: agent chunk 70.4 kB (17.5 kB gzip), app shell
+298.4 kB; all JS chunks remain below 500 kB and shell below 400 kB. Working diff
+hygiene passed. Publication and actual CI receipt are maintained at the top of
+PRIMARY-SESSION; the five unrelated policy files remain excluded.
+
 ## Scope and candidate
 
 Owner-approved replacement for the cancelled compact-layout attempt. Canonical
