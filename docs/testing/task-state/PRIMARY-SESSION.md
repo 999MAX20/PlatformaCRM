@@ -1,6 +1,6 @@
 # PRIMARY-SESSION — PlatformaCRM
 
-## AI-CRUD-HISTORY-20261002 — scoped local verification complete; publication pending
+## AI-CRUD-HISTORY-20261002 — scoped local verification complete; code published
 
 - Source: owner's follow-up to AI-FUNCTIONAL-20261002 explicitly requests universal
   CRM CRUD, full historical/financial analytics and an inventory of remaining AI work.
@@ -50,8 +50,15 @@
   migration; explicit local backup/application approval requested, still pending.
 - Delivery: verified commit and normal push HEAD:main with remote readback and actual CI.
   Base push CI 37003968705 read back SUCCESS. No deployment workflow added.
-  Next: review/stage exact owned paths, commit/static gate, normal push/readback;
-  working-DB migration remains pending owner approval and is not part of local PASS.
+  Published code: `708d0cc9fe2cb325052e14b9401ed7282f081952`, conventional commit
+  `feat(ai): add approved CRM commands and historical finance`, 46 reviewed paths.
+  Static committed-range gate PASS against c48b4e1; normal HEAD:main push succeeded,
+  remote SHA readback matched. Code checkout clean after publication. Actual CI
+  [37012604357](https://github.com/999MAX20/PlatformaCRM/actions/runs/37012604357)
+  is IN_PROGRESS at receipt time, not CI PASS. This documentation-only receipt
+  is published separately; its SHA/CI belongs to Git history and final response.
+  Next: owner answer to the already requested backup + working-DB migration;
+  it remains unapplied and outside local PASS. No new AI phase is authorized.
 
 ## AI-FUNCTIONAL-20261002 — scoped local acceptance complete; published
 

@@ -110,3 +110,13 @@ Sources of these remaining boundaries: [pilot plan](../pilot/local-crm-completio
 [financial source contract](../integrations/financial-source-contract.md),
 [billing decision](../billing/BILLING_DISCUSSION_DEFERRED_2026-09-25.md).
 This inventory does not authorize new phases or reopen historical closures.
+
+## Publication receipt
+
+Code commit `708d0cc9fe2cb325052e14b9401ed7282f081952` on
+`codex/ui-testing-toolkit`: 46 reviewed task-owned files, no working DB/secrets/
+ignored test artifacts. Working/index/new-file review and committed-range static
+gate passed against base c48b4e1. Normal push `HEAD:main` succeeded; remote SHA
+matched exactly. [Push CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/37012604357)
+was IN_PROGRESS at receipt time. This is not CI success or deployment acceptance.
+The documentation receipt's own SHA/CI is reported in Git history/final response.
