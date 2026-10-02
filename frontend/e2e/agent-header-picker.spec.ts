@@ -18,18 +18,35 @@ async function createAgent(session: Awaited<ReturnType<typeof crmSession>>, name
   return bot;
 }
 
-test("header picker searches name and role, keeps long labels bounded and protects agent drafts", async ({ page }, testInfo) => {
+test("agent navigation searches, creates and protects drafts in the expanded sidebar or compact picker", async ({ page }, testInfo) => {
+  const expanded = testInfo.project.name === "desktop-chromium";
+  if (expanded) await page.setViewportSize({ width: 1600, height: 900 });
   const session = await crmSession(page);
   const first = await createAgent(session, "Администратор клиники", "Отвечает на вопросы клиентов");
   const secondName = "Әкімші — запись и подтверждение приёма — clinic appointments and customer support — длинное название агента";
   const second = await createAgent(session, secondName, "Подтверждение записи");
   await page.goto(`/app/ai-agents/${first.id}/profile`);
-  const picker = page.getByTestId("agent-header-picker");
-  const popover = page.getByTestId("agent-picker-popover");
+  const picker = page.getByTestId("agent-picker-trigger");
+  const popover = page.getByTestId("agent-picker-panel");
+  const navigation = page.getByTestId("agent-navigation");
   const editor = page.getByTestId("ai-agent-editor");
-  const originalWidth = (await picker.boundingBox())!.width;
-  await picker.focus();
-  await page.keyboard.press("ArrowDown");
+  const originalWidth = (await navigation.boundingBox())!.width;
+  const create = navigation.getByRole("button", { name: "Создать агента", exact: true });
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: testInfo.outputPath("navigation-profile.png") });
+  await create.click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(create).toBeFocused();
+  async function openList() {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    if (expanded) await popover.getByRole("combobox").focus();
+    else {
+      await picker.focus();
+      await page.keyboard.press("ArrowDown");
+    }
+  }
+  await openList();
   const search = popover.getByRole("combobox");
   await expect(search).toBeFocused();
   await search.fill("нет такого назначения");
@@ -37,34 +54,39 @@ test("header picker searches name and role, keeps long labels bounded and protec
   await search.fill("подтверждение записи");
   await expect(popover.getByRole("option")).toHaveCount(1);
   await expect(popover.getByRole("option")).toContainText(secondName);
-  await page.keyboard.press("Escape");
-  await expect(popover).toBeHidden();
-  await expect(picker).toBeFocused();
+  if (expanded) await search.fill("");
+  else {
+    await page.keyboard.press("Escape");
+    await expect(popover).toBeHidden();
+    await expect(picker).toBeFocused();
+  }
 
   await editor.getByRole("textbox", { name: "Название", exact: true }).fill("Несохранённое имя");
-  await picker.click();
+  await expect(create).toBeDisabled();
+  await openList();
   await search.fill("подтверждение записи");
   await page.keyboard.press("Enter");
   const guard = page.getByRole("dialog", { name: "Несохранённые изменения", exact: true });
   await expect(guard).toBeVisible();
-  await expect(picker).toContainText(first.name);
+  await expect(editor.getByRole("heading", { name: first.name, exact: true })).toBeVisible();
   await guard.getByRole("button", { name: "Отмена", exact: true }).click();
   await expect(editor.getByRole("textbox", { name: "Название", exact: true })).toHaveValue("Несохранённое имя");
-  await picker.click();
+  await openList();
   await search.fill("подтверждение записи");
   await page.keyboard.press("Enter");
   await guard.getByRole("button", { name: "Сохранить и продолжить", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/app/ai-agents/${second.id}/profile$`));
   expect((await session.read(`bots/${first.id}`)).name).toBe("Несохранённое имя");
-  await expect(picker).toHaveAttribute("title", secondName);
-  expect((await picker.boundingBox())!.width).toBe(originalWidth);
-  const truncation = await picker.locator("span").evaluate(element => ({ visible: element.clientWidth, text: element.scrollWidth }));
+  const label = expanded ? popover.getByRole("option", { selected: true }).locator("p").first() : picker.locator("span");
+  await expect(expanded ? popover.getByRole("option", { selected: true }) : picker).toHaveAttribute("title", secondName);
+  expect((await navigation.boundingBox())!.width).toBe(originalWidth);
+  const truncation = await label.evaluate(element => ({ visible: element.clientWidth, text: element.scrollWidth }));
   expect(truncation.text).toBeGreaterThan(truncation.visible);
-  await picker.click();
+  await openList();
   await expect(popover.getByRole("option", { selected: true })).toContainText(secondName);
   await page.screenshot({ path: testInfo.outputPath("selected-long-name.png") });
   expect((await new AxeBuilder({ page }).withRules(["color-contrast"]).analyze()).violations).toEqual([]);
-  await page.keyboard.press("Escape");
+  if (!expanded) await page.keyboard.press("Escape");
 
   await editor.getByRole("textbox", { name: "Название", exact: true }).fill("Отменить это имя");
   await editor.getByRole("tab", { name: "Действия", exact: true }).click();
@@ -72,6 +94,13 @@ test("header picker searches name and role, keeps long labels bounded and protec
   await expect(editor.getByRole("textbox", { name: "Название", exact: true })).toHaveValue("Отменить это имя");
   await editor.locator("footer").getByRole("button", { name: "Отмена", exact: true }).click();
   await expect(editor.getByRole("textbox", { name: "Название", exact: true })).toHaveValue(secondName);
+  await editor.getByRole("textbox", { name: "Название", exact: true }).fill("Не сохранять это имя");
+  await openList();
+  await search.fill("Несохранённое имя");
+  await page.keyboard.press("Enter");
+  await guard.getByRole("button", { name: "Отменить изменения", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/app/ai-agents/${first.id}/profile$`));
+  expect((await session.read(`bots/${second.id}`)).name).toBe(secondName);
 });
 
 test("picker presents a scrollable long list and recoverable loading, error and empty states", async ({ page }, testInfo) => {
@@ -88,8 +117,8 @@ test("picker presents a scrollable long list and recoverable loading, error and 
     return route.fulfill({ json: state === "empty" ? [] : [seed, ...rows] });
   });
   await page.goto(`/app/ai-agents/${seed.id}/profile`);
-  const picker = page.getByTestId("agent-header-picker");
-  const popover = page.getByTestId("agent-picker-popover");
+  const picker = page.getByTestId("agent-picker-trigger");
+  const popover = page.getByTestId("agent-picker-panel");
   await picker.click();
   await expect(popover.getByRole("option")).toHaveCount(36);
   expect(await popover.getByRole("listbox").evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
@@ -163,10 +192,10 @@ test("knowledge and channel dialogs remain usable; failed save preserves the dra
   await expect(editor.getByRole("button", { name: "Сохранить изменения", exact: true })).toBeDisabled();
 });
 
-test("manager cannot enter agent configuration or see its header picker", async ({ page }) => {
+test("manager cannot enter agent configuration or see agent navigation", async ({ page }) => {
   await crmSession(page, "business_manager@example.com");
   await page.goto("/app/ai-agents/1/profile");
   await expect(page.getByTestId("forbidden-state")).toBeVisible();
   await expect(page.getByTestId("ai-agent-editor")).toHaveCount(0);
-  await expect(page.getByTestId("agent-header-picker")).toHaveCount(0);
+  await expect(page.getByTestId("agent-navigation")).toHaveCount(0);
 });

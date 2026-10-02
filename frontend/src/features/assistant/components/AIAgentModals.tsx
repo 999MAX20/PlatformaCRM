@@ -37,7 +37,7 @@ export function CreateAgentModal({
   }, [open]);
 
   return (
-    <Modal title={t("aiAgents.newAgentTitle")} open={open} onClose={() => { if (!isCreating) onClose(); }}>
+    <Modal title={t("aiAgents.newAgentTitle")} open={open} focusReturnId="ai-agent-create" onClose={() => { if (!isCreating) onClose(); }}>
       <form
         className="space-y-4"
         onSubmit={(event) => {

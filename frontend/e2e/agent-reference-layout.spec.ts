@@ -19,6 +19,22 @@ test("centered agent workspace keeps natural flow and all five sections usable a
   const evidence = [];
   for (const size of sizes) {
     await page.setViewportSize(size);
+    const searchBoxes = [];
+    for (const route of ["/app/clients", "/app/tasks", `/app/ai-agents/${bot.id}/profile`]) {
+      await page.goto(route);
+      const banner = page.getByRole("banner");
+      const search = size.width >= 1024
+        ? banner.getByRole("textbox", { name: "Поиск", exact: true })
+        : banner.getByRole("button", { name: "Поиск", exact: true });
+      await expect(search).toBeVisible();
+      searchBoxes.push(await search.boundingBox());
+      expect((await banner.boundingBox())!.height).toBe(57);
+    }
+    for (const box of searchBoxes.slice(1)) {
+      for (const key of ["x", "y", "width", "height"] as const) {
+        expect(Math.abs(box![key] - searchBoxes[0]![key])).toBeLessThanOrEqual(1);
+      }
+    }
     for (const section of ["profile", "knowledge", "actions", "channels", "test"]) {
       await page.goto(`/app/ai-agents/${bot.id}/${section}`);
       const editor = page.getByTestId("ai-agent-editor");
@@ -34,6 +50,14 @@ test("centered agent workspace keeps natural flow and all five sections usable a
       expect(selected!.x).toBeGreaterThanOrEqual(tabs!.x - 1);
       expect(selected!.x + selected!.width).toBeLessThanOrEqual(tabs!.x + tabs!.width + 1);
       expect(geometry.overflow).toBeLessThanOrEqual(1);
+      const navigation = await page.getByTestId("agent-navigation").boundingBox();
+      if (size.width >= 1280) {
+        expect(navigation!.x).toBeGreaterThanOrEqual(64);
+        expect(navigation!.x + navigation!.width).toBeLessThanOrEqual(geometry.editor.x - 16);
+      } else {
+        expect(navigation!.y + navigation!.height).toBeLessThanOrEqual(geometry.editor.y);
+      }
+      await expect(page.getByRole("banner").getByRole("button", { name: "Создать агента", exact: true })).toHaveCount(0);
       const workspaceLeft = size.width >= 1024 ? 64 : 0;
       const leftMargin = geometry.editor.x - workspaceLeft;
       const rightMargin = size.width - geometry.editor.right;
@@ -54,12 +78,6 @@ test("centered agent workspace keeps natural flow and all five sections usable a
       if (size.width >= 1280) {
         expect(geometry.header.height).toBeLessThanOrEqual(105);
         expect(geometry.editor.width).toBe(960);
-        const picker = await page.getByTestId("agent-header-picker").boundingBox();
-        const title = await page.getByRole("banner").getByText("ИИ-агенты", { exact: true }).filter({ visible: true }).boundingBox();
-        const search = await page.getByRole("banner").getByRole("textbox", { name: "Поиск", exact: true }).boundingBox();
-        expect(picker!.width).toBe(180);
-        expect(picker!.x).toBeGreaterThan(title!.x + title!.width);
-        expect(picker!.x + picker!.width).toBeLessThan(search!.x);
         if (section === "profile") {
           const preset = await editor.getByRole("button", { name: "Применить роль администратора стоматологии", exact: true }).boundingBox();
           expect(preset!.height).toBeGreaterThanOrEqual(36);
@@ -102,11 +120,9 @@ test("centered agent workspace keeps natural flow and all five sections usable a
         const banner = page.getByRole("banner");
         await banner.getByRole("button", { name: "Поиск", exact: true }).click();
         const search = await banner.getByRole("textbox", { name: "Поиск", exact: true }).boundingBox();
-        const picker = await page.getByTestId("agent-header-picker").boundingBox();
         expect(search!.y).toBeGreaterThanOrEqual(0);
-        expect(search!.y + search!.height).toBeLessThanOrEqual(picker!.y);
-        const create = await banner.getByRole("button", { name: "Создать агента", exact: true }).boundingBox();
-        expect(search!.x + search!.width).toBeLessThanOrEqual(create!.x);
+        const navigation = await page.getByTestId("agent-navigation").boundingBox();
+        expect(search!.y + search!.height).toBeLessThanOrEqual(navigation!.y);
         await page.screenshot({ path: testInfo.outputPath("mobile-global-search.png") });
         await page.keyboard.press("Escape");
       }

@@ -1001,11 +1001,17 @@ within the working area to the right of the global sidebar. Responsive outer
 padding keeps narrower screens usable. Its heading, tabs, fields, dividers and
 bottom actions share the same edges. This is a layout container without a
 decorative card or outer border. Content determines height; bottom actions follow
-the content rather than filling a viewport footer. A compact
-180px header selector replaces the inner agent sidebar; it searches names/roles
-and shows operational status separately from readiness. On narrow screens it
-moves to the second header row. Keep creation as a separate action and preserve
-the unsaved-change guard when selecting another agent.
+the content rather than filling a viewport footer. The global header uses the
+same grid, search position and height as other CRM pages; agent controls do not
+add columns or a second header row.
+
+Creation and agent navigation live in the free left margin. At widths from
+1536px a compact 208px panel shows creation, name/role search and the actual agent
+list. From 1280px it collapses to creation and picker buttons; below that it becomes
+a compact row above the centered editor. The panel must not shift or overlap the
+editor. Existing status labels, keyboard selection, recoverable data states and
+the unsaved-change guard remain available. Creation stays a separate action and
+is disabled while the current editor has unsaved changes.
 
 Use the optional underline Tabs appearance for its five sections. Forms and
 setting rows use dividers rather than nested cards; channels use aligned

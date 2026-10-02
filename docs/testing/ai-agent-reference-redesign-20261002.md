@@ -1,5 +1,63 @@
 # AI-agent reference redesign — 2026-10-02
 
+## Owner-approved navigation correction
+
+After centered-width publication `028898d`, the owner requested the ordinary
+global-search position and a small internal navigation panel in the free left
+margin. This supersedes the prior header-picker/no-inner-list decision; the
+960px centered editor and content-following actions remain unchanged.
+
+The agent-only global-header grid, context slot and 105px header-height exception
+are removed. Agents now use the existing common header grid and 57px height.
+Create and selection move into page navigation: a 208px list panel from 1536px,
+a two-button rail from 1280px, and a compact row above the editor below that.
+The panel reuses actual bot/profile data, search by name/role, keyboard selection,
+loading/error/retry/empty states, the create modal and existing dirty-draft guard.
+All text comes from existing i18n keys and API fields.
+
+Verification is scoped to navigation and shared-header geometry, using isolated
+fixtures under `output/ai-agent-navigation-20261002`. The layout case compares
+global search with Clients and Tasks at each tested size, checks sidebar/editor
+separation, and retains five-tab/locale/centered-form evidence. Updated existing
+picker cases cover expanded and collapsed navigation, create-dialog focus,
+cancel/save/discard, long lists, loading/error/retry/empty and denied access.
+Unchanged knowledge/channel/preview business contracts reuse prior evidence.
+Final results and exact publication receipt are at the top of PRIMARY-SESSION.
+
+Navigation correction browser receipt (helper prefix:
+`.venv/Scripts/python.exe output/ai-agent-navigation-20261002/verify.py`):
+
+| Arguments | Result |
+| --- | --- |
+| `desktop e2e/agent-reference-layout.spec.ts e2e/agent-header-picker.spec.ts --project=desktop-chromium --grep 'centered agent\|agent navigation searches\|picker presents\|manager cannot'` | Layout and denied access PASS, retained; create-close focus failed and was corrected. Long-list case superseded by the focused repeat below. |
+| `desktop-navigation-final e2e/agent-header-picker.spec.ts --project=desktop-chromium --grep 'agent navigation searches'` | PASS: expanded panel, creation-dialog focus, search, long label, dirty cancel/save/discard. |
+| `desktop-states-final e2e/agent-header-picker.spec.ts --project=desktop-chromium --grep 'picker presents'` | PASS: collapsed rail, scrollable list, keyboard selection, loading/error/retry/empty. |
+| `mobile-tablet e2e/agent-reference-layout.spec.ts e2e/agent-header-picker.spec.ts --project=mobile-chromium --project=tablet-chromium --grep 'centered agent\|agent navigation searches\|picker presents\|manager cannot'` | Five PASS; three tablet interaction cases intentionally skipped because that interaction matrix covers desktop/mobile. Tablet layout is included. |
+| `create-preview-mobile e2e/agent-setup.spec.ts --project=mobile-chromium --grep 'saved agent setup'` | PASS: actual creation through page navigation, saved setup, preview/recovery/readiness. |
+
+Ten applicable browser cases passed. Desktop layout/denial evidence has unchanged
+inputs after the local focus correction; panel keyboard behavior was repeated.
+The create-modal correction uses the existing explicit focus-return mechanism,
+without changing shared overlays. Search x/y/width/height match Clients and Tasks;
+the global header is 57px throughout. All five sections remain centered and clear
+of the navigation panel. RU/KK/EN, keyboard, contrast, no horizontal overflow and
+long-form action reachability passed at 1280/1600/1848, tablet1024 and mobile393.
+Screenshots and JSON are in the helper's `browser-*` output directories; the final
+wide panel is in `browser-desktop-navigation-final/.../navigation-profile.png`.
+
+An initial preflight failed before browser launch because the tracked picker had
+been renamed but the rename was not yet staged. Reviewing/staging those two paths
+allowed the unchanged Vite-environment policy to inspect tracked source. Failed
+attempts are not counted as successful gates. No dependency reinstall, full local
+backend/CRM suite, working database, live provider or real activation was used.
+
+Final isolated `verify.py build` passed i18n (5080 keys), TypeScript and app/widget
+builds. `npm run check:bundle` passed: app shell297.5kB (92.0kB gzip), agents71.7kB
+(17.8kB gzip). The common search position was also visually reviewed on wide and
+compact screens; the running local Vite server serves the updated canonical source.
+No backend, permission, notification, BusinessEvent, AI/provider or migration
+contract changed. The source branch remains `codex/ui-testing-toolkit`, target main.
+
 ## Owner-approved centered-width correction
 
 The owner subsequently rejected viewport-wide forms and approved replacement

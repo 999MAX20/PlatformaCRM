@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
 import { useNavigate } from "react-router";
 
 import { agentProfilesApi, businessKnowledgeApi } from "../../api/ai";
@@ -14,7 +13,7 @@ import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
 import type { AgentProfile, Bot as BotType, BotChannel, BusinessKnowledgeItem } from "../../types";
 import { AIAgentsWorkspace } from "./components/AIAgentsWorkspace";
-import { AgentHeaderPicker } from "./components/AgentHeaderPicker";
+import { AgentNavigation } from "./components/AgentNavigation";
 import { jsonFromLines } from "./aiAgentsUtils";
 import { useAIAgentEditorDrafts } from "./useAIAgentEditorDrafts";
 import { useCanonicalAIAgentRoute } from "./useCanonicalAIAgentRoute";
@@ -189,36 +188,28 @@ export function AIAgentsPage() {
   }, [botDraft, canManage, markBotSaved, markProfileSaved, profileForm.name, saveProfile, selectedBot, setSaveState, updateBot]);
 
   useEffect(() => {
-    setPageHeader({
-      title: t("nav.aiAgents"),
-      contextControl: <AgentHeaderPicker
-        bots={botList} profiles={profileList} selectedBot={selectedBot}
-        isLoading={isPageLoading} error={bots.error || profiles.error}
-        onRetry={() => void Promise.all([bots.refetch(), profiles.refetch()])}
-        onSelect={id => navigate(`/app/ai-agents/${id}/${activeSection}`)}
-      />,
-      primaryAction: canManage
-        ? {
-            label: t("aiAgents.createAgent"),
-            icon: Plus,
-            variant: "primary",
-            disabled: editorDirty,
-            title: editorDirty ? t("aiAgents.unsavedIndicator") : undefined,
-            onClick: () => setCreateOpen(true),
-          }
-        : undefined,
-    });
+    setPageHeader({ title: t("nav.aiAgents") });
     return () => setPageHeader(null);
-  }, [activeSection, botList, bots.error, bots.refetch, canManage, editorDirty, isPageLoading, navigate, profileList, profiles.error, profiles.refetch, selectedBot, setPageHeader, t]);
+  }, [setPageHeader, t]);
+
+  const navigation = (
+    <AgentNavigation
+      bots={botList} profiles={profileList} selectedBot={selectedBot}
+      isLoading={isPageLoading} error={bots.error || profiles.error}
+      canCreate={canManage} dirty={editorDirty} onCreate={() => setCreateOpen(true)}
+      onRetry={() => void Promise.all([bots.refetch(), profiles.refetch()])}
+      onSelect={id => navigate(`/app/ai-agents/${id}/${activeSection}`)}
+    />
+  );
 
   if (isPageLoading) {
-    return <LoadingState label={t("aiAgents.loading")} />;
+    return <>{navigation}<LoadingState label={t("aiAgents.loading")} /></>;
   }
 
   if (!business) return <ErrorState message={t("aiAgents.noBusiness")} />;
 
   if (canonicalRoute) {
-    return <LoadingState label={t("aiAgents.loading")} />;
+    return <>{navigation}<LoadingState label={t("aiAgents.loading")} /></>;
   }
 
   const pageError = bots.error || profiles.error;
@@ -254,57 +245,60 @@ export function AIAgentsPage() {
   };
 
   return (
-    <AIAgentsWorkspace
-      activeSection={activeSection}
-      addChannel={addChannel}
-      botChannels={botChannels.data || []}
-      botDraft={botDraft}
-      businessId={business.id}
-      canManage={canManage}
-      canManageChannels={canManageChannels}
-      canSuggest={canSuggest}
-      canViewChannels={canViewChannels}
-      createAgentPending={createBot.isPending}
-      createError={createBot.error}
-      createOpen={createOpen}
-      dirty={editorDirty}
-      isSaving={isSavingEditor || updateBot.isPending || toggleBotStatus.isPending}
-      knowledgeItems={knowledge.data || []}
-      mutationError={mutationError}
-      navigationBlocked={navigationBlocker.state === "blocked"}
-      newAgentName={newAgentName}
-      onCloseCreate={() => setCreateOpen(false)}
-      onCloseNavigationGuard={closeNavigationGuard}
-      onCreateAgent={() => createBot.mutate()}
-      onDiscardAndContinue={discardAndContinue}
-      onSaveAndContinue={() => {
-        void saveAndContinue().catch(() => undefined);
-      }}
-      onNavigateSection={(section) => navigate(`/app/ai-agents/${selectedBot?.id}/${section}`)}
-      onOpenMessages={() => navigate("/app/conversations")}
-      onOpenCreate={() => setCreateOpen(true)}
-      onReset={resetEditorDrafts}
-      onRetry={() => void Promise.all([
-        bots.refetch(),
-        profiles.refetch(),
-      ])}
-      onRetrySection={() => void Promise.all([
-        ...(loadChannels ? [botChannels.refetch()] : []),
-        ...(["knowledge", "test"].includes(activeSection) ? [knowledge.refetch()] : []),
-      ])}
-      onSave={() => void saveEditorDrafts().catch(() => undefined)}
-      onSetNewAgentName={setNewAgentName}
-      onToggleStatus={(active) => toggleBotStatus.mutate(active)}
-      pageError={pageError}
-      profileForm={profileForm}
-      saveState={saveState}
-      sectionError={sectionError}
-      sectionLoading={sectionLoading}
-      selectedBot={selectedBot}
-      selectedProfile={selectedProfile}
-      setBotDraft={setBotDraft}
-      setProfileForm={setProfileForm}
-      toggleChannel={toggleChannel}
-    />
+    <>
+      {navigation}
+      <AIAgentsWorkspace
+        activeSection={activeSection}
+        addChannel={addChannel}
+        botChannels={botChannels.data || []}
+        botDraft={botDraft}
+        businessId={business.id}
+        canManage={canManage}
+        canManageChannels={canManageChannels}
+        canSuggest={canSuggest}
+        canViewChannels={canViewChannels}
+        createAgentPending={createBot.isPending}
+        createError={createBot.error}
+        createOpen={createOpen}
+        dirty={editorDirty}
+        isSaving={isSavingEditor || updateBot.isPending || toggleBotStatus.isPending}
+        knowledgeItems={knowledge.data || []}
+        mutationError={mutationError}
+        navigationBlocked={navigationBlocker.state === "blocked"}
+        newAgentName={newAgentName}
+        onCloseCreate={() => setCreateOpen(false)}
+        onCloseNavigationGuard={closeNavigationGuard}
+        onCreateAgent={() => createBot.mutate()}
+        onDiscardAndContinue={discardAndContinue}
+        onSaveAndContinue={() => {
+          void saveAndContinue().catch(() => undefined);
+        }}
+        onNavigateSection={(section) => navigate(`/app/ai-agents/${selectedBot?.id}/${section}`)}
+        onOpenMessages={() => navigate("/app/conversations")}
+        onOpenCreate={() => setCreateOpen(true)}
+        onReset={resetEditorDrafts}
+        onRetry={() => void Promise.all([
+          bots.refetch(),
+          profiles.refetch(),
+        ])}
+        onRetrySection={() => void Promise.all([
+          ...(loadChannels ? [botChannels.refetch()] : []),
+          ...(["knowledge", "test"].includes(activeSection) ? [knowledge.refetch()] : []),
+        ])}
+        onSave={() => void saveEditorDrafts().catch(() => undefined)}
+        onSetNewAgentName={setNewAgentName}
+        onToggleStatus={(active) => toggleBotStatus.mutate(active)}
+        pageError={pageError}
+        profileForm={profileForm}
+        saveState={saveState}
+        sectionError={sectionError}
+        sectionLoading={sectionLoading}
+        selectedBot={selectedBot}
+        selectedProfile={selectedProfile}
+        setBotDraft={setBotDraft}
+        setProfileForm={setProfileForm}
+        toggleChannel={toggleChannel}
+      />
+    </>
   );
 }

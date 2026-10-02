@@ -2,6 +2,56 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
+## AI-agent navigation / COMMON HEADER AND LEFT PANEL LOCALLY VERIFIED, 2026-10-02
+
+- Direct owner requirement after centered-width closure: global search must use
+  the same position as other pages; move creation and existing-agent navigation
+  from the header into the free left margin. Supplied screenshot reviewed.
+  This approved change supersedes the earlier no-inner-sidebar decision only
+  for a compact navigation panel; retain the centered 960 px editor and five tabs.
+- Mode implementation; gap UI behavior/layout. Same registered primary/root
+  C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit;
+  base028898ddf381c69432a7bb38c224a388d82f3eb9. Starting source clean except five
+  already-approved external policy files, preserved and excluded from publication.
+- Reuse existing picker search/keyboard/states, actual bots/profiles, create modal,
+  canonical routes and draft guard. Wide screens show create plus agent list in
+  the left margin; narrower screens collapse navigation without moving the editor
+  off center. Global header uses its existing common grid and height.
+- Scope: page navigation, obsolete agent-only header layout, focused browser
+  evidence and matching design/report updates. No backend/API, permission,
+  readiness, notification, BusinessEvent, AI execution, working-DB or activation
+  changes. No new product phase or parallel writer.
+- Gate: compare search geometry against other pages at1280/1600/1848 and mobile;
+  confirm sidebar/editor do not overlap and all five tabs remain centered;
+  create/select/search/long list, dirty cancel/save/discard, loading/error/empty,
+  keyboard/focus and denied route. Reuse unchanged editor/dialog/preview evidence.
+  Build/types/i18n and bundle once at completion, reviewed diff/static/normal
+  push and actual CI. Use isolated fixtures and installed dependencies; no full
+  local CRM suite or live providers.
+- Implemented common header and responsive local navigation. Desktop geometry
+  across1280/1600/1848 and all five tabs/locales PASS; search matches Clients/Tasks.
+  Long-list/loading/error/empty and denied-route cases passed. Initial create-modal
+  close did not restore opener focus; added the existing explicit focus-return ID
+  to the local create flow. Focus/search/create/dirty cancel/save/discard then PASS
+  at1600. Active keyboard row now initializes from the selected agent.
+- Initial environment preflight stopped before tests because a renamed tracked
+  picker path was not staged; reviewed/staged the rename so the tracked-source
+  Vite policy could inspect it. No verifier weakening or environment changes.
+  Ten applicable browser cases now PASS, with commands and reuse boundaries in
+  the navigation amendment of ai-agent-reference-redesign-20261002.md. Mobile
+  creation/setup/preview/recovery PASS; three tablet interaction skips are
+  intentional (desktop/mobile matrix), while tablet layout is verified.
+- Running localhost5173 was read-only checked: it serves the new AgentNavigation
+  module from the canonical source path. No user dev process was stopped.
+  Base028898d CI36990402370 now SUCCESS (09:53UTC); this is prior-candidate evidence.
+- Final isolated `verify.py build` PASS: i18n5080 keys, TypeScript, app and widget.
+  `npm run check:bundle` PASS: app shell297.5kB/gzip92.0kB;
+  agent chunk71.7kB/gzip17.8kB; all chunks below500kB, shell below400kB.
+- Reviewed desktop wide/rail, mobile and representative long-list/channel
+  screenshots. Five external policy files remain excluded. Source HEAD and
+  fetched/remote main still028898d; no concurrent writer or root drift.
+  Next: reviewed commit/static/push and actual new CI; no new product phase.
+
 ## Reference-led AI-agent redesign / CENTERED WIDTH PUBLISHED, CI IN PROGRESS, 2026-10-02
 
 - Owner explicitly rejected the full-width forms and approved three replacement
