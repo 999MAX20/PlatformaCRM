@@ -361,6 +361,7 @@ def send_outbound_message(
     user,
     sender_type=BotMessage.SenderTypes.MANAGER,
     idempotency_key="",
+    runtime_fingerprint="",
 ):
     from apps.bots.outbound_delivery import create_outbound_message
 
@@ -370,6 +371,7 @@ def send_outbound_message(
         user=user,
         sender_type=sender_type,
         idempotency_key=idempotency_key,
+        runtime_fingerprint=runtime_fingerprint,
     )
 
 

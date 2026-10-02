@@ -1,9 +1,10 @@
+import { InternalAgentSettings } from "./components/InternalAgentSettings";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
 import { agentProfilesApi, businessKnowledgeApi } from "../../api/ai";
-import { botChannelsApi, botLifecycleApi, botsApi, ensureBotChannel } from "../../api/bots";
+import { botChannelsApi, botLifecycleApi, botsApi, ensureBotChannel, saveAgentConfiguration } from "../../api/bots";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useAuth } from "../auth/AuthProvider";
@@ -55,7 +56,7 @@ export function AIAgentsPage() {
   });
 
   const selectedProfile = useMemo(
-    () => (profiles.data || []).find((profile) => profile.bot === selectedBot?.id) || null,
+    () => (profiles.data || []).filter((profile) => profile.bot === selectedBot?.id).sort((a, b) => Number(b.is_active) - Number(a.is_active) || b.updated_at.localeCompare(a.updated_at))[0] || null,
     [profiles.data, selectedBot?.id],
   );
   const [isSavingEditor, setIsSavingEditor] = useState(false);
@@ -100,38 +101,23 @@ export function AIAgentsPage() {
     },
   });
 
-  const updateBot = useMutation({
-    mutationFn: (payload: Partial<BotType>) => {
-      if (!selectedBot) throw new Error("Agent is not selected.");
-      return botsApi.update({ id: selectedBot.id, payload });
-    },
-    onSuccess: (updatedBot, payload) => {
-      if ("name" in payload || "default_language" in payload) {
-        markBotSaved(updatedBot);
-      }
-      return queryClient.invalidateQueries({ queryKey: ["bots"] });
-    },
-  });
-
-  const saveProfile = useMutation({
+  const saveConfiguration = useMutation({
     mutationFn: () => {
-      if (!business) throw new Error("Business is not selected.");
-      const payload = {
-        business: business.id,
-        bot: selectedBot?.id || (profileForm.bot ? Number(profileForm.bot) : null),
-        name: profileForm.name,
-        role_description: profileForm.role_description,
-        tone: profileForm.tone,
-        language: botDraft.default_language.trim() || "ru",
-        is_active: true,
-        system_prompt: profileForm.system_prompt,
-        rules_json: jsonFromLines(profileForm.rules_text),
-        allowed_tools_json: { tools: profileForm.allowed_tools },
-        escalation_rules_json: jsonFromLines(profileForm.escalation_text),
-      };
-      return profileForm.id ? agentProfilesApi.update({ id: profileForm.id, payload }) : agentProfilesApi.create(payload);
+      if (!selectedBot) throw new Error("Agent is not selected.");
+      return saveAgentConfiguration(selectedBot.id, {
+        bot: { name: botDraft.name.trim(), default_language: botDraft.default_language, settings_json: botDraft.settings_json },
+        profile: {
+          ...(profileForm.id ? { id: profileForm.id } : {}),
+          name: profileForm.name.trim(), role_description: profileForm.role_description,
+          tone: profileForm.tone, is_active: true, system_prompt: profileForm.system_prompt,
+          rules_json: jsonFromLines(profileForm.rules_text),
+          allowed_tools_json: { tools: profileForm.allowed_tools },
+          escalation_rules_json: jsonFromLines(profileForm.escalation_text),
+        },
+      });
     },
-    onSuccess: async (profile) => {
+    onSuccess: async ({ bot, profile }) => {
+      markBotSaved(bot);
       markProfileSaved(profile);
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["ai-agent-profiles"] }),
@@ -170,22 +156,13 @@ export function AIAgentsPage() {
     if (!selectedBot || !canManage || !botDraft.name.trim() || !profileForm.name.trim()) return false;
     setIsSavingEditor(true);
     try {
-      const [updatedBot, updatedProfile] = await Promise.all([
-        updateBot.mutateAsync({
-          name: botDraft.name.trim(),
-          default_language: botDraft.default_language.trim() || "ru",
-          settings_json: botDraft.settings_json,
-        }),
-        saveProfile.mutateAsync(),
-      ]);
-      markBotSaved(updatedBot);
-      markProfileSaved(updatedProfile);
+      await saveConfiguration.mutateAsync();
       setSaveState("saved");
       return true;
     } finally {
       setIsSavingEditor(false);
     }
-  }, [botDraft, canManage, markBotSaved, markProfileSaved, profileForm.name, saveProfile, selectedBot, setSaveState, updateBot]);
+  }, [botDraft, canManage, profileForm.name, saveConfiguration, selectedBot, setSaveState]);
 
   useEffect(() => {
     setPageHeader({ title: t("nav.aiAgents") });
@@ -227,7 +204,7 @@ export function AIAgentsPage() {
       : activeSection === "test"
         ? (loadChannels && botChannels.isLoading) || knowledge.isLoading
         : false;
-  const mutationError = createBot.error || updateBot.error || saveProfile.error || addChannel.error || toggleChannel.error || toggleBotStatus.error;
+  const mutationError = createBot.error || saveConfiguration.error || addChannel.error || toggleChannel.error || toggleBotStatus.error;
 
   const closeNavigationGuard = () => {
     if (navigationBlocker.state === "blocked") navigationBlocker.reset();
@@ -247,6 +224,7 @@ export function AIAgentsPage() {
   return (
     <>
       {navigation}
+      <InternalAgentSettings businessId={business.id} profiles={profileList} canManage={canManage} />
       <AIAgentsWorkspace
         activeSection={activeSection}
         addChannel={addChannel}
@@ -261,7 +239,7 @@ export function AIAgentsPage() {
         createError={createBot.error}
         createOpen={createOpen}
         dirty={editorDirty}
-        isSaving={isSavingEditor || updateBot.isPending || toggleBotStatus.isPending}
+        isSaving={isSavingEditor || saveConfiguration.isPending || toggleBotStatus.isPending}
         knowledgeItems={knowledge.data || []}
         mutationError={mutationError}
         navigationBlocked={navigationBlocker.state === "blocked"}

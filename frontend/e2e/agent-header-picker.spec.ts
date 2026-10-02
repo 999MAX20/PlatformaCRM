@@ -161,12 +161,13 @@ test("knowledge and channel dialogs remain usable; failed save preserves the dra
   const editor = page.getByTestId("ai-agent-editor");
   await editor.getByRole("button", { name: "Добавить знание", exact: true }).click();
   const modal = page.getByRole("dialog");
-  await modal.getByRole("textbox", { name: "Название", exact: true }).fill("Правила записи");
+  const knowledgeTitle = `Правила записи ${testInfo.project.name}`;
+  await modal.getByRole("textbox", { name: "Название", exact: true }).fill(knowledgeTitle);
   await modal.getByRole("textbox", { name: "Содержание", exact: true }).fill("Перенос записи через администратора.");
   await page.screenshot({ path: testInfo.outputPath("knowledge-dialog.png") });
   await modal.getByRole("button", { name: "Сохранить", exact: true }).click();
   await expect(modal).toBeHidden();
-  await editor.locator("article").filter({ hasText: "Правила записи" }).getByRole("button", { name: "Настроить", exact: true }).click();
+  await editor.locator("article").filter({ hasText: knowledgeTitle }).getByRole("button", { name: "Настроить", exact: true }).click();
   await expect(modal.getByRole("textbox", { name: "Содержание", exact: true })).toHaveValue("Перенос записи через администратора.");
   await page.keyboard.press("Escape");
   await editor.getByRole("tab", { name: "Каналы", exact: true }).click();
@@ -182,8 +183,8 @@ test("knowledge and channel dialogs remain usable; failed save preserves the dra
   expect((await session.read(`bots/${bot.id}`)).status).toBe("draft");
   await editor.getByRole("tab", { name: "Профиль", exact: true }).click();
   await editor.getByRole("textbox", { name: "Название", exact: true }).fill("Сохранить после ошибки");
-  const writes = /\/api\/(?:bots|ai\/agent-profiles)\/\d+\/$/;
-  await page.route(writes, route => route.request().method() === "PATCH" ? route.fulfill({ status: 503, json: { code: "service_unavailable" } }) : route.continue());
+  const writes = /\/api\/bots\/\d+\/configuration\/$/;
+  await page.route(writes, route => route.request().method() === "PUT" ? route.fulfill({ status: 503, json: { code: "service_unavailable" } }) : route.continue());
   await editor.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
   await expect(editor.getByRole("alert").first()).toBeVisible();
   await expect(editor.getByRole("textbox", { name: "Название", exact: true })).toHaveValue("Сохранить после ошибки");

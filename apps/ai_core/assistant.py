@@ -13,6 +13,8 @@ from apps.scheduling.availability import business_zone
 
 
 def build_crm_context(business, user=None):
+    from apps.ai_core.workflows import assert_workflow_enabled
+    config = assert_workflow_enabled(business, "employee")
     now = timezone.now()
     today = timezone.localtime(now, business_zone(business)).date()
     clients_queryset = _scoped_queryset(
@@ -82,6 +84,19 @@ def build_crm_context(business, user=None):
             for appointment in appointments
         ],
     }
+    for source, keys, counters in (
+        ("clients", (), ("clients_count",)),
+        ("leads", ("latest_leads",), ("new_leads_count",)),
+        ("appointments", ("upcoming_appointments", "services"), ("open_appointments_count",)),
+        ("tasks", ("tasks",), ("overdue_tasks_count",)),
+        ("deals", ("deals",), ()),
+    ):
+        if source not in config["sources"]:
+            for key in keys:
+                context.pop(key, None)
+            for key in counters:
+                context["summary"].pop(key, None)
+    context["disabled_sources"] = sorted(set(("clients", "leads", "appointments", "tasks", "deals", "knowledge")) - set(config["sources"]))
     return json.loads(json.dumps(context, cls=DjangoJSONEncoder))
 
 

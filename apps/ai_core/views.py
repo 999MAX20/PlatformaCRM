@@ -227,13 +227,15 @@ class AIAssistantStatusView(APIView):
             "openai": bool(settings.OPENAI_API_KEY),
         }
         key_ready = provider == "mock" or configured_keys.get(provider, False)
-        mode = "unavailable" if not settings.AI_ENABLED or not key_ready else "mock" if provider == "mock" else "live"
+        from apps.ai_core.workflows import workflow_settings
+        enabled = settings.AI_ENABLED and workflow_settings(business, "employee")["enabled"]
+        mode = "unavailable" if not enabled or not key_ready else "mock" if provider == "mock" else "live"
         return Response(
             {
-                "enabled": settings.AI_ENABLED,
+                "enabled": enabled,
                 "provider": provider,
                 "mode": mode,
-                "ready": bool(settings.AI_ENABLED and key_ready),
+                "ready": bool(enabled and key_ready),
                 "key_configured": key_ready,
                 "model": settings.AI_SMART_MODEL,
                 "fast_model": settings.AI_FAST_MODEL,

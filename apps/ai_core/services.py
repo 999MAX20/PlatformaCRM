@@ -37,8 +37,19 @@ def run_ai_request(
 ):
     assert_entitlement_allows(business, EntitlementMetrics.AI_REQUESTS)
     runtime_context = dict(input_json or {})
+    scenario = "analyst" if prompt_type == "business_event_analyst" else "employee" if prompt_type in {"crm_assistant", "daily_summary"} else None
+    scenario_config = None
+    if source == AIRequestLog.Sources.CRM and scenario:
+        from apps.ai_core.workflows import assert_workflow_enabled, workflow_fingerprint
+        scenario_config = assert_workflow_enabled(business, scenario)
+        fingerprint = workflow_fingerprint(business, scenario)
+        response_language = scenario_config.get("language") or response_language
+        runtime_context["saved_scenario"] = scenario_config
+        user_input = f"Saved style: {scenario_config.get('tone', 'expert')}. {scenario_config.get('instructions', '')}\n{user_input}"
     inbound = [item.get("text", "") for item in runtime_context.get("messages", []) if isinstance(item, dict) and item.get("direction") == "inbound"]
     context = get_business_knowledge_context(business, query=inbound[-1] if inbound else user_input)
+    if scenario_config and "knowledge" not in scenario_config["sources"]:
+        context = []
     grounded = source == AIRequestLog.Sources.CRM and "crm_context" in runtime_context
     sources = source_catalog(runtime_context.get("crm_context"), context) if grounded else []
     if grounded:
@@ -54,6 +65,8 @@ def run_ai_request(
         temperature=temperature,
         allow_mock=allow_mock,
     )
+    if scenario_config and workflow_fingerprint(business, scenario) != fingerprint:
+        raise PermissionDenied("AI scenario configuration changed while preparing the answer.")
     if grounded:
         result = validate_answer(result, sources)
     log = AIRequestLog.objects.create(

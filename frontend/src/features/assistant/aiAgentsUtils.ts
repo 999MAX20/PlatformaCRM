@@ -3,7 +3,7 @@ import { BookOpen, Bot, FunctionSquare, MessageSquareText, Radio, Settings } fro
 import type { AgentProfile, Bot as BotType, BotChannel, Id } from "../../types";
 import type { AgentFormState, AgentSection, AutoPipelineMode, OnboardingStep } from "./aiAgentsTypes";
 
-export const defaultAllowedTools = ["create_lead", "create_task", "create_deal", "handoff_to_manager"];
+export const defaultAllowedTools = ["create_client", "create_lead", "create_appointment", "handoff_to_manager"];
 
 export const sections: Array<{ id: AgentSection; labelKey: string; titleKey: string; icon: typeof Settings }> = [
   { id: "profile", labelKey: "aiAgents.section.profile", titleKey: "aiAgents.profileTitle", icon: Bot },
@@ -79,6 +79,7 @@ export function autoPipelineFromSettings(settings: Record<string, unknown>) {
     : "off");
   return {
     enabled: Boolean(raw.enabled ?? mode !== "off"),
+    creation_policy: raw.creation_policy === "automatic" ? "automatic" : "staff_confirmation",
     mode,
     min_lead_confidence: Number(raw.min_lead_confidence ?? 0.7),
     min_deal_confidence: Number(raw.min_deal_confidence ?? 0.8),

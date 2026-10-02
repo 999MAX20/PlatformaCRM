@@ -23,7 +23,14 @@ class BotSerializer(serializers.ModelSerializer):
 
     def validate_settings_json(self, value):
         from apps.bots.ai_settings import validate_ai_settings
-        return validate_ai_settings(value)
+        value = validate_ai_settings(value)
+        if self.context.get("request"):
+            current = self.instance.settings_json if self.instance else {}
+            if value.get("_automatic_actor_id") != current.get("_automatic_actor_id"):
+                raise serializers.ValidationError("Automatic consent must be saved through agent configuration.")
+            if (value.get("auto_crm_pipeline") or {}).get("creation_policy") == "automatic" and (current.get("auto_crm_pipeline") or {}).get("creation_policy") != "automatic":
+                raise serializers.ValidationError("Use agent configuration to enable automatic creation.")
+        return value
 
     class Meta:
         model = Bot
@@ -324,15 +331,7 @@ class PublicWebsiteChatConversationCreateSerializer(serializers.Serializer):
         lead = None
 
         if phone or email:
-            client = self._get_or_create_client(business, full_name, phone, email)
-            if phone and payload_has_explicit_consent(validated_data, channel=OutreachCampaign.Channels.WHATSAPP):
-                record_explicit_consent(
-                    client=client,
-                    channel=OutreachCampaign.Channels.WHATSAPP,
-                    source="website_chat",
-                    note="Explicit website chat consent.",
-                    evidence={"fields": {key: validated_data.get(key) for key in ["marketing_consent", "outreach_consent", "newsletter_consent", "whatsapp_consent"]}},
-                )
+            client = self._get_or_create_client(business, full_name, phone, email, bot=channel.bot)
             # A website conversation is intake, not staff confirmation of a Lead.
 
         conversation = BotConversation.objects.create(
@@ -359,10 +358,19 @@ class PublicWebsiteChatConversationCreateSerializer(serializers.Serializer):
         register_bot_message(bot_message)
         maybe_run_auto_pipeline(conversation=conversation, message=bot_message, channel=channel)
         conversation.refresh_from_db()
+        client = conversation.client
+        if client is not None and phone and payload_has_explicit_consent(validated_data, channel=OutreachCampaign.Channels.WHATSAPP):
+            record_explicit_consent(
+                client=client,
+                channel=OutreachCampaign.Channels.WHATSAPP,
+                source="website_chat",
+                note="Explicit website chat consent.",
+                evidence={"fields": {key: validated_data.get(key) for key in ["marketing_consent", "outreach_consent", "newsletter_consent", "whatsapp_consent"]}},
+            )
         record_message_received_event(conversation=conversation, message=bot_message, provider=BotConversation.Channels.WEBSITE)
-        return {"conversation": conversation, "message": bot_message, "client": client, "lead": lead}
+        return {"conversation": conversation, "message": bot_message, "client": conversation.client, "lead": conversation.lead}
 
-    def _get_or_create_client(self, business, full_name, phone, email):
+    def _get_or_create_client(self, business, full_name, phone, email, *, bot=None):
         queryset = Client.objects.filter(business=business)
         client = None
         if email:
@@ -370,19 +378,12 @@ class PublicWebsiteChatConversationCreateSerializer(serializers.Serializer):
         if client is None and phone:
             client = queryset.filter(phone=phone).first()
         if client:
-            update_fields = []
-            if full_name and client.full_name == "Website visitor":
-                client.full_name = full_name
-                update_fields.append("full_name")
-            if phone and not client.phone:
-                client.phone = phone
-                update_fields.append("phone")
-            if email and not client.email:
-                client.email = email
-                update_fields.append("email")
-            if update_fields:
-                client.save(update_fields=update_fields)
+            # Contact capture is not staff approval to alter an existing client.
             return client
+        # Explicit controlled mode creates through the guarded pipeline after intake.
+        # This public form must not bypass a disabled client capability or revoked actor.
+        if bot and "creation_policy" in ((bot.settings_json or {}).get("auto_crm_pipeline") or {}):
+            return None
         return Client.objects.create(
             business=business,
             full_name=full_name,

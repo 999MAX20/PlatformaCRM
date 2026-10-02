@@ -14,6 +14,7 @@ from apps.activities.services import create_activity_event
 from apps.activities.taxonomy import ActivityEvents
 from apps.bots.models import BotConversation
 from apps.businesses.access import Actions, Resources, assert_can
+from apps.businesses.models import Business
 from apps.businesses.capabilities import assert_resource_enabled
 from apps.clients.models import Client
 from apps.conversations.ai_qualification import ConversationQualification, qualify_conversation
@@ -64,6 +65,8 @@ def run_conversation_pipeline(
     source: str = "api",
     confirmed_actions: list[str] | tuple[str, ...] = (),
     expected_preview_id: str | None = None,
+    automatic_creation: bool = False,
+    expected_runtime_fingerprint: str | None = None,
 ) -> ConversationPipelineResult:
     """Promote an inbox conversation into CRM entities.
 
@@ -80,7 +83,7 @@ def run_conversation_pipeline(
         assert_resource_enabled(conversation.business, Resources.TASKS)
 
     requested = {name for name, enabled in (("create_lead", create_lead), ("create_deal", create_deal), ("create_task", create_task)) if enabled}
-    if requested:
+    if requested and not automatic_creation:
         if not actor or not getattr(actor, "is_authenticated", False):
             raise PermissionDenied("CRM actions require staff confirmation.")
         if requested != set(confirmed_actions):
@@ -104,6 +107,8 @@ def run_conversation_pipeline(
             create_task = create_task and qualification.should_create_task
 
     with transaction.atomic():
+        if automatic_creation:
+            Business.objects.select_for_update().get(pk=conversation.business_id)
         conversation = (
             BotConversation.objects.select_for_update()
             .select_related("business", "client", "lead", "deal", "assigned_to")
@@ -112,6 +117,10 @@ def run_conversation_pipeline(
         for related in (conversation.client, conversation.lead, conversation.deal):
             if related is not None and related.business_id != conversation.business_id:
                 raise ValidationError("Conversation relationships must belong to the same business.")
+        if automatic_creation:
+            from apps.bots.automation_policy import automatic_creation_actor
+            actions = requested | ({"create_client"} if not conversation.client_id else set())
+            actor = automatic_creation_actor(conversation, actions, expected_fingerprint=expected_runtime_fingerprint)
         if requested:
             assert_can(actor, conversation.business, Resources.CONVERSATIONS, Actions.UPDATE, obj=conversation)
             assert_can(actor, conversation.business, Resources.CLIENTS, Actions.CREATE)
@@ -174,7 +183,8 @@ def run_conversation_pipeline(
                 "ai_log_id": ai_log_id,
                 "last_run_at": timezone.now().isoformat(),
                 "last_run_by": actor.id if actor and getattr(actor, "is_authenticated", False) else None,
-                "confirmed_actions": sorted(requested),
+                "confirmed_actions": [] if automatic_creation else sorted(requested),
+                "automatic_actions": sorted(requested) if automatic_creation else [],
             }
         )
         metadata[PIPELINE_META_KEY] = pipeline_meta
@@ -190,7 +200,7 @@ def run_conversation_pipeline(
             write_actor_audit_log(
                 actor=actor, action=AuditLog.Actions.UPDATE, instance=conversation,
                 business=conversation.business,
-                metadata={"kind": "conversation_pipeline_confirmed", "confirmed_actions": sorted(requested),
+                metadata={"kind": "conversation_pipeline_automatic" if automatic_creation else "conversation_pipeline_confirmed", "confirmed_actions": [] if automatic_creation else sorted(requested),
                           "preview_id": expected_preview_id, "created": created, "ai_log_id": ai_log_id},
             )
 
@@ -233,6 +243,14 @@ def _ensure_client(*, conversation: BotConversation, created: dict[str, bool], a
     client = _find_existing_client(conversation, qualification=qualification)
     if client is not None:
         return client
+
+    if source == "auto_pipeline":
+        own = (conversation.bot.settings_json or {}).get("auto_crm_pipeline") or {}
+        if "creation_policy" in own:
+            from apps.bots.ai import get_agent_profile
+            profile = get_agent_profile(conversation)
+            if not profile or "create_client" not in (profile.allowed_tools_json or {}).get("tools", []):
+                raise PermissionDenied("Automatic client creation is disabled.")
 
     full_name = qualification.client_name if qualification and qualification.client_name else _client_name(conversation)
     client = Client.objects.create(
@@ -303,7 +321,7 @@ def _ensure_lead(
         record_lead_captured_event(
             lead=lead, client=client, provider=BotConversation.Channels.WEBSITE,
             external_id=f"website-conversation:{conversation.id}:lead:{lead.id}",
-            payload={"conversation_id": conversation.id, "source": "website_chat", "confirmed_by": actor.id},
+            payload={"conversation_id": conversation.id, "source": "website_chat", "confirmed_by": actor.id if actor else None},
         )
     create_activity_event(
         business=conversation.business,

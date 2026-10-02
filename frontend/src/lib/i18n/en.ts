@@ -1,6 +1,39 @@
 import { ru } from "./ru";
 
 export const en: Record<string, string> = {
+  "aiAgents.authority.autoReply": "Automatic replies enabled",
+  "aiAgents.hint.tool.create_appointment": "The customer must select the service, specialist and exact time. Availability is checked again before saving.",
+  "aiAgents.hint.tool.create_client": "When disabled, the agent does not create new clients. Existing client records are not changed.",
+  "aiWorkflow.employee": "Employee assistant",
+  "aiWorkflow.analyst": "AI analyst",
+  "aiWorkflow.employeeScope": "Summary of permitted data and up to 8 records per type. Suggests a summary, qualification, lead and task for a selected conversation. Creation requires confirmation. Staff perform other changes and deletion in CRM.",
+  "aiWorkflow.analystScope": "Analyzes up to 24 recent permitted operational events with sources. Does not modify CRM or calculate revenue and profit. The attention summary on the assistant page is calculated separately using CRM rules.",
+  "aiWorkflow.enabled": "Scenario enabled",
+  "aiWorkflow.sources": "Answer sources",
+  "aiWorkflow.actions": "Conversation actions",
+  "aiWorkflow.instructions": "Instructions",
+  "aiWorkflow.open": "Open assistant",
+  "aiWorkflow.tone": "Tone",
+  "aiWorkflow.source.clients": "Clients",
+  "aiWorkflow.source.leads": "Leads",
+  "aiWorkflow.source.deals": "Deals",
+  "aiWorkflow.source.tasks": "Tasks",
+  "aiWorkflow.source.appointments": "Calendar",
+  "aiWorkflow.source.knowledge": "Knowledge",
+  "aiWorkflow.tool.summarize_conversation": "Conversation summary",
+  "aiWorkflow.tool.qualify_lead": "Enquiry qualification",
+  "aiWorkflow.tool.create_lead": "Create lead",
+  "aiWorkflow.tool.create_task": "Create task",
+
+  "aiAgents.authority.automatic": "Automatically with business permission",
+  "aiAgents.authority.customerSelection": "After the customer selects an exact option",
+  "aiAgents.creationPolicy": "Creating new records",
+  "aiAgents.creationPolicyHint": "Only enabled capabilities and available facts. Changes to existing records and deletion require staff confirmation. Existing agents keep their previous mode until you change it.",
+  "aiAgents.functions.clientTitle": "Clients",
+  "aiAgents.functions.clientText": "Creates a new client from an enquiry or links an existing client. Does not change existing data.",
+  "aiAgents.functions.bookingTitle": "Calendar appointments",
+  "aiAgents.functions.bookingText": "Books after the customer chooses an offered service, specialist, date and time. Checks availability again before saving. Staff handle rescheduling and cancellation.",
+
   "documents.title": "Documents",
   "documents.terms": "Terms of use / public offer",
   "documents.privacy": "Privacy policy",
@@ -3749,12 +3782,12 @@ export const en: Record<string, string> = {
   "aiAgents.control.privacyText":
     "The agent does not show service fields or internal notes to clients.",
   "aiAgents.control.pipelineTitle": "Requests and manager handoff",
-  "aiAgents.control.pipelineText": "Choose which proposals the agent prepares for staff confirmation.",
+  "aiAgents.control.pipelineText": "Choose the workflow and record creation mode: automatic or after staff confirmation.",
   "aiAgents.control.mode": "What to do after a dialog",
   "aiAgents.control.mode.off": "Off",
   "aiAgents.control.mode.triage": "Only evaluate the request",
-  "aiAgents.control.mode.leadTask": "Suggest lead and task",
-  "aiAgents.control.mode.draftDeal": "Suggest draft deal",
+  "aiAgents.control.mode.leadTask": "Leads and tasks",
+  "aiAgents.control.mode.draftDeal": "Leads, tasks and draft deals",
   "aiAgents.control.maxReplyChars": "Maximum auto-reply length",
   "aiAgents.control.leadConfidence":
     "Minimum confidence for a lead proposal: {value}",
@@ -3765,19 +3798,17 @@ export const en: Record<string, string> = {
   "aiAgents.control.reviewFallbackTitle": "Review uncertain decisions",
   "aiAgents.control.reviewFallbackText":
     "If AI used fallback or is not confident, the dialog stays for manager review.",
-  "aiAgents.control.appointmentTitle": "Collect booking preferences",
-  "aiAgents.control.appointmentText": "The agent asks about a time; staff creates the appointment.",
+  "aiAgents.control.appointmentTitle": "Handle calendar booking",
+  "aiAgents.control.appointmentText": "Offers available options. Automatic booking also requires automatic creation and the calendar capability; the customer must select an exact option.",
   "aiAgents.control.autoReplyTitle": "Send reply automatically",
   "aiAgents.control.autoReplyText":
     "The reply is sent to the client only after the auto pipeline passes its guards.",
   "aiAgents.functions.leadTitle": "Create lead",
-  "aiAgents.functions.leadText":
-    "The agent can suggest a new lead from a dialog.",
+  "aiAgents.functions.leadText": "Creates a lead for expressed interest using the selected creation mode.",
   "aiAgents.functions.taskTitle": "Create task",
-  "aiAgents.functions.taskText":
-    "The agent can suggest a manager task after a conversation.",
-  "aiAgents.functions.dealTitle": "Suggest draft deal",
-  "aiAgents.functions.dealText": "Staff reviews the proposal and confirms draft creation.",
+  "aiAgents.functions.taskText": "Creates a task for a concrete next action using the selected creation mode.",
+  "aiAgents.functions.dealTitle": "Create a draft deal",
+  "aiAgents.functions.dealText": "Creates an open deal for purchase intent; does not close it or perform money operations.",
   "aiAgents.functions.managerTitle": "Pass to manager",
   "aiAgents.functions.managerText":
     "The agent can stop the flow and pass the dialog to a person.",
@@ -3919,7 +3950,7 @@ export const en: Record<string, string> = {
     "Choose the balance of quality and speed. Start with fast or quality mode and avoid frequent changes.",
   "aiAgents.hint.temperature":
     "Higher values make wording freer. For sales we recommend 0.3-0.5 for stable replies.",
-  "aiAgents.hint.pipelineMode": "Leads, tasks and draft deals are created after staff confirms the selected actions.",
+  "aiAgents.hint.pipelineMode": "Creation follows the selected mode and enabled capabilities. Existing-record changes are not automated.",
   "aiAgents.hint.maxReplyChars":
     "Limits auto-reply length. Recommendation: 500-900 characters for a concise client reply.",
   "aiAgents.hint.leadConfidence": "Minimum confidence for proposing a lead to staff.",
@@ -3931,7 +3962,7 @@ export const en: Record<string, string> = {
     "Before launch, add knowledge and connect at least one active channel.",
   "aiAgents.hint.tool.create_lead":
     "Enable almost always: a lead captures client interest and prevents lost requests.",
-  "aiAgents.hint.tool.create_task": "The agent suggests a task; staff confirms its creation.",
+  "aiAgents.hint.tool.create_task": "Only for a concrete follow-up; creation mode is selected above.",
   "aiAgents.hint.tool.create_deal":
     "Enable when sales stages are clear and the agent was tested on real questions.",
   "aiAgents.hint.tool.handoff_to_manager":
@@ -5762,7 +5793,7 @@ export const en: Record<string, string> = {
   "aiAgents.authority.staffConfirmation": "After staff confirmation",
   "aiAgents.authority.staffBooking": "Staff creates the appointment",
   "aiAgents.authority.title": "Agent authority",
-  "aiAgents.authority.text": "Effective execution mode after settings and allowed functions are applied.",
+  "aiAgents.authority.text": "Saved agent capabilities. Operation requires an enabled, ready agent and an active channel.",
   "aiAgents.authority.suggestions": "Replies and qualification",
   "aiAgents.authority.leadTask": "Lead and task",
   "aiAgents.authority.draftDeal": "Draft deal",

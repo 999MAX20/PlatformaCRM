@@ -52,6 +52,10 @@ def tool_requires_approval(tool_name):
 
 
 def assert_tool_execution_allowed(log, user):
+    from apps.ai_core.workflows import assert_employee_tool
+    assert_employee_tool(log.business, log.tool_name)
+    if log.conversation:
+        assert_can(user, log.business, Resources.CONVERSATIONS, Actions.VIEW, obj=log.conversation)
     permission = {
         "create_client": (Resources.CLIENTS, Actions.CREATE),
         "create_lead": (Resources.LEADS, Actions.CREATE),
@@ -67,6 +71,10 @@ def assert_tool_execution_allowed(log, user):
 
 
 def suggest_tool_calls(*, business, user, conversation=None, message=""):
+    from apps.ai_core.workflows import assert_workflow_enabled
+    config = assert_workflow_enabled(business, "employee")
+    if conversation:
+        assert_can(user, business, Resources.CONVERSATIONS, Actions.VIEW, obj=conversation)
     suggestions = [
         ("summarize_conversation", {"message": message}),
         ("qualify_lead", {"message": message}),
@@ -92,6 +100,7 @@ def suggest_tool_calls(*, business, user, conversation=None, message=""):
             input_json={**payload, "requires_confirmation": TOOLS[tool_name].requires_confirmation},
         )
         for tool_name, payload in suggestions
+        if config["tools"] is None or tool_name in config["tools"]
     ]
     return logs
 
@@ -116,6 +125,7 @@ def execute_tool_call_once(log_id, user):
                 return log, True
             if log.status != AIToolCallLog.Statuses.SUGGESTED:
                 return log, False
+            assert_tool_execution_allowed(log, user)
             log.status = AIToolCallLog.Statuses.EXECUTING
             log.locked_at = timezone.now()
             log.attempts += 1

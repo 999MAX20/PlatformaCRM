@@ -58,6 +58,7 @@ class BotViewSet(TenantModelViewSet):
         "pause": Actions.MANAGE,
         "ensure_channel": Actions.MANAGE,
         "preview": Actions.MANAGE,
+        "configuration": Actions.MANAGE,
     }
 
     def perform_create(self, serializer):
@@ -93,6 +94,14 @@ class BotViewSet(TenantModelViewSet):
             write_audit_log(self.request, AuditLog.Actions.UPDATE, bot, metadata=metadata)
             write_activity_event(self.request, "bot.updated", bot, metadata=metadata)
         return Response(self.get_serializer(bot).data)
+
+    @action(detail=True, methods=["put"])
+    def configuration(self, request, pk=None):
+        from apps.ai_core.serializers import AgentProfileSerializer
+        from apps.bots.configuration import save_agent_configuration
+
+        bot, profile = save_agent_configuration(bot=self.get_object(), actor=request.user, data=request.data)
+        return Response({"bot": self.get_serializer(bot).data, "profile": AgentProfileSerializer(profile).data})
 
     @action(detail=True, methods=["post"])
     def preview(self, request, pk=None):

@@ -1,6 +1,39 @@
 import { ru } from "./ru";
 
 export const kk: Record<string, string> = {
+  "aiAgents.authority.autoReply": "Автоматты жауаптар қосулы",
+  "aiAgents.hint.tool.create_appointment": "Клиент қызметті, маманды және нақты уақытты таңдауы керек. Сақтау алдында бос уақыт қайта тексеріледі.",
+  "aiAgents.hint.tool.create_client": "Өшірілгенде агент жаңа клиенттерді құрмайды. Бар клиент жазбалары өзгертілмейді.",
+  "aiWorkflow.employee": "Қызметкер көмекшісі",
+  "aiWorkflow.analyst": "AI талдаушы",
+  "aiWorkflow.employeeScope": "Рұқсат етілген деректер мен әр түрдің 8 жазбасына дейінгі жиынтық. Таңдалған диалог бойынша қорытынды, бағалау, өтінім және тапсырма ұсынады. Құру үшін растау қажет. Басқа өзгерістер мен жоюды қызметкер CRM ішінде орындайды.",
+  "aiWorkflow.analystScope": "Дереккөздері көрсетілген соңғы 24 қолжетімді операциялық оқиғаны талдайды. CRM деректерін өзгертпейді, түсім мен пайданы есептемейді. Көмекші бетіндегі назар аудару жиынтығы CRM ережелерімен бөлек есептеледі.",
+  "aiWorkflow.enabled": "Сценарий қосулы",
+  "aiWorkflow.sources": "Жауап деректері",
+  "aiWorkflow.actions": "Диалог әрекеттері",
+  "aiWorkflow.instructions": "Нұсқаулар",
+  "aiWorkflow.open": "Көмекшіні ашу",
+  "aiWorkflow.tone": "Сөйлесу мәнері",
+  "aiWorkflow.source.clients": "Клиенттер",
+  "aiWorkflow.source.leads": "Өтінімдер",
+  "aiWorkflow.source.deals": "Мәмілелер",
+  "aiWorkflow.source.tasks": "Тапсырмалар",
+  "aiWorkflow.source.appointments": "Күнтізбе",
+  "aiWorkflow.source.knowledge": "Білім қоры",
+  "aiWorkflow.tool.summarize_conversation": "Диалог қорытындысы",
+  "aiWorkflow.tool.qualify_lead": "Өтінішті бағалау",
+  "aiWorkflow.tool.create_lead": "Өтінім құру",
+  "aiWorkflow.tool.create_task": "Тапсырма құру",
+
+  "aiAgents.authority.automatic": "Бизнес рұқсатымен автоматты түрде",
+  "aiAgents.authority.customerSelection": "Клиент нақты нұсқаны таңдағаннан кейін",
+  "aiAgents.creationPolicy": "Жаңа жазбаларды жасау",
+  "aiAgents.creationPolicyHint": "Тек қосылған мүмкіндіктер мен қолжетімді деректер қолданылады. Бар жазбаларды өзгерту және жою қызметкердің растауын талап етеді. Режимді өзгертпейінше, бұрынғы агенттер сол күйінде қалады.",
+  "aiAgents.functions.clientTitle": "Клиенттер",
+  "aiAgents.functions.clientText": "Өтініштен жаңа клиент жасайды немесе диалогты бар клиентпен байланыстырады. Бұрынғы деректерді өзгертпейді.",
+  "aiAgents.functions.bookingTitle": "Күнтізбеге жазылу",
+  "aiAgents.functions.bookingText": "Клиент ұсынылған қызметті, маманды, күн мен уақытты таңдағаннан кейін жазба жасайды. Сақтау алдында бос уақытты қайта тексереді. Ауыстыру мен бас тартуды қызметкер орындайды.",
+
   "documents.title": "Құжаттар",
   "documents.terms": "Пайдаланушы келісімі / жария оферта",
   "documents.privacy": "Құпиялық саясаты",
@@ -3731,12 +3764,12 @@ export const kk: Record<string, string> = {
   "aiAgents.control.privacyText":
     "Агент клиентке қызметтік өрістер мен ішкі жазбаларды көрсетпейді.",
   "aiAgents.control.pipelineTitle": "Өтінімдер және менеджерге беру",
-  "aiAgents.control.pipelineText": "Агент қызметкердің растауына қандай ұсыныстар дайындайтынын таңдаңыз.",
+  "aiAgents.control.pipelineText": "Сценарийді және жазбаларды құру режимін таңдаңыз: автоматты түрде немесе қызметкер растағаннан кейін.",
   "aiAgents.control.mode": "Диалогтан кейін не істеу керек",
   "aiAgents.control.mode.off": "Өшірулі",
   "aiAgents.control.mode.triage": "Тек өтінішті бағалау",
-  "aiAgents.control.mode.leadTask": "Өтінім мен тапсырма ұсыну",
-  "aiAgents.control.mode.draftDeal": "Мәміле жобасын ұсыну",
+  "aiAgents.control.mode.leadTask": "Өтінімдер мен тапсырмалар",
+  "aiAgents.control.mode.draftDeal": "Өтінімдер, тапсырмалар және мәміле жобалары",
   "aiAgents.control.maxReplyChars": "Автожауаптың ең көп ұзындығы",
   "aiAgents.control.leadConfidence":
     "Өтінім ұсынысына қажетті сенімділік: {value}",
@@ -3747,18 +3780,17 @@ export const kk: Record<string, string> = {
   "aiAgents.control.reviewFallbackTitle": "Сенімсіз шешімдерді тексеру",
   "aiAgents.control.reviewFallbackText":
     "AI fallback қолданса немесе сенімсіз болса, диалог менеджер тексеруінде қалады.",
-  "aiAgents.control.appointmentTitle": "Қабылдау тілектерін жинау",
-  "aiAgents.control.appointmentText": "Агент уақытты нақтылайды; қабылдауға қызметкер жазады.",
+  "aiAgents.control.appointmentTitle": "Күнтізбеге жазылумен жұмыс",
+  "aiAgents.control.appointmentText": "Қолжетімді нұсқаларды ұсынады. Автоматты жазылу үшін автоматты құру мен күнтізбе мүмкіндігін қосыңыз; клиент нақты нұсқаны таңдауы керек.",
   "aiAgents.control.autoReplyTitle": "Жауапты автоматты жіберу",
   "aiAgents.control.autoReplyText":
     "Жауап клиентке автопайплайн шектеулерінен өткеннен кейін ғана жіберіледі.",
   "aiAgents.functions.leadTitle": "Өтінім жасау",
-  "aiAgents.functions.leadText": "Агент диалогтан жаңа өтінім ұсына алады.",
+  "aiAgents.functions.leadText": "Білдірілген қызығушылық бойынша таңдалған режимде өтінім құрады.",
   "aiAgents.functions.taskTitle": "Тапсырма жасау",
-  "aiAgents.functions.taskText":
-    "Агент сөйлесуден кейін менеджерге тапсырма ұсына алады.",
-  "aiAgents.functions.dealTitle": "Мәміле жобасын ұсыну",
-  "aiAgents.functions.dealText": "Қызметкер ұсынысты қарап, жобаны жасауды растайды.",
+  "aiAgents.functions.taskText": "Нақты келесі әрекет үшін таңдалған режимде тапсырма құрады.",
+  "aiAgents.functions.dealTitle": "Мәміле жобасын құру",
+  "aiAgents.functions.dealText": "Сатып алу ниеті бойынша ашық мәміле құрады; оны жаппайды және ақша операцияларын орындамайды.",
   "aiAgents.functions.managerTitle": "Менеджерге беру",
   "aiAgents.functions.managerText":
     "Агент сценарийді тоқтатып, диалогты адамға бере алады.",
@@ -3899,7 +3931,7 @@ export const kk: Record<string, string> = {
     "Сапа мен жылдамдық балансын таңдаңыз. Бастау үшін жылдам немесе сапалы режим жеткілікті.",
   "aiAgents.hint.temperature":
     "Мән жоғары болса, жауап еркінірек болады. Сатылым үшін тұрақты жауапқа 0.3-0.5 ұсынамыз.",
-  "aiAgents.hint.pipelineMode": "Өтінім, тапсырма және мәміле жобасы қызметкер таңдаған әрекеттерді растағаннан кейін жасалады.",
+  "aiAgents.hint.pipelineMode": "Құру таңдалған режимге және қосылған мүмкіндіктерге байланысты. Бар жазбаларды өзгерту автоматтандырылмайды.",
   "aiAgents.hint.maxReplyChars":
     "Автожауап ұзындығын шектейді. Ұсыныс: клиентке қысқа жауап үшін 500-900 таңба.",
   "aiAgents.hint.leadConfidence": "Қызметкерге өтінім ұсынуға қажетті ең төменгі сенімділік.",
@@ -3911,7 +3943,7 @@ export const kk: Record<string, string> = {
     "Іске қоспас бұрын білім қосып, кемінде бір белсенді арнаны қосыңыз.",
   "aiAgents.hint.tool.create_lead":
     "Әдетте қосулы болсын: өтінім клиент қызығушылығын бекітеді.",
-  "aiAgents.hint.tool.create_task": "Агент тапсырма ұсынады; оны жасауды қызметкер растайды.",
+  "aiAgents.hint.tool.create_task": "Тек нақты қажеттілік болғанда; құру режимі жоғарыда таңдалады.",
   "aiAgents.hint.tool.create_deal":
     "Сату кезеңдері түсінікті және агент нақты сұрақтарда тексерілгенде қосыңыз.",
   "aiAgents.hint.tool.handoff_to_manager":
@@ -5794,7 +5826,7 @@ export const kk: Record<string, string> = {
   "aiAgents.authority.staffConfirmation": "Қызметкер растағаннан кейін",
   "aiAgents.authority.staffBooking": "Қабылдауға қызметкер жазады",
   "aiAgents.authority.title": "Агент өкілеттіктері",
-  "aiAgents.authority.text": "Баптаулар мен рұқсат етілген функцияларды ескеретін нақты орындау режимі.",
+  "aiAgents.authority.text": "Агенттің сақталған мүмкіндіктері. Жұмыс істеу үшін қосылған дайын агент пен белсенді арна қажет.",
   "aiAgents.authority.suggestions": "Жауаптар мен біліктілік",
   "aiAgents.authority.leadTask": "Өтінім және тапсырма",
   "aiAgents.authority.draftDeal": "Мәміле жобасы",

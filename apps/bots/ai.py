@@ -23,7 +23,7 @@ def build_bot_conversation_context(conversation, limit=12):
 def get_agent_profile(conversation):
     return (
         AgentProfile.objects.filter(business=conversation.business, bot=conversation.bot, is_active=True).order_by("-updated_at").first()
-        or AgentProfile.objects.filter(business=conversation.business, bot__isnull=True, is_active=True).order_by("-updated_at").first()
+        or next((profile for profile in AgentProfile.objects.filter(business=conversation.business, bot__isnull=True, is_active=True).order_by("-updated_at", "-id") if not isinstance(profile.rules_json, dict) or profile.rules_json.get("scenario") not in {"employee", "analyst"}), None)
     )
 
 
@@ -76,7 +76,7 @@ def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification
         reply_instruction = "Generate a short, helpful CRM manager reply for this bot conversation. Do not send it automatically. "
 
     user_input = agent_instruction + reply_instruction + f"Last inbound message: {last_inbound['text'] if last_inbound else 'No inbound message'}"
-    user_input += " Prices in price_from are minimum prices: say 'от', not a guaranteed final price. Booking is performed by staff; never claim you booked, cancelled or transferred anything."
+    user_input += " Prices in price_from are minimum prices: say 'от', not a guaranteed final price. Never claim you booked, cancelled or transferred anything unless a completed action is explicitly supplied by the server."
     user_input += " Use scheduling_context.currency for every price; never infer currency from the message language. Interpret relative dates using scheduling_context.local_date and timezone. next_available_slots are confirmed free slots on their stated dates; do not say a requested date is unavailable when those slots include it."
     crm_context = {}
     if conversation.client_id:
@@ -86,7 +86,6 @@ def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification
             "phone": conversation.client.phone,
             "email": conversation.client.email,
             "source": conversation.client.source,
-            "notes": conversation.client.notes,
         }
     if conversation.lead_id:
         crm_context["lead"] = {

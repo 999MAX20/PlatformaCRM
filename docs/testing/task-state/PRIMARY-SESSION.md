@@ -1,5 +1,45 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## AI-FUNCTIONAL-20261002 — scoped local acceptance complete; publication next
+
+- Owner/source: request 02.10 plus controlled-creation/calendar decisions and
+  synthetic OpenRouter approval. Primary 01a0fc25-6286-77a2-94be-cabb2b179381,
+  generation 3, registry idle. Same task; no ownership transfer or next phase.
+- Root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+  starting HEAD ab913ea8f5f6af6ecf44b7e282d128414895699c; starting checkout clean.
+  Every current changed/untracked source path belongs to this task. Latest fetch
+  FETCH_HEAD and remote main both equal that base; origin/main was a stale local
+  ref because configured fetch refspecs exclude main. No conflicting writer.
+- Contract/result, exact commands, failed iterations, capability matrix and
+  limitations: [AI functional report](../ai-functional-20261002.md). Reuse existing
+  Bot/Profile, Inbox, domain, approval, activity/audit, notifications and events.
+- Implemented: atomic settings API/UI; saved runtime fingerprint and queued/in-flight
+  revocation; opt-in guarded client/lead/task/open-deal/calendar creation; exact
+  delivered-slot selection/replay; no automatic existing lead-status change;
+  public intake cannot bypass controlled client creation; explicit consent retained.
+  Internal scenario profiles/source/tool switches, truthful status and language/tone;
+  internal profiles never become messenger fallback; client notes excluded externally.
+- Required scoped checks satisfied by unchanged dependent PASS plus affected rechecks:
+  245 PASS in initial 247 run (invalid module label + fixed notification encoding);
+  real specialist schedule module PASS; final-regressions 31 PASS; intake-guard
+  33 PASS; final controlled intake/consent 9 PASS plus corrected legacy case 1 PASS.
+  Original failed logs remain failed; no full-project/release certification claim.
+- Browser: 10 selected desktop/mobile scenarios with final PASS evidence, including
+  configuration/readback/recovery, internal settings, manager denial, knowledge/channel
+  dialogs and FC-J10 approval/task/audit. Test-fixture failures and corrections are
+  preserved in report. UI screenshots inspected. Final types/i18n/app/widget build,
+  bundle budget, Django check/migration drift PASS. No installs or working DB writes.
+- Live API->Inbox->model: 3 OpenRouter/openai/gpt-4o-mini synthetic calls, cost
+  $0.00040275, reserved $0.075 under $1 cap. Tone RU and changed knowledge EN observed;
+  temperature forwarding verified. No real customer message or external channel used.
+- Boundary: no arbitrary universal CRUD or full-history/financial analyst; website/email
+  adapters are mock, live transport not certified. No new permission framework,
+  migrations, env variables, clinical records or deployment. PostgreSQL concurrent
+  races and external-request cancellation are not claimed.
+- Next: final intended/untracked diff and links review, explicit staging, conventional
+  commit; committed-range static on ab913ea; normal push HEAD:main with remote SHA
+  readback and actual CI status. CI is separate from local scoped evidence.
+
 ## Explicit handoff generation 2 → 3 — completed, 2026-10-02
 
 Transition key: 01a0d6c1-3ee4-7f92-b94c-0242bb2eb35e →

@@ -1,5 +1,36 @@
 # PlatformaCRM — правила первой платной версии
 
+## Controlled AI automation — owner decision 2026-10-02
+
+This later decision supersedes the earlier per-action staff-confirmation requirement
+for creation only when the business explicitly enables the corresponding capability.
+It does not establish implementation/readiness. Task AI-FUNCTIONAL-20261002 owns
+implementation and evidence; historical closures remain unchanged.
+
+Three user scenarios share existing tenant/role rules: messenger AI operator handles
+inbound conversations; employee AI assistant assists authorized staff with CRM work;
+business AI analyst reads permission-scoped evidence for management. A capability
+never grants access beyond the actor/business; client-facing context must not expose
+other customers or internal management data. Analyst output is not a mutation.
+
+- Inbound messages may identify an existing client or create a new one. Existing
+  client fields, including empty fields, must not change without staff confirmation.
+- Explicitly enabled creation capabilities may create a lead for a qualified request,
+  a task for a concrete follow-up, an open/draft deal for expressed purchase intent,
+  and an appointment after explicit customer choice of service, specialist and a
+  currently free exact slot. Do not fabricate missing data or create every entity
+  for every message. Replays must reuse the original result.
+- Appointment creation and lead-status changes are separate: autonomous booking
+  must not silently change an existing lead. Rescheduling/cancellation and all
+  existing-record updates require confirmation by an authorized staff member.
+- All deletions require staff confirmation and existing archive/domain safeguards.
+  No autonomous money operations, role changes or deal completion are authorized.
+- Settings must expose the actual supported entity/actions and their confirmation
+  boundary. Disabled capabilities cannot execute through queued/in-flight work.
+  Save must not silently leave a half-updated agent configuration.
+- No new external channels, billing, clinical records or permission framework.
+  Live provider/channel acceptance remains distinct from isolated controlled tests.
+
 ## Текущий объём исполнения — решение владельца 28.09.2026
 
 [Текущий пилот](../pilot/local-crm-completion.md#current-plan) ограничен классической

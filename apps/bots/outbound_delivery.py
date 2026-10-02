@@ -65,6 +65,7 @@ def create_outbound_message(
     user,
     sender_type=BotMessage.SenderTypes.MANAGER,
     idempotency_key="",
+    runtime_fingerprint="",
 ):
     assert_entitlement_allows(conversation.business, EntitlementMetrics.BOT_MESSAGES)
     normalized_key = _normalize_idempotency_key(idempotency_key)
@@ -84,6 +85,9 @@ def create_outbound_message(
             return existing
 
     from apps.bots.inbox_service import register_bot_message
+    if sender_type == BotMessage.SenderTypes.BOT and not runtime_fingerprint:
+        from apps.bots.runtime_configuration import agent_runtime_fingerprint
+        runtime_fingerprint = agent_runtime_fingerprint(conversation)
 
     try:
         with transaction.atomic():
@@ -99,6 +103,7 @@ def create_outbound_message(
                 payload_json={
                     "sent_by_user_id": user.id if user and user.is_authenticated else None,
                     "delivery_mode": "outbox",
+                    **({"agent_runtime_fingerprint": runtime_fingerprint} if runtime_fingerprint else {}),
                 },
             )
             register_bot_message(message, actor=user)
@@ -172,8 +177,10 @@ def deliver_outbound_message(message_id):
     conversation = message.conversation
     if message.sender_type == BotMessage.SenderTypes.BOT:
         from apps.bots.lifecycle import conversation_ai_block_reason
+        from apps.bots.runtime_configuration import agent_runtime_fingerprint
 
-        if conversation_ai_block_reason(conversation):
+        fingerprint = (message.payload_json or {}).get("agent_runtime_fingerprint")
+        if conversation_ai_block_reason(conversation) or (fingerprint and fingerprint != agent_runtime_fingerprint(conversation)):
             return _finish_delivery(
                 message,
                 result={"ok": False, "reason": "Automatic reply stopped because AI is no longer eligible.", "retryable": False},

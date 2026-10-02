@@ -1083,6 +1083,30 @@ Copy this section for every new confirmed precedent:
 - Reusable rule: inspect font-file cmap and actual rendered fonts; a font-family
   declaration or broad unicode-range does not prove that glyphs exist.
 
+### ZD-043 — AI settings could be partially saved or outlived by queued work
+
+- Confirmed on ab913ea: editor sent independent Bot/Profile saves; runtime checked
+  lifecycle but not all changed settings/knowledge before publishing old output.
+- Corrected with atomic configuration service and persisted runtime fingerprint
+  checks after generation and before delivery. Disabled controlled capabilities
+  are checked again at domain writes, including public contact intake.
+- Regression evidence: [AI-FUNCTIONAL-20261002](../docs/testing/ai-functional-20261002.md),
+  configuration rollback, stale reply, disabled tools and real API readback/recovery.
+- Status: VERIFIED LOCALLY; publication/CI receipt is in PRIMARY-SESSION.
+- Audit rule: a UI toggle is not a runtime boundary; verify queued work and alternate
+  intake paths as well as the next ordinary request.
+
+### ZD-044 — Customer reply prompt included internal client notes
+
+- Confirmed in bots/ai.py CRM context: client.notes was supplied to the external
+  reply model even though merchant copy promised internal notes stayed private.
+- Removed that field from customer reply context. Internal employee CRM remains
+  permission-scoped. Sentinel regression proves notes are absent at provider boundary.
+- Status: VERIFIED LOCALLY in AI-FUNCTIONAL-20261002; no claim of historical leakage
+  to a real customer. Publication/CI receipt is in PRIMARY-SESSION.
+- Audit rule: instructions alone cannot protect internal data already included in
+  a customer-facing model prompt; minimize the supplied context.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

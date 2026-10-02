@@ -15,9 +15,9 @@ export type AIAssistantChatResponse = {
   tokens_used: number;
   log_id: Id;
   context: {
-    clients_count: number;
-    new_leads_count: number;
-    open_appointments_count: number;
+    clients_count?: number;
+    new_leads_count?: number;
+    open_appointments_count?: number;
   };
 };
 

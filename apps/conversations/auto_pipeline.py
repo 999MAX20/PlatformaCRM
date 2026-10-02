@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from django.utils import timezone
 
@@ -12,10 +13,11 @@ from apps.bots.ai import suggest_bot_reply
 from apps.bots.inbox_service import send_outbound_message, handoff_conversation
 from apps.bots.lifecycle import conversation_ai_block_reason
 from apps.bots.models import BotChannel, BotConversation, BotMessage
+from apps.bots.runtime_configuration import agent_runtime_fingerprint
 from apps.businesses.access import Resources
 from apps.businesses.capabilities import resource_is_enabled
 from apps.conversations.ai_qualification import ConversationQualification, qualify_conversation
-from apps.conversations.booking import BookingResult, maybe_create_appointment_from_reply, store_offered_slots
+from apps.conversations.booking import BookingResult, format_booking_offer, maybe_create_appointment_from_reply, store_offered_slots
 from apps.conversations.pipeline import PIPELINE_META_KEY, run_conversation_pipeline
 from apps.integrations.sanitization import sanitize_error_text
 from apps.notifications.models import Notification
@@ -44,6 +46,7 @@ class AutoPipelineConfig:
     appointment_confirmation_mode: str = APPOINTMENT_CONFIRM_STAFF
     auto_send_reply: bool = False
     max_auto_reply_chars: int = 900
+    creation_policy: str = "staff_confirmation"
 
 
 @dataclass
@@ -57,9 +60,13 @@ class AutoPipelineDecision:
     reply_message: BotMessage | None = None
     reply_error: str = ""
     booking: BookingResult | None = None
+    runtime_fingerprint: str = ""
 
 
 def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, channel: BotChannel | None = None) -> AutoPipelineDecision:
+    conversation.refresh_from_db()
+    channel = conversation.bot.channels.filter(channel=conversation.channel).first()
+    fingerprint = agent_runtime_fingerprint(conversation)
     config = resolve_auto_pipeline_config(conversation=conversation, channel=channel)
     if not config.enabled or config.mode == "off":
         decision = AutoPipelineDecision(status="skipped_disabled", reason="Auto CRM pipeline is disabled.")
@@ -88,7 +95,12 @@ def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessag
         _save_auto_pipeline_decision(conversation, message, config, state_decision)
         _write_decision_event(conversation, state_decision)
         return state_decision
+    if agent_runtime_fingerprint(conversation) != fingerprint:
+        decision = AutoPipelineDecision(status="skipped_configuration_changed", reason="Agent configuration changed during qualification.")
+        _save_auto_pipeline_decision(conversation, message, config, decision)
+        return decision
     decision = decide_qualified_pipeline(config=config, qualification=qualification, ai_log_id=ai_log.id if ai_log else None)
+    decision.runtime_fingerprint = fingerprint
     decision.confirmation_policy = _confirmation_policy(config)
     if decision.status in {"needs_review", "blocked_low_confidence", "blocked_risky_intent", "blocked_fallback"}:
         handoff_conversation(conversation, reason=decision.reason)
@@ -117,19 +129,46 @@ def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessag
     decision.confirmation_policy["requires_explicit_confirmation"] = [
         action for action, enabled in (("create_lead", create_lead), ("create_task", create_task), ("create_draft_deal", create_deal)) if enabled
     ]
-    # V1-A03 is the only automatic CRM write: associate/create the client.
-    # Lead, task and draft deal are proposals, even for persisted legacy modes.
-    result = run_conversation_pipeline(
-        conversation=conversation,
-        create_lead=False,
-        create_deal=False,
-        create_task=False,
-        use_ai_qualification=False,
-        qualification_override=qualification,
-        ai_log_id_override=ai_log.id if ai_log else None,
-        source="auto_pipeline",
-    )
+    automatic = config.creation_policy == "automatic"
+    if automatic:
+        create_lead = create_lead and qualification.intent in {"price_question", "purchase_interest", "appointment_request"}
+        create_deal = create_deal and qualification.intent in {"purchase_interest", "appointment_request"}
+        from apps.bots.automation_policy import automatic_creation_actor
+        actions = {name for name, enabled in (("create_lead", create_lead), ("create_task", create_task), ("create_deal", create_deal)) if enabled}
+        if not conversation.client_id:
+            actions.add("create_client")
+        try:
+            automatic_creation_actor(conversation, actions, expected_fingerprint=fingerprint)
+        except PermissionDenied:
+            decision.status = "needs_review"
+            decision.reason = "Automatic creation is no longer authorized."
+            handoff_conversation(conversation, reason=decision.reason)
+            _save_auto_pipeline_decision(conversation, message, config, decision)
+            return decision
+    # Legacy modes remain proposals until the business explicitly opts in.
+    try:
+        result = run_conversation_pipeline(
+            conversation=conversation,
+            create_lead=automatic and create_lead,
+            create_deal=automatic and create_deal,
+            create_task=automatic and create_task,
+            use_ai_qualification=False,
+            qualification_override=qualification,
+            ai_log_id_override=ai_log.id if ai_log else None,
+            source="auto_pipeline",
+            automatic_creation=automatic,
+            expected_runtime_fingerprint=fingerprint,
+        )
+    except (PermissionDenied, ValidationError):
+        decision.status = "needs_review"
+        decision.reason = "CRM creation needs staff review. No partial changes were saved."
+        handoff_conversation(conversation, reason=decision.reason)
+        _save_auto_pipeline_decision(conversation, message, config, decision)
+        return decision
     decision.result = result
+    if automatic:
+        decision.confirmation_policy["requires_explicit_confirmation"] = []
+        decision.confirmation_policy["created"] = result.created
     if config.create_appointment:
         decision.booking = maybe_create_appointment_from_reply(conversation=result.conversation, message=message)
     if decision.booking is None or decision.booking.status != "booked":
@@ -147,6 +186,14 @@ def resolve_auto_pipeline_config(*, conversation: BotConversation, channel: BotC
         raw.update(conversation.bot.settings_json.get(AUTO_PIPELINE_META_KEY) or {})
     if channel and isinstance(channel.config_json, dict):
         raw.update(channel.config_json.get(AUTO_PIPELINE_META_KEY) or {})
+    own = (conversation.bot.settings_json or {}).get(AUTO_PIPELINE_META_KEY) or {}
+    # Agent-level stop switches take precedence over legacy channel overrides.
+    if "mode" in own:
+        raw.pop("confirmation_mode", None)
+        raw["mode"] = own["mode"]
+    for switch in ("enabled", "auto_send_reply", "create_appointment"):
+        if own.get(switch) is False:
+            raw[switch] = False
 
     mode, confirmation_mode = _resolve_confirmation_mode(raw)
     enabled = bool(raw.get("enabled", mode != "off"))
@@ -163,6 +210,7 @@ def resolve_auto_pipeline_config(*, conversation: BotConversation, channel: BotC
         appointment_confirmation_mode=APPOINTMENT_CONFIRM_STAFF,
         auto_send_reply=bool(raw.get("auto_send_reply", False)),
         max_auto_reply_chars=max(120, min(_int(raw.get("max_auto_reply_chars"), 900), 2000)),
+        creation_policy=((conversation.bot.settings_json or {}).get(AUTO_PIPELINE_META_KEY) or {}).get("creation_policy", "staff_confirmation"),
     )
 
 
@@ -216,6 +264,7 @@ def _guard_conversation_state(conversation: BotConversation) -> AutoPipelineDeci
 
 
 def _save_auto_pipeline_decision(conversation: BotConversation, message: BotMessage, config: AutoPipelineConfig, decision: AutoPipelineDecision) -> None:
+    conversation.refresh_from_db(fields=["metadata_json"])
     metadata = dict(conversation.metadata_json or {})
     metadata[AUTO_PIPELINE_META_KEY] = {
         "status": decision.status,
@@ -300,7 +349,7 @@ def _resolve_confirmation_mode(raw: dict[str, Any]) -> tuple[str, str]:
 
 def _confirmation_policy(config: AutoPipelineConfig) -> dict[str, Any]:
     return {
-        "mode": "staff_confirmation",
+        "mode": config.creation_policy,
         "crm_mode": config.mode,
         "allowed_auto_actions": ["create_client"] if config.mode in {"lead_task", "draft_deal"} else [],
         "requires_explicit_confirmation": [],
@@ -312,17 +361,35 @@ def _confirmation_policy(config: AutoPipelineConfig) -> dict[str, Any]:
 
 def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfig, decision: AutoPipelineDecision) -> None:
     try:
+        fingerprint = decision.runtime_fingerprint or agent_runtime_fingerprint(conversation)
+        if agent_runtime_fingerprint(conversation) != fingerprint:
+            decision.reply_error = "Automatic reply stopped because agent configuration changed."
+            return
+        conversation.refresh_from_db()
         result, log, _message_context, _sources = suggest_bot_reply(conversation=conversation, user=None, auto_mode=True, qualification=decision.qualification)
         if conversation_ai_block_reason(conversation):
             decision.reply_error = "Automatic reply stopped because AI is no longer eligible."
+            return
+        if agent_runtime_fingerprint(conversation) != fingerprint:
+            decision.reply_error = "Automatic reply stopped because agent configuration changed."
             return
         text = (result.output_text or "").strip()
         if not text:
             decision.reply_error = "AI returned an empty auto reply."
             return
-        if len(text) > config.max_auto_reply_chars:
-            text = text[: config.max_auto_reply_chars].rstrip()
-        message = send_outbound_message(conversation, text, user=None, sender_type=BotMessage.SenderTypes.BOT)
+        scheduling_context = (log.input_json or {}).get("scheduling_context") if log else {}
+        offered_context = scheduling_context
+        if config.creation_policy == "automatic":
+            slots = (scheduling_context or {}).get("next_available_slots", [])[:3] if config.create_appointment else []
+            while slots and len(format_booking_offer(conversation, slots)) > config.max_auto_reply_chars:
+                slots = slots[:-1]
+            offered_context = {"next_available_slots": slots}
+            if slots:
+                offer = format_booking_offer(conversation, slots)
+                body = text[:max(0, config.max_auto_reply_chars - len(offer) - 2)].rstrip()
+                text = f"{body}\n\n{offer}".strip()
+        text = text[:config.max_auto_reply_chars].rstrip()
+        message = send_outbound_message(conversation, text, user=None, sender_type=BotMessage.SenderTypes.BOT, runtime_fingerprint=fingerprint)
         payload = dict(message.payload_json or {})
         payload.update(
             {
@@ -334,9 +401,9 @@ def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfi
         message.payload_json = payload
         message.save(update_fields=["payload_json"])
         decision.reply_message = message
-        scheduling_context = (log.input_json or {}).get("scheduling_context") if log else {}
-        if scheduling_context:
-            store_offered_slots(conversation=conversation, scheduling_context=scheduling_context, ai_log_id=log.id if log else None)
+        if offered_context:
+            store_offered_slots(conversation=conversation, scheduling_context=offered_context, ai_log_id=log.id if log else None,
+                                runtime_fingerprint=fingerprint, offer_message_id=message.id)
     except Exception as exc:
         decision.reply_error = sanitize_error_text(exc)
         if not conversation_ai_block_reason(conversation):

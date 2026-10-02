@@ -1,8 +1,16 @@
 import { createCrudApi } from "./crud";
 import { apiClient, unwrapList } from "./client";
-import type { Bot, BotChannel, BotConversation, BotMessage, IntegrationEventLog } from "../types";
+import type { AgentProfile, Bot, BotChannel, BotConversation, BotMessage, IntegrationEventLog } from "../types";
 
 export const botsApi = createCrudApi<Bot>("/api/bots/");
+export const saveAgentConfiguration = async (id: Bot["id"], payload: {
+  bot: Pick<Bot, "name" | "default_language" | "settings_json">;
+  profile: Partial<AgentProfile>;
+}) => {
+  const { data } = await apiClient.put<{ bot: Bot; profile: AgentProfile }>(`/api/bots/${id}/configuration/`, payload);
+  return data;
+};
+
 export const botLifecycleApi = {
   activate: async (id: number | string) => {
     const { data } = await apiClient.post<Bot>(`/api/bots/${id}/activate/`);

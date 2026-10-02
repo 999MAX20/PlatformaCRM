@@ -34,18 +34,18 @@ export function AgentActionsSection({
           <h3 className="text-base font-semibold text-midnight">{t("aiAgents.authority.title")}</h3>
           <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.authority.text")}</p>
           <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:divide-x lg:divide-platforma-border">
-            <AuthorityRow label={t("aiAgents.authority.suggestions")} value={t("aiAgents.authority.suggestOnly")} />
+            <AuthorityRow label={t("aiAgents.authority.suggestions")} value={t(runtime.enabled && runtime.auto_send_reply ? "aiAgents.authority.autoReply" : "aiAgents.authority.suggestOnly")} />
             <AuthorityRow
               label={t("aiAgents.authority.leadTask")}
-              value={proposesWork && (toolEnabled("create_lead") || toolEnabled("create_task")) ? t("aiAgents.authority.staffConfirmation") : t("aiAgents.authority.off")}
+              value={proposesWork && (toolEnabled("create_lead") || toolEnabled("create_task")) ? t(runtime.creation_policy === "automatic" ? "aiAgents.authority.automatic" : "aiAgents.authority.staffConfirmation") : t("aiAgents.authority.off")}
             />
             <AuthorityRow
               label={t("aiAgents.authority.draftDeal")}
-              value={runtime.enabled && runtime.mode === "draft_deal" && toolEnabled("create_deal") ? t("aiAgents.authority.staffConfirmation") : t("aiAgents.authority.off")}
+              value={runtime.enabled && runtime.mode === "draft_deal" && toolEnabled("create_deal") ? t(runtime.creation_policy === "automatic" ? "aiAgents.authority.automatic" : "aiAgents.authority.staffConfirmation") : t("aiAgents.authority.off")}
             />
             <AuthorityRow
               label={t("aiAgents.authority.appointment")}
-              value={t("aiAgents.authority.staffBooking")}
+              value={runtime.creation_policy === "automatic" && runtime.enabled && runtime.create_appointment && toolEnabled("create_appointment") ? t("aiAgents.authority.customerSelection") : t("aiAgents.authority.staffBooking")}
             />
           </div>
         </div>
@@ -102,6 +102,16 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
           ]}
         />
         <FieldHint>{t("aiAgents.hint.pipelineMode")}</FieldHint>
+        </div>
+
+        <div className="mt-3 max-w-xl">
+          <Select label={t("aiAgents.creationPolicy")} value={config.creation_policy} disabled={!canManage}
+            onChange={event => setConfig(current => ({ ...current, creation_policy: event.target.value }))}
+            options={[
+              { value: "staff_confirmation", label: t("aiAgents.authority.staffConfirmation") },
+              { value: "automatic", label: t("aiAgents.authority.automatic") },
+            ]} />
+          <FieldHint>{t("aiAgents.creationPolicyHint")}</FieldHint>
         </div>
 
         <div className="mt-3 divide-y divide-platforma-border">
@@ -184,6 +194,8 @@ function FunctionsSection({
 }) {
   const { t } = useI18n();
   const tools = [
+    ["create_client", t("aiAgents.functions.clientTitle"), t("aiAgents.functions.clientText")],
+    ["create_appointment", t("aiAgents.functions.bookingTitle"), t("aiAgents.functions.bookingText")],
     ["create_lead", t("aiAgents.functions.leadTitle"), t("aiAgents.functions.leadText")],
     ["create_task", t("aiAgents.functions.taskTitle"), t("aiAgents.functions.taskText")],
     ["create_deal", t("aiAgents.functions.dealTitle"), t("aiAgents.functions.dealText")],
@@ -204,7 +216,7 @@ function FunctionsSection({
         <h3 className="mb-3 text-base font-semibold text-platforma-ink">{t("aiAgents.functionsTitle")}</h3>
         <div className="divide-y divide-platforma-border">
         {tools.map(([key, title, text]) => {
-          const enabled = form.allowed_tools.includes(key);
+          const enabled = key === "handoff_to_manager" || form.allowed_tools.includes(key);
           return (
             <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-1">
               <details className="min-w-0 text-sm">
@@ -216,7 +228,7 @@ function FunctionsSection({
               </details>
               <div className="flex min-h-11 shrink-0 items-center gap-2 sm:min-h-9">
                 <span className="text-xs font-semibold text-platforma-subtle">{enabled ? t("aiAgents.functions.enabled") : t("aiAgents.functions.disabled")}</span>
-                <ToggleSwitch checked={enabled} disabled={!canManage} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />
+                <ToggleSwitch checked={enabled} disabled={!canManage || key === "handoff_to_manager"} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />
               </div>
             </div>
           );

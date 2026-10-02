@@ -39,6 +39,8 @@ def build_business_event_sources(business, *, user=None, limit=24):
 
 
 def build_event_analyst_brief(*, business, user=None, limit=24):
+    from apps.ai_core.workflows import assert_workflow_enabled
+    assert_workflow_enabled(business, "analyst")
     sources = build_business_event_sources(business, user=user, limit=limit)
     if not sources:
         return _unavailable_brief(sources, "no_data")

@@ -39,6 +39,33 @@ class AgentProfileSerializer(serializers.ModelSerializer):
         bot = attrs.get("bot") if "bot" in attrs else getattr(self.instance, "bot", None)
         if business and bot and bot.business_id != business.id:
             raise serializers.ValidationError("Bot must belong to the selected business.")
+        for field, key in (("rules_json", "items"), ("escalation_rules_json", "items"), ("allowed_tools_json", "tools")):
+            if field not in attrs:
+                continue
+            value = attrs[field]
+            if field != "allowed_tools_json" and isinstance(value, list):
+                value = {key: value}
+                attrs[field] = value
+            if not isinstance(value, dict) or (key in value and (not isinstance(value[key], list) or any(not isinstance(item, str) for item in value[key]))):
+                raise serializers.ValidationError({field: "Expected an object containing a list of strings."})
+        rules = attrs.get("rules_json", getattr(self.instance, "rules_json", {}))
+        if isinstance(rules, dict) and "scenario" in rules:
+            from apps.ai_core.workflows import SCENARIOS, SOURCES
+            if rules["scenario"] not in SCENARIOS or bot is not None:
+                raise serializers.ValidationError({"rules_json": "Internal scenarios cannot be attached to a messenger bot."})
+            sources = rules.get("sources", sorted(SOURCES))
+            if not isinstance(sources, list) or any(not isinstance(source, str) or source not in SOURCES for source in sources):
+                raise serializers.ValidationError({"rules_json": "Unsupported data source."})
+            from apps.ai_core.tool_registry import TOOLS
+            tools = attrs.get("allowed_tools_json", getattr(self.instance, "allowed_tools_json", {})).get("tools", [])
+            if any(tool not in TOOLS for tool in tools) or (rules["scenario"] == "analyst" and tools):
+                raise serializers.ValidationError({"allowed_tools_json": "Unsupported scenario capability."})
+        if "language" in attrs and attrs["language"] not in {"ru", "kk", "en"}:
+            raise serializers.ValidationError({"language": "Unsupported agent language."})
+        if bot and self.context.get("request") and (bot.settings_json.get("auto_crm_pipeline") or {}).get("creation_policy") == "automatic":
+            from apps.bots.automation_policy import authorize_configuration
+            tools = attrs.get("allowed_tools_json", getattr(self.instance, "allowed_tools_json", {})).get("tools", [])
+            authorize_configuration(bot, bot.settings_json, tools, self.context["request"].user)
         return attrs
 
 
