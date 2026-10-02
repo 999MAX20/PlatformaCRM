@@ -1,15 +1,15 @@
 # PRIMARY-SESSION — PlatformaCRM
 
-## AI-FUNCTIONAL-20261002 — scoped local acceptance complete; publication next
+## AI-FUNCTIONAL-20261002 — scoped local acceptance complete; published
 
 - Owner/source: request 02.10 plus controlled-creation/calendar decisions and
   synthetic OpenRouter approval. Primary 01a0fc25-6286-77a2-94be-cabb2b179381,
   generation 3, registry idle. Same task; no ownership transfer or next phase.
 - Root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
   starting HEAD ab913ea8f5f6af6ecf44b7e282d128414895699c; starting checkout clean.
-  Every current changed/untracked source path belongs to this task. Latest fetch
-  FETCH_HEAD and remote main both equal that base; origin/main was a stale local
-  ref because configured fetch refspecs exclude main. No conflicting writer.
+  All 43 published paths belonged to this task; checkout clean after code commit.
+  Before publication FETCH_HEAD and remote main equaled that base; origin/main
+  was stale because configured fetch refspecs exclude main. No conflicting writer.
 - Contract/result, exact commands, failed iterations, capability matrix and
   limitations: [AI functional report](../ai-functional-20261002.md). Reuse existing
   Bot/Profile, Inbox, domain, approval, activity/audit, notifications and events.
@@ -36,9 +36,19 @@
   adapters are mock, live transport not certified. No new permission framework,
   migrations, env variables, clinical records or deployment. PostgreSQL concurrent
   races and external-request cancellation are not claimed.
-- Next: final intended/untracked diff and links review, explicit staging, conventional
-  commit; committed-range static on ab913ea; normal push HEAD:main with remote SHA
-  readback and actual CI status. CI is separate from local scoped evidence.
+- Publication: 410a25f94ad3dd91dffa9bca566c29fc7e2046ef, conventional commit
+  `feat(ai): enforce saved capabilities across CRM workflows`; intended/untracked
+  diff and links reviewed, explicit paths staged. Committed-range static against
+  ab913ea PASS. Normal push HEAD:main succeeded; ls-remote matched the full SHA.
+- Actual CI: [run 37003604213](https://github.com/999MAX20/PlatformaCRM/actions/runs/37003604213)
+  IN_PROGRESS at receipt check (run started 2026-10-02T11:54:26Z). No CI PASS or
+  deployment claim. Final task response records the last observed CI status.
+- Receipt-only follow-up: STATUS/checkpoint/defect integration status. Risk is
+  evidence consistency; check links and working/index/committed diff hygiene,
+  explicit stage and normal push. No app rechecks for unchanged product inputs.
+  Receipt commit SHA is in Git history and final response, avoiding a receipt loop.
+- Authorized implementation scope is complete. Universal CRUD, full analytics and
+  external-channel live acceptance remain outside this bounded result.
 
 ## Explicit handoff generation 2 → 3 — completed, 2026-10-02
 

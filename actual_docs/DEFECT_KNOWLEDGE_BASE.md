@@ -1092,7 +1092,8 @@ Copy this section for every new confirmed precedent:
   are checked again at domain writes, including public contact intake.
 - Regression evidence: [AI-FUNCTIONAL-20261002](../docs/testing/ai-functional-20261002.md),
   configuration rollback, stale reply, disabled tools and real API readback/recovery.
-- Status: VERIFIED LOCALLY; publication/CI receipt is in PRIMARY-SESSION.
+- Status: INTEGRATED in main at 410a25f; scoped local checks PASS, CI pending
+  at receipt check. Publication/CI receipt is in PRIMARY-SESSION.
 - Audit rule: a UI toggle is not a runtime boundary; verify queued work and alternate
   intake paths as well as the next ordinary request.
 
@@ -1102,8 +1103,9 @@ Copy this section for every new confirmed precedent:
   reply model even though merchant copy promised internal notes stayed private.
 - Removed that field from customer reply context. Internal employee CRM remains
   permission-scoped. Sentinel regression proves notes are absent at provider boundary.
-- Status: VERIFIED LOCALLY in AI-FUNCTIONAL-20261002; no claim of historical leakage
-  to a real customer. Publication/CI receipt is in PRIMARY-SESSION.
+- Status: INTEGRATED in main at 410a25f; scoped local checks PASS, CI pending
+  at receipt check. No claim of historical leakage to a real customer.
+  Publication/CI receipt is in PRIMARY-SESSION.
 - Audit rule: instructions alone cannot protect internal data already included in
   a customer-facing model prompt; minimize the supplied context.
 
