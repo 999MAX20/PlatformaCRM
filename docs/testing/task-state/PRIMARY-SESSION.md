@@ -2,7 +2,7 @@
 
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
-## Reference-led AI-agent redesign / CENTERED WIDTH LOCALLY VERIFIED, 2026-10-02
+## Reference-led AI-agent redesign / CENTERED WIDTH PUBLISHED, CI IN PROGRESS, 2026-10-02
 
 - Owner explicitly rejected the full-width forms and approved three replacement
   references, relayed by coordinator 01a0f32f-7d02-7263-a53d-496c8f9787f5.
@@ -49,8 +49,15 @@
 - Own scope: six agent components, two existing E2E specs, design-system/report,
   STATUS and this checkpoint. Five external policy files match their original
   SHA256 snapshot and stay excluded. Root/owner/branch/HEAD unchanged;
-  fetched main and remote readback both6a3f39f. Next: reviewed commit/static/push
-  and actual CI inspection. No further product scope is authorized by completion.
+  fetched main and remote readback both6a3f39f before publication.
+- Implementation commit20a2f28ddc2fbaebad86f74c97569216d5aee82c normal-pushed to
+  origin/main; exact remote SHA read back. Static runner passed with explicit
+  base6a3f39f5dbeba8d1340208208ceb207e7175c040: working/index/range hygiene,
+  isolated migration drift (none) and Django system check (no issues).
+- Actual CI36990306274 inspected at2026-10-02 09:32 UTC: frontend and backend
+  jobs IN_PROGRESS, conclusion null. No CI success or deployment claim.
+  This documentation receipt changes no application inputs; reuse passed checks,
+  verify its diff/range and normal-push. No further product scope is authorized.
 
 ## Reference-led AI-agent redesign / LOCALLY VERIFIED, 2026-10-02
 
