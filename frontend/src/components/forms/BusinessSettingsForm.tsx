@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
+import { businessConnectorsApi } from "../../api/connectors";
 
 import { useI18n } from "../../lib/i18n";
 import type { Business } from "../../types";
@@ -23,6 +25,8 @@ function createSchema(t: (key: string) => string) {
     timezone: z.string().min(1),
     language: z.string().min(1),
     currency: z.string().min(1),
+    financial_source_mode: z.enum(["external", "manual"]),
+    financial_connector: z.string().optional(),
     legal_name: z.string().optional(),
     tax_id: z.string().optional(),
     invoice_email: z.string().email().or(z.literal("")).optional(),
@@ -45,6 +49,7 @@ export function BusinessSettingsForm({
   onSubmit: (payload: Partial<Business>) => Promise<unknown>;
 }) {
   const { t } = useI18n();
+  const connectors = useQuery({ queryKey: ["financial-source-options", initial?.id], queryFn: () => businessConnectorsApi.list({ business: initial!.id }), enabled: Boolean(initial?.id) });
   const form = useForm<Values>({
     resolver: zodResolver(createSchema(t)),
     defaultValues: {
@@ -60,6 +65,8 @@ export function BusinessSettingsForm({
       timezone: initial?.timezone || "Asia/Almaty",
       language: initial?.language || "ru",
       currency: initial?.currency || "KZT",
+      financial_source_mode: initial?.financial_source_mode || "external",
+      financial_connector: initial?.financial_connector ? String(initial.financial_connector) : "",
       legal_name: initial?.legal_name || "",
       tax_id: initial?.tax_id || "",
       invoice_email: initial?.invoice_email || "",
@@ -73,7 +80,7 @@ export function BusinessSettingsForm({
   });
 
   return (
-    <form className="grid gap-4" onSubmit={form.handleSubmit((values) => onSubmit(values as Partial<Business>))}>
+    <form className="grid gap-4" onSubmit={form.handleSubmit((values) => onSubmit({ ...values, financial_connector: values.financial_source_mode === "external" && values.financial_connector ? Number(values.financial_connector) : null } as Partial<Business>))}>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("businessForm.name")} error={form.formState.errors.name?.message} {...form.register("name")} />
         <Input label={t("businessForm.slug")} error={form.formState.errors.slug?.message} {...form.register("slug")} />
@@ -120,6 +127,11 @@ export function BusinessSettingsForm({
         <Input label={t("businessForm.legalName")} {...form.register("legal_name")} />
         <Input label={t("businessForm.taxId")} {...form.register("tax_id")} />
       </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Select label={t("aiHistory.sourceSetting")} options={[{ value: "manual", label: t("aiHistory.manual") }, { value: "external", label: t("aiHistory.external") }]} {...form.register("financial_source_mode")} />
+        {form.watch("financial_source_mode") === "external" && <Select label={t("aiHistory.integration")} disabled={connectors.isLoading || connectors.isError} options={[{ value: "", label: t("aiHistory.notSelected") }, ...(connectors.data || []).filter(item => item.capability === "finance").map(item => ({ value: String(item.id), label: item.name }))]} {...form.register("financial_connector")} />}
+      </div>
+      {connectors.isError && form.watch("financial_source_mode") === "external" && <p role="alert" className="text-sm text-platforma-danger">{t("aiHistory.integrationUnavailable")}</p>}
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("businessForm.invoiceEmail")} error={form.formState.errors.invoice_email?.message} {...form.register("invoice_email")} />
         <Input label={t("businessForm.bookingBufferMinutes")} type="number" error={form.formState.errors.booking_buffer_minutes?.message} {...form.register("booking_buffer_minutes")} />

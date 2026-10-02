@@ -6,7 +6,7 @@ import type { FinancialReport } from "../../types";
 const reasons = new Set([
   "no_source", "unsupported_source", "multiple_sources", "permission_denied",
   "source_unavailable", "initial_sync", "no_verified_snapshot", "sync_failed",
-  "sync_stopped", "updating", "snapshot_not_refreshed", "sync_overdue",
+  "sync_stopped", "updating", "snapshot_not_refreshed", "sync_overdue", "currency_mismatch",
 ]);
 
 export function FinancialStatus({ report, compact = false }: { report?: FinancialReport; compact?: boolean }) {
@@ -19,11 +19,12 @@ export function FinancialStatus({ report, compact = false }: { report?: Financia
           {report?.state === "stale" ? `${t("finance.stale")} ` : ""}{t(`finance.reason.${reason}`)}
         </span>
       ) : null}
-      {report?.source ? <span className="block break-words">{t("finance.source", { name: report.source.name })}</span> : null}
+      {report?.source ? <span className="block break-words">{t("finance.source", { name: report.source.provider === "manual" ? t("aiHistory.manual") : report.source.name })}</span> : null}
       {report ? <span className="block">{t("finance.period", { start: report.period.start, end: report.period.end })}</span> : null}
       {report?.last_successful_sync_at ? (
         <span className="block">{t("finance.asOf", { at: formatDateTime(report.last_successful_sync_at, undefined, true) })}</span>
       ) : null}
+      {report?.last_recorded_at ? <span className="block">{t("aiHistory.lastRecorded", { at: formatDateTime(report.last_recorded_at, undefined, true) })}</span> : null}
     </span>
   );
 }
@@ -32,7 +33,7 @@ export function FinancialSummary({ report }: { report: FinancialReport }) {
   const { t } = useI18n();
   return (
     <Surface as="section" padding="lg" className="mt-6" data-testid="financial-summary">
-      <h2 className="text-lg font-semibold text-platforma-ink">{t("finance.title")}</h2>
+      <h2 className="text-lg font-semibold text-platforma-ink">{t(report.source?.provider === "manual" ? "aiHistory.manual" : "finance.title")}</h2>
       <div className="mt-3 text-platforma-subtle"><FinancialStatus report={report} /></div>
       {report.state === "unavailable" ? (
         <p className="mt-3 font-semibold text-platforma-subtle">{t("finance.unavailable")}</p>

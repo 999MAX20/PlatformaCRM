@@ -38,6 +38,8 @@ import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useEntityData } from "../../hooks/useEntityData";
 import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
+import { CRMCommandPanel } from "./components/CRMCommandPanel";
+import { AIHistoryPanel } from "./components/AIHistoryPanel";
 
 type NavigatorInsight = {
   id: string;
@@ -473,6 +475,8 @@ export function AIAssistantPage() {
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="space-y-5">
+          {canUseAssistant && <CRMCommandPanel key={`crm-${business.id}`} businessId={business.id} canSuggest={canSuggestActions} canExecute={canExecuteActions && canApproveActions} />}
+          {canViewAnalyst && <AIHistoryPanel key={`history-${business.id}`} businessId={business.id} />}
           <Card className="overflow-hidden">
             <CardBody className="p-4 sm:p-5">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

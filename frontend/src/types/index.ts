@@ -26,6 +26,8 @@ export type Business = {
   timezone: string;
   language: "ru" | "kk" | "en" | string;
   currency: "KZT" | "USD" | "EUR" | "RUB" | string;
+  financial_source_mode?: "external" | "manual";
+  financial_connector?: Id | null;
   legal_name: string;
   tax_id: string;
   invoice_email: string;
@@ -1641,12 +1643,16 @@ export type FinancialReport = {
   state: "unavailable" | "available" | "stale";
   reason: string | null;
   period: { start: string; end: string };
-  source: { id: Id; name: string; provider: string } | null;
+  source: { id: Id | null; name: string; provider: string } | null;
   last_successful_sync_at: string | null;
   currency: string;
   receipts: string | null;
   refunds: string | null;
   net_receipts: string | null;
+  coverage?: "recorded_manual_operations";
+  as_of?: string;
+  last_recorded_at?: string | null;
+  operation_count?: number;
 };
 
 export type OwnerDashboardMetrics = {

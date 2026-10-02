@@ -29,6 +29,8 @@ class FinancialSourceContractTests(TestCase):
         self.connector = BusinessConnector.objects.create(
             business=self.business, provider="1c", capability="finance", name="Isolated accounting fixture", status="connected",
         )
+        self.business.financial_connector = self.connector
+        self.business.save(update_fields=["financial_connector"])
         self.updated_at = timezone.now() - timedelta(hours=2)
         self.run = ConnectorSyncRun.objects.create(
             business=self.business, connector=self.connector, mode="pull", status="succeeded",
@@ -202,7 +204,11 @@ class FinancialSourceContractTests(TestCase):
 
     def test_multiple_supported_sources_are_not_automatically_summed(self):
         BusinessConnector.objects.create(business=self.business, provider="1c", name="Second isolated source", status="connected")
-        self.assert_unavailable(self.financial(), "multiple_sources")
+        self.assertEqual(self.financial()["source"]["id"], self.connector.pk)
+        self.assertEqual(Decimal(self.financial()["receipts"]), Decimal("500.00"))
+        self.business.financial_connector = None
+        self.business.save(update_fields=["financial_connector"])
+        self.assert_unavailable(self.financial(), "no_source")
 
     def test_future_success_and_reader_failure_do_not_expose_finance(self):
         self.run.finished_at = timezone.now() + timedelta(days=1)

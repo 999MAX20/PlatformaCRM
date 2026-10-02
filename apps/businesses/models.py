@@ -42,6 +42,8 @@ class Business(TimeStampedModel):
     timezone = models.CharField(max_length=64, default="UTC")
     language = models.CharField(max_length=16, default="ru")
     currency = models.CharField(max_length=8, default="KZT")
+    financial_source_mode = models.CharField(max_length=16, choices=[("external", "External accounting"), ("manual", "Manual journal")], default="external")
+    financial_connector = models.ForeignKey("integrations.BusinessConnector", null=True, blank=True, on_delete=models.SET_NULL, related_name="financial_source_businesses")
     legal_name = models.CharField(max_length=255, blank=True)
     tax_id = models.CharField(max_length=64, blank=True)
     invoice_email = models.EmailField(blank=True)

@@ -352,7 +352,8 @@ class OwnerDashboardAnalyticsTests(TestCase):
         # An imported amount alone is not evidence of financial growth.
         self.assertEqual(response.data["business_pulse"]["tone"], "setup")
         self.assertIsNone(response.data["revenue"]["total_estimate"])
-        self.assertEqual(response.data["financial"]["reason"], "unsupported_source")
+        # A connector request does not select an accounting source for the business.
+        self.assertEqual(response.data["financial"]["reason"], "no_source")
         self.assertEqual(response.data["latest_business_events"][0]["event_type"], "kaspi_sale_detected")
         self.assertEqual(response.data["connector_health"]["pending"], 1)
         self.assertTrue(response.data["setup"]["sources"]["sales_data"])

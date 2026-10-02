@@ -22,7 +22,19 @@ class BusinessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
         fields = "__all__"
+        read_only_fields = ["owner", "created_at", "updated_at"]
     read_only_fields = ["owner", "created_at", "updated_at"]
+
+    def validate(self, attrs):
+        connector = attrs.get("financial_connector", getattr(self.instance, "financial_connector", None))
+        mode = attrs.get("financial_source_mode", getattr(self.instance, "financial_source_mode", "external"))
+        if connector and (self.instance is None or connector.business_id != self.instance.pk):
+            raise serializers.ValidationError({"financial_connector": "Select an integration belonging to this business."})
+        if connector and connector.capability != "finance":
+            raise serializers.ValidationError({"financial_connector": "Select an accounting integration."})
+        if mode == "manual":
+            attrs["financial_connector"] = None
+        return attrs
 
 
 class BusinessCapabilitySerializer(serializers.ModelSerializer):

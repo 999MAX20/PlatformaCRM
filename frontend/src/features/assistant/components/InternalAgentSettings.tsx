@@ -11,7 +11,7 @@ import { useI18n } from "../../../lib/i18n";
 import type { AgentProfile, Id } from "../../../types";
 
 const sources = ["clients", "leads", "deals", "tasks", "appointments", "knowledge"];
-const tools = ["summarize_conversation", "qualify_lead", "create_lead", "create_task"];
+const tools = ["summarize_conversation", "qualify_lead", "create_lead", "create_task", "crm_read", "crm_create", "crm_update", "crm_archive", "crm_restore", "crm_transition"];
 
 export function InternalAgentSettings({ businessId, profiles, canManage }: { businessId: Id; profiles: AgentProfile[]; canManage: boolean }) {
   const { t } = useI18n();

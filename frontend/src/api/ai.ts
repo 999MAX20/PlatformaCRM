@@ -233,6 +233,7 @@ export const aiApi = {
     );
     return data;
   },
+  getToolApproval: async (id: Id) => (await apiClient.get<ApprovalRequest>(`/api/ai/approval-requests/${id}/`)).data,
   executeTool: async (logId: Id, approvalId?: Id) => {
     const { data } = await apiClient.post<AIToolCallLog>(`/api/ai/tools/${logId}/execute/`, approvalId ? { approval_id: approvalId } : {});
     return data;

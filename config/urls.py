@@ -31,6 +31,7 @@ from apps.ai_core.views import (
     ApprovalRequestViewSet,
     BusinessKnowledgeItemViewSet,
 )
+from apps.ai_core.crm_views import AIHistoryView, CRMReadView, CRMPlanView
 from apps.analytics.views import AnalyticsEventViewSet, ReportWidgetViewSet, ScheduledReportViewSet, owner_dashboard, report_export, report_summary
 from apps.automations.views import AutomationActionViewSet, AutomationConditionViewSet, AutomationRuleViewSet, AutomationRunViewSet
 from apps.billing.views import CurrentSubscriptionViewSet, EntitlementSummaryViewSet, SubscriptionPlanViewSet, UsageSummaryViewSet
@@ -273,6 +274,9 @@ urlpatterns = [
     path("api/ai/assistant/status/", AIAssistantStatusView.as_view(), name="ai_assistant_status"),
     path("api/ai/assistant/chat/", AIAssistantChatView.as_view(), name="ai_assistant_chat"),
     path("api/ai/analyst/brief/", AIAnalystBriefView.as_view(), name="ai_analyst_brief"),
+    path("api/ai/analyst/history/", AIHistoryView.as_view(), name="ai_analyst_history"),
+    path("api/ai/crm/read/", CRMReadView.as_view(), name="ai_crm_read"),
+    path("api/ai/crm/plan/", CRMPlanView.as_view(), name="ai_crm_plan"),
     path("api/ai/owner-brief/daily/", AIOwnerDailyBriefView.as_view(), name="ai_owner_daily_brief"),
     path("api/ai/tools/suggest/", AIToolSuggestView.as_view(), name="ai_tools_suggest"),
     path("api/ai/tools/<int:log_id>/execute/", AIToolExecuteView.as_view(), name="ai_tools_execute"),

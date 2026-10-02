@@ -303,6 +303,8 @@ class AIToolSuggestView(APIView):
             user=request.user,
             conversation=serializer.validated_data.get("conversation"),
             message=serializer.validated_data.get("message", ""),
+            tool_name=serializer.validated_data.get("tool_name"),
+            arguments=serializer.validated_data.get("arguments"),
         )
         return Response(
             {
@@ -327,6 +329,8 @@ class AIToolExecuteView(APIView):
             raise PermissionDenied("Tool call was not found.")
         if not user_can_access_business(request.user, log.business):
             raise PermissionDenied("You do not have access to this business.")
+        if log.tool_name.startswith("crm_") and log.user_id != request.user.pk:
+            raise PermissionDenied("This CRM command belongs to another requester.")
         assert_can(request.user, log.business, Resources.AI_PIPELINE, Actions.EXECUTE, obj=log)
         if log.status not in {AIToolCallLog.Statuses.SUGGESTED, AIToolCallLog.Statuses.EXECUTED}:
             log.status = AIToolCallLog.Statuses.REJECTED
@@ -359,11 +363,11 @@ class AIToolExecuteView(APIView):
                     "detail": "This AI tool action is not permitted.",
                     "approval_required": bool(approval),
                     "approval_status": "permission_denied",
-                    "tool_call": AIToolCallLogSerializer(log).data,
+                    "tool_call": {"id": log.pk, "status": log.status} if log.tool_name.startswith("crm_") else AIToolCallLogSerializer(log).data,
                 },
                 status=403,
             )
-        log, duplicate = execute_tool_call_once(log.id, request.user)
+        log, duplicate = execute_tool_call_once(log.id, request.user, approval_id=approval.id if approval else None)
         if approval and log.status == AIToolCallLog.Statuses.EXECUTED:
             approval.status = ApprovalRequest.Statuses.EXECUTED
             approval.save(update_fields=["status", "updated_at"])

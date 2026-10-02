@@ -1,5 +1,16 @@
 # Client payments — implementation contract
 
+## Owner revision 2026-10-02 — explicit reporting source
+
+The business may explicitly select this journal as its financial analysis source,
+or select one external accounting connector. Never auto-select or combine them.
+Manual totals mean recorded receipts/refunds/net for the requested business-timezone
+period, not certified accounting completeness. Profit/debt and expenses/accruals
+are outside the approved scope. Existing ledger invariants remain unchanged.
+See the current [financial source contract](../integrations/financial-source-contract.md).
+The 22 September exclusion below is retained as historical decision evidence and
+is superseded only for this explicit source-selection/reporting behavior.
+
 ## Owner decision 2026-09-22 — manual accounting is separate
 
 The existing journal is named **Ручной учёт** (Manual accounting). Preserve all

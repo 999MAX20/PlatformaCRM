@@ -26,7 +26,13 @@ def financial_report(business, *, user, start_date, end_date, now=None):
             or not permission.allowed or permission.scope != RolePermission.Scopes.BUSINESS):
         return {**result, "reason": "permission_denied"}
 
-    connectors = list(BusinessConnector.objects.filter(business=business))
+    if business.financial_source_mode == "manual":
+        from apps.analytics.manual_finance import manual_financial_report
+        return manual_financial_report(business, user=user, start_date=start_date, end_date=end_date, result=result)
+
+    if not business.financial_connector_id:
+        return {**result, "reason": "no_source"}
+    connectors = list(BusinessConnector.objects.filter(business=business, pk=business.financial_connector_id))
     supported = [(connector, get_financial_source_reader(connector.provider)) for connector in connectors]
     supported = [(connector, reader) for connector, reader in supported if reader is not None]
     if not supported:

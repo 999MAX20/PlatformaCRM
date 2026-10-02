@@ -150,10 +150,14 @@ class AIToolSuggestSerializer(serializers.Serializer):
     business = serializers.PrimaryKeyRelatedField(queryset=Business.objects.all())
     conversation = serializers.PrimaryKeyRelatedField(queryset=BotConversation.objects.all(), required=False, allow_null=True)
     message = serializers.CharField(required=False, allow_blank=True)
+    tool_name = serializers.ChoiceField(choices=["crm_create", "crm_update", "crm_archive", "crm_restore", "crm_transition"], required=False)
+    arguments = serializers.DictField(required=False)
 
     def validate(self, attrs):
         business = attrs["business"]
         conversation = attrs.get("conversation")
         if conversation and conversation.business_id != business.id:
             raise serializers.ValidationError("Conversation must belong to the selected business.")
+        if ("tool_name" in attrs) != ("arguments" in attrs):
+            raise serializers.ValidationError("Command and arguments must be provided together.")
         return attrs

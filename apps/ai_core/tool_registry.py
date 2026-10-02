@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from django.db import transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from rest_framework.exceptions import PermissionDenied
 
 from apps.ai_core.models import AIToolCallLog
 from apps.activities.services import create_activity_event
@@ -33,6 +34,12 @@ class AIToolDefinition:
 
 
 TOOLS = {
+    "crm_read": AIToolDefinition("crm_read", "Search and read permitted CRM records.", requires_confirmation=False),
+    "crm_create": AIToolDefinition("crm_create", "Create a CRM record after reviewing its fields."),
+    "crm_update": AIToolDefinition("crm_update", "Update the exact reviewed CRM record."),
+    "crm_archive": AIToolDefinition("crm_archive", "Archive the reviewed CRM record."),
+    "crm_restore": AIToolDefinition("crm_restore", "Restore the reviewed CRM record."),
+    "crm_transition": AIToolDefinition("crm_transition", "Apply a reviewed CRM lifecycle action."),
     "create_lead": AIToolDefinition("create_lead", "Create a CRM lead from confirmed context."),
     "create_client": AIToolDefinition("create_client", "Create a client profile."),
     "create_task": AIToolDefinition("create_task", "Create an actionable task and calendar reminder from an AI recommendation."),
@@ -54,6 +61,9 @@ def tool_requires_approval(tool_name):
 def assert_tool_execution_allowed(log, user):
     from apps.ai_core.workflows import assert_employee_tool
     assert_employee_tool(log.business, log.tool_name)
+    if log.tool_name.startswith("crm_"):
+        from apps.ai_core.crm_tools import assert_command_allowed
+        return assert_command_allowed(business=log.business, user=user, tool=log.tool_name, payload=log.input_json, replay=log.status == AIToolCallLog.Statuses.EXECUTED)
     if log.conversation:
         assert_can(user, log.business, Resources.CONVERSATIONS, Actions.VIEW, obj=log.conversation)
     permission = {
@@ -70,9 +80,13 @@ def assert_tool_execution_allowed(log, user):
     return result
 
 
-def suggest_tool_calls(*, business, user, conversation=None, message=""):
+def suggest_tool_calls(*, business, user, conversation=None, message="", tool_name=None, arguments=None):
     from apps.ai_core.workflows import assert_workflow_enabled
     config = assert_workflow_enabled(business, "employee")
+    if tool_name is not None:
+        from apps.ai_core.crm_tools import prepare_command
+        payload = prepare_command(business=business, user=user, tool=tool_name, payload=arguments)
+        return [AIToolCallLog.objects.create(business=business, user=user, tool_name=tool_name, input_json=payload)]
     if conversation:
         assert_can(user, business, Resources.CONVERSATIONS, Actions.VIEW, obj=conversation)
     suggestions = [
@@ -117,10 +131,15 @@ def tool_call_fingerprint(log):
     return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
 
-def execute_tool_call_once(log_id, user):
+def execute_tool_call_once(log_id, user, *, approval_id=None):
     try:
         with transaction.atomic():
             log = AIToolCallLog.objects.select_for_update().select_related("business", "conversation").get(id=log_id)
+            locked_approval = None
+            if log.tool_name.startswith("crm_"):
+                from apps.ai_core.crm_approval import validate_locked_approval
+                locked_approval = validate_locked_approval(log, user, approval_id)
+                assert_tool_execution_allowed(log, user)
             if log.status == AIToolCallLog.Statuses.EXECUTED:
                 return log, True
             if log.status != AIToolCallLog.Statuses.SUGGESTED:
@@ -138,9 +157,16 @@ def execute_tool_call_once(log_id, user):
             log.locked_at = None
             log.executed_at = timezone.now()
             log.save(update_fields=["status", "output_json", "error", "locked_at", "executed_at"])
+            if locked_approval is not None:
+                locked_approval.status = "executed"
+                locked_approval.save(update_fields=["status", "updated_at"])
             return log, False
     except Exception as exc:
         log = AIToolCallLog.objects.get(id=log_id)
+        if log.tool_name.startswith("crm_") and isinstance(exc, PermissionDenied):
+            raise
+        if log.status == AIToolCallLog.Statuses.EXECUTED:
+            return log, True
         log.status = AIToolCallLog.Statuses.FAILED
         log.error = sanitize_error_text(exc)
         log.locked_at = None
@@ -154,6 +180,9 @@ def execute_tool_call(log, user):
 
 
 def _tool_handler(tool_name):
+    if tool_name.startswith("crm_"):
+        from apps.ai_core.crm_tools import execute_command
+        return execute_command
     return {
         "create_client": _execute_create_client,
         "create_lead": _execute_create_lead,

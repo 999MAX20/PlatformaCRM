@@ -8,6 +8,8 @@ contracts; detailed technical documentation and evidence retain their owners.
 
 ## Current backend boundary and documentation status
 
+- [AI CRM commands and historical finance, 02.10](testing/ai-crud-history-20261002.md) — reviewed mutations, full-period aggregates, explicit financial source and remaining AI acceptance.
+
 - [File antivirus and quarantine](security/file-antivirus.md) — ClamAV, private download guards, worker recovery, import scanning and rollout boundary.
 
 - [Ребрендинг в PlatformaCRM](operations/rebranding-2026-09-28.md) — новое название, единый репозиторий PlatformaCRM и сохранённые технические идентификаторы совместимости.

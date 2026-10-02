@@ -34,10 +34,11 @@ def run_ai_request(
     model_tier=None,
     temperature=None,
     response_language=None,
+    response_contract=None,
 ):
     assert_entitlement_allows(business, EntitlementMetrics.AI_REQUESTS)
     runtime_context = dict(input_json or {})
-    scenario = "analyst" if prompt_type == "business_event_analyst" else "employee" if prompt_type in {"crm_assistant", "daily_summary"} else None
+    scenario = "analyst" if prompt_type in {"business_event_analyst", "business_history_analyst"} else "employee" if prompt_type in {"crm_assistant", "daily_summary", "crm_action_plan"} else None
     scenario_config = None
     if source == AIRequestLog.Sources.CRM and scenario:
         from apps.ai_core.workflows import assert_workflow_enabled, workflow_fingerprint
@@ -57,6 +58,8 @@ def run_ai_request(
     prompt = build_prompt(prompt_type=prompt_type, user_input=user_input, context=context, runtime_context=runtime_context, response_language=response_language)
     if grounded:
         prompt.messages[0]["content"] += ANSWER_CONTRACT
+    if response_contract:
+        prompt.messages[0]["content"] += response_contract
     result = generate_text(
         prompt,
         prompt_type=prompt_type,

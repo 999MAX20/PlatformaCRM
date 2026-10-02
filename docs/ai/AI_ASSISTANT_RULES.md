@@ -1,5 +1,27 @@
 # AI Assistant And AI Analyst Rules
 
+## Staff CRM commands and historical finance — owner decision 2026-10-02
+
+AI-CRUD-HISTORY-20261002 extends the employee assistant to clients, leads, deals,
+tasks and appointments: scoped search/read, creation, detail updates, explicit
+lifecycle actions, archive and authorized restore. A natural-language request
+prepares one strict command; every staff mutation needs an exact preview and
+current approval. Existing domain services, membership/role/tenant checks, expiry,
+record-version checks and replay protection remain mandatory. No hard delete,
+arbitrary ORM/SQL, account administration or money movement is introduced.
+
+The historical analyst aggregates all accessible records in the requested period
+(up to ten years), compares the preceding equal-length period and can explain
+those totals with sources. Entity statuses are current statuses of period records,
+not reconstructed states at period end. Operational counts cannot establish cash.
+The business explicitly chooses manual journal OR one external accounting connector.
+Receipts/refunds/net are approved; profit/debt, expenses/accruals are excluded.
+Manual coverage means recorded operations, not accounting completeness. The
+[financial contract](../integrations/financial-source-contract.md) supersedes the
+earlier manual-source exclusion below. The event analyst keeps its existing boundary.
+Implementation, acceptance and remaining AI work are recorded in
+[the task report](../testing/ai-crud-history-20261002.md).
+
 ## Controlled AI automation — owner decision 2026-10-02
 
 This later decision supersedes the earlier per-action staff-confirmation requirement

@@ -1,5 +1,58 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## AI-CRUD-HISTORY-20261002 — scoped local verification complete; publication pending
+
+- Source: owner's follow-up to AI-FUNCTIONAL-20261002 explicitly requests universal
+  CRM CRUD, full historical/financial analytics and an inventory of remaining AI work.
+  This expands the earlier bounded scope; prior evidence/closures remain unchanged.
+- Owner primary 01a0fc25-6286-77a2-94be-cabb2b179381, generation 3, registry idle.
+  Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit;
+  starting HEAD/base c48b4e1007dd6a2fbbd296d8a1c82650e48e4dd0; checkout clean.
+- Mode implementation + gap inventory; gap types code and financial-source policy.
+  Reuse AI jobs/provider, tool logs/approvals, entity serializers/domain services,
+  archive/audit, scoped selectors, analytics and verified financial-source contract.
+- Observable result: employee can locate/read and propose create/update/archive/restore
+  for clients, leads, deals, tasks and appointments through reachable assistant UI;
+  exact mutation preview/confirmation, domain lifecycle, current rights, no cross-tenant
+  links, stale-target rejection and replay protection. Read/history queries must not
+  confuse a short context sample with the full requested period.
+- Financial owner decisions: business explicitly selects manual CRM journal OR one
+  external accounting connector; sources never auto-select/mix. This revises the
+  22.09 exclusion of the manual journal from analytics. Scope is receipts, refunds,
+  their difference and period comparison; profit/debt remain unavailable because
+  expenses/accruals are explicitly excluded. Production external reader registry
+  remains empty: selector support is not a live financial connector certification.
+- Risk high: entity mutations/permissions and financial semantics. Focused isolated
+  backend tests after each coherent service/API slice: happy/invalid, role/tenant,
+  exact approval/expiry/payload changes, stale target, rollback/replay, lifecycle,
+  data-source disable/revocation and no-data/provider failure. Completion: affected
+  AI/domain/analytics dependent suites, check/migration drift, frontend build/types,
+  targeted assistant CRUD + period/report desktop/mobile browser flow, diff hygiene.
+- Permission framework unchanged; underlying rights remain mandatory. Domain services
+  own notifications/BusinessEvents; all writes audited. No money movement, external
+  messaging, live paid provider calls, working-DB migration or deployment authorized
+  by this implementation scope. No new source checkout or parallel writer.
+- Progress/checkpoint after one hour: CRUD/approval/planner/read API, history report/
+  grounded answers, selected financial source and reachable UI implemented.
+  [Detailed report](../ai-crud-history-20261002.md) owns commands, coverage/failures
+  and remaining AI stages. Final command/planner tests 23 PASS, dependent corrected 113 PASS;
+  initial dependent 266 PASS plus invalid test label and superseded source assertion,
+  both resolved by corrected run. Finance/history 33 PASS and answers 4 PASS.
+  Six selected desktop/mobile behaviors passed across final runs: reviewed write/
+  provider recovery, stale refusal, selected source/history totals. Locale check found
+  RU fallback overwriting new EN/KK keys; fixed, two final locale/keyboard tests PASS.
+  Mobile financial viewport-width check PASS; screenshots inspected. Final build/
+  types/5209 i18n keys/app/widget and bundle budgets PASS; Django check/drift PASS.
+  No full-project/real-provider/target-PostgreSQL gate claimed. Local logs
+  output/ai-crud-history-20261002. Required failed iterations remain in the report.
+- New migration businesses.0011_financial_analysis_source adds two Business fields.
+  Isolated migration PASS. Working DB read-only migrate --plan shows only this
+  migration; explicit local backup/application approval requested, still pending.
+- Delivery: verified commit and normal push HEAD:main with remote readback and actual CI.
+  Base push CI 37003968705 read back SUCCESS. No deployment workflow added.
+  Next: review/stage exact owned paths, commit/static gate, normal push/readback;
+  working-DB migration remains pending owner approval and is not part of local PASS.
+
 ## AI-FUNCTIONAL-20261002 — scoped local acceptance complete; published
 
 - Owner/source: request 02.10 plus controlled-creation/calendar decisions and
