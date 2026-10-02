@@ -1,5 +1,43 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## Explicit handoff generation 2 → 3 — completed, 2026-10-02
+
+Transition key: 01a0d6c1-3ee4-7f92-b94c-0242bb2eb35e →
+01a0fc25-6286-77a2-94be-cabb2b179381 / generation 3.
+Project local-3368c3df041be97f9549005fc6749ad2; canonical root
+C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit.
+
+Source DoD and successor comprehension were verified before ownership transfer
+(completed successor turn 01a0fc25-696e-70d2-a7ac-7b6d6ac06dfd).
+Native list_archived_threads on local confirmed the exact source ID above,
+title PlatformaCRM, cwd C:/Users/user/Desktop/PlatformaCRM, updatedAt 1790936893.
+The first read preceded archive completion; one bounded repeat confirmed it.
+Registry was rechecked unchanged before release: generation 3, matching primary,
+retired source and verified awaiting_archive handoff. Release sets transition idle,
+successorThreadId null and handoff null without incrementing generation.
+Source remains retired; this primary waits for a fresh owner request.
+
+Policy publication d79ec9d18391eacc5f8b5f98149271c82fc3643e is confirmed on
+remote main by ls-remote and explicit fetch. Source docs review/hygiene PASS;
+previous UI candidate 32dcb5dbc234c82515e900b70cf48a6c352a6fc5 has 10 browser,
+build/types/i18n, bundle/static PASS and actual CI 36993394556 SUCCESS.
+Local navigation evidence exists under output/ai-agent-navigation-20261002;
+the report is docs/testing/ai-agent-reference-redesign-20261002.md.
+Policy CI 36995220688 remained IN_PROGRESS at 2026-10-02T10:28:46Z
+(frontend SUCCESS, backend in progress); no full CI PASS or deployment claim.
+
+Finalization plan: metadata only; risk is ownership/receipt consistency. Check
+JSON invariants, changed local references and working/index/committed-range diff
+hygiene; review exactly four metadata paths, then conventional commit and normal
+push HEAD:main with remote SHA readback. Publication commit is identified by this
+receipt's Git history; final SHA/CI observation is returned in the task response
+and sanitized local output/git-publication-20260921/ci-<SHA>.json.
+No app tests/install/build, DB migration, provider calls or server changes are
+required or performed. No permission, notification, BusinessEvent or AI behavior
+changes. Existing services and prior closures remain; billing/external integrations
+are outside scope. Hook status remains REQUIRES_REVIEW_AND_TRUST.
+
+
 Дата: 2026-09-24. Это карточка исполнения, не продуктовый backlog.
 
 ## Policy publication and explicit handoff, 2026-10-02
