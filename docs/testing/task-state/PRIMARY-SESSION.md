@@ -1,5 +1,33 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## LOCAL-MIGRATIONS-20261005 — owner-authorized working DB update
+
+- Owner explicitly approved backup and the three pending local migrations after
+  reproduced `/api/auth/me/` 500: missing Business financial_source_mode column.
+- Same registered primary/root/branch; starting clean HEAD 4c64d46. No code changes.
+  Plan: verify exact SQLite target and migration plan, consistent SQLite backup,
+  apply only planned additions, check integrity/row preservation/profile/check.
+- Backup: ignored local `output/local-server-20261005/db-before-migrations-20261005T120953Z.sqlite3`;
+  SQLite backup API and integrity_check PASS. Canonical db.sqlite3 target asserted.
+- Applied businesses.0011_financial_analysis_source,
+  scheduling.0008_specialist_schedule_exceptions, tasks.0010_scheduled_reminder_delivery.
+  All migration operations OK. Existing business-table row counts unchanged.
+  Initial all-table equality assertion correctly exposed expected Django metadata
+  additions (3 migration records, 2 content types, 8 permissions); explicit delta
+  check PASS, not data loss. Post-migration integrity_check PASS.
+- CurrentUserView authenticated request-factory check for the affected local user
+  returns 200 with business profile. A bare synthetic AccessToken HTTP probe returned
+  401 because it omitted session-bound authentication; it is not browser-login proof.
+  Browser password/cookie login was not replayed. User can retry the existing page.
+- `manage.py migrate --check` and `manage.py check` PASS. No seed/reset, provider
+  calls, deployment, dependency install or repeated application suites.
+- Backend started from canonical root, Python PID 14192/8856, :8000; Vite PID14568,
+  canonical frontend, :5173. Their stdout/stderr and local result JSON are under
+  output/local-server-20261005. Health/db and frontend HTTP 200 on server launch.
+- Earlier pending-migration statements below are superseded by this receipt.
+  Code/receipt CI 37012604357 and 37012747188 were read back SUCCESS on 05.10.
+  Next: user retries login; no new AI development phase authorized.
+
 ## AI-CRUD-HISTORY-20261002 — scoped local verification complete; code published
 
 - Source: owner's follow-up to AI-FUNCTIONAL-20261002 explicitly requests universal
