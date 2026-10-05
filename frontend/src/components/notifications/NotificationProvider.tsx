@@ -41,6 +41,7 @@ export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationIte
     <StatusNotice
       data-testid="action-feedback"
       compact
+      actionPlacement="corner"
       tone={tone}
       title={message}
       className="pointer-events-auto w-[min(360px,calc(100vw-2rem))] shadow-panel backdrop-blur transition"
@@ -59,12 +60,13 @@ export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationIte
         </button>
       )}
       details={item.actionLabel && item.onAction ? (
+        <div className="flex justify-center">
           <Button
             data-testid="action-feedback-action"
             type="button"
             size="sm"
             variant="secondary"
-            className="mt-2 h-8"
+            className="h-8"
             isLoading={isActing}
             onClick={async () => {
               setIsActing(true);
@@ -81,6 +83,7 @@ export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationIte
           >
             {item.actionLabel}
           </Button>
+        </div>
       ) : null}
     />
   );

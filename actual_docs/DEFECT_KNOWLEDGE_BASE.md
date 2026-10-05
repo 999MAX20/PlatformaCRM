@@ -1109,6 +1109,21 @@ Copy this section for every new confirmed precedent:
 - Audit rule: instructions alone cannot protect internal data already included in
   a customer-facing model prompt; minimize the supplied context.
 
+### ZD-045 — Feedback palette and locale fallback contradicted the intended UI
+
+- Confirmed on b82c8a2: warning/danger soft tokens still produced warm pastel
+  surfaces, StatusNotice placed actions at the top, and EN/KK Russian fallback
+  spreads overrode earlier localized entries.
+- Neutral soft tokens, centered actions with separate corner dismiss controls,
+  corrected dictionary precedence and a checker guard address the shared causes.
+  Generic transport copy no longer promises that uncertain writes were saved.
+- Status: FIXED_BRANCH, focused local checks PASS; publication receipt is in
+  PRIMARY-SESSION. [Scope, failures, checks and screenshots](../docs/testing/ui-feedback-20261005.md).
+- Audit rule: inspect rendered shared-token consumers and actual dictionary
+  precedence; matching key names and an old-color blacklist alone are insufficient.
+  Review screenshots in addition to contrast/overflow checks; inline-flex button
+  styling can defeat a margin-based centering attempt.
+
 ## Maintenance Contract
 
 - Add an entry when a defect is confirmed, not after memory has faded.

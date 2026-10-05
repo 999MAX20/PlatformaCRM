@@ -60,7 +60,7 @@ export function AiInsightCard({
         <p className="mt-1 text-sm leading-6 text-platforma-subtle">{description}</p>
       </div>
       {actionLabel ? (
-        <div className="inline-flex items-center gap-2 text-sm font-semibold text-ai-700">
+        <div className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-ai-700 sm:justify-start">
           {actionLabel}
           {href ? <ArrowRight size={16} className="transition group-hover:translate-x-1" /> : null}
         </div>

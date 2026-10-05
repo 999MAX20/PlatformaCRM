@@ -34,6 +34,13 @@ function sourceFiles(directory) {
 }
 
 for (const [language, dictionary] of Object.entries(dictionaries)) {
+  // A fallback spread after translated entries silently restores Russian copy.
+  const block = dictionaryBlock(language);
+  const fallback = block.indexOf("...ru");
+  const firstKey = block.search(/^\s*"[^"]+":/m);
+  if (fallback !== -1 && firstKey !== -1 && fallback > firstKey) {
+    failures.push(`${language}: Russian fallback must precede translated entries.`);
+  }
   const missing = [...allKeys].filter((key) => !(key in dictionary));
   if (missing.length) {
     failures.push(`${language}: missing ${missing.length} keys: ${missing.slice(0, 20).join(", ")}`);

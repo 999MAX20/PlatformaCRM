@@ -45,6 +45,7 @@ export function appErrorNoticeTone(error: AppError): StatusNoticeTone {
 
 type StatusNoticeProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   action?: ReactNode;
+  actionPlacement?: "center" | "corner";
   ariaLive?: "assertive" | "off" | "polite";
   compact?: boolean;
   description?: ReactNode;
@@ -57,6 +58,7 @@ type StatusNoticeProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
 
 export function StatusNotice({
   action,
+  actionPlacement = "center",
   ariaLive,
   className,
   compact = false,
@@ -86,7 +88,7 @@ export function StatusNotice({
         className,
       )}
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className={cn("flex gap-3", actionPlacement === "corner" ? "flex-row items-start justify-between" : "flex-col sm:flex-row sm:items-center sm:justify-between")}>
         <div className="flex min-w-0 items-start gap-3">
           <Icon
             aria-hidden="true"
@@ -98,7 +100,7 @@ export function StatusNotice({
             {description ? <div className="mt-1 text-sm leading-6 text-platforma-subtle">{description}</div> : null}
           </div>
         </div>
-        {action ? <div className="shrink-0">{action}</div> : null}
+        {action ? <div className={cn("flex shrink-0 flex-wrap items-center justify-center gap-2", actionPlacement === "center" && "sm:justify-end")}>{action}</div> : null}
       </div>
       {details ? <div className="mt-3">{details}</div> : null}
     </div>

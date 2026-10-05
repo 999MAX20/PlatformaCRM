@@ -1,6 +1,7 @@
 import { ru } from "./ru";
 
 export const kk: Record<string, string> = {
+  ...ru,
   "aiAgents.authority.autoReply": "Автоматты жауаптар қосулы",
   "aiAgents.hint.tool.create_appointment": "Клиент қызметті, маманды және нақты уақытты таңдауы керек. Сақтау алдында бос уақыт қайта тексеріледі.",
   "aiAgents.hint.tool.create_client": "Өшірілгенде агент жаңа клиенттерді құрмайды. Бар клиент жазбалары өзгертілмейді.",
@@ -129,7 +130,6 @@ export const kk: Record<string, string> = {
   "payments.pagination": "Төлемдер журналының беттері",
   "payments.count": "Операциялар: {count}",
   "payments.next": "Келесі",
-  ...ru,
   "aiWorkflow.source.clients": "Клиенттер",
   "aiWorkflow.source.leads": "Өтінімдер",
   "aiWorkflow.source.deals": "Мәмілелер",
@@ -1109,8 +1109,8 @@ export const kk: Record<string, string> = {
   "actions.errorUnavailable": "Бұл жазба енді қолжетімсіз. Бетті жаңартып, жаңартылған тізімнен жалғастырыңыз.",
   "actions.errorConflict": "Жазба жұмыс барысында өзгерді. Деректерді жаңартып, қайталаңыз.",
   "actions.errorRateLimited": "Тым көп әрекет жасалды. Аздап күтіп, қайталаңыз.",
-  "actions.errorTemporary": "Сервер әрекетті аяқтамады. Экрандағы деректер сақталды; сәлден соң қайталаңыз.",
-  "actions.errorNetwork": "Байланыс үзілді. Өзгерістер жоғалған жоқ; байланыс қалпына келгенде қайталаңыз.",
+  "actions.errorTemporary": "Әрекетті аяқтау мүмкін болмады. Сәл күтіп, қайталамас бұрын нәтижесін тексеріңіз.",
+  "actions.errorNetwork": "Байланыс үзілді. Интернет байланысын тексеріңіз. Байланыс қалпына келгенде әрекеттің нәтижесін тексеріңіз.",
   "actions.errorGeneric": "Әрекет орындалмады. Күйді тексеріп, қайталаңыз.",
   "fallback.inline.title": "Әрекетті орындау мүмкін болмады",
   "fallback.page.title": "Деректерді ашу мүмкін болмады",

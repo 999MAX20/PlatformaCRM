@@ -50,10 +50,10 @@ test("semantic actions retain readable default, hover, pressed, focus and disabl
     await expect(button).toHaveCSS("box-shadow", /rgb\(0, 122, 89\)/);
   }
   const warning = page.getByTestId("tone-warning");
-  await expect(warning).toHaveCSS("background-color", "rgb(255, 245, 232)");
+  await expect(warning).toHaveCSS("background-color", "rgb(240, 244, 242)");
   expect(await textContrast(warning)).toBeGreaterThanOrEqual(4.5);
   await warning.hover();
-  await expect(warning).not.toHaveCSS("background-color", "rgb(255, 245, 232)");
+  await expect(warning).not.toHaveCSS("background-color", "rgb(240, 244, 242)");
   await warning.evaluate((node) => Promise.all(node.getAnimations().map((animation) => animation.finished)));
   const hoverColor = await warning.evaluate((node) => getComputedStyle(node).backgroundColor);
   expect(await textContrast(warning)).toBeGreaterThanOrEqual(4.5);
@@ -85,8 +85,8 @@ test("fields, checkbox, switch and tabs share keyboard focus and selected colors
   await expect(field).toHaveCSS("outline-color", "rgb(0, 122, 89)");
   await expect(page.getByRole("textbox", { name: "Invalid field" })).toHaveCSS("border-color", "rgb(163, 59, 53)");
   await expect(page.getByRole("textbox", { name: "Read-only field" })).toHaveCSS("background-color", "rgb(240, 244, 242)");
-  await expect(page.getByTestId("warning-alpha")).toHaveCSS("background-color", "rgba(255, 245, 232, 0.45)");
-  await expect(page.getByTestId("danger-alpha")).toHaveCSS("background-color", "rgba(255, 240, 238, 0.6)");
+  await expect(page.getByTestId("warning-alpha")).toHaveCSS("background-color", "rgba(240, 244, 242, 0.45)");
+  await expect(page.getByTestId("danger-alpha")).toHaveCSS("background-color", "rgba(240, 244, 242, 0.6)");
   await expect(page.getByTestId("inbox-action-composer")).toBeDisabled();
   await expect(page.getByTestId("inbox-action-composer")).toHaveCSS("background-color", "rgb(238, 241, 239)");
   for (const name of ["Disabled field", "Disabled select"]) {

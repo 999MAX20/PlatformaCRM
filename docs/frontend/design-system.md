@@ -1,12 +1,22 @@
 # PlatformaCRM Design System Notes
 
-Last updated: 2026-10-02
+Last updated: 2026-10-05
+
+## Neutral feedback surfaces — 2026-10-05
+
+Owner-approved palette version 2 replaces warning.soft and danger.soft with
+surface.subtle (#F0F4F2). Warning/error meaning remains in icons, text and borders;
+pink, peach and orange pastel backgrounds are no longer used for these states.
+Recovery actions center vertically beside copy on wide screens and horizontally
+below it on narrow screens. Toast dismiss controls stay in the upper corner;
+toast recovery actions are centered below the message.
 
 ## Shared neutral / emerald colors — 2026-10-02
 
-The owner-approved shared palette is version1 of
+The initial owner-approved shared palette was version1 of
 [`semantic-tokens.json`](../../frontend/src/theme/semantic-tokens.json).
-Its35 values match the approved CRM/Market proposal exactly. The former proposal
+Its35 values matched the approved CRM/Market proposal; version2 changes above
+supersede its two warm feedback surfaces. The former proposal
 status is superseded by implementation approval. JSON takes precedence over the
 generated reference images; their invented records, fields and labels are not
 product requirements. This replaces the previous warm/peach direction without
@@ -31,9 +41,9 @@ single file; opacity modifiers remain supported. `styles.css` contains legacy
 | disabled-{surface,content,border} | disabled roles, opacity1 |
 
 Filled brand/danger/AI controls use white text. Caution remains warning, not
-destructive: soft background plus warning content, with4%/8% content mixed into
-the soft surface for hover/pressed. These are derived states, not new palette
-values. Solid focus ring and translucent focus halo have separate roles.
+destructive: neutral soft background plus warning content, with surface.default
+on hover and surface.hover when pressed to preserve text contrast. Solid focus
+ring and translucent focus halo have separate roles.
 Disabled/loading controls preserve their behavior and share explicit neutral
 tokens instead of reducing opacity. Native checkbox/radio accents use brand;
 their native disabled drawing may additionally reflect browser/platform behavior.

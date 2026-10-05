@@ -24,9 +24,9 @@
     "success.content": "#237A4A",
     "success.soft": "#EEF8F2",
     "warning.content": "#9A5A13",
-    "warning.soft": "#FFF5E8",
+    "warning.soft": "#F0F4F2",
     "danger.content": "#A33B35",
-    "danger.soft": "#FFF0EE",
+    "danger.soft": "#F0F4F2",
     "danger.hover": "#8F302B",
     "danger.pressed": "#762620",
     "info.content": "#245E8A",
@@ -38,6 +38,6 @@
     "disabled.content": "#728078",
     "disabled.border": "#D7E1DC"
   },
-  "version": 1,
-  "approvedAt": "2026-10-02"
+  "version": 2,
+  "approvedAt": "2026-10-05"
 }

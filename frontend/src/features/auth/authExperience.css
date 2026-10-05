@@ -549,7 +549,7 @@
 }
 
 .platforma-auth-card label span:last-child:not(:first-child) {
-  color: #fca5a5 !important;
+  color: var(--color-danger-content) !important;
 }
 
 .platforma-auth-helper {
@@ -560,11 +560,11 @@
 }
 
 .platforma-auth-error {
-  border: 1px solid rgba(248, 113, 113, 0.28);
+  border: 1px solid var(--color-border-default);
   border-radius: 16px;
-  background: rgba(127, 29, 29, 0.28);
+  background: var(--color-danger-soft);
   padding: 12px 14px;
-  color: #fecaca;
+  color: var(--color-danger-content);
   font-size: 14px;
   line-height: 1.45;
 }

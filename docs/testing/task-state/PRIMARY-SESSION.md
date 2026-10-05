@@ -1,5 +1,36 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## UI-FEEDBACK-20261005 — locally verified; publication next
+
+- Owner explicitly authorized this UI task in the side conversation; primary is
+  idle, registry/ownership remain unchanged. Canonical root, existing branch
+  codex/ui-testing-toolkit, clean starting HEAD b82c8a278a422a744d1e1b3a0cff692900c25cbd.
+- Result: remove warm pastel feedback surfaces, align recovery actions, check
+  merchant-safe RU/KK/EN copy, inventory existing feedback and screenshot states.
+- Gap: shared visual/copy policy. Reuse semantic tokens, StatusNotice, existing
+  fallback/error normalization and browser fixtures. No backend, working DB,
+  permission, BusinessEvent, AI behavior or provider changes.
+- Risk: shared surfaces affect callers; preserve semantic icons/text and action
+  behavior. Check representative consumers, desktop/mobile, locales and keyboard.
+- Focused checks: existing error/feedback/fallback policy suites, inventory and
+  targeted browser recovery states. Completion: build/types/i18n and bundle once,
+  diff hygiene, screenshot review, task-owned commit/normal push and actual CI.
+- Completed: neutral warning/danger surfaces, centered actions/corner dismissal,
+  shared unread-message notice, corrected RU fallback order in EN/KK, safe copy.
+- [Report and exact checks](../ui-feedback-20261005.md),
+  [source inventory](../ui-feedback-inventory-20261005.md). Local gallery under
+  output/playwright/feedback-20261005; preview 127.0.0.1:5198, PID14020.
+- PASS: focused Node suites (20; final affected 9 rechecked), 4 palette/keyboard
+  cases, 3 real isolated session recovery flows, localized screenshot/axe matrix,
+  i18n/types/app+widget build, bundle. Failures and corrections retained in report.
+  Production build remains valid after only dev-fixture and unused legacy CSS edits.
+- Fetched actual main equals starting HEAD; origin/main initially stale because
+  configured fetch refspecs omit main, reconciled via explicit main refspec.
+  No competing writer/HEAD drift or unrelated dirty files. CI workflow only;
+  no push-triggered deployment workflow found. Registry unchanged.
+- Next: review/stage only this task, commit, committed-range static, normal push,
+  remote SHA readback and actual CI. No full E2E, provider or working-DB changes.
+
 ## LOCAL-MIGRATIONS-20261005 — owner-authorized working DB update
 
 - Owner explicitly approved backup and the three pending local migrations after

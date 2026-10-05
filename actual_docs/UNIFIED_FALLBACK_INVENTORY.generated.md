@@ -4,8 +4,8 @@
 
 ## Coverage Summary
 
-- Routes: **42** (derived from the functional certification registry).
-- Distinct frontend API operations: **608** (181 queries, 427 mutations).
+- Routes: **44** (derived from the functional certification registry).
+- Distinct frontend API operations: **614** (184 queries, 430 mutations).
 - Background tasks: **14**.
 - Async/provider status values: **83** across 15 models.
 - Stable backend/API error codes: **29**.
@@ -68,6 +68,8 @@ Detection records which fallback signals currently exist in the owning page sour
 
 | ID | Route | Permission owner | Current evidence | Intended recovery location | Source |
 | --- | --- | --- | --- | --- | --- |
+| PUBLIC-DOCUMENTS | /documents | None | loading:not_detected; empty:not_detected; denied:guarded; failure:not_detected; recovery:not_detected | authentication_flow | frontend/src/features/documents/DocumentsPage.tsx |
+| PUBLIC-DOCUMENT | /documents/:documentId | None | loading:not_detected; empty:not_detected; denied:guarded; failure:not_detected; recovery:not_detected | authentication_flow | frontend/src/features/documents/DocumentsPage.tsx |
 | AUTH-LOGIN | /login | PublicRoute | loading:detected; empty:not_detected; denied:not_applicable; failure:detected; recovery:detected | authentication_flow | frontend/src/features/auth/LoginPage.tsx |
 | AUTH-SIGNUP | /signup | PublicRoute | loading:detected; empty:not_detected; denied:not_applicable; failure:detected; recovery:detected | authentication_flow | frontend/src/features/auth/SignupPage.tsx |
 | AUTH-MFA | /mfa | PublicRoute | loading:detected; empty:not_detected; denied:not_applicable; failure:detected; recovery:detected | authentication_flow | frontend/src/features/auth/MfaPage.tsx |
@@ -123,28 +125,33 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/activity-events/:param/archive/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/activities.ts:8#archive |
 | POST | /api/activity-events/:param/restore/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/activities.ts:8#restore |
 | GET | /api/activity-events/actors/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/activities.ts:16 |
-| GET | /api/ai/agent-profiles/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:248#list |
-| POST | /api/ai/agent-profiles/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:248#create |
-| DELETE | /api/ai/agent-profiles/:param/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:248#remove |
-| GET | /api/ai/agent-profiles/:param/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:248#retrieve |
-| PATCH | /api/ai/agent-profiles/:param/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:248#update |
-| POST | /api/ai/agent-profiles/:param/archive/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:248#archive |
-| POST | /api/ai/agent-profiles/:param/restore/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:248#restore |
+| GET | /api/ai/agent-profiles/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:249#list |
+| POST | /api/ai/agent-profiles/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:249#create |
+| DELETE | /api/ai/agent-profiles/:param/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:249#remove |
+| GET | /api/ai/agent-profiles/:param/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:249#retrieve |
+| PATCH | /api/ai/agent-profiles/:param/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:249#update |
+| POST | /api/ai/agent-profiles/:param/archive/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:249#archive |
+| POST | /api/ai/agent-profiles/:param/restore/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:249#restore |
 | GET | /api/ai/analyst/brief/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:200 |
+| GET | /api/ai/analyst/history/ | query | ai_assistant:view / ai_pipeline:suggest / ai_analyst:view by operation + entity_scope | safe_read | safe read only | ai_assistant_or_history_report | frontend/src/api/aiCRM.ts:21 |
+| POST | /api/ai/analyst/history/ | mutation | ai_assistant:view / ai_pipeline:suggest / ai_analyst:view by operation + entity_scope | none_proven | no automatic retry | ai_assistant_or_history_report | frontend/src/api/aiCRM.ts:23 |
 | POST | /api/ai/approval-requests/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:220 |
+| GET | /api/ai/approval-requests/:param/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:236 |
 | POST | /api/ai/approval-requests/:param/approve/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:230 |
 | POST | /api/ai/assistant/chat/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:186 |
 | GET | /api/ai/assistant/status/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:170 |
+| POST | /api/ai/crm/plan/ | mutation | ai_assistant:view / ai_pipeline:suggest / ai_analyst:view by operation + entity_scope | none_proven | no automatic retry | ai_assistant_or_history_report | frontend/src/api/aiCRM.ts:19 |
+| GET | /api/ai/crm/read/ | query | ai_assistant:view / ai_pipeline:suggest / ai_analyst:view by operation + entity_scope | safe_read | safe read only | ai_assistant_or_history_report | frontend/src/api/aiCRM.ts:17 |
 | GET | /api/ai/jobs/:param/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:140 |
-| GET | /api/ai/knowledge-items/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:252#list |
-| POST | /api/ai/knowledge-items/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:252#create |
-| DELETE | /api/ai/knowledge-items/:param/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:252#remove |
-| GET | /api/ai/knowledge-items/:param/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:252#retrieve |
-| PATCH | /api/ai/knowledge-items/:param/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:252#update |
-| POST | /api/ai/knowledge-items/:param/archive/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:252#archive |
-| POST | /api/ai/knowledge-items/:param/restore/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:252#restore |
+| GET | /api/ai/knowledge-items/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:253#list |
+| POST | /api/ai/knowledge-items/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:253#create |
+| DELETE | /api/ai/knowledge-items/:param/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:253#remove |
+| GET | /api/ai/knowledge-items/:param/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:253#retrieve |
+| PATCH | /api/ai/knowledge-items/:param/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:253#update |
+| POST | /api/ai/knowledge-items/:param/archive/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:253#archive |
+| POST | /api/ai/knowledge-items/:param/restore/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:253#restore |
 | GET | /api/ai/owner-brief/daily/ | query | ai_assistant:view | safe_read | safe read only | ai_action_or_job_details | frontend/src/api/ai.ts:206 |
-| POST | /api/ai/tools/:param/execute/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:237 |
+| POST | /api/ai/tools/:param/execute/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:238 |
 | POST | /api/ai/tools/suggest/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:212 |
 | GET | /api/analytics-events/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:6#list |
 | POST | /api/analytics-events/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:6#create |
@@ -187,31 +194,31 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/appointments/:param/reschedule/ | mutation | appointments:view | none_proven | no automatic retry | calendar_or_appointment_workspace | frontend/src/api/appointments.ts:65 |
 | POST | /api/appointments/:param/restore/ | mutation | appointments:view | none_proven | no automatic retry | calendar_or_appointment_workspace | frontend/src/api/appointments.ts:39#restore |
 | GET | /api/appointments/available-slots/ | query | appointments:view | safe_read | safe read only | calendar_or_appointment_workspace | frontend/src/api/appointments.ts:75 |
-| POST | /api/auth/change-email/confirm/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:144 |
-| POST | /api/auth/change-email/request/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:139 |
-| POST | /api/auth/change-password/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:105 |
-| GET | /api/auth/login-history/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:110 |
-| POST | /api/auth/logout/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:197 |
-| GET | /api/auth/me/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:95 |
-| PATCH | /api/auth/me/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:100 |
-| DELETE | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:219 |
-| GET | /api/auth/me/avatar/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:210 |
-| POST | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:216 |
-| POST | /api/auth/mfa/disable/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:180 |
-| POST | /api/auth/mfa/enrollment/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:230 |
-| POST | /api/auth/mfa/enrollment/start/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:214 |
-| POST | /api/auth/mfa/recovery-codes/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:174 |
-| POST | /api/auth/mfa/sessions/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:192 |
-| GET | /api/auth/mfa/status/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:161 |
-| POST | /api/auth/mfa/step-up/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:166 |
-| POST | /api/auth/mfa/verify/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:245 |
-| POST | /api/auth/password-reset/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:164 |
-| POST | /api/auth/password-reset/request/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:158 |
-| GET | /api/auth/sessions/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:125<br>frontend/src/api/auth.ts:129 |
-| POST | /api/auth/sessions/:param/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:135 |
-| POST | /api/auth/signup/owner/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:149 |
-| POST | /api/auth/social/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:137 |
-| POST | /api/auth/token/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:127 |
+| POST | /api/auth/change-email/confirm/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:148 |
+| POST | /api/auth/change-email/request/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:143 |
+| POST | /api/auth/change-password/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:109 |
+| GET | /api/auth/login-history/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:114 |
+| POST | /api/auth/logout/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:222 |
+| GET | /api/auth/me/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:99 |
+| PATCH | /api/auth/me/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:104 |
+| DELETE | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:224 |
+| GET | /api/auth/me/avatar/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:215 |
+| POST | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:221 |
+| POST | /api/auth/mfa/disable/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:184 |
+| POST | /api/auth/mfa/enrollment/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:255 |
+| POST | /api/auth/mfa/enrollment/start/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:239 |
+| POST | /api/auth/mfa/recovery-codes/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:178 |
+| POST | /api/auth/mfa/sessions/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:196 |
+| GET | /api/auth/mfa/status/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:165 |
+| POST | /api/auth/mfa/step-up/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:170 |
+| POST | /api/auth/mfa/verify/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:270 |
+| POST | /api/auth/password-reset/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:175 |
+| POST | /api/auth/password-reset/request/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:169 |
+| GET | /api/auth/sessions/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:129<br>frontend/src/api/auth.ts:133 |
+| POST | /api/auth/sessions/:param/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:139 |
+| POST | /api/auth/signup/owner/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:160 |
+| POST | /api/auth/social/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:148 |
+| POST | /api/auth/token/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:138 |
 | GET | /api/automation-rules/ | query | automations:view | safe_read | safe read only | automation_run_details | frontend/src/api/automations.ts:6#list |
 | POST | /api/automation-rules/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:6#create |
 | DELETE | /api/automation-rules/:param/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:6#remove |
@@ -241,49 +248,50 @@ Detection records which fallback signals currently exist in the owning page sour
 | GET | /api/billing/entitlements/ | query | owner_or_administrator | safe_read | safe read only | settings_billing | frontend/src/api/billing.ts:18 |
 | GET | /api/billing/plans/ | query | owner_or_administrator | safe_read | safe read only | settings_billing | frontend/src/api/billing.ts:6 |
 | GET | /api/billing/usage-summary/ | query | owner_or_administrator | safe_read | safe read only | settings_billing | frontend/src/api/billing.ts:14 |
-| GET | /api/bot-channels/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:16#list |
-| POST | /api/bot-channels/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:16#create |
-| DELETE | /api/bot-channels/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:16#remove |
-| GET | /api/bot-channels/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:16#retrieve |
-| PATCH | /api/bot-channels/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:16#update |
-| POST | /api/bot-channels/:param/archive/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:16#archive |
-| POST | /api/bot-channels/:param/instagram-config/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:233 |
-| GET | /api/bot-channels/:param/instagram-status/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:263 |
-| POST | /api/bot-channels/:param/instagram-test-connection/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:250 |
-| POST | /api/bot-channels/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:16#restore |
-| POST | /api/bot-channels/:param/set-telegram-webhook/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:87 |
-| POST | /api/bot-channels/:param/sync-telegram-updates/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:124 |
-| POST | /api/bot-channels/:param/telegram-config/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:75 |
-| GET | /api/bot-channels/:param/telegram-status/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:94 |
-| POST | /api/bot-channels/:param/telegram-test-connection/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:114 |
-| POST | /api/bot-channels/:param/whatsapp-config/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:167 |
-| GET | /api/bot-channels/:param/whatsapp-status/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:198 |
-| POST | /api/bot-channels/:param/whatsapp-test-connection/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:185 |
-| GET | /api/bot-conversations/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:21#list |
-| POST | /api/bot-conversations/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:21#create |
-| DELETE | /api/bot-conversations/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:21#remove |
-| GET | /api/bot-conversations/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:21#retrieve |
-| PATCH | /api/bot-conversations/:param/ | mutation | conversations:view + integrations:view | none_proven | no automatic retry | bot_or_channel_details + conversation_delivery_details | frontend/src/api/bots.ts:21#update<br>frontend/src/api/inbox.ts:303 |
-| POST | /api/bot-conversations/:param/archive/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:21#archive |
-| POST | /api/bot-conversations/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:21#restore |
-| POST | /api/bot-conversations/:param/suggest-reply/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:53 |
-| GET | /api/bot-messages/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:22#list |
-| POST | /api/bot-messages/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:22#create |
-| DELETE | /api/bot-messages/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:22#remove |
-| GET | /api/bot-messages/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:22#retrieve |
-| PATCH | /api/bot-messages/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:22#update |
-| POST | /api/bot-messages/:param/archive/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:22#archive |
-| POST | /api/bot-messages/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:22#restore |
+| GET | /api/bot-channels/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:24#list |
+| POST | /api/bot-channels/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:24#create |
+| DELETE | /api/bot-channels/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:24#remove |
+| GET | /api/bot-channels/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:24#retrieve |
+| PATCH | /api/bot-channels/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:24#update |
+| POST | /api/bot-channels/:param/archive/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:24#archive |
+| POST | /api/bot-channels/:param/instagram-config/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:241 |
+| GET | /api/bot-channels/:param/instagram-status/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:271 |
+| POST | /api/bot-channels/:param/instagram-test-connection/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:258 |
+| POST | /api/bot-channels/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:24#restore |
+| POST | /api/bot-channels/:param/set-telegram-webhook/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:95 |
+| POST | /api/bot-channels/:param/sync-telegram-updates/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:132 |
+| POST | /api/bot-channels/:param/telegram-config/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:83 |
+| GET | /api/bot-channels/:param/telegram-status/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:102 |
+| POST | /api/bot-channels/:param/telegram-test-connection/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:122 |
+| POST | /api/bot-channels/:param/whatsapp-config/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:175 |
+| GET | /api/bot-channels/:param/whatsapp-status/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:206 |
+| POST | /api/bot-channels/:param/whatsapp-test-connection/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:193 |
+| GET | /api/bot-conversations/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:29#list |
+| POST | /api/bot-conversations/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:29#create |
+| DELETE | /api/bot-conversations/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:29#remove |
+| GET | /api/bot-conversations/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:29#retrieve |
+| PATCH | /api/bot-conversations/:param/ | mutation | conversations:view + integrations:view | none_proven | no automatic retry | bot_or_channel_details + conversation_delivery_details | frontend/src/api/bots.ts:29#update<br>frontend/src/api/inbox.ts:303 |
+| POST | /api/bot-conversations/:param/archive/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:29#archive |
+| POST | /api/bot-conversations/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:29#restore |
+| POST | /api/bot-conversations/:param/suggest-reply/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:61 |
+| GET | /api/bot-messages/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:30#list |
+| POST | /api/bot-messages/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:30#create |
+| DELETE | /api/bot-messages/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:30#remove |
+| GET | /api/bot-messages/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:30#retrieve |
+| PATCH | /api/bot-messages/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:30#update |
+| POST | /api/bot-messages/:param/archive/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:30#archive |
+| POST | /api/bot-messages/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:30#restore |
 | GET | /api/bots/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:5#list |
 | POST | /api/bots/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:5#create |
 | DELETE | /api/bots/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:5#remove |
 | GET | /api/bots/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:5#retrieve |
 | PATCH | /api/bots/:param/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:5#update |
-| POST | /api/bots/:param/activate/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:8 |
+| POST | /api/bots/:param/activate/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:16 |
 | POST | /api/bots/:param/archive/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:5#archive |
-| POST | /api/bots/:param/channels/ensure/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:18 |
-| POST | /api/bots/:param/pause/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:12 |
-| POST | /api/bots/:param/preview/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:49 |
+| POST | /api/bots/:param/channels/ensure/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:26 |
+| PUT | /api/bots/:param/configuration/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:10 |
+| POST | /api/bots/:param/pause/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:20 |
+| POST | /api/bots/:param/preview/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:57 |
 | POST | /api/bots/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:5#restore |
 | GET | /api/business-connectors/ | query | integrations:view | safe_read | safe read only | integration_details | frontend/src/api/connectors.ts:161#list |
 | POST | /api/business-connectors/ | mutation | integrations:view | none_proven | no automatic retry | integration_details | frontend/src/api/connectors.ts:161#create |
@@ -426,7 +434,7 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/inbox/conversations/:param/set-priority/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:179 |
 | POST | /api/inbox/conversations/:param/suggest-reply/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:212 |
 | GET | /api/inbox/conversations/summary/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:142 |
-| GET | /api/integration-event-logs/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:26 |
+| GET | /api/integration-event-logs/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:34 |
 | GET | /api/lead-form-fields/ | query | leads:view | safe_read | safe read only | lead_form_settings | frontend/src/api/leadForms.ts:17#list |
 | POST | /api/lead-form-fields/ | mutation | leads:view | none_proven | no automatic retry | lead_form_settings | frontend/src/api/leadForms.ts:17#create |
 | DELETE | /api/lead-form-fields/:param/ | mutation | leads:view | none_proven | no automatic retry | lead_form_settings | frontend/src/api/leadForms.ts:17#remove |
@@ -576,9 +584,9 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/pricing/kaspi/rules/:param/recommend/ | mutation | integrations:view | none_proven | no automatic retry | pricing_operation_details | frontend/src/api/pricing.ts:232 |
 | POST | /api/pricing/kaspi/rules/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | pricing_operation_details | frontend/src/api/pricing.ts:223#restore |
 | POST | /api/pricing/kaspi/rules/bulk-update/ | mutation | integrations:view | none_proven | no automatic retry | pricing_operation_details | frontend/src/api/pricing.ts:275 |
-| GET | /api/public/website-chat/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:286 |
-| POST | /api/public/website-chat/:param/conversations/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:295 |
-| POST | /api/public/website-chat/:param/conversations/:param/messages/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:302 |
+| GET | /api/public/website-chat/:param/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:294 |
+| POST | /api/public/website-chat/:param/conversations/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:303 |
+| POST | /api/public/website-chat/:param/conversations/:param/messages/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:310 |
 | GET | /api/quick-replies/ | query | conversations:view | safe_read | safe read only | inbox_composer | frontend/src/api/quickReplies.ts:4#list |
 | POST | /api/quick-replies/ | mutation | conversations:view | none_proven | no automatic retry | inbox_composer | frontend/src/api/quickReplies.ts:4#create |
 | DELETE | /api/quick-replies/:param/ | mutation | conversations:view | none_proven | no automatic retry | inbox_composer | frontend/src/api/quickReplies.ts:4#remove |

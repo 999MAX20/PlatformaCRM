@@ -1,6 +1,7 @@
 import { ru } from "./ru";
 
 export const en: Record<string, string> = {
+  ...ru,
   "aiAgents.authority.autoReply": "Automatic replies enabled",
   "aiAgents.hint.tool.create_appointment": "The customer must select the service, specialist and exact time. Availability is checked again before saving.",
   "aiAgents.hint.tool.create_client": "When disabled, the agent does not create new clients. Existing client records are not changed.",
@@ -129,7 +130,6 @@ export const en: Record<string, string> = {
   "payments.pagination": "Payment journal pages",
   "payments.count": "Operations: {count}",
   "payments.next": "Next",
-  ...ru,
   "aiWorkflow.source.clients": "Clients",
   "aiWorkflow.source.leads": "Leads",
   "aiWorkflow.source.deals": "Deals",
@@ -1106,8 +1106,8 @@ export const en: Record<string, string> = {
   "actions.errorUnavailable": "This item is no longer available. Refresh the page and continue from the updated list.",
   "actions.errorConflict": "The record changed while you were working. Refresh and try again.",
   "actions.errorRateLimited": "Too many attempts. Wait a moment and retry.",
-  "actions.errorTemporary": "The server did not complete the action. Your data is still here; retry in a moment.",
-  "actions.errorNetwork": "Connection interrupted. Your changes were not lost; retry when the connection returns.",
+  "actions.errorTemporary": "The action could not be completed. Wait a moment and check the result before trying again.",
+  "actions.errorNetwork": "Connection interrupted. Check your internet connection. Once it returns, check the result of the action.",
   "actions.errorGeneric": "The action was not completed. Review the state and try again.",
   "fallback.inline.title": "The action could not be completed",
   "fallback.page.title": "The data could not be opened",

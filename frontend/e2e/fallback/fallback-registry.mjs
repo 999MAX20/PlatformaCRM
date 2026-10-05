@@ -34,6 +34,7 @@ const merchant = (permissionOwner, retryLocation = "owning_page") => ({
 export const apiModulePolicies = {
   activities: merchant("analytics:view"),
   ai: merchant("ai_assistant:view", "ai_action_or_job_details"),
+  aiCRM: merchant("ai_assistant:view / ai_pipeline:suggest / ai_analyst:view by operation + entity_scope", "ai_assistant_or_history_report"),
   analytics: merchant("analytics:view"),
   appointments: merchant("appointments:view", "calendar_or_appointment_workspace"),
   auth: merchant("authenticated_user", "account_security"),

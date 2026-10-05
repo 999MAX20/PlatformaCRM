@@ -1,4 +1,4 @@
-import { Bell, Check, Menu, MessageSquareText, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { Bell, Check, Menu, SlidersHorizontal, Sparkles, X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { useNavigate } from "react-router";
@@ -21,6 +21,7 @@ import { mobileNavigationDrawerId } from "./MobileNav";
 import type { PageHeaderConfig } from "./PageHeaderContext";
 import { useNotificationSoundPreference } from "../../lib/notificationSound";
 import { NotificationSoundWatcher } from "../notifications/NotificationSoundWatcher";
+import { UnreadMessagesNotice } from "../notifications/UnreadMessagesNotice";
 
 export function Header({
   menuOpen,
@@ -424,36 +425,15 @@ export function Header({
           </div>
           <HeaderAccountLink user={user} membership={activeMembership} />
           {chatToastOpen ? (
-            <div className="fixed right-4 top-20 z-[90] w-[min(360px,calc(100vw-2rem))] rounded-card border border-platforma-border bg-surface-card p-4 shadow-premium ring-1 ring-platforma-danger/[0.16]">
-              <div className="flex items-start gap-3">
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-card bg-[var(--platforma-danger-soft)] text-platforma-danger">
-                  <MessageSquareText size={21} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-platforma-ink">{t("header.chatToastTitle")}</p>
-                  <p className="mt-1 text-sm font-semibold leading-5 text-platforma-subtle">
-                    {t("header.chatToastText", { count: unreadChatMessages > 99 ? "99+" : unreadChatMessages })}
-                  </p>
-                  <button
-                    type="button"
-                    className="platforma-focus-ring mt-3 rounded-control bg-brand-500 px-3 py-2 text-xs font-semibold text-white ring-1 ring-brand-600/10 transition hover:bg-brand-600"
-                    onClick={() => {
-                      setChatToastOpen(false);
-                      navigate("/app/conversations?unread=true");
-                    }}
-                  >
-                    {t("header.openMessages")}
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  className="platforma-focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
-                  onClick={() => setChatToastOpen(false)}
-                  aria-label={t("common.close")}
-                >
-                  <X size={17} />
-                </button>
-              </div>
+            <div className="fixed right-4 top-20 z-[90] w-[min(360px,calc(100vw-2rem))]">
+              <UnreadMessagesNotice
+                count={unreadChatMessages}
+                onDismiss={() => setChatToastOpen(false)}
+                onOpen={() => {
+                  setChatToastOpen(false);
+                  navigate("/app/conversations?unread=true");
+                }}
+              />
             </div>
           ) : null}
         </div>

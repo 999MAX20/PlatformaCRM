@@ -29,8 +29,8 @@
   --platforma-warning: var(--color-warning-content);
   --platforma-warning-soft: var(--color-warning-soft);
   --platforma-warning-bold: var(--color-warning-soft);
-  --platforma-warning-bold-hover: color-mix(in srgb, var(--color-warning-content) 4%, var(--color-warning-soft));
-  --platforma-warning-bold-pressed: color-mix(in srgb, var(--color-warning-content) 8%, var(--color-warning-soft));
+  --platforma-warning-bold-hover: var(--color-surface-default);
+  --platforma-warning-bold-pressed: var(--color-surface-hover);
   --platforma-danger: var(--color-danger-content);
   --platforma-danger-soft: var(--color-danger-soft);
   --platforma-danger-hover: var(--color-danger-hover);
