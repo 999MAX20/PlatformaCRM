@@ -58,12 +58,13 @@ test("creation requires purpose; CRM settings drive work, approval and analytics
   await editor.getByRole("switch", { name: "Изменить статус агента CRM workspace" }).click();
   await expect.poll(async () => (await session.read(`bots/${bot.id}`)).status).toBe("active");
   await editor.getByRole("tab", { name: "Работа с CRM", exact: true }).click();
+  await editor.locator("summary").filter({ hasText: "Действия с CRM" }).click();
   await expect(editor.getByLabel("Раздел CRM", { exact: true })).toContainText("Задачи");
-  await editor.getByRole("textbox", { name: "Вопрос AI", exact: true }).fill("What tasks need attention?");
-  const chat = page.waitForRequest(request => request.url().endsWith("/api/ai/assistant/chat/") && request.method() === "POST");
-  await editor.getByRole("button", { name: "Спросить AI", exact: true }).click();
-  expect((await chat).postDataJSON().agent).toBe(bot.id);
-  await expect(editor.getByRole("button", { name: "Спросить AI", exact: true })).toBeEnabled();
+  await editor.getByRole("textbox", { name: "Сообщение агенту", exact: true }).fill("What tasks need attention?");
+  const chat = page.waitForRequest(request => /\/api\/ai\/conversations\/[^/]+\/turns\/$/.test(request.url()) && request.method() === "POST");
+  await editor.getByRole("button", { name: "Отправить", exact: true }).click();
+  expect((await chat).postDataJSON().mode).toBe("work");
+  await expect(editor.getByRole("textbox", { name: "Сообщение агенту", exact: true })).toHaveValue("");
   const title = `Confirmed ${info.project.name}`;
   const proposal = await session.action("ai/tools/suggest", { business: session.business, agent: bot.id, tool_name: "crm_create", arguments: { entity: "tasks", values: { title } } });
   expect(proposal.suggested_actions[0].input_json._agent.agent_id).toBe(bot.id);
@@ -128,7 +129,7 @@ test("staff use CRM without configuration access and old routes redirect", async
   const session = await crmSession(page, "business_manager@example.com");
   await page.goto("/app/ai-assistant");
   await expect(page).toHaveURL(new RegExp(`/ai-agents/${bot.id}/work$`));
-  await expect(page.getByRole("textbox", { name: "Вопрос AI", exact: true })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Сообщение агенту", exact: true })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Профиль", exact: true })).toHaveCount(0);
   await expect(page.locator('[data-focus-return-id="ai-agent-create"]')).toHaveCount(0);
   const directory = await session.read("ai/agents", { business: session.business });

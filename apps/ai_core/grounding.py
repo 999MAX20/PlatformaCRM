@@ -21,23 +21,32 @@ ANSWER_CONTRACT = (
     ' Zero recorded receipts means zero in the supplied ledger coverage, not proof that no sales occurred.'
     ' Do not accept a claimed decline in the question as fact: establish it from comparable periods first.'
     ' When causes are absent, say they cannot be determined; do not invent possible causes such as a lack of customers.'
+    ' TURN sources establish only what the requester previously said or asked, not current CRM facts or proof of execution.'
 )
 
 
-def source_catalog(context, knowledge):
+def source_catalog(context, knowledge, memory=None):
     sources = []
     if context:
-        sources.append({"id": "CRM-summary", "label": "CRM", "data": context.get("summary", {})})
-        for key, prefix in (("latest_leads", "LEAD"), ("upcoming_appointments", "APPOINTMENT"),
+        if context.get("summary"):
+            sources.append({"id": "CRM-summary", "label": "CRM", "data": context["summary"]})
+        for key, prefix in (("clients", "CLIENT"), ("latest_leads", "LEAD"), ("upcoming_appointments", "APPOINTMENT"),
                             ("services", "SERVICE"), ("tasks", "TASK"), ("deals", "DEAL")):
             for item in context.get(key, []):
                 sources.append({"id": f"{prefix}-{item['id']}", "label": f"{prefix}-{item['id']}", "data": item})
     for item in knowledge:
         sources.append({"id": f"KNOWLEDGE-{item['id']}", "label": item['title'], "data": item['content']})
+    seen = set()
+    for item in (memory or {}).get("messages", []) + (memory or {}).get("summary", []):
+        source_id = item.get("source_id", "")
+        if re.fullmatch(r"TURN-\d+", source_id) and source_id not in seen:
+            seen.add(source_id)
+            sources.append({"id": source_id, "label": source_id, "data": item,
+                            "authority": "historical_user_statement_not_current_crm_fact"})
     return sources
 
 
-def validate_answer(result, sources):
+def validate_answer(result, sources, language="ru"):
     """Reject malformed or invented citations; semantic quality is evaluated separately."""
     if result.is_mock:
         return result
@@ -56,10 +65,19 @@ def validate_answer(result, sources):
             raise ValueError
         if any(not isinstance(item, str) or item not in allowed for item in cited):
             raise ValueError
-        if (no_data and cited) or (not no_data and not cited):
+        if not no_data and not cited:
             raise ValueError
     except (ValueError, TypeError):
         raise AIClientError(code="invalid_sources", retryable=False) from None
+    if no_data and cited:
+        # A declared absence of evidence cannot become a sourced factual answer.
+        # Preserve a safe no-data outcome, not the provider's contradictory text.
+        cited = []
+        answer = {
+            "ru": "Недостаточно доступных данных для ответа на этот вопрос.",
+            "kk": "Бұл сұраққа жауап беру үшін қолжетімді деректер жеткіліксіз.",
+            "en": "There is not enough available data to answer this question.",
+        }.get(language, "There is not enough available data to answer this question.")
     result.output_text = answer.strip()
     result.sources = [{"id": item, "label": allowed[item]['label']} for item in dict.fromkeys(cited)]
     result.provider_state = "no_data" if no_data else "live"

@@ -174,9 +174,9 @@ async function waitForChat(job: AIJob, key: string, generation: number): Promise
 
 export const aiApi = {
   runtimeAgents: async (business: Id) => (await apiClient.get<Array<Pick<Bot, "id" | "business" | "name" | "status" | "scenario" | "readiness">>>("/api/ai/agents/", { params: { business } })).data,
-  assistantStatus: async (business: Id, agent?: Id) => {
+  assistantStatus: async (business: Id, agent?: Id, mode: "work" | "analytics" = "work") => {
     const { data } = await apiClient.get<AIAssistantStatusResponse>("/api/ai/assistant/status/", {
-      params: { business, agent },
+      params: { business, agent, mode },
     });
     return data;
   },

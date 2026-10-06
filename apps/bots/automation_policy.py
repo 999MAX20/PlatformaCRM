@@ -34,6 +34,9 @@ def automatic_creation_actor(conversation, actions, *, expected_fingerprint=None
     """Called again inside the domain transaction immediately before writes."""
     from apps.conversations.auto_pipeline import resolve_auto_pipeline_config
     from apps.bots.models import Bot
+    from apps.ai_core.inbox_runtime import assert_current_inbound
+
+    assert_current_inbound(conversation)
 
     conversation.bot = Bot.objects.select_for_update().get(pk=conversation.bot_id, business_id=conversation.business_id)
 

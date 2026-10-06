@@ -84,7 +84,7 @@ def build_history_report(*, business, user, start, end):
         "state": "available" if any(value["count"] for value in operations.values()) or current["state"] != "unavailable" else "no_data"}
 
 
-def explain_history(*, business, user, start, end, question):
+def explain_history(*, business, user, start, end, question, conversation_memory=None):
     import json
     from rest_framework.exceptions import PermissionDenied
     from apps.ai_core.services import run_ai_request
@@ -101,7 +101,7 @@ def explain_history(*, business, user, start, end, question):
         " Explain only supplied deterministic totals and differences. Do not invent causes or forecasts."
     )
     result, log = run_ai_request(business=business, user=user, prompt_type="business_history_analyst",
-        user_input=question, input_json={"crm_context": {"summary": report}}, response_contract=contract)
+        user_input=question, input_json={"crm_context": {"summary": report}, **({"conversation_memory": conversation_memory} if conversation_memory else {})}, response_contract=contract)
     business.refresh_from_db()
     fresh = build_history_report(business=business, user=user, start=start, end=end)
     def signature(value):

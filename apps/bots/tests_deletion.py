@@ -30,6 +30,20 @@ class AgentDeletionTests(TestCase):
         self.assertEqual(response.status_code, 201, response.data)
         return Bot.objects.get(pk=response.data["id"])
 
+    def test_delete_stops_conversation_turn_and_preserves_its_history(self):
+        from apps.ai_core.conversation_access import create_staff_conversation
+        from apps.ai_core.conversation_state import start_turn
+        from apps.ai_core.models import AgentTurn
+        bot = self.create("crm")
+        activate_bot(bot=bot)
+        thread = create_staff_conversation(business=self.business, agent_id=bot.pk, user=self.owner)
+        turn, job = start_turn(conversation_id=thread.pk, user=self.owner, message="Create a task", idempotency_key="delete-test")
+        delete_agent(bot=bot, actor=self.owner)
+        turn.refresh_from_db(); job.refresh_from_db()
+        self.assertEqual(turn.status, AgentTurn.Statuses.CANCELLED)
+        self.assertEqual(job.status, AIJob.Statuses.FAILED)
+        self.assertEqual(turn.message, "Create a task")
+
     def test_inbox_delete_preserves_history_stops_work_and_hides_configuration(self):
         bot = self.create()
         other = self.create()

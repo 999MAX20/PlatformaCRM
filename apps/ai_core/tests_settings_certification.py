@@ -87,3 +87,36 @@ class SettingsCertificationTests(TestCase):
                     response = self.api.post("/api/ai/assistant/chat/", {"business": self.business.pk, "agent": bot.pk, "message": "What needs attention?"}, format="json")
                 self.assertIn(response.status_code, (200, 202), response.data)
                 self.assert_provider_settings(generate, version, expected, inbox=False)
+
+    def test_qualification_and_reply_share_selected_model_but_not_creativity(self):
+        from apps.conversations.ai_qualification import qualify_conversation
+        from apps.bots.ai import suggest_bot_reply
+        bot = create_bot(validated_data={"business": self.business, "name": "Inbox"})
+        profile = AgentProfile.objects.create(business=self.business, bot=bot, name=bot.name)
+        self.save_configuration(bot, profile, 2)
+        bot.refresh_from_db()
+        conversation = BotConversation.objects.create(business=self.business, bot=bot, channel="website")
+        BotMessage.objects.create(conversation=conversation, direction="inbound", text="Какая цена?")
+        responses = [AIClientResult('{"intent":"price_question","summary":"Price request","requires_human_review":false}', "gpt-4o-mini"),
+                     AIClientResult("Reply", "gpt-4o-mini")]
+        with patch("apps.ai_core.services.generate_text", side_effect=responses) as generate:
+            qualify_conversation(conversation=conversation)
+            suggest_bot_reply(conversation=conversation)
+        self.assertEqual([call.kwargs["model"] for call in generate.call_args_list], ["gpt-4o-mini", "gpt-4o-mini"])
+        self.assertEqual([call.kwargs["temperature"] for call in generate.call_args_list], [0.2, 0.8])
+        self.assertEqual(generate.call_args_list[0].args[0].response_format, {"type": "json_object"})
+        self.assertFalse(hasattr(generate.call_args_list[1].args[0], "response_format"))
+
+    def test_inflight_inbox_settings_change_rejects_late_response(self):
+        from apps.bots.ai import suggest_bot_reply
+        from rest_framework.exceptions import PermissionDenied
+        bot = create_bot(validated_data={"business": self.business, "name": "Inbox"})
+        profile = AgentProfile.objects.create(business=self.business, bot=bot, name=bot.name)
+        conversation = BotConversation.objects.create(business=self.business, bot=bot, channel="website")
+        BotMessage.objects.create(conversation=conversation, direction="inbound", text="Hello")
+        def change_settings(*args, **kwargs):
+            profile.is_active = False
+            profile.save()
+            return AIClientResult("Late answer", "test")
+        with patch("apps.ai_core.services.generate_text", side_effect=change_settings), self.assertRaises(PermissionDenied):
+            suggest_bot_reply(conversation=conversation)

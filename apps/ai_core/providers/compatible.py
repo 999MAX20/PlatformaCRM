@@ -51,6 +51,8 @@ class OpenAICompatibleProvider(BaseAIProvider):
             "temperature": temperature,
             "max_tokens": getattr(settings, "AI_MAX_OUTPUT_TOKENS", 1200),
         }
+        if getattr(prompt, "response_format", None):
+            payload["response_format"] = prompt.response_format
         endpoint = self.base_url.rstrip("/") + "/chat/completions"
         api_request = request.Request(
             endpoint,

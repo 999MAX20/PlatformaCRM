@@ -68,6 +68,15 @@ class ProviderQualityTests(SimpleTestCase):
         self.assertEqual(payload['messages'][0]['role'], 'system')
         self.assertLessEqual(payload['max_tokens'], 1200)
 
+    def test_provider_forwards_only_explicit_structured_output_capability(self):
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = b'{"choices":[{"message":{"content":"{}"}}]}'
+        prompt = build_prompt("conversation_qualification", "Return JSON")
+        prompt.response_format = {"type": "json_object"}
+        with patch("apps.ai_core.providers.compatible.request.urlopen", return_value=response) as send:
+            OpenRouterProvider().generate_text(prompt, model="openai/gpt-4o-mini", temperature=0.2, timeout_seconds=3)
+        self.assertEqual(json.loads(send.call_args.args[0].data)["response_format"], {"type": "json_object"})
+
     def test_model_settings_use_openrouter_names_and_validate_temperature(self):
         self.assertEqual(validate_ai_settings({'model': 'gpt-4o'})['model'], 'openai/gpt-4o')
         from rest_framework.exceptions import ValidationError
@@ -87,6 +96,14 @@ class ProviderQualityTests(SimpleTestCase):
         self.assertEqual(result.sources, [{'id': 'known', 'label': 'Known'}])
         result = validate_answer(AIClientResult('{"answer":"No data","source_ids":[],"no_data":true}', 'm'), [])
         self.assertEqual(result.provider_state, 'no_data')
+
+    def test_contradictory_no_data_discards_text_and_citations(self):
+        result = validate_answer(AIClientResult('{"answer":"Unsupported profit is 999999","source_ids":["known"],"no_data":true}', 'm'),
+                                 [{"id": "known", "label": "Known"}], "en")
+        self.assertEqual(result.provider_state, "no_data")
+        self.assertEqual(result.sources, [])
+        self.assertNotIn("999999", result.output_text)
+        self.assertIn("not enough", result.output_text)
 
     def test_grounding_accepts_json_fence_but_still_validates_sources(self):
         for source, accepted in [('known', True), ('invented', False)]:
@@ -201,6 +218,21 @@ class AIWorkflowQualityTests(TestCase):
         self.assertTrue(latest['next_available_slots'])
         ScheduleException.objects.create(business=self.business, resource=other, date=tomorrow, start_time=time(9), end_time=time(18), is_day_off=True)
         self.assertEqual(build_bot_scheduling_context(conversation)['next_available_slots'], [])
+
+    def test_price_question_keeps_prices_without_unrequested_booking_context(self):
+        from apps.services.models import Service
+        from apps.bots.scheduling_context import build_bot_scheduling_context
+        conversation, message = self._conversation()
+        message.text = "Сколько стоит консультация?"
+        message.save(update_fields=["text"])
+        Service.objects.create(business=self.business, name="Консультация", price_from=12000)
+        with patch("apps.bots.scheduling_context.get_available_slots") as slots:
+            context = build_bot_scheduling_context(conversation, booking_only=True)
+        self.assertFalse(context["booking_intent"])
+        self.assertEqual(context["services"][0]["price_from"], "12000.00")
+        self.assertEqual(context["required_questions"], [])
+        self.assertEqual(context["next_available_slots"], [])
+        slots.assert_not_called()
 
     def _job(self):
         return AIJob.objects.create(business=self.business, user=self.owner, source='crm', prompt_type='crm_assistant', idempotency_key='quality-job', input_json={'user_input': 'hi'})

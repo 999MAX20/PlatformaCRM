@@ -16,6 +16,7 @@ import { channelLabel, conversationTitle } from "../conversationUtils";
 import { ConversationComposer } from "./ConversationComposer";
 import { Pill, Tooltip } from "./ConversationPrimitives";
 import { MessageBubble } from "./MessageBubble";
+import { InboxMemoryControl } from "./InboxMemoryControl";
 
 type ConversationThreadPaneProps = {
   selected: InboxConversation | null;
@@ -126,6 +127,7 @@ export function ConversationThreadPane({
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
+                <InboxMemoryControl key={selected.id} conversation={selected} />
                 <Tooltip label={t("conversations.assignTooltip")}>
                   <Button
                     data-conversation-action-id="assign"

@@ -15,7 +15,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--suite", choices=["smoke", "profiles", "temperature", "scope", "dialogue", "analytics", "commands", "pipeline", "final_responses", "final_crm"], default="smoke")
+    parser.add_argument("--suite", choices=["smoke", "profiles", "temperature", "scope", "dialogue", "analytics", "commands", "pipeline", "final_responses", "final_crm", "continuity"], default="smoke")
+    parser.add_argument("--max-calls", type=int, choices=range(1, 751), default=500, metavar="1..750")
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--child", action="store_true")
     parser.add_argument("--case-filter", default="")
@@ -39,6 +40,7 @@ def main():
             env.update(AI_PROVIDER="openrouter", OPENROUTER_API_KEY=key, OPENROUTER_BASE_URL="https://openrouter.ai/api/v1", AI_ENABLED="True", AI_QUEUE_LIVE_REQUESTS="False", AI_HTTP_TIMEOUT_SECONDS="45", AI_MAX_OUTPUT_TOKENS="600",
                        **{name: str(getattr(settings, name)) for name in ("AI_MODEL", "AI_FAST_MODEL", "AI_SMART_MODEL", "AI_CHEAP_MODEL", "AI_PROMPT_MODEL_TIERS")})
             command = [sys.executable, __file__, "--child", "--suite", args.suite, "--output", args.output]
+            command.extend(["--max-calls", str(args.max_calls)])
             if args.case_filter:
                 command.extend(["--case-filter", args.case_filter])
             if args.live:
@@ -53,7 +55,7 @@ def main():
     from scripts.ai_behavior.fixtures import Laboratory, NOW
     from scripts.ai_behavior.transport import Transport
     from scripts.ai_behavior.suites import Evaluation
-    transport = Transport(directory, live=args.live)
+    transport = Transport(directory, live=args.live, max_calls=args.max_calls)
     transport.load_prices()
     import hashlib
     import time

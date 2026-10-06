@@ -33,6 +33,10 @@ from apps.ai_core.views import (
 )
 from apps.ai_core.crm_views import AIHistoryView, CRMReadView, CRMPlanView
 from apps.ai_core.agent_views import AIRuntimeAgentsView
+from apps.ai_core.conversation_views import (
+    AgentConversationListView, AgentConversationDetailView, AgentConversationTurnsView,
+    AgentConversationResetView, AgentTurnCancelView, AgentTurnRetryView, AgentTurnConfirmView,
+)
 from apps.analytics.views import AnalyticsEventViewSet, ReportWidgetViewSet, ScheduledReportViewSet, owner_dashboard, report_export, report_summary
 from apps.automations.views import AutomationActionViewSet, AutomationConditionViewSet, AutomationRuleViewSet, AutomationRunViewSet
 from apps.billing.views import CurrentSubscriptionViewSet, EntitlementSummaryViewSet, SubscriptionPlanViewSet, UsageSummaryViewSet
@@ -273,6 +277,13 @@ urlpatterns = [
     path("api/integrations/instagram/webhook/", InstagramWebhookView.as_view(), name="instagram_webhook"),
     path("api/public-api/clients/", PublicApiClientsView.as_view(), name="public_api_clients"),
     path("api/ai/agents/", AIRuntimeAgentsView.as_view(), name="ai_runtime_agents"),
+    path("api/ai/conversations/", AgentConversationListView.as_view(), name="ai_conversations"),
+    path("api/ai/conversations/<uuid:conversation_id>/", AgentConversationDetailView.as_view(), name="ai_conversation"),
+    path("api/ai/conversations/<uuid:conversation_id>/turns/", AgentConversationTurnsView.as_view(), name="ai_conversation_turns"),
+    path("api/ai/conversations/<uuid:conversation_id>/reset-memory/", AgentConversationResetView.as_view(), name="ai_conversation_reset"),
+    path("api/ai/conversations/<uuid:conversation_id>/turns/<int:turn_id>/cancel/", AgentTurnCancelView.as_view(), name="ai_turn_cancel"),
+    path("api/ai/conversations/<uuid:conversation_id>/turns/<int:turn_id>/retry/", AgentTurnRetryView.as_view(), name="ai_turn_retry"),
+    path("api/ai/conversations/<uuid:conversation_id>/turns/<int:turn_id>/confirm/", AgentTurnConfirmView.as_view(), name="ai_turn_confirm"),
     path("api/ai/assistant/status/", AIAssistantStatusView.as_view(), name="ai_assistant_status"),
     path("api/ai/assistant/chat/", AIAssistantChatView.as_view(), name="ai_assistant_chat"),
     path("api/ai/analyst/brief/", AIAnalystBriefView.as_view(), name="ai_analyst_brief"),

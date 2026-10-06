@@ -82,6 +82,8 @@ class AutomaticBookingTests(TestCase):
         qualification = ConversationQualification(intent="appointment_request", confidence=0.99,
             summary="Customer requests cleaning", should_create_lead=False, should_create_task=False)
         self.message.text = "I would like to book cleaning"; self.message.save()
+        # The customer chooses only after receiving the newly generated offer.
+        self.reply.delete()
         log = SimpleNamespace(id=None, input_json={"scheduling_context": {"next_available_slots": [self.slot]}})
         with patch("apps.conversations.auto_pipeline.qualify_conversation", return_value=(qualification, None)), patch("apps.conversations.auto_pipeline.suggest_bot_reply", return_value=(SimpleNamespace(output_text="Choose a time"), log, [], [])), patch("apps.bots.outbound_delivery.send_message", side_effect=lambda *args, **kwargs: {"ok": True, "provider_message_id": str(kwargs["payload"]["zani_message_id"])}):
             offer = maybe_run_auto_pipeline(conversation=self.conversation, message=self.message)
@@ -92,6 +94,7 @@ class AutomaticBookingTests(TestCase):
             delivered = deliver_outbound_message(offer.reply_message.id)
             self.assertEqual(delivered.status, "sent", delivered.error_text)
             self.conversation.refresh_from_db()
+            self.reply = BotMessage.objects.create(conversation=self.conversation, direction="inbound", text="1 вариант подходит")
             booked = maybe_run_auto_pipeline(conversation=self.conversation, message=self.reply)
         self.assertEqual(booked.booking.status, "booked", booked.booking.reason)
         self.assertEqual(Appointment.objects.count(), 1)

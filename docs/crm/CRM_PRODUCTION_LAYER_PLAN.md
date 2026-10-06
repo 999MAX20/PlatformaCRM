@@ -1,5 +1,14 @@
 # CRM Production Layer Plan
 
+## Persistent AI conversations — 2026-10-06, locally accepted
+
+The approved AI continuation adds owner-private Work/Analytics conversations,
+scoped Inbox memory and recoverable reviewed actions over existing CRM services.
+CRM permissions, lifecycle rules and controlled automatic-creation policy remain
+authoritative. Implementation and passing local verification are recorded in
+[the task](../testing/ai-agent-continuity-20261006.md); publication and actual CI
+are tracked separately there. No new CRM domain or deployment phase.
+
 ## CRM workspace reference redesign — 2026-10-01
 
 Owner-authorized refinement of the existing leads/deals/clients workspaces is

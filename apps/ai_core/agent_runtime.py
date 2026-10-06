@@ -10,6 +10,21 @@ from apps.bots.models import Bot
 
 
 _agent_id = ContextVar("crm_agent_id", default=None)
+_conversation_id = ContextVar("private_agent_conversation_id", default=None)
+
+
+@contextmanager
+def bind_conversation(conversation_id):
+    token = _conversation_id.set(str(conversation_id))
+    try:
+        yield
+    finally:
+        _conversation_id.reset(token)
+
+
+def conversation_binding():
+    value = _conversation_id.get()
+    return {"_conversation": value} if value else {}
 
 
 @contextmanager

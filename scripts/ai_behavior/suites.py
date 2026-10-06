@@ -111,6 +111,10 @@ class Evaluation:
         from scripts.ai_behavior.action_cases import run_pipeline
         run_pipeline(self)
 
+    def continuity(self):
+        from scripts.ai_behavior.continuity_cases import run_continuity
+        run_continuity(self)
+
     def final_responses(self):
         for suite in (self.profiles, self.scope, self.dialogue, self.analytics, self.temperature):
             suite()

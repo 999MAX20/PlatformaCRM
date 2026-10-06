@@ -43,8 +43,11 @@ def qualification_from_payload(payload: dict[str, Any]) -> ConversationQualifica
 
 
 def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock=True, message_context=None) -> tuple[ConversationQualification, AIRequestLog | None]:
+    memory = {}
     if message_context is None:
-        message_context = build_bot_conversation_context(conversation, limit=16)
+        from apps.ai_core.conversation_memory import inbox_memory
+        memory = inbox_memory(conversation=conversation, limit=16)
+        message_context = memory["messages"]
     services = list(Service.objects.filter(business=conversation.business, is_active=True).order_by("name")[:30])
     service_catalog = [{"id": service.id, "name": service.name, "price_from": str(service.price_from or "")} for service in services]
     profile = get_agent_profile(conversation)
@@ -74,8 +77,13 @@ def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock
         "Черновик сделки предлагай только если есть коммерческий интерес, запись, покупка или вопрос о цене. "
         "Значения true/false в примере схемы не являются готовым решением: вычисли каждое поле по диалогу. "
         "При явно выраженном намерении купить и просьбе подготовить сделку ставь should_create_deal=true; при обычном справочном вопросе без покупки не создавай сделку. "
-        "Запись, перенос, отмену и изменение результата сделки выполняет только сотрудник. Выбор времени клиентом не является подтверждённой записью. "
-        "requires_human_review=true ставь только если автоматизацию нужно остановить: жалоба, спам, опасный запрос, явная просьба оператора, финальное подтверждение оплаты/скидки/записи без достаточных данных. "
+        "Создание новой записи разрешает только сервер по сохранённым полномочиям после явного выбора клиентом услуги, специалиста и точного свободного времени. "
+        "Классифицируй этот выбор как appointment_request; он сам по себе не требует сотрудника и ещё не доказывает выполнение записи. "
+        "requires_human_review означает исключительную передачу оператору, а не обычное подтверждение записи или необходимость проверить свободное время. "
+        "Если после отправленного предложения клиент отвечает «1 вариант подходит», это выбор нового предложенного слота: appointment_request, requires_human_review=false при отсутствии отдельной жалобы, опасного запроса или совпавшего escalation_rule. "
+        "Не ставь human review только потому, что запись ещё не выполнена: разрешения и занятость слота проверяет сервер перед созданием. При true укажи в reason конкретное основание передачи оператору; само желание записаться таким основанием не является. "
+        "Перенос, отмена, изменение существующей записи, подтверждение оплаты/скидки и изменение результата сделки требуют сотрудника. "
+        "requires_human_review=true ставь если автоматизацию нужно остановить: жалоба, спам, опасный запрос, явная просьба оператора, изменение существующих данных или условие настроенных escalation_rules. "
         "Обычный вопрос о цене, записи, услуге или времени не требует human review: бот должен задать следующий уточняющий вопрос. "
         "Просьба записаться к названному специалисту — appointment_request, а не просьба переключить чат на человека. "
         "Недостающие дата, время или телефон при записи требуют уточнения, но сами по себе не требуют human review."
@@ -93,6 +101,7 @@ def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock
             "channel": conversation.channel,
             "external_user_id": conversation.external_user_id,
             "messages": message_context,
+            "conversation_memory": memory,
             "services": service_catalog,
             "escalation_rules": profile.escalation_rules_json if profile else {},
         },

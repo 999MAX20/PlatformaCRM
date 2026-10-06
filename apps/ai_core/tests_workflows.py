@@ -70,12 +70,14 @@ class InternalWorkflowTests(TestCase):
             self.assertFalse(AgentProfileSerializer(data=data).is_valid())
 
     def test_stale_internal_reply_is_not_returned(self):
+        context = build_crm_context(self.business, user=self.owner)
         def generate(*args, **kwargs):
             self.profile.is_active = False; self.profile.save()
             return AIClientResult(output_text="Old answer", model="mock", tokens_used=0, is_mock=True, provider="mock")
-        with patch("apps.ai_core.services.generate_text", side_effect=generate):
+        with patch("apps.ai_core.services.generate_text", side_effect=generate) as provider:
             with self.assertRaises(PermissionDenied):
-                run_ai_request(business=self.business, user=self.owner, prompt_type="crm_assistant", user_input="Hello", input_json={"crm_context": {"summary": {}}})
+                run_ai_request(business=self.business, user=self.owner, prompt_type="crm_assistant", user_input="Hello", input_json={"crm_context": context})
+        provider.assert_called_once()
 
     def test_disabled_status_matches_execution(self):
         self.profile.is_active = False; self.profile.save()

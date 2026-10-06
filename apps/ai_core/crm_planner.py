@@ -2,11 +2,11 @@
 import json
 import re
 
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.ai_core.ai_client import AIClientError
 from apps.ai_core.agent_runtime import bind_command
-from apps.ai_core.crm_tools import ENTITIES, MUTATIONS, prepare_command, scoped_entities, serialize_record, target_for_command
+from apps.ai_core.crm_tools import ENTITIES, MUTATIONS, prepare_command, scoped_entities, serialize_record, target_for_command, target_fingerprint
 from apps.ai_core.crm_transitions import TRANSITIONS
 from apps.ai_core.models import AIToolCallLog
 from apps.ai_core.services import run_ai_request
@@ -27,7 +27,27 @@ PLAN_CONTRACT = (
     ' Only assign uses values:{"user_id":ID}; stage uses values:{"stage_id":ID}; reschedule uses values:{"start_at":"ISO8601","resource":ID}.'
     ' Add reason only when required or supplied; never copy schema descriptions as literal reasons or action values.'
     ' For appointment dates use the supplied business timezone and current local reference including UTC offset, not a remembered historic offset.'
+    ' question belongs only at the top level, never inside arguments or values.'
+    ' A non-empty question and a proposed tool are mutually exclusive. Never submit empty required strings.'
+    ' Generic requests such as "create a new task" or "создай новую задачу" do not supply a title.'
+    ' Ask what the task is about; never use "New task"/"Новая задача" as an invented title.'
 )
+
+
+def clarification(*, request_log, language, fields=(), question=""):
+    """Safe user-facing input recovery; never expose serializer/provider internals."""
+    labels = {
+        "ru": {"full_name": "имя клиента", "client": "клиент", "title": "название", "service": "услуга", "resource": "специалист", "start_at": "дата и время", "pipeline": "воронка", "stage": "этап"},
+        "kk": {"full_name": "клиенттің аты", "client": "клиент", "title": "атауы", "service": "қызмет", "resource": "маман", "start_at": "күн мен уақыт", "pipeline": "сату құбыры", "stage": "кезең"},
+        "en": {"full_name": "client name", "client": "client", "title": "title", "service": "service", "resource": "specialist", "start_at": "date and time", "pipeline": "pipeline", "stage": "stage"},
+    }
+    language = language if language in labels else "ru"
+    requested = [labels[language][field] for field in fields if field in labels[language]]
+    if not question:
+        question = {"ru": "Уточните данные для действия", "kk": "Әрекет үшін деректерді нақтылаңыз", "en": "Please clarify the details for this action"}[language]
+        question += (": " + ", ".join(requested) + ".") if requested else "."
+    return {"question": question, "suggested_actions": [], "request_log_id": request_log.pk,
+            "missing_fields": list(fields)}
 
 
 def plan_response_contract(entity, target):
@@ -72,13 +92,13 @@ def reference_choices(business, user, entity):
     return choices
 
 
-def plan_command(*, business, user, entity, message, entity_id=None):
+def plan_command(*, business, user, entity, message, entity_id=None, conversation_memory=None, persist=True):
     config = assert_workflow_enabled(business, "employee")
     spec = ENTITIES[entity]
     scoped_entities(business, user, entity)
     target = target_for_command(business, user, entity, entity_id) if entity_id else None
+    target_version = target_fingerprint(target) if target else None
     choices = reference_choices(business, user, entity)
-    from apps.ai_core.crm_tools import request_context
     from django.utils import timezone
     from apps.scheduling.availability import business_zone
     context = {"entity": entity, "fields": spec.fields, "transitions": TRANSITIONS.get(entity, ()),
@@ -93,7 +113,8 @@ def plan_command(*, business, user, entity, message, entity_id=None):
         "allow_null": fields[name].allow_null, "allow_blank": getattr(fields[name], "allow_blank", False),
         "choices": list(getattr(fields[name], "choices", {}))} for name in spec.fields}
     result, request_log = run_ai_request(business=business, user=user, prompt_type="crm_action_plan",
-        user_input=message, input_json={"command_context": context}, response_contract=plan_response_contract(entity, target))
+        user_input=message, input_json={"command_context": context, **({"conversation_memory": conversation_memory} if conversation_memory else {})},
+        response_contract=plan_response_contract(entity, target))
     if result.is_mock:
         raise AIClientError("A live AI provider is required to interpret an action request.", code="planner_unavailable", retryable=False)
     try:
@@ -106,9 +127,19 @@ def plan_command(*, business, user, entity, message, entity_id=None):
             question = payload.get("question")
             if not isinstance(question, str) or not question.strip() or len(question) > 1000:
                 raise ValueError
-            return {"question": question, "suggested_actions": [], "request_log_id": request_log.pk}
+            return clarification(request_log=request_log, language=config.get("language"), question=question.strip())
         arguments = payload["arguments"]
         if not isinstance(arguments, dict) or arguments.get("entity") != entity:
+            raise ValueError
+        # Older providers sometimes put the envelope's question beside entity.
+        # Only this known, non-executable field can move; unknown arguments fail.
+        question = payload.get("question") or arguments.get("question", "")
+        if not isinstance(question, str) or len(question) > 1000:
+            raise ValueError
+        if question.strip():
+            return clarification(request_log=request_log, language=config.get("language"), question=question.strip())
+        arguments = {key: value for key, value in arguments.items() if key != "question"}
+        if set(arguments) - {"entity", "entity_id", "values", "action", "reason"}:
             raise ValueError
         tool = payload["tool"]
         if tool not in context["available_tools"]:
@@ -120,13 +151,26 @@ def plan_command(*, business, user, entity, message, entity_id=None):
         values = arguments.get("values", {})
         if not isinstance(values, dict):
             raise ValueError
+        if tool in {"crm_create", "crm_update"} and set(values) - set(spec.fields):
+            raise ValueError
         for field, value in values.items():
             reference = "stage" if field == "stage_id" else field
             if reference in choices and value is not None and (type(value) is not int or value not in {row["id"] for row in choices[reference]}):
                 raise ValueError
     except (KeyError, ValueError, TypeError):
         raise AIClientError(code="invalid_action_plan", retryable=False) from None
-    prepared = prepare_command(business=business, user=user, tool=tool, payload=arguments)
+    if target and target_fingerprint(target_for_command(business, user, entity, target.pk)) != target_version:
+        raise PermissionDenied("CRM record changed while preparing the action. Request a fresh proposal.")
+    try:
+        prepared = prepare_command(business=business, user=user, tool=tool, payload=arguments)
+    except ValidationError as exc:
+        # User input was valid; the proposed action needs clarification. Domain
+        # validation remains authoritative and no tool/approval is created.
+        fields = sorted(set(exc.detail).intersection(spec.fields)) if isinstance(exc.detail, dict) else []
+        return clarification(request_log=request_log, language=config.get("language"), fields=fields)
+    if not persist:
+        return {"question": "", "suggested_actions": [], "request_log_id": request_log.pk,
+                "prepared_command": {"tool": tool, "payload": bind_command(business, prepared)}}
     log = AIToolCallLog.objects.create(business=business, user=user, tool_name=tool, input_json=bind_command(business, prepared))
     from apps.ai_core.serializers import AIToolCallLogSerializer
     return {"question": "", "suggested_actions": [AIToolCallLogSerializer(log).data], "request_log_id": request_log.pk}

@@ -62,6 +62,20 @@ class AgentRuntimeTests(TestCase):
             response = self.api.get("/api/ai/crm/read/", {"business": self.business.pk, "entity": "tasks", **agent})
             self.assertEqual(response.status_code, 403)
 
+    def test_all_sources_disabled_returns_localized_no_data_without_provider(self):
+        for language, phrase in (("ru", "Нет доступных"), ("kk", "дереккөздер жоқ"), ("en", "No sources")):
+            self.profile.rules_json = {"sources": []}
+            self.profile.language = language
+            self.profile.save()
+            with patch("apps.ai_core.services.generate_text") as generate:
+                response = self.api.post("/api/ai/assistant/chat/", {"business": self.business.pk,
+                    "agent": self.agent.pk, "message": "Сколько клиентов?"})
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual(response.data["provider_state"], "no_data")
+            self.assertEqual(response.data["sources"], [])
+            self.assertIn(phrase, response.data["answer"])
+            generate.assert_not_called()
+
     def test_command_binds_settings_and_revokes_old_confirmation(self):
         self.profile.allowed_tools_json = {"tools": ["crm_create"]}
         self.profile.save()

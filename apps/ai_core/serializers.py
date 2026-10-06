@@ -122,6 +122,7 @@ class AIJobSerializer(serializers.ModelSerializer):
 
 class AIAssistantStatusSerializer(serializers.Serializer):
     business = serializers.PrimaryKeyRelatedField(queryset=Business.objects.all())
+    mode = serializers.ChoiceField(choices=["work", "analytics"], default="work")
 
 
 class AIAnalystBriefSerializer(serializers.Serializer):

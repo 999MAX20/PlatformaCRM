@@ -1,5 +1,27 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## AI-AGENT-CONTINUITY-20261006 — implementation active
+
+- Owner approved the full prior proposal and previous AI discussion; all slices
+  belong to one authorized outcome. Same generation3 owner/root/branch; clean
+  starting HEAD ada5874971fbfb5a5992bf43e1ba4043dd802c0a, matching origin/main.
+- Previous application and receipt CI are SUCCESS (37493074978/37493625059),
+  1355 backend tests each. Publication complete; six real-model cases remain open.
+- [Scope and checks](../ai-agent-continuity-20261006.md): fix known behavior,
+  shared scoped-memory infrastructure for both scenarios, coherent runtime model
+  policy, recoverable actions and reachable UI; no deployment/working-DB migration.
+- Backend checkpoint: planner/runtime regressions and memory/state/execution
+  focused gates PASS (9/53/12/18, overlapping suites; details in task report).
+  Additive ai_core.0007 generated and exercised only in isolated test databases.
+  Owner-private API16 and Inbox continuity22 PASS; UI implemented, types PASS.
+  Working migration0007 authorized and applied with backup/data preservation;
+  live evaluation21 cases found3 new failures, fixes/retest active. No commit/push yet.
+- Local implementation/acceptance complete: desktop/mobile/settings/Inbox,
+  bounded recall, confirmation/recovery/concurrency and analyst access checked.
+  All21 real-model scenarios have latest PASS; last full20/21 plus final booking2/2.
+  Cumulative580 calls/USD0.26152530 ofUSD3. Mandatory review remains enforced.
+- Next: verified commit/normal push/actual CI. No CD or new product phase.
+
 ## PUBLICATION-20261006 — published, CI readback in progress
 
 - Owner explicitly requests commit/push of all accumulated changes and actual CI;

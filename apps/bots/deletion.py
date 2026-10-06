@@ -32,6 +32,10 @@ def delete_agent(*, bot, actor):
     conversations.update(bot_enabled=False, updated_at=now)
     # Existing workers also recheck the paused agent/fingerprint before effects.
     reason = "AI agent deleted; pending work stopped."
+    from apps.ai_core.models import AgentTurn
+    from apps.ai_core.conversation_state import OPEN, stop_turn
+    for turn in AgentTurn.objects.filter(conversation__agent=bot, status__in=OPEN).select_related("conversation"):
+        stop_turn(turn, actor)
     AIJob.objects.filter(business=bot.business, input_json__runtime_context___agent__agent_id=bot.pk,
         status__in=[AIJob.Statuses.PENDING, AIJob.Statuses.RUNNING, AIJob.Statuses.RETRY_SCHEDULED]
     ).update(status=AIJob.Statuses.FAILED, error=reason, next_retry_at=None, locked_at=None, completed_at=now, updated_at=now)

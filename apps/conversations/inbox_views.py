@@ -259,6 +259,12 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         conversation = reopen_conversation(conversation, actor=request.user)
         return Response(self.get_serializer(conversation).data, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=["post"], url_path="reset-ai-memory")
+    def reset_ai_memory(self, request, pk=None):
+        from apps.ai_core.inbox_runtime import reset_inbox_memory
+        conversation = reset_inbox_memory(conversation=self.get_object(), actor=request.user)
+        return Response(self.get_serializer(conversation).data)
+
     @action(detail=True, methods=["post"], url_path="suggest-reply")
     def suggest_reply(self, request, pk=None):
         conversation = self.get_object()

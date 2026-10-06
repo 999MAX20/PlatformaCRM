@@ -9,6 +9,7 @@ import { useI18n } from "../../../lib/i18n";
 import type { AgentProfile } from "../../../types";
 import type { AgentFormState, BotDraftState } from "../aiAgentsTypes";
 import { FieldHint } from "./AIAgentsShared";
+import { ToggleSwitch } from "../../../components/ui/Switch";
 
 type ProfileProps = {
   botDraft: BotDraftState;
@@ -119,6 +120,12 @@ function ModelsSection({ draft, setDraft, canManage }: { draft: BotDraftState; s
             <input className="w-full accent-ai-600" type="range" min="0" max="1" step="0.1" value={temperature} disabled={!canManage} onChange={(event) => setTemperature(Number(event.target.value))} />
             <FieldHint>{t("aiAgents.hint.temperature")}</FieldHint>
           </label>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-sm font-semibold text-platforma-subtle">{t("agentChat.memorySetting")}</span>
+            <ToggleSwitch label={t("agentChat.memorySetting")} checked={draft.settings_json.memory_enabled !== false} disabled={!canManage}
+              onChange={value => setDraft(current => ({ ...current, settings_json: { ...current.settings_json, memory_enabled: value } }))} />
+          </div>
+          <FieldHint>{t("agentChat.memoryHint")}</FieldHint>
 
         </div>
       </section>

@@ -497,8 +497,9 @@ not full-corpus RAG. Scheduling uses active specialists and existing availabilit
 working-hours, overlap and absence rules. The latest inbound request takes priority;
 name inflection matching is conservative and ambiguous cases need clarification.
 Only today/tomorrow/day-after-tomorrow keywords have explicit date handling here.
-Prices marked price_from are minimum prices. Replies must not claim a booking,
-transfer or cancellation has been executed; staff confirmation rules remain.
+Prices marked price_from are minimum prices. Replies may claim a booking,
+transfer or cancellation only after its successful domain operation. The approved
+controlled-creation exceptions and staff confirmation rules above remain in force.
 
 Complaints, human-review requests and AI failures hand off through the existing
 conversation service with internal notifications and audit/activity. Incoming
@@ -510,3 +511,44 @@ Evidence and remaining acceptance boundaries belong to
 [the active checkpoint](../testing/task-state/PRIMARY-SESSION.md). Synthetic live
 OpenRouter tests do not prove channel delivery, production workers, universal
 answer accuracy or billing. The agent setup-page redesign remains separate.
+
+## Persistent agent conversations — 2026-10-06
+
+Employee Work and Analytics share owner-private conversations within the selected
+Business and CRM agent. Administrators do not gain access to another employee's
+conversation. Inbox memory belongs to its existing customer conversation. Active
+membership, effective permissions, enabled sources and referenced entities are
+rechecked; a changed access fingerprint redacts obsolete staff history and excludes
+ineligible recall. Private conversation requests are excluded from business-wide
+AI request logs.
+
+Memory combines bounded recent turns, lexical recall and rebuildable extractive
+summaries. Historical generated answers are not authoritative current CRM data.
+Current facts come from scoped selectors; recalled user requests and completed
+actions provide conversation context. Reset starts a new memory epoch, preserves
+history/audit and revokes pending work. Archive preserves history and disables
+new sends until restored. Both thread lists and messages support pagination.
+
+The saved agent model applies to routing, qualification, planning, analysis and
+answers. Structured stages cap temperature at0.2; supported model presets request
+JSON output. There is no silent model substitution. Agent configuration changes
+invalidate late results. Memory can be disabled in agent settings.
+
+Employee actions produce reviewable proposals before execution. Confirmation
+includes the conversation revision and exact action fingerprints. Dependent
+actions are proposed after their predecessor succeeds and require their own
+confirmation. Partial failures preserve completed steps; an explicit retry
+prepares only remaining work. Cancellation, newer requests, reset and permission
+changes prevent stale execution. Request keys prevent duplicate submissions;
+interrupted paid preparation requires an explicit retry.
+Analytics readiness uses its own permission and enabled state. Analytics turns
+cannot prepare CRM mutations, including when a model suggests an action to an
+owner; the response directs the user to Work with CRM.
+
+Each Inbox inbound message has one durable attempt. Duplicate delivery never
+reruns the model or CRM actions; newer inbound messages supersede old preparation
+and prevent stale outbound delivery. Existing outbound transport retries remain
+separate. This does not enable new external channels or authorize deployment.
+
+Acceptance, migration evidence and remaining limitations are recorded in
+[AI-AGENT-CONTINUITY-20261006](../testing/ai-agent-continuity-20261006.md).

@@ -9,7 +9,7 @@ from apps.scheduling.services import get_available_slots
 from apps.services.models import Service
 
 
-def build_bot_scheduling_context(conversation, *, qualification=None, days=5, slots_per_resource=3, message_context=None):
+def build_bot_scheduling_context(conversation, *, qualification=None, days=5, slots_per_resource=3, message_context=None, booking_only=False):
     business = conversation.business
     messages = (
         [message["text"] for message in reversed(message_context) if message["direction"] == "inbound"][:8]
@@ -23,8 +23,11 @@ def build_bot_scheduling_context(conversation, *, qualification=None, days=5, sl
     matched_service = _match_service(services, message_text, qualification=qualification)
     if not matched_service:
         matched_service = _match_service(services, " ".join(messages[1:]).lower(), qualification=qualification)
-    matched_resource = _match_resource(resources, message_text)
+    matched_resource = _remembered_resource(resources, messages)
     required_questions = _required_questions(matched_service=matched_service, matched_resource=matched_resource, resources=resources)
+    booking_intent = getattr(qualification, "intent", None) == "appointment_request" if qualification else any(
+        re.search(r"запис|брон|свободн.{0,12}(?:врем|окн)|слот|вариант|жазыл|бронда|бос.{0,12}уақыт|\bbook|appointment|available.{0,12}(?:time|slot)", message.casefold())
+        for message in messages[:3])
     today = timezone.localtime(timezone.now(), business_zone(business)).date()
 
     context = {
@@ -37,7 +40,13 @@ def build_bot_scheduling_context(conversation, *, qualification=None, days=5, sl
         "matched_resource": _resource_payload(matched_resource) if matched_resource else None,
         "next_available_slots": [],
         "required_questions": required_questions,
+        "booking_intent": booking_intent,
     }
+    if booking_only and not booking_intent:
+        # Prices remain available for questions; unrequested scheduling choices
+        # must not steer every reply into a booking conversation.
+        context.update(resources=[], matched_resource=None, required_questions=[])
+        return context
     if not matched_service:
         return context
 
@@ -102,6 +111,17 @@ def _match_resource(resources, message_text):
     matches = [resource for resource in resources if _name_matches(resource.name, message_text)]
     if len(matches) == 1:
         return matches[0]
+    return None
+
+
+def _remembered_resource(resources, messages):
+    for message in messages:
+        text = message.casefold()
+        if re.search(r"любо[йму]+.{0,15}(?:врач|специалист)|неважно.{0,15}(?:кто|врач)|any (?:doctor|specialist)|кез келген.{0,15}(?:дәрігер|маман)", text):
+            return None
+        matched = _match_resource(resources, text)
+        if matched:
+            return matched
     return None
 
 

@@ -6,8 +6,8 @@ from django.db.models import F, Q
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
-from apps.ai_core.ai_client import generate_text
-from apps.ai_core.agent_runtime import agent_binding, bind_agent
+from apps.ai_core.ai_client import AIClientResult, generate_text
+from apps.ai_core.agent_runtime import agent_binding, bind_agent, conversation_binding
 from apps.ai_core.context_service import get_business_knowledge_context
 from apps.ai_core.models import AIJob, AIRequestLog
 from apps.ai_core.prompt_service import build_prompt
@@ -39,7 +39,7 @@ def run_ai_request(
 ):
     assert_entitlement_allows(business, EntitlementMetrics.AI_REQUESTS)
     runtime_context = dict(input_json or {})
-    scenario = "analyst" if prompt_type in {"business_event_analyst", "business_history_analyst"} else "employee" if prompt_type in {"crm_assistant", "daily_summary", "crm_action_plan"} else None
+    scenario = "analyst" if prompt_type in {"business_event_analyst", "business_history_analyst"} else "employee" if prompt_type in {"crm_assistant", "daily_summary", "crm_action_plan", "agent_turn_plan"} else None
     scenario_config = None
     if source == AIRequestLog.Sources.CRM and scenario:
         from apps.ai_core.workflows import assert_workflow_enabled, workflow_fingerprint
@@ -56,11 +56,20 @@ def run_ai_request(
     from apps.ai_core.knowledge import available_agent
     agent_id = runtime_context.get("bot_id") if source == AIRequestLog.Sources.BOT else (scenario_config or {}).get("agent_id")
     knowledge_agent = available_agent(business=business, agent_id=agent_id) if agent_id else None
+    from apps.ai_core.models import AgentProfile
+    from apps.ai_core.runtime_policy import generation_policy, policy_fingerprint
+    profile = AgentProfile.objects.filter(business=business, bot=knowledge_agent, is_active=True).order_by("-updated_at", "-id").first() if knowledge_agent else None
+    policy = generation_policy(prompt_type=prompt_type, agent=knowledge_agent, profile=profile,
+                               configuration=scenario_config, model=model, model_tier=model_tier,
+                               temperature=temperature, language=response_language)
+    model, model_tier, temperature, response_language = policy.model, policy.model_tier, policy.temperature, policy.language
+    policy_version = policy_fingerprint(knowledge_agent, profile) if knowledge_agent else None
     context = get_business_knowledge_context(business, query=inbound[-1] if inbound else user_input, agent=knowledge_agent)
     if scenario_config and "knowledge" not in scenario_config["sources"]:
         context = []
     grounded = source == AIRequestLog.Sources.CRM and "crm_context" in runtime_context
-    sources = source_catalog(runtime_context.get("crm_context"), context) if grounded else []
+    memory = runtime_context.get("conversation_memory") if conversation_binding() else None
+    sources = source_catalog(runtime_context.get("crm_context"), context, memory) if grounded else []
     if grounded:
         runtime_context["source_catalog"] = sources
     agent_preferences = None
@@ -69,8 +78,6 @@ def run_ai_request(
         agent_preferences = {"role": scenario_config.get("role", ""), "instructions": scenario_config.get("instructions", ""),
                              "rules": scenario_config.get("rules", {}).get("items", []), "tone": scenario_config.get("tone")}
     elif prompt_type in {"bot_suggest_reply", "conversation_qualification"} and knowledge_agent is not None:
-        from apps.ai_core.models import AgentProfile
-        profile = AgentProfile.objects.filter(business=business, bot=knowledge_agent, is_active=True).order_by("-updated_at").first()
         if profile is not None and prompt_type == "bot_suggest_reply":
             agent_preferences = {"role": profile.role_description, "instructions": profile.system_prompt,
                                  "rules": profile.rules_json.get("items", []), "tone": profile.tone}
@@ -82,31 +89,43 @@ def run_ai_request(
         prompt.messages[0]["content"] += ANSWER_CONTRACT
     if response_contract:
         prompt.messages[0]["content"] += response_contract
+    if policy.json_output:
+        prompt.response_format = {"type": "json_object"}
     language_name = {"ru": "Russian", "kk": "Kazakh", "en": "English"}.get(response_language)
     if language_name:
         prompt.messages[0]["content"] += (
             f" Output language requirement: write all human-readable response text, including the JSON answer field, in {language_name}."
             " Keep schema keys, source IDs, entity names and codes unchanged. The question's language does not change this requirement."
         )
-    result = generate_text(
-        prompt,
-        prompt_type=prompt_type,
-        model=model,
-        model_tier=model_tier,
-        temperature=temperature,
-        allow_mock=allow_mock,
-    )
+    no_sources = grounded and not sources
+    if no_sources:
+        import json
+        answers = {
+            "ru": "Нет доступных источников для ответа. Проверьте разрешённые источники агента и права доступа.",
+            "kk": "Жауап беру үшін қолжетімді дереккөздер жоқ. Агенттің рұқсат етілген дереккөздері мен қолжетімділік құқықтарын тексеріңіз.",
+            "en": "No sources are available for an answer. Check the agent's enabled sources and your access permissions.",
+        }
+        answer = answers.get(response_language, answers["ru"])
+        result = AIClientResult(output_text=json.dumps({"answer": answer, "source_ids": [], "no_data": True}), model="", provider="none")
+    else:
+        result = generate_text(
+            prompt, prompt_type=prompt_type, model=model, model_tier=model_tier,
+            temperature=temperature, allow_mock=allow_mock,
+        )
     if scenario_config and workflow_fingerprint(business, scenario) != fingerprint:
         raise PermissionDenied("AI scenario configuration changed while preparing the answer.")
     if knowledge_agent is not None:
         current_agent = available_agent(business=business, agent_id=knowledge_agent.pk)
+        current_profile = AgentProfile.objects.filter(business=business, bot=current_agent, is_active=True).order_by("-updated_at", "-id").first()
+        if policy_fingerprint(current_agent, current_profile) != policy_version:
+            raise PermissionDenied("Agent settings changed while preparing the answer. Please retry.")
         current_context = get_business_knowledge_context(business, query=inbound[-1] if inbound else user_input, agent=current_agent)
         if scenario_config and "knowledge" not in scenario_config["sources"]:
             current_context = []
         if current_context != context:
             raise PermissionDenied("Agent knowledge changed while preparing the answer. Please retry.")
     if grounded:
-        result = validate_answer(result, sources)
+        result = validate_answer(result, sources, response_language or "ru")
     log = AIRequestLog.objects.create(
         business=business,
         user=user,
@@ -119,16 +138,19 @@ def run_ai_request(
             "ai_model_tier": model_tier,
             "ai_temperature": temperature,
             "ai_response_language": response_language,
+            "ai_stage": "structured" if policy.structured else "response",
             "provider_state": result.provider_state,
             "sources": result.sources,
             **(input_json or {}),
+            **conversation_binding(),
             **({"_agent": agent_binding(business)} if scenario_config else {}),
         },
         output_text=result.output_text,
         model=result.model,
         tokens_used=result.tokens_used,
     )
-    increment_usage(business, UsageCounter.Metrics.AI_REQUESTS)
+    if not no_sources:
+        increment_usage(business, UsageCounter.Metrics.AI_REQUESTS)
     return result, log
 
 
@@ -173,15 +195,21 @@ def process_due_ai_jobs(*, limit=100):
     # A dead worker may have reached the paid provider. End the abandoned
     # attempt visibly; only an explicit new user request may repeat that call.
     cutoff = now - timezone.timedelta(seconds=max(300, settings.AI_HTTP_TIMEOUT_SECONDS * 3))
-    expired = AIJob.objects.filter(status=AIJob.Statuses.RUNNING).filter(
+    expired_jobs = AIJob.objects.filter(status=AIJob.Statuses.RUNNING).filter(
         Q(locked_at__lte=cutoff) | Q(locked_at__isnull=True, updated_at__lte=cutoff)
-    ).update(
+    )
+    expired_turns = list(expired_jobs.filter(prompt_type="agent_conversation").values_list("input_json__runtime_context__turn_id", flat=True))
+    expired = expired_jobs.update(
         status=AIJob.Statuses.FAILED,
         error="AI request was interrupted. Please retry or continue manually.",
         locked_at=None, next_retry_at=None, completed_at=now, updated_at=now,
     )
     if expired:
         logger.warning("ai.jobs_interrupted", extra={"expired_jobs": expired})
+    if expired_turns:
+        from apps.ai_core.models import AgentTurn
+        AgentTurn.objects.filter(pk__in=[value for value in expired_turns if value is not None], status=AgentTurn.Statuses.PREPARING).update(
+            status=AgentTurn.Statuses.FAILED, error_code="interrupted", completed_at=now, updated_at=now)
     job_ids = list(
         AIJob.objects.filter(
             Q(status=AIJob.Statuses.PENDING)
@@ -223,30 +251,26 @@ def process_ai_job(job_id):
         with bind_agent(runtime_context.get("_agent", {}).get("agent_id")):
             if runtime_context.get("_agent") and runtime_context["_agent"] != agent_binding(job.business):
                 raise PermissionDenied("Agent settings changed. Submit a new request.")
-            if job.source == AIRequestLog.Sources.CRM:
-                assert_business_access(job.user, job.business)
-                assert_can(job.user, job.business, Resources.AI_ASSISTANT, Actions.SUGGEST)
-                runtime_context = {"crm_context": build_crm_context(job.business, user=job.user)}
-            result, log = run_ai_request(
-                business=job.business,
-                user=job.user,
-                source=job.source,
-                prompt_type=job.prompt_type,
-                user_input=job.input_json.get("user_input", ""),
-                input_json=runtime_context,
-                allow_mock=False,
-            )
-        result_json = {
-            "answer": result.output_text,
-            "provider": result.provider,
-            "model": result.model,
-            "tokens_used": result.tokens_used,
-            "log_id": log.id,
-            "is_mock": result.is_mock,
-            "provider_state": result.provider_state,
-            "sources": result.sources,
-            "context": runtime_context.get("crm_context", {}).get("summary", {}),
-        }
+            if job.prompt_type == "agent_conversation":
+                from apps.ai_core.conversation_preparation import prepare_agent_turn
+                result_json = prepare_agent_turn(runtime_context["turn_id"])
+                log = None  # Detailed private results stay behind the thread API.
+            else:
+                if job.source == AIRequestLog.Sources.CRM:
+                    assert_business_access(job.user, job.business)
+                    assert_can(job.user, job.business, Resources.AI_ASSISTANT, Actions.SUGGEST)
+                    runtime_context = {"crm_context": build_crm_context(job.business, user=job.user)}
+                result, log = run_ai_request(
+                    business=job.business, user=job.user, source=job.source,
+                    prompt_type=job.prompt_type, user_input=job.input_json.get("user_input", ""),
+                    input_json=runtime_context, allow_mock=False,
+                )
+                result_json = {
+                    "answer": result.output_text, "provider": result.provider, "model": result.model,
+                    "tokens_used": result.tokens_used, "log_id": log.id, "is_mock": result.is_mock,
+                    "provider_state": result.provider_state, "sources": result.sources,
+                    "context": runtime_context.get("crm_context", {}).get("summary", {}),
+                }
         updates = {
             "status": AIJob.Statuses.SUCCEEDED, "result_json": result_json,
             "request_log": log, "completed_at": timezone.now(), "locked_at": None,
@@ -259,6 +283,10 @@ def process_ai_job(job_id):
             updates.update(status=AIJob.Statuses.RETRY_SCHEDULED, next_retry_at=timezone.now() + timezone.timedelta(seconds=delay_seconds))
         else:
             updates.update(status=AIJob.Statuses.FAILED, completed_at=timezone.now())
+        if job.prompt_type == "agent_conversation":
+            from apps.ai_core.conversation_state import fail_turn
+            fail_turn((job.input_json.get("runtime_context") or {}).get("turn_id"),
+                      "access_changed" if isinstance(exc, PermissionDenied) else "provider_unavailable")
     # Recovery can expire this attempt while its provider call is outstanding.
     # A late answer/error must not replace the failed state or schedule a retry.
     claim.update(**updates, updated_at=timezone.now())

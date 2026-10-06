@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.db import models
 
@@ -32,6 +34,75 @@ class AIRequestLog(models.Model):
 
     def __str__(self):
         return f"{self.source}:{self.prompt_type} for {self.business}"
+
+
+class AgentConversation(TimeStampedModel):
+    """Private employee threads or one existing customer conversation; never both."""
+    class Kinds(models.TextChoices):
+        STAFF = "staff", "Employee"
+        INBOX = "inbox", "Customer"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="agent_conversations")
+    agent = models.ForeignKey("bots.Bot", on_delete=models.PROTECT, related_name="memory_conversations")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="agent_conversations")
+    inbox_conversation = models.OneToOneField("bots.BotConversation", null=True, blank=True, on_delete=models.CASCADE, related_name="agent_memory")
+    kind = models.CharField(max_length=16, choices=Kinds.choices)
+    title = models.CharField(max_length=120, blank=True)
+    is_archived = models.BooleanField(default=False)
+    revision = models.PositiveIntegerField(default=0)
+    memory_epoch = models.PositiveIntegerField(default=0)
+    memory_since = models.DateTimeField(null=True, blank=True)
+    memory_json = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ["-updated_at", "-id"]
+        indexes = [models.Index(fields=["business", "agent", "owner", "is_archived", "updated_at"], name="ai_thread_owner_recent")]
+        constraints = [models.CheckConstraint(
+            condition=(models.Q(kind="staff", inbox_conversation__isnull=True)
+                       | models.Q(kind="inbox", owner__isnull=True, inbox_conversation__isnull=False)),
+            name="ai_thread_scope_kind")]
+
+
+class AgentTurn(TimeStampedModel):
+    class Statuses(models.TextChoices):
+        PREPARING = "preparing", "Preparing"
+        CLARIFYING = "clarifying", "Needs information"
+        AWAITING_CONFIRMATION = "awaiting_confirmation", "Needs confirmation"
+        EXECUTING = "executing", "Executing"
+        COMPLETED = "completed", "Completed"
+        FAILED = "failed", "Failed"
+        CANCELLED = "cancelled", "Cancelled"
+        SUPERSEDED = "superseded", "Replaced"
+
+    conversation = models.ForeignKey(AgentConversation, on_delete=models.CASCADE, related_name="turns")
+    sequence = models.PositiveIntegerField()
+    idempotency_key = models.CharField(max_length=128)
+    request_hash = models.CharField(max_length=64)
+    message = models.TextField()
+    response = models.TextField(blank=True)
+    status = models.CharField(max_length=32, choices=Statuses.choices, default=Statuses.PREPARING)
+    mode = models.CharField(max_length=16, default="work")
+    context_json = models.JSONField(default=dict, blank=True)
+    sources_json = models.JSONField(default=list, blank=True)
+    references_json = models.JSONField(default=list, blank=True)
+    plan_json = models.JSONField(default=dict, blank=True)
+    access_fingerprint = models.CharField(max_length=64)
+    runtime_fingerprint = models.CharField(max_length=64)
+    memory_epoch = models.PositiveIntegerField(default=0)
+    error_code = models.CharField(max_length=64, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    request_log = models.ForeignKey(AIRequestLog, on_delete=models.SET_NULL, null=True, blank=True, related_name="agent_turns")
+    tool_calls = models.ManyToManyField("AIToolCallLog", blank=True, related_name="agent_turns")
+
+    class Meta:
+        ordering = ["sequence"]
+        constraints = [
+            models.UniqueConstraint(fields=["conversation", "sequence"], name="ai_turn_sequence"),
+            models.UniqueConstraint(fields=["conversation", "idempotency_key"], name="ai_turn_request_key"),
+            models.UniqueConstraint(fields=["conversation"], condition=models.Q(status__in=["preparing", "executing"]), name="ai_turn_one_running"),
+        ]
+        indexes = [models.Index(fields=["conversation", "status", "created_at"], name="ai_turn_thread_status")]
 
 
 class BusinessKnowledgeItem(TimeStampedModel):

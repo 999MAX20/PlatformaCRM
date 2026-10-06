@@ -12,7 +12,7 @@ import { useI18n } from "../../../lib/i18n";
 import { FinancialStatus } from "../../analytics/FinancialSummary";
 import type { Id } from "../../../types";
 
-export function AIHistoryPanel({ businessId, agentId }: { businessId: Id; agentId?: Id }) {
+export function AIHistoryPanel({ businessId, agentId, conversationMode = false }: { businessId: Id; agentId?: Id; conversationMode?: boolean }) {
   const { t } = useI18n();
   const today = new Date().toLocaleDateString("en-CA");
   const [start, setStart] = useState(`${today.slice(0, 7)}-01`);
@@ -49,10 +49,10 @@ export function AIHistoryPanel({ businessId, agentId }: { businessId: Id; agentI
       </table></div>
       {report.series.points.length > 0 && <details><summary className="cursor-pointer py-2 font-medium">{t("aiHistory.cashSeries")}</summary><div className="max-h-80 overflow-auto" tabIndex={0}><table className="w-full text-left text-sm"><thead><tr><th className="p-2">{t("aiHistory.period")}</th><th className="p-2">{t("finance.receipts")}</th><th className="p-2">{t("finance.refunds")}</th><th className="p-2">{t("finance.net_receipts")}</th></tr></thead><tbody>{report.series.points.map(point => <tr key={point.period}><th className="p-2 font-medium">{point.period}</th><td className="p-2">{money(point.receipts)}</td><td className="p-2">{money(point.refunds)}</td><td className="p-2">{money(point.net_receipts)}</td></tr>)}</tbody></table></div><p className="text-xs text-platforma-subtle">{t("aiHistory.zeroBuckets")}</p></details>}
       {report.state === "no_data" && <p role="status">{t("finance.unavailable")}</p>}
-      <form className="space-y-3" onSubmit={event => { event.preventDefault(); explain.mutate(); }}>
+      {!conversationMode && <form className="space-y-3" onSubmit={event => { event.preventDefault(); explain.mutate(); }}>
         <Textarea label={t("aiHistory.question")} value={question} disabled={explain.isPending} onChange={event => { setQuestion(event.target.value); explain.reset(); }} />
         <Button type="submit" variant="ai" disabled={!question.trim() || report.state === "no_data" || start !== period.start || end !== period.end} isLoading={explain.isPending}>{t("aiHistory.explain")}</Button>
-      </form>
+      </form>}
       {explain.error && <p role="alert" className="text-platforma-danger">{getApiErrorMessage(explain.error)}</p>}
       {explain.data && <div role="status" className="space-y-2 whitespace-pre-wrap text-sm"><p>{explain.data.answer || t("finance.unavailable")}</p>{explain.data.provider_state === "mock" && <p>{t("aiQuality.mock")}</p>}{explain.data.sources.length > 0 && <p className="text-platforma-subtle">{t("aiHistory.answerSource", period)}</p>}</div>}
     </>}

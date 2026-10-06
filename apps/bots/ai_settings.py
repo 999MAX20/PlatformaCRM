@@ -8,6 +8,8 @@ def validate_ai_settings(value):
     if not isinstance(value, dict):
         raise ValidationError("Agent settings must be an object.")
     value = dict(value)
+    if "memory_enabled" in value and not isinstance(value["memory_enabled"], bool):
+        raise ValidationError({"memory_enabled": "Use a boolean value."})
     temperature = value.get("temperature")
     if temperature is not None:
         if isinstance(temperature, bool) or not isinstance(temperature, (int, float)) or not math.isfinite(temperature) or not 0 <= temperature <= 1:

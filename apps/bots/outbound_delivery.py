@@ -85,6 +85,12 @@ def create_outbound_message(
             return existing
 
     from apps.bots.inbox_service import register_bot_message
+    from apps.ai_core.conversation_access import memory_access_fingerprint
+    from apps.ai_core.inbox_runtime import inbound_binding, assert_current_inbound
+    memory_fingerprint = memory_access_fingerprint(business=conversation.business, agent=conversation.bot)
+    binding = inbound_binding() if sender_type == BotMessage.SenderTypes.BOT else None
+    if binding:
+        assert_current_inbound(conversation)
     if sender_type == BotMessage.SenderTypes.BOT and not runtime_fingerprint:
         from apps.bots.runtime_configuration import agent_runtime_fingerprint
         runtime_fingerprint = agent_runtime_fingerprint(conversation)
@@ -103,6 +109,8 @@ def create_outbound_message(
                 payload_json={
                     "sent_by_user_id": user.id if user and user.is_authenticated else None,
                     "delivery_mode": "outbox",
+                    "memory_access_fingerprint": memory_fingerprint,
+                    **({"in_reply_to_message_id": binding["message_id"], "memory_epoch": binding["epoch"]} if binding else {}),
                     **({"agent_runtime_fingerprint": runtime_fingerprint} if runtime_fingerprint else {}),
                 },
             )
@@ -180,7 +188,14 @@ def deliver_outbound_message(message_id):
         from apps.bots.runtime_configuration import agent_runtime_fingerprint
 
         fingerprint = (message.payload_json or {}).get("agent_runtime_fingerprint")
-        if conversation_ai_block_reason(conversation) or (fingerprint and fingerprint != agent_runtime_fingerprint(conversation)):
+        inbound_id = (message.payload_json or {}).get("in_reply_to_message_id")
+        latest = conversation.messages.filter(direction=BotMessage.Directions.INBOUND).order_by("-created_at", "-pk").values_list("pk", flat=True).first() if inbound_id else None
+        stale = bool(inbound_id and latest != inbound_id)
+        if inbound_id:
+            from apps.ai_core.models import AgentConversation
+            stale = stale or not AgentConversation.objects.filter(inbox_conversation=conversation,
+                memory_epoch=message.payload_json.get("memory_epoch")).exists()
+        if stale or conversation_ai_block_reason(conversation) or (fingerprint and fingerprint != agent_runtime_fingerprint(conversation)):
             return _finish_delivery(
                 message,
                 result={"ok": False, "reason": "Automatic reply stopped because AI is no longer eligible.", "retryable": False},

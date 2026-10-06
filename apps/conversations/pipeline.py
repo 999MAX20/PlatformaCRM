@@ -114,6 +114,8 @@ def run_conversation_pipeline(
             .select_related("business", "client", "lead", "deal", "assigned_to")
             .get(pk=conversation.pk)
         )
+        from apps.ai_core.inbox_runtime import assert_current_inbound
+        assert_current_inbound(conversation)
         for related in (conversation.client, conversation.lead, conversation.deal):
             if related is not None and related.business_id != conversation.business_id:
                 raise ValidationError("Conversation relationships must belong to the same business.")

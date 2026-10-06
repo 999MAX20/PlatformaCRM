@@ -8,17 +8,8 @@ from rest_framework.exceptions import PermissionDenied
 
 
 def build_bot_conversation_context(conversation, limit=12):
-    messages = conversation.messages.order_by("-created_at")[:limit]
-    return [
-        {
-            "id": message.id,
-            "direction": message.direction,
-            "text": message.text,
-            "status": message.status,
-            "created_at": message.created_at.isoformat(),
-        }
-        for message in reversed(list(messages))
-    ]
+    from apps.ai_core.conversation_memory import inbox_memory
+    return inbox_memory(conversation=conversation, limit=limit)["messages"]
 
 
 def get_agent_profile(conversation):
@@ -31,10 +22,13 @@ def get_agent_profile(conversation):
 
 def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification=None, message_context=None):
     # Explicit context permits a draft-agent preview without persisted Inbox data.
-    scheduling_context = build_bot_scheduling_context(conversation, qualification=qualification, message_context=message_context)
+    memory = {}
     if message_context is None:
-        message_context = build_bot_conversation_context(conversation)
-    sales_playbook = build_sales_playbook_context(conversation.business) if auto_mode else {}
+        from apps.ai_core.conversation_memory import inbox_memory
+        memory = inbox_memory(conversation=conversation)
+        message_context = memory["messages"]
+    scheduling_context = build_bot_scheduling_context(conversation, qualification=qualification, message_context=message_context, booking_only=True)
+    sales_playbook = build_sales_playbook_context(conversation.business) if auto_mode and scheduling_context.get("booking_intent") else {}
     bot_settings = validate_ai_settings(conversation.bot.settings_json)
     model = bot_settings.get("model") if isinstance(bot_settings.get("model"), str) else None
     model_tier = bot_settings.get("model_tier") if isinstance(bot_settings.get("model_tier"), str) else None
@@ -67,12 +61,12 @@ def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification
         )
     if auto_mode:
         reply_instruction = (
-            "Generate a short, sales-oriented bot reply for this conversation. "
+            "Generate a short, helpful bot reply answering the latest customer request in the saved tone. "
             "The reply may be sent automatically, so do not promise discounts, final booking, delivery, payment, or availability unless it is explicitly confirmed in context. "
-            "Follow sales_playbook exactly for this business type. "
+            "When booking is requested, follow the supplied sales_playbook for this business type. "
             "Use available scheduling context when present. Offer only real slots from next_available_slots. "
             "Use service prices from services.price_from and describe them as minimum prices in the saved reply language when price_from is present. "
-            "If service, preferred specialist/resource, day, or exact slot is missing, ask one clear next question instead of inventing details. "
+            "For a booking request, if service, preferred specialist/resource, day, or exact slot is missing, ask one clear next question instead of inventing details. "
         )
     else:
         reply_instruction = "Generate a short, helpful CRM manager reply for this bot conversation. Do not send it automatically. "
@@ -115,6 +109,7 @@ def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification
             "is_preview": conversation.pk is None,
             "channel": conversation.channel,
             "messages": message_context,
+            "conversation_memory": memory,
             "agent_profile": agent_payload,
             "crm_context": crm_context,
             "scheduling_context": scheduling_context,

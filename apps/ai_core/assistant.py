@@ -1,5 +1,5 @@
 from apps.clients.models import Client
-from apps.businesses.access import Actions, Resources, scope_queryset
+from apps.businesses.access import Actions, Resources, can, scope_queryset
 from apps.core.permissions import user_can_access_business
 from apps.leads.models import Lead
 from apps.scheduling.models import Appointment
@@ -15,6 +15,7 @@ from apps.scheduling.availability import business_zone
 def build_crm_context(business, user=None):
     from apps.ai_core.workflows import assert_workflow_enabled
     config = assert_workflow_enabled(business, "employee")
+    permitted_sources = {source for source in config["sources"] if source == "knowledge" or can(user, business, source, Actions.VIEW).allowed}
     now = timezone.now()
     zone = business_zone(business)
     today = timezone.localtime(now, zone).date()
@@ -96,12 +97,12 @@ def build_crm_context(business, user=None):
         ("tasks", ("tasks",), ("overdue_tasks_count",)),
         ("deals", ("deals",), ()),
     ):
-        if source not in config["sources"]:
+        if source not in permitted_sources:
             for key in keys:
                 context.pop(key, None)
             for key in counters:
                 context["summary"].pop(key, None)
-    context["disabled_sources"] = sorted(set(("clients", "leads", "appointments", "tasks", "deals", "knowledge")) - set(config["sources"]))
+    context["disabled_sources"] = sorted(set(("clients", "leads", "appointments", "tasks", "deals", "knowledge")) - permitted_sources)
     return json.loads(json.dumps(context, cls=DjangoJSONEncoder))
 
 

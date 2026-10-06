@@ -63,6 +63,11 @@ class AutoPipelineDecision:
 
 
 def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, channel: BotChannel | None = None) -> AutoPipelineDecision:
+    from apps.ai_core.inbox_runtime import run_inbound_once
+    return run_inbound_once(conversation=conversation, message=message, channel=channel, run=_run_auto_pipeline)
+
+
+def _run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, channel: BotChannel | None = None) -> AutoPipelineDecision:
     conversation.refresh_from_db()
     channel = conversation.bot.channels.filter(channel=conversation.channel).first()
     fingerprint = agent_runtime_fingerprint(conversation)
@@ -81,6 +86,9 @@ def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessag
     try:
         qualification, ai_log = qualify_conversation(conversation=conversation, allow_mock=True)
     except AIClientError:
+        state_decision = _guard_conversation_state(conversation)
+        if state_decision is not None:
+            return state_decision
         decision = AutoPipelineDecision(status="blocked_fallback", reason="AI unavailable; manager review required.")
         if not conversation_ai_block_reason(conversation):
             handoff_conversation(conversation, reason=decision.reason)
@@ -252,6 +260,9 @@ def decide_qualified_pipeline(
 
 
 def _guard_conversation_state(conversation: BotConversation) -> AutoPipelineDecision | None:
+    from apps.ai_core.inbox_runtime import is_current_inbound
+    if not is_current_inbound(conversation):
+        return AutoPipelineDecision(status="skipped_superseded", reason="A newer customer message replaced this request.")
     reason = conversation_ai_block_reason(conversation)
     descriptions = {
         "handoff": "Conversation is handed off to a manager.",
@@ -266,6 +277,9 @@ def _guard_conversation_state(conversation: BotConversation) -> AutoPipelineDeci
 
 
 def _save_auto_pipeline_decision(conversation: BotConversation, message: BotMessage, config: AutoPipelineConfig, decision: AutoPipelineDecision) -> None:
+    from apps.ai_core.inbox_runtime import is_current_inbound
+    if not is_current_inbound(conversation):
+        return
     conversation.refresh_from_db(fields=["metadata_json"])
     metadata = dict(conversation.metadata_json or {})
     metadata[AUTO_PIPELINE_META_KEY] = {
@@ -363,13 +377,16 @@ def _confirmation_policy(config: AutoPipelineConfig) -> dict[str, Any]:
 
 def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfig, decision: AutoPipelineDecision) -> None:
     try:
+        from apps.ai_core.inbox_runtime import inbound_binding, is_current_inbound
+        if not is_current_inbound(conversation):
+            return
         fingerprint = decision.runtime_fingerprint or agent_runtime_fingerprint(conversation)
         if agent_runtime_fingerprint(conversation) != fingerprint:
             decision.reply_error = "Automatic reply stopped because agent configuration changed."
             return
         conversation.refresh_from_db()
         result, log, _message_context, _sources = suggest_bot_reply(conversation=conversation, user=None, auto_mode=True, qualification=decision.qualification)
-        if conversation_ai_block_reason(conversation):
+        if conversation_ai_block_reason(conversation) or not is_current_inbound(conversation):
             decision.reply_error = "Automatic reply stopped because AI is no longer eligible."
             return
         if agent_runtime_fingerprint(conversation) != fingerprint:
@@ -391,7 +408,9 @@ def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfi
                 body = text[:max(0, config.max_auto_reply_chars - len(offer) - 2)].rstrip()
                 text = f"{body}\n\n{offer}".strip()
         text = text[:config.max_auto_reply_chars].rstrip()
-        message = send_outbound_message(conversation, text, user=None, sender_type=BotMessage.SenderTypes.BOT, runtime_fingerprint=fingerprint)
+        binding = inbound_binding()
+        message = send_outbound_message(conversation, text, user=None, sender_type=BotMessage.SenderTypes.BOT,
+            runtime_fingerprint=fingerprint, idempotency_key=f"ai-inbound:{binding['message_id']}" if binding else "")
         payload = dict(message.payload_json or {})
         payload.update(
             {
@@ -408,7 +427,7 @@ def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfi
                                 runtime_fingerprint=fingerprint, offer_message_id=message.id)
     except Exception as exc:
         decision.reply_error = sanitize_error_text(exc)
-        if not conversation_ai_block_reason(conversation):
+        if not conversation_ai_block_reason(conversation) and is_current_inbound(conversation):
             handoff_conversation(conversation, reason="AI reply unavailable; manager review required.")
 
 

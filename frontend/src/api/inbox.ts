@@ -138,6 +138,9 @@ function cleanParams(filters: InboxFilters) {
 }
 
 export const inboxApi = {
+  async resetAIMemory(conversationId: Id) {
+    return (await apiClient.post<InboxConversation>(`/api/inbox/conversations/${conversationId}/reset-ai-memory/`)).data;
+  },
   getSummary: async () => {
     const { data } = await apiClient.get<InboxSummary>("/api/inbox/conversations/summary/");
     return data;

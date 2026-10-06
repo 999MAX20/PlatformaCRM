@@ -43,7 +43,9 @@ def _resource_for_approval_action(action_type):
 
 
 class AIRequestLogViewSet(TenantModelViewSet):
-    queryset = AIRequestLog.objects.select_related("business", "user")
+    # Private thread content is exposed only by its owner-scoped, source-aware
+    # conversation API. The business-wide operational log is not an alternate reader.
+    queryset = AIRequestLog.objects.exclude(input_json__has_key="_conversation").select_related("business", "user")
     serializer_class = AIRequestLogSerializer
     access_resource = Resources.AI_ANALYST
     http_method_names = ["get", "head", "options"]
@@ -258,7 +260,8 @@ class AIAssistantStatusView(APIView):
             assert_business_access(request.user, business)
         except PermissionError as exc:
             raise PermissionDenied() from exc
-        assert_can(request.user, business, Resources.AI_ASSISTANT, Actions.VIEW)
+        mode = serializer.validated_data["mode"]
+        assert_can(request.user, business, Resources.AI_ANALYST if mode == "analytics" else Resources.AI_ASSISTANT, Actions.VIEW)
 
         from django.conf import settings
 
@@ -270,7 +273,7 @@ class AIAssistantStatusView(APIView):
         }
         key_ready = provider == "mock" or configured_keys.get(provider, False)
         from apps.ai_core.workflows import workflow_settings
-        config = workflow_settings(business, "employee")
+        config = workflow_settings(business, "analyst" if mode == "analytics" else "employee")
         enabled = settings.AI_ENABLED and config["enabled"]
         mode = "unavailable" if not enabled or not key_ready else "mock" if provider == "mock" else "live"
         return Response(
