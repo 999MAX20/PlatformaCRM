@@ -46,6 +46,8 @@ export function formFromProfile(profile: AgentProfile): AgentFormState {
     language: profile.language,
     is_active: profile.is_active,
     system_prompt: profile.system_prompt,
+    sources: Array.isArray(profile.rules_json?.sources) ? profile.rules_json.sources as string[] : ["clients", "leads", "deals", "tasks", "appointments", "knowledge"],
+    analyst_enabled: profile.rules_json?.analyst_enabled !== false,
     rules_text: Array.isArray(profile.rules_json?.items) ? (profile.rules_json.items as string[]).join("\n") : "",
     escalation_text: Array.isArray(profile.escalation_rules_json?.items) ? (profile.escalation_rules_json.items as string[]).join("\n") : "",
     allowed_tools: tools,
@@ -53,18 +55,21 @@ export function formFromProfile(profile: AgentProfile): AgentFormState {
 }
 
 export function createDefaultProfile(bot: BotType | null | undefined, t: (key: string) => string): AgentFormState {
+  const crm = bot?.scenario === "crm";
   return {
     id: null,
     name: bot?.name || t("aiAgents.defaultName"),
     bot: bot ? String(bot.id) : "",
-    role_description: t("aiSetup.dentalRole"),
-    tone: "friendly",
+    role_description: crm ? "" : t("aiSetup.dentalRole"),
+    tone: crm ? "expert" : "friendly",
     language: bot?.default_language || "ru",
     is_active: true,
-    system_prompt: t("aiSetup.dentalPrompt"),
-    rules_text: t("aiAgents.defaultRules"),
-    escalation_text: t("aiSetup.dentalEscalation"),
-    allowed_tools: defaultAllowedTools,
+    system_prompt: crm ? "" : t("aiSetup.dentalPrompt"),
+    sources: ["clients", "leads", "deals", "tasks", "appointments", "knowledge"],
+    analyst_enabled: true,
+    rules_text: crm ? "" : t("aiAgents.defaultRules"),
+    escalation_text: crm ? "" : t("aiSetup.dentalEscalation"),
+    allowed_tools: crm ? ["crm_read"] : defaultAllowedTools,
   };
 }
 
@@ -135,4 +140,10 @@ export function getOnboardingSteps({
     { done: hasKnowledge, title: t("aiAgents.checklist.knowledge"), text: t("aiAgents.checklist.knowledgeText"), href: `/app/ai-agents/${botId}/knowledge` },
     { done: hasActiveChannel, title: t("aiAgents.checklist.channel"), text: t("aiAgents.checklist.channelText"), href: `/app/ai-agents/${botId}/channels` },
   ];
+}
+
+export function sectionsForAgent(scenario?: string) {
+  return scenario === "crm" ? [...sections.filter(section => !["channels", "test"].includes(section.id)),
+    { id: "work" as const, labelKey: "aiScenario.work", titleKey: "aiScenario.work", icon: MessageSquareText },
+    { id: "analytics" as const, labelKey: "aiScenario.analytics", titleKey: "aiScenario.analytics", icon: BookOpen }] : sections;
 }

@@ -27,7 +27,7 @@ export function PlatformOperationsPage() {
   const { t } = useI18n();
   const health = useQuery({ queryKey: ["platform-operations-health"], queryFn: platformApi.operationsHealth });
 
-  if (health.isLoading) return <LoadingState label={t("platform.operations.loading")} />;
+  if (health.isLoading) return <LoadingState scope="page" />;
   if (health.isError || !health.data) return <ErrorState message={t("platform.operations.error")} />;
 
   const data = health.data;

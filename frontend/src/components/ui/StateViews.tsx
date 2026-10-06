@@ -1,45 +1,21 @@
-import { Inbox, Loader2, ShieldAlert } from "lucide-react";
+import { Inbox } from "lucide-react";
+import { useMemo } from "react";
 
-import type { AppError } from "../../api/appError";
+import { normalizeAppError, type AppError } from "../../api/appError";
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
-import { PermissionFallback } from "./FallbackSurfaces";
-import { StatusNotice } from "./StatusNotice";
+import { InlineFallback, PermissionFallback } from "./FallbackSurfaces";
+import { LoadingIndicator } from "./LoadingIndicator";
 
-export function LoadingState({ label }: { label?: string }) {
+export function LoadingState({ label, scope = "block" }: { label?: string; scope?: "block" | "page" }) {
   const { t } = useI18n();
   const resolvedLabel = label || t("common.loadingData");
-  return (
-    <div
-      role="status"
-      aria-busy="true"
-      aria-live="polite"
-      aria-label={resolvedLabel}
-      className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-card"
-    >
-      <div className="flex items-center gap-3 text-sm font-semibold text-platforma-subtle">
-        <Loader2 aria-hidden="true" className="animate-spin text-brand-700" size={18} />
-        {resolvedLabel}
-      </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <SkeletonBlock className="h-16" />
-        <SkeletonBlock className="h-16" />
-        <SkeletonBlock className="h-16" />
-      </div>
-    </div>
-  );
+  return <LoadingIndicator label={resolvedLabel} scope={scope} />;
 }
 
-export function ErrorState({ message, action }: { message: string; action?: React.ReactNode }) {
-  const { t } = useI18n();
-  return (
-    <StatusNotice
-      tone="danger"
-      title={t("fallback.inline.title")}
-      description={message}
-      action={action}
-    />
-  );
+export function ErrorState({ error, message, action }: { error?: unknown; message?: string; action?: React.ReactNode }) {
+  const appError = useMemo(() => normalizeAppError(error), [error]);
+  return <InlineFallback error={appError} message={message} action={action} />;
 }
 
 export function ForbiddenState({
@@ -52,22 +28,15 @@ export function ForbiddenState({
   message?: string;
 }) {
   const { t } = useI18n();
-  if (error) return <PermissionFallback error={error} title={title} />;
-
-  return (
-    <StatusNotice
-      data-testid="forbidden-state"
-      tone="warning"
-      icon={ShieldAlert}
-      title={title || t("permissions.hiddenTitle")}
-      description={message || t("actions.errorForbidden")}
-      details={(
-        <p className="rounded-control bg-surface-card px-3 py-2 text-xs font-semibold text-platforma-warning">
-          {t("permissions.hiddenText")}
-        </p>
-      )}
-    />
-  );
+  const permissionError: AppError = error || {
+    category: "permission", code: "permission_denied", fieldErrors: {},
+    messageKey: "actions.errorForbidden", retryable: false,
+    retryPolicy: "never_blindly", source: "runtime",
+  };
+  return <PermissionFallback error={permissionError}
+    testId={error ? "permission-fallback" : "forbidden-state"}
+    title={title || t("permissions.hiddenTitle")} message={message}
+    guidance={t("permissions.hiddenText")} />;
 }
 
 export function EmptyState({
@@ -96,22 +65,7 @@ export function SkeletonBlock({ className }: { className?: string }) {
 }
 
 export function PageSkeleton() {
-  const { t } = useI18n();
-  const label = t("common.loadingWorkspace");
-  return (
-    <div role="status" aria-busy="true" aria-live="polite" aria-label={label} className="space-y-4">
-      <SkeletonBlock className="h-16 max-w-3xl" />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <SkeletonBlock key={index} className="h-24" />
-        ))}
-      </div>
-      <div className="grid gap-4 xl:grid-cols-2">
-        <SkeletonBlock className="h-72" />
-        <SkeletonBlock className="h-72" />
-      </div>
-    </div>
-  );
+  return <LoadingState scope="page" />;
 }
 
 export { ConnectivityBanner } from "./ConnectivityBanner";

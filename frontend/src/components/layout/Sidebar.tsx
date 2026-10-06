@@ -12,7 +12,6 @@ import {
   MessageSquareText,
   PlugZap,
   Settings,
-  Sparkles,
   Users,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -56,11 +55,11 @@ const desktopSections = [
       { to: "/app/tasks", label: "nav.tasks", icon: ListChecks, resource: "tasks" },
       { to: "/app/calendar", label: "nav.calendar", icon: CalendarDays, resource: "appointments" },
       { to: "/app/conversations", label: "nav.conversations", icon: MessageSquareText, resource: "conversations" },
+      { to: "/app/ai-agents", label: "nav.aiAgents", icon: Bot, resource: "ai_automation" },
       {
         label: "nav.channels",
         icon: PlugZap,
         children: [
-          { to: "/app/ai-agents", label: "nav.aiAgents", icon: Bot, resource: "ai_automation" },
           { to: "/app/integrations", label: "nav.integrations", icon: PlugZap, resource: "integrations" },
         ],
       },
@@ -70,7 +69,6 @@ const desktopSections = [
         icon: BarChart3,
         children: [
           { to: "/app/analytics", label: "nav.analytics", icon: BarChart3, resource: "analytics" },
-          { to: "/app/ai-assistant", label: "nav.aiAssistant", icon: Sparkles, resource: "ai_assistant" },
           { to: "/app/timeline", label: "nav.timeline", icon: Clock3, resource: "analytics" },
         ],
       },
@@ -91,11 +89,11 @@ const mobileDrawerSections = [
       { to: "/app/tasks", label: "nav.tasks", icon: ListChecks, resource: "tasks" },
       { to: "/app/calendar", label: "nav.calendar", icon: CalendarDays, resource: "appointments" },
       { to: "/app/conversations", label: "nav.conversations", icon: MessageSquareText, resource: "conversations" },
+      { to: "/app/ai-agents", label: "nav.aiAgents", icon: Bot, resource: "ai_automation" },
       {
         label: "nav.channels",
         icon: PlugZap,
         children: [
-          { to: "/app/ai-agents", label: "nav.aiAgents", icon: Bot, resource: "ai_automation" },
           { to: "/app/integrations", label: "nav.integrations", icon: PlugZap, resource: "integrations" },
         ],
       },
@@ -105,7 +103,6 @@ const mobileDrawerSections = [
         icon: BarChart3,
         children: [
           { to: "/app/analytics", label: "nav.analytics", icon: BarChart3, resource: "analytics" },
-          { to: "/app/ai-assistant", label: "nav.aiAssistant", icon: Sparkles, resource: "ai_assistant" },
           { to: "/app/timeline", label: "nav.timeline", icon: Clock3, resource: "analytics" },
         ],
       },
@@ -120,6 +117,7 @@ function isItemActive(pathname: string, to?: string) {
 }
 
 function isSidebarItemVisible(item: SidebarItem, user: ReturnType<typeof useAuth>["user"], businessId?: number): boolean {
+  if (item.to === "/app/ai-agents") return ["ai_automation", "ai_assistant", "ai_analyst"].some(resource => hasPermission(user, businessId, resource, "view"));
   if (item.resource && !hasPermission(user, businessId, item.resource, item.action)) return false;
   if (!item.children?.length) return true;
   return item.children.some((child) => isSidebarItemVisible(child, user, businessId));

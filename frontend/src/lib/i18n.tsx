@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { LoadingIndicator } from "../components/ui/LoadingIndicator";
 
 export type Language = "ru" | "kk" | "en";
 type Dictionary = Record<string, string>;
@@ -8,6 +9,7 @@ const LANGUAGE_KEY = "ai_smb_language";
 const dictionaryCache: Partial<Record<Language, Dictionary>> = {};
 const errorBoundaryDictionary: Record<Language, Dictionary> = {
   ru: {
+    "common.loadingData": "Загружаем данные...",
     "errorBoundary.unknown": "Неизвестная ошибка",
     "errorBoundary.eyebrow": "Ошибка",
     "errorBoundary.title": "Что-то пошло не так",
@@ -16,6 +18,7 @@ const errorBoundaryDictionary: Record<Language, Dictionary> = {
     "errorBoundary.home": "В рабочую область",
   },
   kk: {
+    "common.loadingData": "Деректер жүктелуде...",
     "errorBoundary.unknown": "Белгісіз қате",
     "errorBoundary.eyebrow": "Қате",
     "errorBoundary.title": "Бірдеңе дұрыс болмады",
@@ -24,6 +27,7 @@ const errorBoundaryDictionary: Record<Language, Dictionary> = {
     "errorBoundary.home": "Жұмыс аймағына",
   },
   en: {
+    "common.loadingData": "Loading data...",
     "errorBoundary.unknown": "Unknown error",
     "errorBoundary.eyebrow": "Error",
     "errorBoundary.title": "Something went wrong",
@@ -103,11 +107,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, [language]);
 
   if (!dictionary) {
-    return (
-      <div className="grid min-h-screen place-items-center bg-platforma-bg text-sm font-semibold text-platforma-subtle">
-        PlatformaCRM
-      </div>
-    );
+    return <LoadingIndicator scope="page" label={translate(language, "common.loadingData")} />;
   }
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

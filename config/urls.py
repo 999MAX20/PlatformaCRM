@@ -32,6 +32,7 @@ from apps.ai_core.views import (
     BusinessKnowledgeItemViewSet,
 )
 from apps.ai_core.crm_views import AIHistoryView, CRMReadView, CRMPlanView
+from apps.ai_core.agent_views import AIRuntimeAgentsView
 from apps.analytics.views import AnalyticsEventViewSet, ReportWidgetViewSet, ScheduledReportViewSet, owner_dashboard, report_export, report_summary
 from apps.automations.views import AutomationActionViewSet, AutomationConditionViewSet, AutomationRuleViewSet, AutomationRunViewSet
 from apps.billing.views import CurrentSubscriptionViewSet, EntitlementSummaryViewSet, SubscriptionPlanViewSet, UsageSummaryViewSet
@@ -271,6 +272,7 @@ urlpatterns = [
     path("api/integrations/whatsapp/webhook/", WhatsAppWebhookView.as_view(), name="whatsapp_webhook"),
     path("api/integrations/instagram/webhook/", InstagramWebhookView.as_view(), name="instagram_webhook"),
     path("api/public-api/clients/", PublicApiClientsView.as_view(), name="public_api_clients"),
+    path("api/ai/agents/", AIRuntimeAgentsView.as_view(), name="ai_runtime_agents"),
     path("api/ai/assistant/status/", AIAssistantStatusView.as_view(), name="ai_assistant_status"),
     path("api/ai/assistant/chat/", AIAssistantChatView.as_view(), name="ai_assistant_chat"),
     path("api/ai/analyst/brief/", AIAnalystBriefView.as_view(), name="ai_analyst_brief"),

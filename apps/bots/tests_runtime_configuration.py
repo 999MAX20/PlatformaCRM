@@ -20,7 +20,7 @@ class RuntimeConfigurationTests(TestCase):
             "temperature": 0.4, "auto_crm_pipeline": {"mode": "triage", "enabled": True, "auto_send_reply": True}})
         self.channel = BotChannel.objects.create(bot=self.bot, channel="website", status="active")
         self.profile = AgentProfile.objects.create(business=self.business, bot=self.bot, name="Runtime")
-        self.knowledge = BusinessKnowledgeItem.objects.create(business=self.business, title="Price", content="100")
+        self.knowledge = BusinessKnowledgeItem.objects.create(business=self.business, bot=self.bot, title="Price", content="100")
         self.conversation = BotConversation.objects.create(business=self.business, bot=self.bot, channel="website", external_user_id="test")
         self.message = BotMessage.objects.create(conversation=self.conversation, direction="inbound", text="Price?")
 
@@ -30,6 +30,20 @@ class RuntimeConfigurationTests(TestCase):
             result = maybe_run_auto_pipeline(conversation=self.conversation, message=self.message, channel=self.channel)
         self.assertEqual(result.status, "skipped_disabled")
         qualify.assert_not_called()
+
+    def test_high_confidence_sales_intent_cannot_override_required_human_review(self):
+        from apps.conversations.ai_qualification import ConversationQualification
+        qualification = ConversationQualification(intent="price_question", confidence=0.99,
+            summary="Price question matching the owner's escalation rule", requires_human_review=True)
+        with patch("apps.conversations.auto_pipeline.qualify_conversation", return_value=(qualification, None)), \
+             patch("apps.conversations.auto_pipeline.run_conversation_pipeline") as run, \
+             patch("apps.conversations.auto_pipeline._send_auto_reply") as reply:
+            result = maybe_run_auto_pipeline(conversation=self.conversation, message=self.message, channel=self.channel)
+        self.assertEqual(result.status, "needs_review")
+        self.conversation.refresh_from_db()
+        self.assertTrue(self.conversation.handoff_required)
+        run.assert_not_called()
+        reply.assert_not_called()
 
     def test_settings_changed_during_qualification_cannot_create_or_reply(self):
         def change(**kwargs):

@@ -1,4 +1,6 @@
-import type { ComponentProps, Dispatch, SetStateAction } from "react";
+import { CRMAgentRuntime } from "./CRMAgentRuntime";
+import { CRMAgentSettings } from "./CRMAgentSettings";
+import type { ComponentProps, Dispatch, ReactNode, SetStateAction } from "react";
 
 import { getApiErrorMessage } from "../../../api/client";
 import { CrmWorkspacePage } from "../../../components/crm";
@@ -47,6 +49,9 @@ export function AIAgentsWorkspace({
   mutationError,
   navigationBlocked,
   newAgentName,
+  newAgentScenario,
+  onSetNewAgentScenario,
+  hasCRMAgent,
   onCloseCreate,
   onCloseNavigationGuard,
   onCreateAgent,
@@ -71,6 +76,7 @@ export function AIAgentsWorkspace({
   setBotDraft,
   setProfileForm,
   toggleChannel,
+  deleteControl,
 }: {
   activeSection: AgentSection;
   addChannel: AddChannelMutation;
@@ -90,6 +96,9 @@ export function AIAgentsWorkspace({
   mutationError: unknown;
   navigationBlocked: boolean;
   newAgentName: string;
+  newAgentScenario: "inbox" | "crm" | null;
+  onSetNewAgentScenario: (value: "inbox" | "crm") => void;
+  hasCRMAgent: boolean;
   onCloseCreate: () => void;
   onCloseNavigationGuard: () => void;
   onCreateAgent: () => void;
@@ -114,6 +123,7 @@ export function AIAgentsWorkspace({
   setBotDraft: Dispatch<SetStateAction<BotDraftState>>;
   setProfileForm: Dispatch<SetStateAction<AgentFormState>>;
   toggleChannel: ToggleChannelMutation;
+  deleteControl?: ReactNode;
 }) {
   const { t } = useI18n();
 
@@ -121,7 +131,7 @@ export function AIAgentsWorkspace({
     return (
       <CrmWorkspacePage maxWidthClassName="max-w-[1520px]">
         <ErrorState
-          message={getApiErrorMessage(pageError)}
+          error={pageError} message={getApiErrorMessage(pageError)}
           action={(
             <Button type="button" variant="secondary" onClick={onRetry}>
               {t("common.retry")}
@@ -165,7 +175,7 @@ export function AIAgentsWorkspace({
             canManage={canManage}
             activationBlocked={selectedBot.status !== "active" && !launchReady}
             dirty={dirty}
-            saveDisabled={!botDraft.name.trim() || !profileForm.name.trim()}
+            saveDisabled={!botDraft.name.trim()}
             isSaving={isSaving}
             saveState={saveState}
             onSectionChange={onNavigateSection}
@@ -173,16 +183,17 @@ export function AIAgentsWorkspace({
             onOpenMessages={onOpenMessages}
             onReset={onReset}
             onSave={onSave}
-            showFooter={dirty || activeSection === "profile" || activeSection === "actions"}
+            showFooter={dirty || activeSection === "profile" || activeSection === "actions" || (selectedBot.scenario === "crm" && activeSection === "knowledge")}
+            afterFooter={activeSection === "profile" ? deleteControl : undefined}
           >
-            {mutationError ? <ErrorState message={getApiErrorMessage(mutationError)} /> : null}
+            {mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}
             {activeSection === "channels" && !canViewChannels ? (
               <ErrorState message={t("aiAgents.channelsPermissionDenied")} />
             ) : sectionLoading ? (
-              <LoadingState label={t("aiAgents.sectionLoading")} />
+              <LoadingState />
             ) : sectionError ? (
               <ErrorState
-                message={getApiErrorMessage(sectionError)}
+                error={sectionError} message={getApiErrorMessage(sectionError)}
                 action={<Button type="button" variant="secondary" onClick={onRetrySection}>{t("common.retry")}</Button>}
               />
             ) : activeSection === "profile" ? (
@@ -204,7 +215,11 @@ export function AIAgentsWorkspace({
                 toggleChannel={toggleChannel}
               />
             ) : activeSection === "knowledge" ? (
-              <KnowledgeSection businessId={businessId} items={knowledgeItems} canManage={canManage} />
+              <>{selectedBot.scenario === "crm" && <CRMAgentSettings section="sources" form={profileForm} setForm={setProfileForm} canManage={canManage} />}<KnowledgeSection key={selectedBot.id} agentId={selectedBot.id} businessId={businessId} items={knowledgeItems} canManage={canManage} /></>
+            ) : activeSection === "work" || activeSection === "analytics" ? (
+              <CRMAgentRuntime key={`${selectedBot.id}-${activeSection}`} bot={selectedBot} section={activeSection} dirty={dirty} />
+            ) : activeSection === "actions" && selectedBot.scenario === "crm" ? (
+              <CRMAgentSettings section="actions" form={profileForm} setForm={setProfileForm} canManage={canManage} />
             ) : activeSection === "actions" ? (
               <AgentActionsSection
                 botDraft={botDraft}
@@ -225,7 +240,7 @@ export function AIAgentsWorkspace({
           </AIAgentEditorShell>
         ) : (
           <div className="space-y-3">
-            {mutationError ? <ErrorState message={getApiErrorMessage(mutationError)} /> : null}
+            {mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}
             <EmptyAgentsState canManage={canManage} onCreate={onOpenCreate} />
           </div>
         )}
@@ -236,6 +251,9 @@ export function AIAgentsWorkspace({
         canManage={canManage}
         error={createError}
         name={newAgentName}
+        scenario={newAgentScenario}
+        onScenarioChange={onSetNewAgentScenario}
+        hasCRMAgent={hasCRMAgent}
         onNameChange={onSetNewAgentName}
         onClose={onCloseCreate}
         onSubmit={onCreateAgent}

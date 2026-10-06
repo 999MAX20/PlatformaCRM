@@ -49,7 +49,7 @@ export function InterfaceSettingsCard() {
   return (
     <Card id="interface" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
       <h2 className="mb-3 text-base font-bold">{t("account.interfaceTitle")}</h2>
-      {mutation.error ? <ErrorState message={getApiErrorMessage(mutation.error)} /> : null}
+      {mutation.error ? <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} /> : null}
       {mutation.isSuccess ? <p role="status" className="mb-3 text-sm text-platforma-success">{t("account.interfaceSaved")}</p> : null}
       <form className="grid max-w-[560px] gap-3 sm:grid-cols-2" onSubmit={(event) => { event.preventDefault(); mutation.mutate({ language: selectedLanguage, start_page: selectedStartPage }); }}>
         <div className="min-w-0 flex-1">

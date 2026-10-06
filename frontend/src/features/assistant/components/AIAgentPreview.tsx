@@ -34,7 +34,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
             </Button>
           ))}
         </div>
-        <div role="log" aria-label={t("aiSetup.previewTitle")} className="max-h-80 min-h-32 space-y-3 overflow-y-auto overscroll-contain rounded-control bg-surface-muted p-3">
+        <div role="log" aria-label={t("aiSetup.previewTitle")} className={`max-h-80 space-y-3 overflow-y-auto overscroll-contain rounded-control bg-surface-muted ${messages.length ? "min-h-32 p-3" : "h-0"}`}>
           {messages.map((message, index) => (
             <div key={index} className="border-b border-platforma-border pb-2 last:border-0 last:pb-0">
               <p className="text-xs font-semibold text-platforma-subtle">{t(message.direction === "inbound" ? "aiAgents.client" : "aiAgents.reply")}</p>
@@ -51,7 +51,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
             {preview.data.sources.map((source) => <li key={`${source.type}-${source.id}`}>{source.label}</li>)}
           </ul> : null}
         </div> : null}
-        {preview.error ? <ErrorState message={getApiErrorMessage(preview.error)} /> : null}
+        {preview.error ? <ErrorState error={preview.error} message={getApiErrorMessage(preview.error)} /> : null}
         <form className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end" onSubmit={(event) => {
           event.preventDefault();
           if (!disabled && text.trim()) preview.mutate([...messages.slice(-14), { direction: "inbound", text: text.trim() }]);

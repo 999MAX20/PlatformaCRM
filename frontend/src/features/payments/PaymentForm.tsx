@@ -106,7 +106,7 @@ export function PaymentForm({ businessId, currency, initialClient, original, can
     <form onSubmit={submit} className="space-y-4" onChange={() => setDirty(true)} onKeyDown={(event) => {
       if (event.key === "Escape" && event.target instanceof Element && event.target.closest('[role="listbox"], [role="combobox"][aria-expanded="true"]')) event.stopPropagation();
     }}>
-      {mutation.error && <ErrorState message={getApiErrorMessage(mutation.error)} />}
+      {mutation.error && <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} />}
       {fieldErrors.form && <p role="alert" className="text-platforma-danger">{fieldErrors.form}</p>}
       {uncertain && <p role="alert">{t("payments.uncertain")}</p>}
       <fieldset disabled={mutation.isPending || uncertain} className="space-y-4">

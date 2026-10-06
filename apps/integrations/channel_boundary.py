@@ -88,9 +88,13 @@ def lock_channel_business(business_id):
 
 def lock_channel_for_setup(channel):
     from apps.bots.models import BotChannel
+    from apps.core.domain_errors import InvalidTransition
 
     lock_channel_business(channel.bot.business_id)
-    return BotChannel.objects.select_for_update().select_related("bot").get(pk=channel.pk)
+    channel = BotChannel.objects.select_for_update().select_related("bot").get(pk=channel.pk)
+    if channel.bot.is_deleted:
+        raise InvalidTransition(detail="This AI agent has been deleted.")
+    return channel
 
 
 @contextmanager

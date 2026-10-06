@@ -1,0 +1,89 @@
+import { expect, test } from "@playwright/test";
+import { crmSession } from "./support/crm-workspace";
+import type { Bot, BusinessKnowledgeItem } from "../src/types";
+
+test.beforeEach(({ page }) => {
+  test.skip(process.env.ZANI_QUALITY_GATE !== "1", "Requires isolated fixtures");
+  page.setDefaultTimeout(15_000);
+  test.setTimeout(180_000);
+});
+
+test("new agents isolate private knowledge and explicitly connect shared materials", async ({ page }, info) => {
+  const session = await crmSession(page);
+  const shared = await session.create<BusinessKnowledgeItem>("ai/knowledge-items", { title: "Legacy shared material", content: "Shared only when connected" });
+  const first = await session.create<Bot>("bots", { name: "Isolated First" });
+  const second = await session.create<Bot>("bots", { name: "Isolated Second" });
+  await session.create("ai/agent-profiles", { bot: first.id, name: first.name, system_prompt: "First agent private instructions" });
+  await page.goto(`/app/ai-agents/${first.id}/knowledge`);
+  const editor = page.getByTestId("ai-agent-editor");
+  await expect(editor.getByText(shared.title, { exact: true })).toHaveCount(0);
+  const privateTitle = "First agent private material";
+  await editor.getByRole("button", { name: "Добавить знание", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByRole("textbox", { name: /^Название/ }).fill(privateTitle);
+  await dialog.getByRole("textbox", { name: /^Содержание/ }).fill("Private facts for first agent only");
+  await dialog.getByRole("button", { name: "Сохранить", exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(editor.getByText(privateTitle, { exact: true })).toBeVisible();
+  const own = (await session.read("ai/knowledge-items", { agent: first.id })).results.find((item: BusinessKnowledgeItem) => item.title === privateTitle);
+  expect(own.bot).toBe(first.id);
+  await editor.getByRole("button", { name: "Подключить общие материалы", exact: true }).click();
+  const sharedRow = dialog.locator("article").filter({ hasText: shared.title });
+  await page.route(`**/api/ai/knowledge-items/${shared.id}/connection/`, route => route.fulfill({ status: 503, json: { detail: "Temporary connection failure" } }));
+  await sharedRow.getByRole("button", { name: "Подключить", exact: true }).click();
+  await expect(dialog.getByRole("alert")).toBeVisible();
+  await page.unroute(`**/api/ai/knowledge-items/${shared.id}/connection/`);
+  await sharedRow.getByRole("button", { name: "Подключить", exact: true }).click();
+  await expect(sharedRow).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(editor.getByText(shared.title, { exact: true })).toBeVisible();
+  await page.screenshot({ path: info.outputPath("explicit-knowledge.png"), fullPage: true });
+  if (await page.getByTestId("agent-picker-trigger").count()) await page.getByTestId("agent-picker-trigger").click();
+  await page.getByTestId("agent-navigation").getByRole("option", { name: /Isolated Second/ }).click();
+  await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).not.toHaveValue("First agent private instructions");
+  await editor.getByRole("tab", { name: "Знания", exact: true }).click();
+  await expect(editor.getByText(privateTitle, { exact: true })).toHaveCount(0);
+  await expect(editor.getByText(shared.title, { exact: true })).toHaveCount(0);
+  await expect.poll(async () => (await session.read("ai/knowledge-items", { agent: second.id })).count).toBe(0);
+  if (await page.getByTestId("agent-picker-trigger").count()) await page.getByTestId("agent-picker-trigger").click();
+  await page.getByTestId("agent-navigation").getByRole("option", { name: /Isolated First/ }).click();
+  await editor.getByRole("tab", { name: "Знания", exact: true }).click();
+  await expect(editor.getByText(shared.title, { exact: true })).toBeVisible();
+  await editor.getByRole("button", { name: "Отключить", exact: true }).click();
+  await expect(editor.getByText(shared.title, { exact: true })).toHaveCount(0);
+  await page.reload();
+  await expect(editor.getByText(privateTitle, { exact: true })).toBeVisible();
+  await expect(editor.getByText(shared.title, { exact: true })).toHaveCount(0);
+  await editor.getByRole("tab", { name: "Профиль", exact: true }).click();
+  await editor.getByRole("button", { name: "Удалить агента", exact: true }).click();
+  await dialog.getByRole("button", { name: "Удалить агента", exact: true }).click();
+  await expect(page).not.toHaveURL(new RegExp(`/ai-agents/${first.id}/`));
+  const replacement = await session.create<Bot>("bots", { name: "Isolated Replacement" });
+  await page.goto(`/app/ai-agents/${replacement.id}/knowledge`);
+  await expect(editor.getByRole("heading", { name: "Знания агента", exact: true })).toBeVisible();
+  await expect(editor.getByText(privateTitle, { exact: true })).toHaveCount(0);
+  await expect(editor.getByText(shared.title, { exact: true })).toHaveCount(0);
+  expect((await session.read("ai/knowledge-items", { agent: replacement.id })).count).toBe(0);
+  expect((await session.read("ai/knowledge-items")).results.some((item: BusinessKnowledgeItem) => item.id === shared.id)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+});
+
+test("shared knowledge picker has localized keyboard and empty states", async ({ page }, info) => {
+  const session = await crmSession(page);
+  const bot = await session.create<Bot>("bots", { name: "Knowledge locales" });
+  await page.route("**/api/ai/knowledge-items/?business=**", route => route.fulfill({ json: { count: 0, next: null, previous: null, results: [] } }));
+  for (const [locale, label] of [["ru", "Подключить общие материалы"], ["kk", "Ортақ материалдарды қосу"], ["en", "Connect shared materials"]]) {
+    await page.evaluate(value => localStorage.setItem("ai_smb_language", value), locale);
+    await page.goto(`/app/ai-agents/${bot.id}/knowledge`);
+    const trigger = page.getByRole("button", { name: label, exact: true });
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("dialog", { name: label, exact: true })).toBeVisible();
+    await expect(page.getByRole("dialog").getByRole("status")).toBeVisible();
+    await page.screenshot({ path: info.outputPath(`shared-${locale}.png`), fullPage: true });
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+  }
+});

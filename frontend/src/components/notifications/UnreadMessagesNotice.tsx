@@ -11,7 +11,7 @@ export function UnreadMessagesNotice({ count, onOpen, onDismiss }: {
 }) {
   const { t } = useI18n();
   return <StatusNotice
-    tone="danger"
+    tone="info"
     role="status"
     ariaLive="polite"
     icon={MessageSquareText}

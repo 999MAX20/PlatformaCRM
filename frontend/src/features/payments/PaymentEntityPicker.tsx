@@ -39,7 +39,7 @@ export function PaymentEntityPicker({ businessId, kind, clientId, value, onChang
       onKeyDown={(event) => { if (event.key === "Escape") { event.stopPropagation(); setOpen(false); trigger.current?.focus(); } }}>
       <Input autoFocus label={`${t("common.search")}: ${label}`} value={search} maxLength={200} onChange={(e) => setSearch(e.target.value)} />
       {options.isLoading && <LoadingState />}
-      {options.error && <ErrorState message={getApiErrorMessage(options.error)} action={<Button type="button" variant="secondary" onClick={() => void options.refetch()}>{t("common.retry")}</Button>} />}
+      {options.error && <ErrorState error={options.error} message={getApiErrorMessage(options.error)} action={<Button type="button" variant="secondary" onClick={() => void options.refetch()}>{t("common.retry")}</Button>} />}
       {!options.isFetching && options.data?.count === 0 && <p role="status">{t("payments.noMatches")}</p>}
       <ul aria-label={label} className="space-y-1">
         {options.data?.results.map((option) => <li key={option.id}>

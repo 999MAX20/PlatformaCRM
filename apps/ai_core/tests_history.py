@@ -51,7 +51,9 @@ class HistoricalAnalystTests(SelectedFinancialSourceTests):
         self.business.financial_source_mode = "external"
         self.business.save()
         self.assertEqual(self.history().data["financial"]["state"], "unavailable")
-        AgentProfile.objects.create(business=self.business, name="Off", is_active=False, rules_json={"scenario": "analyst"})
+        from apps.bots.models import Bot
+        agent = Bot.objects.create(business=self.business, name="CRM", status="active", settings_json={"scenario": "crm"})
+        AgentProfile.objects.create(business=self.business, bot=agent, name="Off", rules_json={"analyst_enabled": False})
         self.assertEqual(self.history().status_code, 403)
 
     def test_history_rejects_other_business(self):

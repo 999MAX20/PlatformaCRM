@@ -1,4 +1,5 @@
 """Thin API boundaries for the employee's CRM reads and historical analyst."""
+from apps.ai_core.agent_runtime import agent_request
 from datetime import timedelta
 
 from rest_framework import serializers
@@ -23,6 +24,7 @@ class CRMReadSerializer(serializers.Serializer):
 
 
 class CRMReadView(APIView):
+    @agent_request
     def get(self, request):
         serializer = CRMReadSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -40,6 +42,7 @@ class CRMPlanSerializer(serializers.Serializer):
 
 
 class CRMPlanView(APIView):
+    @agent_request
     def post(self, request):
         serializer = CRMPlanSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -63,6 +66,7 @@ class HistorySerializer(serializers.Serializer):
 
 
 class AIHistoryView(APIView):
+    @agent_request
     def get(self, request):
         serializer = HistorySerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -70,6 +74,7 @@ class AIHistoryView(APIView):
         assert_can(request.user, values["business"], Resources.AI_ANALYST, Actions.VIEW)
         return Response(build_history_report(user=request.user, **values))
 
+    @agent_request
     def post(self, request):
         serializer = HistoryQuestionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

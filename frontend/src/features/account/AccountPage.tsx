@@ -7,7 +7,7 @@ import { getApiErrorMessage } from "../../api/client";
 import { notificationsApi } from "../../api/notifications";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
-import { ErrorState } from "../../components/ui/StateViews";
+import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
 import { useActiveBusiness } from "../../hooks/useBusiness";
@@ -135,7 +135,7 @@ export function AccountPage() {
           </div>
           <Button size="sm" variant="ghost" data-testid="merchant-logout" onClick={logout}><LogOut size={16} />{t("header.logout")}</Button>
         </div>
-        {profileMutation.error ? <ErrorState message={getApiErrorMessage(profileMutation.error)} /> : null}
+        {profileMutation.error ? <ErrorState error={profileMutation.error} message={getApiErrorMessage(profileMutation.error)} /> : null}
         {profileSaved ? <p role="status" className="mb-3 text-sm text-platforma-success">{t("account.saved")}</p> : null}
         <div className="grid gap-5 sm:grid-cols-[160px_minmax(0,1fr)]">
           <AvatarEditor user={user} />
@@ -166,7 +166,7 @@ export function AccountPage() {
         </details> : null}
         <details className="border-t border-platforma-border pt-3">
           <summary className="cursor-pointer text-sm font-semibold">{t("account.loginHistoryTitle")}</summary>
-          {loginHistory.isLoading ? <p role="status" className="mt-2 text-sm">{t("common.loading")}</p> : loginHistory.error ? <ErrorState message={getApiErrorMessage(loginHistory.error)} action={<Button size="sm" variant="secondary" onClick={() => void loginHistory.refetch()}>{t("common.retry")}</Button>} /> : <div className="mt-2 divide-y divide-platforma-border">
+          {loginHistory.isLoading ? <LoadingState /> : loginHistory.error ? <ErrorState error={loginHistory.error} message={getApiErrorMessage(loginHistory.error)} action={<Button size="sm" variant="secondary" onClick={() => void loginHistory.refetch()}>{t("common.retry")}</Button>} /> : <div className="mt-2 divide-y divide-platforma-border">
             {(loginHistory.data || []).slice(0, 5).map((item) => <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
               <span>{formatDateTime(item.created_at)}</span><span className="text-platforma-subtle" title={item.user_agent || t("account.noDevice")}>{item.ip_address || t("account.noIp")}</span><span>{t(`status.${item.status}`)}</span>
             </div>)}
@@ -178,8 +178,8 @@ export function AccountPage() {
       <Card id="notifications" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <h2 className="mb-2 text-base font-bold">{t("account.notificationsEyebrow")}</h2>
         <p className="mb-2 text-xs text-platforma-subtle">{t("account.notificationsText")}</p>
-        {notificationPreferenceMutation.error ? <ErrorState message={getApiErrorMessage(notificationPreferenceMutation.error)} /> : null}
-        {!business?.id ? <p className="text-sm">{t("account.notificationsNoBusiness")}</p> : notificationPreferences.isLoading ? <p role="status" className="text-sm">{t("common.loading")}</p> : notificationPreferences.error ? <ErrorState message={getApiErrorMessage(notificationPreferences.error)} action={<Button size="sm" variant="secondary" onClick={() => void notificationPreferences.refetch()}>{t("common.retry")}</Button>} /> : <div className="divide-y divide-platforma-border">
+        {notificationPreferenceMutation.error ? <ErrorState error={notificationPreferenceMutation.error} message={getApiErrorMessage(notificationPreferenceMutation.error)} /> : null}
+        {!business?.id ? <p className="text-sm">{t("account.notificationsNoBusiness")}</p> : notificationPreferences.isLoading ? <LoadingState /> : notificationPreferences.error ? <ErrorState error={notificationPreferences.error} message={getApiErrorMessage(notificationPreferences.error)} action={<Button size="sm" variant="secondary" onClick={() => void notificationPreferences.refetch()}>{t("common.retry")}</Button>} /> : <div className="divide-y divide-platforma-border">
           {notificationCategories.map((item) => {
             const enabled = preferenceByCategory.get(item.category)?.in_app_enabled !== false;
             return <div key={item.category} className="flex items-center justify-between gap-3 py-2">
@@ -212,7 +212,7 @@ export function AccountPage() {
               <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">{t("account.securityText")}</p>
             </div>
           </div>
-          {passwordMutation.error ? <div className="mb-4"><ErrorState message={getApiErrorMessage(passwordMutation.error)} /></div> : null}
+          {passwordMutation.error ? <div className="mb-4"><ErrorState error={passwordMutation.error} message={getApiErrorMessage(passwordMutation.error)} /></div> : null}
           <form
             className="grid gap-4"
             onSubmit={(event) => {

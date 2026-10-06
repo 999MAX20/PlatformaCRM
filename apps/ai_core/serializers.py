@@ -22,8 +22,30 @@ class AIRequestLogSerializer(serializers.ModelSerializer):
 class BusinessKnowledgeItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BusinessKnowledgeItem
-        fields = "__all__"
+        fields = ["id", "business", "bot", "title", "content", "category", "is_active", "created_at", "updated_at"]
         read_only_fields = ["created_at", "updated_at"]
+
+    def validate(self, attrs):
+        business = attrs.get("business", getattr(self.instance, "business", None))
+        bot = attrs.get("bot", getattr(self.instance, "bot", None))
+        if bot and (bot.business_id != business.pk or bot.is_deleted):
+            raise serializers.ValidationError({"bot": "Agent is unavailable for this business."})
+        if self.instance and (business != self.instance.business or bot != self.instance.bot):
+            raise serializers.ValidationError("Knowledge ownership cannot change.")
+        return attrs
+
+    def create(self, validated_data):
+        from apps.ai_core.knowledge import save_knowledge
+        return save_knowledge(actor=self.context["request"].user, data=validated_data)
+
+    def update(self, instance, validated_data):
+        from apps.ai_core.knowledge import save_knowledge
+        return save_knowledge(actor=self.context["request"].user, data=validated_data, item=instance)
+
+
+class KnowledgeConnectionSerializer(serializers.Serializer):
+    agent = serializers.IntegerField(min_value=1)
+    connected = serializers.BooleanField()
 
 
 class AgentProfileSerializer(serializers.ModelSerializer):
@@ -39,6 +61,8 @@ class AgentProfileSerializer(serializers.ModelSerializer):
         bot = attrs.get("bot") if "bot" in attrs else getattr(self.instance, "bot", None)
         if business and bot and bot.business_id != business.id:
             raise serializers.ValidationError("Bot must belong to the selected business.")
+        if bot and bot.is_deleted:
+            raise serializers.ValidationError("This AI agent has been deleted.")
         for field, key in (("rules_json", "items"), ("escalation_rules_json", "items"), ("allowed_tools_json", "tools")):
             if field not in attrs:
                 continue
@@ -60,6 +84,19 @@ class AgentProfileSerializer(serializers.ModelSerializer):
             tools = attrs.get("allowed_tools_json", getattr(self.instance, "allowed_tools_json", {})).get("tools", [])
             if any(tool not in TOOLS for tool in tools) or (rules["scenario"] == "analyst" and tools):
                 raise serializers.ValidationError({"allowed_tools_json": "Unsupported scenario capability."})
+        if bot and bot.scenario == "crm":
+            from apps.ai_core.workflows import SOURCES
+            from apps.ai_core.tool_registry import TOOLS
+            if not isinstance(rules, dict) or "scenario" in rules:
+                raise serializers.ValidationError({"rules_json": "Use the CRM agent's unified settings."})
+            sources = rules.get("sources", sorted(SOURCES))
+            if not isinstance(sources, list) or any(not isinstance(item, str) or item not in SOURCES for item in sources):
+                raise serializers.ValidationError({"rules_json": "Unsupported data source."})
+            if "analyst_enabled" in rules and not isinstance(rules["analyst_enabled"], bool):
+                raise serializers.ValidationError({"rules_json": "Analyst enabled must be boolean."})
+            tools = attrs.get("allowed_tools_json", getattr(self.instance, "allowed_tools_json", {})).get("tools", [])
+            if any(tool not in TOOLS for tool in tools):
+                raise serializers.ValidationError({"allowed_tools_json": "Unsupported CRM capability."})
         if "language" in attrs and attrs["language"] not in {"ru", "kk", "en"}:
             raise serializers.ValidationError({"language": "Unsupported agent language."})
         if bot and self.context.get("request") and (bot.settings_json.get("auto_crm_pipeline") or {}).get("creation_policy") == "automatic":

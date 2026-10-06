@@ -115,7 +115,7 @@ export function IntegrationsPage() {
   const errorCount = data.filter((item) => statusFilterFor(item.status) === "error").length;
 
   if (isBusinessLoading || capabilities.isLoading || connectors.isLoading) {
-    return <LoadingState label={t("integrations.page.loading")} />;
+    return <LoadingState scope="page" />;
   }
 
   if (!business) {
@@ -200,7 +200,7 @@ export function IntegrationsPage() {
       }
     >
       <div className="space-y-5 p-3 sm:p-4">
-        {pageError ? <ErrorState message={getApiErrorMessage(pageError)} /> : null}
+        {pageError ? <ErrorState error={pageError} message={getApiErrorMessage(pageError)} /> : null}
         <Surface padding="sm" variant="muted" className="text-sm font-semibold text-platforma-subtle">
           {t("integrations.page.merchantResultsMeta", {
             found: visibleData.length,

@@ -49,7 +49,7 @@ class AIPauseInboundTests(TestCase):
         self.bot.status = Bot.Statuses.ACTIVE
         self.bot.save(update_fields=["status"])
         AgentProfile.objects.create(business=self.business, bot=self.bot, name="Ready profile")
-        BusinessKnowledgeItem.objects.create(business=self.business, title="Knowledge", content="Ask the manager.")
+        BusinessKnowledgeItem.objects.create(business=self.business, bot=self.bot, title="Knowledge", content="Ask the manager.")
 
     def _post_website(self, **data):
         return self.api.post(f"/api/public/website-chat/{self.channel.public_token}/conversations/",

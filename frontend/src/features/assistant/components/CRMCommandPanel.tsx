@@ -1,3 +1,4 @@
+import { LoadingState } from "../../../components/ui/StateViews";
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
@@ -19,11 +20,11 @@ const routePaths = { clients: "clients", leads: "leads", deals: "deals", tasks: 
 function label(row: CRMRecord) { return row.full_name || row.title || row.message || row.start_at || `#${row.id}`; }
 function text(value: unknown) { return value === null || value === undefined || value === "" ? "—" : String(value); }
 
-export function CRMCommandPanel({ businessId, canSuggest, canExecute }: { businessId: Id; canSuggest: boolean; canExecute: boolean }) {
+export function CRMCommandPanel({ businessId, agentId, allowedSources = entities, canSuggest, canExecute }: { businessId: Id; agentId?: Id; allowedSources?: CRMEntity[]; canSuggest: boolean; canExecute: boolean }) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const confirm = useActionConfirm();
-  const [entity, setEntity] = useState<CRMEntity>("clients");
+  const [entity, setEntity] = useState<CRMEntity>(allowedSources[0] || "clients");
   const [query, setQuery] = useState("");
   const [offset, setOffset] = useState(0);
   const [archived, setArchived] = useState(false);
@@ -31,9 +32,9 @@ export function CRMCommandPanel({ businessId, canSuggest, canExecute }: { busine
   const [message, setMessage] = useState("");
   const [proposal, setProposal] = useState<AIToolCallLog | null>(null);
   const approvals = useRef(new Map<Id, Id>());
-  const records = useQuery({ queryKey: ["ai-crm-records", businessId, entity, query, offset, archived],
-    queryFn: () => aiCRMApi.read({ business: businessId, entity, query, offset, include_archived: archived }) });
-  const plan = useMutation({ mutationFn: () => aiCRMApi.plan({ business: businessId, entity, entity_id: target?.id, message }),
+  const records = useQuery({ queryKey: ["ai-crm-records", businessId, agentId, entity, query, offset, archived],
+    queryFn: () => aiCRMApi.read({ business: businessId, agent: agentId, entity, query, offset, include_archived: archived }) });
+  const plan = useMutation({ mutationFn: () => aiCRMApi.plan({ business: businessId, agent: agentId, entity, entity_id: target?.id, message }),
     onMutate: () => setProposal(null), onSuccess: result => setProposal(result.suggested_actions[0] || null) });
   const execute = useMutation({ mutationFn: async (action: AIToolCallLog) => {
     let approvalId = approvals.current.get(action.id);
@@ -58,11 +59,11 @@ export function CRMCommandPanel({ businessId, canSuggest, canExecute }: { busine
   return <Card aria-label={t("aiCRM.title")}><CardBody className="space-y-4">
     <h2 className="text-lg font-semibold">{t("aiCRM.title")}</h2>
     <div className="grid gap-3 sm:grid-cols-2">
-      <Select label={t("aiCRM.entity")} value={entity} disabled={busy} onChange={event => { setEntity(event.target.value as CRMEntity); setTarget(null); setOffset(0); clear(); }} options={entities.map(value => ({ value, label: t(`aiWorkflow.source.${value}`) }))} />
+      <Select label={t("aiCRM.entity")} value={entity} disabled={busy} onChange={event => { setEntity(event.target.value as CRMEntity); setTarget(null); setOffset(0); clear(); }} options={allowedSources.map(value => ({ value, label: t(`aiWorkflow.source.${value}`) }))} />
       <Input label={t("common.search")} value={query} disabled={busy} onChange={event => { setQuery(event.target.value); setOffset(0); setTarget(null); clear(); }} />
     </div>
     <label className="flex min-h-9 items-center gap-2 text-sm"><input type="checkbox" checked={archived} disabled={busy} onChange={event => { setArchived(event.target.checked); setOffset(0); setTarget(null); clear(); }} />{t("aiCRM.includeArchived")}</label>
-    {records.isLoading && <p role="status">{t("aiCRM.loading")}</p>}
+    {records.isLoading && <LoadingState />}
     {records.error && <div role="alert"><p>{getApiErrorMessage(records.error)}</p><Button variant="secondary" onClick={() => records.refetch()}>{t("aiCRM.retry")}</Button></div>}
     {records.data && <>
       <Select label={t("aiCRM.target")} value={target ? String(target.id) : ""} disabled={busy} onChange={event => { setTarget(records.data.results.find(row => row.id === Number(event.target.value)) || null); clear(); }} options={[{ value: "", label: t("aiCRM.newRecord") }, ...records.data.results.map(row => ({ value: String(row.id), label: `${label(row)} · #${row.id}` }))]} />

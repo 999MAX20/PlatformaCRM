@@ -45,7 +45,7 @@ export function AbsenceAppointmentsModal({ resource, date, appointments, loading
         <p className="text-sm text-platforma-subtle">{t("appointment.date")}: {date}</p>
         {!loading && !error ? <p className="font-semibold">{t("workingHours.absenceCounts", { count: appointments.length, clients: new Set(appointments.map((item) => item.client)).size })}</p> : null}
         {loading || resources.isLoading ? <LoadingState /> : null}
-        {error || mutation.error || resources.error ? <ErrorState message={getApiErrorMessage(error || mutation.error || resources.error)} /> : null}
+        {error || mutation.error || resources.error ? <ErrorState error={error || mutation.error || resources.error} message={getApiErrorMessage(error || mutation.error || resources.error)} /> : null}
         {selected ? <AppointmentRescheduleForm appointment={selected} businessId={resource.business} resources={resources.data || []}
           timeZone={timeZone} isSubmitting={mutation.isPending} onCancel={() => setSelected(null)}
           onSubmit={(payload) => mutation.mutateAsync({ appointment: selected, payload })} /> : (

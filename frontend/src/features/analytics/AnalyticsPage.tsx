@@ -101,7 +101,7 @@ export function AnalyticsPage() {
   });
 
   if (!business) return <ErrorState message={t("analytics.noBusiness")} />;
-  if (appointments.isLoading || services.isLoading || metrics.isLoading) return <LoadingState />;
+  if (appointments.isLoading || services.isLoading || metrics.isLoading) return <LoadingState scope="page" />;
   if (metrics.error) return <ErrorState message={t("analytics.loadError")} />;
 
   const appointmentList = appointments.data || [];
@@ -269,8 +269,8 @@ export function AnalyticsPage() {
                 CSV
               </Button>
             </div>
-            {reportSummary.isLoading ? <div className="mt-4"><LoadingState label={t("analytics.loadingReports")} /></div> : null}
-            {reportSummary.error ? <div className="mt-4"><ErrorState message={getApiErrorMessage(reportSummary.error)} /></div> : null}
+            {reportSummary.isLoading ? <div className="mt-4"><LoadingState /></div> : null}
+            {reportSummary.error ? <div className="mt-4"><ErrorState error={reportSummary.error} message={getApiErrorMessage(reportSummary.error)} /></div> : null}
             {report ? (
               <div className="mt-5 grid gap-4 lg:grid-cols-4">
                 <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
@@ -412,7 +412,7 @@ export function AnalyticsPage() {
             <p className="text-sm text-platforma-subtle">{t("analytics.teamPerformanceText")}</p>
           </div>
         </div>
-        {teamPerformance.isLoading ? <LoadingState label={t("analytics.loadingTeam")} /> : null}
+        {teamPerformance.isLoading ? <LoadingState /> : null}
         {teamPerformance.error ? (
           <Card>
             <CardBody className="flex items-start gap-3">

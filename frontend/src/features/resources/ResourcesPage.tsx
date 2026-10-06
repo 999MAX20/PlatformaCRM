@@ -270,7 +270,7 @@ export function ResourcesPage() {
   }
 
   if (!business) return <ErrorState message={t("resources.noBusiness")} />;
-  if (resourcesQuery.isLoading || teamMembersQuery.isLoading) return <LoadingState />;
+  if (resourcesQuery.isLoading || teamMembersQuery.isLoading) return <LoadingState scope="page" />;
 
   const pageError = resourcesQuery.error || teamMembersQuery.error || (!selectedResourceOnPage && selectedResourceQuery.error);
   const hasFilters = Boolean(search || resourceType || status);
@@ -300,7 +300,7 @@ export function ResourcesPage() {
         {pageError ? (
           <div className="mb-3 shrink-0">
             <ErrorState
-              message={getApiErrorMessage(pageError)}
+              error={pageError} message={getApiErrorMessage(pageError)}
               action={<Button type="button" variant="secondary" onClick={() => void Promise.all([resourcesQuery.refetch(), teamMembersQuery.refetch(), ...(selectedResourceId && !selectedResourceOnPage ? [selectedResourceQuery.refetch()] : [])])}>{t("common.retry")}</Button>}
             />
           </div>
@@ -405,7 +405,7 @@ export function ResourcesPage() {
           setCreateDraft(undefined);
         }}
       >
-        {businessHoursQuery.error ? <ErrorState message={getApiErrorMessage(businessHoursQuery.error)} /> : null}
+        {businessHoursQuery.error ? <ErrorState error={businessHoursQuery.error} message={getApiErrorMessage(businessHoursQuery.error)} /> : null}
         <ResourceCreateForm
           businessId={business.id}
           initial={createDraft}

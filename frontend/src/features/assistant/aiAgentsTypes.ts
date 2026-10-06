@@ -1,6 +1,6 @@
 import type { AgentProfile, Id } from "../../types";
 
-export type AgentSection = "profile" | "channels" | "knowledge" | "actions" | "test";
+export type AgentSection = "profile" | "channels" | "knowledge" | "actions" | "test" | "work" | "analytics";
 
 export type AgentFormState = {
   id: Id | null;
@@ -12,6 +12,8 @@ export type AgentFormState = {
   is_active: boolean;
   system_prompt: string;
   rules_text: string;
+  sources: string[];
+  analyst_enabled: boolean;
   escalation_text: string;
   allowed_tools: string[];
 };

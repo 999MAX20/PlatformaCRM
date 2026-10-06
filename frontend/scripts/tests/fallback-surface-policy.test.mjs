@@ -37,9 +37,11 @@ test("shared fallback family consumes AppError and exports every required surfac
 });
 
 test("fallbacks, connectivity, field summaries and toasts share one status notice primitive", () => {
-  for (const source of [fallbackSurfaces, connectivityBanner, fieldErrorSummary, notificationProvider, stateViews]) {
+  for (const source of [fallbackSurfaces, connectivityBanner, fieldErrorSummary, notificationProvider]) {
     assert.match(source, /StatusNotice/);
   }
+  assert.match(stateViews, /return <InlineFallback error=\{appError\}/);
+  assert.match(stateViews, /return <PermissionFallback error=\{permissionError\}/);
   assert.match(statusNotice, /statusNoticeTones/);
   assert.match(statusNotice, /success/);
   assert.match(statusNotice, /info/);
@@ -53,7 +55,7 @@ test("fallback surfaces use normalized keys and never render raw error objects",
     assert.doesNotMatch(source, /error\.message(?!Key)|error\.detail|statusText|JSON\.stringify\(error/);
   }
   assert.match(fallbackSurfaces, /t\(error\.messageKey\)/);
-  assert.match(connectivityBanner, /t\(error\.messageKey\)/);
+  assert.match(connectivityBanner, /isReconnecting \? "fallback\.connectivity\.reconnectingText" : error\.messageKey/);
   assert.match(notificationProvider, /t\(item\.appError\.messageKey\)/);
 });
 
@@ -61,7 +63,8 @@ test("recovery actions remain policy-gated and support details expose only reque
   assert.match(fallbackSurfaces, /canOfferActionRecovery\(error, Boolean\(onRetry\)\)/);
   assert.match(connectivityBanner, /canOfferActionRecovery\(error, Boolean\(onRetry\)\)/);
   assert.match(recoveryDetails, /if \(!error\.requestId\) return null/);
-  assert.doesNotMatch(recoveryDetails, /fieldErrors|retryAfterSeconds|status/);
+  assert.match(recoveryDetails, /canShowSupportDetails\(error\)/);
+  assert.doesNotMatch(recoveryDetails, /error\.(?:fieldErrors|retryAfterSeconds|status)/);
 });
 
 test("field error summary avoids exposing technical field names without approved labels", () => {

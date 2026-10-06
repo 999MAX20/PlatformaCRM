@@ -19,6 +19,8 @@ import { normalizeAppError } from "../../api/appError";
 import { Button } from "../../components/ui/Button";
 import { ErrorState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
+import { RecoveryDetails } from "../../components/ui/RecoveryDetails";
+import { useRecoveryDelay } from "../../components/actions/useRecoveryDelay";
 import { useI18n } from "../../lib/i18n";
 import { useBrowserSessionActivity } from "./useBrowserSessionActivity";
 import {
@@ -226,12 +228,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [acceptUser, isAuthenticated, isLoading, loadCurrentUser, sessionGeneration, user],
   );
 
-  const message = recoveryError ? t(normalizeAppError(recoveryError).messageKey) : "";
-  const retry = <Button type="button" isLoading={isRecovering} onClick={() => void restoreCurrentSession()}>{t("common.retry")}</Button>;
+  const recoveryAppError = useMemo(() => recoveryError ? normalizeAppError(recoveryError) : undefined, [recoveryError]);
+  const recoveryDelay = useRecoveryDelay(recoveryAppError);
+  const message = recoveryAppError ? t(recoveryAppError.messageKey) : "";
+  const retry = <Button type="button" disabled={recoveryDelay > 0} isLoading={isRecovering} onClick={() => void restoreCurrentSession()}>{recoveryDelay > 0 ? t("fallback.retryAfter", { seconds: recoveryDelay }) : t("common.retry")}</Button>;
   return <AuthContext.Provider value={value}>
-    {recoveryError && !isAuthenticated ? <div data-testid="session-recovery" className="mx-auto max-w-xl p-6"><ErrorState message={message} action={retry} /></div> : children}
+    {recoveryError && !isAuthenticated ? <div data-testid="session-recovery" className="mx-auto max-w-xl p-6"><ErrorState error={recoveryError} action={retry} /></div> : children}
     {recoveryError && isAuthenticated ? <div data-testid="session-recovery" className="fixed inset-x-3 bottom-24 z-[90] mx-auto max-w-xl lg:bottom-4">
-      <StatusNotice tone="warning" title={message} action={retry} />
+      <StatusNotice tone="warning" title={message} action={retry} details={recoveryAppError ? <RecoveryDetails error={recoveryAppError} /> : undefined} />
     </div> : null}
   </AuthContext.Provider>;
 }

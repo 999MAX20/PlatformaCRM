@@ -26,7 +26,7 @@ export function PlatformOverviewPage() {
   const { t, language } = useI18n();
   const overview = useQuery({ queryKey: ["platform-overview"], queryFn: platformApi.overview });
 
-  if (overview.isLoading) return <LoadingState label={t("platform.overview.loading")} />;
+  if (overview.isLoading) return <LoadingState scope="page" />;
   if (overview.isError || !overview.data) return <ErrorState message={t("platform.overview.error")} />;
 
   const data = overview.data;

@@ -7,6 +7,64 @@
 - Owner: ZANI manager workflow
 - Primary audit scope: authenticated `/app`
 
+## AI-AGENTS-BEHAVIOR-20261006 — real-response findings
+
+Saved preferences reaching a prompt did not prove obedience: actual responses
+exposed conflicting language requirements, weak roles/tone, invalid command
+arguments, UTC presented as local time, and unavailable data confused with empty
+records. Explicit saved-language precedence, bounded owner preferences, exact
+planner shapes and server-side business timezone conversion repaired reproduced
+cases. A high-confidence shortcut also bypassed requires_human_review and ignored
+custom escalation; removed it and tested the decision boundary.
+
+Regression rule: inspect actual responses and persisted fields, not only HTTP200,
+mocked provider output or prompt parameters. Never repair false booking escalation
+by bypassing mandatory review. Preserve failed attempts and distinguish harness
+errors, empty evidence, unsupported memory, and live delivery from controlled
+receipts. Six live scenarios remain red, including structured lead planning,
+no-source handling and customer booking. This entry is not an overall PASS.
+[Results and remaining acceptance](../docs/testing/ai-agents-behavior-20261006.md).
+
+## AI-AGENTS-CERTIFICATION-20261006 — bounded functional defects
+
+User-flow checks found: relative website widget URL resolving against the merchant
+domain; a new website draft without an activation control; Meta channel badges
+equating stored credentials with a verified connection; a Telegram key input
+without an accessible name; and a Russian minimum-price word forced into English
+AI replies. Fixes use an absolute widget URL, expose website activation while
+retaining backend checks, derive connection badges from actual channel status,
+reuse the input's translated label and condition minimum-price wording on the
+price type and selected language.
+
+Regression rule: exercise a freshly created channel through usable activation,
+not only a seeded active channel. Credential persistence does not prove provider
+readiness. Verify generated embed URLs in a different origin and inspect live
+multilingual output separately from prompt-input assertions. Evidence/limits:
+[certification report](../docs/testing/ai-agents-certification-20261006.md).
+
+## AI-AGENT-FOLLOWUP-20261005 — locally verified, integration blocked
+
+Deletion returned 204 but the UI showed failure until reload. HTTP inspection of
+the running Vite server proved a stale transformed hook without discardDeletedAgent
+was combined with a fresh caller. Disk source and isolated tests were correct.
+Restarting the verified owned Vite process and reading back the served module
+resolved that mismatch. Rule: for local-only runtime regressions inspect actual
+served modules, not only source files or tests on freshly started servers.
+
+Owner creation of CRM agents produced inbox agents because the long-running local
+backend used `--noreload` and did not contain the scenario API, although the new
+frontend and isolated test servers did. The running route returned 404 and all four
+new records lacked `settings_json.scenario`. Restarted only the owned canonical
+backend with reload; live metadata now exposes both choices. Existing records were
+preserved. Scope: local process freshness, not a new scenario data-model rewrite.
+
+Scenario help also opened from the entire card and covered the other card. Help
+now opens only from the icon (plus keyboard/touch), to the right outside the dialog
+when space permits, otherwise inline without overlap. Regression evidence and
+publication boundary: [follow-up report](../docs/testing/ai-agent-followup-20261005.md).
+Rule: isolated browser PASS does not certify an already-running local server;
+read back its changed API contract before handing it back for owner use.
+
 ## Purpose
 
 This is the permanent precedent register for defects discovered during owner
@@ -1117,12 +1175,40 @@ Copy this section for every new confirmed precedent:
 - Neutral soft tokens, centered actions with separate corner dismiss controls,
   corrected dictionary precedence and a checker guard address the shared causes.
   Generic transport copy no longer promises that uncertain writes were saved.
-- Status: FIXED_BRANCH, focused local checks PASS; publication receipt is in
-  PRIMARY-SESSION. [Scope, failures, checks and screenshots](../docs/testing/ui-feedback-20261005.md).
+- Status: INTEGRATED in main at 9ff3662, focused local checks PASS; CI37312854122
+  frontend dependency audit FAILED on unchanged braces/DOMPurify dependencies.
+  UI build/bundle PASS; overall CI not green.
+  [Scope, failures, checks and screenshots](../docs/testing/ui-feedback-20261005.md).
 - Audit rule: inspect rendered shared-token consumers and actual dictionary
   precedence; matching key names and an old-color blacklist alone are insufficient.
   Review screenshots in addition to contrast/overflow checks; inline-flex button
   styling can defeat a margin-based centering attempt.
+
+### ZD-046 — Dashboard loading bypassed the shared indicator
+
+- Owner reproduced a text banner after the shared startup ring on reload.
+  OwnerDashboard and ManagerDashboard returned their own loading Surface;
+  replacing LoadingState/PageSkeleton alone did not reach these branches.
+- Both dashboard branches now use the centered page indicator. Similar loading
+  text in account, AI, settings and conversation panels uses the block indicator;
+  feature loading labels use the common localized data-loading copy.
+- Status: FIXED_BRANCH, local build and focused dashboard tests PASS; browser
+  evidence and publication boundary in [loading report](../docs/testing/ui-loading-20261005.md).
+- Audit rule: search query-loading branches and translated status copy as well
+  as shared component callers; delay the data response after route loading ends.
+
+## UI-STATE-BEHAVIOR-20261005 — duplicate and misleading recovery states
+
+- Confirmed: service edit errors appeared both inside the form and as a toast;
+  reconnect disappeared after a timer without proving service availability;
+  failed Undo could leave a pending control; older async completion could dismiss
+  a newer operation. Support references lacked a clear request-versus-ticket boundary.
+- Fixed locally through shared feedback/fallback behavior, safe read recovery,
+  request-identity dedupe and localized support copy. Keyboard focus pauses expiry.
+- Status: FIXED_BRANCH, not published. Current focused checks and catalog evidence:
+  [behavior report](../docs/testing/ui-state-behavior-20261005.md).
+- Regression rule: test rejection and stale completion as well as success;
+  delay actual recovery, retain form drafts, and verify one owning error surface.
 
 ## Maintenance Contract
 

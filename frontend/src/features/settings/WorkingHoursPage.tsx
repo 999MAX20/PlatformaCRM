@@ -265,7 +265,7 @@ export function WorkingHoursPage() {
   }
 
   if (!business) return <ErrorState message={t("workingHours.noBusiness")} />;
-  if (workingHours.isLoading || resources.isLoading) return <LoadingState />;
+  if (workingHours.isLoading || resources.isLoading) return <LoadingState scope="page" />;
 
   const pageError = workingHours.error || resources.error;
 
@@ -280,7 +280,7 @@ export function WorkingHoursPage() {
 
       {pageError ? (
         <div className="mb-3 shrink-0">
-          <ErrorState message={getApiErrorMessage(pageError)} action={<Button type="button" variant="secondary" onClick={() => void Promise.all([workingHours.refetch(), resources.refetch()])}>{t("common.retry")}</Button>} />
+          <ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button type="button" variant="secondary" onClick={() => void Promise.all([workingHours.refetch(), resources.refetch()])}>{t("common.retry")}</Button>} />
         </div>
       ) : null}
 

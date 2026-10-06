@@ -124,6 +124,31 @@ Backend suites, полный E2E, live providers и рабочая БД не з�
 
 ## Публикация
 
-Task-owned diff reviewed; commit, normal push, remote readback and actual CI
-are recorded in the current checkpoint and final delivery message. До этих
-операций локальный PASS не означает публикацию или CI PASS.
+Код `9ff366207e73472cda71ca3b9113ca4f9f305af9` опубликован normal push
+`HEAD:main`, `git ls-remote origin refs/heads/main` подтвердил тот же SHA.
+`scripts/codex_verify.py --mode static --base-ref b82c8a278a422a744d1e1b3a0cff692900c25cbd`
+прошёл, включая изолированные system/migration-drift checks. Это не запуск
+backend suite. Ссылки новых отчётов и весь task-owned diff проверены.
+
+[CI37312854122](https://github.com/999MAX20/PlatformaCRM/actions/runs/37312854122)
+собрал app/widget и прошёл bundle, но frontend job111772265561 завершился
+**FAILED** на `npm audit --audit-level=moderate`. Причины из реального журнала:
+`braces` GHSA-vfj7-8cjw-p6xm и `dompurify` GHSA-p98j-92pf-mc4p с их зависимыми
+пакетами. CI сообщил 7 затронутых пакетов (1 low, 6 high); это не 7 подтверждённых
+эксплуатируемых уязвимостей CRM. Readback 05.10 13:47 UTC: backend PASS,
+workflow завершён FAILURE из-за frontend dependency audit.
+
+Доказательство исходной зависимости: diff `b82c8a2..9ff3662` для package.json,
+package-lock.json и CI workflow пуст; lock blob на обоих SHA одинаковый:
+`213f6573e7916c500c216c90a9133caad11286c8`. Дополнительный read-only
+`npm --prefix frontend audit --package-lock-only --audit-level=moderate --json`
+воспроизвёл exit1; результат в `output/playwright/feedback-20261005/dependency-audit.json`.
+Lock-only отчёт перечислил 6 пакетов (1 low, 5 high); он отличается по числу
+зависимых узлов от CI audit, но подтверждает те же корневые braces/DOMPurify.
+Для braces этот отчёт предлагает major-переход Tailwind 3→4. Такой переход
+и исключения аудита не входят в текущую UI-задачу и не выполнялись.
+
+Зелёная CI-приёмка остаётся заблокированной. После выявления отказа дальнейшие
+commit/push остановлены; четыре документа квитанции сохранены локально.
+Никаких force-push, смены ветки, миграции рабочей БД, выкладки или передачи
+primary-владения не выполнялось.

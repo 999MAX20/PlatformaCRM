@@ -42,27 +42,22 @@ test("saved messenger capabilities survive reload and are atomic on API failure"
   expect((await session.list<AgentProfile>("ai/agent-profiles")).find(item => item.bot === bot.id)?.allowed_tools_json.tools).not.toContain("create_lead");
 });
 
-test("internal workflow controls save to backend and revoke queued suggestions", async ({ page }, info) => {
+test("CRM agent source controls persist and pause revokes runtime", async ({ page }, info) => {
   const session = await crmSession(page);
-  await page.goto("/app/ai-agents");
-  const employee = page.locator("details").filter({ has: page.locator("summary", { hasText: /^Помощник сотрудника$/ }) });
-  await employee.locator("summary").click();
-  await employee.getByLabel("Клиенты", { exact: true }).uncheck();
-  await employee.getByLabel("Создание задачи", { exact: true }).uncheck();
-  await employee.getByRole("button", { name: "Сохранить", exact: true }).click();
-  await expect.poll(async () => (await session.list<AgentProfile>("ai/agent-profiles")).find(item => item.rules_json.scenario === "employee")?.allowed_tools_json.tools).not.toContain("create_task");
+  const bot = await session.create<Bot>("bots", { name: "CRM settings", scenario: "crm" });
+  await session.action(`bots/${bot.id}/activate`);
+  await page.goto(`/app/ai-agents/${bot.id}/knowledge`);
+  const editor = page.getByTestId("ai-agent-editor");
+  await editor.getByLabel("Клиенты", { exact: true }).uncheck();
+  await editor.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
+  await expect.poll(async () => (await session.list<AgentProfile>("ai/agent-profiles")).find(item => item.bot === bot.id)?.rules_json.sources).not.toContain("clients");
   await page.reload();
-  await employee.locator("summary").click();
-  await expect(employee.getByLabel("Клиенты", { exact: true })).not.toBeChecked();
-  const response = await session.action("ai/tools/suggest", { business: session.business, message: "Follow up" });
-  expect(response.suggested_actions.some((item: { tool_name: string }) => item.tool_name === "create_task")).toBeFalsy();
-  await employee.getByRole("switch", { name: "Сценарий включён" }).click();
-  await employee.getByRole("button", { name: "Сохранить", exact: true }).click();
-  await expect.poll(async () => (await session.list<AgentProfile>("ai/agent-profiles")).find(item => item.rules_json.scenario === "employee")?.is_active).toBe(false);
-  const blocked = await page.request.post(`${api}/api/ai/tools/suggest/`, { headers: session.headers, data: { business: session.business, message: "Follow up" } });
+  await expect(editor.getByLabel("Клиенты", { exact: true })).not.toBeChecked();
+  await editor.getByRole("switch", { name: "Изменить статус агента CRM settings" }).click();
+  await expect.poll(async () => (await session.read(`bots/${bot.id}`)).status).toBe("paused");
+  const blocked = await page.request.post(`${api}/api/ai/tools/suggest/`, { headers: session.headers, data: { business: session.business, agent: bot.id, message: "Follow up" } });
   expect(blocked.status()).toBe(403);
-  await page.screenshot({ path: info.outputPath("employee-disabled.png"), fullPage: true });
-  const profile = (await session.list<AgentProfile>("ai/agent-profiles")).find(item => item.rules_json.scenario === "employee")!;
-  const cleanup = await page.request.delete(`${api}/api/ai/agent-profiles/${profile.id}/`, { headers: session.headers });
-  expect(cleanup.status()).toBe(204);
+  await editor.getByRole("tab", { name: "Работа с CRM", exact: true }).click();
+  await expect(editor.getByText(/Агент ещё не активен/)).toBeVisible();
+  await page.screenshot({ path: info.outputPath("crm-paused.png"), fullPage: true });
 });

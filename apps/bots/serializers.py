@@ -20,6 +20,7 @@ from apps.leads.models import Lead
 
 class BotSerializer(serializers.ModelSerializer):
     readiness = serializers.SerializerMethodField()
+    scenario = serializers.ChoiceField(choices=Bot.Scenarios.choices, required=False)
 
     def validate_settings_json(self, value):
         from apps.bots.ai_settings import validate_ai_settings
@@ -38,6 +39,7 @@ class BotSerializer(serializers.ModelSerializer):
             "id",
             "business",
             "name",
+            "scenario",
             "status",
             "default_language",
             "settings_json",
@@ -116,7 +118,7 @@ class BotChannelSerializer(serializers.ModelSerializer):
             BotChannel.Channels.WHATSAPP,
             BotChannel.Channels.INSTAGRAM,
         }:
-            duplicate = BotChannel.objects.filter(bot__business=bot.business, channel=channel)
+            duplicate = BotChannel.objects.filter(bot__business=bot.business, channel=channel).exclude(bot__settings_json__has_key="_deleted_at")
             if self.instance is not None:
                 duplicate = duplicate.exclude(pk=self.instance.pk)
             if duplicate.exists():
@@ -228,6 +230,8 @@ class BotConversationSerializer(serializers.ModelSerializer):
         deal = attrs.get("deal") or getattr(self.instance, "deal", None)
         assigned_to = attrs.get("assigned_to") or getattr(self.instance, "assigned_to", None)
 
+        if bot and bot.scenario != "inbox":
+            raise serializers.ValidationError("Customer conversations require an inbox agent.")
         if business and bot and bot.business_id != business.id:
             raise serializers.ValidationError("Bot must belong to the selected business.")
         if business and client and client.business_id != business.id:

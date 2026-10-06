@@ -233,6 +233,8 @@ def process_automation_run(run_id):
             run.action_results = [{"status": "skipped", "reason": "Rule is missing or inactive."}]
         else:
             entity = _resolve_entity(run.entity_type, run.entity_id)
+            if _entity_type(entity, "BotConversation") and entity.bot.is_deleted:
+                return cancel_automation_run(run)
             _assert_entity_resource_enabled(run.business, entity)
             if run.current_action_index == 0 and not _conditions_match(rule, entity=entity, payload=run.payload):
                 run.status = AutomationRun.Statuses.SKIPPED

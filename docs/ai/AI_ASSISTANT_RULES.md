@@ -1,5 +1,84 @@
 # AI Assistant And AI Analyst Rules
 
+## Agent knowledge isolation — owner decision 2026-10-05
+
+Each agent starts with no connected knowledge. New records created inside its
+knowledge tab belong to that agent. A shared business library remains available,
+but an operator must explicitly connect each shared material to each agent.
+Existing ownerless records stay shared and are not automatically connected by
+migration. No implicit legacy profile is selected for customer replies,
+qualification, automatic action capabilities or internal CRM workflows.
+Standard application presets remain presets; no previous agent's configuration
+or channel credentials are copied into a new agent.
+
+`BusinessKnowledgeItem.bot` is nullable: a non-null owner is immutable and protected
+from hard deletion; null denotes a shared library record. `connected_agents` links
+apply only to shared records in the same Business. Retired agents keep their private
+knowledge and historical links; normal API/runtime selectors exclude them. A new
+agent, even with the same name, does not inherit those records or connections.
+
+`GET /api/ai/knowledge-items/?agent=<id>` returns only that agent's own records and
+explicit shared connections. Without `agent`, listing returns the shared library;
+`business` narrows the already-authorized scope. Creates accept `bot` for agent-owned
+records; updates cannot change ownership. `POST /api/ai/knowledge-items/<id>/connection/`
+accepts `{agent, connected}` and requires existing `ai_automation.manage` rights.
+Create/update/link actions are audited transactionally. Foreign businesses,
+retired agents and connecting another agent's private record are rejected.
+
+AI retrieval, readiness and runtime fingerprints use this same ownership boundary.
+Only active records reach prompts. Requests without an agent do not implicitly
+receive the shared library. Removing/changing connected knowledge while a provider
+call is running rejects the stale answer. CRM source switches and user permission
+checks still apply. Existing CRM records, conversation history and global model
+defaults are not agent-owned knowledge and keep their established access rules.
+
+Schema migration: `ai_core.0006_agent_knowledge_isolation`. It preserves existing
+records and adds no connections; applying it to an existing working DB is a separate
+authorized operation. Verification: AI-AGENT-ISOLATION-20261005 in PRIMARY-SESSION.
+
+## Agent deletion — owner decision 2026-10-05
+
+Deleting an agent removes it from selectable agents and permanently disables its
+runtime; this is distinct from a reversible pause. Conversation/message history,
+activity/audit, AI logs and already-created CRM records remain. The profile footer
+requires confirmation, warns about unsaved changes, and uses existing
+`ai_automation.delete` authorization. There is no restore/reactivate path.
+
+The retained Bot row carries a server-owned `_deleted_at` marker in settings and
+paused status; ordinary managers exclude it, while historical foreign keys remain.
+Profiles and channels are disabled. Pending AI jobs, unexecuted commands/approvals,
+automatic outgoing messages and active automation runs for its conversations are
+stopped. Runtime checks reject late work or attempts to resume a deleted agent.
+Shared automation rules and unrelated agents continue; deleting an agent does not
+roll back completed business actions or recall a provider message already sent.
+A replacement can be created, including the business's next CRM agent. Retired
+agents do not consume the selectable-agent quota. No schema migration is required.
+
+## Agent purposes — owner decision 2026-10-05
+
+Creation requires a name and one immutable purpose: `inbox` for customer
+conversations, or `crm` for staff CRM work with optional analytics. There may be
+multiple inbox agents and one CRM agent per business. Each typed agent owns its
+profile and runtime settings. Existing records without a purpose remain inbox
+agents. The name can change without changing purpose or identity.
+
+The single UI is `/app/ai-agents/:id/:section`; the numeric identity stays stable.
+The old assistant routes redirect there. Inbox agents expose profile, knowledge,
+actions, channels and dialogue testing. CRM agents expose profile, sources and
+knowledge, capabilities, work and analytics; they cannot connect customer channels
+or supply a customer conversation's profile. Creation cards explain both purposes.
+
+CRM requests include the selected agent. The server checks purpose and business;
+source access and actions remain bounded by both saved settings and actor rights.
+Queued requests and prepared commands retain server-owned agent identity and a
+configuration fingerprint. Pause or changed settings revoke stale work; mutations
+still require exact confirmation, current approval and existing domain checks.
+Configuration access and staff runtime access retain their separate permissions.
+A minimal staff directory does not expose configuration, instructions or secrets.
+Business-only legacy callers use the configured CRM agent when present; before one
+exists their existing legacy behavior remains for compatibility. No schema, money,
+provider deployment or live-channel acceptance is implied by this change.
+
 ## Staff CRM commands and historical finance — owner decision 2026-10-02
 
 AI-CRUD-HISTORY-20261002 extends the employee assistant to clients, leads, deals,

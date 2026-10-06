@@ -31,7 +31,7 @@ class AgentPreviewTests(TestCase):
         cls.profile = AgentProfile.objects.create(business=cls.business, bot=cls.bot, name="Reception",
             language="kk", tone="formal", system_prompt="Use clinic facts", escalation_rules_json={"items": ["Escalate complaints"]})
         cls.service = Service.objects.create(business=cls.business, name="Cleaning", price_from=5000, duration_minutes=30)
-        cls.knowledge = BusinessKnowledgeItem.objects.create(business=cls.business, title="Address", content="Test clinic at Test Street.")
+        cls.knowledge = BusinessKnowledgeItem.objects.create(business=cls.business, bot=cls.bot, title="Address", content="Test clinic at Test Street.")
 
     def setUp(self):
         self.api = APIClient()

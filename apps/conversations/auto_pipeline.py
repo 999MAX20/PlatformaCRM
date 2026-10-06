@@ -7,9 +7,8 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from django.utils import timezone
 
 from apps.activities.services import create_activity_event
-from apps.ai_core.models import AgentProfile
 from apps.ai_core.ai_client import AIClientError
-from apps.bots.ai import suggest_bot_reply
+from apps.bots.ai import get_agent_profile, suggest_bot_reply
 from apps.bots.inbox_service import send_outbound_message, handoff_conversation
 from apps.bots.lifecycle import conversation_ai_block_reason
 from apps.bots.models import BotChannel, BotConversation, BotMessage
@@ -125,7 +124,8 @@ def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessag
         decision.reason = "Deal creation is disabled for this business."
     elif decision.status == "proposed_draft_deal" and not create_deal:
         decision.status = "proposed_lead_task"
-        decision.reason = "Deal creation is disabled by the active agent profile."
+        decision.reason = ("Deal creation is disabled by the active agent profile." if "create_deal" not in allowed_tools
+                           else "Qualification does not propose a draft deal.")
     decision.confirmation_policy["requires_explicit_confirmation"] = [
         action for action, enabled in (("create_lead", create_lead), ("create_task", create_task), ("create_draft_deal", create_deal)) if enabled
     ]
@@ -169,6 +169,8 @@ def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessag
     if automatic:
         decision.confirmation_policy["requires_explicit_confirmation"] = []
         decision.confirmation_policy["created"] = result.created
+        decision.confirmation_policy["allowed_auto_actions"] = sorted(actions)
+        decision.reason = "Enabled automatic CRM actions were processed; see created records for the outcome."
     if config.create_appointment:
         decision.booking = maybe_create_appointment_from_reply(conversation=result.conversation, message=message)
     if decision.booking is None or decision.booking.status != "booked":
@@ -454,13 +456,9 @@ def _is_fallback(qualification: ConversationQualification) -> bool:
 
 
 def _can_continue_with_review_flag(config: AutoPipelineConfig, qualification: ConversationQualification) -> bool:
-    if _is_fallback(qualification) and not config.require_review_on_fallback:
-        return True
-    if qualification.intent not in config.allow_deal_intents:
-        return False
-    if qualification.confidence < config.min_lead_confidence:
-        return False
-    return True
+    # High sales confidence is not permission to ignore an explicit review
+    # decision, including a matched owner escalation rule.
+    return _is_fallback(qualification) and not config.require_review_on_fallback
 
 
 def _float(value, default: float) -> float:
@@ -478,13 +476,10 @@ def _int(value, default: int) -> int:
 
 
 def _resolve_allowed_tools(conversation: BotConversation) -> set[str]:
-    profile = (
-        AgentProfile.objects.filter(business=conversation.business, bot=conversation.bot, is_active=True).order_by("-updated_at").first()
-        or AgentProfile.objects.filter(business=conversation.business, bot__isnull=True, is_active=True).order_by("-updated_at").first()
-    )
+    profile = get_agent_profile(conversation)
     if profile is None:
-        return {"create_lead", "create_task", "create_deal", "handoff_to_manager"}
+        return set()
     raw_tools = (profile.allowed_tools_json or {}).get("tools")
     if not isinstance(raw_tools, list):
-        return {"create_lead", "create_task", "create_deal", "handoff_to_manager"}
+        return set()
     return {str(tool) for tool in raw_tools}

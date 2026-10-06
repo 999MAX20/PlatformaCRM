@@ -7,6 +7,7 @@ from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.ai_core.ai_client import generate_text
+from apps.ai_core.agent_runtime import agent_binding, bind_agent
 from apps.ai_core.context_service import get_business_knowledge_context
 from apps.ai_core.models import AIJob, AIRequestLog
 from apps.ai_core.prompt_service import build_prompt
@@ -46,20 +47,47 @@ def run_ai_request(
         fingerprint = workflow_fingerprint(business, scenario)
         response_language = scenario_config.get("language") or response_language
         runtime_context["saved_scenario"] = scenario_config
+        model = scenario_config.get("model") or model
+        model_tier = scenario_config.get("model_tier") or model_tier
+        if scenario_config.get("temperature") is not None:
+            temperature = scenario_config["temperature"]
         user_input = f"Saved style: {scenario_config.get('tone', 'expert')}. {scenario_config.get('instructions', '')}\n{user_input}"
     inbound = [item.get("text", "") for item in runtime_context.get("messages", []) if isinstance(item, dict) and item.get("direction") == "inbound"]
-    context = get_business_knowledge_context(business, query=inbound[-1] if inbound else user_input)
+    from apps.ai_core.knowledge import available_agent
+    agent_id = runtime_context.get("bot_id") if source == AIRequestLog.Sources.BOT else (scenario_config or {}).get("agent_id")
+    knowledge_agent = available_agent(business=business, agent_id=agent_id) if agent_id else None
+    context = get_business_knowledge_context(business, query=inbound[-1] if inbound else user_input, agent=knowledge_agent)
     if scenario_config and "knowledge" not in scenario_config["sources"]:
         context = []
     grounded = source == AIRequestLog.Sources.CRM and "crm_context" in runtime_context
     sources = source_catalog(runtime_context.get("crm_context"), context) if grounded else []
     if grounded:
         runtime_context["source_catalog"] = sources
-    prompt = build_prompt(prompt_type=prompt_type, user_input=user_input, context=context, runtime_context=runtime_context, response_language=response_language)
+    agent_preferences = None
+    escalation_rules = None
+    if scenario_config:
+        agent_preferences = {"role": scenario_config.get("role", ""), "instructions": scenario_config.get("instructions", ""),
+                             "rules": scenario_config.get("rules", {}).get("items", []), "tone": scenario_config.get("tone")}
+    elif prompt_type in {"bot_suggest_reply", "conversation_qualification"} and knowledge_agent is not None:
+        from apps.ai_core.models import AgentProfile
+        profile = AgentProfile.objects.filter(business=business, bot=knowledge_agent, is_active=True).order_by("-updated_at").first()
+        if profile is not None and prompt_type == "bot_suggest_reply":
+            agent_preferences = {"role": profile.role_description, "instructions": profile.system_prompt,
+                                 "rules": profile.rules_json.get("items", []), "tone": profile.tone}
+        elif profile is not None:
+            escalation_rules = profile.escalation_rules_json.get("items", [])
+    prompt = build_prompt(prompt_type=prompt_type, user_input=user_input, context=context, runtime_context=runtime_context,
+                          response_language=response_language, agent_preferences=agent_preferences, escalation_rules=escalation_rules)
     if grounded:
         prompt.messages[0]["content"] += ANSWER_CONTRACT
     if response_contract:
         prompt.messages[0]["content"] += response_contract
+    language_name = {"ru": "Russian", "kk": "Kazakh", "en": "English"}.get(response_language)
+    if language_name:
+        prompt.messages[0]["content"] += (
+            f" Output language requirement: write all human-readable response text, including the JSON answer field, in {language_name}."
+            " Keep schema keys, source IDs, entity names and codes unchanged. The question's language does not change this requirement."
+        )
     result = generate_text(
         prompt,
         prompt_type=prompt_type,
@@ -70,6 +98,13 @@ def run_ai_request(
     )
     if scenario_config and workflow_fingerprint(business, scenario) != fingerprint:
         raise PermissionDenied("AI scenario configuration changed while preparing the answer.")
+    if knowledge_agent is not None:
+        current_agent = available_agent(business=business, agent_id=knowledge_agent.pk)
+        current_context = get_business_knowledge_context(business, query=inbound[-1] if inbound else user_input, agent=current_agent)
+        if scenario_config and "knowledge" not in scenario_config["sources"]:
+            current_context = []
+        if current_context != context:
+            raise PermissionDenied("Agent knowledge changed while preparing the answer. Please retry.")
     if grounded:
         result = validate_answer(result, sources)
     log = AIRequestLog.objects.create(
@@ -87,6 +122,7 @@ def run_ai_request(
             "provider_state": result.provider_state,
             "sources": result.sources,
             **(input_json or {}),
+            **({"_agent": agent_binding(business)} if scenario_config else {}),
         },
         output_text=result.output_text,
         model=result.model,
@@ -106,6 +142,9 @@ def create_ai_job(
     input_json=None,
     idempotency_key=None,
 ):
+    input_json = dict(input_json or {})
+    if source == AIRequestLog.Sources.CRM:
+        input_json["_agent"] = agent_binding(business)
     key = idempotency_key or uuid.uuid4().hex
     job, created = AIJob.objects.get_or_create(
         business=business,
@@ -123,7 +162,8 @@ def create_ai_job(
         process_ai_job_task.apply_async(args=[job.id], queue="ai")
     elif job.user_id != getattr(user, "id", None):
         raise PermissionDenied()
-    elif job.prompt_type != prompt_type or job.input_json.get("user_input") != user_input:
+    elif (job.prompt_type != prompt_type or job.input_json.get("user_input") != user_input
+          or (job.input_json.get("runtime_context") or {}).get("_agent", {}) != input_json.get("_agent", {})):
         raise ValidationError("This request key has already been used for a different request.")
     return job, created
 
@@ -180,19 +220,22 @@ def process_ai_job(job_id):
     )
     try:
         runtime_context = job.input_json.get("runtime_context") or {}
-        if job.source == AIRequestLog.Sources.CRM:
-            assert_business_access(job.user, job.business)
-            assert_can(job.user, job.business, Resources.AI_ASSISTANT, Actions.SUGGEST)
-            runtime_context = {"crm_context": build_crm_context(job.business, user=job.user)}
-        result, log = run_ai_request(
-            business=job.business,
-            user=job.user,
-            source=job.source,
-            prompt_type=job.prompt_type,
-            user_input=job.input_json.get("user_input", ""),
-            input_json=runtime_context,
-            allow_mock=False,
-        )
+        with bind_agent(runtime_context.get("_agent", {}).get("agent_id")):
+            if runtime_context.get("_agent") and runtime_context["_agent"] != agent_binding(job.business):
+                raise PermissionDenied("Agent settings changed. Submit a new request.")
+            if job.source == AIRequestLog.Sources.CRM:
+                assert_business_access(job.user, job.business)
+                assert_can(job.user, job.business, Resources.AI_ASSISTANT, Actions.SUGGEST)
+                runtime_context = {"crm_context": build_crm_context(job.business, user=job.user)}
+            result, log = run_ai_request(
+                business=job.business,
+                user=job.user,
+                source=job.source,
+                prompt_type=job.prompt_type,
+                user_input=job.input_json.get("user_input", ""),
+                input_json=runtime_context,
+                allow_mock=False,
+            )
         result_json = {
             "answer": result.output_text,
             "provider": result.provider,

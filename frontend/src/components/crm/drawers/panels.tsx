@@ -407,7 +407,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
           }}
         >
           <Input label={t("crmCard.fileName")} value={renameValue} onChange={(event) => setRenameValue(event.target.value)} required />
-          {renameMutation.error ? <ErrorState message={getApiErrorMessage(renameMutation.error)} /> : null}
+          {renameMutation.error ? <ErrorState error={renameMutation.error} message={getApiErrorMessage(renameMutation.error)} /> : null}
           <div className="flex justify-end gap-2">
             <Button
               type="button"

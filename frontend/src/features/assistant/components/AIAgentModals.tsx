@@ -7,12 +7,16 @@ import { Modal } from "../../../components/ui/Modal";
 import { ErrorState } from "../../../components/ui/StateViews";
 import { getApiErrorMessage } from "../../../api/client";
 import { useI18n } from "../../../lib/i18n";
+import { AgentScenarioCard } from "./AgentScenarioCard";
 
 export function CreateAgentModal({
   canManage,
   isCreating,
   error,
   name,
+  scenario,
+  onScenarioChange,
+  hasCRMAgent,
   onClose,
   onNameChange,
   onSubmit,
@@ -22,6 +26,9 @@ export function CreateAgentModal({
   isCreating: boolean;
   error: unknown;
   name: string;
+  scenario: "inbox" | "crm" | null;
+  onScenarioChange: (scenario: "inbox" | "crm") => void;
+  hasCRMAgent: boolean;
   onClose: () => void;
   onNameChange: (name: string) => void;
   onSubmit: () => void;
@@ -42,10 +49,10 @@ export function CreateAgentModal({
         className="space-y-4"
         onSubmit={(event) => {
           event.preventDefault();
-          onSubmit();
+          if (scenario && name.trim() && !(scenario === "crm" && hasCRMAgent)) onSubmit();
         }}
       >
-        {error ? <ErrorState message={getApiErrorMessage(error)} /> : null}
+        {error ? <ErrorState error={error} message={getApiErrorMessage(error)} /> : null}
         <Input
           ref={nameInputRef}
           autoFocus
@@ -54,7 +61,11 @@ export function CreateAgentModal({
           onChange={(event) => onNameChange(event.target.value)}
           placeholder={t("aiAgents.agentNamePlaceholder")}
         />
-        <Button type="submit" variant="primary" disabled={!canManage || !name.trim()} isLoading={isCreating}>
+        <fieldset disabled={isCreating} className="space-y-3">
+          <legend className="mb-2 text-sm font-semibold">{t("aiScenario.choose")}</legend>
+          {(["inbox", "crm"] as const).map(value => <AgentScenarioCard key={value} value={value} selected={scenario === value} unavailable={value === "crm" && hasCRMAgent} onSelect={() => onScenarioChange(value)} />)}
+        </fieldset>
+        <Button type="submit" variant="primary" disabled={!canManage || !name.trim() || !scenario || (scenario === "crm" && hasCRMAgent)} isLoading={isCreating}>
           <Plus aria-hidden="true" size={16} />
           {t("aiAgents.createAgent")}
         </Button>

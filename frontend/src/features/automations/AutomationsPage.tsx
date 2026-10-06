@@ -216,7 +216,7 @@ export function AutomationsPage() {
   }
 
   if (!business) return <ErrorState message={t("automations.noBusiness")} />;
-  if (automationRules.isLoading || templates.isLoading || runs.isLoading) return <LoadingState />;
+  if (automationRules.isLoading || templates.isLoading || runs.isLoading) return <LoadingState scope="page" />;
 
   return (
     <>

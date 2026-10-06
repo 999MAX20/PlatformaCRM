@@ -52,7 +52,7 @@ export function PlatformMerchantsPage() {
     );
   }, [merchants.data, query]);
 
-  if (merchants.isLoading) return <LoadingState label={t("platform.merchants.loading")} />;
+  if (merchants.isLoading) return <LoadingState scope="page" />;
   if (merchants.isError) return <ErrorState message={t("platform.merchants.error")} />;
 
   return (

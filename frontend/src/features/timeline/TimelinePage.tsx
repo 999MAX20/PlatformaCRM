@@ -148,7 +148,7 @@ export function TimelinePage() {
             {query.isError ? (
               <div className="p-4">
                 <ErrorState
-                  message={getApiErrorMessage(query.error)}
+                  error={query.error} message={getApiErrorMessage(query.error)}
                   action={
                     <div className="flex flex-wrap gap-2">
                       <Button

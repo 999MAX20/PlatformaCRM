@@ -1,5 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import { ChevronDown } from "lucide-react";
+import { Modal } from "../../../components/ui/Modal";
 
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
@@ -20,7 +20,11 @@ type ProfileProps = {
 
 export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, canManage }: ProfileProps) {
   const { t } = useI18n();
-  const [showQuality, setShowQuality] = useState(false);
+  const [templateOpen, setTemplateOpen] = useState(false);
+  const applyTemplate = () => {
+    setForm(current => ({ ...current, role_description: t("aiSetup.dentalRole"), system_prompt: t("aiSetup.dentalPrompt"), rules_text: t("aiAgents.defaultRules"), escalation_text: t("aiSetup.dentalEscalation") }));
+    setTemplateOpen(false);
+  };
 
   return (
     <div className="divide-y divide-platforma-border">
@@ -50,25 +54,14 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
       <section className="py-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-base font-semibold text-platforma-ink">{t("aiAgents.instructionTitle")}</h3>
-          <Button type="button" className="min-h-11 w-fit sm:min-h-10" variant="secondary" disabled={!canManage} onClick={() => setForm(current => ({
-            ...current, role_description: t("aiSetup.dentalRole"), system_prompt: t("aiSetup.dentalPrompt"),
-            rules_text: t("aiAgents.defaultRules"), escalation_text: t("aiSetup.dentalEscalation"),
-          }))}>{t("aiSetup.applyDentalRole")}</Button>
+          {botDraft.settings_json.scenario !== "crm" && <Button type="button" className="min-h-11 w-fit sm:min-h-10" variant="secondary" disabled={!canManage} onClick={() => setTemplateOpen(true)}>{t("aiWorkspace.template")}</Button>}
         </div>
         <Textarea className="h-20 !min-h-20 py-2" rows={3} label={t("aiAgents.roleDescription")} value={form.role_description} disabled={!canManage}
           onChange={event => setForm(current => ({ ...current, role_description: event.target.value }))} />
       </section>
 
       <section className="pt-4">
-        <button type="button" className="platforma-focus-ring flex min-h-11 items-center gap-2 text-left" onClick={() => setShowQuality(value => !value)}
-          aria-expanded={showQuality} aria-controls="ai-agent-quality-settings">
-          <span className="text-base font-semibold text-platforma-ink">{t("aiSetup.advanced")}</span>
-          <ChevronDown aria-hidden="true" size={16} className={showQuality ? "rotate-180" : ""} />
-        </button>
-        {showQuality ? (
-          <div id="ai-agent-quality-settings" className="mt-3 space-y-3">
-            <Input className="sm:min-h-10" label={t("aiAgents.profileName")} value={form.name} disabled={!canManage}
-              onChange={event => setForm(current => ({ ...current, name: event.target.value }))} />
+        <div id="ai-agent-quality-settings" className="space-y-3">
             <div>
               <Textarea className="min-h-20 py-2" rows={3} label={t("aiAgents.systemPrompt")} value={form.system_prompt} disabled={!canManage}
                 onChange={event => setForm(current => ({ ...current, system_prompt: event.target.value }))} />
@@ -83,8 +76,14 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
               <ModelsSection draft={botDraft} setDraft={setBotDraft} canManage={canManage} />
             </div>
           </div>
-        ) : null}
       </section>
+      <Modal title={t("aiWorkspace.template")} open={templateOpen} onClose={() => setTemplateOpen(false)}>
+        <p className="mb-4 text-sm text-platforma-subtle">{t("aiWorkspace.templateHint")}</p>
+        <div className="space-y-4">
+          {[["aiAgents.roleDescription", "aiSetup.dentalRole"], ["aiAgents.systemPrompt", "aiSetup.dentalPrompt"], ["aiAgents.rules", "aiAgents.defaultRules"], ["aiSetup.handoffRules", "aiSetup.dentalEscalation"]].map(([label, value]) => <div key={label}><h3 className="text-sm font-semibold">{t(label)}</h3><p className="whitespace-pre-wrap text-sm text-platforma-subtle">{t(value)}</p></div>)}
+          <div className="flex flex-wrap justify-end gap-2"><Button variant="secondary" onClick={() => setTemplateOpen(false)}>{t("common.cancel")}</Button><Button disabled={!canManage} onClick={applyTemplate}>{t("aiWorkspace.fillTemplate")}</Button></div>
+        </div>
+      </Modal>
     </div>
   );
 }

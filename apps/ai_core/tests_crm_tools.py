@@ -125,8 +125,13 @@ class CRMCommandTests(TestCase):
         self.assertEqual(self.api.post(f"/api/ai/tools/{log.pk}/execute/", {"approval_id": approval.pk}).status_code, 403)
 
     def test_disabled_capability_is_rechecked(self):
+        from apps.bots.models import Bot
+        agent = Bot.objects.create(business=self.business, name="CRM", status="active", settings_json={"scenario": "crm"})
+        profile = AgentProfile.objects.create(business=self.business, bot=agent, name="CRM",
+            allowed_tools_json={"tools": ["crm_update"]})
         log = self.proposal("crm_update", entity_id=self.person.pk, values={"phone": "123"})
-        AgentProfile.objects.create(business=self.business, name="Disabled", rules_json={"scenario": "employee"}, allowed_tools_json={"tools": []})
+        profile.allowed_tools_json = {"tools": []}
+        profile.save()
         self.assertEqual(self.execute(log).status_code, 403)
 
     def test_search_paginates_full_scope_and_hides_foreign_records(self):

@@ -29,6 +29,8 @@ export function AgentActionsSection({
   const proposesWork = runtime.enabled && (runtime.mode === "lead_task" || runtime.mode === "draft_deal");
   return (
     <div className="space-y-5">
+      <ControlSection botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
+      <FunctionsSection form={form} setForm={setForm} canManage={canManage} />
       <section className="border-b border-platforma-border pb-5 last:border-0">
         <div>
           <h3 className="text-base font-semibold text-midnight">{t("aiAgents.authority.title")}</h3>
@@ -50,8 +52,6 @@ export function AgentActionsSection({
           </div>
         </div>
       </section>
-      <ControlSection botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
-      <FunctionsSection form={form} setForm={setForm} canManage={canManage} />
       <section className="border-b border-platforma-border pb-5 last:border-0"><div>
         <Textarea className="min-h-20 py-2" rows={2} label={t("aiSetup.handoffRules")} value={form.escalation_text} disabled={!canManage} onChange={(event) => setForm((current) => ({ ...current, escalation_text: event.target.value }))} />
       </div></section>
@@ -121,10 +121,10 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
             ["auto_send_reply", t("aiAgents.control.autoReplyTitle"), t("aiAgents.control.autoReplyText")],
           ].map(([key, title, text]) => (
             <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-1">
-              <details className="text-sm">
-                <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 font-semibold text-midnight sm:min-h-9 sm:py-2">{title}</summary>
+              <div className="py-2 text-sm">
+                <h4 className="mb-1 font-semibold text-midnight">{title}</h4>
                 <p className="pb-2 leading-5 text-platforma-subtle">{text}</p>
-              </details>
+              </div>
               <div className="flex min-h-11 items-center sm:min-h-9">
                 <ToggleSwitch
                   checked={Boolean(config[key as keyof typeof config])}
@@ -219,13 +219,13 @@ function FunctionsSection({
           const enabled = key === "handoff_to_manager" || form.allowed_tools.includes(key);
           return (
             <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-1">
-              <details className="min-w-0 text-sm">
-                <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 font-semibold text-platforma-ink sm:min-h-9 sm:py-2">{title}</summary>
+              <div className="min-w-0 py-2 text-sm">
+                <h4 className="mb-1 font-semibold text-platforma-ink">{title}</h4>
                 <div className="pb-2">
                   <p className="leading-5 text-platforma-subtle">{text}</p>
                   <FieldHint>{t(`aiAgents.hint.tool.${key}`)}</FieldHint>
                 </div>
-              </details>
+              </div>
               <div className="flex min-h-11 shrink-0 items-center gap-2 sm:min-h-9">
                 <span className="text-xs font-semibold text-platforma-subtle">{enabled ? t("aiAgents.functions.enabled") : t("aiAgents.functions.disabled")}</span>
                 <ToggleSwitch checked={enabled} disabled={!canManage || key === "handoff_to_manager"} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />

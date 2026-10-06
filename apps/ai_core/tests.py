@@ -79,7 +79,7 @@ class AICoreFoundationTests(TestCase):
             generate_text("Hello", allow_mock=False)
 
     @override_settings(AI_PROVIDER="mock", OPENAI_API_KEY="", OPENROUTER_API_KEY="", KIMI_API_KEY="")
-    def test_run_ai_request_logs_mock_response(self):
+    def test_unbound_ai_request_logs_mock_without_implicit_knowledge(self):
         BusinessKnowledgeItem.objects.create(
             business=self.business,
             title="Working hours",
@@ -99,7 +99,7 @@ class AICoreFoundationTests(TestCase):
         self.assertEqual(log.business, self.business)
         self.assertEqual(log.user, self.owner)
         self.assertEqual(log.prompt_type, "test_prompt")
-        self.assertEqual(log.input_json["context"][0]["title"], "Working hours")
+        self.assertEqual(log.input_json["context"], [])
         self.assertEqual(log.input_json["ai_provider"], "mock")
 
     def test_knowledge_items_are_tenant_filtered(self):

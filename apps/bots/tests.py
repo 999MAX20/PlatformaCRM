@@ -30,10 +30,11 @@ from apps.tasks.models import Task
 class BotsFoundationTests(TestCase):
     def _prepare_agent_readiness(self, bot):
         AgentProfile.objects.get_or_create(
-            business=bot.business, bot=bot, defaults={"name": "Website test profile"},
+            business=bot.business, bot=bot, defaults={"name": "Website test profile",
+                "allowed_tools_json": {"tools": ["create_lead", "create_task", "create_deal", "handoff_to_manager"]}},
         )
         BusinessKnowledgeItem.objects.get_or_create(
-            business=bot.business, title="Website test knowledge",
+            business=bot.business, bot=bot, title="Website test knowledge",
             defaults={"content": "Use the configured services and available slots."},
         )
 
@@ -803,13 +804,13 @@ class BotsFoundationTests(TestCase):
 
     @override_settings(OPENAI_API_KEY="")
     def test_suggest_reply_returns_suggestion_without_sending_message(self):
+        bot = Bot.objects.create(business=self.business, name="Website bot", status=Bot.Statuses.ACTIVE)
         BusinessKnowledgeItem.objects.create(
-            business=self.business,
+            business=self.business, bot=bot,
             title="Booking policy",
             content="Offer two nearest appointment slots.",
             category="bot",
         )
-        bot = Bot.objects.create(business=self.business, name="Website bot", status=Bot.Statuses.ACTIVE)
         conversation = BotConversation.objects.create(
             business=self.business,
             bot=bot,

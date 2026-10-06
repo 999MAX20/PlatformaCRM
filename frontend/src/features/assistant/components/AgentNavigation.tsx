@@ -132,8 +132,8 @@ export function AgentNavigation({ bots, profiles, selectedBot, isLoading, error,
                     }} />
                 </div>
               </div>
-              {isLoading ? <LoadingState label={t("aiAgents.loading")} /> : error ? (
-                <ErrorState message={getApiErrorMessage(error)} action={<Button variant="secondary" onClick={onRetry}>{t("common.retry")}</Button>} />
+              {isLoading ? <LoadingState /> : error ? (
+                <ErrorState error={error} message={getApiErrorMessage(error)} action={<Button variant="secondary" onClick={onRetry}>{t("common.retry")}</Button>} />
               ) : null}
               <div ref={listRef} id={listId} role="listbox" aria-label={t("aiAgents.allAgents")} className={cn("overflow-y-auto overscroll-contain", expanded ? "max-h-[calc(100dvh-210px)] space-y-1" : "max-h-[min(360px,calc(100dvh-200px))] p-1")}>
                 {!isLoading && !error ? options.map(({ bot, role }, index) => (
@@ -146,7 +146,7 @@ export function AgentNavigation({ bots, profiles, selectedBot, isLoading, error,
                     <div className="min-w-0 flex-1">
                       <p className={cn("font-semibold text-platforma-text", expanded ? "truncate" : "break-words")}>{bot.name}</p>
                       {expanded ? <p className="mt-1 text-xs text-platforma-subtle">{t(`aiAgents.status.${bot.status}`)}</p> :
-                        <p className="mt-0.5 break-words text-xs leading-5 text-platforma-subtle">{role || t("aiAgents.purposeMissing")}</p>}
+                        <p className="mt-0.5 break-words text-xs leading-5 text-platforma-subtle">{t(`aiScenario.${bot.scenario || "inbox"}`)}</p>}
                     </div>
                     {!expanded ? <div className="flex max-w-[120px] shrink-0 flex-col items-end gap-1">
                       <Badge size="sm" variant={bot.status === "active" ? "success" : "neutral"}>{t(`aiAgents.status.${bot.status}`)}</Badge>

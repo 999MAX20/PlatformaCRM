@@ -168,7 +168,7 @@ export function TasksPage() {
 
   if (!business) return <ErrorState message={t("tasks.noBusiness")} />;
   if (createContext.error) return <ErrorState message={createContext.error} />;
-  if (createContext.isLoading) return <LoadingState />;
+  if (createContext.isLoading) return <LoadingState scope="page" />;
   if (taskIdParam) return <Navigate to={`/app/tasks/${taskIdParam}`} replace />;
   if (
     taskSummary.isLoading ||
@@ -182,17 +182,17 @@ export function TasksPage() {
     botConversations.isLoading ||
     services.isLoading
   )
-    return <LoadingState />;
+    return <LoadingState scope="page" />;
   if (taskSummary.error)
-    return <ErrorState message={getApiErrorMessage(taskSummary.error)} />;
+    return <ErrorState error={taskSummary.error} message={getApiErrorMessage(taskSummary.error)} />;
   if (canViewTeam && taskWorkload.error)
-    return <ErrorState message={getApiErrorMessage(taskWorkload.error)} />;
+    return <ErrorState error={taskWorkload.error} message={getApiErrorMessage(taskWorkload.error)} />;
   if (tasksQuery.error)
-    return <ErrorState message={getApiErrorMessage(tasksQuery.error)} />;
+    return <ErrorState error={tasksQuery.error} message={getApiErrorMessage(tasksQuery.error)} />;
   if (canCreateTask && taskTemplates.error)
-    return <ErrorState message={getApiErrorMessage(taskTemplates.error)} />;
+    return <ErrorState error={taskTemplates.error} message={getApiErrorMessage(taskTemplates.error)} />;
   if (botConversations.error)
-    return <ErrorState message={getApiErrorMessage(botConversations.error)} />;
+    return <ErrorState error={botConversations.error} message={getApiErrorMessage(botConversations.error)} />;
 
   const visibleTasks = loadedTasks;
   const totalTasks = tasksQuery.data?.pages[0]?.count ?? visibleTasks.length;

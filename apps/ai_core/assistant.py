@@ -16,7 +16,8 @@ def build_crm_context(business, user=None):
     from apps.ai_core.workflows import assert_workflow_enabled
     config = assert_workflow_enabled(business, "employee")
     now = timezone.now()
-    today = timezone.localtime(now, business_zone(business)).date()
+    zone = business_zone(business)
+    today = timezone.localtime(now, zone).date()
     clients_queryset = _scoped_queryset(
         Client.objects.filter(business=business),
         user=user,
@@ -46,7 +47,7 @@ def build_crm_context(business, user=None):
 
     tasks_queryset = _scoped_queryset(Task.objects.filter(business=business, is_archived=False), user=user, business=business, resource=Resources.TASKS)
     context = {
-        "generated_at": timezone.now().isoformat(),
+        "generated_at": timezone.localtime(now, zone).isoformat(),
         "local_date": today.isoformat(),
         "timezone": business.timezone,
         "coverage": "Permission-scoped summary and up to 8 records per category; not a complete history. Financial receipts/refunds are not supplied.",
@@ -68,7 +69,7 @@ def build_crm_context(business, user=None):
                 "source": lead.source,
                 "status": lead.status,
                 "message": lead.message,
-                "created_at": lead.created_at.isoformat(),
+                "created_at": timezone.localtime(lead.created_at, zone).isoformat(),
             }
             for lead in leads
         ],
@@ -79,11 +80,15 @@ def build_crm_context(business, user=None):
                 "service": appointment.service.name,
                 "resource": appointment.resource.name if appointment.resource else None,
                 "status": appointment.status,
-                "start_at": appointment.start_at.isoformat(),
+                "start_at": timezone.localtime(appointment.start_at, zone).isoformat(),
             }
             for appointment in appointments
         ],
     }
+    # Provider prose should not have to calculate local business dates or offsets.
+    for task in context["tasks"]:
+        if task["due_at"] is not None:
+            task["due_at"] = timezone.localtime(task["due_at"], zone).isoformat()
     for source, keys, counters in (
         ("clients", (), ("clients_count",)),
         ("leads", ("latest_leads",), ("new_leads_count",)),

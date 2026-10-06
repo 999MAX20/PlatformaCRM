@@ -15,7 +15,7 @@ import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
-import { ErrorState } from "../../components/ui/StateViews";
+import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { SecuritySettingRow } from "./SecuritySettingRow";
 import { useI18n } from "../../lib/i18n";
@@ -98,8 +98,9 @@ export function MfaSecurityCard() {
       <div>
         <SecuritySettingRow icon={<ShieldCheck size={18} />} title={t("mfa.accountTitle")}
           value={mfa ? <span className={mfa.enabled ? "text-platforma-success" : "text-platforma-subtle"}>{mfa.enabled ? t("mfa.enabled") : mfa.required ? t("mfa.required") : t("mfa.notEnabled")}</span> : undefined}
-          action={statusQuery.isLoading ? <span role="status" className="text-sm">{t("common.loading")}</span> : mfa ? <Button size="sm" variant="secondary" aria-label={t(mfa.enabled ? "mfa.accountEyebrow" : "mfa.setup")} isLoading={startMutation.isPending} onClick={() => mfa.enabled ? setManageOpen(value => !value) : startMutation.mutate()}>{t(mfa.enabled ? "account.securityManage" : "account.securityConnect")}</Button> : <Button size="sm" variant="secondary" onClick={() => void statusQuery.refetch()}>{t("common.retry")}</Button>} />
-        {statusQuery.error || startMutation.error ? <div className="mt-2"><ErrorState message={getApiErrorMessage(statusQuery.error || startMutation.error)} /></div> : null}
+          action={statusQuery.isLoading ? null : mfa ? <Button size="sm" variant="secondary" aria-label={t(mfa.enabled ? "mfa.accountEyebrow" : "mfa.setup")} isLoading={startMutation.isPending} onClick={() => mfa.enabled ? setManageOpen(value => !value) : startMutation.mutate()}>{t(mfa.enabled ? "account.securityManage" : "account.securityConnect")}</Button> : <Button size="sm" variant="secondary" onClick={() => void statusQuery.refetch()}>{t("common.retry")}</Button>} />
+        {statusQuery.isLoading ? <LoadingState /> : null}
+        {statusQuery.error || startMutation.error ? <div className="mt-2"><ErrorState error={statusQuery.error || startMutation.error} message={getApiErrorMessage(statusQuery.error || startMutation.error)} /></div> : null}
         {mfa?.enabled && manageOpen ? <div className="pb-3 pl-12">
           <div className="my-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-platforma-subtle"><span>{t("mfa.recoveryRemaining")}: {mfa.recovery_codes_remaining}</span></div>
           <div className="flex flex-wrap gap-2">
@@ -120,7 +121,7 @@ export function MfaSecurityCard() {
             </>
           ) : (
             <form className="grid gap-4" onSubmit={(event) => { event.preventDefault(); actionMutation.mutate(); }}>
-              {actionMutation.error ? <ErrorState message={getApiErrorMessage(actionMutation.error)} /> : null}
+              {actionMutation.error ? <ErrorState error={actionMutation.error} message={getApiErrorMessage(actionMutation.error)} /> : null}
               {mode === "setup" && enrollment ? (
                 <AuthenticatorEnrollment enrollment={enrollment} />
               ) : null}

@@ -1303,7 +1303,7 @@ export function ConversationsPage() {
     return (
       <div data-testid="inbox-error-state">
         <ErrorState
-          message={getApiErrorMessage(pageError)}
+          error={pageError} message={getApiErrorMessage(pageError)}
           action={
             <Button
               type="button"
@@ -1914,7 +1914,7 @@ export function ConversationsPage() {
         </div>
         <div className="max-h-[56vh] overflow-y-auto p-3">
           {quickReplies.isLoading ? (
-            <LoadingState label={t("common.loading")} />
+            <LoadingState />
           ) : null}
           {!quickReplies.isLoading && !quickReplyTemplates.length ? (
             <EmptyState
@@ -1981,7 +1981,7 @@ export function ConversationsPage() {
           {crmLinkModal === "client" ? (
             <>
               {clientLinkCandidates.isLoading ? (
-                <LoadingState label={t("common.loading")} />
+                <LoadingState />
               ) : null}
               {!clientLinkCandidates.isLoading &&
               !clientLinkCandidates.data?.length ? (
@@ -2014,7 +2014,7 @@ export function ConversationsPage() {
           {crmLinkModal === "lead" ? (
             <>
               {leadLinkCandidates.isLoading ? (
-                <LoadingState label={t("common.loading")} />
+                <LoadingState />
               ) : null}
               {!leadLinkCandidates.isLoading &&
               !leadLinkCandidates.data?.length ? (
@@ -2045,7 +2045,7 @@ export function ConversationsPage() {
           {crmLinkModal === "deal" ? (
             <>
               {dealLinkCandidates.isLoading ? (
-                <LoadingState label={t("common.loading")} />
+                <LoadingState />
               ) : null}
               {!dealLinkCandidates.isLoading &&
               !dealLinkCandidates.data?.length ? (

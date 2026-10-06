@@ -121,9 +121,10 @@ class Command(BaseCommand):
         )
         self._create_message_settings(business)
         bot = Bot.objects.create(business=business, name="CRM Runtime Sales Bot", status=Bot.Statuses.ACTIVE)
-        AgentProfile.objects.create(business=business, bot=bot, name="CRM runtime check profile")
+        AgentProfile.objects.create(business=business, bot=bot, name="CRM runtime check profile",
+            allowed_tools_json={"tools": ["create_lead", "create_task", "create_deal", "handoff_to_manager"]})
         BusinessKnowledgeItem.objects.create(
-            business=business,
+            business=business, bot=bot,
             title="CRM runtime check knowledge",
             content="Offer only configured services and available slots; CRM work needs staff confirmation and staff creates appointments.",
         )

@@ -74,7 +74,9 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       { id: "open-messages", label: t("command.openMessages"), hint: t("nav.conversations"), to: "/app/conversations", icon: Search, priority: 10, resource: "conversations" },
       { id: "open-settings", label: t("command.openSettings"), hint: t("nav.settings"), to: "/app/settings", icon: Settings, priority: 10, resource: "settings", action: "update" },
       { id: "open-ai-agents", label: t("command.openAiAgents"), hint: t("nav.aiAgents"), to: "/app/ai-agents", icon: Search, priority: 10, resource: "ai_automation" },
-    ].filter((command) => !command.resource || hasPermission(user, businessId, command.resource, command.action));
+    ].filter((command) => command.id === "open-ai-agents"
+      ? ["ai_automation", "ai_assistant", "ai_analyst"].some(resource => hasPermission(user, businessId, resource, "view"))
+      : !command.resource || hasPermission(user, businessId, command.resource, command.action));
     const leadCommands = (canViewLeads ? leads.data || [] : []).map((lead) => {
       const client = (clients.data || []).find((item) => item.id === lead.client);
       const service = (services.data || []).find((item) => item.id === lead.service);

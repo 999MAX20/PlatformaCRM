@@ -66,7 +66,9 @@
 
 ## Implemented AI Assistant for CRM
 
-- `/app/ai-assistant` calls `/api/ai/assistant/chat/`.
+- `/app/ai-agents/:id/work` calls `/api/ai/assistant/chat/` with the selected CRM agent.
+- Creation selects inbox or CRM purpose; settings and runtime belong to that agent.
+- Old assistant routes redirect to AI Agents; staff access does not require configuration access.
 - Assistant answers use tenant-safe CRM context from the active business.
 - Responses show mock/model/log metadata and are saved in `AIRequestLog`.
 

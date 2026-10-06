@@ -50,7 +50,7 @@ export function BotsPage() {
   ];
 
   if (!business) return <ErrorState message={t("bots.noBusiness")} />;
-  if (bots.isLoading || botChannels.isLoading || botConversations.isLoading) return <LoadingState />;
+  if (bots.isLoading || botChannels.isLoading || botConversations.isLoading) return <LoadingState scope="page" />;
 
   const botList = bots.data || [];
 

@@ -120,7 +120,7 @@ export function ImportPanel({
         </p>
       </div>
 
-      {importError ? <ErrorState message={getApiErrorMessage(importError)} /> : null}
+      {importError ? <ErrorState error={importError} message={getApiErrorMessage(importError)} /> : null}
 
       <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
         <div className="grid gap-3 lg:grid-cols-[180px_1fr_auto_auto]">

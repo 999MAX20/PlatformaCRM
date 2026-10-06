@@ -336,6 +336,7 @@ export type PlatformMerchant = {
 };
 
 export type Bot = {
+  scenario?: "inbox" | "crm";
   id: Id;
   business: Id;
   name: string;
@@ -1231,6 +1232,7 @@ export type AgentProfile = {
 export type BusinessKnowledgeItem = {
   id: Id;
   business: Id;
+  bot: Id | null;
   title: string;
   content: string;
   category: string;

@@ -5,7 +5,7 @@ import { Button } from "../../../components/ui/Button";
 import { Card, CardBody } from "../../../components/ui/Card";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
-import { ErrorState } from "../../../components/ui/StateViews";
+import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import type { Id, Subscription, SubscriptionPlan } from "../../../types";
 import type { Translate } from "../settingsUtils";
 
@@ -68,6 +68,8 @@ export function BillingSection({
   subscriptionIsLoading,
   t,
 }: BillingSectionProps) {
+  if (subscriptionIsLoading) return <Card id="billing" className={className}><CardBody><LoadingState /></CardBody></Card>;
+
   return (
     <Card id="billing" className={className}>
       <CardBody>
@@ -77,9 +79,7 @@ export function BillingSection({
               {t("settings.currentPlan")}
             </p>
             <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
-              {subscriptionIsLoading
-                ? t("settings.loading")
-                : currentPlan?.name || t("settings.noPlan")}
+              {currentPlan?.name || t("settings.noPlan")}
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
               {hasSubscription
@@ -138,7 +138,7 @@ export function BillingSection({
         </div>
         {error ? (
           <div className="mt-4">
-            <ErrorState message={getApiErrorMessage(error)} />
+            <ErrorState error={error} message={getApiErrorMessage(error)} />
           </div>
         ) : null}
         <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_0.8fr]">

@@ -45,3 +45,13 @@ class CRMPlannerTests(TestCase):
             response = self.api.post("/api/ai/crm/plan/", {"business": self.business.pk, "entity": "clients", "message": "Create client"}, format="json")
         self.assertEqual(response.status_code, 503)
         self.assertFalse(AIToolCallLog.objects.exists())
+
+    def test_dated_task_can_be_planned_and_logged_without_mutation(self):
+        from django.utils import timezone
+        from apps.tasks.models import Task
+        task = Task.objects.create(business=self.business, title="Original", due_at=timezone.now())
+        response = self.plan({"tool": "crm_update", "arguments": {"entity": "tasks", "entity_id": task.pk,
+            "values": {"title": "Reviewed"}}, "question": ""}, entity="tasks", entity_id=task.pk)
+        self.assertEqual(response.status_code, 200, response.data)
+        task.refresh_from_db()
+        self.assertEqual(task.title, "Original")

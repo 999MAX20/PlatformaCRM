@@ -1,4 +1,4 @@
-import { InternalAgentSettings } from "./components/InternalAgentSettings";
+import { CRMStaffAgentsPage } from "./CRMStaffAgentsPage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
@@ -15,18 +15,27 @@ import { hasPermission } from "../../lib/permissions";
 import type { AgentProfile, Bot as BotType, BotChannel, BusinessKnowledgeItem } from "../../types";
 import { AIAgentsWorkspace } from "./components/AIAgentsWorkspace";
 import { AgentNavigation } from "./components/AgentNavigation";
+import { AgentDeleteControl } from "./components/AgentDeleteControl";
 import { jsonFromLines } from "./aiAgentsUtils";
 import { useAIAgentEditorDrafts } from "./useAIAgentEditorDrafts";
 import { useCanonicalAIAgentRoute } from "./useCanonicalAIAgentRoute";
 import { useMetaOAuthCallbackBridge } from "./useMetaOAuthCallbackBridge";
 
 export function AIAgentsPage() {
+  const { user } = useAuth();
+  const { business, isLoading } = useActiveBusiness();
+  if (isLoading) return <LoadingState scope="page" />;
+  return hasPermission(user, business?.id, "ai_automation", "view") ? <CustomerAgentsPage /> : <CRMStaffAgentsPage />;
+}
+
+function CustomerAgentsPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { setPageHeader } = usePageHeader();
   const { user } = useAuth();
   const { business, isLoading: isBusinessLoading } = useActiveBusiness();
   const canManage = hasPermission(user, business?.id, "ai_automation", "manage");
+  const canDelete = hasPermission(user, business?.id, "ai_automation", "delete");
   const canViewChannels = hasPermission(user, business?.id, "integrations", "view");
   const canManageChannels = hasPermission(user, business?.id, "integrations", "manage");
   const canSuggest = hasPermission(user, business?.id, "ai_assistant", "suggest");
@@ -35,17 +44,13 @@ export function AIAgentsPage() {
     bots: true,
   });
   const profiles = useQuery<AgentProfile[]>({ queryKey: ["ai-agent-profiles"], queryFn: () => agentProfilesApi.list() });
-  const knowledge = useQuery<BusinessKnowledgeItem[]>({
-    queryKey: ["ai-knowledge-items", business?.id],
-    queryFn: () => businessKnowledgeApi.list(),
-    enabled: Boolean(business),
-  });
   const [createOpen, setCreateOpen] = useState(false);
+  const [newAgentScenario, setNewAgentScenario] = useState<"inbox" | "crm" | null>(null);
   const [newAgentName, setNewAgentName] = useState(() => t("aiAgents.defaultNewAgentName"));
   useMetaOAuthCallbackBridge();
 
-  const botList = useMemo(() => bots.data || [], [bots.data]);
-  const profileList = useMemo(() => profiles.data || [], [profiles.data]);
+  const botList = useMemo(() => (bots.data || []).filter(bot => bot.business === business?.id), [bots.data, business?.id]);
+  const profileList = useMemo(() => (profiles.data || []).filter(profile => profile.business === business?.id), [profiles.data, business?.id]);
   const isPageLoading = isBusinessLoading
     || bots.isLoading
     || profiles.isLoading;
@@ -54,12 +59,18 @@ export function AIAgentsPage() {
     hasBusiness: Boolean(business),
     isPageLoading,
   });
+  const knowledge = useQuery<BusinessKnowledgeItem[]>({
+    queryKey: ["ai-knowledge-items", business?.id, selectedBot?.id],
+    queryFn: () => businessKnowledgeApi.listAll({ agent: selectedBot?.id }),
+    enabled: Boolean(business && selectedBot),
+  });
 
   const selectedProfile = useMemo(
     () => (profiles.data || []).filter((profile) => profile.bot === selectedBot?.id).sort((a, b) => Number(b.is_active) - Number(a.is_active) || b.updated_at.localeCompare(a.updated_at))[0] || null,
     [profiles.data, selectedBot?.id],
   );
   const [isSavingEditor, setIsSavingEditor] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const loadChannels = Boolean(business && canViewChannels && ["channels", "test"].includes(activeSection));
   const botChannels = useQuery<BotChannel[]>({
     queryKey: ["bot-channels"],
@@ -72,7 +83,9 @@ export function AIAgentsPage() {
   }, [botChannels.dataUpdatedAt, queryClient]);
   const {
     botDraft,
+    discardDeletedAgent,
     editorDirty,
+    hasUserEdits,
     markBotSaved,
     markProfileSaved,
     navigationBlocker,
@@ -89,6 +102,7 @@ export function AIAgentsPage() {
       botsApi.create({
         business: Number(business?.id),
         name: newAgentName.trim() || t("aiAgents.defaultNewAgentName"),
+        scenario: newAgentScenario || "inbox",
         status: "draft",
         default_language: "ru",
         settings_json: {},
@@ -96,6 +110,8 @@ export function AIAgentsPage() {
     onSuccess: async (bot) => {
       await queryClient.invalidateQueries({ queryKey: ["bots"] });
       setCreateOpen(false);
+      setNewAgentScenario(null);
+      await queryClient.invalidateQueries({ queryKey: ["ai-agent-profiles"] });
       setNewAgentName(t("aiAgents.defaultNewAgentName"));
       navigate(`/app/ai-agents/${bot.id}/profile`);
     },
@@ -108,9 +124,10 @@ export function AIAgentsPage() {
         bot: { name: botDraft.name.trim(), default_language: botDraft.default_language, settings_json: botDraft.settings_json },
         profile: {
           ...(profileForm.id ? { id: profileForm.id } : {}),
-          name: profileForm.name.trim(), role_description: profileForm.role_description,
+          name: botDraft.name.trim(), role_description: profileForm.role_description,
           tone: profileForm.tone, is_active: true, system_prompt: profileForm.system_prompt,
-          rules_json: jsonFromLines(profileForm.rules_text),
+          rules_json: { ...selectedProfile?.rules_json, ...jsonFromLines(profileForm.rules_text),
+            ...(selectedBot.scenario === "crm" ? { sources: profileForm.sources, analyst_enabled: profileForm.analyst_enabled } : {}) },
           allowed_tools_json: { tools: profileForm.allowed_tools },
           escalation_rules_json: jsonFromLines(profileForm.escalation_text),
         },
@@ -153,7 +170,7 @@ export function AIAgentsPage() {
   });
 
   const saveEditorDrafts = useCallback(async () => {
-    if (!selectedBot || !canManage || !botDraft.name.trim() || !profileForm.name.trim()) return false;
+    if (!selectedBot || !canManage || !botDraft.name.trim()) return false;
     setIsSavingEditor(true);
     try {
       await saveConfiguration.mutateAsync();
@@ -172,21 +189,21 @@ export function AIAgentsPage() {
   const navigation = (
     <AgentNavigation
       bots={botList} profiles={profileList} selectedBot={selectedBot}
-      isLoading={isPageLoading} error={bots.error || profiles.error}
-      canCreate={canManage} dirty={editorDirty} onCreate={() => setCreateOpen(true)}
+      isLoading={isPageLoading || Boolean(canonicalRoute) || isDeleting} error={bots.error || profiles.error}
+      canCreate={canManage} dirty={hasUserEdits} onCreate={() => setCreateOpen(true)}
       onRetry={() => void Promise.all([bots.refetch(), profiles.refetch()])}
-      onSelect={id => navigate(`/app/ai-agents/${id}/${activeSection}`)}
+      onSelect={id => navigate(`/app/ai-agents/${id}/profile`)}
     />
   );
 
   if (isPageLoading) {
-    return <>{navigation}<LoadingState label={t("aiAgents.loading")} /></>;
+    return <>{navigation}<LoadingState scope="page" /></>;
   }
 
   if (!business) return <ErrorState message={t("aiAgents.noBusiness")} />;
 
   if (canonicalRoute) {
-    return <>{navigation}<LoadingState label={t("aiAgents.loading")} /></>;
+    return <>{navigation}<LoadingState scope="page" /></>;
   }
 
   const pageError = bots.error || profiles.error;
@@ -224,7 +241,6 @@ export function AIAgentsPage() {
   return (
     <>
       {navigation}
-      <InternalAgentSettings businessId={business.id} profiles={profileList} canManage={canManage} />
       <AIAgentsWorkspace
         activeSection={activeSection}
         addChannel={addChannel}
@@ -232,6 +248,15 @@ export function AIAgentsPage() {
         botDraft={botDraft}
         businessId={business.id}
         canManage={canManage}
+        deleteControl={selectedBot && canDelete ? <AgentDeleteControl key={selectedBot.id} bot={selectedBot}
+          onPendingChange={setIsDeleting}
+          disabled={isSavingEditor || saveConfiguration.isPending || toggleBotStatus.isPending}
+          onDeleted={() => {
+            discardDeletedAgent();
+            queryClient.setQueryData<BotType[]>(["bots"], current => current?.filter(bot => bot.id !== selectedBot.id));
+            navigate("/app/ai-agents", { replace: true });
+            void Promise.all(["bots", "ai-agent-profiles", "bot-channels", "ai-runtime-agents"].map(key => queryClient.invalidateQueries({ queryKey: [key] })));
+          }} /> : undefined}
         canManageChannels={canManageChannels}
         canSuggest={canSuggest}
         canViewChannels={canViewChannels}
@@ -239,14 +264,17 @@ export function AIAgentsPage() {
         createError={createBot.error}
         createOpen={createOpen}
         dirty={editorDirty}
-        isSaving={isSavingEditor || saveConfiguration.isPending || toggleBotStatus.isPending}
-        knowledgeItems={knowledge.data || []}
+        isSaving={isSavingEditor || saveConfiguration.isPending || toggleBotStatus.isPending || isDeleting}
+        knowledgeItems={(knowledge.data || []).filter(item => item.business === business.id)}
         mutationError={mutationError}
         navigationBlocked={navigationBlocker.state === "blocked"}
         newAgentName={newAgentName}
+        newAgentScenario={newAgentScenario}
+        onSetNewAgentScenario={setNewAgentScenario}
+        hasCRMAgent={botList.some(bot => bot.scenario === "crm")}
         onCloseCreate={() => setCreateOpen(false)}
         onCloseNavigationGuard={closeNavigationGuard}
-        onCreateAgent={() => createBot.mutate()}
+        onCreateAgent={() => { if (newAgentScenario) createBot.mutate(); }}
         onDiscardAndContinue={discardAndContinue}
         onSaveAndContinue={() => {
           void saveAndContinue().catch(() => undefined);

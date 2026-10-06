@@ -150,11 +150,12 @@ class AIWorkflowQualityTests(TestCase):
         provider.assert_not_called()
 
     def test_knowledge_lookup_prioritizes_matching_item_beyond_first_eight(self):
+        agent = Bot.objects.create(business=self.business, name="Knowledge search")
         for index in range(9):
-            BusinessKnowledgeItem.objects.create(business=self.business, title=f'A{index}', content='General')
-        wanted = BusinessKnowledgeItem.objects.create(business=self.business, title='Z Whitening', content='Whitening costs 14000')
+            BusinessKnowledgeItem.objects.create(business=self.business, bot=agent, title=f'A{index}', content='General')
+        wanted = BusinessKnowledgeItem.objects.create(business=self.business, bot=agent, title='Z Whitening', content='Whitening costs 14000')
         BusinessKnowledgeItem.objects.create(business=self.foreign, title='Whitening', content='SECRET')
-        result = get_business_knowledge_context(self.business, query='Whitening')
+        result = get_business_knowledge_context(self.business, query='Whitening', agent=agent)
         self.assertEqual(result[0]['id'], wanted.pk)
         self.assertEqual(len(result), 8)
         self.assertNotIn('SECRET', str(result))
@@ -240,7 +241,7 @@ class AIWorkflowQualityTests(TestCase):
     def _conversation(self):
         bot = Bot.objects.create(business=self.business, name='Quality bot', status='active', settings_json={'auto_crm_pipeline': {'enabled': True, 'mode': 'triage', 'auto_send_reply': True}})
         AgentProfile.objects.create(business=self.business, bot=bot, name='Receptionist')
-        BusinessKnowledgeItem.objects.create(business=self.business, title='Clinic', content='Synthetic clinic')
+        BusinessKnowledgeItem.objects.create(business=self.business, bot=bot, title='Clinic', content='Synthetic clinic')
         BotChannel.objects.create(bot=bot, channel='website', status='active')
         conversation = BotConversation.objects.create(business=self.business, bot=bot, channel='website', external_user_id='quality')
         message = BotMessage.objects.create(conversation=conversation, direction='inbound', text='Connect me to a manager')

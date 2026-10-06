@@ -118,6 +118,7 @@ export function AppLayout() {
           <div className={`flex min-w-0 flex-1 flex-col ${usesEdgeToEdgeCrm ? "pb-[calc(5.5rem+env(safe-area-inset-bottom))]" : "pb-28"} lg:pb-0`}>
             <WorkspaceNavigation pageHeader={pageHeader} />
             <main
+              data-workspace-content
               key={workspaceAnimationKey}
               className={`animate-fade-in mx-auto w-full flex-1 ${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}
             >

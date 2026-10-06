@@ -123,6 +123,7 @@ export function TelegramInlineSetup({
           </div>
           <Input
             label=""
+            aria-label={t("integrations.telegram.botKey")}
             value={botToken}
             onChange={(event) => setBotToken(event.target.value)}
             placeholder={tokenConfigured ? t("integrations.telegram.tokenReplacePlaceholder") : t("integrations.telegram.tokenInputPlaceholder")}

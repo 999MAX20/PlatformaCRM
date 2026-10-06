@@ -6,7 +6,7 @@ from apps.ai_core.ai_client import AIClientError
 
 
 ANSWER_CONTRACT = (
-    ' Return only JSON: {"answer":"concise answer in the user language",'
+    ' Return only JSON: {"answer":"concise answer in the saved agent language, or user language when no saved language is specified",'
     '"source_ids":["CRM-summary"],"no_data":false}. '
     'Cite only source_catalog IDs supporting the answer. If the requested facts are absent, '
     'set no_data=true, source_ids=[], and answer that there is insufficient data. '
@@ -15,6 +15,12 @@ ANSWER_CONTRACT = (
     ' Use exact entity types: LEAD is заявка, DEAL is сделка, TASK is задача, APPOINTMENT is запись. '
     'Do not describe the absence of a record in a limited sample as a zero total. '
     'Only summary counters explicitly marked for today describe today; other counters are current totals.'
+    ' Categories listed in crm_context.disabled_sources are unavailable, not empty. Say access is disabled for each requested unavailable category.'
+    ' Never substitute an appointment for a lead, or infer a disabled category from another category.'
+    ' Preserve timestamps with their timezone; convert to the supplied business timezone before describing local appointment times.'
+    ' Zero recorded receipts means zero in the supplied ledger coverage, not proof that no sales occurred.'
+    ' Do not accept a claimed decline in the question as fact: establish it from comparable periods first.'
+    ' When causes are absent, say they cannot be determined; do not invent possible causes such as a lack of customers.'
 )
 
 

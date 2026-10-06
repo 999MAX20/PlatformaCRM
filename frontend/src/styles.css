@@ -2,6 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+.platforma-loading {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 10rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.platforma-loading--page { min-height: 100dvh; }
+
+/* Fill the real content box, including its existing header/nav padding. */
+[data-workspace-content]:has(> .platforma-loading--page) {
+  display: flex;
+  flex-direction: column;
+}
+[data-workspace-content] > .platforma-loading--page {
+  flex: 1;
+  min-height: 10rem;
+}
+
+.platforma-loading__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  opacity: 0;
+  animation: platforma-loading-appear 120ms ease-out 200ms forwards;
+}
+.platforma-loading__ring {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--color-border-default);
+  border-top-color: var(--color-brand-default);
+  border-radius: 50%;
+  animation: platforma-loading-turn 900ms linear infinite;
+}
+@keyframes platforma-loading-turn { to { transform: rotate(360deg); } }
+@keyframes platforma-loading-appear { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .platforma-loading__content { animation: none; opacity: 1; }
+  .platforma-loading__ring { animation: none; }
+}
+
 :root {
   --platforma-bg: var(--color-surface-canvas);
   --platforma-page-soft: var(--color-surface-canvas);

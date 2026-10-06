@@ -1,3 +1,4 @@
+from apps.ai_core.agent_runtime import agent_request
 from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
@@ -23,11 +24,12 @@ from apps.ai_core.serializers import (
     AIRequestLogSerializer,
     AgentProfileSerializer,
     BusinessKnowledgeItemSerializer,
+    KnowledgeConnectionSerializer,
 )
 from apps.ai_core.services import create_ai_job, run_ai_request
 from apps.ai_core.tool_registry import assert_tool_execution_allowed, execute_tool_call_once, registered_tools, suggest_tool_calls, tool_call_fingerprint, tool_requires_approval
-from apps.businesses.access import Actions, Resources, assert_can
-from apps.core.permissions import user_can_access_business
+from apps.businesses.access import Actions, Resources, assert_can, can
+from apps.core.permissions import accessible_businesses, user_can_access_business
 from apps.core.sanitization import sanitize_error_text
 from apps.core.viewsets import TenantModelViewSet
 
@@ -62,9 +64,47 @@ class BusinessKnowledgeItemViewSet(TenantModelViewSet):
     serializer_class = BusinessKnowledgeItemSerializer
     access_resource = Resources.AI_AUTOMATION
 
+    action_permission_map = {**TenantModelViewSet.action_permission_map, "connection": Actions.MANAGE}
+
+    def get_queryset(self):
+        from django.db.models import Q
+        from rest_framework import serializers
+        queryset = super().get_queryset().exclude(bot__settings_json__has_key="_deleted_at")
+        business_id = self.request.query_params.get("business")
+        if business_id is not None:
+            queryset = queryset.filter(business_id=serializers.IntegerField(min_value=1).run_validation(business_id))
+        agent_id = self.request.query_params.get("agent")
+        if agent_id is not None:
+            agent_id = serializers.IntegerField(min_value=1).run_validation(agent_id)
+            from apps.bots.models import Bot
+            from django.shortcuts import get_object_or_404
+            agent = get_object_or_404(Bot.objects.filter(business__in=accessible_businesses(self.request.user)), pk=agent_id)
+            queryset = queryset.filter(business_id=agent.business_id).filter(
+                Q(bot=agent) | Q(bot__isnull=True, connected_agents=agent))
+        elif self.action == "list":
+            queryset = queryset.filter(bot__isnull=True)
+        return queryset.distinct()
+
+    def perform_create(self, serializer):
+        self._enforce_business_access(serializer)
+        serializer.save()
+
+    def perform_update(self, serializer):
+        self._enforce_business_access(serializer)
+        serializer.save()
+
+    @action(detail=True, methods=["post"])
+    def connection(self, request, pk=None):
+        from apps.ai_core.knowledge import connect_shared_knowledge
+        payload = KnowledgeConnectionSerializer(data=request.data)
+        payload.is_valid(raise_exception=True)
+        item = connect_shared_knowledge(actor=request.user, item=self.get_object(),
+            agent_id=payload.validated_data["agent"], connected=payload.validated_data["connected"])
+        return Response(self.get_serializer(item).data)
+
 
 class AgentProfileViewSet(TenantModelViewSet):
-    queryset = AgentProfile.objects.select_related("business", "bot")
+    queryset = AgentProfile.objects.exclude(bot__settings_json__has_key="_deleted_at").select_related("business", "bot")
     serializer_class = AgentProfileSerializer
     access_resource = Resources.AI_AUTOMATION
 
@@ -154,6 +194,7 @@ class AIAssistantChatView(APIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "ai_assistant"
 
+    @agent_request
     def post(self, request):
         serializer = AIAssistantChatSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -208,6 +249,7 @@ class AIAssistantChatView(APIView):
 
 
 class AIAssistantStatusView(APIView):
+    @agent_request
     def get(self, request):
         serializer = AIAssistantStatusSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -228,7 +270,8 @@ class AIAssistantStatusView(APIView):
         }
         key_ready = provider == "mock" or configured_keys.get(provider, False)
         from apps.ai_core.workflows import workflow_settings
-        enabled = settings.AI_ENABLED and workflow_settings(business, "employee")["enabled"]
+        config = workflow_settings(business, "employee")
+        enabled = settings.AI_ENABLED and config["enabled"]
         mode = "unavailable" if not enabled or not key_ready else "mock" if provider == "mock" else "live"
         return Response(
             {
@@ -237,7 +280,9 @@ class AIAssistantStatusView(APIView):
                 "mode": mode,
                 "ready": bool(enabled and key_ready),
                 "key_configured": key_ready,
-                "model": settings.AI_SMART_MODEL,
+                "model": config.get("model") or settings.AI_SMART_MODEL,
+                "sources": [source for source in config["sources"] if source != "knowledge" and can(request.user, business, source, Actions.VIEW).allowed],
+                "tools": config["tools"],
                 "fast_model": settings.AI_FAST_MODEL,
                 "cheap_model": settings.AI_CHEAP_MODEL,
             }
@@ -248,6 +293,7 @@ class AIAnalystBriefView(APIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "ai_assistant"
 
+    @agent_request
     def get(self, request):
         serializer = AIAnalystBriefSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -290,6 +336,7 @@ class AIOwnerDailyBriefView(APIView):
 
 
 class AIToolSuggestView(APIView):
+    @agent_request
     def post(self, request):
         serializer = AIToolSuggestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

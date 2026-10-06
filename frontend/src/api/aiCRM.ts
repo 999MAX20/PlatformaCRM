@@ -13,12 +13,12 @@ export type HistoryReport = {
   state: "available" | "no_data";
 };
 export const aiCRMApi = {
-  read: async (params: { business: Id; entity: CRMEntity; query?: string; offset?: number; include_archived?: boolean }) =>
+  read: async (params: { business: Id; agent?: Id; entity: CRMEntity; query?: string; offset?: number; include_archived?: boolean }) =>
     (await apiClient.get<CRMReadResult>("/api/ai/crm/read/", { params })).data,
-  plan: async (payload: { business: Id; entity: CRMEntity; entity_id?: Id; message: string }) =>
+  plan: async (payload: { business: Id; agent?: Id; entity: CRMEntity; entity_id?: Id; message: string }) =>
     (await apiClient.post<{ question: string; suggested_actions: AIToolCallLog[] }>("/api/ai/crm/plan/", payload)).data,
-  history: async (params: { business: Id; start: string; end: string }) =>
+  history: async (params: { business: Id; agent?: Id; start: string; end: string }) =>
     (await apiClient.get<HistoryReport>("/api/ai/analyst/history/", { params })).data,
-  explainHistory: async (payload: { business: Id; start: string; end: string; question: string }) =>
+  explainHistory: async (payload: { business: Id; agent?: Id; start: string; end: string; question: string }) =>
     (await apiClient.post<{ answer: string; sources: Array<{ id: string; label: string }>; provider_state: string; report: HistoryReport }>("/api/ai/analyst/history/", payload)).data,
 };

@@ -119,7 +119,7 @@ function ChannelsSection({
                   >
                     {channel ? t("aiAgents.configure") : t("aiAgents.connect")}
                   </Button>
-                  {channel && ["active", "paused"].includes(channel.status) ? (
+                  {channel && (item.key === "website" || ["active", "paused"].includes(channel.status)) ? (
                     <ToggleSwitch
                       checked={connected}
                       disabled={!canManage}
@@ -158,7 +158,8 @@ function ChannelsSection({
 function WebsiteSetup({ bot, channel }: { bot: BotType; channel?: BotChannel }) {
   const { t } = useI18n();
   const widgetApiBase = import.meta.env.VITE_API_URL || window.location.origin;
-  const snippet = channel ? `<script src=\"/widget/platformacrm-widget.js\" data-platforma-token=\"${channel.public_token}\" data-platforma-api=\"${widgetApiBase}\"></script>` : "";
+  const widgetScriptUrl = new URL("/widget/platformacrm-widget.js", window.location.origin).href;
+  const snippet = channel ? `<script src=\"${widgetScriptUrl}\" data-platforma-token=\"${channel.public_token}\" data-platforma-api=\"${widgetApiBase}\"></script>` : "";
   return (
     <div className="space-y-4">
       <div className="border-b border-platforma-border pb-3">

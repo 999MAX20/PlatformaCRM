@@ -342,23 +342,12 @@ export function ManagerDashboard({
     "business_operator",
   ].includes(role);
 
-  if (isCoreDataLoading) {
-    return (
-      <div className="space-y-5 pb-6">
-        <Surface
-          className="border-brand-100 px-5 py-4 text-sm font-semibold text-platforma-subtle"
-          padding="none"
-        >
-          {t("dashboard.loadingCoreData")}
-        </Surface>
-      </div>
-    );
-  }
+  if (isCoreDataLoading) return <LoadingState scope="page" />;
 
   return (
     <div className="space-y-5 pb-6" data-testid="dashboard-workspace-ready">
       {isWorkQueuesLoading ? (
-        <LoadingState label={t("dashboard.loadingPriorities")} />
+        <LoadingState />
       ) : null}
       {workQueuesError ? (
         <div data-testid="dashboard-priority-error">

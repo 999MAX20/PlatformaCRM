@@ -1,3 +1,4 @@
+from apps.ai_core.agent_runtime import agent_command, bind_command, command_agent
 import hashlib
 import json
 from dataclasses import dataclass
@@ -58,6 +59,7 @@ def tool_requires_approval(tool_name):
     return bool(tool and tool.requires_confirmation)
 
 
+@agent_command
 def assert_tool_execution_allowed(log, user):
     from apps.ai_core.workflows import assert_employee_tool
     assert_employee_tool(log.business, log.tool_name)
@@ -86,7 +88,7 @@ def suggest_tool_calls(*, business, user, conversation=None, message="", tool_na
     if tool_name is not None:
         from apps.ai_core.crm_tools import prepare_command
         payload = prepare_command(business=business, user=user, tool=tool_name, payload=arguments)
-        return [AIToolCallLog.objects.create(business=business, user=user, tool_name=tool_name, input_json=payload)]
+        return [AIToolCallLog.objects.create(business=business, user=user, tool_name=tool_name, input_json=bind_command(business, payload))]
     if conversation:
         assert_can(user, business, Resources.CONVERSATIONS, Actions.VIEW, obj=conversation)
     suggestions = [
@@ -111,7 +113,7 @@ def suggest_tool_calls(*, business, user, conversation=None, message="", tool_na
             user=user,
             conversation=conversation,
             tool_name=tool_name,
-            input_json={**payload, "requires_confirmation": TOOLS[tool_name].requires_confirmation},
+            input_json=bind_command(business, {**payload, "requires_confirmation": TOOLS[tool_name].requires_confirmation}),
         )
         for tool_name, payload in suggestions
         if config["tools"] is None or tool_name in config["tools"]
@@ -134,33 +136,37 @@ def tool_call_fingerprint(log):
 def execute_tool_call_once(log_id, user, *, approval_id=None):
     try:
         with transaction.atomic():
+            from apps.businesses.models import Business
+            business_id = AIToolCallLog.objects.values_list("business_id", flat=True).get(id=log_id)
+            Business.objects.select_for_update().get(pk=business_id)
             log = AIToolCallLog.objects.select_for_update().select_related("business", "conversation").get(id=log_id)
-            locked_approval = None
-            if log.tool_name.startswith("crm_"):
-                from apps.ai_core.crm_approval import validate_locked_approval
-                locked_approval = validate_locked_approval(log, user, approval_id)
+            with command_agent(log):
+                locked_approval = None
+                if log.tool_name.startswith("crm_"):
+                    from apps.ai_core.crm_approval import validate_locked_approval
+                    locked_approval = validate_locked_approval(log, user, approval_id)
+                    assert_tool_execution_allowed(log, user)
+                if log.status == AIToolCallLog.Statuses.EXECUTED:
+                    return log, True
+                if log.status != AIToolCallLog.Statuses.SUGGESTED:
+                    return log, False
                 assert_tool_execution_allowed(log, user)
-            if log.status == AIToolCallLog.Statuses.EXECUTED:
-                return log, True
-            if log.status != AIToolCallLog.Statuses.SUGGESTED:
+                log.status = AIToolCallLog.Statuses.EXECUTING
+                log.locked_at = timezone.now()
+                log.attempts += 1
+                log.error = ""
+                log.save(update_fields=["status", "locked_at", "attempts", "error"])
+                output = _tool_handler(log.tool_name)(log, user)
+                log.status = AIToolCallLog.Statuses.EXECUTED
+                log.output_json = output
+                log.error = ""
+                log.locked_at = None
+                log.executed_at = timezone.now()
+                log.save(update_fields=["status", "output_json", "error", "locked_at", "executed_at"])
+                if locked_approval is not None:
+                    locked_approval.status = "executed"
+                    locked_approval.save(update_fields=["status", "updated_at"])
                 return log, False
-            assert_tool_execution_allowed(log, user)
-            log.status = AIToolCallLog.Statuses.EXECUTING
-            log.locked_at = timezone.now()
-            log.attempts += 1
-            log.error = ""
-            log.save(update_fields=["status", "locked_at", "attempts", "error"])
-            output = _tool_handler(log.tool_name)(log, user)
-            log.status = AIToolCallLog.Statuses.EXECUTED
-            log.output_json = output
-            log.error = ""
-            log.locked_at = None
-            log.executed_at = timezone.now()
-            log.save(update_fields=["status", "output_json", "error", "locked_at", "executed_at"])
-            if locked_approval is not None:
-                locked_approval.status = "executed"
-                locked_approval.save(update_fields=["status", "updated_at"])
-            return log, False
     except Exception as exc:
         log = AIToolCallLog.objects.get(id=log_id)
         if log.tool_name.startswith("crm_") and isinstance(exc, PermissionDenied):

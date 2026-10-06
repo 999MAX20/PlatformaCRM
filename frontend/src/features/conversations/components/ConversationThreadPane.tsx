@@ -205,7 +205,7 @@ export function ConversationThreadPane({
             className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-surface-warm p-5 pb-28 lg:pb-5"
           >
             {messagesLoading ? (
-              <LoadingState label={t("conversations.loadingHistory")} />
+              <LoadingState />
             ) : null}
             {canLoadMoreMessages ? (
               <Button

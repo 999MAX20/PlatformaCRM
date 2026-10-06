@@ -187,11 +187,7 @@ export function EntitySecondaryButton({
 }
 
 export function EntityWorkspaceLoadingState({ label }: { label?: string }) {
-  return (
-    <CrmWorkspacePage>
-      <LoadingState label={label} />
-    </CrmWorkspacePage>
-  );
+  return <LoadingState scope="page" label={label} />;
 }
 
 export function EntityWorkspaceErrorState({ message }: { message: string }) {

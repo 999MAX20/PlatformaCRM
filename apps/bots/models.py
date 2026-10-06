@@ -9,7 +9,29 @@ from apps.clients.models import Client
 from apps.leads.models import Lead
 
 
+class AvailableBotManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().exclude(settings_json__has_key="_deleted_at")
+
+
 class Bot(TimeStampedModel):
+    # Retain the row for conversation/history foreign keys; public/runtime lookups
+    # and plan usage see only available agents. No schema change is required.
+    objects = AvailableBotManager()
+    all_objects = models.Manager()
+
+    @property
+    def is_deleted(self):
+        return "_deleted_at" in (self.settings_json or {})
+
+    class Scenarios(models.TextChoices):
+        INBOX = "inbox", "Customer conversations"
+        CRM = "crm", "Staff CRM and analytics"
+
+    @property
+    def scenario(self):
+        return (self.settings_json or {}).get("scenario", self.Scenarios.INBOX)
+
     class Statuses(models.TextChoices):
         DRAFT = "draft", "Draft"
         ACTIVE = "active", "Active"

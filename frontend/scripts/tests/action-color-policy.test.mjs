@@ -90,7 +90,7 @@ test("AI tone is reserved for model-driven actions", () => {
     assert.doesNotMatch(read(relativePath), /variant="ai"/, relativePath);
   }
 
-  assert.match(read("src/features/assistant/AIAssistantPage.tsx"), /variant="ai"/);
+  assert.match(read("src/features/assistant/components/CRMAgentRuntime.tsx"), /variant="ai"/);
   assert.match(read("src/features/bots/BotDetailPage.tsx"), /variant="ai"/);
 });
 

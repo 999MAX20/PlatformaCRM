@@ -61,6 +61,11 @@ class BotViewSet(TenantModelViewSet):
         "configuration": Actions.MANAGE,
     }
 
+    def destroy(self, request, *args, **kwargs):
+        from apps.bots.deletion import delete_agent
+        delete_agent(bot=self.get_object(), actor=request.user)
+        return Response(status=204)
+
     def perform_create(self, serializer):
         business = serializer.validated_data["business"]
         assert_entitlement_allows(business, EntitlementMetrics.BOTS)
@@ -152,7 +157,7 @@ class BotViewSet(TenantModelViewSet):
 
 
 class BotChannelViewSet(TenantModelViewSet):
-    queryset = BotChannel.objects.select_related("bot", "bot__business")
+    queryset = BotChannel.objects.exclude(bot__settings_json__has_key="_deleted_at").select_related("bot", "bot__business")
     serializer_class = BotChannelSerializer
     business_lookup = "bot__business"
 

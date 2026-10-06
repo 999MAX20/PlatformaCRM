@@ -56,7 +56,7 @@ export function PlatformMerchantDetailPage() {
     },
   });
 
-  if (merchant.isLoading) return <LoadingState label={t("platform.merchantDetail.loading")} />;
+  if (merchant.isLoading) return <LoadingState scope="page" />;
   if (merchant.isError || !merchant.data) return <ErrorState message={t("platform.merchantDetail.error")} />;
 
   const data = merchant.data;
@@ -198,7 +198,7 @@ export function PlatformMerchantDetailPage() {
                   placeholder={t("mfa.codePlaceholder")}
                   autoComplete="one-time-code"
                 />
-                {supportMutation.isError ? <ErrorState message={getApiErrorMessage(supportMutation.error)} /> : null}
+                {supportMutation.isError ? <ErrorState error={supportMutation.error} message={getApiErrorMessage(supportMutation.error)} /> : null}
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Button onClick={() => supportMutation.mutate()} isLoading={supportMutation.isPending} disabled={!note.trim() || !mfaCode.trim()}>
                     <MessageSquarePlus size={16} /> {t("platform.merchantDetail.saveAction")}

@@ -44,41 +44,31 @@ function member({ grants = true, enabled = true } = {}) {
 }
 
 for (const layout of ["desktopSections", "mobileDrawerSections"]) {
-  const control = navigation[layout].flatMap((section) => section.items).find((item) => item.label === "nav.control");
-  const assistant = control.children.find((item) => item.to === "/app/ai-assistant");
-
-  test(`${layout}: AI assistant appears once next to Analytics with the existing route permission`, () => {
-    assert.ok(assistant);
-    assert.equal(control.children.filter((item) => item.to === assistant.to).length, 1);
-    assert.equal(control.children.indexOf(assistant), control.children.findIndex((item) => item.to === "/app/analytics") + 1);
-    assert.equal(assistant.label, "nav.aiAssistant");
-    assert.equal(assistant.resource, "ai_assistant");
-    assert.equal(assistant.action ?? "view", "view");
+  const items = navigation[layout].flatMap((section) => section.items);
+  const agent = items.find((item) => item.to === "/app/ai-agents");
+  test(`${layout}: one unified agent entry replaces the old assistant`, () => {
+    assert.ok(agent);
+    const all = items.flatMap(item => [item, ...(item.children || [])]);
+    assert.equal(all.filter(item => item.to === "/app/ai-agents").length, 1);
+    assert.equal(all.filter(item => item.to === "/app/ai-assistant").length, 0);
   });
-
-  test(`${layout}: a permitted member can reach AI even without analytics permission`, () => {
-    const visible = navigation.filterSidebarItem(control, member(), 1);
-    assert.ok(visible);
-    assert.deepEqual(Array.from(visible.children, (item) => item.to), ["/app/ai-assistant"]);
+  test(`${layout}: existing assistant, analyst and configuration permissions grant navigation`, () => {
+    for (const resource of ["ai_assistant", "ai_analyst", "ai_automation"]) {
+      const user = member();
+      user.effective_permissions["1"] = [{ resource, action: "view" }];
+      assert.ok(navigation.filterSidebarItem(agent, user, 1));
+    }
   });
-
-  test(`${layout}: absent permission, disabled AI and foreign business hide the entry`, () => {
-    assert.ok(assistant);
-    assert.equal(navigation.filterSidebarItem(assistant, member({ grants: false }), 1), null);
-    assert.equal(navigation.filterSidebarItem(assistant, member({ enabled: false }), 1), null);
-    assert.equal(navigation.filterSidebarItem(assistant, member(), 2), null);
+  test(`${layout}: missing permission, disabled AI and foreign business hide agents`, () => {
+    assert.equal(navigation.filterSidebarItem(agent, member({ grants: false }), 1), null);
+    assert.equal(navigation.filterSidebarItem(agent, member({ enabled: false }), 1), null);
+    assert.equal(navigation.filterSidebarItem(agent, member(), 2), null);
   });
 }
 
-test("AI assistant uses a registered route and remains distinct from AI agents", async () => {
+test("old assistant routes redirect into unified agents", async () => {
   const router = await read("app/router.tsx");
-  assert.match(router, /path: "ai-assistant",\s*resource: "ai_assistant",[\s\S]*?<AIAssistantPage\s*\/>/);
-  assert.equal(navigation.isItemActive("/app/ai-assistant", "/app/ai-assistant"), true);
-  assert.equal(navigation.isItemActive("/app/ai-agents", "/app/ai-assistant"), false);
-});
-
-test("AI navigation label exists in RU, KK and EN", async () => {
-  for (const locale of ["ru", "kk", "en"]) {
-    assert.match(await read(`lib/i18n/${locale}.ts`), /"nav\.aiAssistant":\s*"[^"\n]+"/);
-  }
+  assert.doesNotMatch(router, /AIAssistantPage/);
+  assert.match(router, /path: "ai-assistant",[\s\S]*?<Navigate to="\/app\/ai-agents" replace/);
+  assert.equal(navigation.isItemActive("/app/ai-agents/12/work", "/app/ai-agents"), true);
 });

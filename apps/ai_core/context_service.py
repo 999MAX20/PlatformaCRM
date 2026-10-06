@@ -1,10 +1,10 @@
-from apps.ai_core.models import BusinessKnowledgeItem
 import re
 
 
-def get_business_knowledge_context(business, limit=8, query=""):
+def get_business_knowledge_context(business, limit=8, query="", *, agent=None):
     # Bounded lexical retrieval; Unicode casefold behaves consistently on SQLite/Postgres.
-    items = list(BusinessKnowledgeItem.objects.filter(business=business, is_active=True).order_by("category", "title")[:500])
+    from apps.ai_core.knowledge import agent_knowledge
+    items = list(agent_knowledge(business=business, agent=agent).filter(is_active=True).order_by("category", "title")[:500])
     words = list(dict.fromkeys(re.findall(r"[^\W_]{3,}", query.casefold())))[:24]
     def relevance(item):
         title, content = item.title.casefold(), item.content.casefold()

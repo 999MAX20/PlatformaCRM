@@ -69,7 +69,7 @@ export function InviteAcceptPage() {
   });
 
   if (preview.isLoading || isAuthLoading) {
-    return <LoadingState label={t("invite.checking")} />;
+    return <LoadingState scope="page" />;
   }
 
   return (
@@ -85,7 +85,7 @@ export function InviteAcceptPage() {
             {t("invite.description")}
           </p>
 
-          {preview.error ? <div className="mt-5"><ErrorState message={getApiErrorMessage(preview.error)} /></div> : null}
+          {preview.error ? <div className="mt-5"><ErrorState error={preview.error} message={getApiErrorMessage(preview.error)} /></div> : null}
           {preview.data?.status && preview.data.status !== "pending" ? (
             <StatusNotice
               compact
@@ -101,7 +101,7 @@ export function InviteAcceptPage() {
               <p className="mt-1 text-sm leading-6 text-platforma-faint">{t(`settings.roleDescription.${preview.data.role}`)}</p>
             </div>
           ) : null}
-          {acceptMutation.error ? <div className="mt-5"><ErrorState message={getApiErrorMessage(acceptMutation.error)} /></div> : null}
+          {acceptMutation.error ? <div className="mt-5"><ErrorState error={acceptMutation.error} message={getApiErrorMessage(acceptMutation.error)} /></div> : null}
 
           {requiresAuthentication || isAuthenticated ? (
             <div className="mt-6 space-y-4">

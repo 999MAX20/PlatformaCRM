@@ -393,14 +393,7 @@ function buildBriefItems({
     ];
   }
   if (isOwnerBriefLoading) {
-    return [
-      {
-        key: "owner-brief-loading",
-        title: t("dashboard.ownerBriefLoadingTitle"),
-        text: t("dashboard.ownerBriefLoadingText"),
-        tone: "ai",
-      },
-    ];
+    return [];
   }
   if (!canViewAiAnalyst) {
     return [
@@ -418,7 +411,7 @@ function buildBriefItems({
         key: "owner-brief-unavailable",
         title: t("dashboard.ownerBriefUnavailableTitle"),
         text: t("dashboard.ownerBriefUnavailableText"),
-        href: canViewAiAssistant ? "/app/ai-assistant" : undefined,
+        href: canViewAiAssistant ? "/app/ai-agents" : undefined,
         action: canViewAiAssistant ? t("dashboard.openAiAnalyst") : undefined,
         tone: "amber",
       },
@@ -545,18 +538,7 @@ export function OwnerDashboard({
   });
   const financial = dashboard?.financial;
 
-  if (isCoreDataLoading) {
-    return (
-      <div className="space-y-4 pb-8">
-        <Surface
-          className="border-brand-100 bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700"
-          padding="none"
-        >
-          {t("dashboard.loadingCoreData")}
-        </Surface>
-      </div>
-    );
-  }
+  if (isCoreDataLoading) return <LoadingState scope="page" />;
 
   return (
     <div className="space-y-4 pb-8" data-testid="dashboard-workspace-ready">
@@ -569,7 +551,7 @@ export function OwnerDashboard({
         </Surface>
       ) : null}
       {isWorkQueuesLoading ? (
-        <LoadingState label={t("dashboard.loadingPriorities")} />
+        <LoadingState />
       ) : null}
       {workQueuesError ? (
         <div data-testid="dashboard-priority-error">
@@ -640,7 +622,7 @@ export function OwnerDashboard({
 
       <section className="grid min-w-0 grid-cols-1 items-stretch gap-4 xl:grid-cols-3">
         <AttentionList items={attentionItems} />
-        <AiBriefCard items={briefItems} />
+        {isOwnerBriefLoading && !ownerBrief ? <LoadingState /> : <AiBriefCard items={briefItems} />}
         <TeamPerformanceCard dashboard={dashboard} />
       </section>
     </div>

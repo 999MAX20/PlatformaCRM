@@ -314,7 +314,7 @@ export function PricingPage() {
         description={t("pricing.description")}
       />
 
-      {error ? <ErrorState message={getApiErrorMessage(error)} /> : null}
+      {error ? <ErrorState error={error} message={getApiErrorMessage(error)} /> : null}
 
       <section className={control?.emergency_stop_enabled ? "rounded-[2rem] border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] p-5 shadow-soft" : "rounded-[2rem] border border-platforma-border bg-white p-5 shadow-soft"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -381,7 +381,7 @@ export function PricingPage() {
             ]}
           />
         </div>
-        {catalogQuery.isLoading ? <LoadingState label={t("pricing.loadingCatalog")} /> : null}
+        {catalogQuery.isLoading ? <LoadingState /> : null}
         <div className="mt-4 grid gap-3">
           {catalogItems.map((item) => (
             <article key={item.id} className="rounded-2xl border border-platforma-border bg-surface-muted p-4">
@@ -502,7 +502,7 @@ export function PricingPage() {
             {t("pricing.disableAutopilotSelected")}
           </label>
         </div>
-        {rulesQuery.isLoading ? <LoadingState label={t("pricing.loadingRules")} /> : null}
+        {rulesQuery.isLoading ? <LoadingState /> : null}
         <div className="mt-4 grid gap-3">
           {rules.map((rule) => {
             const latest = latestRecommendations.get(String(rule.id));
@@ -621,7 +621,7 @@ export function PricingPage() {
             ]}
           />
         </div>
-        {changeLogsQuery.isLoading ? <LoadingState label={t("pricing.loadingHistory")} /> : null}
+        {changeLogsQuery.isLoading ? <LoadingState /> : null}
         <div className="mt-4 overflow-hidden rounded-2xl border border-platforma-border">
           {changeLogs.map((log) => (
             <article key={log.id} className="grid gap-3 border-b border-platforma-border bg-surface-muted px-4 py-3 last:border-b-0 md:grid-cols-[1.2fr_1fr_auto] md:items-center">

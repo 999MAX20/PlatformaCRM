@@ -17,3 +17,7 @@ export function canUseActionFallback(
 ) {
   return error.source === "runtime" && error.category === "internal" && hasFallback;
 }
+
+export function canShowSupportDetails(error: AppError) {
+  return Boolean(error.requestId) && ["internal", "temporary", "provider"].includes(error.category);
+}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useBlocker } from "react-router";
 
 import type { AgentProfile, Bot as BotType } from "../../types";
@@ -31,6 +31,7 @@ export function useAIAgentEditorDrafts({
   const [botDraft, setBotDraft] = useState<BotDraftState>(() => botDraftFromBot(selectedBot));
   const [savedBotDraft, setSavedBotDraft] = useState<BotDraftState>(() => botDraftFromBot(selectedBot));
   const [saveState, setSaveState] = useState<"idle" | "saved">("idle");
+  const deletedAgentId = useRef<BotType["id"] | null>(null);
 
   useEffect(() => {
     const nextProfile = selectedProfile
@@ -63,7 +64,7 @@ export function useAIAgentEditorDrafts({
 
   const navigationBlocker = useBlocker(useCallback(
     ({ nextLocation }: { nextLocation: { pathname: string } }) => {
-      if (!hasUserEdits || !selectedBot) return false;
+      if (!hasUserEdits || !selectedBot || selectedBot.id === deletedAgentId.current) return false;
       const currentAgentRoute = `/app/ai-agents/${selectedBot.id}`;
       return !(
         nextLocation.pathname === currentAgentRoute
@@ -102,6 +103,8 @@ export function useAIAgentEditorDrafts({
   }, []);
 
   return {
+    discardDeletedAgent: () => { deletedAgentId.current = selectedBot?.id ?? null; resetEditorDrafts(); },
+    hasUserEdits,
     botDraft,
     editorDirty,
     markBotSaved,

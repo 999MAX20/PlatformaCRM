@@ -403,7 +403,7 @@ export function CalendarPage() {
 
   if (!business) return <ErrorState message={t("calendar.noBusiness")} />;
   if (createContext.error) return <ErrorState message={createContext.error} />;
-  if (createContext.isLoading) return <LoadingState />;
+  if (createContext.isLoading) return <LoadingState scope="page" />;
 
   const appointmentItems = appointments.data || [];
   const clientItems = createContext.includeClient(clients.data || []);
@@ -433,7 +433,7 @@ export function CalendarPage() {
     return (
       <div data-testid="calendar-error-state">
         <ErrorState
-          message={getApiErrorMessage(calendarDataError)}
+          error={calendarDataError} message={getApiErrorMessage(calendarDataError)}
           action={
             <Button
               type="button"
@@ -740,7 +740,7 @@ export function CalendarPage() {
 
       {isCalendarDataLoading ? (
         <div className="mb-4">
-          <LoadingState label={t("calendar.loadingInline")} />
+          <LoadingState />
         </div>
       ) : null}
 

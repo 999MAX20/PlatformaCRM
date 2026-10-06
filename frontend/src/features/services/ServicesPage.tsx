@@ -121,6 +121,10 @@ export function ServicesPage() {
         showNotification({ message: t("services.noticeCreated"), tone: "success" });
       }
     },
+    onError: (error, variables) => {
+      // The open edit form owns its error; creation still uses one toast.
+      if (!variables.id) showNotification({ message: getApiErrorMessage(error), tone: "danger" });
+    },
   });
   const lifecycleMutation = useMutation({
     mutationFn: async ({ service, action, reason }: {
@@ -161,12 +165,6 @@ export function ServicesPage() {
       showNotification({ message: getApiErrorMessage(error), tone: "danger" });
     },
   });
-  const actionErrorMessage = mutation.error ? getApiErrorMessage(mutation.error) : "";
-
-  useEffect(() => {
-    if (!actionErrorMessage) return;
-    showNotification({ message: actionErrorMessage, tone: "danger" });
-  }, [actionErrorMessage, showNotification]);
 
   const serviceRows = servicesQuery.data?.results || [];
   const totalServices = servicesQuery.data?.count || 0;
@@ -294,7 +292,7 @@ export function ServicesPage() {
   }, [confirmAction, lifecycleMutation, t]);
 
   if (!business) return <ErrorState message={t("services.noBusiness")} />;
-  if (overviewQuery.isLoading || appointmentsQuery.isLoading || servicesQuery.isLoading) return <LoadingState />;
+  if (overviewQuery.isLoading || appointmentsQuery.isLoading || servicesQuery.isLoading) return <LoadingState scope="page" />;
 
   const pageError = overviewQuery.error || appointmentsQuery.error || servicesQuery.error || (!selectedServiceOnPage && selectedServiceQuery.error);
   const hasFilters = Boolean(search || status);
@@ -319,7 +317,7 @@ export function ServicesPage() {
         {pageError ? (
           <div className="mb-3 shrink-0">
             <ErrorState
-              message={getApiErrorMessage(pageError)}
+              error={pageError} message={getApiErrorMessage(pageError)}
               action={<Button type="button" variant="secondary" onClick={() => void Promise.all([overviewQuery.refetch(), appointmentsQuery.refetch(), servicesQuery.refetch(), ...(selectedServiceId && !selectedServiceOnPage ? [selectedServiceQuery.refetch()] : [])])}>{t("common.retry")}</Button>}
             />
           </div>
@@ -431,7 +429,7 @@ export function ServicesPage() {
         appointmentCount={selectedService ? appointmentUsage.get(selectedService.id) || 0 : 0}
         canManage={canManage}
         isSaving={mutation.isPending || lifecycleMutation.isPending}
-        errorMessage={mutation.error ? actionErrorMessage : undefined}
+        error={mutation.error}
         onDirtyChange={setInspectorDirty}
         onClose={() => { void closeInspector(); }}
         onSubmit={(payload) => mutation.mutateAsync({ id: selectedService!.id, payload })}

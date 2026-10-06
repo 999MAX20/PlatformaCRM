@@ -286,7 +286,7 @@ export function OutreachPage() {
     },
   });
 
-  if (businessLoading || campaigns.isLoading) return <LoadingState label={t("outreach.loading")} />;
+  if (businessLoading || campaigns.isLoading) return <LoadingState scope="page" />;
   if (!business) return <ErrorState message={t("outreach.noBusiness")} />;
 
   const campaignList = campaigns.data || [];
@@ -323,7 +323,7 @@ export function OutreachPage() {
         }
       />
 
-      {pageError ? <div className="mb-4"><ErrorState message={getApiErrorMessage(pageError)} /></div> : null}
+      {pageError ? <div className="mb-4"><ErrorState error={pageError} message={getApiErrorMessage(pageError)} /></div> : null}
 
       <div className="mb-5 grid gap-4 md:grid-cols-3">
         <MetricTile icon={BarChart3} tone="brand" label={t("outreach.metric.campaigns")} value={campaignList.length} hint={t("outreach.metric.active", { count: activeCampaigns })} />

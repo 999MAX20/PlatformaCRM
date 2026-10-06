@@ -139,7 +139,7 @@ export function PlatformLayout() {
             })}
           </div>
 
-          <section className="min-w-0 flex-1 py-4">
+          <section data-workspace-content className="min-w-0 flex-1 py-4">
             <Outlet />
           </section>
         </div>

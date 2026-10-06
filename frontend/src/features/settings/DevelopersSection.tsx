@@ -171,7 +171,7 @@ export function DevelopersSection() {
         </div>
         {error ? (
           <div className="mb-4">
-            <ErrorState message={getApiErrorMessage(error)} />
+            <ErrorState error={error} message={getApiErrorMessage(error)} />
           </div>
         ) : null}
         {lastToken ? (

@@ -153,11 +153,6 @@ const PricingPage = lazy(() =>
     default: module.PricingPage,
   })),
 );
-const AIAssistantPage = lazy(() =>
-  import("../features/assistant/AIAssistantPage").then((module) => ({
-    default: module.AIAssistantPage,
-  })),
-);
 const AIAgentsPage = lazy(() =>
   import("../features/assistant/AIAgentsPage").then((module) => ({
     default: module.AIAgentsPage,
@@ -218,8 +213,7 @@ function MerchantRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, isMerchantUser, isPlatformUser } =
     useAuth();
   const location = useLocation();
-  const { t } = useI18n();
-  if (isLoading) return <LoadingState label={t("common.loadingAccess")} />;
+  if (isLoading) return <LoadingState scope="page" />;
   if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location }} />;
   if (!isMerchantUser && isPlatformUser)
     return <Navigate to="/platform" replace />;
@@ -229,8 +223,7 @@ function MerchantRoute({ children }: { children: React.ReactNode }) {
 function PlatformRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, isPlatformUser } = useAuth();
   const location = useLocation();
-  const { t } = useI18n();
-  if (isLoading) return <LoadingState label={t("common.loadingAccess")} />;
+  if (isLoading) return <LoadingState scope="page" />;
   if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location }} />;
   return isPlatformUser ? children : <Navigate to="/app/dashboard" replace />;
 }
@@ -238,14 +231,13 @@ function PlatformRoute({ children }: { children: React.ReactNode }) {
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, isPlatformUser } = useAuth();
   const location = useLocation();
-  const { t } = useI18n();
   const [storedReturnTo] = useState(() => getSessionExpiredReturnTo());
 
   useEffect(() => {
     if (isAuthenticated) clearSessionExpiredReturnTo();
   }, [isAuthenticated]);
 
-  if (isLoading) return <LoadingState label={t("common.loadingAccess")} />;
+  if (isLoading) return <LoadingState scope="page" />;
   if (!isAuthenticated) return children;
 
   const stateReturnTo = getAuthReturnPathFromState(location.state);
@@ -262,9 +254,8 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 
 function PageLoader({ children }: { children: React.ReactNode }) {
-  const { t } = useI18n();
   return (
-    <Suspense fallback={<LoadingState label={t("common.loadingWorkspace")} />}>
+    <Suspense fallback={<LoadingState scope="page" />}>
       {children}
     </Suspense>
   );
@@ -283,7 +274,7 @@ function PermissionRoute({
   const { t } = useI18n();
   const { business, isLoading } = useActiveBusiness();
   if (!resource) return children;
-  if (isLoading) return <LoadingState label={t("common.checkingAccess")} />;
+  if (isLoading) return <LoadingState scope="page" />;
   if (!user || !business?.id)
     return (
       <ForbiddenState
@@ -300,8 +291,7 @@ function PermissionRoute({
 function UserStartRedirect() {
   const { user } = useAuth();
   const { business, isLoading } = useActiveBusiness();
-  const { t } = useI18n();
-  if (isLoading) return <LoadingState label={t("common.loadingWorkspace")} />;
+  if (isLoading) return <LoadingState scope="page" />;
   return <Navigate to={getUserStartPath(user, business?.id)} replace />;
 }
 
@@ -502,24 +492,21 @@ const merchantChildren = [
   },
   {
     path: "ai-assistant",
-    resource: "ai_assistant",
     element: (
       <PageLoader>
-        <AIAssistantPage />
+        <Navigate to="/app/ai-agents" replace />
       </PageLoader>
     ),
   },
   {
     path: "ai",
-    resource: "ai_assistant",
-    element: <Navigate to="/app/ai-assistant" replace />,
+    element: <Navigate to="/app/ai-agents" replace />,
   },
   {
     path: "assistant",
-    resource: "ai_assistant",
     element: (
       <PageLoader>
-        <AIAssistantPage />
+        <Navigate to="/app/ai-agents" replace />
       </PageLoader>
     ),
   },
@@ -534,7 +521,6 @@ const merchantChildren = [
   },
   {
     path: "ai-agents",
-    resource: "ai_automation",
     element: (
       <PageLoader>
         <AIAgentsPage />
@@ -543,7 +529,6 @@ const merchantChildren = [
   },
   {
     path: "ai-agents/:id",
-    resource: "ai_automation",
     element: (
       <PageLoader>
         <AIAgentsPage />
@@ -552,7 +537,6 @@ const merchantChildren = [
   },
   {
     path: "ai-agents/:id/:section",
-    resource: "ai_automation",
     element: (
       <PageLoader>
         <AIAgentsPage />
@@ -734,24 +718,21 @@ const legacyMerchantRoutes = [
   },
   {
     path: "/ai-assistant",
-    resource: "ai_assistant",
     element: (
       <PageLoader>
-        <AIAssistantPage />
+        <Navigate to="/app/ai-agents" replace />
       </PageLoader>
     ),
   },
   {
     path: "/ai",
-    resource: "ai_assistant",
-    element: <Navigate to="/app/ai-assistant" replace />,
+    element: <Navigate to="/app/ai-agents" replace />,
   },
   {
     path: "/assistant",
-    resource: "ai_assistant",
     element: (
       <PageLoader>
-        <AIAssistantPage />
+        <Navigate to="/app/ai-agents" replace />
       </PageLoader>
     ),
   },
@@ -766,7 +747,6 @@ const legacyMerchantRoutes = [
   },
   {
     path: "/ai-agents",
-    resource: "ai_automation",
     element: (
       <PageLoader>
         <AIAgentsPage />

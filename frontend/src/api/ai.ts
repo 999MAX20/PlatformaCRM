@@ -2,8 +2,13 @@ import { apiClient } from "./client";
 import { isAxiosError } from "axios";
 import { createCrudApi } from "./crud";
 import { assertCurrentSession } from "./token";
-import type { AgentProfile, ApprovalRequest, AIToolCallLog, AIToolSuggestResponse, BusinessKnowledgeItem, Id } from "../types";
+import type { AgentProfile, ApprovalRequest, AIToolCallLog, AIToolSuggestResponse, BusinessKnowledgeItem, Bot, Id } from "../types";
 import { tokenStorage } from "../lib/storage";
+
+export async function setAgentKnowledgeConnection(itemId: Id, agent: Id, connected: boolean) {
+  const { data } = await apiClient.post<BusinessKnowledgeItem>(`/api/ai/knowledge-items/${itemId}/connection/`, { agent, connected });
+  return data;
+}
 
 export type AIAssistantChatResponse = {
   sources: { id: string; label: string }[];
@@ -22,6 +27,8 @@ export type AIAssistantChatResponse = {
 };
 
 export type AIAssistantStatusResponse = {
+  sources: string[];
+  tools: string[] | null;
   enabled: boolean;
   provider: string;
   mode: "mock" | "live" | "unavailable";
@@ -166,19 +173,20 @@ async function waitForChat(job: AIJob, key: string, generation: number): Promise
 }
 
 export const aiApi = {
-  assistantStatus: async (business: Id) => {
+  runtimeAgents: async (business: Id) => (await apiClient.get<Array<Pick<Bot, "id" | "business" | "name" | "status" | "scenario" | "readiness">>>("/api/ai/agents/", { params: { business } })).data,
+  assistantStatus: async (business: Id, agent?: Id) => {
     const { data } = await apiClient.get<AIAssistantStatusResponse>("/api/ai/assistant/status/", {
-      params: { business },
+      params: { business, agent },
     });
     return data;
   },
-  assistantChat: async ({ business, message, prompt_type }: { business: Id; message: string; prompt_type?: string }) => {
+  assistantChat: async ({ business, agent, message, prompt_type }: { business: Id; agent?: Id; message: string; prompt_type?: string }) => {
     const generation = tokenStorage.getGeneration();
     if (pendingChatGeneration !== generation) {
       pendingChats.clear();
       pendingChatGeneration = generation;
     }
-    const key = JSON.stringify([generation, business, message, prompt_type]);
+    const key = JSON.stringify([generation, business, agent, message, prompt_type]);
     const existing = pendingChats.get(key);
     if (existing) {
       return waitForChat(await getChatJob(existing, key), key, generation);
@@ -187,6 +195,7 @@ export const aiApi = {
       business,
       message,
       prompt_type,
+      agent,
       idempotency_key: crypto.randomUUID(),
     }, { timeout: 70_000 });
     assertCurrentSession(generation);
@@ -196,9 +205,9 @@ export const aiApi = {
     }
     return data;
   },
-  analystBrief: async ({ business, limit = 24 }: { business: Id; limit?: number }) => {
+  analystBrief: async ({ business, agent, limit = 24 }: { business: Id; agent?: Id; limit?: number }) => {
     const { data } = await apiClient.get<AIAnalystBriefResponse>("/api/ai/analyst/brief/", {
-      params: { business, limit },
+      params: { business, agent, limit },
     });
     return data;
   },

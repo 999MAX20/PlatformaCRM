@@ -682,7 +682,7 @@ export function SettingsPage() {
     };
   }
 
-  if (isLoading) return <LoadingState />;
+  if (isLoading) return <LoadingState scope="page" />;
 
   const currentPlan = subscription.data?.plan;
   const hasSubscription = Boolean(subscription.data && currentPlan);
@@ -849,7 +849,7 @@ export function SettingsPage() {
       </section>
       {mutation.error ? (
         <div className="mb-4">
-          <ErrorState message={getApiErrorMessage(mutation.error)} />
+          <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} />
         </div>
       ) : null}
       <div className="grid gap-5 xl:grid-cols-[220px_minmax(0,1fr)]">
@@ -898,16 +898,14 @@ export function SettingsPage() {
               {appointmentMessageMutation.error ? (
                 <div className="mb-4">
                   <ErrorState
-                    message={getApiErrorMessage(
+                    error={appointmentMessageMutation.error} message={getApiErrorMessage(
                       appointmentMessageMutation.error,
                     )}
                   />
                 </div>
               ) : null}
               {appointmentMessageSettings.isLoading ? (
-                <div className="rounded-card border border-platforma-border bg-surface-muted p-5 text-sm font-bold text-platforma-subtle">
-                  {t("settings.appointmentMessagesLoading")}
-                </div>
+                <LoadingState />
               ) : (
                 <div className="grid gap-4 xl:grid-cols-3">
                   {appointmentMessages.map((setting) => {
@@ -1077,7 +1075,7 @@ export function SettingsPage() {
               {updateMemberMutation.error || departmentMutation.error ? (
                 <div className="mb-4">
                   <ErrorState
-                    message={getApiErrorMessage(
+                    error={updateMemberMutation.error || departmentMutation.error} message={getApiErrorMessage(
                       updateMemberMutation.error || departmentMutation.error,
                     )}
                   />
@@ -1086,7 +1084,7 @@ export function SettingsPage() {
               {inviteMutation.error || revokeInvitationMutation.error ? (
                 <div className="mb-4">
                   <ErrorState
-                    message={getApiErrorMessage(
+                    error={inviteMutation.error || revokeInvitationMutation.error} message={getApiErrorMessage(
                       inviteMutation.error || revokeInvitationMutation.error,
                     )}
                   />
@@ -1773,7 +1771,7 @@ export function SettingsPage() {
               {notificationPreferenceMutation.error ? (
                 <div className="mb-4">
                   <ErrorState
-                    message={getApiErrorMessage(
+                    error={notificationPreferenceMutation.error} message={getApiErrorMessage(
                       notificationPreferenceMutation.error,
                     )}
                   />
@@ -1850,7 +1848,9 @@ export function SettingsPage() {
               removeQuickReplyMutation.error ? (
                 <div className="mb-4">
                   <ErrorState
-                    message={getApiErrorMessage(
+                    error={quickReplyMutation.error ||
+                        updateQuickReplyMutation.error ||
+                        removeQuickReplyMutation.error} message={getApiErrorMessage(
                       quickReplyMutation.error ||
                         updateQuickReplyMutation.error ||
                         removeQuickReplyMutation.error,
@@ -2136,7 +2136,7 @@ export function SettingsPage() {
               {updatePermissionMutation.error ? (
                 <div className="mb-4">
                   <ErrorState
-                    message={getApiErrorMessage(updatePermissionMutation.error)}
+                    error={updatePermissionMutation.error} message={getApiErrorMessage(updatePermissionMutation.error)}
                   />
                 </div>
               ) : null}
@@ -2295,7 +2295,9 @@ export function SettingsPage() {
               removeCustomFieldMutation.error ? (
                 <div className="mb-4">
                   <ErrorState
-                    message={getApiErrorMessage(
+                    error={customFieldMutation.error ||
+                        updateCustomFieldMutation.error ||
+                        removeCustomFieldMutation.error} message={getApiErrorMessage(
                       customFieldMutation.error ||
                         updateCustomFieldMutation.error ||
                         removeCustomFieldMutation.error,

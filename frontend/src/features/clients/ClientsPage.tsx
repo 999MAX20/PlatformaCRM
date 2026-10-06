@@ -173,6 +173,10 @@ export function ClientsPage() {
       setActionClient(null);
       showUndoToast({
         message: t("clients.noticeArchived"),
+        onRecover: async () => {
+          await queryClient.invalidateQueries({ queryKey: ["clients"] });
+          await queryClient.invalidateQueries({ queryKey: ["crm-card", "client", variables.id] });
+        },
         onUndo: async () => {
           await clientsApi.restore(variables.id);
           await queryClient.invalidateQueries({ queryKey: ["clients"] });
@@ -286,7 +290,7 @@ export function ClientsPage() {
     createSegmentMutation.error;
 
   if (!business) return <ErrorState message={t("clients.noBusiness")} />;
-  if (pageLoading) return <LoadingState />;
+  if (pageLoading) return <LoadingState scope="page" />;
 
   const hasClientFilters =
     Boolean(search.trim()) ||
@@ -306,7 +310,7 @@ export function ClientsPage() {
       >
         {pageError ? (
           <div className="mb-3">
-            <ErrorState message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />
+            <ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />
           </div>
         ) : null}
 

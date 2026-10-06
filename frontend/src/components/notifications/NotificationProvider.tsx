@@ -5,6 +5,10 @@ import type { AppError } from "../../api/appError";
 import { Button } from "../ui/Button";
 import { useI18n } from "../../lib/i18n";
 import { StatusNotice, type StatusNoticeTone } from "../ui/StatusNotice";
+import { RecoveryDetails } from "../ui/RecoveryDetails";
+import { useRecoveryDelay } from "../actions/useRecoveryDelay";
+import { canShowSupportDetails } from "../actions/actionFeedbackPolicy";
+import { notificationDedupeKey } from "./notificationPolicy";
 
 type NotificationTone = StatusNoticeTone;
 
@@ -15,6 +19,7 @@ export type NotificationOptions = {
   durationMs?: number;
   actionLabel?: string;
   onAction?: () => Promise<void> | void;
+  dedupeKey?: string;
 };
 
 type NotificationItem = NotificationOptions & {
@@ -24,18 +29,20 @@ type NotificationItem = NotificationOptions & {
 
 const NotificationContext = createContext<((options: NotificationOptions) => void) | null>(null);
 
-export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationItem; onDismiss: (id: number) => void }) {
+export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true }: { item: NotificationItem; onDismiss: (id: number) => void; dismissAfterAction?: boolean }) {
   const { t } = useI18n();
   const [isHovered, setIsHovered] = useState(false);
   const [isActing, setIsActing] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
+  const delay = useRecoveryDelay(item.appError);
   const tone = item.tone || (item.appError ? "danger" : "info");
-  const message = item.appError ? t(item.appError.messageKey) : item.message || t("actions.errorGeneric");
+  const message = item.message || (item.appError ? t(item.appError.messageKey) : t("actions.errorGeneric"));
 
   useEffect(() => {
-    if (isHovered || isActing) return undefined;
+    if (isHovered || hasFocus || isActing || delay > 0) return undefined;
     const timer = window.setTimeout(() => onDismiss(item.id), item.durationMs ?? 5_000);
     return () => window.clearTimeout(timer);
-  }, [isActing, isHovered, item.durationMs, item.id, onDismiss]);
+  }, [delay, hasFocus, isActing, isHovered, item.durationMs, item.id, onDismiss]);
 
   return (
     <StatusNotice
@@ -47,6 +54,10 @@ export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationIte
       className="pointer-events-auto w-[min(360px,calc(100vw-2rem))] shadow-panel backdrop-blur transition"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onFocusCapture={() => setHasFocus(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHasFocus(false);
+      }}
       role={tone === "danger" || tone === "warning" ? "alert" : "status"}
       ariaLive={tone === "danger" || tone === "warning" ? "assertive" : "polite"}
       action={(
@@ -59,7 +70,10 @@ export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationIte
           <X size={15} />
         </button>
       )}
-      details={item.actionLabel && item.onAction ? (
+      details={(item.actionLabel && item.onAction) || (item.appError && canShowSupportDetails(item.appError)) ? (
+        <div className="space-y-3">
+        {item.appError ? <RecoveryDetails error={item.appError} /> : null}
+        {item.actionLabel && item.onAction ? (
         <div className="flex justify-center">
           <Button
             data-testid="action-feedback-action"
@@ -68,6 +82,7 @@ export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationIte
             variant="secondary"
             className="h-8"
             isLoading={isActing}
+            disabled={delay > 0}
             onClick={async () => {
               setIsActing(true);
               try {
@@ -76,13 +91,15 @@ export function ActionFeedbackToast({ item, onDismiss }: { item: NotificationIte
                 // The mutation owns the follow-up error notification. Keep the
                 // retry control recoverable and avoid an unhandled rejection.
               } finally {
-                onDismiss(item.id);
+                if (dismissAfterAction) onDismiss(item.id);
                 setIsActing(false);
               }
             }}
           >
-            {item.actionLabel}
+            {delay > 0 ? t("fallback.retryAfter", { seconds: delay }) : item.actionLabel}
           </Button>
+        </div>
+        ) : null}
         </div>
       ) : null}
     />
@@ -97,16 +114,18 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }, []);
 
   const showNotification = useCallback((options: NotificationOptions) => {
-    setItems((current) =>
-      [
+    setItems((current) => {
+      const key = notificationDedupeKey(options);
+      if (key && current.some(item => notificationDedupeKey(item) === key)) return current;
+      return [
         {
           ...options,
           id: Date.now() + Math.floor(Math.random() * 1000),
           createdAt: Date.now(),
         },
         ...current,
-      ].slice(0, 4),
-    );
+      ].slice(0, 4);
+    });
   }, []);
 
   const value = useMemo(() => showNotification, [showNotification]);

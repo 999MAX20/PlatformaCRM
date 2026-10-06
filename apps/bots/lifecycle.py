@@ -14,12 +14,16 @@ READINESS_KNOWLEDGE = "knowledge"
 
 def get_bot_readiness(bot: Bot) -> dict:
     profiles = list(bot.agent_profiles.all())
+    if bot.scenario == Bot.Scenarios.CRM:
+        ready = any(profile.is_active for profile in profiles)
+        return {"is_ready": ready, "profile_ready": ready, "channel_ready": True,
+                "knowledge_ready": True, "missing": [] if ready else [READINESS_PROFILE]}
     channels = list(bot.channels.all())
-    knowledge_items = list(bot.business.knowledge_items.all())
+    from apps.ai_core.knowledge import agent_knowledge
 
     profile_ready = any(profile.is_active for profile in profiles)
     channel_ready = any(channel.status == BotChannel.Statuses.ACTIVE for channel in channels)
-    knowledge_ready = any(item.is_active for item in knowledge_items)
+    knowledge_ready = agent_knowledge(business=bot.business, agent=bot).filter(is_active=True).exists()
     missing = [
         key
         for key, ready in (
@@ -39,7 +43,15 @@ def get_bot_readiness(bot: Bot) -> dict:
 
 
 def is_bot_runtime_ready(bot: Bot) -> bool:
-    return bot.status == Bot.Statuses.ACTIVE and get_bot_readiness(bot)["is_ready"]
+    return not bot.is_deleted and bot.status == Bot.Statuses.ACTIVE and get_bot_readiness(bot)["is_ready"]
+
+
+def lock_available_bot(bot):
+    current = Bot.all_objects.select_for_update().get(pk=bot.pk)
+    if current.is_deleted:
+        raise InvalidTransition(detail="This AI agent has been deleted.")
+    bot.refresh_from_db()
+    return bot
 
 
 def conversation_ai_block_reason(conversation: BotConversation) -> str:
@@ -51,7 +63,7 @@ def conversation_ai_block_reason(conversation: BotConversation) -> str:
         return "bot_paused"
     if current.status != BotConversation.Statuses.OPEN or current.is_archived:
         return "inactive"
-    if current.business_id != current.bot.business_id or not is_bot_runtime_ready(current.bot):
+    if current.bot.scenario != Bot.Scenarios.INBOX or current.business_id != current.bot.business_id or not is_bot_runtime_ready(current.bot):
         return "agent_unready"
     if not current.bot.channels.filter(channel=current.channel, status=BotChannel.Statuses.ACTIVE).exists():
         return "channel_inactive"
@@ -70,6 +82,8 @@ def assert_bot_can_activate(bot: Bot) -> dict:
 
 @transaction.atomic
 def create_bot(*, validated_data: dict) -> Bot:
+    from apps.bots.scenarios import prepare_creation
+    validated_data = prepare_creation(validated_data)
     requested_status = validated_data.get("status", Bot.Statuses.DRAFT)
     if requested_status == Bot.Statuses.ACTIVE:
         raise InvalidTransition(
@@ -84,11 +98,21 @@ def create_bot(*, validated_data: dict) -> Bot:
                 }
             },
         )
-    return Bot.objects.create(**validated_data)
+    bot = Bot.objects.create(**validated_data)
+    if bot.scenario == Bot.Scenarios.CRM:
+        from apps.ai_core.models import AgentProfile
+        from apps.ai_core.workflows import SOURCES
+        AgentProfile.objects.create(business=bot.business, bot=bot, name=bot.name,
+            language=bot.default_language, tone="expert", rules_json={"sources": sorted(SOURCES), "analyst_enabled": True},
+            allowed_tools_json={"tools": ["crm_read"]})
+    return bot
 
 
 @transaction.atomic
 def update_bot(*, bot: Bot, validated_data: dict) -> Bot:
+    from apps.bots.scenarios import prepare_update
+    bot = lock_available_bot(bot)
+    validated_data = prepare_update(bot, validated_data)
     if "status" in validated_data:
         raise InvalidTransition(detail="Use the activate or pause action to change AI agent status.")
 
@@ -103,6 +127,7 @@ def update_bot(*, bot: Bot, validated_data: dict) -> Bot:
 
 @transaction.atomic
 def activate_bot(*, bot: Bot) -> tuple[Bot, bool]:
+    bot = lock_available_bot(bot)
     if bot.status == Bot.Statuses.ACTIVE:
         return bot, False
     assert_bot_can_activate(bot)
@@ -113,6 +138,7 @@ def activate_bot(*, bot: Bot) -> tuple[Bot, bool]:
 
 @transaction.atomic
 def pause_bot(*, bot: Bot) -> tuple[Bot, bool]:
+    bot = lock_available_bot(bot)
     if bot.status == Bot.Statuses.PAUSED:
         return bot, False
     if bot.status != Bot.Statuses.ACTIVE:
@@ -124,7 +150,10 @@ def pause_bot(*, bot: Bot) -> tuple[Bot, bool]:
 
 @transaction.atomic
 def ensure_bot_channel(*, bot: Bot, channel_type: str) -> tuple[BotChannel, bool]:
+    if bot.scenario != Bot.Scenarios.INBOX:
+        raise InvalidTransition(detail="Only customer agents can connect messaging channels.")
     Business.objects.select_for_update().get(pk=bot.business_id)
+    bot = lock_available_bot(bot)
     existing = BotChannel.objects.filter(bot=bot, channel=channel_type).first()
     if existing:
         return existing, False
@@ -137,7 +166,7 @@ def ensure_bot_channel(*, bot: Bot, channel_type: str) -> tuple[BotChannel, bool
         owner = BotChannel.objects.select_related("bot").filter(
             bot__business_id=bot.business_id,
             channel=channel_type,
-        ).first()
+        ).exclude(bot__settings_json__has_key="_deleted_at").first()
         if owner:
             raise OwnershipConflict(
                 detail="This messenger channel is already assigned to another AI agent.",
@@ -185,6 +214,7 @@ def assert_channel_can_activate(channel: BotChannel) -> None:
 @transaction.atomic
 def update_bot_channel(*, channel: BotChannel, validated_data: dict) -> BotChannel:
     channel = lock_channel_for_setup(channel)
+    lock_available_bot(channel.bot)
     validated_data = validate_channel_public_write(dict(validated_data), channel)
     requested_status = validated_data.get("status", channel.status)
     if requested_status == BotChannel.Statuses.ACTIVE and channel.status != BotChannel.Statuses.ACTIVE:

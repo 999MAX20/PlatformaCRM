@@ -15,7 +15,8 @@ from apps.ai_core.ai_client import AIClientResult
 class InternalWorkflowTests(TestCase):
     def setUp(self):
         fixtures.AICoreFoundationTests.setUp(self)
-        self.profile = AgentProfile.objects.create(business=self.business, name="Staff", rules_json={"scenario": "employee", "sources": ["tasks"]}, allowed_tools_json={"tools": ["create_task"]})
+        self.agent = Bot.objects.create(business=self.business, name="Staff", status="active", settings_json={"scenario": "crm"})
+        self.profile = AgentProfile.objects.create(business=self.business, bot=self.agent, name="Staff", rules_json={"sources": ["tasks"]}, allowed_tools_json={"tools": ["create_task"]})
 
     def test_sources_and_disabled_workflow_are_enforced(self):
         context = build_crm_context(self.business, user=self.owner)
@@ -25,6 +26,29 @@ class InternalWorkflowTests(TestCase):
         self.profile.is_active = False; self.profile.save()
         with self.assertRaises(PermissionDenied):
             build_crm_context(self.business, user=self.owner)
+
+    def test_prompt_dates_are_converted_to_business_timezone_before_generation(self):
+        from datetime import datetime, timedelta, timezone as utc_timezone
+        from apps.tasks.models import Task
+        from apps.clients.models import Client
+        from apps.services.models import Service
+        from apps.scheduling.models import Appointment
+        self.business.timezone = "Asia/Almaty"
+        self.business.save(update_fields=["timezone"])
+        self.profile.rules_json = {"sources": ["tasks", "appointments"]}
+        self.profile.save()
+        start = datetime(2026, 10, 8, 10, tzinfo=utc_timezone.utc)
+        task = Task.objects.create(business=self.business, title="Local deadline",
+                                   due_at=start)
+        client = Client.objects.create(business=self.business, full_name="Local client")
+        service = Service.objects.create(business=self.business, name="Local service", duration_minutes=30)
+        Appointment.objects.create(business=self.business, client=client, service=service,
+                                   start_at=start, end_at=start+timedelta(minutes=30))
+        with patch("django.utils.timezone.now", return_value=start-timedelta(days=1)):
+            context = build_crm_context(self.business, user=self.owner)
+        row = next(row for row in context["tasks"] if row["id"] == task.pk)
+        self.assertEqual(row["due_at"], "2026-10-08T15:00:00+05:00")
+        self.assertEqual(context["upcoming_appointments"][0]["start_at"], "2026-10-08T15:00:00+05:00")
 
     def test_capabilities_rechecked_after_suggestion(self):
         logs = suggest_tool_calls(business=self.business, user=self.owner, message="Follow up")
@@ -37,8 +61,8 @@ class InternalWorkflowTests(TestCase):
         bot = Bot.objects.create(business=self.business, name="Messenger")
         conversation = BotConversation.objects.create(business=self.business, bot=bot, channel="website")
         self.assertIsNone(get_agent_profile(conversation))
-        fallback = AgentProfile.objects.create(business=self.business, name="Legacy", rules_json=["Keep legacy rules"])
-        self.assertEqual(get_agent_profile(conversation).id, fallback.id)
+        AgentProfile.objects.create(business=self.business, name="Legacy", rules_json=["Keep legacy rules"])
+        self.assertIsNone(get_agent_profile(conversation))
 
     def test_invalid_scenario_and_analyst_mutation_are_rejected(self):
         for rules, tools in [({"scenario": "unknown"}, []), ({"scenario": "analyst"}, ["create_task"]), ({"scenario": "employee", "sources": ["foreign"]}, [])]:

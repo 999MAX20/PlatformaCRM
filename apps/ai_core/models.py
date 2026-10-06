@@ -36,6 +36,8 @@ class AIRequestLog(models.Model):
 
 class BusinessKnowledgeItem(TimeStampedModel):
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="knowledge_items")
+    bot = models.ForeignKey("bots.Bot", on_delete=models.PROTECT, null=True, blank=True, related_name="knowledge_items")
+    connected_agents = models.ManyToManyField("bots.Bot", blank=True, related_name="connected_knowledge_items")
     title = models.CharField(max_length=255)
     content = models.TextField()
     category = models.CharField(max_length=64, blank=True)

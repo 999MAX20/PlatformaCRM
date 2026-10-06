@@ -27,7 +27,7 @@ export function ConnectivityBanner({ error, isReconnecting = false, onRetry }: C
       icon={isReconnecting ? RefreshCw : WifiOff}
       iconClassName={isReconnecting ? "animate-spin motion-reduce:animate-none" : undefined}
       title={t(isReconnecting ? "fallback.connectivity.reconnectingTitle" : "fallback.connectivity.offlineTitle")}
-      description={t(error.messageKey)}
+      description={t(isReconnecting ? "fallback.connectivity.reconnectingText" : error.messageKey)}
       action={canRetry && onRetry ? (
         <Button type="button" size="sm" variant="secondary" onClick={onRetry}>
           {t("common.retry")}

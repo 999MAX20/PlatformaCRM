@@ -148,6 +148,7 @@ export function DealsPage() {
       selection.setSelectedIds([]);
       showUndoToast({
         message: t("deals.noticeArchived", { count: variables.ids.length }),
+        onRecover: async () => { await queryClient.invalidateQueries({ queryKey: ["deals"] }); },
         onUndo: async () => {
           await Promise.all(variables.ids.map((id) => dealsApi.restore(id)));
           await queryClient.invalidateQueries({ queryKey: ["deals"] });
@@ -257,8 +258,8 @@ export function DealsPage() {
 
   if (!business) return <ErrorState message={t("deals.noBusiness")} />;
   if (createContext.error) return <ErrorState message={createContext.error} />;
-  if (createContext.isLoading) return <LoadingState />;
-  if (isLoading) return <LoadingState />;
+  if (createContext.isLoading) return <LoadingState scope="page" />;
+  if (isLoading) return <LoadingState scope="page" />;
 
   const dealWorkspaceError =
     queries.clients.error ||
@@ -284,7 +285,7 @@ export function DealsPage() {
         maxWidthClassName="max-w-none"
         testId={dealWorkspaceReady ? "deals-workspace-ready" : undefined}
       >
-        {dealWorkspaceError ? <ErrorState message={getApiErrorMessage(dealWorkspaceError)} action={<Button variant="secondary" onClick={() => {
+        {dealWorkspaceError ? <ErrorState error={dealWorkspaceError} message={getApiErrorMessage(dealWorkspaceError)} action={<Button variant="secondary" onClick={() => {
           void Promise.all([
             viewMode === "table" ? deals.refetch() : retryBoard(),
             summary.refetch(), queries.clients.refetch(), queries.pipelines.refetch(), queries.pipelineStages.refetch(),

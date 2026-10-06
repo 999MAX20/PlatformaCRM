@@ -1,86 +1,62 @@
-import { Undo2, X } from "lucide-react";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 
-import { Button } from "../ui/Button";
-import { ToastSurface } from "../ui/Overlay";
+import { normalizeAppError, type AppError } from "../../api/appError";
 import { useI18n } from "../../lib/i18n";
+import { ActionFeedbackToast } from "../notifications/NotificationProvider";
 
 type UndoToastOptions = {
   message: string;
   undoLabel?: string;
   durationMs?: number;
   onUndo: () => Promise<void> | void;
+  onRecover?: () => Promise<void> | void;
 };
-
-type UndoToastItem = UndoToastOptions & {
-  id: number;
-};
-
+type UndoToastItem = UndoToastOptions & { id: number; error?: AppError };
 const UndoToastContext = createContext<((options: UndoToastOptions) => void) | null>(null);
 
 export function UndoToastProvider({ children }: { children: React.ReactNode }) {
   const { t } = useI18n();
   const [item, setItem] = useState<UndoToastItem | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isUndoing, setIsUndoing] = useState(false);
-
+  const nextId = useRef(0);
+  const pendingId = useRef<number | null>(null);
   const showUndoToast = useCallback((options: UndoToastOptions) => {
-    setIsHovered(false);
-    setIsUndoing(false);
-    setItem({ ...options, id: Date.now() });
+    setItem({ ...options, id: ++nextId.current });
+  }, []);
+  const dismiss = useCallback((id: number) => {
+    setItem(current => current?.id === id ? null : current);
   }, []);
 
-  useEffect(() => {
-    if (!item || isHovered || isUndoing) return;
-    const timer = window.setTimeout(() => setItem(null), item.durationMs ?? 10_000);
-    return () => window.clearTimeout(timer);
-  }, [isHovered, isUndoing, item]);
+  async function perform(current: UndoToastItem) {
+    if (pendingId.current === current.id) return;
+    pendingId.current = current.id;
+    try {
+      if (current.error) await current.onRecover?.();
+      else await current.onUndo();
+      dismiss(current.id);
+    } catch (error) {
+      setItem(latest => latest?.id === current.id ? { ...latest, error: normalizeAppError(error) } : latest);
+    } finally {
+      if (pendingId.current === current.id) pendingId.current = null;
+    }
+  }
 
-  const value = useMemo(() => showUndoToast, [showUndoToast]);
-
-  return (
-    <UndoToastContext.Provider value={value}>
-      {children}
-      {item ? (
-        <ToastSurface
-          className="text-sm font-bold text-platforma-text"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <Undo2 size={18} className="shrink-0 text-brand-700" />
-          <span className="min-w-0 flex-1">{item.message}</span>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            isLoading={isUndoing}
-            onClick={async () => {
-              setIsUndoing(true);
-              await item.onUndo();
-              setItem(null);
-              setIsUndoing(false);
-            }}
-          >
-            {item.undoLabel || t("actions.undo")}
-          </Button>
-          <button
-            type="button"
-            className="platforma-focus-ring rounded-control p-1 text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
-            aria-label={t("common.close")}
-            onClick={() => setItem(null)}
-          >
-            <X size={16} />
-          </button>
-        </ToastSurface>
-      ) : null}
-    </UndoToastContext.Provider>
-  );
+  return <UndoToastContext.Provider value={showUndoToast}>
+    {children}
+    {item ? <div className="fixed bottom-5 right-5" style={{ zIndex: "var(--platforma-z-toast)" }}>
+      <ActionFeedbackToast key={item.id} dismissAfterAction={false} onDismiss={dismiss} item={{
+        id: item.id, createdAt: item.id,
+        message: item.error ? t("fallback.undoFailed") : item.message,
+        appError: item.error, tone: item.error ? "warning" : "success",
+        durationMs: item.error ? 20_000 : item.durationMs ?? 10_000,
+        actionLabel: item.error ? (item.onRecover ? t("common.refresh") : undefined) : item.undoLabel || t("actions.undo"),
+        onAction: !item.error || item.onRecover ? () => perform(item) : undefined,
+      }} />
+    </div> : null}
+  </UndoToastContext.Provider>;
 }
 
 export function useUndoToast() {
   const context = useContext(UndoToastContext);
-  if (!context) {
-    throw new Error("useUndoToast must be used within UndoToastProvider");
-  }
+  if (!context) throw new Error("useUndoToast must be used within UndoToastProvider");
   return context;
 }

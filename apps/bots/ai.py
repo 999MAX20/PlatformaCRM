@@ -4,6 +4,7 @@ from apps.bots.models import BotMessage
 from apps.bots.sales_playbooks import build_sales_playbook_context
 from apps.bots.scheduling_context import build_bot_scheduling_context
 from apps.bots.ai_settings import validate_ai_settings
+from rest_framework.exceptions import PermissionDenied
 
 
 def build_bot_conversation_context(conversation, limit=12):
@@ -21,9 +22,10 @@ def build_bot_conversation_context(conversation, limit=12):
 
 
 def get_agent_profile(conversation):
+    if conversation.bot.is_deleted or conversation.bot.scenario != "inbox" or conversation.bot.business_id != conversation.business_id:
+        raise PermissionDenied("Customer conversations require an inbox agent from the same business.")
     return (
         AgentProfile.objects.filter(business=conversation.business, bot=conversation.bot, is_active=True).order_by("-updated_at").first()
-        or next((profile for profile in AgentProfile.objects.filter(business=conversation.business, bot__isnull=True, is_active=True).order_by("-updated_at", "-id") if not isinstance(profile.rules_json, dict) or profile.rules_json.get("scenario") not in {"employee", "analyst"}), None)
     )
 
 
@@ -69,14 +71,14 @@ def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification
             "The reply may be sent automatically, so do not promise discounts, final booking, delivery, payment, or availability unless it is explicitly confirmed in context. "
             "Follow sales_playbook exactly for this business type. "
             "Use available scheduling context when present. Offer only real slots from next_available_slots. "
-            "Use service prices from services.price_from and explain them as 'от' when price_from is present. "
+            "Use service prices from services.price_from and describe them as minimum prices in the saved reply language when price_from is present. "
             "If service, preferred specialist/resource, day, or exact slot is missing, ask one clear next question instead of inventing details. "
         )
     else:
         reply_instruction = "Generate a short, helpful CRM manager reply for this bot conversation. Do not send it automatically. "
 
     user_input = agent_instruction + reply_instruction + f"Last inbound message: {last_inbound['text'] if last_inbound else 'No inbound message'}"
-    user_input += " Prices in price_from are minimum prices: say 'от', not a guaranteed final price. Never claim you booked, cancelled or transferred anything unless a completed action is explicitly supplied by the server."
+    user_input += " Only prices explicitly supplied as price_from are minimum prices: use the saved reply language (for example, 'from' in English), not a guaranteed final price. Other supplied prices retain their stated meaning. Never claim you booked, cancelled or transferred anything unless a completed action is explicitly supplied by the server."
     user_input += " Use scheduling_context.currency for every price; never infer currency from the message language. Interpret relative dates using scheduling_context.local_date and timezone. next_available_slots are confirmed free slots on their stated dates; do not say a requested date is unavailable when those slots include it."
     crm_context = {}
     if conversation.client_id:

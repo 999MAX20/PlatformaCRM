@@ -180,12 +180,14 @@ export function WhatsAppInlineSetup({
   const error = saveCredentials.error || testConnection.error || startEmbeddedSignup.error || completeEmbeddedSignup.error || toggleChannel.error || status.error;
   const credentialsConfigured = Boolean(status.data?.phone_number_id_configured && status.data?.access_token_configured);
   const hasSignupResult = Boolean(signupCode || signupPhoneNumberId);
-  const connectionStatus = credentialsConfigured
-    ? t("integrations.status.connected")
-    : hasSignupResult
-      ? t("integrations.whatsapp.finishConnection")
-      : t("integrations.status.notConnected");
-  const connectionTone = credentialsConfigured ? "success" : hasSignupResult ? "progress" : "neutral";
+  const connectionStatus = channel?.status === "active" ? t("integrations.status.connected")
+    : channel?.status === "paused" ? t("integrations.status.paused")
+    : channel?.status === "error" ? t("integrations.status.error")
+    : credentialsConfigured ? t("integrations.status.providerConfiguring")
+    : hasSignupResult ? t("integrations.whatsapp.finishConnection")
+    : t("integrations.status.notConnected");
+  const connectionTone = channel?.status === "active" ? "success" : channel?.status === "error" ? "warning"
+    : channel?.status === "paused" ? "neutral" : credentialsConfigured || hasSignupResult ? "progress" : "neutral";
 
   if (!channel) {
     return <ErrorState message={t("aiAgents.channelSetupUnavailable")} />;

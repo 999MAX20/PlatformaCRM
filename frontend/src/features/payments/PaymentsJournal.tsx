@@ -56,7 +56,7 @@ export function PaymentsJournal({ client, onClose }: { client?: PaymentOption; o
           </div>
           {saved && <p role="status" className="text-sm text-platforma-success">{t("payments.saved")}</p>}
           {payments.isLoading && <LoadingState />}
-          {payments.error && <ErrorState message={getApiErrorMessage(payments.error)} action={<Button variant="secondary" onClick={() => void payments.refetch()}>{t("common.retry")}</Button>} />}
+          {payments.error && <ErrorState error={payments.error} message={getApiErrorMessage(payments.error)} action={<Button variant="secondary" onClick={() => void payments.refetch()}>{t("common.retry")}</Button>} />}
           {!payments.isFetching && !payments.error && payments.data?.count === 0 && <EmptyState title={t("payments.empty")} description={t("payments.emptyText")} />}
           {!payments.error && <ul className="space-y-3" aria-label={t("payments.title")}>
             {payments.data?.results.map((payment) => <li key={payment.id} className="space-y-3 rounded-card border border-platforma-border bg-surface-card p-4" data-testid={`payment-row-${payment.id}`}>

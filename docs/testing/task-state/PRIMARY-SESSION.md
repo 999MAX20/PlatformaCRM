@@ -1,6 +1,337 @@
 # PRIMARY-SESSION — PlatformaCRM
 
-## UI-FEEDBACK-20261005 — locally verified; publication next
+## PUBLICATION-20261006 — active
+
+- Owner explicitly requests commit/push of all accumulated uncommitted changes,
+  then actual CI before new AI implementation. Owner corrected CD request: no CD.
+  Also requests design proposals for memory in both scenarios, model controls,
+  role/tone explanation and reliable end-to-end orchestration; implementation waits.
+- Canonical root, generation3 owner, branch codex/ui-testing-toolkit, starting
+  HEAD9ff366207e73472cda71ca3b9113ca4f9f305af9; remote main matches. Prior WIP is now
+  explicitly included in publication scope. Starting hash inventory and diff:
+  output/publication-20261006. No other writer, no branch switch or working DB writes.
+- Risk/plan: inspect entire candidate and new files for unintended content; reconcile
+  retained targeted evidence; prepare exact explicit paths. Current read-only npm
+  audit reproduces dependency blocker, including braces with no patched release.
+  Major Tailwind migration is not silently bundled into this publication.
+- Completion checks: diff/lock/static hygiene, applicable unchanged evidence,
+  real CI on any authorized published commit; keep known six AI failures visible.
+  No real provider calls or release/deployment claimed. Publication policy conflict
+  must be resolved if dependency acceptance cannot pass with bounded maintenance.
+
+## AI-AGENTS-BEHAVIOR-20261006 — evaluation complete locally, product acceptance failed
+
+- Same registered generation3 owner/canonical root/branch/HEAD9ff3662; prior WIP
+  retained, index empty. Evaluation/report scope complete; no new phase/handoff.
+- [Report and open defects](../ai-agents-behavior-20261006.md): 216 unique cases,
+  610 retained attempts, 484 paid requests, USD0.16127360 of authorized USD3.
+  Latest machine210 PASS/4 FAIL/2 ERROR; manual partial/unsupported statuses remain.
+- Real language/format/source/time/planner/escalation defects repaired and retested.
+  Six final red cases: sources-none; lead create/update; missing-fields clarification;
+  selected-slot replay and busy booking (false classifier escalation). Do not bypass
+  requires_human_review to make booking pass. Roles/tone/price fidelity remain partial.
+- Final affected ai_core/bots/conversations283 +4 new boundaries PASS; check/drift
+  PASS. Earlier broad410 includes unchanged automation/integration coverage.
+  Transport budget4 PASS. Prior24 browser/build evidence reused only for unchanged
+  frontend hashes. No working DB writes/migrations or live messenger delivery.
+- Final temperature12 per arm: Inbox unique2 vs12, CRM3 vs12 at0.1 vs0.8;
+  fixed prompt/business facts, price/currency/refund retained. CRM durable memory
+  absent; classifier model remains separate from saved reply model/temperature.
+- All paid suites ended. Raw synthetic ledger/answers, summary/case-review and source
+  hashes: output/ai-agents-behavior-20261006. No further paid requests required.
+  Harness-only serialization/receipt errors and actual rate limiting are recorded.
+- Owned backend refreshed parent13804/child15420, frontend13772 unchanged; canonical
+  roots and HTTP200 checked. No other processes stopped.
+- Publication blocked: fresh CI37312854122 still fails frontend dependency audit;
+  no commit/push/deployment. Next unfinished product result: structured planning/
+  no-data contracts and accurate booking classification, followed by text fidelity.
+
+## AI-AGENTS-CERTIFICATION-20261006 — verified locally, publication blocked
+
+- Existing AI Agents settings/runtime certification is complete. Full scope,
+  per-surface evidence, exact commands, failed attempts and limits:
+  [report](../ai-agents-certification-20261006.md).
+- 393 affected/dependent backend tests, check/drift; 24 unique browser checks
+  (18 desktop/6 mobile); build/types/i18n/widget/bundle; diff/link/readback PASS.
+  Four authorized synthetic live OpenRouter requests used 3328 tokens and proved
+  changed Inbox/CRM instructions. No remaining live-call authorization. English
+  price wording was corrected afterward and verified locally, not re-sampled live.
+- Five bounded defects fixed: absolute website script URL, website draft activation,
+  translated conditional minimum-price wording, honest Meta connection badges,
+  Telegram key accessible name. No chat redesign/uploads/exports implemented.
+- Owner-authorized working migration completed: backup, only ai_core.0006,
+  original data in 113 tables preserved, zero implicit knowledge links, integrity
+  PASS. Existing two knowledge records remain shared. Details/backup in report.
+- Owned canonical backend parent9140/child8592 and frontend13772 are refreshed;
+  health/module HTTP200 and current source markers verified. All test runs ended.
+- Same registered owner/root/branch codex/ui-testing-toolkit, HEAD9ff3662;
+  pre-existing WIP preserved, index empty. Task source hashes and all logs under
+  output/ai-agents-certification-20261006. No commit/push: fresh GitHub readback
+  confirms prior CI37312854122 frontend dependency audit still fails; its backend,
+  build and bundle steps passed. Current dirty snapshot has no new CI.
+- Assessment delivered: separate internal business chat in Analytics, source-backed
+  deterministic metrics, saved conversation context and permissions; retain simple
+  metrics/period controls. This is a proposal, not authorization for a new phase.
+  Real messenger OAuth/webhooks and production hosting remain unverified.
+- Next: owner selection of a new scope; no task is running or scheduled here.
+
+## AI-AGENT-ISOLATION-20261005 — implementation
+
+- Completion local checks: 295 backend, 5 browser desktop/mobile including
+  RU/KK/EN, build/types/i18n/bundle, system/drift and isolated migration round-trip
+  PASS. Details: [report](../ai-agent-isolation-20261005.md). No new commit/push;
+  prior dependency CI remains failed. No full-release/provider suite claimed.
+- Working operation completed with owner authorization on 06.10: backup + only
+  ai_core.0006, original rows/columns in 113 tables unchanged, zero implicit links,
+  integrity PASS, owned canonical servers restarted and HTTP200 readback.
+  Details in the certification report; this supersedes the earlier pending step.
+- Owner approved audit recommendation: new agents have independent knowledge and
+  settings; shared material requires explicit connection; no legacy profile fallback.
+  Retired history remains retained and cannot become a replacement agent's context.
+- Same registered owner, canonical root, branch codex/ui-testing-toolkit and
+  HEAD 9ff3662; 145 prior dirty paths preserved, starting snapshot under
+  output/ai-agent-isolation-20261005. One bounded behavior change, not a new AI phase.
+- Reuse knowledge model/API, profiles, existing permissions and editor. Add explicit
+  agent ownership and shared links, enforce tenant/agent boundaries in backend
+  retrieval/CRUD and actual AI prompts, scoped UI cache and connect/disconnect flow.
+  Existing ownerless knowledge remains shared but is not automatically attached.
+- Risk: data access and migration, including retained history, late requests and
+  replacement agents. Focused isolated service/API tests after each backend slice;
+  completion affected/dependent suites, check/drift, migration round-trip, targeted
+  desktop/mobile UI and build/types/i18n. No live AI/provider calls or broad release gate.
+- No new permission framework/notification/BusinessEvent policy. Audit changes.
+  Generate/test schema in isolated DB first; working-db migration requires a concrete
+  target/backup proposal under AGENTS.md. No data deletion or implicit shared linking.
+  Prior failed dependency CI continues to block publication.
+
+## AI-AGENT-FOLLOWUP-20261005 — deletion-result regression reopened
+
+- Resolved local environment gap after owner confirmed recurrence. Direct HTTP
+  GET of /src/features/assistant/useAIAgentEditorDrafts.ts on 5173 returned cached
+  code WITHOUT discardDeletedAgent/deletedAgentId; served AIAgentsPage called it.
+  Thus onSuccess threw after DELETE 204 before cache removal/navigation. Source
+  file already contained the function. Saved stale/fresh transformed responses.
+- Verified canonical owned Vite PID14568, restarted only it -> PID8224 on 5173.
+  Fresh HTTP readback includes function and deletion guard; user tab reloaded.
+  No application rewrite or merchant DB mutation. Earlier isolated direct/proxy
+  regression PASS reused: relevant application/test inputs unchanged. No build
+  required for process refresh/docs. Publication remains blocked by prior CI.
+
+- Owner reports an error after deletion although refresh removes the agent.
+  Local server log confirms DELETE 204. Investigate frontend success handling,
+  including old inbox agents without profiles and multiple remaining agents.
+- Same owner/root/branch/HEAD 9ff3662; starting diff under
+  output/ai-agent-delete-result-20261005. Preserve existing WIP and merchant data.
+- Minimal frontend fix if reproduced; no lifecycle/policy/permission change.
+  Focused isolated browser regression first, completion build/types and hygiene.
+  Prior dependency CI continues to block publication; no working-DB test writes.
+- Investigation checkpoint: both direct-API and same-origin Vite proxy isolated
+  browser runs PASS (one legacy-inbox regression each, two sequential deletions).
+  Current application files match previous closure hashes. No application fix
+  inferred from these passes: the owner's runtime error remains unreproduced.
+  Added regression coverage only; asked whether it repeats after a full reload.
+  Next: obtain the failing browser exception if it recurs; preserve merchant data.
+  Evidence and exact commands: follow-up report, deletion-result section.
+
+## AI-AGENT-FOLLOWUP-20261005 — locally verified; publication blocked
+
+- Owner reports CRM creation becoming inbox on local server and obstructive scenario
+  hints; additionally requests deletion at the bottom of the agent profile.
+- Same owner/root/branch/HEAD 9ff3662. Starting working snapshot saved under
+  output/ai-agent-followup-20261005; preserve all previous uncommitted work.
+- Reopen on reproduced evidence: local API /api/ai/agents/ returns 404 while current
+  source defines it; existing canonical runserver uses --noreload. Four recent local
+  agents 3–6 have no stored scenario. Refresh this task's local backend, not records.
+- Code gap: hints currently open from the whole card and overlap the other card.
+  Trigger only from help icon (also keyboard/touch), place outside dialog on right
+  when space permits, non-overlapping inline fallback on narrow screens.
+- Owner selected history-preserving deletion. Implemented protected retirement,
+  paused channels/profiles, revoked queues/commands and cancelled conversation runs.
+  No deletion or conversion of the four local records. No migration required.
+- Focused checks: runtime route before/after refresh, isolated creation/API readback,
+  tooltip mouse/focus/touch placement desktop/mobile. For deletion, service/API
+  role/tenant/lifecycle/replay/history tests before UI, then reachable confirm/cancel,
+  error/retry and navigation. Finish build/types/i18n/bundle, check/drift as applicable,
+  docs and diff hygiene. No full E2E, paid AI, dependency update or DB seed.
+- Final checkpoint 17:54 UTC: 287 backend + system/drift PASS, 13 policy checks,
+  build/types/i18n/bundle PASS. Core creation/deletion/error-retry and keyboard/
+  RU/KK/EN desktop/mobile PASS (4 browser cases). Sequential runs resolved the
+  parallel startup timeouts; locale test no longer interrupts refresh with a
+  redundant reload. Evidence: [follow-up report](../ai-agent-followup-20261005.md).
+- Only owned local backend was restarted with reload, same canonical root/8000;
+  frontend/5173 retained. Live OPTIONS confirms inbox/crm choices. No working-DB
+  mutation; owner can use the new delete button on earlier trial agents.
+- HEAD/branch unchanged, empty index. Prior WIP preserved; snapshot hashes and
+  hygiene reviewed. Implementation is complete locally; next step is owner review.
+- Prior dependency CI remains failed and blocks publication. No new phase.
+
+## AI-AGENT-SCENARIOS-20261005 — locally verified; publication blocked
+
+- Final checkpoint 05.10 17:02 UTC: implementation and local cleanup complete.
+  [Acceptance/checks/failures](../ai-agent-scenarios-20261005.md): final backend
+  250 PASS + system/drift; 16 desktop/mobile scenarios, 13 policy checks and
+  build/types/i18n/bundle PASS. New inputs recorded in the output source manifest.
+- Local DB now has zero agents. Verified backup, audited deletion of the exact
+  two agents/four channels/two profiles, 109 other tables unchanged; integrity PASS.
+  The first cleanup transaction rolled back on SET_NULL profile retention;
+  the final explicit profile cleanup and readback passed. No history removed.
+- HEAD/branch unchanged, empty index; no commit/push because existing dependency
+  CI still failed. Preserve prior UI WIP. Next: owner review from empty AI Agents;
+  no additional phase authorized. Entries below retain the implementation trail.
+- Owner approved replacing the preceding UX structure: creation requires a name
+  and inbox/CRM scenario; each agent has its own configuration and adapted UI.
+  Retire the old AI Assistant page while preserving its useful work/analytics.
+  Stable /app/ai-agents/:id/:section routes; no scenario-switch tabs in an agent.
+- Same registered owner/root/branch/HEAD 9ff3662. Prior 18 task-input hashes match;
+  no other active CRM writer. Preserve all pre-existing UI WIP, including the
+  unrelated service-error-feedback test. Snapshot in output/ai-agent-scenarios-20261005.
+- Reuse Bot.settings_json for persisted, API-validated immutable scenario; existing
+  records default to inbox. One internal CRM assistant per business as proposed
+  and approved; creation serialized under Business lock. No schema migration.
+- Reuse AgentProfile, CRM commands/approval, historical/event analyst, AI jobs and
+  existing roles. Bind runtime, queued requests and approvals to the selected CRM
+  agent; never give customer agents internal sources. Configuration and use have
+  separate existing permissions. No new external channels, financial behavior or
+  provider expenses. Keep audit/activity and exact confirmation/replay safeguards.
+- Risk/verification: after typed creation/configuration run focused isolated bot
+  tests; after runtime binding run AI workflow/CRM/job/history/approval tests.
+  Completion: affected/dependent backend suites, system/drift, targeted API/UI
+  creation and both scenarios, role denial/tenant isolation, pause/revocation,
+  no-data/error/retry, desktop/mobile/RU/KK/EN, build/types/i18n/bundle/hygiene.
+- Owner previously requested clearing the two local agents after implementation;
+  inspect exact local targets/dependencies and back up before any agreed cleanup.
+  No broad data reset or cascading removal of CRM history is authorized.
+- Existing dependency CI failure still blocks publication; do not modify locks
+  or publish unrelated WIP. This bounded restructuring is the stopping point.
+- Implementation checkpoint 05.10 16:49 UTC: typed creation/configuration and
+  selected-agent runtime are implemented, including queued requests/approval
+  binding, customer boundary, minimal staff directory and adapted UI. Retired UI
+  files are backed up under the task output directory. No working DB mutation yet.
+- Focused backend PASS: creation/configuration 9; runtime/workflows/CRM/jobs 70;
+  status/source follow-up 12; conversation boundary follow-up 10. Failures were
+  fixture username, expected domain 409 and an unsupported POST test corrected
+  to validate the serializer; all initial logs retained. Final affected backend
+  gate (ai_core, bots, conversation confirmations + check/drift) is running.
+- Browser desktop main CRM flow PASS through settings, ID binding, exact approval,
+  cancellation/no-write, one task creation and RU/KK/EN analytics/accessibility.
+  Customer creation and manager use also passed. Mobile and retained inbox/UX
+  regressions continue. Fixed creation blocked by an untouched missing profile
+  and enabled during canonical navigation; final mobile rerun is pending.
+- Read-only local cleanup inventory: canonical db.sqlite3 has only Bot 1/business1
+  paused and Bot 2/business2 active; zero conversations, four channels and two
+  profiles. No other direct foreign-key dependents. Owner requested their removal
+  after implementation; back up and recheck exact scope before deleting via the
+  existing audited API boundary. Preserve all unrelated business records.
+
+## AI-AGENTS-UX-20261005 — locally verified; publication blocked
+
+- Owner requests a five-tab behavior review and clearer AI setup: separate company
+  employee/analyst settings, visible profile instructions without duplicate naming,
+  explicit dental template application, knowledge validation and clearer authority.
+- Same registered primary/root/branch; HEAD 9ff3662. Preserve prior UI WIP;
+  starting diff/status saved in output/ai-agents-ux-20261005. No ownership transfer.
+- Frontend behavior/evidence gap; reuse profiles, bot configuration API, shared
+  forms, navigation guards and translations. No backend, permission, migration,
+  BusinessEvent, notification policy or paid/live-provider changes.
+- Risk: draft loss on navigation, accidental template replacement, invalid knowledge
+  and misleading effective permissions. Focused browser interactions cover these,
+  empty/error/read-only states and RU/KK/EN desktop/mobile. Completion: build/types,
+  i18n, bundle and diff hygiene; no full E2E or dependency reinstall.
+- Prior failed dependency CI gate remains a publication blocker. Do not stage
+  other UI work or update dependencies as part of this task.
+- Completed: dedicated company scenario pages, draft guards, visible profile and
+  single name, dental template preview, knowledge requirements/errors/categories,
+  visible action help and derived authority summary. Empty preview no longer
+  reserves a blank conversation area; internal forms retain mobile footer space.
+- PASS: 12 distinct desktop/mobile browser cases, including five-tab layout across
+  1280/1600/1848/Pixel 7, RU/KK/EN, contrast, save/reload, denied manager, API errors,
+  retry, whitespace validation, template cancel/apply and draft navigation guard.
+  Final six affected reruns PASS; final build/types/i18n/widget/bundle PASS.
+- [Review, exact commands, failures/corrections and skips](../ai-agents-ux-20261005.md).
+  Canonical branch/HEAD unchanged, index empty; no commit/push/deployment or new CI.
+  Existing dependency failure remains visible. Relevant source hashes and original
+  WIP snapshot are in output/ai-agents-ux-20261005; previous UI work preserved.
+
+## UI-STATE-BEHAVIOR-20261005 — locally verified; publication blocked
+
+- Completion: [report](../ui-state-behavior-20261005.md). Current snapshot passed
+  20 policy tests, 10 desktop + 6 mobile browser cases, 162 localized catalog
+  screenshots with axe/overflow checks, build/types/i18n/bundle and hygiene.
+  Previous server startup timeout diagnosed with unchanged assertions/timeouts;
+  next isolated run PASS. Router context fixed in catalog only on resume.
+  Shared component/locale/consumer changes retained alongside later AI work.
+- No working DB migration, backend rewrite, live provider or full E2E claim.
+  No commit/push: previous dependency CI still blocks publication. Automation
+  paused; no further UI-state implementation remains in this approved scope.
+
+- Resumed with explicit owner instruction after primary turn completed and idle
+  readback. Preserve subsequent AI changes and its pending working-DB migration.
+  Same HEAD 9ff3662; no registry change. Reconcile shared consumers with current
+  UI, finish catalog (router context for linked AI example), focused behavior and
+  service/session recovery tests, final build/types/i18n/bundle and report.
+  Scheduled continuation paused to prevent duplicate execution. Prior dependency
+  CI still blocks publication; no dependency or working-database work in scope.
+
+- Owner approved the preceding review's bounded notification/state improvements
+  across RU/KK/EN: one surface per event, correct support-reference use, network
+  recovery, rate-limit retry, failed undo, accessible toast timing and truthful
+  catalog examples. Existing approved loading behavior stays.
+- Canonical root/branch/HEAD unchanged (codex/ui-testing-toolkit, 9ff3662).
+  Starting 49 dirty/untracked paths belong to the prior loading/feedback work;
+  preserve them and the idle primary registry. No other source checkout or writer.
+- Reuse StatusNotice, normalized AppError, query client, existing fallback/toast
+  providers and locales. No backend/migrations/provider setup or live telemetry
+  publication. A support code identifies a request, not a created support ticket.
+- Risk: shared recovery controls, pending async actions, offline/reconnect and
+  preserving form work. Focused policy tests plus browser interactions for failed
+  undo/retry, delayed recovery, duplicate suppression, keyboard timer pause,
+  support detail visibility/copy, service edit error and session recovery.
+  Completion: RU/KK/EN desktop/mobile catalog evidence, build/types/i18n/bundle
+  and diff hygiene. No dependency reinstall or full-project E2E.
+- Previous CI dependency-audit blocker remains; no dependency remediation or
+  exception authorized here. Required failed gate still prevents publication.
+
+## UI-LOADING-20261005 — locally verified; publication blocked
+
+- Owner follow-up: dashboard reload still briefly showed loadingCoreData banner.
+  Reopened loading scope for this proven missed case and equivalent textual data
+  placeholders in page/section headers and panels. Replace with existing ring;
+  keep API/auth/business behavior and existing ready content unchanged.
+  Risk: loading-to-ready layout in owner/manager dashboards and affected panels.
+  Verify delayed dashboard data, representative panels/mobile/locales, existing
+  focused checks and final build/bundle. Previous dependency blocker still applies.
+- Follow-up completed: owner/manager dashboard banner and equivalent header/panel
+  text loaders now use the common ring. All feature LoadingState copy unified.
+  PASS: 3 dashboard API/fallback browser tests, 9 focused policy tests, 9 delayed
+  reload/panel cases with screenshots, final build/types/i18n/bundle and hygiene.
+  UI report records scope and corrected harness details. ZD-046 added.
+
+- Owner approved one centered rotating-ring loading experience, including reload,
+  workspace preparation, route modules and data. Existing errors/alerts deferred.
+- Canonical root/branch unchanged, base 9ff3662. Four previous feedback receipt
+  docs already dirty and preserved; dependency-audit CI blocker remains open.
+- Reuse LoadingState/PageSkeleton and route guards; no permission, API, provider,
+  BusinessEvent or working-DB changes. Page loading fills available content area;
+  local loading stays within its block. Existing background query behavior stays.
+- Risk: shared layouts, lazy/auth/data transitions and reduced-motion behavior.
+  Check delayed module/data responses, reload/recovery, desktop/mobile, RU/KK/EN,
+  panel sizing and reduced motion; build/types/i18n/bundle once after changes.
+- Publication remains blocked by the existing required dependency gate; no
+  dependency migration or audit exception is authorized by this loading task.
+- Completed: pure shared LoadingIndicator, page/block scope, workspace sizing,
+  unified startup/module/auth/data copy, 200ms appearance delay and reduced motion.
+- PASS: 12 browser loading checks (11 screenshots), 3 isolated session recovery
+  cases, 9 existing fallback/error policy checks, i18n/types/app+widget build,
+  bundle budgets and diff hygiene. No production edits after the build.
+- [Report, exact commands and corrected harness attempts](../ui-loading-20261005.md).
+  Screenshots/geometry under output/playwright/loading-20261005. Own servers
+  stopped; existing working servers preserved; no working-DB changes.
+- HEAD still 9ff366207e73472cda71ca3b9113ca4f9f305af9; index empty, changes local.
+  Readback of previous CI at 13:47 UTC: backend PASS, dependency audit FAILURE.
+  No commit/push or full-green delivery claim. Next unresolved item is the
+  separate dependency gate; no additional UI/product phase started.
+
+## UI-FEEDBACK-20261005 — UI published; CI dependency gate blocked
 
 - Owner explicitly authorized this UI task in the side conversation; primary is
   idle, registry/ownership remain unchanged. Canonical root, existing branch
@@ -28,8 +359,25 @@
   configured fetch refspecs omit main, reconciled via explicit main refspec.
   No competing writer/HEAD drift or unrelated dirty files. CI workflow only;
   no push-triggered deployment workflow found. Registry unchanged.
-- Next: review/stage only this task, commit, committed-range static, normal push,
-  remote SHA readback and actual CI. No full E2E, provider or working-DB changes.
+- Code commit 9ff366207e73472cda71ca3b9113ca4f9f305af9 normal-pushed HEAD:main;
+  ls-remote readback matches. Static gate against b82c8a2 PASS including isolated
+  system/migration-drift checks and working/index/committed diff hygiene.
+- Actual CI 37312854122: frontend app/widget build and bundle PASS; dependency
+  audit FAILED on pre-existing braces/DOMPurify dependency tree. Backend PASS
+  at 2026-10-05 13:47 UTC readback; overall CI FAILURE.
+  Sanitized evidence: output/publication-20260930/ci-9ff366207e73472cda71ca3b9113ca4f9f305af9.json.
+  Baseline proof: package/lock/workflow diff empty versus b82c8a2; lock blob
+  213f6573e7916c500c216c90a9133caad11286c8 identical. Read-only npm audit
+  --package-lock-only reproduces failure (exit1). Local audit suggests a Tailwind
+  major migration for braces; no dependency upgrade/exception in this UI scope.
+- Four receipt docs remain task-owned local changes (STATUS, this checkpoint,
+  defect knowledge, UI report); no follow-up commit/push after the failed CI gate.
+- Own fixture Vite session stopped; static screenshot preview :5198 remains
+  available for owner review. Existing working servers :5173/:8000 preserved.
+  UI scope implemented/verified; complete green CI acceptance remains blocked.
+  No next product phase started, full E2E, providers or working-DB changes.
+  Next unresolved item: separate existing-dependency remediation;
+  no approval threshold was relaxed.
 
 ## LOCAL-MIGRATIONS-20261005 — owner-authorized working DB update
 

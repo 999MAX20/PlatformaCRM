@@ -99,7 +99,7 @@ export function TimelineActorFilter({
           </div>
           {actors.isError ? (
             <ErrorState
-              message={getApiErrorMessage(actors.error)}
+              error={actors.error} message={getApiErrorMessage(actors.error)}
               action={
                 <Button
                   variant="secondary"

@@ -79,7 +79,7 @@ test("centered agent workspace keeps natural flow and all five sections usable a
         expect(geometry.header.height).toBeLessThanOrEqual(105);
         expect(geometry.editor.width).toBe(960);
         if (section === "profile") {
-          const preset = await editor.getByRole("button", { name: "Применить роль администратора стоматологии", exact: true }).boundingBox();
+          const preset = await editor.getByRole("button", { name: "Шаблон: администратор стоматологии", exact: true }).boundingBox();
           expect(preset!.height).toBeGreaterThanOrEqual(36);
           expect(preset!.height).toBeLessThanOrEqual(40);
           const role = editor.getByRole("textbox", { name: "Описание роли", exact: true });
@@ -99,14 +99,9 @@ test("centered agent workspace keeps natural flow and all five sections usable a
       }
       await page.screenshot({ path: testInfo.outputPath(`${size.width}-${section}.png`), animations: "disabled", fullPage: true });
       if (section === "actions") {
-        const descriptions = editor.locator("details");
-        await expect(descriptions).toHaveCount(7);
-        for (const detail of await descriptions.all()) {
-          await detail.locator("summary").click();
-          await expect(detail.locator("p").first()).toBeVisible();
-        }
+        await expect(editor.getByRole("heading", { name: "Полномочия агента", exact: true })).toBeVisible();
+        await expect(editor.locator("details")).toHaveCount(0);
         await page.screenshot({ path: testInfo.outputPath(`${size.width}-actions-help.png`), fullPage: true });
-        for (const detail of await descriptions.all()) await detail.locator("summary").click();
       }
       if (geometry.footer) {
         const lastAction = editor.locator("footer").getByRole("button").last();
@@ -127,7 +122,6 @@ test("centered agent workspace keeps natural flow and all five sections usable a
         await page.keyboard.press("Escape");
       }
       if (section === "profile") {
-        await editor.getByRole("button", { name: "Дополнительные настройки", exact: true }).click();
         await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toBeEnabled();
         await page.screenshot({ path: testInfo.outputPath(`${size.width}-profile-advanced.png`), fullPage: true });
         const save = editor.getByRole("button", { name: "Сохранить изменения", exact: true });

@@ -11,6 +11,8 @@ from apps.conversations.auto_pipeline import (
 
 
 def preview_agent_dialogue(*, bot, user, messages):
+    if bot.scenario != "inbox":
+        raise ValidationError({"scenario": "Customer dialogue preview is only available for inbox agents."})
     readiness = get_bot_readiness(bot)
     if not readiness["profile_ready"]:
         raise ValidationError({"profile": "Save an active agent profile before testing."})

@@ -69,7 +69,7 @@ export function ScheduleExceptionsPanel({ resource, timeZone, canManage }: {
     <section className="space-y-3 border-t border-platforma-border pt-4" data-testid="schedule-exceptions">
       <h3 className="font-semibold text-platforma-ink">{t("workingHours.dateExceptions")}</h3>
       {exceptions.isLoading ? <LoadingState /> : null}
-      {error ? <ErrorState message={getApiErrorMessage(error)} /> : null}
+      {error ? <ErrorState error={error} message={getApiErrorMessage(error)} /> : null}
       <div className="flex flex-wrap gap-2">
         {(exceptions.data || []).map((row) => (
           <Button key={row.id} variant="secondary" type="button" onClick={() => selectDate(row.date, row)}>

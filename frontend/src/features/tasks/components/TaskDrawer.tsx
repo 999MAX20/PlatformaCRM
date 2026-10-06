@@ -6,7 +6,7 @@ import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
-import { ErrorState } from "../../../components/ui/StateViews";
+import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import { Textarea } from "../../../components/ui/Textarea";
 import { useBodyScrollLock } from "../../../hooks/useBodyScrollLock";
 import { cn } from "../../../lib/cn";
@@ -433,7 +433,7 @@ export function TaskDrawer({
                       </div>
                     </div>
                   ))}
-                  {commentsLoading ? <p className="text-sm text-platforma-muted">{t("common.loading")}</p> : null}
+                  {commentsLoading ? <LoadingState /> : null}
                   {!commentsLoading && !comments.length ? <p className="text-sm text-platforma-muted">{t("tasks.noComments")}</p> : null}
                 </div>
                 <form
@@ -461,7 +461,7 @@ export function TaskDrawer({
                   {activityEvents.slice(0, 16).map((event) => (
                     <TaskActivityRow key={event.id} event={event} />
                   ))}
-                  {activityLoading ? <p className="text-sm text-platforma-muted">{t("common.loading")}</p> : null}
+                  {activityLoading ? <LoadingState /> : null}
                   {!activityLoading && !activityEvents.length ? <p className="text-sm text-platforma-muted">{t("tasks.noHistory")}</p> : null}
                 </div>
               </div>

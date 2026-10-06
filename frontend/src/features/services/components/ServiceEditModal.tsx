@@ -19,6 +19,7 @@ export function ServiceEditModal({
   canManage,
   isSaving,
   errorMessage,
+  error,
   onSubmit,
   onClose,
   onDirtyChange,
@@ -29,6 +30,7 @@ export function ServiceEditModal({
   canManage: boolean;
   isSaving: boolean;
   errorMessage?: string;
+  error?: unknown;
   onSubmit: (payload: Partial<Service>) => Promise<unknown>;
   onClose: () => void;
   onDirtyChange: (isDirty: boolean) => void;
@@ -73,7 +75,7 @@ export function ServiceEditModal({
             <ServiceStatusBadge service={service} size="sm" />
             <p className="text-sm text-platforma-subtle">{t("services.inspectorSubtitle")}</p>
           </div>
-          {errorMessage ? <ErrorState message={errorMessage} /> : null}
+          {error || errorMessage ? <ErrorState error={error} message={errorMessage} /> : null}
           {!canEdit ? (
             <StatusNotice
               tone="warning"

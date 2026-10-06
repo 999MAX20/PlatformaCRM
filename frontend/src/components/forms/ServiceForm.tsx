@@ -77,7 +77,12 @@ export function ServiceForm({
       id={formId}
       className="grid gap-4"
       onSubmit={form.handleSubmit(async (values) => {
-        await onSubmit({ ...values, business: businessId, price_from: values.price_from || null });
+        try {
+          await onSubmit({ ...values, business: businessId, price_from: values.price_from || null });
+        } catch {
+          // The owning mutation renders feedback; retain the edited values.
+          return;
+        }
         form.reset(values);
       })}
     >

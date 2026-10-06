@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 
 import type { Bot } from "../../types";
-import { canonicalSection } from "./aiAgentsUtils";
+import { canonicalSection, sectionsForAgent } from "./aiAgentsUtils";
 
 function isAiAgentsRoute(pathname: string) {
   return (
@@ -25,10 +25,12 @@ export function useCanonicalAIAgentRoute({
   const location = useLocation();
   const navigate = useNavigate();
   const selectedBotId = params.id ? Number(params.id) : null;
-  const activeSection = canonicalSection(params.section);
-  const hasInvalidSection = Boolean(params.section && params.section !== activeSection);
   const matchedBot = selectedBotId ? bots.find((bot) => bot.id === selectedBotId) || null : null;
   const selectedBot = matchedBot || bots[0] || null;
+  const validSections = sectionsForAgent(selectedBot?.scenario);
+  const activeSection = validSections.find(section => section.id === params.section)?.id
+    ?? validSections.find(section => section.id === canonicalSection(params.section))?.id ?? "profile";
+  const hasInvalidSection = Boolean(params.section && params.section !== activeSection);
   const needsCanonicalRoute = Boolean(
     !isPageLoading
     && hasBusiness

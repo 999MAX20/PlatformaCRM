@@ -73,8 +73,8 @@ export function BotDetailPage() {
     onSuccess: (data) => setSuggestedReply(data),
   });
 
-  if (bot.isLoading || botChannels.isLoading || botConversations.isLoading || botMessages.isLoading) return <LoadingState />;
-  if (bot.error) return <ErrorState message={getApiErrorMessage(bot.error)} />;
+  if (bot.isLoading || botChannels.isLoading || botConversations.isLoading || botMessages.isLoading) return <LoadingState scope="page" />;
+  if (bot.error) return <ErrorState error={bot.error} message={getApiErrorMessage(bot.error)} />;
   if (!bot.data) return <ErrorState message={t("botDetail.notFound")} />;
 
   const channels = (botChannels.data || []).filter((channel) => channel.bot === bot.data.id);
@@ -119,11 +119,11 @@ export function BotDetailPage() {
           </>
         }
       />
-      {addWebsiteChannel.error ? <div className="mb-4"><ErrorState message={getApiErrorMessage(addWebsiteChannel.error)} /></div> : null}
-      {addWhatsAppChannel.error ? <div className="mb-4"><ErrorState message={getApiErrorMessage(addWhatsAppChannel.error)} /></div> : null}
-      {previewMutation.error ? <div className="mb-4"><ErrorState message={getApiErrorMessage(previewMutation.error)} /></div> : null}
-      {followUpMutation.error ? <div className="mb-4"><ErrorState message={getApiErrorMessage(followUpMutation.error)} /></div> : null}
-      {suggestReplyMutation.error ? <div className="mb-4"><ErrorState message={getApiErrorMessage(suggestReplyMutation.error)} /></div> : null}
+      {addWebsiteChannel.error ? <div className="mb-4"><ErrorState error={addWebsiteChannel.error} message={getApiErrorMessage(addWebsiteChannel.error)} /></div> : null}
+      {addWhatsAppChannel.error ? <div className="mb-4"><ErrorState error={addWhatsAppChannel.error} message={getApiErrorMessage(addWhatsAppChannel.error)} /></div> : null}
+      {previewMutation.error ? <div className="mb-4"><ErrorState error={previewMutation.error} message={getApiErrorMessage(previewMutation.error)} /></div> : null}
+      {followUpMutation.error ? <div className="mb-4"><ErrorState error={followUpMutation.error} message={getApiErrorMessage(followUpMutation.error)} /></div> : null}
+      {suggestReplyMutation.error ? <div className="mb-4"><ErrorState error={suggestReplyMutation.error} message={getApiErrorMessage(suggestReplyMutation.error)} /></div> : null}
 
       <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
         <Card>

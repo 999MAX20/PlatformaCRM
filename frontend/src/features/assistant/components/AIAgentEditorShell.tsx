@@ -8,7 +8,7 @@ import { Tabs } from "../../../components/ui/Tabs";
 import { useI18n } from "../../../lib/i18n";
 import type { Bot as BotType } from "../../../types";
 import type { AgentSection } from "../aiAgentsTypes";
-import { agentStatusLabel, sections } from "../aiAgentsUtils";
+import { agentStatusLabel, sectionsForAgent } from "../aiAgentsUtils";
 
 type SaveState = "idle" | "saved";
 
@@ -35,6 +35,7 @@ export function AIAgentEditorShell({
   onSave,
   showFooter,
   children,
+  afterFooter,
 }: {
   bot: BotType;
   activeSection: AgentSection;
@@ -51,11 +52,13 @@ export function AIAgentEditorShell({
   onSave: () => void;
   showFooter: boolean;
   children: ReactNode;
+  afterFooter?: ReactNode;
 }) {
   const { t } = useI18n();
   const headerRef = useRef<HTMLElement>(null);
   const runtimeBlocked = bot.status === "active" && Boolean(bot.readiness && !bot.readiness.is_ready);
   const statusLabel = agentStatusLabel(bot, t);
+  const sections = sectionsForAgent(bot.scenario);
   const nextSection = sections[sections.findIndex((section) => section.id === activeSection) + 1];
   useLayoutEffect(() => {
     const list = headerRef.current?.querySelector<HTMLElement>('[role="tablist"]');
@@ -77,14 +80,15 @@ export function AIAgentEditorShell({
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <div className="flex min-w-0 flex-1 basis-full items-center gap-3 sm:basis-auto">
             <h2 className="min-w-0 truncate text-lg font-semibold text-platforma-ink" title={bot.name}>{bot.name}</h2>
+            <Badge size="sm" variant="neutral">{t(`aiScenario.${bot.scenario || "inbox"}`)}</Badge>
             <Badge size="sm" variant={statusVariant(bot.status, runtimeBlocked)}>{statusLabel}</Badge>
           </div>
 
           <div className="flex shrink-0 flex-wrap items-center gap-2">
-            <Button type="button" size="sm" className="min-h-11 sm:min-h-9" variant="secondary" onClick={onOpenMessages}>
+            {bot.scenario !== "crm" && <Button type="button" size="sm" className="min-h-11 sm:min-h-9" variant="secondary" onClick={onOpenMessages}>
               <MessageSquareText aria-hidden="true" size={16} />
               {t("aiAgents.openMessages")}
-            </Button>
+            </Button>}
             <div className="flex min-h-11 items-center gap-2 sm:min-h-9">
               <Switch
                 checked={bot.status === "active"}
@@ -144,6 +148,7 @@ export function AIAgentEditorShell({
           </div>
         </footer>
       ) : null}
+      {afterFooter}
     </section>
   );
 }
