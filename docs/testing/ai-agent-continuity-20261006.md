@@ -228,3 +228,24 @@ worker was found and one existing pending daily_summary is deliberately untouche
 No working data was seeded/reset; only the separately approved additive migration
 was applied. Final backend refresh after the qualification correction is recorded
 with the publication receipt. No CD or external channel messages.
+
+## Publication receipt
+
+- Canonical root `C:/Users/user/Desktop/PlatformaCRM`, branch
+  `codex/ui-testing-toolkit`, same registered generation3 owner. Reviewed71
+  task-owned paths,3566 insertions/141 deletions; no unrelated work included.
+- Application commit `c750d16180fdb803f61261a9fb40c9ad838c8b30` passed
+  `.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+  ada5874971fbfb5a5992bf43e1ba4043dd802c0a`. This includes the actual committed
+  range, source checks, migration drift/system checks and final diff hygiene.
+- Normal fast-forward `HEAD:main` push succeeded. Independent `git ls-remote`
+  returned exactly the intended SHA. Working tree was clean after publication.
+- [Application CI37511802600](https://github.com/999MAX20/PlatformaCRM/actions/runs/37511802600)
+  was queued at receipt time, not yet PASS. The final documentation receipt also
+  triggers CI; its exact SHA and final CI readback are reported in the task's
+  completion response and `output/ai-agent-continuity-20261006/final-ci-receipt.json`.
+  No full delivery claim is made while required CI remains pending.
+- Final owned backend parent17796 runs the canonical checkout with local inline
+  AI; HTTP health200. Existing pending daily_summary remains untouched. Frontend
+  source is canonical Vite5173. Working migration/data preservation evidence above
+  is unchanged. Only CI is configured for this push; no CD/deployment was started.
