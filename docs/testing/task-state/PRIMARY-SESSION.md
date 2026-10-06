@@ -1,23 +1,28 @@
 # PRIMARY-SESSION — PlatformaCRM
 
-## PUBLICATION-20261006 — active
+## PUBLICATION-20261006 — locally verified, publishing
 
-- Owner explicitly requests commit/push of all accumulated uncommitted changes,
-  then actual CI before new AI implementation. Owner corrected CD request: no CD.
-  Also requests design proposals for memory in both scenarios, model controls,
-  role/tone explanation and reliable end-to-end orchestration; implementation waits.
-- Canonical root, generation3 owner, branch codex/ui-testing-toolkit, starting
-  HEAD9ff366207e73472cda71ca3b9113ca4f9f305af9; remote main matches. Prior WIP is now
-  explicitly included in publication scope. Starting hash inventory and diff:
-  output/publication-20261006. No other writer, no branch switch or working DB writes.
-- Risk/plan: inspect entire candidate and new files for unintended content; reconcile
-  retained targeted evidence; prepare exact explicit paths. Current read-only npm
-  audit reproduces dependency blocker, including braces with no patched release.
-  Major Tailwind migration is not silently bundled into this publication.
-- Completion checks: diff/lock/static hygiene, applicable unchanged evidence,
-  real CI on any authorized published commit; keep known six AI failures visible.
-  No real provider calls or release/deployment claimed. Publication policy conflict
-  must be resolved if dependency acceptance cannot pass with bounded maintenance.
+- Owner explicitly requests commit/push of all accumulated changes and actual CI;
+  corrected CD request: no CD. Chose dependency remediation/Tailwind4 migration
+  before publication. New AI product implementation waits; proposals requested.
+- Canonical root, generation3 owner, branch codex/ui-testing-toolkit; starting
+  HEAD/remote main9ff366207e73472cda71ca3b9113ca4f9f305af9. Initial193 files reviewed,
+  authorized and committed as5febd35. Migration is a separate change, same checkout.
+- [Delivery report](../dependency-publication-20261006.md). Tailwind4.3.3/PostCSS8.5.29,
+  patched DOMPurify/source-map-js remove old audit chain without exceptions.
+  npm audit0 vulnerabilities; Python audit no known vulnerabilities. Build/types/
+  i18n/widget/bundle and24 policy tests PASS.12 baseline/after screenshots RU/KK/EN,
+  desktop/mobile: identical geometry/type, at most2 changed pixels; focus PASS.
+- 24 unique browser checks PASS,4 viewport-specific skips. Combined fixture failures
+  reproduced quota/single-CRM boundaries and passed in fresh databases. Startup
+  timeouts diagnosed before test body; final local test used300s startup allowance,
+  unchanged assertions/timeouts. All failed attempts retained in output/publication-20261006.
+- Backend code unchanged from final AI evaluation; affected/dependent PASS retained.
+  No paid calls, working DB writes/migrations or external messages. Own frontend
+  refreshed PID15372; backend13804/15420 retained. No other process stopped.
+- Next: committed-range static check, normal HEAD:main push/readback, actual GitHub
+  CI. Known six real-model failures and quality limits remain open; green CI is not
+  full AI acceptance. No release/deployment or subsequent product phase started.
 
 ## AI-AGENTS-BEHAVIOR-20261006 — evaluation complete locally, product acceptance failed
 

@@ -190,7 +190,7 @@ function TaskTableSection({
           <p className="mt-1 text-sm font-semibold text-platforma-muted">{description}</p>
         </div>
         <div className="flex items-center rounded-control bg-surface-muted p-1">
-          <span className="inline-flex h-8 items-center gap-2 rounded-control bg-platforma-card px-3 text-sm font-bold text-brand-700 shadow-sm">
+          <span className="inline-flex h-8 items-center gap-2 rounded-control bg-platforma-card px-3 text-sm font-bold text-brand-700 shadow-xs">
             <span className="rounded-control bg-brand-50 px-1.5 py-0.5 text-xs text-brand-700 ring-1 ring-brand-100">{totalCount ?? tasks.length}</span>
             {t("tasks.all")}
           </span>

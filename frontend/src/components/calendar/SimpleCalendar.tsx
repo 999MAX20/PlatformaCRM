@@ -36,7 +36,7 @@ export function SimpleCalendar({
                 const service = services.find((item) => item.id === appointment.service);
                 const resource = resources.find((item) => item.id === appointment.resource);
                 return (
-                  <div key={appointment.id} className="rounded-control border border-brand-100 border-l-4 border-l-brand-500 bg-brand-50 px-3 py-2 shadow-sm">
+                  <div key={appointment.id} className="rounded-control border border-brand-100 border-l-4 border-l-brand-500 bg-brand-50 px-3 py-2 shadow-xs">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <p className="font-semibold text-platforma-ink">{client?.full_name || t("appointment.client")} · {service?.name || t("appointment.service")}</p>
                       <StatusBadge status={appointment.status} />

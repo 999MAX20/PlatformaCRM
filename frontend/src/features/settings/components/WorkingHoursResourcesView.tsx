@@ -122,7 +122,7 @@ export function WorkingHoursResourcesView({
                     tabIndex={0}
                     aria-label={t("workingHours.openResourceSchedule").replace("{name}", item.resource.name)}
                     data-focus-return-id={`working-hours-resource-${item.resource.id}`}
-                    className="platforma-focus-ring cursor-pointer outline-none transition hover:bg-surface-hover"
+                    className="platforma-focus-ring cursor-pointer outline-hidden transition hover:bg-surface-hover"
                     onClick={() => onOpen(item.resource)}
                     onKeyDown={(event) => {
                       if (event.key !== "Enter" && event.key !== " ") return;

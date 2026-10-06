@@ -388,7 +388,7 @@ export function PricingPage() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
                   <input
-                    className="mt-1 h-5 w-5 rounded border-platforma-control"
+                    className="mt-1 h-5 w-5 rounded-sm border-platforma-control"
                     type="checkbox"
                     checked={selectedCatalogIds.includes(String(item.id))}
                     disabled={Boolean(item.rule_id)}
@@ -498,7 +498,7 @@ export function PricingPage() {
             </Button>
           </div>
           <label className="mt-3 flex items-center gap-2 text-sm font-bold text-platforma-subtle">
-            <input className="h-4 w-4 rounded border-platforma-control" type="checkbox" checked={bulkRuleDisableAutopilot} onChange={(event) => setBulkRuleDisableAutopilot(event.target.checked)} />
+            <input className="h-4 w-4 rounded-sm border-platforma-control" type="checkbox" checked={bulkRuleDisableAutopilot} onChange={(event) => setBulkRuleDisableAutopilot(event.target.checked)} />
             {t("pricing.disableAutopilotSelected")}
           </label>
         </div>
@@ -512,7 +512,7 @@ export function PricingPage() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
                     <input
-                      className="mt-1 h-5 w-5 rounded border-platforma-control"
+                      className="mt-1 h-5 w-5 rounded-sm border-platforma-control"
                       type="checkbox"
                       checked={selectedRuleIds.includes(String(rule.id))}
                       onChange={(event) => {

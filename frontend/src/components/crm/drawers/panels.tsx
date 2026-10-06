@@ -254,7 +254,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
               className="relative flex min-w-0 items-center justify-between gap-3 rounded-card border border-platforma-border bg-surface-muted px-3 py-2.5 transition hover:border-brand-200 hover:bg-surface-card"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-surface-card text-brand-600 shadow-sm">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-surface-card text-brand-600 shadow-xs">
                   {attachment.content_type.startsWith("image/") ? <Image size={18} /> : <FileText size={18} />}
                 </span>
                 <div className="min-w-0">
@@ -267,7 +267,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
               </div>
               <button
                 type="button"
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-control border border-platforma-border bg-surface-card text-platforma-muted shadow-sm transition hover:bg-surface-hover hover:text-platforma-ink"
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-control border border-platforma-border bg-surface-card text-platforma-muted shadow-xs transition hover:bg-surface-hover hover:text-platforma-ink"
                 onClick={() => setOpenAttachmentMenuId((current) => (current === attachment.id ? null : attachment.id))}
                 aria-label={t("crmCard.fileActions")}
               >
@@ -370,7 +370,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
               <img
                 src={previewUrl}
                 alt={previewAttachment.original_name}
-                className="max-w-none rounded-card bg-surface-card object-contain shadow-sm"
+                className="max-w-none rounded-card bg-surface-card object-contain shadow-xs"
                 style={{ width: `${previewScale * 100}%` }}
               />
             </div>

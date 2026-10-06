@@ -195,7 +195,7 @@ export function TaskDrawer({
     <>
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-platforma-ink/[0.35] backdrop-blur-sm transition-opacity duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "fixed inset-0 z-50 bg-platforma-ink/[0.35] backdrop-blur-xs transition-opacity duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         )}
         onMouseDown={onClose}
@@ -231,7 +231,7 @@ export function TaskDrawer({
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7">
-            <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+            <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("tasks.taskSummary")}</p>
@@ -254,7 +254,7 @@ export function TaskDrawer({
               </div>
             </section>
 
-            <div className="sticky top-0 z-10 -mx-5 mt-4 border-y border-platforma-border bg-surface-muted/[0.92] px-5 py-2 backdrop-blur sm:-mx-7 sm:px-7">
+            <div className="sticky top-0 z-10 -mx-5 mt-4 border-y border-platforma-border bg-surface-muted/[0.92] px-5 py-2 backdrop-blur-sm sm:-mx-7 sm:px-7">
               <div className="grid grid-cols-3 gap-1 rounded-control bg-surface-muted p-1">
                 <TaskDrawerTabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")}>
                   {t("tasks.drawerOverviewTab")}
@@ -271,7 +271,7 @@ export function TaskDrawer({
             {activeTab === "overview" ? (
               <div className="mt-4 space-y-4">
                 {isEditingDetails ? (
-                  <div className="rounded-card border border-brand-100 bg-surface-card p-4 shadow-sm">
+                  <div className="rounded-card border border-brand-100 bg-surface-card p-4 shadow-xs">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("tasks.editTitle")}</p>
                       <div className="flex items-center gap-2">
@@ -326,13 +326,13 @@ export function TaskDrawer({
                   </div>
                 ) : null}
 
-                <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+                <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
                   <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("crmCard.overview")}</p>
                   {task.description ? <p className="text-sm leading-6 text-platforma-text">{task.description}</p> : <p className="text-sm leading-6 text-platforma-muted">{t("crmCard.noNotesText")}</p>}
                 </div>
 
                 <div className="grid gap-4 lg:grid-cols-2">
-                  <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+                  <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
                     <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("tasks.assignee")}</p>
                     <div className="flex flex-col gap-3">
                       <Select
@@ -361,7 +361,7 @@ export function TaskDrawer({
                     </div>
                   </div>
 
-                  <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+                  <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
                     <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">
                       <CalendarClock size={14} /> {t("tasks.dates")}
                     </p>
@@ -376,7 +376,7 @@ export function TaskDrawer({
                   </div>
                 </div>
 
-                <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+                <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">
                       <Link2 size={14} /> {t("tasks.links")}
@@ -403,7 +403,7 @@ export function TaskDrawer({
             ) : null}
 
             {activeTab === "comments" ? (
-              <div className="mt-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+              <div className="mt-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><MessageSquare size={14} /> {t("tasks.comments")}</p>
                   <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-platforma-muted">{comments.length}</span>
@@ -450,7 +450,7 @@ export function TaskDrawer({
             ) : null}
 
             {activeTab === "history" ? (
-              <div className="mt-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+              <div className="mt-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">
                     <CalendarClock size={14} /> {t("tasks.history")}
@@ -480,7 +480,7 @@ function TaskDrawerTabButton({ active, onClick, children }: { active: boolean; o
       type="button"
       className={cn(
         "min-h-10 rounded-lg px-3 text-sm font-semibold transition",
-        active ? "bg-surface-card text-brand-700 shadow-sm" : "text-platforma-muted hover:bg-surface-card hover:text-platforma-ink",
+        active ? "bg-surface-card text-brand-700 shadow-xs" : "text-platforma-muted hover:bg-surface-card hover:text-platforma-ink",
       )}
       onClick={onClick}
     >

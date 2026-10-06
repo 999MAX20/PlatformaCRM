@@ -76,7 +76,7 @@ export function OnboardingProgress({
     );
   }
   return (
-    <div className={cn("rounded-2xl border border-platforma-border bg-white p-4", compact ? "mt-5" : "shadow-sm")}>
+    <div className={cn("rounded-2xl border border-platforma-border bg-white p-4", compact ? "mt-5" : "shadow-xs")}>
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.16em] text-ai-700">{t("aiAgents.firstLaunch")}</p>

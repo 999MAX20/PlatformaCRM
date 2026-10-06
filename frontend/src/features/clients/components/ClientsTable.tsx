@@ -155,7 +155,7 @@ export function ClientsTable({
                   checked={allPageRowsChecked}
                   readOnly
                   onClick={toggleAllPageRows}
-                  className="h-4 w-4 rounded border-platforma-border text-brand-600 focus:ring-brand-500"
+                  className="h-4 w-4 rounded-sm border-platforma-border text-brand-600 focus:ring-brand-500"
                   aria-label={t("clients.selectAllPage")}
                 />
               </th>

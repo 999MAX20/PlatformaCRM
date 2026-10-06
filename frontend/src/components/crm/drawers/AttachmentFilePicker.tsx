@@ -70,7 +70,7 @@ export function AttachmentFilePicker({
             : "border-platforma-border bg-surface-muted text-platforma-muted hover:border-brand-200 hover:bg-surface-card"
         }`}
       >
-        <span className="grid h-10 w-10 place-items-center rounded-card bg-surface-card text-brand-600 shadow-sm">
+        <span className="grid h-10 w-10 place-items-center rounded-card bg-surface-card text-brand-600 shadow-xs">
           <Upload size={18} />
         </span>
         <span className="mt-3 text-sm font-semibold text-platforma-ink">

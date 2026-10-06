@@ -196,7 +196,7 @@ export function SignupPage() {
                   <input id={`accept-${document.id}`} type="checkbox" value={document.id} {...register("accepted_documents")} required className="platforma-focus-ring mt-0.5 h-4 w-4 shrink-0 accent-brand-600" aria-describedby={errors.accepted_documents ? "documents-error" : undefined} />
                   <label htmlFor={`accept-${document.id}`}>
                     {t(document.id === "privacy" ? "documents.read" : "documents.accept")} {" "}
-                    <Link to={documentPath(document.id)} target="_blank" rel="noopener noreferrer" className="platforma-focus-ring rounded underline underline-offset-4">{t(document.titleKey)}</Link>
+                    <Link to={documentPath(document.id)} target="_blank" rel="noopener noreferrer" className="platforma-focus-ring rounded-sm underline underline-offset-4">{t(document.titleKey)}</Link>
                   </label>
                 </div>)}
                 {errors.accepted_documents ? <p id="documents-error" role="alert" className="text-sm text-platforma-danger">{errors.accepted_documents.message}</p> : null}

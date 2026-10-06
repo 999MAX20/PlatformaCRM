@@ -65,7 +65,7 @@ export function WorkingHoursForm({
         <Input label={t("workingHours.end")} type="time" {...form.register("end_time")} />
       </div>
       <label className="flex items-center gap-2 text-sm font-semibold text-platforma-subtle">
-        <input type="checkbox" className="h-4 w-4 rounded border-platforma-border accent-brand-500" {...form.register("is_day_off")} />
+        <input type="checkbox" className="h-4 w-4 rounded-sm border-platforma-border accent-brand-500" {...form.register("is_day_off")} />
         {t("workingHours.dayOff")}
       </label>
       <Button type="submit" isLoading={form.formState.isSubmitting}>{t("workingHours.saveSchedule")}</Button>
@@ -255,10 +255,10 @@ export function WeeklyWorkingHoursForm({
             <div
               key={weekday.value}
               className={layout === "week-grid"
-                ? "grid min-w-0 gap-2 rounded-card border border-platforma-border bg-surface-card p-3 shadow-sm"
+                ? "grid min-w-0 gap-2 rounded-card border border-platforma-border bg-surface-card p-3 shadow-xs"
                 : compact
-                ? "grid grid-cols-2 gap-3 rounded-card border border-platforma-border bg-surface-card p-3 shadow-sm"
-                : "grid gap-3 rounded-card border border-platforma-border bg-surface-card p-3 shadow-sm sm:grid-cols-[120px_1fr_1fr_140px] sm:items-center"}
+                ? "grid grid-cols-2 gap-3 rounded-card border border-platforma-border bg-surface-card p-3 shadow-xs"
+                : "grid gap-3 rounded-card border border-platforma-border bg-surface-card p-3 shadow-xs sm:grid-cols-[120px_1fr_1fr_140px] sm:items-center"}
             >
               <div className={layout === "week-grid"
                 ? "flex items-center justify-between gap-2"
@@ -291,7 +291,7 @@ export function WeeklyWorkingHoursForm({
               >
                 <input
                   type="checkbox"
-                  className="h-5 w-5 rounded border-platforma-border accent-brand-500"
+                  className="h-5 w-5 rounded-sm border-platforma-border accent-brand-500"
                   checked={day.is_day_off}
                   disabled={disabled}
                   onChange={(event) => updateDay(weekday.value, { is_day_off: event.target.checked })}

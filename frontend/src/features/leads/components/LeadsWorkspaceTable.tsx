@@ -242,7 +242,7 @@ export function LeadsWorkspaceTable({
               />
               <span
                 className={cn(
-                  "grid h-5 w-5 place-items-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500",
+                  "grid h-5 w-5 place-items-center rounded-sm border peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500",
                   allPageRowsSelected
                     ? "border-brand-500 bg-brand-500 text-white"
                     : "border-platforma-control bg-surface-card",

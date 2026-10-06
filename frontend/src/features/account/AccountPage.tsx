@@ -185,7 +185,7 @@ export function AccountPage() {
             return <div key={item.category} className="flex items-center justify-between gap-3 py-2">
               <span className="text-sm" title={t(item.descriptionKey)}>{t(item.titleKey)}</span>
               <button type="button" role="switch" aria-checked={enabled} aria-label={t(item.titleKey)} disabled={notificationPreferenceMutation.isPending || notificationPreferences.isFetching} onClick={() => notificationPreferenceMutation.mutate({ category: item.category, enabled: !enabled })} className="platforma-focus-ring group flex w-12 shrink-0 items-center justify-center rounded-control disabled:opacity-100">
-                <span aria-hidden="true" className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors group-disabled:bg-disabled-surface group-disabled:ring-1 group-disabled:ring-disabled-border ${enabled ? "bg-brand-500" : "bg-platforma-control"}`}><span className={`h-4 w-4 rounded-full bg-white shadow-sm transition-transform group-disabled:bg-disabled-content ${enabled ? "translate-x-4" : "translate-x-0"}`} /></span>
+                <span aria-hidden="true" className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors group-disabled:bg-disabled-surface group-disabled:ring-1 group-disabled:ring-disabled-border ${enabled ? "bg-brand-500" : "bg-platforma-control"}`}><span className={`h-4 w-4 rounded-full bg-white shadow-xs transition-transform group-disabled:bg-disabled-content ${enabled ? "translate-x-4" : "translate-x-0"}`} /></span>
               </button>
             </div>;
           })}

@@ -93,7 +93,7 @@ export function ServiceForm({
         </div>
       ) : null}
       {!initial ? (
-        <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+        <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
           <p className="text-sm font-semibold text-platforma-ink">{t("services.templatesTitle")}</p>
           <p className="mt-1 text-sm leading-6 text-platforma-muted">{t("services.templatesText")}</p>
           <div className="mt-3 flex flex-wrap gap-2">

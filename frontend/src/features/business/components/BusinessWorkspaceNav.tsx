@@ -25,7 +25,7 @@ export function BusinessWorkspaceNav() {
             className={({ isActive }) => cn(
               "platforma-focus-ring inline-flex min-h-10 shrink-0 items-center justify-center rounded-control px-4 text-sm font-semibold transition sm:flex-1",
               isActive
-                ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
+                ? "bg-brand-50 text-brand-700 shadow-xs ring-1 ring-brand-100"
                 : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
             )}
           >

@@ -61,7 +61,7 @@ function WorkloadAssigneeCard({
     <button
       type="button"
       className={`min-h-[168px] rounded-lg border p-4 text-left transition ${
-        isSelected ? "border-brand-100 bg-brand-50 shadow-sm" : "border-platforma-border bg-surface-muted hover:border-brand-200 hover:bg-platforma-card"
+        isSelected ? "border-brand-100 bg-brand-50 shadow-xs" : "border-platforma-border bg-surface-muted hover:border-brand-200 hover:bg-platforma-card"
       }`}
       onClick={() => onSelectAssignee(isSelected ? "" : assigneeValue)}
     >

@@ -64,7 +64,7 @@ export function CalendarToolbar({
   );
 
   return (
-    <section className="mb-4 rounded-card border border-platforma-border bg-platforma-card p-3 shadow-sm">
+    <section className="mb-4 rounded-card border border-platforma-border bg-platforma-card p-3 shadow-xs">
       <div className="flex flex-col gap-3 2xl:flex-row 2xl:items-center 2xl:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="secondary" size="icon" className="h-10 w-10" onClick={() => onShiftDate(-1)} aria-label={t("calendar.previousDay")}>
@@ -101,7 +101,7 @@ export function CalendarToolbar({
                 data-testid={`calendar-view-${item.value}`}
                 className={cn(
                   "rounded-control px-3 py-2 text-xs font-bold transition sm:text-sm",
-                  viewMode === item.value ? "bg-platforma-card text-brand-700 shadow-sm" : "text-platforma-muted hover:bg-surface-hover hover:text-platforma-text",
+                  viewMode === item.value ? "bg-platforma-card text-brand-700 shadow-xs" : "text-platforma-muted hover:bg-surface-hover hover:text-platforma-text",
                 )}
                 onClick={() => onViewModeChange(item.value as CalendarViewMode)}
               >

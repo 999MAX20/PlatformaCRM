@@ -8,7 +8,7 @@ const surfaceVariants = {
   outlined: "rounded-card border border-platforma-border bg-surface-card",
   muted: "rounded-card border border-platforma-border bg-surface-muted",
   ai: "platforma-ai-surface rounded-card",
-  danger: "rounded-card border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] shadow-sm",
+  danger: "rounded-card border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] shadow-xs",
 };
 
 const surfacePaddings = {

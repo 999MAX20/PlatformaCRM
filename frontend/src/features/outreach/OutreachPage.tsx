@@ -425,7 +425,7 @@ export function OutreachPage() {
                 <button
                   key={campaign.id}
                   type="button"
-                  className={`w-full rounded-card border p-4 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${active ? "border-brand-200 bg-brand-50 shadow-sm" : "border-platforma-border bg-surface-card hover:border-brand-100 hover:bg-surface-hover"}`}
+                  className={`w-full rounded-card border p-4 text-left transition focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 ${active ? "border-brand-200 bg-brand-50 shadow-xs" : "border-platforma-border bg-surface-card hover:border-brand-100 hover:bg-surface-hover"}`}
                   onClick={() => setSelectedId(campaign.id)}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -810,7 +810,7 @@ function ManualAudiencePicker({
               type="button"
               disabled={disabled}
               onClick={() => onToggle(Number(client.id))}
-              className={`rounded-card border px-3 py-2 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${selected ? "border-brand-200 bg-brand-50 text-brand-900" : "border-platforma-border bg-surface-muted text-platforma-subtle"} ${disabled ? "cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content" : "hover:border-brand-100 hover:bg-surface-card"}`}
+              className={`rounded-card border px-3 py-2 text-left transition focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 ${selected ? "border-brand-200 bg-brand-50 text-brand-900" : "border-platforma-border bg-surface-muted text-platforma-subtle"} ${disabled ? "cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content" : "hover:border-brand-100 hover:bg-surface-card"}`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">

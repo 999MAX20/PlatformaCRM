@@ -174,7 +174,7 @@ export function AnalyticsPage() {
       <section className="mb-6 rounded-card border border-ai-100 bg-ai-50 p-5 shadow-card">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-start gap-4">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-control bg-surface-card text-ai-700 shadow-sm">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-control bg-surface-card text-ai-700 shadow-xs">
               <TrendingUp size={22} />
             </div>
             <div>

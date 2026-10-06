@@ -66,13 +66,13 @@ export function PlatformMerchantsPage() {
               {t("platform.merchants.description")}
             </p>
           </div>
-          <div className="flex items-center gap-2 rounded-2xl border border-platforma-border/80 bg-white/85 px-4 py-3 shadow-sm">
+          <div className="flex items-center gap-2 rounded-2xl border border-platforma-border/80 bg-white/85 px-4 py-3 shadow-xs">
             <Search size={18} className="text-platforma-faint" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t("platform.merchants.search")}
-              className="w-full min-w-[220px] bg-transparent text-sm font-semibold text-midnight outline-none placeholder:text-platforma-faint"
+              className="w-full min-w-[220px] bg-transparent text-sm font-semibold text-midnight outline-hidden placeholder:text-platforma-faint"
             />
           </div>
         </div>

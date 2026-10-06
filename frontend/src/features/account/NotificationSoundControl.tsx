@@ -36,7 +36,7 @@ export function NotificationSoundControl() {
                 setNotificationSoundPreference(user.id, !enabled);
               } catch { setError(true); }
             }}>
-            <span aria-hidden="true" className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors ${enabled ? "bg-brand-500" : "bg-platforma-control"}`}><span className={`h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${enabled ? "translate-x-4" : "translate-x-0"}`} /></span>
+            <span aria-hidden="true" className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors ${enabled ? "bg-brand-500" : "bg-platforma-control"}`}><span className={`h-4 w-4 rounded-full bg-white shadow-xs transition-transform ${enabled ? "translate-x-4" : "translate-x-0"}`} /></span>
           </button>
         </div>
       </div>

@@ -247,7 +247,7 @@ export function ClientInspector({
               className={
                 activeTab === tab.id
                   ? "cursor-pointer border-b-2 border-platforma-info bg-[var(--platforma-info-soft)] px-1 pb-1.5 text-platforma-info transition"
-                  : "cursor-pointer border-b-2 border-transparent px-1 pb-1.5 transition hover:bg-surface-hover hover:text-platforma-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1"
+                  : "cursor-pointer border-b-2 border-transparent px-1 pb-1.5 transition hover:bg-surface-hover hover:text-platforma-text focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1"
                 }
             >
               {tab.label}

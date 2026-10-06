@@ -339,7 +339,7 @@ export function LeadDetailPanel({
           <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("leads.internalNotes")}</p>
           <div className="relative">
             <textarea
-              className="mt-3 min-h-20 w-full resize-none rounded-xl border border-platforma-border bg-surface-muted px-3 py-2 text-sm font-semibold text-platforma-subtle outline-none focus:border-brand-500 focus:bg-white"
+              className="mt-3 min-h-20 w-full resize-none rounded-xl border border-platforma-border bg-surface-muted px-3 py-2 text-sm font-semibold text-platforma-subtle outline-hidden focus:border-brand-500 focus:bg-white"
               placeholder={t("leads.notePlaceholder")}
               value={noteDraft}
               onChange={(event) => setNoteDraft(event.target.value)}

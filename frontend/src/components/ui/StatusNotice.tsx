@@ -82,7 +82,7 @@ export function StatusNotice({
       role={resolvedRole}
       aria-live={resolvedLive}
       className={cn(
-        "rounded-card border text-platforma-text shadow-sm",
+        "rounded-card border text-platforma-text shadow-xs",
         compact ? "p-3" : "p-4",
         definition.container,
         className,

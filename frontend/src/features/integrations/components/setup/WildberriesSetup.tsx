@@ -138,7 +138,7 @@ export function WildberriesInlineSetup({
               ["stocks", t("integrations.wildberries.entity.stocks")],
             ].map(([value, label]) => (
               <label key={value} className="flex items-center gap-2 rounded-xl border border-platforma-border px-3 py-2 text-sm font-bold text-platforma-subtle">
-                <input type="checkbox" className="h-4 w-4 rounded border-platforma-control" checked={entities.includes(value)} onChange={() => toggleEntity(value)} />
+                <input type="checkbox" className="h-4 w-4 rounded-sm border-platforma-control" checked={entities.includes(value)} onChange={() => toggleEntity(value)} />
                 {label}
               </label>
             ))}

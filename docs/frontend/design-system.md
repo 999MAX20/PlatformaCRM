@@ -2,6 +2,16 @@
 
 Last updated: 2026-10-05
 
+## Tailwind4 compatibility — 2026-10-06
+
+Tailwind4.3.3 runs through `@tailwindcss/postcss`; the existing TypeScript adapter
+and semantic JSON palette remain authoritative through `@config`. Source scanning
+uses the configured app paths. Renamed shadow/radius/outline utilities preserve
+the previous rendered appearance; explicit line heights preserve text rhythm.
+Button caller utilities override conflicting base size utilities through
+tailwind-merge. No palette, geometry or product-flow redesign accompanies this
+dependency update. [Migration checks and browser limits](../testing/dependency-publication-20261006.md).
+
 ## Neutral feedback surfaces — 2026-10-05
 
 Owner-approved palette version 2 replaces warning.soft and danger.soft with

@@ -105,7 +105,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           role="combobox"
           disabled={disabled}
           className={cn(
-            "platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-sm transition hover:border-brand-500 hover:bg-surface-hover disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content disabled:opacity-100",
+            "platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-xs transition hover:border-brand-500 hover:bg-surface-hover disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content disabled:opacity-100",
             error && "border-platforma-danger hover:border-platforma-danger focus-visible:border-platforma-danger focus-visible:ring-platforma-danger/[0.18]",
             className,
           )}

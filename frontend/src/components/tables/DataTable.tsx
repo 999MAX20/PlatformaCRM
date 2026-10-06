@@ -114,7 +114,7 @@ export function DataTable<T>({
                 data-testid={rowTestId?.(row)}
                 className={cn(
                   "space-y-2.5 px-3 py-2.5 transition-colors",
-                  onRowSelect && "cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
+                  onRowSelect && "cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:ring-inset",
                   selected && "bg-brand-50/80 shadow-[inset_5px_0_0_var(--platforma-brand)]",
                   rowClassName?.(row),
                 )}
@@ -173,7 +173,7 @@ export function DataTable<T>({
                   data-testid={rowTestId?.(row)}
                   className={cn(
                     "transition hover:bg-surface-hover",
-                    onRowSelect && "cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-inset",
+                    onRowSelect && "cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:ring-inset",
                     selected && "bg-brand-50/80 shadow-[inset_5px_0_0_var(--platforma-brand)] hover:bg-brand-50/80",
                     rowClassName?.(row),
                   )}

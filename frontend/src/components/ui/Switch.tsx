@@ -58,7 +58,7 @@ export function Switch({
       onClick={() => onChange(!checked)}
       className={cn(
         "relative inline-flex shrink-0 items-center rounded-full border p-0.5 transition duration-150",
-        "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--platforma-focus-ring)] focus-visible:ring-offset-2",
+        "focus-visible:outline-hidden focus-visible:ring-4 focus-visible:ring-[var(--platforma-focus-ring)] focus-visible:ring-offset-2",
         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:opacity-100",
         checked ? toneClasses[tone] : "border-platforma-control bg-surface-muted hover:bg-surface-hover active:bg-brand-50",
         sizing.track,
@@ -68,7 +68,7 @@ export function Switch({
     >
       <span
         className={cn(
-          "block rounded-full shadow-sm transition-transform duration-150",
+          "block rounded-full shadow-xs transition-transform duration-150",
           disabledState ? "bg-disabled-content" : checked ? "bg-white" : "bg-platforma-control",
           sizing.knob,
           checked ? sizing.translate : "translate-x-0",

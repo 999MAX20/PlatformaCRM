@@ -1,151 +1,304 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss' source(none);
 
-.platforma-loading {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  min-height: 10rem;
-  padding: 1.5rem;
-  text-align: center;
-}
+@config '../tailwind.config.ts';
 
-.platforma-loading--page { min-height: 100dvh; }
-
-/* Fill the real content box, including its existing header/nav padding. */
-[data-workspace-content]:has(> .platforma-loading--page) {
-  display: flex;
-  flex-direction: column;
-}
-[data-workspace-content] > .platforma-loading--page {
-  flex: 1;
-  min-height: 10rem;
+/* Keep the established v3 text rhythm when descendants change only font size. */
+@theme {
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
 }
 
-.platforma-loading__content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.875rem;
-  opacity: 0;
-  animation: platforma-loading-appear 120ms ease-out 200ms forwards;
-}
-.platforma-loading__ring {
-  width: 2rem;
-  height: 2rem;
-  border: 2px solid var(--color-border-default);
-  border-top-color: var(--color-brand-default);
-  border-radius: 50%;
-  animation: platforma-loading-turn 900ms linear infinite;
-}
-@keyframes platforma-loading-turn { to { transform: rotate(360deg); } }
-@keyframes platforma-loading-appear { to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) {
-  .platforma-loading__content { animation: none; opacity: 1; }
-  .platforma-loading__ring { animation: none; }
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: #e5e7eb;
+  }
 }
 
-:root {
-  --platforma-bg: var(--color-surface-canvas);
-  --platforma-page-soft: var(--color-surface-canvas);
-  --platforma-surface: var(--color-surface-default);
-  --platforma-surface-warm: var(--color-surface-subtle);
-  --platforma-surface-muted: var(--color-surface-subtle);
-  --platforma-surface-raised: var(--color-surface-default);
-  --platforma-brand: var(--color-brand-default);
-  --platforma-brand-hover: var(--color-brand-hover);
-  --platforma-brand-strong: var(--color-brand-pressed);
-  --platforma-brand-content: var(--color-brand-content);
-  --platforma-brand-soft: var(--color-brand-soft);
-  --platforma-focus-ring: var(--color-focus-ring);
-  --platforma-text-inverse: var(--color-text-inverse);
-  --platforma-discovery: #4f46e5;
-  --platforma-discovery-soft: #eef2ff;
-  --platforma-discovery-border: #c7d2fe;
-  --platforma-ai: var(--color-ai-content);
-  --platforma-ai-hover: var(--color-ai-hover);
-  --platforma-ai-soft: var(--color-ai-soft);
-  --platforma-ai-border: #ddd2ff;
-  --platforma-ai-end: var(--color-ai-hover);
-  --platforma-success: var(--color-success-content);
-  --platforma-success-soft: var(--color-success-soft);
-  --platforma-warning: var(--color-warning-content);
-  --platforma-warning-soft: var(--color-warning-soft);
-  --platforma-warning-bold: var(--color-warning-soft);
-  --platforma-warning-bold-hover: var(--color-surface-default);
-  --platforma-warning-bold-pressed: var(--color-surface-hover);
-  --platforma-danger: var(--color-danger-content);
-  --platforma-danger-soft: var(--color-danger-soft);
-  --platforma-danger-hover: var(--color-danger-hover);
-  --platforma-danger-pressed: var(--color-danger-pressed);
-  --platforma-info: var(--color-info-content);
-  --platforma-info-soft: var(--color-info-soft);
-  --platforma-neutral: var(--color-text-muted);
-  --platforma-neutral-soft: var(--color-surface-subtle);
-  --platforma-ink: var(--color-text-primary);
-  --platforma-midnight: var(--color-text-primary);
-  --platforma-muted: var(--color-text-secondary);
-  --platforma-muted-soft: var(--color-text-muted);
-  --platforma-border: var(--color-border-default);
-  --platforma-shadow-soft: 0 1px 3px rgba(23, 32, 30, 0.06);
-  --platforma-shadow-elevated: 0 4px 12px rgba(23, 32, 30, 0.05);
-  --platforma-shadow-card: 0 4px 12px rgba(23, 32, 30, 0.05);
-  --platforma-shadow-panel: 0 16px 40px rgba(23, 32, 30, 0.1);
-  --platforma-shadow-premium: 0 16px 40px rgba(23, 32, 30, 0.1);
-  --platforma-radius-card: 12px;
-  --platforma-radius-control: 10px;
-  --platforma-radius-modal: 16px;
-  --platforma-z-popover: 60;
-  --platforma-z-drawer: 70;
-  --platforma-z-modal: 80;
-  --platforma-z-toast: 90;
-  color: var(--platforma-ink);
-  background: var(--platforma-bg);
-  font-family:
-    "Manrope Variable", "Noto Sans Variable", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
-    sans-serif;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+@utility platforma-surface {
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface-raised);
+  box-shadow: var(--platforma-shadow-soft);
+  border-radius: var(--platforma-radius-card);
 }
 
-:root:lang(kk) {
-  font-family: "Noto Sans Variable", "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+@utility platforma-surface-strong {
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface-warm);
+  box-shadow: var(--platforma-shadow-elevated);
+  border-radius: var(--platforma-radius-card);
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background: var(--platforma-bg);
+@utility platforma-card {
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface);
+  box-shadow: var(--platforma-shadow-card);
+  border-radius: var(--platforma-radius-card);
 }
 
-html,
-body,
-#root {
-  width: 100%;
-  overflow-x: hidden;
+@utility platforma-panel {
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface);
+  box-shadow: var(--platforma-shadow-panel);
+  border-radius: var(--platforma-radius-card);
 }
 
-html[data-scroll-lock="true"],
-html[data-scroll-lock="true"] body,
-html[data-scroll-lock="true"] #root {
-  overscroll-behavior: none;
+@utility platforma-overlay-backdrop {
+  background: rgba(23, 32, 30, 0.46);
+  backdrop-filter: blur(10px);
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
+@utility platforma-dialog-surface {
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface);
+  box-shadow: var(--platforma-shadow-premium);
+  border-radius: var(--platforma-radius-modal);
 }
 
-* {
-  box-sizing: border-box;
+@utility platforma-drawer-surface {
+  border-left: 1px solid var(--platforma-border);
+  background: var(--platforma-surface);
+  box-shadow: var(--platforma-shadow-premium);
 }
 
-::selection {
-  background: var(--color-brand-border);
+@utility platforma-popover-surface {
+  z-index: var(--platforma-z-popover);
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface);
+  box-shadow: var(--platforma-shadow-panel);
+  border-radius: var(--platforma-radius-card);
+}
+
+@utility platforma-toast-surface {
+  border: 1px solid var(--platforma-border);
+  background: var(--platforma-surface);
+  box-shadow: var(--platforma-shadow-panel);
+  border-radius: var(--platforma-radius-card);
+}
+
+@utility platforma-control {
+  min-height: 40px;
+  border-radius: var(--platforma-radius-control);
+}
+
+@utility platforma-touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@utility platforma-focus-ring {
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--platforma-focus-ring);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--color-focus-halo);
+  }
+}
+
+@utility platforma-ai-surface {
+  position: relative;
+  border: 1px solid var(--platforma-ai-border);
+  background: var(--platforma-ai-soft);
+  box-shadow: var(--platforma-shadow-card);
+
+  &::before {
+    content: none;
+  }
+}
+
+@layer utilities {
+  .platforma-loading {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 10rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .platforma-loading--page {
+    min-height: 100dvh;
+  }
+
+  /* Fill the real content box, including its existing header/nav padding. */
+  [data-workspace-content]:has(> .platforma-loading--page) {
+    display: flex;
+    flex-direction: column;
+  }
+  [data-workspace-content] > .platforma-loading--page {
+    flex: 1;
+    min-height: 10rem;
+  }
+
+  .platforma-loading__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+    opacity: 0;
+    animation: platforma-loading-appear 120ms ease-out 200ms forwards;
+  }
+  .platforma-loading__ring {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--color-border-default);
+    border-top-color: var(--color-brand-default);
+    border-radius: 50%;
+    animation: platforma-loading-turn 900ms linear infinite;
+  }
+  @keyframes platforma-loading-turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes platforma-loading-appear {
+    to {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .platforma-loading__content {
+      animation: none;
+      opacity: 1;
+    }
+    .platforma-loading__ring {
+      animation: none;
+    }
+  }
+
+  :root {
+    --platforma-bg: var(--color-surface-canvas);
+    --platforma-page-soft: var(--color-surface-canvas);
+    --platforma-surface: var(--color-surface-default);
+    --platforma-surface-warm: var(--color-surface-subtle);
+    --platforma-surface-muted: var(--color-surface-subtle);
+    --platforma-surface-raised: var(--color-surface-default);
+    --platforma-brand: var(--color-brand-default);
+    --platforma-brand-hover: var(--color-brand-hover);
+    --platforma-brand-strong: var(--color-brand-pressed);
+    --platforma-brand-content: var(--color-brand-content);
+    --platforma-brand-soft: var(--color-brand-soft);
+    --platforma-focus-ring: var(--color-focus-ring);
+    --platforma-text-inverse: var(--color-text-inverse);
+    --platforma-discovery: #4f46e5;
+    --platforma-discovery-soft: #eef2ff;
+    --platforma-discovery-border: #c7d2fe;
+    --platforma-ai: var(--color-ai-content);
+    --platforma-ai-hover: var(--color-ai-hover);
+    --platforma-ai-soft: var(--color-ai-soft);
+    --platforma-ai-border: #ddd2ff;
+    --platforma-ai-end: var(--color-ai-hover);
+    --platforma-success: var(--color-success-content);
+    --platforma-success-soft: var(--color-success-soft);
+    --platforma-warning: var(--color-warning-content);
+    --platforma-warning-soft: var(--color-warning-soft);
+    --platforma-warning-bold: var(--color-warning-soft);
+    --platforma-warning-bold-hover: var(--color-surface-default);
+    --platforma-warning-bold-pressed: var(--color-surface-hover);
+    --platforma-danger: var(--color-danger-content);
+    --platforma-danger-soft: var(--color-danger-soft);
+    --platforma-danger-hover: var(--color-danger-hover);
+    --platforma-danger-pressed: var(--color-danger-pressed);
+    --platforma-info: var(--color-info-content);
+    --platforma-info-soft: var(--color-info-soft);
+    --platforma-neutral: var(--color-text-muted);
+    --platforma-neutral-soft: var(--color-surface-subtle);
+    --platforma-ink: var(--color-text-primary);
+    --platforma-midnight: var(--color-text-primary);
+    --platforma-muted: var(--color-text-secondary);
+    --platforma-muted-soft: var(--color-text-muted);
+    --platforma-border: var(--color-border-default);
+    --platforma-shadow-soft: 0 1px 3px rgba(23, 32, 30, 0.06);
+    --platforma-shadow-elevated: 0 4px 12px rgba(23, 32, 30, 0.05);
+    --platforma-shadow-card: 0 4px 12px rgba(23, 32, 30, 0.05);
+    --platforma-shadow-panel: 0 16px 40px rgba(23, 32, 30, 0.1);
+    --platforma-shadow-premium: 0 16px 40px rgba(23, 32, 30, 0.1);
+    --platforma-radius-card: 12px;
+    --platforma-radius-control: 10px;
+    --platforma-radius-modal: 16px;
+    --platforma-z-popover: 60;
+    --platforma-z-drawer: 70;
+    --platforma-z-modal: 80;
+    --platforma-z-toast: 90;
+    color: var(--platforma-ink);
+    background: var(--platforma-bg);
+    font-family:
+      'Manrope Variable',
+      'Noto Sans Variable',
+      Inter,
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'SF Pro Display',
+      'Segoe UI',
+      sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  :root:lang(kk) {
+    font-family:
+      'Noto Sans Variable', 'Manrope Variable', ui-sans-serif, system-ui,
+      sans-serif;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--platforma-bg);
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  html[data-scroll-lock='true'],
+  html[data-scroll-lock='true'] body,
+  html[data-scroll-lock='true'] #root {
+    overscroll-behavior: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: var(--color-brand-border);
+  }
 }
 
 @layer base {
@@ -163,104 +316,6 @@ select {
   input[type="checkbox"]:disabled,
   input[type="radio"]:disabled {
     accent-color: var(--color-disabled-content);
-  }
-}
-
-@layer components {
-  .platforma-surface {
-    border: 1px solid var(--platforma-border);
-    background: var(--platforma-surface-raised);
-    box-shadow: var(--platforma-shadow-soft);
-    border-radius: var(--platforma-radius-card);
-  }
-
-  .platforma-surface-strong {
-    border: 1px solid var(--platforma-border);
-    background: var(--platforma-surface-warm);
-    box-shadow: var(--platforma-shadow-elevated);
-    border-radius: var(--platforma-radius-card);
-  }
-
-  .platforma-card {
-    border: 1px solid var(--platforma-border);
-    background: var(--platforma-surface);
-    box-shadow: var(--platforma-shadow-card);
-    border-radius: var(--platforma-radius-card);
-  }
-
-  .platforma-panel {
-    border: 1px solid var(--platforma-border);
-    background: var(--platforma-surface);
-    box-shadow: var(--platforma-shadow-panel);
-    border-radius: var(--platforma-radius-card);
-  }
-
-  .platforma-overlay-backdrop {
-    background: rgba(23, 32, 30, 0.46);
-    backdrop-filter: blur(10px);
-  }
-
-  .platforma-dialog-surface {
-    border: 1px solid var(--platforma-border);
-    background: var(--platforma-surface);
-    box-shadow: var(--platforma-shadow-premium);
-    border-radius: var(--platforma-radius-modal);
-  }
-
-  .platforma-drawer-surface {
-    border-left: 1px solid var(--platforma-border);
-    background: var(--platforma-surface);
-    box-shadow: var(--platforma-shadow-premium);
-  }
-
-  .platforma-popover-surface {
-    z-index: var(--platforma-z-popover);
-    border: 1px solid var(--platforma-border);
-    background: var(--platforma-surface);
-    box-shadow: var(--platforma-shadow-panel);
-    border-radius: var(--platforma-radius-card);
-  }
-
-  .platforma-toast-surface {
-    border: 1px solid var(--platforma-border);
-    background: var(--platforma-surface);
-    box-shadow: var(--platforma-shadow-panel);
-    border-radius: var(--platforma-radius-card);
-  }
-
-  .platforma-control {
-    min-height: 40px;
-    border-radius: var(--platforma-radius-control);
-  }
-
-  .platforma-touch-target {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  .platforma-focus-ring {
-    outline: none;
-    transition:
-      border-color 160ms ease,
-      box-shadow 160ms ease,
-      transform 160ms ease;
-  }
-
-  .platforma-focus-ring:focus-visible {
-    outline: 2px solid var(--platforma-focus-ring);
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px var(--color-focus-halo);
-  }
-
-  .platforma-ai-surface {
-    position: relative;
-    border: 1px solid var(--platforma-ai-border);
-    background: var(--platforma-ai-soft);
-    box-shadow: var(--platforma-shadow-card);
-  }
-
-  .platforma-ai-surface::before {
-    content: none;
   }
 }
 
@@ -359,10 +414,12 @@ select {
     border-radius: 1.35rem;
   }
 
-  input,
-  textarea,
-  select {
-    font-size: 16px;
+  @layer utilities {
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
   }
 
   .mobile-safe-bottom {

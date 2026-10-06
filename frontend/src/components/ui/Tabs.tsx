@@ -52,8 +52,8 @@ export function Tabs<T extends string>({
                   : "border-transparent text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text"
                 : active
                 ? tone === "ai"
-                  ? "bg-ai-50 text-ai-700 shadow-sm ring-1 ring-ai-100"
-                  : "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
+                  ? "bg-ai-50 text-ai-700 shadow-xs ring-1 ring-ai-100"
+                  : "bg-brand-50 text-brand-700 shadow-xs ring-1 ring-brand-100"
                 : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
             )}
             role="tab"

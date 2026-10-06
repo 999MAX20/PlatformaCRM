@@ -39,7 +39,7 @@ export function ConversationComposer({
           title={t("conversations.closedReplyNotice")}
         />
       ) : null}
-      <div className="flex items-end gap-2 rounded-card border border-platforma-border bg-platforma-card px-3 py-2 shadow-sm">
+      <div className="flex items-end gap-2 rounded-card border border-platforma-border bg-platforma-card px-3 py-2 shadow-xs">
         <button type="button" className="mb-1 grid h-8 w-8 shrink-0 place-items-center rounded-control text-platforma-muted hover:bg-surface-hover hover:text-platforma-text" title={t("conversations.attachFile")}>
           <Paperclip size={16} />
         </button>
@@ -56,7 +56,7 @@ export function ConversationComposer({
           data-testid="inbox-action-composer"
           ref={composerRef}
           rows={1}
-          className="platforma-focus-ring max-h-28 min-h-10 min-w-0 flex-1 resize-none bg-transparent py-2 text-sm text-platforma-text outline-none placeholder:text-platforma-muted disabled:bg-disabled-surface disabled:text-disabled-content disabled:placeholder:text-disabled-content disabled:opacity-100"
+          className="platforma-focus-ring max-h-28 min-h-10 min-w-0 flex-1 resize-none bg-transparent py-2 text-sm text-platforma-text outline-hidden placeholder:text-platforma-muted disabled:bg-disabled-surface disabled:text-disabled-content disabled:placeholder:text-disabled-content disabled:opacity-100"
           disabled={selected.status === "closed" || sendPending}
           placeholder={t("conversations.replyPlaceholder")}
           value={draft}

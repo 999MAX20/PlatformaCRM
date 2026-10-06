@@ -27,7 +27,7 @@ export function LeadShortcutsModal({
             <span className="text-sm font-bold text-platforma-muted">
               {shortcut.label}
             </span>
-            <kbd className="rounded-lg border border-platforma-border bg-surface-card px-2 py-1 text-xs font-bold text-platforma-text shadow-sm">
+            <kbd className="rounded-lg border border-platforma-border bg-surface-card px-2 py-1 text-xs font-bold text-platforma-text shadow-xs">
               {shortcut.key}
             </kbd>
           </div>

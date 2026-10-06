@@ -1905,7 +1905,7 @@ export function ConversationsPage() {
         <div className="border-b border-platforma-border p-4">
           <input
             type="search"
-            className="h-11 w-full rounded-control border border-platforma-border bg-platforma-card px-3 text-sm font-semibold text-platforma-text outline-none transition placeholder:text-platforma-muted focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
+            className="h-11 w-full rounded-control border border-platforma-border bg-platforma-card px-3 text-sm font-semibold text-platforma-text outline-hidden transition placeholder:text-platforma-muted focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
             placeholder={t("conversations.quickRepliesSearch")}
             value={quickReplySearch}
             onChange={(event) => setQuickReplySearch(event.target.value)}

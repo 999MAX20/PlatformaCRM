@@ -16,7 +16,7 @@ export function LanguageSelector({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "platforma-language-selector relative inline-flex min-h-10 items-center gap-2 rounded-control border border-platforma-border bg-surface-card px-2.5 shadow-sm transition focus-within:border-brand-200 focus-within:ring-4 focus-within:ring-brand-100",
+        "platforma-language-selector relative inline-flex min-h-10 items-center gap-2 rounded-control border border-platforma-border bg-surface-card px-2.5 shadow-xs transition focus-within:border-brand-200 focus-within:ring-4 focus-within:ring-brand-100",
         className,
       )}
     >

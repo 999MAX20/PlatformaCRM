@@ -750,7 +750,7 @@ export function CalendarPage() {
           isCalendarDataLoading ? undefined : "calendar-workspace-ready"
         }
       >
-        <div className="overflow-hidden rounded-card border border-platforma-border bg-platforma-card shadow-sm lg:hidden">
+        <div className="overflow-hidden rounded-card border border-platforma-border bg-platforma-card shadow-xs lg:hidden">
           <div className="p-4">
             <div className="min-w-0">
               <p className="text-xs font-bold uppercase text-platforma-muted">
@@ -868,7 +868,7 @@ export function CalendarPage() {
           </div>
         </div>
 
-        <div className="hidden min-w-0 overflow-visible rounded-card border border-platforma-border bg-platforma-card shadow-sm lg:block">
+        <div className="hidden min-w-0 overflow-visible rounded-card border border-platforma-border bg-platforma-card shadow-xs lg:block">
           <ActiveCalendarFilters
             chips={activeFilterChips}
             onClearAll={clearAllFilters}
@@ -982,7 +982,7 @@ export function CalendarPage() {
                           key={appointment.id}
                           type="button"
                           className={cn(
-                            "group absolute left-2 right-2 overflow-visible rounded-control border-l-4 border-t border-r border-b px-3 py-2 text-left shadow-sm transition hover:z-30 hover:shadow-md",
+                            "group absolute left-2 right-2 overflow-visible rounded-control border-l-4 border-t border-r border-b px-3 py-2 text-left shadow-xs transition hover:z-30 hover:shadow-md",
                             getTone(index),
                             selectedAppointment?.id === appointment.id &&
                               "border-[var(--platforma-brand-content)] bg-brand-50 shadow-md",
@@ -1175,7 +1175,7 @@ export function CalendarPage() {
                               key={appointment.id}
                               type="button"
                               className={cn(
-                                "group absolute left-1 right-1 overflow-visible rounded-control border-l-4 border-t border-r border-b px-2 py-1 text-left text-xs shadow-sm hover:z-30 hover:shadow-md",
+                                "group absolute left-1 right-1 overflow-visible rounded-control border-l-4 border-t border-r border-b px-2 py-1 text-left text-xs shadow-xs hover:z-30 hover:shadow-md",
                                 getTone(index),
                                 selectedAppointment?.id === appointment.id &&
                               "border-[var(--platforma-brand-content)] bg-brand-50 shadow-md",
@@ -1296,7 +1296,7 @@ export function CalendarPage() {
                             <button
                               key={appointment.id}
                               type="button"
-                              className="w-full truncate rounded-control border border-brand-100 bg-platforma-card px-2 py-1 text-left text-xs font-bold text-brand-700 shadow-sm transition hover:border-brand-500 hover:bg-brand-50"
+                              className="w-full truncate rounded-control border border-brand-100 bg-platforma-card px-2 py-1 text-left text-xs font-bold text-brand-700 shadow-xs transition hover:border-brand-500 hover:bg-brand-50"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 selectAppointment(appointment);

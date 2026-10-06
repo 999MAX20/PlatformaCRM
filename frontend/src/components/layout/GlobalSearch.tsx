@@ -227,7 +227,7 @@ export function GlobalSearch() {
 
       <div
         className={cn(
-          "w-full items-center gap-3 border border-platforma-border bg-surface-card px-3 text-sm shadow-sm",
+          "w-full items-center gap-3 border border-platforma-border bg-surface-card px-3 text-sm shadow-xs",
           "lg:flex lg:min-w-0",
           mobileExpanded ? "flex h-[52px] min-w-0 rounded-full lg:h-10 lg:rounded-control" : "hidden h-10 rounded-control",
         )}
@@ -235,7 +235,7 @@ export function GlobalSearch() {
         <Search size={18} className="shrink-0 text-platforma-faint" />
         <input
           ref={inputRef}
-          className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-platforma-text outline-none placeholder:text-platforma-faint"
+          className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-platforma-text outline-hidden placeholder:text-platforma-faint"
           aria-label={t("search.aria")}
           placeholder={placeholder}
           value={query}
@@ -259,7 +259,7 @@ export function GlobalSearch() {
               <button
                 key={value}
                 type="button"
-                className={cn("platforma-focus-ring h-9 rounded-control text-xs font-semibold transition", scope === value ? "bg-surface-card text-brand-700 shadow-sm" : "text-platforma-subtle hover:text-platforma-text")}
+                className={cn("platforma-focus-ring h-9 rounded-control text-xs font-semibold transition", scope === value ? "bg-surface-card text-brand-700 shadow-xs" : "text-platforma-subtle hover:text-platforma-text")}
                 onClick={() => setScope(value)}
               >
                 {value === "page" ? t("search.scopePage") : t("search.scopeGlobal")}

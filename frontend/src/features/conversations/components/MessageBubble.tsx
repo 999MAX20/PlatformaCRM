@@ -38,7 +38,7 @@ export function MessageBubble({ message, t }: { message: InboxMessage; t: Transl
     >
       <div
         className={cn(
-          "max-w-[78%] rounded-card border border-platforma-border bg-platforma-card px-4 py-3 text-sm leading-6 text-platforma-text shadow-sm",
+          "max-w-[78%] rounded-card border border-platforma-border bg-platforma-card px-4 py-3 text-sm leading-6 text-platforma-text shadow-xs",
           inbound ? "rounded-tl-md" : "rounded-tr-md",
         )}
         data-testid="conversation-message-bubble"

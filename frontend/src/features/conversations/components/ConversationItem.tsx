@@ -59,7 +59,7 @@ export function ConversationItem({
             {selectedForBulk ? <CheckSquare size={19} /> : <Square size={19} />}
           </button>
         ) : null}
-        <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full border border-platforma-border bg-platforma-card text-xs font-bold text-brand-700 shadow-sm">
+        <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full border border-platforma-border bg-platforma-card text-xs font-bold text-brand-700 shadow-xs">
           {initials || <MessageSquare size={16} />}
           <span className={cn("absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full border-2 border-platforma-card", conversation.channel === "telegram" ? "bg-sky-500" : conversation.channel === "whatsapp" ? "bg-emerald-500" : conversation.channel === "instagram" ? "bg-pink-500" : "bg-platforma-muted")} />
           {unread > 0 ? (

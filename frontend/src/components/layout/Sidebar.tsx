@@ -329,7 +329,7 @@ export function Sidebar({
                       <span className={cn("min-w-0 truncate transition-opacity duration-150", isExpanded ? "opacity-100" : "hidden opacity-0")}>{t(item.label)}</span>
                       {!isExpanded ? <span className="sr-only">{t(item.label)}</span> : null}
                       {item.to === "/app/conversations" && unreadMessages ? (
-                        <span className={cn("min-w-5 rounded-full bg-platforma-danger px-1.5 py-0.5 text-center text-[10px] font-semibold leading-none text-white shadow-sm", isExpanded ? "ml-auto" : "absolute right-1 top-1 px-1")}>
+                        <span className={cn("min-w-5 rounded-full bg-platforma-danger px-1.5 py-0.5 text-center text-[10px] font-semibold leading-none text-white shadow-xs", isExpanded ? "ml-auto" : "absolute right-1 top-1 px-1")}>
                           {unreadMessages > 99 ? "99+" : unreadMessages}
                         </span>
                       ) : active && isExpanded ? <span className="ml-auto h-2 w-2 rounded-full bg-[var(--platforma-brand-content)]" /> : null}

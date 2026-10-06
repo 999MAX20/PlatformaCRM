@@ -35,7 +35,7 @@ export function FieldErrorSummary({ error, fieldLabels = {}, onFieldSelect }: Fi
                 {onFieldSelect ? (
                   <button
                     type="button"
-                    className="platforma-focus-ring rounded-sm text-left font-semibold underline decoration-platforma-danger/35 underline-offset-2 hover:decoration-current"
+                    className="platforma-focus-ring rounded-xs text-left font-semibold underline decoration-platforma-danger/35 underline-offset-2 hover:decoration-current"
                     onClick={() => onFieldSelect(field)}
                   >
                     {label ? `${label}: ` : ""}{message}

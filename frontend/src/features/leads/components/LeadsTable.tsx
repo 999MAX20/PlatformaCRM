@@ -153,7 +153,7 @@ function LeadTableRow({
       >
         <ManagerAvatar name={responsibleName} />
         {canAssign ? <select
-          className="w-0 min-w-0 flex-1 truncate rounded-lg border border-transparent bg-transparent text-xs font-bold text-platforma-muted outline-none hover:border-platforma-border hover:bg-surface-card"
+          className="w-0 min-w-0 flex-1 truncate rounded-lg border border-transparent bg-transparent text-xs font-bold text-platforma-muted outline-hidden hover:border-platforma-border hover:bg-surface-card"
           value={lead.responsible_user ? String(lead.responsible_user) : ""}
           onChange={(event) =>
             onAssign(
@@ -218,7 +218,7 @@ function LeadTableRow({
         />
         <span
           className={cn(
-            "grid h-5 w-5 place-items-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500",
+            "grid h-5 w-5 place-items-center rounded-sm border peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500",
             bulkSelected
               ? "border-brand-500 bg-brand-500 text-white"
               : "border-platforma-control bg-surface-card",
@@ -250,7 +250,7 @@ function LeadTableRow({
               key={item.id}
               type="button"
               data-testid={`lead-row-action-${item.id}`}
-              className="grid h-8 w-8 place-items-center rounded-control border border-platforma-border bg-surface-card text-platforma-muted shadow-sm transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
+              className="grid h-8 w-8 place-items-center rounded-control border border-platforma-border bg-surface-card text-platforma-muted shadow-xs transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
               aria-label={item.label}
               title={item.label}
               onClick={(event) => {

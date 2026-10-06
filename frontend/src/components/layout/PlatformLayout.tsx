@@ -127,7 +127,7 @@ export function PlatformLayout() {
                   end={item.end}
                   className={({ isActive }) =>
                     cn(
-                      "flex items-center gap-2 rounded-2xl border border-white/70 bg-white/70 px-3 py-3 text-sm font-semibold text-platforma-subtle shadow-sm backdrop-blur-xl",
+                      "flex items-center gap-2 rounded-2xl border border-white/70 bg-white/70 px-3 py-3 text-sm font-semibold text-platforma-subtle shadow-xs backdrop-blur-xl",
                       isActive && "bg-midnight text-white",
                     )
                   }

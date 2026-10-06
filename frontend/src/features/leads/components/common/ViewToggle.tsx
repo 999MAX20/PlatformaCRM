@@ -17,7 +17,7 @@ export function ViewToggle({ value, onChange, t }: { value: LeadViewMode; onChan
           <button
             key={mode.id}
             type="button"
-            className={cn("grid h-8 w-8 place-items-center rounded transition focus-visible-ring", value === mode.id ? "bg-platforma-border text-platforma-text" : "text-platforma-faint hover:bg-surface-hover")}
+            className={cn("grid h-8 w-8 place-items-center rounded-sm transition focus-visible-ring", value === mode.id ? "bg-platforma-border text-platforma-text" : "text-platforma-faint hover:bg-surface-hover")}
             onClick={() => onChange(mode.id)}
             aria-label={t(mode.labelKey)}
             title={t(mode.labelKey)}

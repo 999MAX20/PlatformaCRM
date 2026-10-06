@@ -51,7 +51,7 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
       actionPlacement="corner"
       tone={tone}
       title={message}
-      className="pointer-events-auto w-[min(360px,calc(100vw-2rem))] shadow-panel backdrop-blur transition"
+      className="pointer-events-auto w-[min(360px,calc(100vw-2rem))] shadow-panel backdrop-blur-sm transition"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocusCapture={() => setHasFocus(true)}

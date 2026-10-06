@@ -152,7 +152,7 @@ export function PlatformOperationsPage() {
           <p className="mt-1 text-sm text-platforma-faint">{t("platform.operations.providerRolloutText")}</p>
           <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {providerRolloutItems.map((provider) => (
-              <div key={provider.provider} className="rounded-3xl border border-platforma-border bg-white p-4 shadow-sm">
+              <div key={provider.provider} className="rounded-3xl border border-platforma-border bg-white p-4 shadow-xs">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-black uppercase tracking-[0.16em] text-platforma-faint">#{provider.order} {provider.provider}</p>

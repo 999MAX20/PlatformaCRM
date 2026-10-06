@@ -1093,7 +1093,7 @@ export function SettingsPage() {
               <div className="grid gap-4 xl:grid-cols-[1.3fr_0.7fr]">
                 <div className="rounded-card border border-platforma-border bg-surface-card p-4">
                   <div className="mb-4 flex items-start gap-3 rounded-card bg-surface-muted p-4">
-                    <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-surface-card text-brand-600 shadow-sm">
+                    <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-surface-card text-brand-600 shadow-xs">
                       <ShieldCheck size={22} />
                     </div>
                     <div>
@@ -1179,7 +1179,7 @@ export function SettingsPage() {
                           type="button"
                           className={`rounded-control border p-3 text-left transition hover:bg-surface-card ${
                             inviteForm.role === roleKey
-                              ? "border-brand-200 bg-surface-card shadow-sm"
+                              ? "border-brand-200 bg-surface-card shadow-xs"
                               : "border-platforma-border bg-surface-muted"
                           }`}
                           onClick={() =>
@@ -1271,7 +1271,7 @@ export function SettingsPage() {
                   ) : null}
                   <div className="mt-4 rounded-card border border-brand-100 bg-brand-50 p-4">
                     <div className="mb-3 flex items-start gap-3">
-                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-surface-card text-brand-700 shadow-sm">
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-surface-card text-brand-700 shadow-xs">
                         <Send size={18} />
                       </div>
                       <div>

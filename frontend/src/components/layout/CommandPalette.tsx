@@ -115,13 +115,13 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     .map((item) => item.command);
 
   return (
-    <div className="fixed inset-0 z-[80] bg-platforma-ink/[0.35] p-4 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-[80] bg-platforma-ink/[0.35] p-4 backdrop-blur-xs" onClick={onClose}>
       <div className="mx-auto mt-20 max-w-xl overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-premium" onClick={(event) => event.stopPropagation()}>
         <div className="flex items-center gap-3 border-b border-platforma-border px-4 py-3">
           <Search size={18} className="text-platforma-faint" />
           <input
             autoFocus
-            className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-platforma-ink outline-none placeholder:text-platforma-faint"
+            className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-platforma-ink outline-hidden placeholder:text-platforma-faint"
             placeholder={t("command.placeholder")}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -145,7 +145,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                   setQuery("");
                 }}
               >
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-surface-card text-brand-700 shadow-sm">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-surface-card text-brand-700 shadow-xs">
                   <Icon size={17} />
                 </span>
                 <span className="min-w-0 flex-1">

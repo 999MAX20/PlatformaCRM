@@ -113,7 +113,7 @@ export function ImportPanel({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
         <p className="text-sm font-semibold text-platforma-ink">Excel / CSV</p>
         <p className="mt-1 text-sm font-medium leading-6 text-platforma-muted">
           {t("integrations.import.panelDescription")}
@@ -122,7 +122,7 @@ export function ImportPanel({
 
       {importError ? <ErrorState error={importError} message={getApiErrorMessage(importError)} /> : null}
 
-      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
         <div className="grid gap-3 lg:grid-cols-[180px_1fr_auto_auto]">
           <Select
             data-testid="import-entity"
@@ -152,7 +152,7 @@ export function ImportPanel({
         </div>
       </div>
 
-      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="font-semibold text-platforma-ink">{selected?.original_filename || t("integrations.import.noFileSelected")}</p>
@@ -227,7 +227,7 @@ export function ImportPanel({
         </div>
       </div>
 
-      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+      <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
         <p className="font-semibold text-platforma-ink">{t("integrations.import.history")}</p>
         <div className="mt-3 space-y-2">
           {jobs.slice(0, 8).map((job) => (

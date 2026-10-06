@@ -20,7 +20,7 @@ export function LogoMark({ logo, label, compact = false }: { logo?: string; labe
 
   if (logo && providerLogos.has(logo)) {
     return (
-      <div className={cn("grid shrink-0 place-items-center overflow-hidden border border-platforma-border bg-surface-card shadow-sm", containerClassName)}>
+      <div className={cn("grid shrink-0 place-items-center overflow-hidden border border-platforma-border bg-surface-card shadow-xs", containerClassName)}>
         <img src={logo} alt="" className={cn("object-contain", imageClassName)} />
       </div>
     );

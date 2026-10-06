@@ -90,7 +90,7 @@ export function ConversationQueueFilters({
         <button
           type="button"
           className={cn(
-            "relative grid h-10 w-11 place-items-center rounded-control border border-platforma-border bg-platforma-card text-platforma-muted shadow-sm transition hover:border-brand-200 hover:bg-surface-hover",
+            "relative grid h-10 w-11 place-items-center rounded-control border border-platforma-border bg-platforma-card text-platforma-muted shadow-xs transition hover:border-brand-200 hover:bg-surface-hover",
             isAdvancedOpen && "border-brand-200 bg-brand-50 text-brand-700",
           )}
           onClick={() => setIsAdvancedOpen((value) => !value)}

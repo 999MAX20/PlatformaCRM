@@ -123,7 +123,7 @@ export function DealDetailPanel({
             ["activities", t("deals.tabActivities")],
             ["history", t("deals.tabHistory")],
           ].map(([value, label]) => (
-            <button key={value} type="button" className={cn("rounded-md px-3 py-2 text-sm font-bold transition", tab === value ? "bg-white text-brand-700 shadow-sm" : "text-platforma-subtle")} onClick={() => setTab(value as DealDetailTab)}>
+            <button key={value} type="button" className={cn("rounded-md px-3 py-2 text-sm font-bold transition", tab === value ? "bg-white text-brand-700 shadow-xs" : "text-platforma-subtle")} onClick={() => setTab(value as DealDetailTab)}>
               {label}
             </button>
           ))}
@@ -245,7 +245,7 @@ export function DealDetailPanel({
         {tab === "history" ? (
           <PanelBlock title={t("deals.timeline")} icon={CalendarClock}>
             <DealTimeline events={timeline} emptyText={t("deals.emptyDealHistory")} />
-            <textarea className="mt-4 min-h-24 w-full rounded-lg border border-platforma-border bg-white p-3 text-sm outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20" placeholder={t("deals.commentPlaceholder")} />
+            <textarea className="mt-4 min-h-24 w-full rounded-lg border border-platforma-border bg-white p-3 text-sm outline-hidden focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20" placeholder={t("deals.commentPlaceholder")} />
             <p className="mt-3 text-sm text-platforma-faint">{selectedLead ? t("deals.leadLine", { value: `#${selectedLead.id} · ${selectedLead.status}` }) : t("deals.notLinked")}</p>
           </PanelBlock>
         ) : null}

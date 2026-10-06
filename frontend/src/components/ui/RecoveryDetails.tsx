@@ -19,13 +19,13 @@ export function RecoveryDetails({ error, className }: { error: AppError; classNa
       data-testid="recovery-details"
       className={cn("rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-xs text-platforma-subtle", className)}
     >
-      <summary className="platforma-focus-ring cursor-pointer rounded-sm font-semibold text-platforma-text">
+      <summary className="platforma-focus-ring cursor-pointer rounded-xs font-semibold text-platforma-text">
         {t("fallback.recovery.summary")}
       </summary>
       <p className="mt-2 leading-5">{t("fallback.recovery.help")}</p>
       <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-platforma-border pt-2">
         <span>{t("fallback.recovery.requestId")}</span>
-        <code className="max-w-full select-all break-all rounded bg-surface-muted px-2 py-1 font-mono text-[11px] text-platforma-text">
+        <code className="max-w-full select-all break-all rounded-sm bg-surface-muted px-2 py-1 font-mono text-[11px] text-platforma-text">
           {error.requestId}
         </code>
         <button

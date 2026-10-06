@@ -113,7 +113,7 @@ export function ResourceEditModal({
         </div>
 
         <div className="space-y-4">
-          <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+          <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
             <div className="flex items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-brand-50 text-brand-700">
                 <CalendarCheck2 aria-hidden="true" size={19} />
@@ -127,7 +127,7 @@ export function ResourceEditModal({
             </div>
           </section>
 
-          <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-sm">
+          <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
             <div className="flex items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-brand-50 text-brand-700">
                 <CalendarClock aria-hidden="true" size={19} />

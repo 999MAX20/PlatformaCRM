@@ -62,10 +62,10 @@ export function CrmWorkspacePopover({ label, icon, children, open: controlledOpe
 
   return <>
     <Button ref={trigger} variant="secondary" size="sm" className="h-10 shrink-0 gap-2 px-3" aria-expanded={open} aria-controls={open ? id : undefined} aria-haspopup="dialog" onClick={toggle}>
-      {icon}{label}{count > 0 ? <span className="rounded bg-surface-muted px-1.5 tabular-nums">{count}</span> : null}
+      {icon}{label}{count > 0 ? <span className="rounded-sm bg-surface-muted px-1.5 tabular-nums">{count}</span> : null}
     </Button>
     {open ? createPortal(<PopoverSurface ref={panel} id={id} role="dialog" aria-label={label} tabIndex={-1}
-      className="fixed z-[80] w-[min(420px,calc(100vw-1rem))] overflow-y-auto p-4 outline-none" style={position}>
+      className="fixed z-[80] w-[min(420px,calc(100vw-1rem))] overflow-y-auto p-4 outline-hidden" style={position}>
       {children}
     </PopoverSurface>, document.body) : null}
   </>;

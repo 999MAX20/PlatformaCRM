@@ -74,7 +74,7 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
                 cn(
                   "platforma-focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-0.5 py-2 text-center text-[10px] font-semibold leading-none transition active:scale-[0.98]",
                   isActive
-                    ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
+                    ? "bg-brand-50 text-brand-700 shadow-xs ring-1 ring-brand-100"
                     : "text-platforma-faint",
                 )
               }
@@ -101,7 +101,7 @@ export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: ()
           className={cn(
             "platforma-focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-0.5 py-2 text-center text-[10px] font-semibold leading-none transition hover:bg-surface-hover hover:text-platforma-text active:scale-[0.98]",
             open
-              ? "bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100"
+              ? "bg-brand-50 text-brand-700 shadow-xs ring-1 ring-brand-100"
               : "text-platforma-faint",
           )}
         >

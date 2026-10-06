@@ -85,7 +85,7 @@ export function ConversationThreadPane({
       {!selected ? (
         <div className="grid flex-1 place-items-center p-8">
           <div className="text-center">
-            <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-card bg-platforma-card text-brand-600 shadow-sm">
+            <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-card bg-platforma-card text-brand-600 shadow-xs">
               <MessageSquare aria-hidden="true" size={26} />
             </div>
             <p className="text-2xl font-bold text-platforma-muted">
@@ -226,7 +226,7 @@ export function ConversationThreadPane({
             ) : null}
             {messageList.length ? (
               <div className="sticky top-0 z-10 flex justify-center">
-                <span className="rounded-full bg-platforma-card/90 px-3 py-1 text-xs font-bold text-platforma-muted shadow-sm ring-1 ring-platforma-border">
+                <span className="rounded-full bg-platforma-card/90 px-3 py-1 text-xs font-bold text-platforma-muted shadow-xs ring-1 ring-platforma-border">
                   {t("common.today")}
                 </span>
               </div>

@@ -32,7 +32,7 @@ export function CrmWorkspaceToolbar<T extends string>({ search, searchLabel, onS
       <div role="group" aria-label={ariaLabel} className="flex max-w-full items-center gap-2 overflow-x-auto pb-0.5">
         {tabs.map((tab) => <button key={tab.value} type="button" aria-pressed={value === tab.value} onClick={() => onChange(tab.value)}
           className={cn("platforma-focus-ring inline-flex h-9 shrink-0 items-center gap-2 rounded-control border px-3 text-sm font-semibold", value === tab.value ? "border-brand-100 bg-brand-50 text-platforma-text" : "border-transparent bg-surface-muted text-platforma-subtle hover:bg-surface-hover")}>
-          {tab.label}{typeof tab.count === "number" ? <span className="rounded bg-black/[0.04] px-1.5 text-xs font-normal tabular-nums">{tab.count}</span> : null}
+          {tab.label}{typeof tab.count === "number" ? <span className="rounded-sm bg-black/[0.04] px-1.5 text-xs font-normal tabular-nums">{tab.count}</span> : null}
         </button>)}
       </div>
       {secondaryActions}

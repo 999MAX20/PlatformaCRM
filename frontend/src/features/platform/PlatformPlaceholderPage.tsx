@@ -15,7 +15,7 @@ export function PlatformPlaceholderPage({ titleKey, eyebrowKey, descriptionKey, 
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[2rem] border border-platforma-border bg-white p-6 shadow-sm sm:p-8">
+      <section className="rounded-[2rem] border border-platforma-border bg-white p-6 shadow-xs sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">{t(eyebrowKey)}</p>

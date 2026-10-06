@@ -41,7 +41,7 @@ export function LeadsBulkBar({
       <div className="flex max-w-full flex-wrap items-center gap-2 rounded-card bg-platforma-ink px-4 py-3 text-white shadow-panel">
         <span className="mr-2 text-sm font-bold">{labels.selected}</span>
         <select
-          className="h-9 rounded-lg border border-white/10 bg-white/10 px-3 text-sm font-bold text-white outline-none"
+          className="h-9 rounded-lg border border-white/10 bg-white/10 px-3 text-sm font-bold text-white outline-hidden"
           defaultValue=""
           onChange={(event) =>
             onAssign(
