@@ -5,11 +5,15 @@
 
 ## Где остановились
 
-06.10: накопленные изменения зафиксированы локально (5febd35); готовится push
-с отдельным переходом на Tailwind4. Dependency audit исправлен: npm0 уязвимостей,
-Python audit PASS. Сборка,24 browser/24 policy и визуальное сравнение PASS.
+06.10: накопленные изменения (5febd35) и переход на Tailwind4 (426b330)
+опубликованы в origin/main; удалённый SHA подтверждён. Dependency audit исправлен:
+npm0 уязвимостей, Python audit PASS. Сборка,24 browser/24 policy,
+визуальное сравнение и static gate реального committed range PASS.
 [Проверки и доставка](docs/testing/dependency-publication-20261006.md).
-Следующее: static gate, push и фактический GitHub CI. CD исключён владельцем.
+На момент записи [CI приложения](https://github.com/999MAX20/PlatformaCRM/actions/runs/37493074978):
+frontend SUCCESS, backend tests выполняются. Итог CI проверяется отдельно;
+ожидание не считается PASS. CD исключён владельцем. Исторические записи ниже
+о блокировке публикации описывают состояние до этой доставки.
 Новая реализация памяти/поведения AI пока не начата.
 
 06.10: AI-AGENTS-BEHAVIOR-20261006 — поведенческое исследование завершено локально.

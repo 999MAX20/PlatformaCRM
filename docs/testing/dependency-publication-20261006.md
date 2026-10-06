@@ -107,8 +107,28 @@ are local ignored evidence under `output/publication-20261006`.
 ## Publication and limits
 
 All selected local checks passed. The accumulated snapshot is commit `5febd35`;
-the dependency migration is prepared as a separate commit. Normal push and actual
-CI readback follow the committed-range static gate.
+the dependency migration is `426b330279213558ca76542c8c445bc133f62f28`.
+The real committed-range gate passed:
+
+```text
+.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref 9ff366207e73472cda71ca3b9113ca4f9f305af9
+```
+
+After fetching main and proving ancestry, normal `git push origin HEAD:main`
+succeeded. Independent `git ls-remote origin refs/heads/main` returned the exact
+application commit above. [Application CI run37493074978](https://github.com/999MAX20/PlatformaCRM/actions/runs/37493074978)
+has frontend SUCCESS (installation, build/widget, bundle and dependency audit).
+At receipt time backend schema/system/static/readiness checks passed and its full
+test suite was still running. This observation is not full CI PASS.
+
+This receipt changes only STATUS, PRIMARY-SESSION and this report. Its gate is
+link/consistency review plus working/index/actual committed-range diff hygiene;
+application inputs and validated local evidence remain unchanged. The final
+receipt commit is identified by this file's Git history. Actual final CI results
+and remote SHA are reported in the task response and retained under local ignored
+`output/publication-20261006`; no additional receipt commit is needed to describe
+the receipt itself. CI remains inspectable in [GitHub Actions](https://github.com/999MAX20/PlatformaCRM/actions).
+
 This delivery does **not** close the six failed real-model scenarios or the manual
 quality limitations in the [AI behavior report](ai-agents-behavior-20261006.md).
 Memory, model-control design and orchestration proposals remain the next product

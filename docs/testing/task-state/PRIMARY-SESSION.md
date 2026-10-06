@@ -1,6 +1,6 @@
 # PRIMARY-SESSION — PlatformaCRM
 
-## PUBLICATION-20261006 — locally verified, publishing
+## PUBLICATION-20261006 — published, CI readback in progress
 
 - Owner explicitly requests commit/push of all accumulated changes and actual CI;
   corrected CD request: no CD. Chose dependency remediation/Tailwind4 migration
@@ -20,8 +20,17 @@
 - Backend code unchanged from final AI evaluation; affected/dependent PASS retained.
   No paid calls, working DB writes/migrations or external messages. Own frontend
   refreshed PID15372; backend13804/15420 retained. No other process stopped.
-- Next: committed-range static check, normal HEAD:main push/readback, actual GitHub
-  CI. Known six real-model failures and quality limits remain open; green CI is not
+- Static gate on9ff3662..426b330 PASS. Normal HEAD:main push completed; remote
+  SHA426b330279213558ca76542c8c445bc133f62f28 independently read back. Application
+  [CI37493074978](https://github.com/999MAX20/PlatformaCRM/actions/runs/37493074978):
+  frontend SUCCESS, backend tests in progress at receipt time; no full PASS claim.
+- Receipt-only completion plan: three docs; review links/consistency and working,
+  index/committed-range diff hygiene, conventional commit and normal push/readback.
+  No application inputs change, so local application checks are reused. Final
+  receipt SHA and actual CI results are returned in the task response and local
+  ignored publication evidence, without another self-referential receipt commit.
+- Next: finish actual CI readback for application and receipt commits; fix any
+  in-scope failure. Known six real-model failures and quality limits remain open; green CI is not
   full AI acceptance. No release/deployment or subsequent product phase started.
 
 ## AI-AGENTS-BEHAVIOR-20261006 — evaluation complete locally, product acceptance failed
