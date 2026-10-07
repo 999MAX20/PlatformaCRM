@@ -34,6 +34,15 @@ Use this index first when you need to understand where a document belongs. Keep 
 
 ## Main sections
 
+### Pilot / pre-production technical passports
+
+- [Реестр основных функций](pre-production/README.md) — отдельный каталог
+  фактического состояния модулей, версий, защитных механизмов и границ приёмки.
+- [Состояние пилота](pre-production/project-state.md),
+  [клиентский AI-агент](pre-production/customer-ai-agent.md),
+  [пауза CRM-аналитики](pre-production/crm-ai-agent.md).
+  Паспорта сопровождают исходные контракты и отчёты, не заменяют план исполнения.
+
 ### Approved first paid release
 
 - [V1 product rules](product/V1_PRODUCT_RULES.md) — owner-approved dental administrative CRM, required channels and controlled AI. Read with the latest deferred billing note: CRM package includes AI volume; prices and details remain open. Defines target scope, not implementation readiness.

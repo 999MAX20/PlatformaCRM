@@ -1,5 +1,34 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## PREPROD-DOCS-20261007 — documentation verified
+
+- Owner requested a dedicated pilot/pre-production technical documentation area,
+  a registry for major modules and the current customer-agent specification.
+- Mode: docs only; gap: documentation. Same generation3 primary, canonical root
+  C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit;
+  clean starting HEAD6822ea1623e00fb57af682182cf594ad948fcc8b.
+- Result: docs/pre-production index, project snapshot, customer-agent passport,
+  paused CRM-agent record and reusable module template. Reuse existing contracts,
+  source and verification reports; no new product rules, runtime changes or audit.
+- Risk: confusing a documented capability with production approval or a development
+  pause with runtime disablement. Separate implemented/verified/published/deployed.
+- Checks: added/changed links, source/contract consistency, full intended diff,
+  working/index/real committed-range hygiene. No app install/build/tests/DB actions.
+- Completion: explicit reviewed-path commit, normal HEAD:main push, SHA readback
+  and actual CI observation. New module entries do not authorize implementation.
+- Prior safety application and receipt CI both SUCCESS, confirmed in
+  output/inbox-agent-safety-20261007/publication-final.json; older pending entries
+  below describe publication-time observations.
+- Result: five new passports/index/template documents and three routing/checkpoint
+  updates. Registry does not claim undrafted modules are absent or certified;
+  CRM-agent development pause is explicitly distinct from runtime disablement.
+- Verification:54 new/changed local links PASS; source/contract/evidence consistency
+  reviewed; full eight-file content and working diff hygiene PASS. No product
+  mutation, external calls, app suites, build, installs or DB operations warranted.
+- Publication receipt is recorded in final response and ignored
+  output/preprod-docs-20261007/publication.json after normal push/readback;
+  pending CI must remain pending in that observation. No automatic new module task.
+
 ## INBOX-AGENT-SAFETY-20261007 — published, actual CI pending
 
 - Same registered generation3 owner, canonical root and codex/ui-testing-toolkit;
