@@ -3,8 +3,8 @@
   "projectName": "PlatformaCRM",
   "projectId": "local-3368c3df041be97f9549005fc6749ad2",
   "canonicalRoot": "C:\\Users\\user\\Desktop\\PlatformaCRM",
-  "generation": 3,
-  "primaryThreadId": "01a0fc25-6286-77a2-94be-cabb2b179381",
+  "generation": 4,
+  "primaryThreadId": "01a11776-e13a-76c2-9fc0-75d38228f649",
   "successorThreadId": null,
   "transition": "idle",
   "autoHandoffEnabled": false,
@@ -22,13 +22,15 @@
     "01a02954-6edd-74f2-8944-794408801f0d",
     "01a02916-4955-7491-a51e-6372a6d17ca8",
     "01a0c36e-33aa-7c72-be9b-72624dd2c739",
-    "01a0d6c1-3ee4-7f92-b94c-0242bb2eb35e"
+    "01a0d6c1-3ee4-7f92-b94c-0242bb2eb35e",
+    "01a0fc25-6286-77a2-94be-cabb2b179381"
   ],
   "sourceThreadIds": [
     "01a02906-d0a3-7820-80f2-adad5cf5a613",
     "01a02915-a366-7150-91bb-ce938cd50138",
     "01a02954-6edd-74f2-8944-794408801f0d",
-    "01a02916-4955-7491-a51e-6372a6d17ca8"
+    "01a02916-4955-7491-a51e-6372a6d17ca8",
+    "01a0fc25-6286-77a2-94be-cabb2b179381"
   ],
-  "lastAuthorization": "Owner explicit command 2026-09-25: transfer work to one new Platforma.CRM chat in the same saved project and local canonical folder, verify comprehension, switch ownership and archive source; no new product phase."
+  "lastAuthorization": "Owner explicit request 2026-10-07: transfer to one new PlatformaCRM task in the same saved project/local canonical checkout, verify comprehension, transfer ownership and archive source; no new product phase."
 }

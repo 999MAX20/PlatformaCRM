@@ -1,5 +1,49 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## HANDOFF-20261007 — generation 3 → 4 completed
+
+- Transition key: 01a0fc25-6286-77a2-94be-cabb2b179381 →
+  01a11776-e13a-76c2-9fc0-75d38228f649 / generation 3 → 4.
+  Project local-3368c3df041be97f9549005fc6749ad2; canonical root
+  C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit.
+- Source DoD and successor comprehension verified before the ownership switch;
+  comprehension turn 01a11776-e341-7190-b6a5-31838ac32914. Native
+  list_archived_threads(hostId=local) confirmed the exact source ID, title
+  PlatformaCRM, canonical cwd and updatedAt 1791395202. Registry was rechecked
+  with matching primary/source/generation, retired source and verified handoff.
+  Release sets idle, successorThreadId=null and handoff=null; generation stays 4.
+- Source completed customer-agent safety and pre-production documentation.
+  Verified base a349c9ac6adaf29210903be3cd326685c925d054; source normal push/readback
+  and CI 37657729094 SUCCESS. Safety application/receipt CI
+  37653976762 / 37654213713 SUCCESS. Local logs and publication receipts exist in
+  output/inbox-agent-safety-20261007 and output/preprod-docs-20261007.
+  Evidence: [safety acceptance](../inbox-agent-safety-20261007.md) and
+  [pre-production index](../../pre-production/README.md).
+- Finalization contract: metadata only; risk is ownership/receipt inconsistency.
+  Four paths: STATUS.md, this checkpoint, actual_docs/PROJECT_HANDOFF.md and
+  .codex/project-session.json. Check JSON invariants, changed references and full
+  intended diff; run git diff --check, git diff --cached --check and
+  git diff --check a349c9ac6adaf29210903be3cd326685c925d054...HEAD after commit.
+  Review explicit paths, normal push HEAD:main, remote SHA readback and actual CI.
+  Final publication SHA/checks/CI are reported in the task response, avoiding a
+  self-referential receipt commit. No app build/tests/install, DB or server actions
+  are needed for this metadata change; no product/permission/AI behavior changes.
+- Pre-commit verification PASS: registry identity/release invariants, four added
+  Markdown links and three registry paths, exact four-path inventory with no
+  untracked files, full diff review and working-tree diff hygiene. Fetched
+  origin/main equals the verified base; only ci.yml is present, no deployment
+  workflow. Index/real-range checks and remote readback follow publication.
+- No unfinished source edits/tests/pushes, agents or task monitoring automations.
+  Local backend 6316 and frontend 16012 are retained without intervention.
+  Working migrations already authorized/applied with backup and preservation
+  of 117 original tables. No new runtime or health claim from this handoff.
+- Limits retained: latest safety uses mock providers; earlier 21 live-model cases
+  predate it. No production/live messenger acceptance or new paid-model budget.
+  CRM/Analytics development remains paused without removal/runtime-disable claim.
+  Hook status remains REQUIRES_REVIEW_AND_TRUST; runtime activation not proven.
+- Next: complete metadata publication, then wait for a fresh owner task.
+  No backlog, new passport, analytics, deployment or live evaluation auto-resume.
+
 ## PREPROD-DOCS-20261007 — documentation verified
 
 - Owner requested a dedicated pilot/pre-production technical documentation area,

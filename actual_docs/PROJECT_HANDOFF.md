@@ -1,5 +1,35 @@
 # PlatformaCRM Project Handoff
 
+## Explicit handoff generation 3 → 4 — completed, 2026-10-07
+
+Transition key: 01a0fc25-6286-77a2-94be-cabb2b179381 →
+01a11776-e13a-76c2-9fc0-75d38228f649 / generation 3 → 4.
+Project local-3368c3df041be97f9549005fc6749ad2; canonical checkout
+C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit.
+Saved Desktop/Zani is a verified junction to the same checkout.
+
+Source DoD and comprehension turn 01a11776-e341-7190-b6a5-31838ac32914 were verified.
+Native list_archived_threads on local confirmed the exact source ID, title
+PlatformaCRM, canonical cwd and updatedAt 1791395202. Matching registry was
+rechecked before release: generation 4, successor primary, source retired,
+awaiting_archive and both verification flags true. Release clears handoff and
+successorThreadId and sets idle without another generation increment.
+
+Completed source: customer-agent safety and pre-production technical passports.
+Verified base a349c9ac6adaf29210903be3cd326685c925d054; CI 37657729094 SUCCESS.
+Safety application/receipt CI 37653976762 / 37654213713 SUCCESS. Logs and receipts
+are present. Full transition evidence and metadata verification plan:
+[HANDOFF-20261007 checkpoint](../docs/testing/task-state/PRIMARY-SESSION.md).
+
+Publication covers only four metadata files with JSON/reference/diff checks,
+normal HEAD:main push and remote SHA readback. Final SHA and actual CI are reported
+in the task response. App builds/tests, dependencies, DB and servers are unchanged.
+No new product, permission, notification, BusinessEvent or AI behavior is introduced.
+Latest safety acceptance uses mocks; earlier live cases do not certify that update.
+CRM/Analytics development remains paused without a runtime-disable claim.
+The registered primary waits for a fresh owner task after metadata publication;
+no deployment, live evaluation, new passports or other product phase is authorized.
+
 ## Explicit handoff generation 2 → 3 — completed, 2026-10-02
 
 Transition key: 01a0d6c1-3ee4-7f92-b94c-0242bb2eb35e →
