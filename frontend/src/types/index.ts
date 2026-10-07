@@ -517,6 +517,7 @@ export type ConnectorSyncRun = {
 };
 
 export type BotConversation = {
+  ai_safety?: { calls_used: number; calls_limit: number; calls_remaining: number; next_call_available_at: string | null; reason: string };
   id: Id;
   business: Id;
   business_name?: string;
@@ -1230,6 +1231,7 @@ export type AgentProfile = {
 };
 
 export type BusinessKnowledgeItem = {
+  customer_visible?: boolean;
   id: Id;
   business: Id;
   bot: Id | null;

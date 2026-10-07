@@ -113,6 +113,7 @@ class BusinessKnowledgeItem(TimeStampedModel):
     content = models.TextField()
     category = models.CharField(max_length=64, blank=True)
     is_active = models.BooleanField(default=True)
+    customer_visible = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["category", "title"]

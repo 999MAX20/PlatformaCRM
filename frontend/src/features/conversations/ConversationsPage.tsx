@@ -1426,6 +1426,7 @@ export function ConversationsPage() {
             })
           }
           toggleBotPending={toggleBotMutation.isPending}
+          canToggleBot={canSuggestAi && hasPermission(user, selected?.business, "conversations", "update")}
           onCloseConversation={() =>
             selected &&
             closeMutation.mutate({

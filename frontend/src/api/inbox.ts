@@ -303,7 +303,7 @@ export const inboxApi = {
     return data;
   },
   toggleBot: async ({ conversationId, botEnabled }: { conversationId: Id; botEnabled: boolean }) => {
-    const { data } = await apiClient.patch<InboxConversation>(`/api/bot-conversations/${conversationId}/`, {
+    const { data } = await apiClient.post<InboxConversation>(`/api/inbox/conversations/${conversationId}/ai-state/`, {
       bot_enabled: botEnabled,
     });
     return data;

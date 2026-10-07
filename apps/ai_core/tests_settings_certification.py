@@ -60,7 +60,7 @@ class SettingsCertificationTests(TestCase):
         bot = create_bot(validated_data={"business": self.business, "name": "Inbox"})
         profile = AgentProfile.objects.create(business=self.business, bot=bot, name=bot.name)
         BotChannel.objects.create(bot=bot, channel="website", status="active")
-        BusinessKnowledgeItem.objects.create(business=self.business, bot=bot, title="Knowledge", content="ONLY_THIS_AGENT_KNOWLEDGE")
+        BusinessKnowledgeItem.objects.create(customer_visible=True, business=self.business, bot=bot, title="Knowledge", content="ONLY_THIS_AGENT_KNOWLEDGE")
         BusinessKnowledgeItem.objects.create(business=self.business, title="Shared", content="UNCONNECTED_BUSINESS_KNOWLEDGE")
         activate_bot(bot=bot)
         conversation = BotConversation.objects.create(business=self.business, bot=bot, channel="website", external_user_id="synthetic-audit")
@@ -77,7 +77,7 @@ class SettingsCertificationTests(TestCase):
     def test_saved_crm_settings_change_actual_chat_provider_input(self):
         bot = create_bot(validated_data={"business": self.business, "name": "CRM", "scenario": "crm"})
         profile = AgentProfile.objects.get(bot=bot)
-        BusinessKnowledgeItem.objects.create(business=self.business, bot=bot, title="Knowledge", content="ONLY_THIS_AGENT_KNOWLEDGE")
+        BusinessKnowledgeItem.objects.create(customer_visible=True, business=self.business, bot=bot, title="Knowledge", content="ONLY_THIS_AGENT_KNOWLEDGE")
         BusinessKnowledgeItem.objects.create(business=self.business, title="Shared", content="UNCONNECTED_BUSINESS_KNOWLEDGE")
         activate_bot(bot=bot)
         for version in (1, 2):

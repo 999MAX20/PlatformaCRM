@@ -25,7 +25,7 @@ class AgentKnowledgeIsolationTests(TestCase):
         self.agent = create_bot(validated_data={"business": self.business, "name": "First"})
         self.other = create_bot(validated_data={"business": self.business, "name": "Second"})
         self.shared = BusinessKnowledgeItem.objects.create(business=self.business, title="Shared", content="Legacy material")
-        self.own = BusinessKnowledgeItem.objects.create(business=self.business, bot=self.agent, title="Private", content="Only first agent")
+        self.own = BusinessKnowledgeItem.objects.create(customer_visible=True, business=self.business, bot=self.agent, title="Private", content="Only first agent")
         self.foreign = BusinessKnowledgeItem.objects.create(business=self.other_business, title="Foreign", content="Other tenant")
 
     def knowledge_ids(self, agent):
@@ -33,7 +33,7 @@ class AgentKnowledgeIsolationTests(TestCase):
 
     def connect(self, item=None, agent=None, connected=True):
         return self.api.post(f"/api/ai/knowledge-items/{(item or self.shared).pk}/connection/",
-            {"agent": (agent or self.agent).pk, "connected": connected}, format="json")
+            {"agent": (agent or self.agent).pk, "connected": connected, "allow_customer_use": True}, format="json")
 
     def test_empty_default_and_explicit_shared_connection_are_agent_scoped(self):
         self.assertEqual(self.knowledge_ids(self.agent), {self.own.pk})
@@ -53,7 +53,7 @@ class AgentKnowledgeIsolationTests(TestCase):
             response = self.api.patch(f"/api/ai/knowledge-items/{self.own.pk}/", {"bot": bot}, format="json")
             self.assertEqual(response.status_code, 400)
         response = self.api.post("/api/ai/knowledge-items/", {"business": self.business.pk, "bot": self.other.pk,
-            "title": "New", "content": "Independent"}, format="json")
+            "title": "New", "content": "Independent", "customer_visible": True}, format="json")
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(self.knowledge_ids(self.other), {response.data["id"]})
 
@@ -113,7 +113,7 @@ class AgentKnowledgeIsolationTests(TestCase):
     def test_connection_is_idempotent_and_audit_failure_rolls_it_back(self):
         with patch("apps.ai_core.knowledge.write_actor_audit_log", side_effect=RuntimeError("Audit unavailable")):
             with self.assertRaises(RuntimeError):
-                connect_shared_knowledge(actor=self.owner, item=self.shared, agent_id=self.agent.pk, connected=True)
+                connect_shared_knowledge(actor=self.owner, item=self.shared, agent_id=self.agent.pk, connected=True, allow_customer_use=True)
         self.assertFalse(self.shared.connected_agents.exists())
         self.assertEqual(self.connect().status_code, 200)
         count = AuditLog.objects.count()

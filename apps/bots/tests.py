@@ -35,7 +35,7 @@ class BotsFoundationTests(TestCase):
         )
         BusinessKnowledgeItem.objects.get_or_create(
             business=bot.business, bot=bot, title="Website test knowledge",
-            defaults={"content": "Use the configured services and available slots."},
+            defaults={"content": "Use the configured services and available slots.", "customer_visible": True},
         )
 
     def setUp(self):
@@ -805,7 +805,7 @@ class BotsFoundationTests(TestCase):
     @override_settings(OPENAI_API_KEY="")
     def test_suggest_reply_returns_suggestion_without_sending_message(self):
         bot = Bot.objects.create(business=self.business, name="Website bot", status=Bot.Statuses.ACTIVE)
-        BusinessKnowledgeItem.objects.create(
+        BusinessKnowledgeItem.objects.create(customer_visible=True,
             business=self.business, bot=bot,
             title="Booking policy",
             content="Offer two nearest appointment slots.",
@@ -1654,7 +1654,9 @@ class InboxBackendTests(TestCase):
         self.assertEqual(response.data["client_id"], self.client.id)
         self.assertIsNone(response.data["lead_id"])
         log = AIRequestLog.objects.filter(prompt_type="bot_suggest_reply").latest("id")
-        self.assertEqual(log.input_json["crm_context"]["client"]["id"], self.client.id)
+        self.assertEqual(log.input_json["crm_context"], {})
+        if self.client.phone:
+            self.assertNotIn(self.client.phone, str(log.input_json))
 
     def test_legacy_bot_suggest_reply_endpoint_still_works(self):
         BotMessage.objects.create(

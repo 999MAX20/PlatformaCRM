@@ -83,9 +83,23 @@ def _run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, ch
         _write_decision_event(conversation, state_decision)
         return state_decision
 
+    from apps.bots.customer_safety import before_inbound, qualification_boundary, safety_handoff
+    safety_reason = before_inbound(conversation, message)
+    if safety_reason:
+        decision = AutoPipelineDecision(status="skipped_duplicate_text" if safety_reason == "duplicate_text" else "safety_handoff", reason=safety_reason)
+        if safety_reason != "duplicate_text":
+            safety_handoff(conversation, safety_reason)
+        _save_auto_pipeline_decision(conversation, message, config, decision)
+        return decision
     try:
         qualification, ai_log = qualify_conversation(conversation=conversation, allow_mock=True)
-    except AIClientError:
+    except AIClientError as exc:
+        if exc.error_code in {"unsafe_customer_context", "unsafe_customer_output", "customer_call_limit"}:
+            reason = {"unsafe_customer_context": "unsafe_context", "unsafe_customer_output": "unsafe_output", "customer_call_limit": "call_limit"}[exc.error_code]
+            safety_handoff(conversation, reason)
+            decision = AutoPipelineDecision(status="safety_handoff", reason=reason)
+            _save_auto_pipeline_decision(conversation, message, config, decision)
+            return decision
         state_decision = _guard_conversation_state(conversation)
         if state_decision is not None:
             return state_decision
@@ -105,6 +119,28 @@ def _run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, ch
     if agent_runtime_fingerprint(conversation) != fingerprint:
         decision = AutoPipelineDecision(status="skipped_configuration_changed", reason="Agent configuration changed during qualification.")
         _save_auto_pipeline_decision(conversation, message, config, decision)
+        return decision
+    boundary = qualification_boundary(conversation, message, qualification)
+    if boundary:
+        decision = AutoPipelineDecision(status="qualified_only", reason=boundary, qualification=qualification,
+            ai_log_id=ai_log.id if ai_log else None, runtime_fingerprint=fingerprint)
+        if boundary in {"first_off_topic", "social_reply"}:
+            if not qualification.requires_human_review and qualification.intent not in {"spam", "support", "complaint"} and config.auto_send_reply:
+                _send_auto_reply(conversation=conversation, config=config, decision=decision)
+            elif qualification.requires_human_review or qualification.intent in {"spam", "support", "complaint"}:
+                safety_handoff(conversation, "uncertain")
+                decision.status = "safety_handoff"
+        elif boundary == "boundary_reply":
+            if config.auto_send_reply:
+                from apps.bots.safety_content import safety_text
+                decision.reply_message = send_outbound_message(conversation=conversation,
+                    text=safety_text(conversation, "boundary"), user=None, sender_type=BotMessage.SenderTypes.BOT,
+                    idempotency_key=f"safety-boundary:{message.pk}", runtime_fingerprint=fingerprint)
+        else:
+            safety_handoff(conversation, boundary)
+            decision.status = "safety_handoff"
+        _save_auto_pipeline_decision(conversation, message, config, decision)
+        _write_decision_event(conversation, decision)
         return decision
     decision = decide_qualified_pipeline(config=config, qualification=qualification, ai_log_id=ai_log.id if ai_log else None)
     decision.runtime_fingerprint = fingerprint
@@ -428,7 +464,11 @@ def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfi
     except Exception as exc:
         decision.reply_error = sanitize_error_text(exc)
         if not conversation_ai_block_reason(conversation) and is_current_inbound(conversation):
-            handoff_conversation(conversation, reason="AI reply unavailable; manager review required.")
+            if getattr(exc, "error_code", "") in {"unsafe_customer_context", "unsafe_customer_output"}:
+                from apps.bots.customer_safety import safety_handoff
+                safety_handoff(conversation, "unsafe_context" if exc.error_code == "unsafe_customer_context" else "unsafe_output")
+            else:
+                handoff_conversation(conversation, reason="AI reply unavailable; manager review required.")
 
 
 def _auto_reply_meta(decision: AutoPipelineDecision) -> dict[str, Any] | None:

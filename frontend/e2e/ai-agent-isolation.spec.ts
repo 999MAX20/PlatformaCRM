@@ -29,6 +29,8 @@ test("new agents isolate private knowledge and explicitly connect shared materia
   expect(own.bot).toBe(first.id);
   await editor.getByRole("button", { name: "Подключить общие материалы", exact: true }).click();
   const sharedRow = dialog.locator("article").filter({ hasText: shared.title });
+  await expect(sharedRow.getByRole("button", { name: "Подключить", exact: true })).toBeDisabled();
+  await sharedRow.getByRole("checkbox").check();
   await page.route(`**/api/ai/knowledge-items/${shared.id}/connection/`, route => route.fulfill({ status: 503, json: { detail: "Temporary connection failure" } }));
   await sharedRow.getByRole("button", { name: "Подключить", exact: true }).click();
   await expect(dialog.getByRole("alert")).toBeVisible();

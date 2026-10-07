@@ -15,13 +15,13 @@ import { useI18n } from "../../../lib/i18n";
 import type { BusinessKnowledgeItem, Id } from "../../../types";
 import { FieldHint } from "./AIAgentsShared";
 import { SharedKnowledgePicker } from "./SharedKnowledgePicker";
-export function KnowledgeSection({ agentId, businessId, items, canManage }: { agentId: Id; businessId: Id; items: BusinessKnowledgeItem[]; canManage: boolean }) {
+export function KnowledgeSection({ agentId, businessId, items, canManage, customerAgent = false }: { agentId: Id; businessId: Id; items: BusinessKnowledgeItem[]; canManage: boolean; customerAgent?: boolean }) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [sharedOpen, setSharedOpen] = useState(false);
   const [editing, setEditing] = useState<BusinessKnowledgeItem | null>(null);
-  const [draft, setDraft] = useState({ title: "", category: "business", content: "", is_active: true });
+  const [draft, setDraft] = useState({ title: "", category: "business", content: "", is_active: true, customer_visible: false });
   const [submitted, setSubmitted] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
@@ -39,7 +39,7 @@ export function KnowledgeSection({ agentId, businessId, items, canManage }: { ag
       queryClient.invalidateQueries({ queryKey: ["bots"] });
       setOpen(false);
       setEditing(null);
-      setDraft({ title: "", category: "business", content: "", is_active: true });
+      setDraft({ title: "", category: "business", content: "", is_active: true, customer_visible: false });
     },
   });
   const disconnect = useMutation({ mutationFn: (id: Id) => setAgentKnowledgeConnection(id, agentId, false),
@@ -53,10 +53,10 @@ export function KnowledgeSection({ agentId, businessId, items, canManage }: { ag
     setSubmitted(false);
     if (item) {
       setEditing(item);
-      setDraft({ title: item.title, category: item.category || "business", content: item.content, is_active: item.is_active });
+      setDraft({ title: item.title, category: item.category || "business", content: item.content, is_active: item.is_active, customer_visible: Boolean(item.customer_visible) });
     } else {
       setEditing(null);
-      setDraft({ title: "", category: "business", content: "", is_active: true });
+      setDraft({ title: "", category: "business", content: "", is_active: true, customer_visible: false });
     }
     setOpen(true);
   };
@@ -72,7 +72,7 @@ export function KnowledgeSection({ agentId, businessId, items, canManage }: { ag
     saveKnowledge.reset();
     setSubmitted(false);
     setEditing(null);
-    setDraft({ ...template, is_active: true });
+    setDraft({ ...template, is_active: true, customer_visible: false });
     setOpen(true);
   };
 
@@ -99,6 +99,7 @@ export function KnowledgeSection({ agentId, businessId, items, canManage }: { ag
                 <div className="flex flex-wrap items-center gap-2">
                   <h4 className="break-words text-sm font-semibold text-platforma-ink">{item.title}</h4>
                   {item.bot === null && <span className="text-xs text-platforma-subtle">{t("aiAgents.knowledge.sharedMaterial")}</span>}
+                  {customerAgent && <span className="text-xs text-platforma-subtle">{t(item.customer_visible ? "customerSafety.publicMaterial" : "customerSafety.internalMaterial")}</span>}
                   <span className={cn("rounded-full px-2 py-0.5 text-xs font-semibold", item.is_active ? "bg-[var(--platforma-success-soft)] text-platforma-success" : "bg-surface-muted text-platforma-subtle")}>
                     {item.is_active ? t("aiAgents.knowledge.active") : t("aiAgents.knowledge.off")}
                   </span>
@@ -134,6 +135,7 @@ export function KnowledgeSection({ agentId, businessId, items, canManage }: { ag
         </div>
       </section>
       {sharedOpen && <SharedKnowledgePicker open onClose={() => setSharedOpen(false)} businessId={businessId} agentId={agentId}
+        customerAgent={customerAgent}
         connectedIds={items.filter(item => item.bot === null).map(item => item.id)} />}
 
       <Modal title={editing ? t("aiAgents.knowledge.editTitle") : t("aiAgents.knowledge.newTitle")} open={open} onClose={() => { if (!saveKnowledge.isPending) setOpen(false); }}>
@@ -165,6 +167,11 @@ export function KnowledgeSection({ agentId, businessId, items, canManage }: { ag
             {t("aiAgents.knowledge.useInContext")}
           </label>
           <FieldHint>{t("aiAgents.hint.knowledgeActive")}</FieldHint>
+          {customerAgent && <label className="flex items-start gap-2 text-sm text-platforma-subtle">
+            <input type="checkbox" className="mt-1" disabled={!canManage || saveKnowledge.isPending} checked={draft.customer_visible}
+              onChange={event => setDraft(current => ({ ...current, customer_visible: event.target.checked }))} />
+            {t("customerSafety.publishMaterial")}
+          </label>}
           <p className="text-sm text-platforma-subtle">{t("aiWorkspace.requiredKnowledge")}</p>
           <Button type="submit" disabled={!canManage} isLoading={saveKnowledge.isPending}>
             <Save size={16} /> {t("common.save")}

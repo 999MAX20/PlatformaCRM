@@ -71,9 +71,9 @@ export type AgentPreviewResponse = {
   summary: string;
   automatic_reply_enabled: boolean;
   automation_enabled: boolean;
-  provider_state: "live" | "mock";
+  provider_state: "live" | "mock" | "not_called";
   sources: Array<{ type: string; id: number; label: string }>;
-  log_id: number;
+  log_id: number | null;
   model: string;
   provider: string;
 };

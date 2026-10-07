@@ -1,4 +1,6 @@
 import type { ReactNode, Ref } from "react";
+import { useI18n } from "../../../lib/i18n";
+import { useActiveBusiness } from "../../../hooks/useBusiness";
 import {
   CheckCheck,
   MessageSquare,
@@ -41,6 +43,7 @@ type ConversationThreadPaneProps = {
   assignPending: boolean;
   onToggleBot: () => void;
   toggleBotPending: boolean;
+  canToggleBot: boolean;
   onCloseConversation: () => void;
   closePending: boolean;
   onReopenConversation: () => void;
@@ -71,14 +74,22 @@ export function ConversationThreadPane({
   assignPending,
   onToggleBot,
   toggleBotPending,
+  canToggleBot,
   onCloseConversation,
   closePending,
   onReopenConversation,
   reopenPending,
   t,
 }: ConversationThreadPaneProps) {
+  const { language } = useI18n();
+  const { business } = useActiveBusiness();
+  const availableAt = selected?.ai_safety?.next_call_available_at;
+  const availableLabel = availableAt ? new Intl.DateTimeFormat(language, {
+    dateStyle: "short", timeStyle: "short", timeZone: business?.timezone || "UTC",
+  }).format(new Date(availableAt)) : "";
   return (
     <WorkQueueDetailPane
+      className="min-w-0"
       mobileDetailOpen={mobileThreadOpen}
       closeLabel={t("common.close")}
       onMobileClose={onMobileClose}
@@ -152,7 +163,7 @@ export function ConversationThreadPane({
                     data-conversation-action-id="toggle-bot"
                     className="h-9 rounded-control px-3 text-xs"
                     variant={selected.bot_enabled ? "warning" : "secondary"}
-                    disabled={!selected}
+                    disabled={!canToggleBot || selected.status !== "open" || (!selected.bot_enabled && selected.ai_safety?.calls_remaining === 0)}
                     onClick={onToggleBot}
                     isLoading={toggleBotPending}
                     aria-label={
@@ -200,6 +211,12 @@ export function ConversationThreadPane({
                 )}
               </div>
             </div>
+            {selected.ai_safety && <div className="mt-2 space-y-1 text-xs text-platforma-subtle">
+              <p>{t("customerSafety.usage", { used: selected.ai_safety.calls_used, limit: selected.ai_safety.calls_limit })}</p>
+              {availableLabel && <p>{t("customerSafety.availableAt", { time: availableLabel })}</p>}
+              {selected.handoff_required && selected.handoff_reason && <p role="status">{selected.handoff_reason}</p>}
+              {!selected.bot_enabled && selected.ai_safety.reason && <p>{t("customerSafety.resumeHint")}</p>}
+            </div>}
           </div>
 
           <div

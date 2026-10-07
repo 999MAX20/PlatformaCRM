@@ -67,6 +67,7 @@ class InboxMessageSerializer(serializers.ModelSerializer):
 
 
 class InboxConversationSerializer(serializers.ModelSerializer):
+    ai_safety = serializers.SerializerMethodField()
     business_name = serializers.CharField(source="business.name", read_only=True)
     bot_name = serializers.CharField(source="bot.name", read_only=True)
     client_name = serializers.CharField(source="client.full_name", read_only=True)
@@ -99,6 +100,7 @@ class InboxConversationSerializer(serializers.ModelSerializer):
             "bot_enabled",
             "handoff_required",
             "handoff_reason",
+            "ai_safety",
             "last_message_at",
             "last_inbound_at",
             "last_outbound_at",
@@ -110,6 +112,10 @@ class InboxConversationSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = fields
+
+    def get_ai_safety(self, obj):
+        from apps.bots.safety_state import usage
+        return {**usage(obj), "reason": (obj.ai_safety_state or {}).get("reason", "")}
 
     def get_last_message(self, obj):
         if hasattr(obj, "latest_message_id"):
@@ -151,6 +157,10 @@ class InboxAssignSerializer(serializers.Serializer):
 
 class InboxHandoffSerializer(serializers.Serializer):
     reason = serializers.CharField(required=False, allow_blank=True)
+
+
+class InboxAIStateSerializer(serializers.Serializer):
+    bot_enabled = serializers.BooleanField()
 
 
 class InboxCloseSerializer(serializers.Serializer):

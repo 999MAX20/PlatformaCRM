@@ -5,8 +5,8 @@ import { assertCurrentSession } from "./token";
 import type { AgentProfile, ApprovalRequest, AIToolCallLog, AIToolSuggestResponse, BusinessKnowledgeItem, Bot, Id } from "../types";
 import { tokenStorage } from "../lib/storage";
 
-export async function setAgentKnowledgeConnection(itemId: Id, agent: Id, connected: boolean) {
-  const { data } = await apiClient.post<BusinessKnowledgeItem>(`/api/ai/knowledge-items/${itemId}/connection/`, { agent, connected });
+export async function setAgentKnowledgeConnection(itemId: Id, agent: Id, connected: boolean, allowCustomerUse = false) {
+  const { data } = await apiClient.post<BusinessKnowledgeItem>(`/api/ai/knowledge-items/${itemId}/connection/`, { agent, connected, allow_customer_use: allowCustomerUse });
   return data;
 }
 
@@ -257,7 +257,7 @@ export type AgentProfilePayload = Omit<Partial<AgentProfile>, "rules_json" | "al
 
 export const agentProfilesApi = createCrudApi<AgentProfile, AgentProfilePayload, AgentProfilePayload>("/api/ai/agent-profiles/");
 
-export type BusinessKnowledgeItemPayload = Pick<BusinessKnowledgeItem, "business" | "title" | "content" | "category" | "is_active">;
+export type BusinessKnowledgeItemPayload = Pick<BusinessKnowledgeItem, "business" | "title" | "content" | "category" | "is_active" | "customer_visible">;
 
 export const businessKnowledgeApi = createCrudApi<
   BusinessKnowledgeItem,

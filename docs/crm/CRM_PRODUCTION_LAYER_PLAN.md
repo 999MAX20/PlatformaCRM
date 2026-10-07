@@ -1,5 +1,15 @@
 # CRM Production Layer Plan
 
+## Client Inbox safety — 2026-10-07, locally accepted
+
+Owner selected the customer agent for the pilot; staff CRM/Analytics development
+is paused without deleting existing behavior. Current work adds bounded provider
+admission, customer-purpose/privacy handoff, explicit public knowledge and authorized
+recovery over the existing Inbox services. Manual work and message history remain
+available when AI stops. No new CRM domain, permission framework or billing model.
+[Scope, checks and delivery](../testing/inbox-agent-safety-20261007.md);
+[AI contract](../ai/AI_ASSISTANT_RULES.md#customer-agent-safety--owner-decision-2026-10-07).
+
 ## Persistent AI conversations — 2026-10-06, locally accepted
 
 The approved AI continuation adds owner-private Work/Analytics conversations,

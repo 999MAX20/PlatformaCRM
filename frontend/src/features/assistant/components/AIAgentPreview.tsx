@@ -46,7 +46,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
           <StatusNotice compact tone={preview.data.handoff_required ? "warning" : "success"}
             title={t(preview.data.handoff_required ? "aiSetup.handoff" : preview.data.automatic_reply_enabled ? "aiSetup.automatic" : "aiSetup.draftOnly")}
             description={preview.data.summary} />
-          <p className="text-sm text-platforma-subtle">{t(preview.data.provider_state === "live" ? "aiAgents.aiProviderLive" : "aiQuality.mock")}</p>
+          <p className="text-sm text-platforma-subtle">{t(preview.data.provider_state === "not_called" ? "customerSafety.noProviderCall" : preview.data.provider_state === "live" ? "aiAgents.aiProviderLive" : "aiQuality.mock")}</p>
           {preview.data.sources.length ? <ul aria-label={t("aiAgents.aiSources")} className="flex flex-wrap gap-2 text-xs text-platforma-subtle">
             {preview.data.sources.map((source) => <li key={`${source.type}-${source.id}`}>{source.label}</li>)}
           </ul> : null}

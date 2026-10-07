@@ -10,6 +10,7 @@ import { cn } from "../../../lib/cn";
 import type { AgentFormState, AutoPipelineMode, BotDraftState } from "../aiAgentsTypes";
 import { autoPipelineFromSettings } from "../aiAgentsUtils";
 import { FieldHint } from "./AIAgentsShared";
+import { CustomerSafetySettings } from "./CustomerSafetySettings";
 export function AgentActionsSection({
   botDraft,
   setBotDraft,
@@ -31,6 +32,7 @@ export function AgentActionsSection({
     <div className="space-y-5">
       <ControlSection botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
       <FunctionsSection form={form} setForm={setForm} canManage={canManage} />
+      <CustomerSafetySettings botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
       <section className="border-b border-platforma-border pb-5 last:border-0">
         <div>
           <h3 className="text-base font-semibold text-midnight">{t("aiAgents.authority.title")}</h3>

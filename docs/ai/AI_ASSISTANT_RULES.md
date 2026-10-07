@@ -1,5 +1,68 @@
 # AI Assistant And AI Analyst Rules
 
+## Customer-agent safety — owner decision 2026-10-07
+
+Pilot work now prioritizes the customer Inbox agent. Staff CRM/Analytics development
+is paused without deleting its implementation, data or settings.
+
+The Inbox server admits each incoming message before paid classification. Obvious
+secret/instruction-bypass and personal-record lookup requests hand off immediately.
+The classifier must return request_kind: business, social, off_topic, private_record,
+security or uncertain. Missing classification fails closed. Greetings and thanks do
+not increment the off-topic counter. By default the first safe unrelated request
+gets at most one short courtesy answer, the second a deterministic business-topic
+reminder and the third pauses AI and marks the conversation for an administrator.
+Security/private-record requests never receive a courtesy disclosure attempt. A
+name, phone or claim to be the owner is not proof of identity; verification of an
+existing booking/personal record goes to staff without confirming record existence.
+Existing new-booking permissions and mandatory review rules remain authoritative.
+
+Settings customer_safety may tighten the off-topic handoff threshold (1–3), disable
+the first courtesy answer, and choose a technical call ceiling (1–30 per rolling24h).
+The owner selected30 calls per conversation, no new business-wide cap. Each provider
+attempt is reserved durably before I/O, including classification and reply stages;
+failed/uncertain attempts are retained. Retries cannot reset the ledger. This is an
+abuse control, not a commercial billing definition. At exhaustion AI hands off;
+incoming messages and manual CRM work remain available. A new conversation has a
+separate budget: this policy does not claim business-wide attack protection.
+
+Other bounded controls: messages/minute3–30 (default12), message length256–8000
+(default4000), repeated long messages/minute2–10 before handoff (default3). The second
+identical long message is skipped without a paid call; short slot confirmations are
+excluded from that duplicate rule. Counters store hashes/codes/timestamps, not text.
+Staff can pause/resume with conversations.update AND ai_assistant.suggest, provided
+the conversation is open and the agent/channel ready. Resume clears behavioral
+counters/handoff but never call usage; exhausted usage must first expire. Memory
+reset also preserves usage. Late and queued responses remain revoked after resume.
+The API exposes usage and the earliest time enough reservations expire to admit a
+new call, even after the configured ceiling is lowered.
+
+Customer prompts omit linked CRM client/lead private fields. Allowed inputs are the
+current dialogue, public service/scheduling facts and explicitly customer-visible
+agent knowledge. BusinessKnowledgeItem.customer_visible defaults false. Existing
+Inbox-owned materials retain their prior audience during migration; shared and
+CRM-owned materials are not automatically published. Shared knowledge connection
+to an Inbox agent requires customer_visible or explicit allow_customer_use consent.
+The staff UI continues to show excluded materials so they can be reviewed. All
+source selectors still enforce Business and agent ownership/explicit connections.
+Revoking knowledge/settings during generation invalidates its answer.
+
+Recognizable credentials are rejected before publication/provider input and before
+AI output/logging. Pattern checks are defense in depth, not a guarantee of detecting
+all secret formats or indirect instructions. Owners must review public materials;
+mandatory tenant/action checks remain outside the model. No filesystem, environment,
+shell or arbitrary query tool is granted to the customer model.
+
+Authenticated setup preview checks single-request safety and reports a blocked
+request without calling the model for obvious risks. It sends no customer message,
+creates no CRM record and never claims an administrator was actually notified.
+It does not simulate the cumulative Inbox ledger; this boundary is visible in UI.
+General usage accounting still applies to provider calls made by preview.
+
+Schema: bots.0011 and ai_core.0008; working migration is a separate authorized
+operation. Implementation/verification/publication state belongs to
+[INBOX-AGENT-SAFETY-20261007](../testing/inbox-agent-safety-20261007.md).
+
 ## Agent knowledge isolation — owner decision 2026-10-05
 
 Each agent starts with no connected knowledge. New records created inside its

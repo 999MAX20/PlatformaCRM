@@ -72,8 +72,8 @@ def run_inbound_once(*, conversation, message, channel, run):
     if message.conversation_id != conversation.pk or message.direction != BotMessage.Directions.INBOUND:
         raise PermissionDenied("The inbound message does not belong to this conversation.")
     with transaction.atomic():
-        Business.objects.select_for_update().get(pk=conversation.business_id)
-        conversation = BotConversation.objects.select_for_update().select_related("business", "bot").get(pk=conversation.pk)
+        from apps.bots.safety_state import _locked
+        conversation = _locked(conversation)
         thread = inbox_memory_conversation(conversation)
         thread = AgentConversation.objects.select_for_update().get(pk=thread.pk)
         existing = thread.turns.filter(idempotency_key=f"message:{message.pk}").first()

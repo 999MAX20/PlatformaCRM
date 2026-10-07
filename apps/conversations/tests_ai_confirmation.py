@@ -27,7 +27,7 @@ class AIConfirmationTests(TestCase):
         self.bot = Bot.objects.create(business=self.business, name="Confirmation bot", status=Bot.Statuses.ACTIVE)
         AgentProfile.objects.create(business=self.business, bot=self.bot, name="Reception",
             allowed_tools_json={"tools": ["create_lead", "create_task", "create_deal", "handoff_to_manager"]})
-        BusinessKnowledgeItem.objects.create(business=self.business, bot=self.bot, title="Reception", content="Staff confirms CRM actions and books appointments.")
+        BusinessKnowledgeItem.objects.create(customer_visible=True, business=self.business, bot=self.bot, title="Reception", content="Staff confirms CRM actions and books appointments.")
         self.channel = BotChannel.objects.create(bot=self.bot, channel="website", status="active")
         self.conversation = BotConversation.objects.create(business=self.business, bot=self.bot, channel="website", external_user_id="confirmation-client")
         BotMessage.objects.create(conversation=self.conversation, direction="inbound", sender_type="client", text="Хочу записаться на консультацию и узнать цену")

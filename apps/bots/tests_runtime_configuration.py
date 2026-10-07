@@ -20,7 +20,7 @@ class RuntimeConfigurationTests(TestCase):
             "temperature": 0.4, "auto_crm_pipeline": {"mode": "triage", "enabled": True, "auto_send_reply": True}})
         self.channel = BotChannel.objects.create(bot=self.bot, channel="website", status="active")
         self.profile = AgentProfile.objects.create(business=self.business, bot=self.bot, name="Runtime")
-        self.knowledge = BusinessKnowledgeItem.objects.create(business=self.business, bot=self.bot, title="Price", content="100")
+        self.knowledge = BusinessKnowledgeItem.objects.create(business=self.business, bot=self.bot, title="Price", content="100", customer_visible=True)
         self.conversation = BotConversation.objects.create(business=self.business, bot=self.bot, channel="website", external_user_id="test")
         self.message = BotMessage.objects.create(conversation=self.conversation, direction="inbound", text="Price?")
 
@@ -91,4 +91,5 @@ class RuntimeConfigurationTests(TestCase):
         with patch("apps.bots.ai.run_ai_request", return_value=(SimpleNamespace(output_text="Hello"), SimpleNamespace(input_json={}))) as run:
             suggest_bot_reply(conversation=self.conversation)
         self.assertNotIn("PRIVATE_STAFF_NOTE_SENTINEL", str(run.call_args))
-        self.assertEqual(run.call_args.kwargs["input_json"]["crm_context"]["client"]["full_name"], "Customer")
+        self.assertNotIn("Customer", str(run.call_args))
+        self.assertEqual(run.call_args.kwargs["input_json"]["crm_context"], {})

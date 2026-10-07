@@ -22,7 +22,7 @@ class AIRequestLogSerializer(serializers.ModelSerializer):
 class BusinessKnowledgeItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BusinessKnowledgeItem
-        fields = ["id", "business", "bot", "title", "content", "category", "is_active", "created_at", "updated_at"]
+        fields = ["id", "business", "bot", "title", "content", "category", "is_active", "customer_visible", "created_at", "updated_at"]
         read_only_fields = ["created_at", "updated_at"]
 
     def validate(self, attrs):
@@ -46,6 +46,7 @@ class BusinessKnowledgeItemSerializer(serializers.ModelSerializer):
 class KnowledgeConnectionSerializer(serializers.Serializer):
     agent = serializers.IntegerField(min_value=1)
     connected = serializers.BooleanField()
+    allow_customer_use = serializers.BooleanField(required=False, default=False)
 
 
 class AgentProfileSerializer(serializers.ModelSerializer):

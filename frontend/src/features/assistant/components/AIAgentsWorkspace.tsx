@@ -215,7 +215,7 @@ export function AIAgentsWorkspace({
                 toggleChannel={toggleChannel}
               />
             ) : activeSection === "knowledge" ? (
-              <>{selectedBot.scenario === "crm" && <CRMAgentSettings section="sources" form={profileForm} setForm={setProfileForm} canManage={canManage} />}<KnowledgeSection key={selectedBot.id} agentId={selectedBot.id} businessId={businessId} items={knowledgeItems} canManage={canManage} /></>
+              <>{selectedBot.scenario === "crm" && <CRMAgentSettings section="sources" form={profileForm} setForm={setProfileForm} canManage={canManage} />}<KnowledgeSection key={selectedBot.id} agentId={selectedBot.id} businessId={businessId} items={knowledgeItems} canManage={canManage} customerAgent={selectedBot.scenario === "inbox"} /></>
             ) : activeSection === "work" || activeSection === "analytics" ? (
               <CRMAgentRuntime key={`${selectedBot.id}-${activeSection}`} bot={selectedBot} section={activeSection} dirty={dirty} />
             ) : activeSection === "actions" && selectedBot.scenario === "crm" ? (

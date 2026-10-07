@@ -119,6 +119,7 @@ class BotConversation(TimeStampedModel):
     last_outbound_at = models.DateTimeField(null=True, blank=True)
     unread_count = models.PositiveIntegerField(default=0)
     metadata_json = models.JSONField(default=dict, blank=True)
+    ai_safety_state = models.JSONField(default=dict, blank=True, editable=False)
     is_archived = models.BooleanField(default=False)
     archived_at = models.DateTimeField(null=True, blank=True)
     archived_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="archived_bot_conversations")

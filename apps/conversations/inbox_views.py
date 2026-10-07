@@ -82,6 +82,17 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
     serializer_class = InboxConversationSerializer
     permission_classes = [IsMerchantInboxUser]
 
+    @action(detail=True, methods=["post"], url_path="ai-state")
+    def ai_state(self, request, pk=None):
+        from apps.bots.customer_safety import set_customer_ai_state
+        from apps.conversations.inbox_serializers import InboxAIStateSerializer
+        conversation = self.get_object()
+        serializer = InboxAIStateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        conversation = set_customer_ai_state(conversation=conversation, actor=request.user,
+                                             enabled=serializer.validated_data["bot_enabled"])
+        return Response(self.get_serializer(conversation).data)
+
     def get_queryset(self):
         latest_message = BotMessage.objects.filter(conversation_id=OuterRef("pk")).order_by("-created_at", "-id")
         queryset = BotConversation.objects.select_related(

@@ -125,7 +125,7 @@ class Command(BaseCommand):
             allowed_tools_json={"tools": ["create_lead", "create_task", "create_deal", "handoff_to_manager"]})
         BusinessKnowledgeItem.objects.create(
             business=business, bot=bot,
-            title="CRM runtime check knowledge",
+            title="CRM runtime check knowledge", customer_visible=True,
             content="Offer only configured services and available slots; CRM work needs staff confirmation and staff creates appointments.",
         )
         channel = BotChannel.objects.create(

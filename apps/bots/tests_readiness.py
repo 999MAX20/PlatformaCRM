@@ -67,7 +67,7 @@ class BotReadinessAPITests(TestCase):
             channel=BotChannel.Channels.WEBSITE,
             status=BotChannel.Statuses.ACTIVE,
         )
-        BusinessKnowledgeItem.objects.create(
+        BusinessKnowledgeItem.objects.create(customer_visible=True,
             business=self.business, bot=self.bot,
             title="Booking rules",
             content="Use only confirmed slots.",
@@ -247,7 +247,7 @@ class BotReadinessAPITests(TestCase):
             status=BotChannel.Statuses.ACTIVE,
         )
         AgentProfile.objects.create(business=self.business, bot=self.bot, name="Website profile", is_active=True)
-        BusinessKnowledgeItem.objects.create(
+        BusinessKnowledgeItem.objects.create(customer_visible=True,
             business=self.business, bot=self.bot,
             title="Website knowledge",
             content="Grounded answer",

@@ -8,6 +8,9 @@ def validate_ai_settings(value):
     if not isinstance(value, dict):
         raise ValidationError("Agent settings must be an object.")
     value = dict(value)
+    if "customer_safety" in value:
+        from apps.bots.safety_policy import validate_safety_policy
+        value["customer_safety"] = validate_safety_policy(value["customer_safety"])
     if "memory_enabled" in value and not isinstance(value["memory_enabled"], bool):
         raise ValidationError({"memory_enabled": "Use a boolean value."})
     temperature = value.get("temperature")

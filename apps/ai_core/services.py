@@ -108,10 +108,25 @@ def run_ai_request(
         answer = answers.get(response_language, answers["ru"])
         result = AIClientResult(output_text=json.dumps({"answer": answer, "source_ids": [], "no_data": True}), model="", provider="none")
     else:
+        if source == AIRequestLog.Sources.BOT:
+            from apps.bots.safety_content import contains_secret
+            from apps.ai_core.ai_client import AIClientError
+            if contains_secret(prompt.messages):
+                raise AIClientError(code="unsafe_customer_context", retryable=False)
+            if runtime_context.get("conversation_id"):
+                from apps.bots.customer_safety import assert_customer_context, safety_handoff
+                from apps.bots.safety_state import reserve_call
+                customer_conversation = assert_customer_context(business=business, bot_id=agent_id,
+                    conversation_id=runtime_context["conversation_id"])
+                if not reserve_call(conversation=customer_conversation, stage=prompt_type):
+                    safety_handoff(customer_conversation, "call_limit")
+                    raise AIClientError(code="customer_call_limit", retryable=False)
         result = generate_text(
             prompt, prompt_type=prompt_type, model=model, model_tier=model_tier,
             temperature=temperature, allow_mock=allow_mock,
         )
+        if source == AIRequestLog.Sources.BOT and contains_secret(result.output_text):
+            raise AIClientError(code="unsafe_customer_output", retryable=False)
     if scenario_config and workflow_fingerprint(business, scenario) != fingerprint:
         raise PermissionDenied("AI scenario configuration changed while preparing the answer.")
     if knowledge_agent is not None:

@@ -1,5 +1,22 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-AGENT-SAFETY-20261007 — locally accepted, publication pending
+
+- Same registered generation3 owner, canonical root and codex/ui-testing-toolkit;
+  starting HEAD 9fabae07e96c14ff52ae9deb11bfb76d781b5626. All 60 changed paths are
+  task-owned; no other writer or branch drift detected.
+- [Contract, retained failures, checks and delivery](../inbox-agent-safety-20261007.md).
+- Customer safety, configurable limits, public knowledge consent and Inbox recovery
+  implemented. Default 30 calls/conversation/rolling24h; staff recovery preserves usage.
+  CRM/Analytics paused without deletion. No real-provider evaluation or deployment.
+- Backend194 PASS plus unchanged dependent coverage, preview37/migration/concurrency
+  PASS. Desktop4 and mobile3 PASS; final mobile Inbox1 PASS after width correction.
+  Completion build/types/i18n/bundle PASS; affected screenshots reviewed.
+- Owner-authorized working migration applied with backup;117 original tables
+  preserved. Canonical backend6316/frontend16012, localhost8000/5173 HTTP200.
+- Next: reviewed explicit-path commit, static real range, normal HEAD:main push,
+  remote SHA readback and actual CI. Do not start a new phase.
+
 ## AI-AGENT-CONTINUITY-20261006 — published, actual CI pending
 
 - Owner approved the full prior proposal and previous AI discussion; all slices

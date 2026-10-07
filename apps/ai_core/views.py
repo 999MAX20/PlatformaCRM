@@ -101,7 +101,8 @@ class BusinessKnowledgeItemViewSet(TenantModelViewSet):
         payload = KnowledgeConnectionSerializer(data=request.data)
         payload.is_valid(raise_exception=True)
         item = connect_shared_knowledge(actor=request.user, item=self.get_object(),
-            agent_id=payload.validated_data["agent"], connected=payload.validated_data["connected"])
+            agent_id=payload.validated_data["agent"], connected=payload.validated_data["connected"],
+            allow_customer_use=payload.validated_data["allow_customer_use"])
         return Response(self.get_serializer(item).data)
 
 
