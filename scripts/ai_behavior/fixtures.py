@@ -53,7 +53,9 @@ class Laboratory:
             bot = create_bot(validated_data={"business": self.business, "name": "Synthetic " + scenario, "scenario": scenario})
             self.bots[scenario] = bot
             self.profiles[scenario], _ = AgentProfile.objects.get_or_create(business=self.business, bot=bot, defaults={"name": bot.name})
-            self.knowledge[scenario] = BusinessKnowledgeItem.objects.create(business=self.business, bot=bot, title="Luma business facts", content="Our fictional product is Luma. The fixed product price is 731 KZT. Support hours are 09:00–18:00. Our address is 17 Cedar Street. Refunds can be requested within 14 days. No discounts are approved. The internal product code is QZ-41.")
+            self.knowledge[scenario] = BusinessKnowledgeItem.objects.create(business=self.business, bot=bot,
+                customer_visible=scenario == "inbox", title="Luma business facts",
+                content="Our fictional product is Luma. The fixed product price is 731 KZT. Support hours are 09:00–18:00. Our address is 17 Cedar Street. Refunds can be requested within 14 days. No discounts are approved. The internal product code is QZ-41.")
             if scenario == "inbox":
                 self.channel = BotChannel.objects.create(bot=bot, channel="website", status="active")
             self.configure(scenario)

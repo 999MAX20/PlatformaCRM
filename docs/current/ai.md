@@ -143,8 +143,11 @@ No-data, forbidden, unready provider и provider failure показываютс�
 [booking](../../apps/bots/tests_automatic_booking.py),
 [review boundary](../../apps/conversations/tests_ai_behavior_boundaries.py).
 
-Последняя safety-приёмка использовала mocked provider. Прежние 21 real-model
-сценарий предшествуют защите 07.10 и не сертифицируют её. Live messenger,
+08.10 [28 real-model сценариев](../testing/inbox-live-acceptance-20261008.md)
+прошли после уточнения классификации и исправления booking handoff: если сервер
+вернул requires_staff, новый модельный ответ не запрашивается, обращение передаётся
+администратору; при разрешённой автоотправке используется существующий текст handoff.
+Предыдущие 21 real-model сценарий предшествуют защите 07.10. Live messenger,
 production queues и универсальное качество не доказаны; новые расходы не
 разрешены документацией. Исторические доказательства, не команды к запуску:
 [safety](../../archive_docs/2026-10-07/docs/testing/inbox-agent-safety-20261007.md),

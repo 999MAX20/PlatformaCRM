@@ -18,7 +18,7 @@ API слой: [frontend/src/api](../../frontend/src/api).
 | Календарь/специалисты | Resource без обязательного аккаунта, график/исключения, проверки slot/overlap, изменение записи | [scheduling](../../apps/scheduling/services.py), [availability](../../apps/scheduling/availability.py); кресла/оборудование отложены |
 | Задачи/напоминания | Lifecycle, роли, назначение, due processing | [tasks](../../apps/tasks/services.py); target workers и follow-up policy отдельно |
 | Inbox | Диалоги/сообщения/связи, ручная работа и human handoff | [conversations](../../apps/conversations); внешняя доставка не доказана наличием UI |
-| Клиентский AI | Настройки/знания/память, публичные источники, контролируемое создание, safety budget, handoff/recovery | [Подробный паспорт](customer-ai-agent.md); актуальный live safety run и канал ещё нужны |
+| Клиентский AI | Настройки/знания/память, публичные источники, контролируемое создание, safety budget, handoff/recovery | [Подробный паспорт](customer-ai-agent.md); 28 live-сценариев 08.10 PASS; реальный канал ещё не принят |
 | CRM AI / аналитик | Существующие настройки, инструменты, подтверждённые команды и аналитические запросы | [ai_core](../../apps/ai_core), [пауза](crm-ai-agent.md); развитие остановлено решением, runtime не объявлен выключенным |
 | Автоматизации | Conditions, 6 действий, WAIT/retry, leases/idempotency/cancel | [engine](../../apps/automations/engine.py); реальная очередь/target recovery отдельно |
 | Команда/безопасность | Business membership/roles, scoped APIs, сессии/MFA, support grant | [accounts](../../accounts), [core](../../apps/core); target privileged MFA/операционные проверки обязательны |
@@ -35,8 +35,8 @@ API слой: [frontend/src/api](../../frontend/src/api).
 ## Что делать дальше при новом поручении
 
 Сначала выбрать один требуемый результат и [непройденную границу](../current/acceptance.md).
-Для актуального Inbox AI ближайшее доказательство — разрешённый real-model
-прогон после safety update и затем согласованный channel/target flow. Бюджет,
+Для актуального Inbox AI [28 live-сценариев 08.10](../testing/inbox-live-acceptance-20261008.md)
+прошли; следующая отдельная граница — согласованный channel/target flow. Бюджет,
 получатели, deployment и следующий этап здесь не утверждаются.
 Для остальной CRM использовать существующие слои и проверять конкретный
 regression/недостающий критерий; не реализовывать модуль заново по старому плану.

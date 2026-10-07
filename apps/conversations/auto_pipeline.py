@@ -217,7 +217,18 @@ def _run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, ch
         decision.reason = "Enabled automatic CRM actions were processed; see created records for the outcome."
     if config.create_appointment:
         decision.booking = maybe_create_appointment_from_reply(conversation=result.conversation, message=message)
-    if decision.booking is None or decision.booking.status != "booked":
+    if decision.booking is not None and decision.booking.status == "requires_staff":
+        # The server has rejected autonomous booking (busy/stale slot or policy).
+        # Another model reply must not reconfirm that same uncommittable option.
+        from apps.bots.safety_content import safety_text
+        decision.status = "needs_review"
+        decision.reason = decision.booking.reason
+        handoff_conversation(result.conversation, reason=decision.reason)
+        if config.auto_send_reply:
+            decision.reply_message = send_outbound_message(result.conversation,
+                safety_text(result.conversation, "handoff"), user=None,
+                sender_type=BotMessage.SenderTypes.SYSTEM, idempotency_key=f"booking-review:{message.pk}")
+    elif decision.booking is None or decision.booking.status != "booked":
         if _can_auto_reply(config=config, conversation=result.conversation, decision=decision):
             _send_auto_reply(conversation=result.conversation, config=config, decision=decision)
     _notify_pipeline_result(result=result, decision=decision)

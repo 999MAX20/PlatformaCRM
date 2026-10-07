@@ -72,6 +72,61 @@ class AutomaticBookingTests(TestCase):
         self.assertEqual(self.book().status, "requires_staff")
         self.assertFalse(Appointment.objects.exists())
 
+    def _assert_pipeline_review_handoff(self, *, auto_reply=True):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from apps.conversations.ai_qualification import ConversationQualification
+        from apps.conversations.auto_pipeline import maybe_run_auto_pipeline
+        from apps.bots.safety_content import safety_text
+        self.bot.settings_json["auto_crm_pipeline"]["auto_send_reply"] = auto_reply
+        self.bot.save()
+        store_offered_slots(conversation=self.conversation, scheduling_context={"next_available_slots": [self.slot]},
+                            runtime_fingerprint=agent_runtime_fingerprint(self.conversation), offer_message_id=self.offer.id)
+        qualification = ConversationQualification(intent="appointment_request", confidence=.99,
+            summary="Customer selects offered slot", should_create_lead=False, should_create_task=False)
+        before = Appointment.objects.count()
+        with patch("apps.conversations.auto_pipeline.qualify_conversation", return_value=(qualification, None)), \
+             patch("apps.conversations.auto_pipeline.suggest_bot_reply", return_value=(SimpleNamespace(output_text="Confirm the old slot again"), None, [], [])) as reply, \
+             patch("apps.bots.outbound_delivery.send_message", return_value={"ok": True, "provider_message_id": "synthetic-review"}):
+            result = maybe_run_auto_pipeline(conversation=self.conversation, message=self.reply)
+            self.conversation.refresh_from_db()
+            self.assertEqual(result.booking.status, "requires_staff")
+            self.assertTrue(self.conversation.handoff_required)
+            self.assertFalse(self.conversation.bot_enabled)
+            self.assertEqual(result.status, "needs_review")
+            if auto_reply:
+                self.assertEqual(result.reply_message.text, safety_text(self.conversation, "handoff"))
+            else:
+                self.assertIsNone(result.reply_message)
+            reply.assert_not_called()
+            repeat = maybe_run_auto_pipeline(conversation=self.conversation, message=self.reply)
+            if auto_reply:
+                self.assertEqual(repeat.reply_message.pk, result.reply_message.pk)
+            else:
+                self.assertIsNone(repeat.reply_message)
+        self.assertEqual(Appointment.objects.count(), before)
+        self.assertEqual(self.conversation.messages.filter(delivery_idempotency_key=f"booking-review:{self.reply.pk}").count(), int(auto_reply))
+
+    def test_busy_selection_hands_off_instead_of_reconfirming_stale_slot(self):
+        Appointment.objects.create(business=self.business, client=self.client, service=self.service, resource=self.resource,
+                                   start_at=self.start, end_at=self.start + timedelta(minutes=30))
+        self._assert_pipeline_review_handoff()
+
+    def test_staff_policy_selection_hands_off_instead_of_confirmation_loop(self):
+        self.bot.settings_json["auto_crm_pipeline"]["creation_policy"] = "staff_confirmation"
+        self.bot.save()
+        self._assert_pipeline_review_handoff()
+
+    def test_booking_handoff_respects_disabled_auto_reply(self):
+        self.bot.settings_json["auto_crm_pipeline"]["creation_policy"] = "staff_confirmation"
+        self.bot.save()
+        self._assert_pipeline_review_handoff(auto_reply=False)
+
+    def test_disabled_booking_tool_hands_off_without_mutation(self):
+        self.profile.allowed_tools_json = {"tools": ["create_client", "create_lead"]}
+        self.profile.save()
+        self._assert_pipeline_review_handoff()
+
     def test_complete_pipeline_sends_exact_offer_then_books_customer_choice(self):
         from types import SimpleNamespace
         from unittest.mock import patch

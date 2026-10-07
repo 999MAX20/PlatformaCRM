@@ -15,13 +15,21 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--suite", choices=["smoke", "profiles", "temperature", "scope", "dialogue", "analytics", "commands", "pipeline", "final_responses", "final_crm", "continuity"], default="smoke")
+    parser.add_argument("--suite", choices=["smoke", "profiles", "temperature", "scope", "dialogue", "analytics", "commands", "pipeline", "final_responses", "final_crm", "continuity", "customer_acceptance"], default="smoke")
+    parser.add_argument("--budget-usd", default="3", help="Explicitly authorized cumulative ceiling for this output ledger, including retries")
     parser.add_argument("--max-calls", type=int, choices=range(1, 751), default=500, metavar="1..750")
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--child", action="store_true")
     parser.add_argument("--case-filter", default="")
     parser.add_argument("--output", default="output/ai-agents-behavior-20261006")
     args = parser.parse_args()
+    from decimal import Decimal, InvalidOperation
+    try:
+        budget = Decimal(args.budget_usd)
+        if not budget.is_finite() or budget <= 0:
+            raise ValueError
+    except (InvalidOperation, ValueError):
+        parser.error("--budget-usd must be a finite positive decimal")
     directory = (ROOT / args.output).resolve()
     if ROOT not in directory.parents or directory == ROOT:
         raise RuntimeError("Evaluation output must stay inside canonical workspace")
@@ -41,6 +49,7 @@ def main():
                        **{name: str(getattr(settings, name)) for name in ("AI_MODEL", "AI_FAST_MODEL", "AI_SMART_MODEL", "AI_CHEAP_MODEL", "AI_PROMPT_MODEL_TIERS")})
             command = [sys.executable, __file__, "--child", "--suite", args.suite, "--output", args.output]
             command.extend(["--max-calls", str(args.max_calls)])
+            command.extend(["--budget-usd", str(budget)])
             if args.case_filter:
                 command.extend(["--case-filter", args.case_filter])
             if args.live:
@@ -55,12 +64,12 @@ def main():
     from scripts.ai_behavior.fixtures import Laboratory, NOW
     from scripts.ai_behavior.transport import Transport
     from scripts.ai_behavior.suites import Evaluation
-    transport = Transport(directory, live=args.live, max_calls=args.max_calls)
+    transport = Transport(directory, live=args.live, budget=str(budget), max_calls=args.max_calls)
     transport.load_prices()
     import hashlib
     import time
     transport.run_id = args.suite + "-" + str(time.time_ns())
-    manifest = {"run_id": transport.run_id, "suite": args.suite, "filter": args.case_filter, "source_sha256": {
+    manifest = {"run_id": transport.run_id, "suite": args.suite, "filter": args.case_filter, "budget_usd": str(budget), "source_sha256": {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for folder in (ROOT / "apps/ai_core", ROOT / "apps/bots", ROOT / "apps/conversations", ROOT / "scripts/ai_behavior")
         for path in folder.rglob("*.py")}}

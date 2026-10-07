@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-07",
+  "asOf": "2026-10-08",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
     {
@@ -210,6 +210,10 @@
     {
       "path": "STATUS.md",
       "role": "status"
+    },
+    {
+      "path": "docs/testing/inbox-live-acceptance-20261008.md",
+      "role": "evidence"
     }
   ]
 }

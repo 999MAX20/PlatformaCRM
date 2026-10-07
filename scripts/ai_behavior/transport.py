@@ -16,6 +16,8 @@ class Transport:
     def __init__(self, directory, *, live, budget="3", max_calls=500):
         self.directory, self.live = directory, live
         self.budget, self.max_calls = Decimal(budget), max_calls
+        if not self.budget.is_finite() or self.budget <= 0:
+            raise ValueError("Budget must be finite and positive")
         self.original = request.urlopen
         self.case = "unassigned"
         self.calls = []

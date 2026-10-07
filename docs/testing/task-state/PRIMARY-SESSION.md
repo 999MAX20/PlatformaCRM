@@ -1,5 +1,69 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-LIVE-ACCEPTANCE-20261008 — behavioral PASS; publication below
+
+Owner authorized real-model acceptance of ordinary inquiries, booking, protection
+and recovery, including fixes for reproduced in-scope defects. Explicit new budget:
+USD 1 maximum, stop before exceeding it; prior task budgets are not reused.
+Mode verification/targeted fixes; gap evidence. Same generation 4 primary/root/
+branch; clean base `00fe0e7c8743a4b84d136db9492e9228e88beecd`.
+
+Reuse `scripts/ai_behavior`, isolated_runtime, current Inbox pipeline, domain
+services and existing safety/booking/recovery tests. Synthetic disposable DB,
+real configured AI provider only; controlled outbound receipts, never real
+customers or messenger delivery. No working DB, migration, deployment, billing,
+CRM-agent/analytics development or new integration rollout.
+
+Changed behavior initially none; if a defect reproduces, minimal correction and
+focused regression before dependent work. Risks: budget overflow, false booking,
+privacy leak, false handoff, duplicate work and stale replies after recovery.
+Acceptance checks facts vs fixture, actual records/relationships and timestamps,
+no writes without valid consent, denial/tenant boundaries, sensitive context,
+limits and replay, provider failure/manual takeover/resume. Review model output
+semantically; HTTP success alone is not PASS. Test controls cannot masquerade as
+live channel, infrastructure or clinic acceptance.
+
+Focused checks: existing customer safety/state/recovery, automatic booking,
+runtime configuration, Inbox continuity and AI job recovery in isolated runtime;
+test budget harness before live use. Add explicit USD1 CLI budget and a targeted
+Inbox suite if needed, retaining cumulative attempts/reservations across retries.
+Completion: affected/dependent backend suites plus system/migration checks if
+runtime changes; reachable API flow, relevant UI/build only if changed. No full
+project/E2E gate by default. Docs links/registry/diff checks; reviewed commit,
+normal HEAD:main push, remote SHA and actual CI. Keep all failed attempts visible.
+
+Initial plan: prepare selected synthetic scenarios and run deterministic baseline, then
+bounded live evaluation. Evidence under `output/inbox-live-acceptance-20261008/`.
+
+First results: 53 focused tests/system/migration drift PASS; 6 budget-harness tests
+PASS; 4 no-provider safety/API dry cases PASS. First live 27 cases: 25 machine
+PASS, 2 harness failures (ambiguous request expectation contradicted permitted
+uncertain handoff; held-worker simulation accidentally used eager result backend).
+Retain both failures and fix test setup/criteria transparently, not runtime policy.
+Semantic review found a real wrong off_topic classification for clinic address,
+and busy/denied booking selection led to another model confirmation of an
+unavailable/uncommittable time. Appointment writes remained protected.
+
+Bounded fix plan: clarify business-information categories in qualification;
+when existing booking service returns requires_staff, call existing handoff
+service and, when auto replies enabled, send existing localized handoff copy.
+No new booking permission/policy/endpoint/schema/UI. Existing handoff activity,
+audit and manager notification apply; pipeline event retains actual decision.
+Add failing pipeline regression for busy, staff-only and disabled-tool selection,
+verify immediately; strengthen live assertions and retest affected scenarios.
+Provider-failure injection reserves cost conservatively; cumulative ledger stays
+under the separately approved USD1. No real messenger delivery claimed.
+
+Final behavioral gate: 130 affected/dependent backend PASS, system/migration-drift
+PASS (`backend-1791401726512442200.log`); final live run 28/28 machine and semantic
+PASS, 57 real calls. Total 55 case attempts retained, 110 received provider calls,
+2 injected-failure reservations. Provider-reported USD0.1104668, conservative
+charged/reserved USD0.1228916 of USD1. Final source manifest matches current Python
+files. No further paid calls needed. Detailed commands, deltas and limitations:
+[acceptance report](../inbox-live-acceptance-20261008.md). Next: final docs/source
+review and diff gate, commit/push and actual CI. No new phase. Prior docs CI
+37667508038 is now confirmed SUCCESS. Working DB/servers/dependencies unchanged.
+
 ## DOCS-RESET-20261007 — консолидация документации
 
 Mode docs; gap — устаревшие маршруты/смешение требований и истории. Владелец

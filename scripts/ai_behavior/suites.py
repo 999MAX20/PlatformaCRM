@@ -115,6 +115,10 @@ class Evaluation:
         from scripts.ai_behavior.continuity_cases import run_continuity
         run_continuity(self)
 
+    def customer_acceptance(self):
+        from scripts.ai_behavior.customer_cases import run_customer_acceptance
+        run_customer_acceptance(self)
+
     def final_responses(self):
         for suite in (self.profiles, self.scope, self.dialogue, self.analytics, self.temperature):
             suite()

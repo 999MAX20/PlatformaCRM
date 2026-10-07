@@ -55,5 +55,23 @@ class TransportBudgetTests(unittest.TestCase):
         with self.assertRaises(BudgetStop): self.transport(self.req("https://example.invalid/send"))
         self.assertEqual(self.sent, 0)
 
+    def test_one_dollar_ceiling_survives_restart_and_counts_uncertain_attempts(self):
+        self.transport = Transport(self.directory, live=True, budget="1")
+        self.transport.prices = {"openai/gpt-4o-mini": {"prompt": "0.000001", "completion": "0.000002"}}
+        self.transport.ledger = [{"charged_or_reserved_usd": "0.999", "state": "reserved"}]
+        self.transport.persist()
+        restored = Transport(self.directory, live=True, budget="1")
+        restored.prices = self.transport.prices
+        restored.original = self.respond
+        with self.assertRaises(BudgetStop):
+            restored(self.req())
+        self.assertEqual(self.sent, 0)
+        self.assertEqual(len(restored.ledger), 1)
+
+    def test_invalid_budget_cannot_disable_ceiling(self):
+        for value in ("NaN", "Infinity", "-1", "0"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                Transport(self.directory, live=True, budget=value)
+
 
 if __name__ == "__main__": unittest.main()
