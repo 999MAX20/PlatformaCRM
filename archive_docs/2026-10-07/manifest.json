@@ -1,0 +1,1392 @@
+{
+  "schemaVersion": 1,
+  "base": "f01d22610118e3a24df86257943a8be91314f916",
+  "documents": [
+    {
+      "original": "AGENTS.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/AGENTS.snapshot.md",
+      "sha256": "6ed92297a0f2729b3e7ba34a1479a03e34a3283ae673f88c1f64ccb876a956ef",
+      "current": "AGENTS.md"
+    },
+    {
+      "original": "CODEBASE_DEEP_AUDIT_2026-07-23.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/CODEBASE_DEEP_AUDIT_2026-07-23.md",
+      "sha256": "96e13a8226865f6ff2a274d9e01c22065f0ac64d4ed77897ed60e101ab182249",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "MACDENT_PLATFORM_CRM_TECHNICAL_AUDIT_2026-09-18.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/MACDENT_PLATFORM_CRM_TECHNICAL_AUDIT_2026-09-18.md",
+      "sha256": "2938a2620fcb2a92310703a3ac0ebabe31c4d7a309338ee294f350104146389c",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "MACDENT_PRODUCT_UI_UX_AUDIT_2026-09-18.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/MACDENT_PRODUCT_UI_UX_AUDIT_2026-09-18.md",
+      "sha256": "8307658b91357885ec451cd97291c9966eb6fe81bf44a657dba1ecb5cbdc876f",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "README.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/README.snapshot.md",
+      "sha256": "607ff33875448ceeed5a28af16b4c3513565eb60f1e1846fe693f51e57f2875c",
+      "current": "README.md"
+    },
+    {
+      "original": "STATUS.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/STATUS.md",
+      "sha256": "359534675778661e72d8e9dfaaee9c681026fe458d260dd374da753fabc91654",
+      "current": "STATUS.md"
+    },
+    {
+      "original": "accounts/test_accounts.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/accounts/test_accounts.md",
+      "sha256": "657b9c09d93cf0dd0accfd9c952f15a990b4c03a02b88cb44af67671f796cab7",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "actual_docs/APP_FUNCTIONAL_CERTIFICATION.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/APP_FUNCTIONAL_CERTIFICATION.md",
+      "sha256": "33bb3b60601ac746c87682f62c4454f7e0f11fae578ea888fe49622b3e6fff39",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "actual_docs/APP_FUNCTIONAL_CERTIFICATION_REPORT_2026-08-20.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/APP_FUNCTIONAL_CERTIFICATION_REPORT_2026-08-20.md",
+      "sha256": "6ec8bec2e8b590a54e2def3b46d1d01433a464388021ff61370f2f4aaf77260c",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "actual_docs/BACKEND_AUDIT_REMEDIATION_PLAN.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/BACKEND_AUDIT_REMEDIATION_PLAN.md",
+      "sha256": "0e4351ed89595943853b2ac4b0ee58fbffcc21ff6cde0e2353b54b8357bf3feb",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "actual_docs/CRM_WORKSPACE_UX_REFORM.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/CRM_WORKSPACE_UX_REFORM.md",
+      "sha256": "4e193d0cf3c7f783c4d8103c5c506d840002f5fc1d0d0dca4143e260e9c27e47",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "actual_docs/DEFECT_KNOWLEDGE_BASE.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/DEFECT_KNOWLEDGE_BASE.md",
+      "sha256": "ad44b5509a0b9e17c34fab53580d80d23999ac42828692de66ecc5f3f4360e67",
+      "current": "actual_docs/DEFECT_KNOWLEDGE_BASE.md"
+    },
+    {
+      "original": "actual_docs/PRE_PILOT_CODE_READINESS_MASTER.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/PRE_PILOT_CODE_READINESS_MASTER.md",
+      "sha256": "b00d5a62e9e158082ae993647b704d51f9b26a766f3021814ad396f41ba5cbf4",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "actual_docs/PROJECT_HANDOFF.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/PROJECT_HANDOFF.md",
+      "sha256": "52cd4d0aa634699a25feb220c1f66e3d283efd37643d54d926edbe2980ef348f",
+      "current": "actual_docs/PROJECT_HANDOFF.md"
+    },
+    {
+      "original": "actual_docs/README.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/README.md",
+      "sha256": "77835da7859c3328264328602b78b98d94577804554ecd31647f7d6ad528be68",
+      "current": "actual_docs/README.md"
+    },
+    {
+      "original": "actual_docs/UNIFIED_FALLBACK_EXPERIENCE_PLAN.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/actual_docs/UNIFIED_FALLBACK_EXPERIENCE_PLAN.md",
+      "sha256": "8e278606f73b2098597e53b58927716dacd832352fff20f3100aca781b93832a",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "actual_docs/UNIFIED_FALLBACK_INVENTORY.generated.md",
+      "disposition": "generated-unchanged",
+      "preservedAt": "actual_docs/UNIFIED_FALLBACK_INVENTORY.generated.md",
+      "sha256": "d1faacf7b153a2eb823b69f6f403c63d9703ba8db46fec7cbea0483e3c9b5201",
+      "current": "actual_docs/UNIFIED_FALLBACK_INVENTORY.generated.md"
+    },
+    {
+      "original": "apps/README.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/apps/README.md",
+      "sha256": "25091c0fe98422623c08661c97fc20910052e71f353faaef015eb2288e6d8ad4",
+      "current": "apps/README.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/README.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/README.md",
+      "sha256": "065e8fc2105d7583fe9a3c9c46cd9e604f32d7b6d33730f95cf6645034e76849",
+      "current": "archive_docs/2026-09-14/README.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/crm/CRM_AUDIT_REQUIRED_CHANGES.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/crm/CRM_AUDIT_REQUIRED_CHANGES.md",
+      "sha256": "b0f696f966de2fbce23f2e4f593b8c611a3c86c0a462b79a0e1cd7ff4d6c36ab",
+      "current": "archive_docs/2026-09-14/docs/crm/CRM_AUDIT_REQUIRED_CHANGES.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/crm/CRM_IMPLEMENTATION_TASKS.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/crm/CRM_IMPLEMENTATION_TASKS.md",
+      "sha256": "90d335ebbcc975d27136dc0115098cd5c9469b5fc72e76d30fc543690cc59f64",
+      "current": "archive_docs/2026-09-14/docs/crm/CRM_IMPLEMENTATION_TASKS.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/frontend/ui-ux-polish-phase-10.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/frontend/ui-ux-polish-phase-10.md",
+      "sha256": "f456de163e3afee640e492d5abebe12f049715ff23ecc0fdbf3ff33b0d2516c4",
+      "current": "archive_docs/2026-09-14/docs/frontend/ui-ux-polish-phase-10.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/integrations/providers/telegram-connector-mvp.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/integrations/providers/telegram-connector-mvp.md",
+      "sha256": "9322dd29192b990181c851efe0b9aa877899d4aca87420b7df2fd723fb9fe2b2",
+      "current": "archive_docs/2026-09-14/docs/integrations/providers/telegram-connector-mvp.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block10-clean-pilot-package.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block10-clean-pilot-package.md",
+      "sha256": "e4aae638472a4d2772165f2b863a4870374c8f1403a758704aa74ffa3cd2d598",
+      "current": "archive_docs/2026-09-14/docs/pilot/block10-clean-pilot-package.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block11-pilot-smoke-cleanup.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block11-pilot-smoke-cleanup.md",
+      "sha256": "19d5ba510e18721a40a5c136ce14e3124e16b4a9e2988cfce3189eb081d235f2",
+      "current": "archive_docs/2026-09-14/docs/pilot/block11-pilot-smoke-cleanup.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block12-platform-operations-panel.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block12-platform-operations-panel.md",
+      "sha256": "ef4863084ccb199c4f570733c288783577599a8134422c3902a151fe03bc2111",
+      "current": "archive_docs/2026-09-14/docs/pilot/block12-platform-operations-panel.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block13-support-operator-workflow.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block13-support-operator-workflow.md",
+      "sha256": "70caaf67cc54cd822edbef0fbb662f383680454bc55dad1fcf3d4176169ccd2b",
+      "current": "archive_docs/2026-09-14/docs/pilot/block13-support-operator-workflow.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block14-pilot-demo-launch.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block14-pilot-demo-launch.md",
+      "sha256": "990f2fd1d6a7b08119081d58c3586f0ee7c283ad316438379f3d84278a4a0a3e",
+      "current": "archive_docs/2026-09-14/docs/pilot/block14-pilot-demo-launch.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block5-unified-inbox.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block5-unified-inbox.md",
+      "sha256": "29a9a31e8316f670523e192815dd941a882b51ed05ba054995084338a0055659",
+      "current": "archive_docs/2026-09-14/docs/pilot/block5-unified-inbox.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block7-mobile-owner-ux.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block7-mobile-owner-ux.md",
+      "sha256": "f773117f83f5a9e8513bdf0a4f1cc15d0afe215fc8db598bf51aaeb1c9595ad3",
+      "current": "archive_docs/2026-09-14/docs/pilot/block7-mobile-owner-ux.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block8-pilot-smoke-demo.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block8-pilot-smoke-demo.md",
+      "sha256": "cabf3f95059b426e427222f18ab6b304336a4b00ad3c510cfa46d7c1dacf9abf",
+      "current": "archive_docs/2026-09-14/docs/pilot/block8-pilot-smoke-demo.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/block9-data-import-pilot.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/block9-data-import-pilot.md",
+      "sha256": "5ec5c593f825b98064993a55668d99b39afcb6f0d29b582e590ec0e507e175cc",
+      "current": "archive_docs/2026-09-14/docs/pilot/block9-data-import-pilot.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/task3_task_calendar_flow_polish.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/task3_task_calendar_flow_polish.md",
+      "sha256": "67c694bb733c4aac6b3c99e6662bfdf812cc456a97be7e192e2ee7c75a453e3c",
+      "current": "archive_docs/2026-09-14/docs/pilot/task3_task_calendar_flow_polish.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/task5_pilot_qa_polish_report.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/task5_pilot_qa_polish_report.md",
+      "sha256": "7d69f193648adf06909682da982c99a31a26c7a7f968e093b4153c3a320f216b",
+      "current": "archive_docs/2026-09-14/docs/pilot/task5_pilot_qa_polish_report.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/task6_pilot_readiness_checklist_report.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/task6_pilot_readiness_checklist_report.md",
+      "sha256": "5b509bf5b74f30a9e02dce6df53bcff5589133a7795d5e5c2a354bf719f5cec6",
+      "current": "archive_docs/2026-09-14/docs/pilot/task6_pilot_readiness_checklist_report.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/task7_website_chat_connector_foundation_report.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/task7_website_chat_connector_foundation_report.md",
+      "sha256": "c1e14c1ff136b3d39d7f094c6983c1716a25fc3504c23b4414cd734e042afdd3",
+      "current": "archive_docs/2026-09-14/docs/pilot/task7_website_chat_connector_foundation_report.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/task8_inbox_polish_report.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/task8_inbox_polish_report.md",
+      "sha256": "22a6b5d572690d5484b8af01b5cbbbaa88fa6c1c8acc4269e0954e57531f985c",
+      "current": "archive_docs/2026-09-14/docs/pilot/task8_inbox_polish_report.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/pilot/task9_integrations_status_polish_report.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/pilot/task9_integrations_status_polish_report.md",
+      "sha256": "5a35c446969b64da3b7ee58005408712a7ca2e92567c3c06e4757bb29b4f3c8c",
+      "current": "archive_docs/2026-09-14/docs/pilot/task9_integrations_status_polish_report.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/product/competitive-regression-report.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/product/competitive-regression-report.md",
+      "sha256": "22d230185e30282323ebd619bcfe5ef2b1a4fd7704cae4489820b363c0779f5e",
+      "current": "archive_docs/2026-09-14/docs/product/competitive-regression-report.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/production/staging/staging-render-execution-report.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/production/staging/staging-render-execution-report.md",
+      "sha256": "8aa90b96a886e926f2a21360535251f671a2fd5a455d94f73841431175af9c4c",
+      "current": "archive_docs/2026-09-14/docs/production/staging/staging-render-execution-report.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/docs/testing/regression-report.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/docs/testing/regression-report.md",
+      "sha256": "c38f28b85a10d130a4f14a53b5fea4fed38a62c15404f1e4ac69a8900667542e",
+      "current": "archive_docs/2026-09-14/docs/testing/regression-report.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/plan/commit_pr_split_plan_2026_06_08.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/plan/commit_pr_split_plan_2026_06_08.md",
+      "sha256": "3cb77b767d0bee2a4115997fc2f8e1f09a47de6cd6c825955f48bdf2f5376ae4",
+      "current": "archive_docs/2026-09-14/plan/commit_pr_split_plan_2026_06_08.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/plan/production_qa_2026_06_09.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/plan/production_qa_2026_06_09.md",
+      "sha256": "4c5e7f327e8e7f6af431b873f6a0150ba5e753e4311caefe268f95bbdfc8bde0",
+      "current": "archive_docs/2026-09-14/plan/production_qa_2026_06_09.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/plan/readiness_plan.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/plan/readiness_plan.md",
+      "sha256": "36a40ed9c4a2a2ef46fc3f8756020ad85441093df2672078205da8671f534066",
+      "current": "archive_docs/2026-09-14/plan/readiness_plan.md"
+    },
+    {
+      "original": "archive_docs/2026-09-14/plan/stabilization_audit_2026_06_08.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/2026-09-14/plan/stabilization_audit_2026_06_08.md",
+      "sha256": "51690c74dac667781cbf917285b88dfe2cef59249a4094eda24a3a1669949988",
+      "current": "archive_docs/2026-09-14/plan/stabilization_audit_2026_06_08.md"
+    },
+    {
+      "original": "archive_docs/APP_2_PHASE_10_INTERACTION_WORKFLOW_QA_PLAN.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/APP_2_PHASE_10_INTERACTION_WORKFLOW_QA_PLAN.md",
+      "sha256": "e17a143462ca8d2c1950082090a95e62403c5b41dca9b70a4741b0e5b1b427b9",
+      "current": "archive_docs/APP_2_PHASE_10_INTERACTION_WORKFLOW_QA_PLAN.md"
+    },
+    {
+      "original": "archive_docs/APP_2_PHASE_9_UI_UX_POLISH_PLAN.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/APP_2_PHASE_9_UI_UX_POLISH_PLAN.md",
+      "sha256": "bb330110c5a5636fb93283debe43b9d44ff45e2e890f4210b93fa5d8fbac5a25",
+      "current": "archive_docs/APP_2_PHASE_9_UI_UX_POLISH_PLAN.md"
+    },
+    {
+      "original": "archive_docs/APP_2_WORKBENCH_EXECUTION_ROADMAP.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/APP_2_WORKBENCH_EXECUTION_ROADMAP.md",
+      "sha256": "c5689fd9ad40c5f273b2469c4a381265053312563a84ba269d5c235b76ffa9ac",
+      "current": "archive_docs/APP_2_WORKBENCH_EXECUTION_ROADMAP.md"
+    },
+    {
+      "original": "archive_docs/APP_UI_UX_REDESIGN_TASK.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/APP_UI_UX_REDESIGN_TASK.md",
+      "sha256": "cbe239b1bf5d3b19c69511ce1a24ec180ac7189fa3e2a7a519ade05fc6def297",
+      "current": "archive_docs/APP_UI_UX_REDESIGN_TASK.md"
+    },
+    {
+      "original": "archive_docs/BROWSER_UI_UX_REMEDIATION_2026-07-31.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/BROWSER_UI_UX_REMEDIATION_2026-07-31.md",
+      "sha256": "c281158ba111d29faacd8f46378a1a0be1e7f81b7f212301d49a50e9e7f9245b",
+      "current": "archive_docs/BROWSER_UI_UX_REMEDIATION_2026-07-31.md"
+    },
+    {
+      "original": "archive_docs/CRM_CORE_WORKFLOW_AUDIT.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/CRM_CORE_WORKFLOW_AUDIT.md",
+      "sha256": "e6768f147ee6bc064ac36cd4e7f710e4950b4efdf8bb590925eb1cbb13422460",
+      "current": "archive_docs/CRM_CORE_WORKFLOW_AUDIT.md"
+    },
+    {
+      "original": "archive_docs/CRM_IMPLEMENTATION_SPLIT/BACKEND_IMPLEMENTATION_PLAN.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/CRM_IMPLEMENTATION_SPLIT/BACKEND_IMPLEMENTATION_PLAN.md",
+      "sha256": "3ec0aed6c1bded22247c15d6fa9e909980ada091ee843b29e090419ed3cceb60",
+      "current": "archive_docs/CRM_IMPLEMENTATION_SPLIT/BACKEND_IMPLEMENTATION_PLAN.md"
+    },
+    {
+      "original": "archive_docs/CRM_IMPLEMENTATION_SPLIT/BACKEND_RELIABILITY_EXECUTION_PLAN.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/CRM_IMPLEMENTATION_SPLIT/BACKEND_RELIABILITY_EXECUTION_PLAN.md",
+      "sha256": "fd958a205c1f16276d49aecae07eecef9410cc0d7048219cb9b89fe8406ff8a2",
+      "current": "archive_docs/CRM_IMPLEMENTATION_SPLIT/BACKEND_RELIABILITY_EXECUTION_PLAN.md"
+    },
+    {
+      "original": "archive_docs/CRM_PHASE_2A_HARDENING_EVIDENCE.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/CRM_PHASE_2A_HARDENING_EVIDENCE.md",
+      "sha256": "8139590bed8887821c4a64a475a8dadfe92c9972cb11b25b902888dbfc0e11ac",
+      "current": "archive_docs/CRM_PHASE_2A_HARDENING_EVIDENCE.md"
+    },
+    {
+      "original": "archive_docs/CRM_TECHNICAL_MAP_AND_VERTICAL_MODES.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/CRM_TECHNICAL_MAP_AND_VERTICAL_MODES.md",
+      "sha256": "1bd6e0155006db9b70413855914837801049597c3f9a1b5cfdd1fa7f240af21b",
+      "current": "archive_docs/CRM_TECHNICAL_MAP_AND_VERTICAL_MODES.md"
+    },
+    {
+      "original": "archive_docs/POST_CERTIFICATION_EXECUTION_2026-08-02.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/POST_CERTIFICATION_EXECUTION_2026-08-02.md",
+      "sha256": "4af5d50cfc0aef458bdf47ea22355c2ea606d9c84cd69385feb59f5294d0bdd9",
+      "current": "archive_docs/POST_CERTIFICATION_EXECUTION_2026-08-02.md"
+    },
+    {
+      "original": "archive_docs/PROJECT_EXECUTION_MASTER.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/PROJECT_EXECUTION_MASTER.md",
+      "sha256": "e612af41c2562d04f2bcd178b3b8bdb552490e875e8817616ac1593307107ccb",
+      "current": "archive_docs/PROJECT_EXECUTION_MASTER.md"
+    },
+    {
+      "original": "archive_docs/README.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/archive_docs/README.md",
+      "sha256": "7edadd5a0aa3c3f53a98bd9bb1a0090683cb2b299d52cdc4329c37b30bc51f7f",
+      "current": "archive_docs/README.md"
+    },
+    {
+      "original": "archive_docs/X401_LOCAL_PILOT_READINESS_REPORT.md",
+      "disposition": "historical-unchanged",
+      "preservedAt": "archive_docs/X401_LOCAL_PILOT_READINESS_REPORT.md",
+      "sha256": "835bdeb3b202d34ade7dcc70858519d4d8d368c377bada7a52127b49bfc5f65f",
+      "current": "archive_docs/X401_LOCAL_PILOT_READINESS_REPORT.md"
+    },
+    {
+      "original": "docs/README.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/README.md",
+      "sha256": "1b3c49dca8c278d415f1c2485268c1ecbbeae6c2d6ee9f47083358532e9ae364",
+      "current": "docs/README.md"
+    },
+    {
+      "original": "docs/WARM_PREMIUM_CRM_REDESIGN_BRIEF.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/WARM_PREMIUM_CRM_REDESIGN_BRIEF.md",
+      "sha256": "09ace89959737f2009068d7ce8dd80706da4e00d7aa0cd46b4d88193bc040e89",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/ai/AI_ASSISTANT_RULES.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/ai/AI_ASSISTANT_RULES.md",
+      "sha256": "ed456982791f984cb5e467a463a3b937fd0920769c1b84f1930a092f865fe9ca",
+      "current": "docs/current/ai.md"
+    },
+    {
+      "original": "docs/analytics/analytics-reporting.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/analytics/analytics-reporting.md",
+      "sha256": "3355dd4a8b5d88e27c7c001c1c0237572c30a3d0f100b6dd369f5d3d847920bb",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/api/API_ACTION_CONTRACT.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/api/API_ACTION_CONTRACT.md",
+      "sha256": "7de67bc44ba685728c7b32b688ef9eb66f92288207e332dcfcbb4f42aff9d03f",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/architecture/realtime-strategy.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/architecture/realtime-strategy.md",
+      "sha256": "1e60ef5d06de668f1433c22ac5eee60b0f90b030bf1f5fd78c38d16762f153fc",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/auth/social-auth.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/auth/social-auth.md",
+      "sha256": "aa5ecb1eda47f8905d6ada63027aa2ad2f06cf10e7c9345bb69135a4153973c4",
+      "current": "docs/current/access.md"
+    },
+    {
+      "original": "docs/automation/automation-runtime.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/automation/automation-runtime.md",
+      "sha256": "65ab712dbdcebfdbd6552835523bee7dbcf8310759af8dcd6743644a4bb4d767",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/billing/BILLING_DISCUSSION_DEFERRED_2026-09-25.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/billing/BILLING_DISCUSSION_DEFERRED_2026-09-25.md",
+      "sha256": "03fc5a82625b2fb5e03a128494e188c008f274f6779db6bbe73b5462704f1214",
+      "current": "docs/current/product.md"
+    },
+    {
+      "original": "docs/billing/entitlements.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/billing/entitlements.md",
+      "sha256": "5352d4b10fd58f1ba8054a0f8b38c99785eac22bd879605edeeeaa4eef50d996",
+      "current": "docs/current/product.md"
+    },
+    {
+      "original": "docs/crm/CRM_AUDIT_REQUIRED_CHANGES.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/crm/CRM_AUDIT_REQUIRED_CHANGES.md",
+      "sha256": "97a7872294ca07bc45c22593eac7b1b9dcff4b713259755c4560015329a1d872",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/crm/CRM_ENTITY_BEHAVIOR_CONTRACT.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/crm/CRM_ENTITY_BEHAVIOR_CONTRACT.md",
+      "sha256": "761995d4de407c78041f9b4c11fc22045bd03d4c7e80167c04053efb2288c6a7",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/crm/CRM_IMPLEMENTATION_TASKS.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/crm/CRM_IMPLEMENTATION_TASKS.md",
+      "sha256": "d99a93118762a001e5b95909b356d526abc237a483e15e8f502e307164d86c7e",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/crm/CRM_PRODUCTION_LAYER_PLAN.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/crm/CRM_PRODUCTION_LAYER_PLAN.md",
+      "sha256": "16128e41eb46d6c402cf3c37316e6a7ff4c14a88008497f2ec91e78d26117c73",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/crm/client-payments.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/crm/client-payments.md",
+      "sha256": "34cce2d953d92e1f384e0d7fd35bb8de745af884b00cb82cec42a5749d482067",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/crm/specialist-scheduling.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/crm/specialist-scheduling.md",
+      "sha256": "79fa6fe114f833c714f0cc65d143ebedc2cf03aad009a54c6d63944484147c67",
+      "current": "docs/current/crm.md"
+    },
+    {
+      "original": "docs/data-exports.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/data-exports.md",
+      "sha256": "ba4f1941cf1595b277d6f0e0b8b0fbba1ae44881b9607a60bd01d986f2186290",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/frontend/archive/APP_UI_UX_REDESIGN_TASK.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/frontend/archive/APP_UI_UX_REDESIGN_TASK.md",
+      "sha256": "49def7b7dd9ca722a2dc323906ca6dbfd22b681a29922564b8fb0b47e33c345f",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "docs/frontend/design-system.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/frontend/design-system.md",
+      "sha256": "f2b123bfc5d0ff62e3f19a7dda79be17591446529fc6865395107e11f63f8cbf",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "docs/frontend/product-ui-reform.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/frontend/product-ui-reform.md",
+      "sha256": "c139e8b9353538329f1af53623818fb516d92b642b4b66aaa445ab26e86412e4",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "docs/frontend/ui-ux-implementation-standard.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/frontend/ui-ux-implementation-standard.md",
+      "sha256": "80f7fd2a26744445c7a0cd4fa39ac0539a84d46b8f198c458a441991465e30ba",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "docs/frontend/ui-ux-polish-phase-10.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/frontend/ui-ux-polish-phase-10.md",
+      "sha256": "9d814cb99c4a1d5018a9c5f16e4204600c5839315b2c136acb673e508964c1b5",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "docs/integrations/CONNECTOR_BLUEPRINT.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/CONNECTOR_BLUEPRINT.md",
+      "sha256": "deca2dd3a41aad3ab0c77930bfced6d74572e781e394eab4eaba6fdccd4fba8f",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/README.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/README.md",
+      "sha256": "b328940701e42deec1e07a7c6646538863cb1954d29333eeafcf018a6eddee67",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/communication-onboarding.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/communication-onboarding.md",
+      "sha256": "910c7ee147f1d83b663de11c4ed72dabc18af2562f879261aade2a643efed9d5",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/connector-credential-key-rotation.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/connector-credential-key-rotation.md",
+      "sha256": "d55f16c7334cb38acc2bfc07244326f874248c843002c2af29cdae0136d35a35",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/financial-source-contract.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/financial-source-contract.md",
+      "sha256": "6ebfc955039c19febb11ce51a2769349af09ede2fdb2745e2a88849bf75622cd",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/imports/data-imports.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/imports/data-imports.md",
+      "sha256": "78eec5919f0e367b5098f7b0890ff2a6084242e049750cbcb157a71d9e548036",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/imports/excel-csv-real-import-mvp.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/imports/excel-csv-real-import-mvp.md",
+      "sha256": "def365e143c184eef03931d5b9f16b0bde23f1b8c53a209494a446d7877ffefa",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/integrations.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/integrations.md",
+      "sha256": "0faa25f5641c27e663a132cd77b390e2b552ae77da54d883785155e953c665f5",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/lightweight-integrations-roadmap.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/lightweight-integrations-roadmap.md",
+      "sha256": "09002f759a4712914c73acfccb428072fd4a4fa17cc0c4807a04ff3ae6555b56",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/live-connector-test-runbook.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/live-connector-test-runbook.md",
+      "sha256": "9ccbd89e3ec91bf4476a7951cdd802bd2419cd85a8df9d0d31773e2ed6b57c1b",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/marketplace-integrations.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/marketplace-integrations.md",
+      "sha256": "6a8a29077355ced52aa08b0890c46231db706e55ef00501ed7fad66c661c0358",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/marketplace-inventory-write-plan.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/marketplace-inventory-write-plan.md",
+      "sha256": "734d569d4de5b1224be203e76748b08128611530997921d3ddff212b8f47348e",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/marketplace-onboarding-runbook.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/marketplace-onboarding-runbook.md",
+      "sha256": "4f25c29e5f8c4da6d5396825a98842bba6a50584bb66ab9935b72719be80baf0",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/marketplaces/kaspi-merchant-connector.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/marketplaces/kaspi-merchant-connector.md",
+      "sha256": "150f465d3fd66ce8c86947da0d1854c122aadf1fe74c7b009bc11c33da4918ad",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/marketplaces/kaspi-pricing-agent.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/marketplaces/kaspi-pricing-agent.md",
+      "sha256": "9499e850416209bf7bf19a432c166e62f8d5148e9bf5f3faf0d17a841053e5b3",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/marketplaces/moysklad-merchant-connector.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/marketplaces/moysklad-merchant-connector.md",
+      "sha256": "914333be33a31378c09a2925862db69e736c74f93c896464b9538fa9300f6e0c",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/marketplaces/ozon-merchant-connector.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/marketplaces/ozon-merchant-connector.md",
+      "sha256": "59cfb9188f0044a682adcb22f04b54a0f98df182d9cc23e13bab808c900ef87b",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/marketplaces/wildberries-merchant-connector.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/marketplaces/wildberries-merchant-connector.md",
+      "sha256": "14507a557021abb33ee13e2d04c607e1501cb8b707dbac661ed60744ba6673c4",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/provider-rollout.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/provider-rollout.md",
+      "sha256": "ed3bcfb041645162229b3dc59c67dfb5ccd4a4aa36c8c72a0daa4a67c3d7a9df",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/providers/instagram-merchant-connector.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/providers/instagram-merchant-connector.md",
+      "sha256": "e65fcc59cf87c6deea25494c4cc124637808593b71baec9960539e35e5ac24b9",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/providers/telegram-connector-mvp.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/providers/telegram-connector-mvp.md",
+      "sha256": "0bf280d71a9066680165cf0c505b188c2ed3cffa55de96c96b8c99fe41060a12",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/providers/telegram-merchant-connector.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/providers/telegram-merchant-connector.md",
+      "sha256": "8fecf66907959b1cd9a6605379955161c70387df440d86e404b989ad316153bf",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/providers/transactional-email.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/providers/transactional-email.md",
+      "sha256": "de19223af602180d1e7f699685700a3948b4bf23281f82116c9165c079a117a1",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/providers/whatsapp-merchant-connector.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/providers/whatsapp-merchant-connector.md",
+      "sha256": "f9de6f9d89c5b8985586e978a214747da032da0001cf63373e1da138dbb39858",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/providers/widget-sdk.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/providers/widget-sdk.md",
+      "sha256": "952536f002f6e6c2123fac3cfa9bd84d19db59cd3f824743924089969a550c40",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/integrations/public-lead-capture.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/integrations/public-lead-capture.md",
+      "sha256": "0c04789639f88218392de19b70ed90c41876f5e3667e395f7de9725f1ed97bb0",
+      "current": "docs/current/integrations.md"
+    },
+    {
+      "original": "docs/operations/internal-dev-tools-boundary.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/operations/internal-dev-tools-boundary.md",
+      "sha256": "36357a0ec4aab3655bd11456d240192871596334d2dec2d7506fa2d88d23e503",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/operations/platform-operations-health.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/operations/platform-operations-health.md",
+      "sha256": "e05bc3a3caac6505b5ea04942c8744fe827855e2cc8f5ecf094b3ee42418115d",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/operations/rebranding-2026-09-28.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/operations/rebranding-2026-09-28.md",
+      "sha256": "fc8eb2903e6fb07d0959e7469506895b075a3e80b1873c0e154a34192dc80cb6",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/operations/technical-documentation-audit.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/operations/technical-documentation-audit.md",
+      "sha256": "e331318390b8619ce06a5c89881111f08368e93ffd2f52e0e81877c09d52dc14",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/pilot/backend-development-audit.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/backend-development-audit.md",
+      "sha256": "44a968ea19c3479a60b7fd22f2c489ab129eae61b6a59d911a6cff93ee820603",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/backend-open-logic-register.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/backend-open-logic-register.md",
+      "sha256": "588bcb795aedcfb1fd040607abb1d058d8d329e88091af8e7bb4e848e6fab979",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block10-clean-pilot-package.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block10-clean-pilot-package.md",
+      "sha256": "1bbc8dd9cd577db6d2c143f8891ceb24da0e6b850e084afad9105a27e2e39606",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block11-pilot-smoke-cleanup.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block11-pilot-smoke-cleanup.md",
+      "sha256": "d304762e58ff6278c1de941ee4a6b770b3fe476f25d1425aff86a64afeb0cc08",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block12-platform-operations-panel.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block12-platform-operations-panel.md",
+      "sha256": "9f310d790d29c0f4438392bfdced0b1511da748517f1f830e323297f79a3539b",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block13-support-operator-workflow.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block13-support-operator-workflow.md",
+      "sha256": "9f720b0d98125fc1a81745422681766aa162944ecb61e464ed5bf9f5ba7b7668",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block14-pilot-demo-launch.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block14-pilot-demo-launch.md",
+      "sha256": "a66a69ba7c666f1c082b21fa153f1d5cc29873f51a945bf07c0a4b84844b95df",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block5-unified-inbox.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block5-unified-inbox.md",
+      "sha256": "2b226bb94f22067d2853c5644ee549034e5059fcfa16f8f9e9954b61457288e4",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block7-mobile-owner-ux.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block7-mobile-owner-ux.md",
+      "sha256": "8e3c9fbd01eadf17b31559de90f207b3c14f3270fedf74e9079cd99acde9b700",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block8-pilot-smoke-demo.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block8-pilot-smoke-demo.md",
+      "sha256": "0d0fdc74a9025982b243a62e579760402bd20fa562d663f3f28bc930fd339ff2",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/block9-data-import-pilot.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/block9-data-import-pilot.md",
+      "sha256": "c8e06ad9b4766c5b769da2878db456467f61fe618d9560cdc1a9a95fd540ebf2",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/local-crm-completion.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/local-crm-completion.md",
+      "sha256": "49bb17d42e4611419b4e04624c5ea960fa43a722510e6a025dd1d16088df44aa",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/owner-questions-2026-09-28.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/owner-questions-2026-09-28.md",
+      "sha256": "c4dd8829168c77b732b3dbfe8c1911e5ee672c6b8a25d326559f35aabfb534f4",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/pilot-production-qa-checklist.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/pilot-production-qa-checklist.md",
+      "sha256": "1f17cb833d964db8e05d2799df823ed440903a761a81f4d7b3de9ead83499026",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/pilot-safe-promises.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/pilot-safe-promises.md",
+      "sha256": "d43cd5161ef3f61cd8ae3e6c4a88926f80fc3b4a689740aff688220cb8996d1b",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/task3_task_calendar_flow_polish.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/task3_task_calendar_flow_polish.md",
+      "sha256": "5c36093b83fdd9fb704dce3ae0ff7e8cc3657511f2f8679662137617a4a5d716",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/task5_pilot_qa_polish_report.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/task5_pilot_qa_polish_report.md",
+      "sha256": "fe793724c479fa437669e5a5cf0378e6453059cce9911d6ad4bcd8d46a004b6a",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/task6_pilot_readiness_checklist_report.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/task6_pilot_readiness_checklist_report.md",
+      "sha256": "9a6599bda981901453fb3a5d71d1004e3ac42e62dc516985a588edfd9d05240b",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/task7_website_chat_connector_foundation_report.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/task7_website_chat_connector_foundation_report.md",
+      "sha256": "2c2a7a2c406c886a2ef0291859b3d699c6723226f04f69868235c5dd0c5bc1c5",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/task8_inbox_polish_report.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/task8_inbox_polish_report.md",
+      "sha256": "9dc03cf4383517ae709baae2eb3d922a3f482c8ffba0a4145ec607a1eb9b643c",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pilot/task9_integrations_status_polish_report.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/pilot/task9_integrations_status_polish_report.md",
+      "sha256": "5b1d47c04ff752cc3a764c62d8c2f2868392fdfca4a3f632e315c0b635a8d3af",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/pre-production/README.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/pre-production/README.md",
+      "sha256": "831f6d34de92c8a70483e1f4dbbe1a4b90e962d7cdd3882af7673afaeb7539bd",
+      "current": "docs/pre-production/README.md"
+    },
+    {
+      "original": "docs/pre-production/crm-ai-agent.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/pre-production/crm-ai-agent.md",
+      "sha256": "5ea6fb214baa56d31d32c27f69b128d37b632d0ea93a68fffa690751032b5f2c",
+      "current": "docs/pre-production/crm-ai-agent.md"
+    },
+    {
+      "original": "docs/pre-production/customer-ai-agent.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/pre-production/customer-ai-agent.md",
+      "sha256": "8226e576843cea733c0e0946ce9f25eb6cfd0a147e011cbfd1f83991f8ff56eb",
+      "current": "docs/pre-production/customer-ai-agent.md"
+    },
+    {
+      "original": "docs/pre-production/module-template.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/pre-production/module-template.md",
+      "sha256": "7dc6ab4a89c153b42924f171e6784610e2fb88086e4a9547a201f6dd4a009ef1",
+      "current": "docs/pre-production/module-template.md"
+    },
+    {
+      "original": "docs/pre-production/project-state.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/pre-production/project-state.md",
+      "sha256": "771a386999113c5e1acbe9a9653a4ac6678493abcffa2913c7f43b02b1561390",
+      "current": "docs/pre-production/project-state.md"
+    },
+    {
+      "original": "docs/product-capabilities.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/product-capabilities.md",
+      "sha256": "a0ffa2cc024dc399a4c734bfe7376fa7ec454b1769e02fc698619c84df987032",
+      "current": "docs/pre-production/capabilities.md"
+    },
+    {
+      "original": "docs/product/V1_PRODUCT_RULES.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/product/V1_PRODUCT_RULES.md",
+      "sha256": "a7c6d31a813517766340f6ea49ec81325e5d6fa6400c0d5fe21c863ad19112ea",
+      "current": "docs/current/product.md"
+    },
+    {
+      "original": "docs/product/competitive-regression-report.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/product/competitive-regression-report.md",
+      "sha256": "bd990e45495408a498a854bdf3d171a03b8d3225ee8f1b486928866ad38d6d39",
+      "current": "docs/current/product.md"
+    },
+    {
+      "original": "docs/product/landing-activation.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/product/landing-activation.md",
+      "sha256": "c435c9ce8386747df994eca7acdb2337a7948b5d5e4b8c5ac48bfcf44f3b1806",
+      "current": "docs/current/product.md"
+    },
+    {
+      "original": "docs/production/backup-restore.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/backup-restore.md",
+      "sha256": "25c58c013002e0f761b544ac7650c547febb6ad7cbb7903db2679406c1059adb",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/celery-render-runtime.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/celery-render-runtime.md",
+      "sha256": "d0bd3017fbd0a731dcad11e50c9eb2359bc30ce53a7447435afc22dec10ade15",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/deployment.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/deployment.md",
+      "sha256": "cfbc0c5e604e00013d19cc2b90e41631af91a6c3c76ca6689643876971870e08",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/file-storage.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/file-storage.md",
+      "sha256": "6b968c2b8663d4900efa2642ac5fda026d88196b6cc70cb4f86bea7d0bc942f6",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/monitoring-runbook.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/monitoring-runbook.md",
+      "sha256": "53064c64df8a90aa0885bc3cdc9b1a952edb25d31d7c653d8930a73cada3f35a",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/observability.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/observability.md",
+      "sha256": "c77ddfaa9cc096188134e5f36d6eda6babba87cc7bf11ff946822e90e87404d5",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/paid-beta-gate.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/paid-beta-gate.md",
+      "sha256": "e4ffe31ed05cca2cd36e75f1719c84a188d79306617bc5871cebe821bcff4e3f",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/paid-beta-launch-runbook.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/paid-beta-launch-runbook.md",
+      "sha256": "766bc15240f24fe1aab09df1f57a27bd2585692c2ba491deae5650b9949e8a10",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/production-readiness-10000-audit.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/production-readiness-10000-audit.md",
+      "sha256": "94650a5bf56ce4f848d64a3c3a7cfc358846f076a408edcae9c9093acdd299ba",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/production-readiness.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/production-readiness.md",
+      "sha256": "dd2603d26b5c5efb9b2351c25a0d7066b8478a055430be6bc04da086349603a9",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/staging/staging-ci-cd-checklist.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/staging/staging-ci-cd-checklist.md",
+      "sha256": "9900547233010d1b7f5260dc8f93fa61ae17f25a06e54f42769c12423527d842",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/staging/staging-provider-selection.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/staging/staging-provider-selection.md",
+      "sha256": "243c7e917b0704211d5decc7a5c90aaa63741f3a97cbf36a118574484e6bddc3",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/staging/staging-render-execution-report.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/staging/staging-render-execution-report.md",
+      "sha256": "a1ed07786e5097970575d6386576eedc4efea9c8ab57b115a9dfe7a1b78fd74e",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/production/staging/staging-smoke-runbook.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/production/staging/staging-smoke-runbook.md",
+      "sha256": "533085953c40ebe2169e504d286689faf620e97c4c763a9fb660ace2eb166e52",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/security/PERMISSION_MATRIX.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/security/PERMISSION_MATRIX.md",
+      "sha256": "fbf09979bee6ee99c3a165b16b9110b8b3eabbddb46863875bf054b26f5bf3b8",
+      "current": "docs/current/access.md"
+    },
+    {
+      "original": "docs/security/aud027-crm-projections.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/security/aud027-crm-projections.md",
+      "sha256": "f432ab01d52bae84bfe4e691c495a17f4be29d9fe216d4a7eab9138de4223ab7",
+      "current": "docs/current/access.md"
+    },
+    {
+      "original": "docs/security/file-antivirus.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/security/file-antivirus.md",
+      "sha256": "b9af14accefc4d8f7b6356d78a4671e894b46c12d799b517e3ca9794d79a4043",
+      "current": "docs/current/operations.md"
+    },
+    {
+      "original": "docs/security/privileged-mfa.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/security/privileged-mfa.md",
+      "sha256": "373e58532ed06f51709abcc3a0976418e2f046851b91223094ab7d976199819e",
+      "current": "docs/current/access.md"
+    },
+    {
+      "original": "docs/security/rate-limits.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/security/rate-limits.md",
+      "sha256": "20af083b2c9c0feb9250dceff7bb8d0d83032cb1fc87ad51ad75d1d632d379c1",
+      "current": "docs/current/access.md"
+    },
+    {
+      "original": "docs/testing/CODEX_TASK_TEMPLATE.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/CODEX_TASK_TEMPLATE.md",
+      "sha256": "a4a4c8bd4f71a1e253005a368a24a2b2e4629eb8cda5430d748b6ef2aa11dda1",
+      "current": "docs/testing/CODEX_TASK_TEMPLATE.md"
+    },
+    {
+      "original": "docs/testing/SESSION_ROLLOVER.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/SESSION_ROLLOVER.md",
+      "sha256": "54c0621e0ba644cde5cdb08a6ef3a08cac9fdf34aeca85699ef92b64ad79f1af",
+      "current": "docs/testing/SESSION_ROLLOVER.md"
+    },
+    {
+      "original": "docs/testing/ai-agent-continuity-20261006.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-agent-continuity-20261006.md",
+      "sha256": "24c4139308fab2b698f5a94f499cfca43a0c4f2681e2af62f142e5d203e83cbc",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-agent-followup-20261005.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-agent-followup-20261005.md",
+      "sha256": "921f416303193157afc6a646ea4f2951b59f0dedaea2d754906d806f42ee4a52",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-agent-isolation-20261005.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-agent-isolation-20261005.md",
+      "sha256": "e1c77d2561d9cd5fd5acdbb0901f5f764fd1a0d031a4ee224e08bb0980d9d111",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-agent-reference-redesign-20261002.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-agent-reference-redesign-20261002.md",
+      "sha256": "1ed39fb392a7c571b2a82275f8c1b977f39eb06bd089093fdd7eb66d96e00d47",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-agent-scenarios-20261005.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-agent-scenarios-20261005.md",
+      "sha256": "b05200a3edd3c048d975d9ec7a8399253a0ba9c12d6040198bcda2f2ccc451e6",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-agents-behavior-20261006.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-agents-behavior-20261006.md",
+      "sha256": "300865336e4684a615665cd87944258ab3d59444fd6e74cd074e4c88ecfb5457",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-agents-certification-20261006.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-agents-certification-20261006.md",
+      "sha256": "714f93925ae503deb3b3b6d08d0d117c4a8391055fcdab94b0741b05ac41dcea",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-agents-ux-20261005.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-agents-ux-20261005.md",
+      "sha256": "d240cefbb9ac02f96aa0ca081e13847b4cb46cd7daec6cc3384a177a796d7e05",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-crud-history-20261002.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-crud-history-20261002.md",
+      "sha256": "555b611cbbf567b508db91cb869c68b653d61e7fb1fc9f9dcdab2a66b33622c0",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ai-functional-20261002.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ai-functional-20261002.md",
+      "sha256": "1b550c48254f3564ef3cebf0cbf2befd03e4ffa4e9d858db43838fb758f59ca7",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/color-system-audit-20261002.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/color-system-audit-20261002.md",
+      "sha256": "053940f9c137e638d4694d8b75c1b096e0c5d8d31520e0d9d3a7ca359fd93769",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/dependency-publication-20261006.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/dependency-publication-20261006.md",
+      "sha256": "084509e380c1a013ba90098bfb47c047a91a21890ae782dd0f0d9e538844dfa5",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/e2e-scale-baseline.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/e2e-scale-baseline.md",
+      "sha256": "f287328a8ae5b6c1b750e1cceb9417e1b81c162d6a1d43c5144ca0705c0a9247",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/inbox-agent-safety-20261007.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/inbox-agent-safety-20261007.md",
+      "sha256": "28d349d19f513686f4e211c9b3234348c4711133b0d7c23ee15e3c6fa3426200",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/regression-report.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/regression-report.md",
+      "sha256": "74aacbebbb9eca502e6c179eeea591ea06797805f14924142d7214f6e5a97c6b",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/task-state/CONSOLIDATION-2026-09-21.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/task-state/CONSOLIDATION-2026-09-21.md",
+      "sha256": "647fa8237627023305466d67f0a765b1bcd95015168a3d7c77928ffa5f189865",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/task-state/PRIMARY-SESSION.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/task-state/PRIMARY-SESSION.md",
+      "sha256": "0226d52c3569d3fa6c506d85705d4cc915591d083b94494f3e75f9fc33819d38",
+      "current": "docs/testing/task-state/PRIMARY-SESSION.md"
+    },
+    {
+      "original": "docs/testing/testing.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/testing.md",
+      "sha256": "39005d4e03e07d9aca00a0d7b2729430d4200170fd4b86a95186e09c91d5375f",
+      "current": "docs/testing/testing.md"
+    },
+    {
+      "original": "docs/testing/ui-feedback-20261005.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ui-feedback-20261005.md",
+      "sha256": "3424c2bd9af3f1a1a7e2935cd7c0e6f0a3d8edfb3674de70d635872dc584d956",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ui-feedback-inventory-20261005.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ui-feedback-inventory-20261005.md",
+      "sha256": "48ab37a60630d60608a71947947976fd27430e4281a21faf9967b796e6eeaee4",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ui-loading-20261005.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ui-loading-20261005.md",
+      "sha256": "ac39db7013d3c8f72e8f5db5deb24d31832db1669d1d5f5e2a961f4ec0802f6c",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ui-state-behavior-20261005.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ui-state-behavior-20261005.md",
+      "sha256": "70eb37bc6c4d6e6ca3d06279fe828ba45dca0979e5b4115047967f59a831082f",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "docs/testing/ui-testing-toolkit.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/docs/testing/ui-testing-toolkit.md",
+      "sha256": "e8d6503c9f3c238511ee11de22e5f3a3712e8f685415474f6b777dfb9965e730",
+      "current": "docs/testing/ui-testing-toolkit.md"
+    },
+    {
+      "original": "frontend/README.md",
+      "disposition": "replaced-active",
+      "preservedAt": "archive_docs/2026-10-07/frontend/README.md",
+      "sha256": "d3cadcea3d513bce5904f7acc5b661ce4b4e63e60f41440d74e8926d0b20fb60",
+      "current": "frontend/README.md"
+    },
+    {
+      "original": "frontend/src/features/README.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/frontend/src/features/README.md",
+      "sha256": "63f2e029c88fb1b2e7e3db5b03b115c0d8cef1dcb4427a261d0b377f1e852440",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "frontend/src/features/deals/CHANGELOG.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/frontend/src/features/deals/CHANGELOG.md",
+      "sha256": "4ae98f489e54c3e823b698c20499a9c440abf8fa90abbf6bbaa736d6d5bcfdff",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "frontend/src/features/deals/README.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/frontend/src/features/deals/README.md",
+      "sha256": "51971498521b8b287ba2abbaf7231a9301ff133b43614a9cd3019c7132a09472",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "master_teh_plan.txt",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/master_teh_plan.txt",
+      "sha256": "928077025dd4ef8bb24ca1e4d5443686e6a4298f9f9b9df4802d812d4faa7c7f",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "plan/README.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/plan/README.md",
+      "sha256": "411981cd2f4b5a0a3d93dcebad9bef4ac3de2d5df76d7b055f19e2837f87b2d4",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "plan/clean_code_rules/zani_required_clean_code_rules.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/plan/clean_code_rules/zani_required_clean_code_rules.md",
+      "sha256": "61ea165653d323abf2bfc0063fcc3b9787b58ade59407387d9a0b9729a24a1bf",
+      "current": "docs/current/engineering.md"
+    },
+    {
+      "original": "plan/commit_pr_split_plan_2026_06_08.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/plan/commit_pr_split_plan_2026_06_08.md",
+      "sha256": "e9efaca0d64e03c7252988ee2bc4ace3cc9ee37db6114f8ffdf7e99e18cb2909",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "plan/deals_reference_blueprint.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/plan/deals_reference_blueprint.md",
+      "sha256": "d3232ab53b83c64495d3ea769ba823d1e9590b45414862084f0d7382b6a8f9cd",
+      "current": "docs/current/frontend.md"
+    },
+    {
+      "original": "plan/production_qa_2026_06_09.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/plan/production_qa_2026_06_09.md",
+      "sha256": "258abe9a4fc9411ab234930002d963eab299fb1597d38506090ba8ed688422c3",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "plan/readiness_plan.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/plan/readiness_plan.md",
+      "sha256": "9eed188c0bd3cb60335dd4d118134ea3ba92bdc959c83e14622217e667be2335",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "plan/stabilization_audit_2026_06_08.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/plan/stabilization_audit_2026_06_08.md",
+      "sha256": "6796d475754b03cde13f1f32a1932fe7a45510b69d7742e76825f74065c55b18",
+      "current": "docs/current/acceptance.md"
+    },
+    {
+      "original": "plan/ui_ux_design_system_reform.md",
+      "disposition": "archived",
+      "preservedAt": "archive_docs/2026-10-07/plan/ui_ux_design_system_reform.md",
+      "sha256": "72db98af6d07e91685e13ba8a760fed2462eca3bf71b41406011e9be29db8b73",
+      "current": "docs/current/frontend.md"
+    }
+  ]
+}

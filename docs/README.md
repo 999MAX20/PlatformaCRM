@@ -1,138 +1,43 @@
-# PlatformaCRM Documentation Index
+# Действующая документация PlatformaCRM
 
-This folder is the single entry point for PlatformaCRM technical documentation.
+Начать с [STATUS](../STATUS.md) и [карты реализации](pre-production/capabilities.md).
+Читать только профильный контракт и выбранный checkpoint. Ниже — закрытый
+реестр текущих источников; машинный вариант — [documentation-index.json](documentation-index.json).
+Паспорт описывает реализацию и доказательства, контракт — требования, процедура —
+порядок работы. Ни один из них сам по себе не назначает новую задачу.
 
-[Root project status](../STATUS.md) is the owner-approved compact entry point
-for recovering context in a new chat. It routes to existing checkpoints and
-contracts; detailed technical documentation and evidence retain their owners.
+| Вопрос | Действующий источник |
+| --- | --- |
+| Что строим и что отложено | [Продукт](current/product.md) |
+| Что реализовано и где код | [Паспорта](pre-production/README.md), [карта модулей](pre-production/capabilities.md) |
+| Что ещё не принято / не решено | [Приёмка](current/acceptance.md) |
+| CRM, запись, задачи, деньги, автоматизации | [CRM](current/crm.md) |
+| Tenant, роли, MFA, сессии, поддержка | [Доступ](current/access.md) |
+| AI, знания, подтверждения, безопасность клиента | [AI](current/ai.md) |
+| Интерфейс, состояния, typography/tokens | [Frontend](current/frontend.md) |
+| Connectors, импорт/экспорт, реальные каналы | [Интеграции](current/integrations.md) |
+| Среда, worker, AV, backup, production boundary | [Эксплуатация](current/operations.md) |
+| Архитектура изменений | [Инженерные правила](current/engineering.md) |
+| Выполнение задачи | [AGENTS](../AGENTS.md), [шаблон](testing/CODEX_TASK_TEMPLATE.md) |
+| Точные проверки и изоляция | [Testing](testing/testing.md), [UI toolkit](testing/ui-testing-toolkit.md) |
+| Текущая задача и передача | [Checkpoint](testing/task-state/PRIMARY-SESSION.md), [handoff](../actual_docs/PROJECT_HANDOFF.md), [протокол](testing/SESSION_ROLLOVER.md) |
+| Регрессионные прецеденты | [ZR rules](../actual_docs/DEFECT_KNOWLEDGE_BASE.md) |
 
-## Current backend boundary and documentation status
+## История и новые документы
 
-- [AI CRM commands and historical finance, 02.10](testing/ai-crud-history-20261002.md) — reviewed mutations, full-period aggregates, explicit financial source and remaining AI acceptance.
+[Архив](../archive_docs/README.md) содержит старые тела и manifest с SHA256.
+Он исключён из обычного поиска. Историческую ссылку открывать только для точного
+evidence; она не возвращает старый документ в действующие инструкции. Текущие
+контракты уже сохраняют последние решения и открытые обязательства.
 
-- [File antivirus and quarantine](security/file-antivirus.md) — ClamAV, private download guards, worker recovery, import scanning and rollout boundary.
+`actual_docs/UNIFIED_FALLBACK_INVENTORY.generated.md` — машинный каталог по
+стабильному пути, не спецификация и не PASS. Не редактировать вручную.
+Технические backend/frontend README — карты исходников, не независимая политика.
+Навигация `.agents/skills` обновлена на этот набор контрактов.
 
-- [Ребрендинг в PlatformaCRM](operations/rebranding-2026-09-28.md) — новое название, единый репозиторий PlatformaCRM и сохранённые технические идентификаторы совместимости.
-
-- [Billing discussion deferred, later 2026-09-25](billing/BILLING_DISCUSSION_DEFERRED_2026-09-25.md) — latest package with included AI direction supersedes separate-AI/PAYG; prices and billing work deferred, paid-pilot commercial gate retained. No new implementation phase.
-
-- [Текущий план пилота, 28.09](pilot/local-crm-completion.md#current-plan) — источник порядка разрешённого исполнения: внутренняя CRM и AI, старые долги и точные границы; интеграции/мессенджеры/шлюз исключены, billing отложен.
-- [Вопросы владельцу по пилоту](pilot/owner-questions-2026-09-28.md) — решения по поддержке, среде, хранению файлов, ручной приёмке и live AI; независимые проверки продолжаются без ожидания ответов.
-- [Backend development audit, 2026-09-14](pilot/backend-development-audit.md) — implemented vs WIP vs missing evidence; not a second task queue.
-- [Backend open logic register](pilot/backend-open-logic-register.md) — canonical backend gap IDs.
-- [Technical documentation audit](operations/technical-documentation-audit.md) — 105 source documents and archive decisions.
-- [Archive manifest](../archive_docs/2026-09-14/README.md) — 26 historical/superseded records; not implementation authorization.
-- [Active execution authority](../actual_docs/README.md) — pre-pilot, fallback and certification owners.
-
-Use this index first when you need to understand where a document belongs. Keep new technical documentation inside the closest matching section instead of adding more root-level Markdown files.
-
-## Core project rules
-
-- `../AGENTS.md` — repository instructions for Codex and AI agents.
-- `../plan/clean_code_rules/zani_required_clean_code_rules.md` — mandatory engineering rules.
-- `../plan/README.md` — planning-folder index and deprecated plan references.
-
-## Main sections
-
-### Pilot / pre-production technical passports
-
-- [Реестр основных функций](pre-production/README.md) — отдельный каталог
-  фактического состояния модулей, версий, защитных механизмов и границ приёмки.
-- [Состояние пилота](pre-production/project-state.md),
-  [клиентский AI-агент](pre-production/customer-ai-agent.md),
-  [пауза CRM-аналитики](pre-production/crm-ai-agent.md).
-  Паспорта сопровождают исходные контракты и отчёты, не заменяют план исполнения.
-
-### Approved first paid release
-
-- [V1 product rules](product/V1_PRODUCT_RULES.md) — owner-approved dental administrative CRM, required channels and controlled AI. Read with the latest deferred billing note: CRM package includes AI volume; prices and details remain open. Defines target scope, not implementation readiness.
-
-### CRM
-
-Use `crm/` for current CRM domain plans and lifecycle rules. Completed checklists are historical evidence, not a second backlog.
-
-- `crm/CRM_PRODUCTION_LAYER_PLAN.md`
-- [Специалист и отсутствие](crm/specialist-scheduling.md) — индивидуальный график,
-  разбор записей при форс-мажоре и отдельно желаемая рассылка клиентам.
-- [CRM entity behavior contract](crm/CRM_ENTITY_BEHAVIOR_CONTRACT.md) — draft rules for entity relationships, lifecycles, AI boundaries and cross-product audit acceptance; proposals require approval.
-- `crm/CRM_IMPLEMENTATION_TASKS.md` — archive redirect; completed checklist.
-- `crm/CRM_AUDIT_REQUIRED_CHANGES.md` — archive redirect; closed audit.
-- `crm/client-payments.md` — manual client payment journal, permissions and verification.
-
-### Integrations
-
-Use `integrations/` for connector architecture, provider rollout, marketplace/API onboarding, external channels and import connectors.
-
-- `integrations/README.md`
-- `integrations/CONNECTOR_BLUEPRINT.md`
-- [Verified financial source contract](integrations/financial-source-contract.md)
-- `integrations/integrations.md`
-- `integrations/provider-rollout.md`
-- `integrations/marketplace-integrations.md`
-- `integrations/marketplace-onboarding-runbook.md`
-- `integrations/marketplace-inventory-write-plan.md`
-
-### Frontend
-
-Use `frontend/` for UI architecture, design system, authenticated app UX and product UI reform.
-
-- `frontend/design-system.md`
-- `frontend/product-ui-reform.md`
-- `frontend/ui-ux-implementation-standard.md`
-- `frontend/ui-ux-polish-phase-10.md` — archive redirect; historical delivery.
-
-### Production
-
-Use `production/` for deployment, readiness, backups, monitoring, storage, Celery/Redis, paid beta and staging runbooks.
-
-- `production/production-readiness.md`
-- `production/production-readiness-10000-audit.md`
-- `production/deployment.md`
-- `production/paid-beta-gate.md`
-- `production/staging/`
-
-### Security
-
-Use `security/` for permissions, rate limits and access-control documentation.
-
-- `security/PERMISSION_MATRIX.md`
-- `security/aud027-crm-projections.md` — bounded secondary-read correction, local snapshot and verification evidence; not integrated.
-- `security/privileged-mfa.md`
-- `security/rate-limits.md`
-
-### Testing
-
-Use `testing/` for test strategy, Codex task format, regression reports and scale/e2e baselines.
-
-- `testing/testing.md`
-- `testing/ui-testing-toolkit.md` — local component QA and guarded visual-service setup.
-- [Whole-CRM color audit, 2026-10-02](testing/color-system-audit-20261002.md) — semantic palette, route/component coverage, state checks and explicit exceptions.
-- [AI functional acceptance, 2026-10-02](testing/ai-functional-20261002.md) — settings, revocation, controlled CRM/calendar creation, internal scenarios and bounded live evidence.
-- [AI-agent reference redesign, 2026-10-02](testing/ai-agent-reference-redesign-20261002.md) — header picker, five-tab editor, focused interaction and responsive evidence.
-- `testing/CODEX_TASK_TEMPLATE.md`
-- `testing/regression-report.md` — archive redirect; historical regression evidence.
-- `testing/e2e-scale-baseline.md`
-
-### Other focused sections
-
-- `ai/` — AI assistant behavior and source-grounding rules.
-- `analytics/` — analytics and reporting.
-- `api/` — API action contracts.
-- `architecture/` — cross-cutting architecture decisions.
-- `auth/` — authentication and social login.
-- `automation/` — automation runtime.
-- `billing/` — entitlements and billing limits.
-- `operations/` — platform/support operations.
-- `pilot/` — current pilot contracts/runbooks and historical report redirects.
-- `pilot/backend-open-logic-register.md` — active backend register for
-  unimplemented, partial, environment-gated and roadmap behavior.
-- `product/` — product positioning, landing and competitive notes.
-
-## Documentation placement rule
-
-When adding a new document:
-
-1. Put it under the closest section in `docs/`.
-2. Add it to the section README or this index if it is a long-lived source of truth.
-3. Update `AGENTS.md` or `plan/README.md` only if future agents must read it before doing a class of work.
-4. Do not create root-level Markdown plans unless they are repository instructions like `AGENTS.md` or the main `README.md`.
+Новое поведение обновляет существующий контракт и соответствующий паспорт.
+Новая долговечная страница требует явного назначения и регистрации роли здесь
+и в JSON. Детальное evidence хранится в выбранном task checkpoint/report с SHA,
+командами, средой и ограничениями; не раздувать STATUS/README историей прогонов.
+Не добавлять redirect-файлы на каждый архивный путь и не восстанавливать старые
+планы только потому, что их упоминал прежний чат.

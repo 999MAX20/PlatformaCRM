@@ -53,10 +53,10 @@ billing отложен. Требования платного запуска о�
 
 ## Источники и сопровождение
 
-- [План и принятые решения пилота](../pilot/local-crm-completion.md#current-plan).
-- [Актуальные продуктовые правила](../product/V1_PRODUCT_RULES.md).
-- [Эксплуатационные требования](../production/production-readiness.md) и
-  [paid-beta gate](../production/paid-beta-gate.md).
+- [План и принятые решения пилота](../current/acceptance.md).
+- [Актуальные продуктовые правила](../current/product.md).
+- [Эксплуатационные требования](../current/operations.md) и
+  [paid-beta gate](../current/operations.md).
 - [Реестр паспортов и правила обновления](README.md).
 
 07.10.2026 — первый срез: клиентский агент описан, CRM-аналитика отмечена как

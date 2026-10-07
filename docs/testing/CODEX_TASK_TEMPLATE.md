@@ -98,7 +98,7 @@ Store this in the existing task record or relevant handoff, without secrets:
 
 ```text
 Task / current phase / authorized scope:
-Worktree / branch / starting base / current HEAD:
+Canonical root / branch / starting base / current HEAD:
 Affected-path dirty snapshot (including required untracked files):
 Implemented:
 Verified: command, result, state identity, environment, coverage
@@ -110,7 +110,7 @@ Delivery: local / committed / integrated / accepted environment
 Integration owner and overlapping work, if relevant:
 ```
 
-Do not claim a worktree change is present in the main checkout before integration.
+Only the canonical checkout is writable. Do not use alternate source trees for implementation.
 After relevant code, dependency, config or fixture changes, recheck affected
 acceptance evidence; keep valid historical closures attached to their old SHA.
 
@@ -384,8 +384,8 @@ Dirty paths: <свои / чужие / происхождение не устан
   доказательством выполнения правил или автоматическим сохранением сводки.
 
 Для Zani / Platforma.CRM продуктовые границы задаёт
-`docs/product/V1_PRODUCT_RULES.md`, текущие CRM-статусы —
-`docs/crm/CRM_PRODUCTION_LAYER_PLAN.md` и профильные реестры из `docs/README.md`.
+`docs/current/product.md`, текущие CRM-статусы —
+`docs/current/crm.md` и профильные реестры из `docs/README.md`.
 Checkpoint не заменяет эти документы. Если у задачи ещё нет сохраняемой
 карточки, разместить её в `docs/testing/task-state/<task-id>.md`.
 

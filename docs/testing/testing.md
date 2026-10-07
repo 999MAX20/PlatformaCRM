@@ -1,4 +1,4 @@
-# Zani Testing Guide
+# PlatformaCRM Testing Guide
 
 For isolated shared-component development, RU/KK/EN accessibility/interaction
 checks and guarded visual publishing, see [UI testing toolkit](ui-testing-toolkit.md).
@@ -213,7 +213,7 @@ daemon is unavailable.
 ## Isolated Focused Checks Before A Committed Range
 
 Run from the task's repository root. Use its installed Python, or an explicitly
-selected compatible existing interpreter for a linked worktree. Do not install
+selected compatible existing interpreter in the canonical checkout. Do not install
 another environment solely to inspect docs or list command help.
 
 This narrow PowerShell example reuses the existing runner's isolation helper;

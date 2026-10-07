@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-07",
+  "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
+  "documents": [
+    {
+      "path": ".agents/skills/zani-analyze-crm-product/references/crm-mechanics.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-analyze-crm-product/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-build-integration-reliability/references/integration-checklist.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-build-integration-reliability/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-change-crm-domain/references/change-impact.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-change-crm-domain/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-evaluate-ai-grounding/references/ai-checklist.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-evaluate-ai-grounding/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-handle-incident/references/incident-runbook.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-handle-incident/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-plan-observability/references/observability-checklist.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-plan-observability/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-review-access/references/access-checklist.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-review-access/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-review-code/references/review-checklist.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-review-code/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-review-frontend/references/frontend-checklist.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-review-frontend/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-review-performance/references/performance-checklist.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-review-performance/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-run-verification/references/verification-commands.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-run-verification/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": "actual_docs/DEFECT_KNOWLEDGE_BASE.md",
+      "role": "regression-rules"
+    },
+    {
+      "path": "actual_docs/PROJECT_HANDOFF.md",
+      "role": "status"
+    },
+    {
+      "path": "actual_docs/README.md",
+      "role": "navigation"
+    },
+    {
+      "path": "actual_docs/UNIFIED_FALLBACK_INVENTORY.generated.md",
+      "role": "generated-evidence"
+    },
+    {
+      "path": "AGENTS.md",
+      "role": "procedure"
+    },
+    {
+      "path": "apps/README.md",
+      "role": "navigation"
+    },
+    {
+      "path": "docs/current/acceptance.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/current/access.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/current/ai.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/current/crm.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/current/engineering.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/current/frontend.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/current/integrations.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/current/operations.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/current/product.md",
+      "role": "contract"
+    },
+    {
+      "path": "docs/pre-production/capabilities.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/crm-ai-agent.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/customer-ai-agent.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/module-template.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/project-state.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/README.md",
+      "role": "navigation"
+    },
+    {
+      "path": "docs/README.md",
+      "role": "navigation"
+    },
+    {
+      "path": "docs/testing/CODEX_TASK_TEMPLATE.md",
+      "role": "procedure"
+    },
+    {
+      "path": "docs/testing/SESSION_ROLLOVER.md",
+      "role": "procedure"
+    },
+    {
+      "path": "docs/testing/task-state/PRIMARY-SESSION.md",
+      "role": "status"
+    },
+    {
+      "path": "docs/testing/testing.md",
+      "role": "procedure"
+    },
+    {
+      "path": "docs/testing/ui-testing-toolkit.md",
+      "role": "procedure"
+    },
+    {
+      "path": "frontend/README.md",
+      "role": "navigation"
+    },
+    {
+      "path": "README.md",
+      "role": "navigation"
+    },
+    {
+      "path": "STATUS.md",
+      "role": "status"
+    }
+  ]
+}

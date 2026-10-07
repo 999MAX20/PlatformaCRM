@@ -1,18 +1,15 @@
-# ZANI Technical Documentation Archive
+# Архив PlatformaCRM
 
-This directory preserves completed phases, historical audits, implementation
-evidence, readiness reports and superseded roadmaps. Nothing here is deleted.
+История решений, старые планы и отчёты. **Не действующие требования, не backlog,
+не подтверждение текущей готовности.** Начинать с [текущего реестра](../docs/README.md).
 
-Archived documents are a knowledge base: they explain previous decisions,
-accepted implementation scope, verification evidence and deferred work. They
-must not be used to authorize new implementation automatically.
+[Консолидация 07.10.2026](2026-10-07/README.md) содержит точные снимки исходных
+документов, включая прежние entrypoints; [manifest](2026-10-07/manifest.json)
+указывает исходный путь, SHA256, место сохранения и текущий маршрут.
+Ранние архивные тела сохранены на своих местах. Старые относительные ссылки
+в снимках не переписывались: пути интерпретируются в исходном дереве Git base
+`f01d22610118e3a24df86257943a8be91314f916` и сопоставляются через manifest.
 
-The current sources of authority are listed in `../actual_docs/README.md`.
-
-- [2026-09-14 archive manifest](2026-09-14/README.md) — 26 closed/historical or
-  superseded records, preserved bodies and redirects at their old paths.
-- [Documentation audit](../docs/operations/technical-documentation-audit.md) —
-  current replacements and remaining open gates.
-
-Some archived documents intentionally retain links to their original
-`actual_docs/` locations so their historical context remains intact.
+`.rgignore` исключает архив из обычного поиска. Для конкретного исторического
+вопроса допустим `rg --no-ignore <pattern> archive_docs/<точный-путь>`.
+Это разрешение прочитать evidence, не вернуть его правила в активное действие.

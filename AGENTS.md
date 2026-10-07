@@ -26,7 +26,7 @@ One repository-wide writer includes code, migrations, contracts and shared docs.
 Parallel audits may only read an identified snapshot. Keep the current branch;
 never switch a dirty/shared checkout or overwrite it to match a remembered revision.
 Unexpected writer, branch/HEAD drift or affected-path changes pause writes until reconciled.
-See [consolidation evidence](docs/testing/task-state/CONSOLIDATION-2026-09-21.md).
+See [consolidation evidence](archive_docs/2026-10-07/docs/testing/task-state/CONSOLIDATION-2026-09-21.md).
 
 Run servers from the canonical folder. Before trusting localhost, verify backend,
 frontend and worker source roots and build/profile. Do not stop others' processes.
@@ -74,7 +74,7 @@ Working-DB migrations and removal of old trees need their own agreed scope/check
 ## 3. Product and engineering invariants
 
 PlatformaCRM is an AI-first CRM/business control layer for SMB. The first paid release
-serves dental administrators under [V1 rules](docs/product/V1_PRODUCT_RULES.md).
+serves dental administrators under [V1 rules](docs/current/product.md).
 Keep daily work simple, fast, role-aware and action-oriented. Do not introduce
 clinical records, a new permission framework or vertical-mode rewrite implicitly.
 Do not turn it into heavy ERP, a full-sync warehouse, an admin maze, a developer
@@ -106,29 +106,42 @@ contracts → frontend integration → E2E. Do not polish a page while rules are
   sources, or clearly say data is missing. A backend-only foundation is not complete
   without its applicable reachable user flow, permissions and tests.
 
-## 4. Select relevant authority, not every document
+## 4. Select current authority, not historical plans
 
-Always follow [clean-code rules](plan/clean_code_rules/zani_required_clean_code_rules.md).
-Use [docs index](docs/README.md) for document placement and
-[V1 rules](docs/product/V1_PRODUCT_RULES.md) for product scope/behavior, AI, billing,
-integrations and release acceptance. V1 overrides older proposals, not security.
-For defect fixes, UI/UX audits or functional certification read
-[defect knowledge](actual_docs/DEFECT_KNOWLEDGE_BASE.md).
+Always follow [engineering rules](docs/current/engineering.md).
+[docs/README.md](docs/README.md) and its explicit
+[registry](docs/documentation-index.json) define active document roles.
+Read only the current contract relevant to the task, its passport and selected
+checkpoint. No document date, old checkbox or archived "continue" authorizes work.
 
 | Work/question | Authority |
 | --- | --- |
-| Project identity/routing | `actual_docs/README.md`, `actual_docs/PROJECT_HANDOFF.md` |
-| Pre-pilot order / backend gaps | `docs/pilot/local-crm-completion.md` (current pilot plan), `actual_docs/PRE_PILOT_CODE_READINESS_MASTER.md`, `docs/pilot/backend-open-logic-register.md` |
-| Functional / recovery acceptance | `actual_docs/APP_FUNCTIONAL_CERTIFICATION.md`, `actual_docs/UNIFIED_FALLBACK_EXPERIENCE_PLAN.md` |
-| CRM behavior | `docs/crm/CRM_PRODUCTION_LAYER_PLAN.md`, `docs/security/PERMISSION_MATRIX.md`, `docs/ai/AI_ASSISTANT_RULES.md`, `docs/automation/automation-runtime.md`, `docs/billing/entitlements.md` |
-| Frontend | `docs/frontend/design-system.md`, `plan/ui_ux_design_system_reform.md` |
-| Integrations | `docs/integrations/CONNECTOR_BLUEPRINT.md`, `docs/integrations/integrations.md`, `docs/integrations/provider-rollout.md` |
-| Infrastructure | `docs/production/production-readiness.md`, `docs/production/production-readiness-10000-audit.md`, `docs/production/deployment.md`, `docs/production/paid-beta-gate.md` |
+| Product and scope | `docs/current/product.md` |
+| Implemented capabilities / evidence boundary | `docs/pre-production/README.md`, `docs/pre-production/capabilities.md` |
+| Open acceptance / unresolved decisions | `docs/current/acceptance.md` |
+| CRM lifecycle / money / automation | `docs/current/crm.md` |
+| Permissions / tenant / identity | `docs/current/access.md` |
+| AI grounding / actions / safety | `docs/current/ai.md` |
+| Frontend / shared UI | `docs/current/frontend.md` |
+| Connectors / imports / exports | `docs/current/integrations.md` |
+| Environment / files / operations | `docs/current/operations.md` |
 | Verification | `docs/testing/testing.md`, `docs/testing/CODEX_TASK_TEMPLATE.md` |
+| Defect prevention | `actual_docs/DEFECT_KNOWLEDGE_BASE.md` |
+| Ownership / transfer | `actual_docs/PROJECT_HANDOFF.md`, `.codex/project-session.json`, `docs/testing/SESSION_ROLLOVER.md` |
 
-Indexes route to owners; archived plans, redirect stubs and historical checkpoints
-never authorize new work. Do not chase missing historical plans. Correct stale
-indexes only with unambiguous evidence and documentation scope.
+`archive_docs/` contains historical evidence only. Never use its instructions,
+proposals or readiness claims as current authority. `.rgignore` excludes it from
+default searches. For a specific decision/closure, explicitly read the exact
+archived source (or `rg --no-ignore` on that path), label it historical and reconcile
+with current contracts/code. Do not scan the entire archive on startup/compaction.
+Archived relative links retain their original Git-tree context; the manifest maps
+original paths. Do not repair historical bodies or restore redirect stubs.
+
+Unregistered new docs cannot silently become authority. Register an intentional
+document with its role and update its owner; do not create a competing backlog.
+Generated inventory and test reports prove only their named snapshot/boundary.
+Code shows implementation, contracts define requirements; unresolved conflicts
+still follow section 2. Archiving does not close open acceptance or approve proposals.
 
 ## 5. Verification proportional to the change
 
