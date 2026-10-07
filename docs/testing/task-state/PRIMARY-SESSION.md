@@ -1,6 +1,35 @@
 # PRIMARY-SESSION — PlatformaCRM
 
-## INBOX-LOCAL-PILOT-20261008 — local acceptance PASS; publication pending
+## PREPROD-AI-EVIDENCE-20261008 — documentation update
+
+Owner request: update pre-prod with completed customer-agent behavior checks.
+Docs-only evidence gap; same generation 4 primary/root/branch, clean base
+`de1867bd7ed3a2350fdfdb7dfc35c8ca8c365e69`. Reuse the two acceptance reports,
+final case/semantic review and verified publication receipt. No product behavior,
+permissions, notifications, BusinessEvent, schema, environment or paid AI changes.
+Risk: overstating coverage, conflating real model with real delivery, summing
+overlapping tests or leaving stale version/CI status. Update existing passport
+and pre-prod navigation/status; preserve historical evidence and external gaps.
+Checks: counts/source/CI consistency, local links/anchors, registry and reviewed
+working/index/committed diff hygiene. No app tests/build/install/model calls for
+Markdown. Completion: reviewed docs commit, normal push and actual CI status.
+
+Result: current passport contains the six-group behavioral matrix, observed
+outcomes, fixes, handoff/recovery semantics, supporting checks, costs and limits.
+Version and successful application CI are current; pre-prod navigation updated.
+Five registered Markdown files, 65 local links/anchors and final 43-case/CI receipt
+consistency PASS; diff hygiene PASS. Initial verification helper expected six
+files instead of the actual five; corrected to an explicit scope list, then PASS.
+No application checks or paid calls rerun. Documentation publication and its
+push-triggered CI status are reported in the final response; prior application
+CI SUCCESS is evidence for de1867b, not for a future documentation commit.
+
+## INBOX-LOCAL-PILOT-20261008 — complete
+
+Publication readback: `de1867bd7ed3a2350fdfdb7dfc35c8ca8c365e69` normal-pushed
+to main; [CI37684198877](https://github.com/999MAX20/PlatformaCRM/actions/runs/37684198877)
+backend/frontend SUCCESS. Local receipt `output/inbox-local-pilot-20261008/publication.json`.
+The pre-publication steps below were completed; no product work remains in this scope.
 
 Owner authorized completing the existing customer-agent pilot locally: safe
 customer scenarios, handoff communication and fast flexible staff configuration.
@@ -40,7 +69,7 @@ All failed attempts retained: initial missing notice/takeover RED, first live
 38/39 with call-limit defect, fixture-quota browser failures, bad selectors/grep,
 two nonexistent backend labels and i18n build error. Corrected runs cited in report.
 
-Completion DoD remaining: final source/docs/index/secret review and diff hygiene,
+Completed DoD: final source/docs/index/secret review and diff hygiene,
 conventional commit, fetch/prove fast-forward normal push HEAD:main, remote SHA
 readback and actual CI. Do not call CI green before readback. Publication receipt
 goes in local publication.json and final response; candidate is report's commit.
