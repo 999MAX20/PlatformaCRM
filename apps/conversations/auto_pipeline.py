@@ -68,6 +68,30 @@ def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessag
 
 
 def _run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, channel: BotChannel | None = None) -> AutoPipelineDecision:
+    from apps.bots.handoff_notice import send_customer_handoff_notice
+    conversation.refresh_from_db()
+    was_handoff = conversation.handoff_required
+    fingerprint = agent_runtime_fingerprint(conversation)
+    decision = _evaluate_auto_pipeline(conversation=conversation, message=message, channel=channel)
+    conversation.refresh_from_db()
+    if (not was_handoff and conversation.handoff_required and not decision.reply_message
+            and decision.status in {"safety_handoff", "needs_review", "blocked_low_confidence",
+                                    "blocked_risky_intent", "blocked_fallback"}):
+        key = f"booking-review:{message.pk}" if decision.booking else f"customer-handoff:{message.pk}"
+        try:
+            decision.reply_message = send_customer_handoff_notice(conversation=conversation,
+                message=message, fingerprint=fingerprint, idempotency_key=key)
+        except (PermissionDenied, ValidationError):
+            # Handoff remains effective even if sending is denied (e.g. message quota).
+            decision.reply_error = "Customer handoff notice could not be queued."
+        conversation.refresh_from_db()
+        channel = conversation.bot.channels.filter(channel=conversation.channel).first()
+        _save_auto_pipeline_decision(conversation, message,
+            resolve_auto_pipeline_config(conversation=conversation, channel=channel), decision)
+    return decision
+
+
+def _evaluate_auto_pipeline(*, conversation: BotConversation, message: BotMessage, channel: BotChannel | None = None) -> AutoPipelineDecision:
     conversation.refresh_from_db()
     channel = conversation.bot.channels.filter(channel=conversation.channel).first()
     fingerprint = agent_runtime_fingerprint(conversation)
@@ -220,14 +244,9 @@ def _run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, ch
     if decision.booking is not None and decision.booking.status == "requires_staff":
         # The server has rejected autonomous booking (busy/stale slot or policy).
         # Another model reply must not reconfirm that same uncommittable option.
-        from apps.bots.safety_content import safety_text
         decision.status = "needs_review"
         decision.reason = decision.booking.reason
         handoff_conversation(result.conversation, reason=decision.reason)
-        if config.auto_send_reply:
-            decision.reply_message = send_outbound_message(result.conversation,
-                safety_text(result.conversation, "handoff"), user=None,
-                sender_type=BotMessage.SenderTypes.SYSTEM, idempotency_key=f"booking-review:{message.pk}")
     elif decision.booking is None or decision.booking.status != "booked":
         if _can_auto_reply(config=config, conversation=result.conversation, decision=decision):
             _send_auto_reply(conversation=result.conversation, config=config, decision=decision)
@@ -441,8 +460,7 @@ def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfi
             return
         text = (result.output_text or "").strip()
         if not text:
-            decision.reply_error = "AI returned an empty auto reply."
-            return
+            raise AIClientError(code="empty_customer_reply", retryable=False)
         scheduling_context = (log.input_json or {}).get("scheduling_context") if log else {}
         offered_context = scheduling_context
         if config.creation_policy == "automatic":
@@ -474,12 +492,24 @@ def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfi
                                 runtime_fingerprint=fingerprint, offer_message_id=message.id)
     except Exception as exc:
         decision.reply_error = sanitize_error_text(exc)
+        conversation.refresh_from_db()
+        if (getattr(exc, "error_code", "") == "customer_call_limit"
+                and is_current_inbound(conversation)
+                and conversation.handoff_required
+                and (conversation.ai_safety_state or {}).get("reason") == "call_limit"):
+            # The provider admission guard already performed this handoff.
+            decision.status = "safety_handoff"
+            decision.reason = "call_limit"
+            return
         if not conversation_ai_block_reason(conversation) and is_current_inbound(conversation):
             if getattr(exc, "error_code", "") in {"unsafe_customer_context", "unsafe_customer_output"}:
                 from apps.bots.customer_safety import safety_handoff
                 safety_handoff(conversation, "unsafe_context" if exc.error_code == "unsafe_customer_context" else "unsafe_output")
+                decision.status = "safety_handoff"
             else:
                 handoff_conversation(conversation, reason="AI reply unavailable; manager review required.")
+                decision.status = "blocked_fallback"
+            decision.reason = "AI reply unavailable; manager review required."
 
 
 def _auto_reply_meta(decision: AutoPipelineDecision) -> dict[str, Any] | None:

@@ -16,6 +16,7 @@ test("customer safety settings persist; invalid and failed saves preserve valid 
   const bot = await session.create<{ id: number }>("bots", { name: "Safety settings" });
   await page.goto(`/app/ai-agents/${bot.id}/actions`);
   const editor = page.getByTestId("ai-agent-editor");
+  await editor.locator("summary").filter({ hasText: ru["customerSafety.processingLimits"] }).click();
   const limit = editor.getByRole("spinbutton", { name: ru["customerSafety.callLimit"], exact: true });
   await expect(limit).toHaveValue("30");
   await limit.fill("20");
@@ -25,6 +26,7 @@ test("customer safety settings persist; invalid and failed saves preserve valid 
   await expect(save).toBeDisabled();
   expect((await session.read(`bots/${bot.id}`)).settings_json.customer_safety).toMatchObject({ calls_per_24h: 20, allow_first_off_topic: false });
   await page.reload();
+  await editor.locator("summary").filter({ hasText: ru["customerSafety.processingLimits"] }).click();
   await expect(limit).toHaveValue("20");
   await limit.fill("31");
   const invalid = page.waitForResponse(r => r.url().endsWith(`/bots/${bot.id}/configuration/`) && r.request().method() === "PUT");
@@ -45,6 +47,7 @@ test("customer safety settings persist; invalid and failed saves preserve valid 
   for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await page.evaluate(value => localStorage.setItem("ai_smb_language", value), locale);
     await page.goto(`/app/ai-agents/${bot.id}/actions`);
+    await editor.locator("summary").filter({ hasText: copy["customerSafety.processingLimits"] }).click();
     const input = editor.getByRole("spinbutton", { name: copy["customerSafety.callLimit"], exact: true });
     await expect(input).toHaveValue("19");
     await input.focus();

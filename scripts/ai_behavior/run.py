@@ -15,7 +15,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--suite", choices=["smoke", "profiles", "temperature", "scope", "dialogue", "analytics", "commands", "pipeline", "final_responses", "final_crm", "continuity", "customer_acceptance"], default="smoke")
+    parser.add_argument("--suite", choices=["smoke", "profiles", "temperature", "scope", "dialogue", "analytics", "commands", "pipeline", "final_responses", "final_crm", "continuity", "customer_acceptance", "customer_pilot"], default="smoke")
     parser.add_argument("--budget-usd", default="3", help="Explicitly authorized cumulative ceiling for this output ledger, including retries")
     parser.add_argument("--max-calls", type=int, choices=range(1, 751), default=500, metavar="1..750")
     parser.add_argument("--live", action="store_true")
@@ -73,6 +73,9 @@ def main():
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for folder in (ROOT / "apps/ai_core", ROOT / "apps/bots", ROOT / "apps/conversations", ROOT / "scripts/ai_behavior")
         for path in folder.rglob("*.py")}}
+    if args.suite == "customer_pilot":
+        manifest["source_sha256"].update({str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in (ROOT / "frontend/src/lib/i18n").glob("*.ts")})
     with (directory / "run-manifests.jsonl").open("a", encoding="utf8") as stream:
         stream.write(json.dumps(manifest)+"\n")
     with patch("django.utils.timezone.now", return_value=NOW), patch("urllib.request.urlopen", side_effect=transport):

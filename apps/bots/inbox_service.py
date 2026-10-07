@@ -362,6 +362,7 @@ def send_outbound_message(
     sender_type=BotMessage.SenderTypes.MANAGER,
     idempotency_key="",
     runtime_fingerprint="",
+    handoff_notice=False,
 ):
     from apps.bots.outbound_delivery import create_outbound_message
 
@@ -372,6 +373,7 @@ def send_outbound_message(
         sender_type=sender_type,
         idempotency_key=idempotency_key,
         runtime_fingerprint=runtime_fingerprint,
+        handoff_notice=handoff_notice,
     )
 
 

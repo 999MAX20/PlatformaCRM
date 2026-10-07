@@ -31,7 +31,7 @@ export function AgentActionsSection({
   return (
     <div className="space-y-5">
       <ControlSection botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
-      <FunctionsSection form={form} setForm={setForm} canManage={canManage} />
+      <FunctionsSection form={form} setForm={setForm} botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
       <CustomerSafetySettings botDraft={botDraft} setBotDraft={setBotDraft} canManage={canManage} />
       <section className="border-b border-platforma-border pb-5 last:border-0">
         <div>
@@ -49,7 +49,7 @@ export function AgentActionsSection({
             />
             <AuthorityRow
               label={t("aiAgents.authority.appointment")}
-              value={runtime.creation_policy === "automatic" && runtime.enabled && runtime.create_appointment && toolEnabled("create_appointment") ? t("aiAgents.authority.customerSelection") : t("aiAgents.authority.staffBooking")}
+              value={runtime.creation_policy === "automatic" && proposesWork && runtime.create_appointment && toolEnabled("create_appointment") ? t("aiAgents.authority.customerSelection") : t("aiAgents.authority.staffBooking")}
             />
           </div>
         </div>
@@ -107,7 +107,7 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
         </div>
 
         <div className="mt-3 max-w-xl">
-          <Select label={t("aiAgents.creationPolicy")} value={config.creation_policy} disabled={!canManage}
+          <Select label={t("aiAgents.creationPolicy")} value={config.creation_policy} disabled={!canManage || !config.enabled || config.mode === "triage"}
             onChange={event => setConfig(current => ({ ...current, creation_policy: event.target.value }))}
             options={[
               { value: "staff_confirmation", label: t("aiAgents.authority.staffConfirmation") },
@@ -118,8 +118,6 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
 
         <div className="mt-3 divide-y divide-platforma-border">
           {[
-            ["require_review_on_fallback", t("aiAgents.control.reviewFallbackTitle"), t("aiAgents.control.reviewFallbackText")],
-            ["create_appointment", t("aiAgents.control.appointmentTitle"), t("aiAgents.control.appointmentText")],
             ["auto_send_reply", t("aiAgents.control.autoReplyTitle"), t("aiAgents.control.autoReplyText")],
           ].map(([key, title, text]) => (
             <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-1">
@@ -155,6 +153,12 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
           {showAdvanced ? (
             <div id="ai-agent-pipeline-advanced" className="mt-3 grid gap-3 md:grid-cols-2">
               <p className="text-sm leading-5 text-platforma-subtle md:col-span-2">{t("aiAgents.control.advancedText")}</p>
+              <div className="flex items-center justify-between gap-4 md:col-span-2">
+                <span className="text-sm">{t("aiAgents.control.reviewFallbackTitle")}</span>
+                <ToggleSwitch checked={config.require_review_on_fallback} disabled={!canManage || !config.enabled}
+                  label={t("aiAgents.control.reviewFallbackTitle")}
+                  onChange={value => setConfig(current => ({ ...current, require_review_on_fallback: value }))} />
+              </div>
               <div>
                 <Input
                   label={t("aiAgents.control.maxReplyChars")}
@@ -188,13 +192,19 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
 function FunctionsSection({
   form,
   setForm,
+  botDraft,
+  setBotDraft,
   canManage,
 }: {
   form: AgentFormState;
   setForm: React.Dispatch<React.SetStateAction<AgentFormState>>;
+  botDraft: BotDraftState;
+  setBotDraft: React.Dispatch<React.SetStateAction<BotDraftState>>;
   canManage: boolean;
 }) {
   const { t } = useI18n();
+  const runtime = autoPipelineFromSettings(botDraft.settings_json);
+  const proposesWork = runtime.enabled && (runtime.mode === "lead_task" || runtime.mode === "draft_deal");
   const tools = [
     ["create_client", t("aiAgents.functions.clientTitle"), t("aiAgents.functions.clientText")],
     ["create_appointment", t("aiAgents.functions.bookingTitle"), t("aiAgents.functions.bookingText")],
@@ -204,6 +214,11 @@ function FunctionsSection({
     ["handoff_to_manager", t("aiAgents.functions.managerTitle"), t("aiAgents.functions.managerText")],
   ];
   const toggleTool = (tool: string, enabled: boolean) => {
+    if (tool === "create_appointment") setBotDraft(current => ({ ...current,
+      settings_json: { ...current.settings_json, auto_crm_pipeline: {
+        ...autoPipelineFromSettings(current.settings_json), create_appointment: enabled,
+      } },
+    }));
     setForm((current) => ({
       ...current,
       allowed_tools: enabled
@@ -218,19 +233,20 @@ function FunctionsSection({
         <h3 className="mb-3 text-base font-semibold text-platforma-ink">{t("aiAgents.functionsTitle")}</h3>
         <div className="divide-y divide-platforma-border">
         {tools.map(([key, title, text]) => {
-          const enabled = key === "handoff_to_manager" || form.allowed_tools.includes(key);
+          const enabled = key === "handoff_to_manager" || (form.allowed_tools.includes(key)
+            && (key !== "create_appointment" || runtime.create_appointment));
+          const unavailable = !proposesWork || (key === "create_deal" && runtime.mode !== "draft_deal");
           return (
             <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-1">
               <div className="min-w-0 py-2 text-sm">
                 <h4 className="mb-1 font-semibold text-platforma-ink">{title}</h4>
                 <div className="pb-2">
                   <p className="leading-5 text-platforma-subtle">{text}</p>
-                  <FieldHint>{t(`aiAgents.hint.tool.${key}`)}</FieldHint>
                 </div>
               </div>
               <div className="flex min-h-11 shrink-0 items-center gap-2 sm:min-h-9">
                 <span className="text-xs font-semibold text-platforma-subtle">{enabled ? t("aiAgents.functions.enabled") : t("aiAgents.functions.disabled")}</span>
-                <ToggleSwitch checked={enabled} disabled={!canManage || key === "handoff_to_manager"} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />
+                <ToggleSwitch checked={enabled} disabled={!canManage || key === "handoff_to_manager" || unavailable} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />
               </div>
             </div>
           );

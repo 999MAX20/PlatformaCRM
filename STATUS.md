@@ -1,5 +1,11 @@
 # PlatformaCRM — текущий статус
 
+08.10.2026. INBOX-LOCAL-PILOT-20261008: локальная приёмка PASS. Уведомление при
+передаче человеку, отзыв устаревших отправок и удобная настройка существующих
+функций проверены. [Отчёт](docs/testing/inbox-local-pilot-20261008.md) фиксирует
+проверки, расходы и ограничения; публикация/CI — в итоговом ответе и evidence.
+Мессенджеры, production-инфраструктура и развитие CRM-аналитика исключены.
+
 08.10.2026. INBOX-LIVE-ACCEPTANCE-20261008: предметная приёмка прошла, исправлены
 ложный off-topic для справочных вопросов и повторное подтверждение невозможной
 записи. [Отчёт и точные проверки](docs/testing/inbox-live-acceptance-20261008.md)
@@ -19,7 +25,7 @@ PASS; итоговый commit определяется Git history, SHA/CI фи�
 
 [Паспорта](docs/pre-production/README.md) · [что реализовано](docs/pre-production/capabilities.md)
 · [действующие требования](docs/README.md) · [открытая приёмка](docs/current/acceptance.md).
-Внешние интеграции, gateway и billing отложены. Новый продуктовый этап не назначен.
+Внешние интеграции, gateway и billing отложены. Текущий этап ограничен локальным клиентским AI.
 
 Canonical root `C:/Users/user/Desktop/PlatformaCRM`; branch `codex/ui-testing-toolkit`.
 Generation 4 primary, transition idle — [.codex/project-session.json](.codex/project-session.json).

@@ -24,7 +24,7 @@ def run_recovery(c):
         with patch.object(e.transport, "original", side_effect=URLError("Synthetic connection failure")):
             failed = c.process(conversation, message)
         failure = c.observe(conversation, failed)
-        assert conversation.handoff_required and not conversation.bot_enabled and not failed.reply_message, failure
+        c.assert_handoff(conversation, failed)
         assert lab.counts() == counts and usage(conversation)["calls_used"] >= 1
         before = len(e.transport.calls)
         manual = lab.post(f"/api/inbox/conversations/{conversation.pk}/messages/", {"text": "Администратор на связи. Помогу с вашим вопросом."}, 201)
@@ -50,7 +50,8 @@ def run_recovery(c):
             result = c.process(conversation, message)
             data = c.observe(conversation, result)
             assert usage(conversation)["calls_used"] == 1 and len(e.transport.calls) == calls+1, data
-            assert conversation.handoff_required and not result.reply_message and lab.counts() == counts, data
+            c.assert_handoff(conversation, result)
+            assert lab.counts() == counts, data
             response = lab.api.post(f"/api/inbox/conversations/{conversation.pk}/ai-state/", {"bot_enabled": True, "ai_safety_state": {}}, format="json")
             assert response.status_code == 400, response.data
             conversation.refresh_from_db()

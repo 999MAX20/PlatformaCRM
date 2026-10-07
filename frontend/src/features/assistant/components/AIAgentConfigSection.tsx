@@ -68,14 +68,17 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
                 onChange={event => setForm(current => ({ ...current, system_prompt: event.target.value }))} />
               <FieldHint>{t("aiAgents.hint.systemPrompt")}</FieldHint>
             </div>
-            <div className="grid items-start gap-5 lg:grid-cols-2">
+            <details open={botDraft.settings_json.scenario === "crm" ? true : undefined}>
+              <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 text-sm font-semibold text-platforma-ink">{t("aiSetup.advanced")}</summary>
+              <div className="grid items-start gap-5 pt-3 lg:grid-cols-2">
               <div>
                 <Textarea className="min-h-24 py-2" rows={4} label={t("aiAgents.rules")} value={form.rules_text} disabled={!canManage}
                   onChange={event => setForm(current => ({ ...current, rules_text: event.target.value }))} />
                 <FieldHint>{t("aiAgents.hint.rules")}</FieldHint>
               </div>
               <ModelsSection draft={botDraft} setDraft={setBotDraft} canManage={canManage} />
-            </div>
+              </div>
+            </details>
           </div>
       </section>
       <Modal title={t("aiWorkspace.template")} open={templateOpen} onClose={() => setTemplateOpen(false)}>

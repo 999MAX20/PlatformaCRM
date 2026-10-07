@@ -21,6 +21,7 @@ for (const scenario of ["inbox", "crm"] as const) {
     await editor.getByRole("textbox", { name: "Название", exact: true }).fill(`Saved ${scenario}`);
     await choose(page, editor, "Язык", "English");
     await choose(page, editor, "Тон", "Формальный");
+    if (scenario === "inbox") await editor.locator("summary").filter({ hasText: "Дополнительные настройки" }).click();
     await choose(page, editor, "Режим ответов", "Экономный режим");
     for (const [label, value] of [["Описание роли", "AUDIT_ROLE: business receptionist"], ["Главная инструкция", "AUDIT_INSTRUCTION: explain only supplied business facts"], ["Правила", "AUDIT_RULE_ONE\nAUDIT_RULE_TWO"]]) {
       await editor.getByRole("textbox", { name: label, exact: true }).fill(value);
@@ -39,6 +40,7 @@ for (const scenario of ["inbox", "crm"] as const) {
     expect(saved).toMatchObject({ name: `Saved ${scenario}`, default_language: "en", settings_json: { model: "gpt-4o-mini", temperature: 0.2, memory_enabled: false } });
     expect(profile).toMatchObject({ language: "en", tone: "formal", role_description: "AUDIT_ROLE: business receptionist", system_prompt: "AUDIT_INSTRUCTION: explain only supplied business facts", rules_json: { items: ["AUDIT_RULE_ONE", "AUDIT_RULE_TWO"] } });
     await page.reload();
+    if (scenario === "inbox") await editor.locator("summary").filter({ hasText: "Дополнительные настройки" }).click();
     await expect(editor.getByRole("textbox", { name: "Описание роли", exact: true })).toHaveValue(profile.role_description);
     await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue(profile.system_prompt);
     await expect(editor.getByRole("textbox", { name: "Правила", exact: true })).toHaveValue("AUDIT_RULE_ONE\nAUDIT_RULE_TWO");
@@ -98,12 +100,12 @@ test("customer action thresholds, capabilities and handoff rules persist through
   const editor = page.getByTestId("ai-agent-editor");
   await choose(page, editor, "Что делать после диалога", "Заявки, задачи и черновики сделок");
   await choose(page, editor, "Создание новых записей", "Автоматически по разрешению бизнеса");
-  for (const name of ["Работать с записью в календарь", "Автоматически отправлять ответ"]) {
+  for (const name of ["Записи в календаре", "Автоматически отправлять ответ"]) {
     const control = editor.getByRole("switch", { name, exact: true });
     if (await control.getAttribute("aria-checked") === "false") await control.click();
   }
-  await editor.getByRole("switch", { name: "Проверять неуверенные решения", exact: true }).click();
   await editor.getByRole("button", { name: "Расширенные ограничения", exact: true }).click();
+  await editor.getByRole("switch", { name: "Проверять неуверенные решения", exact: true }).click();
   await editor.getByRole("spinbutton", { name: "Максимальная длина автоответа", exact: true }).fill("320");
   for (const slider of await editor.getByRole("slider").all()) { await slider.focus(); await slider.press("End"); }
   for (const control of await editor.getByRole("switch").all()) {

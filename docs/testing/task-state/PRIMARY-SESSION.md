@@ -1,5 +1,52 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-LOCAL-PILOT-20261008 — local acceptance PASS; publication pending
+
+Owner authorized completing the existing customer-agent pilot locally: safe
+customer scenarios, handoff communication and fast flexible staff configuration.
+No new capabilities, CRM-agent development, messenger integrations, production
+hosting/database/workers or real customer delivery. Explicit separate USD1 budget.
+Same generation 4 registered primary, root `C:/Users/user/Desktop/PlatformaCRM`,
+branch `codex/ui-testing-toolkit`, clean base `0112475850c631cd946424c86f49e363c6b80881`.
+All changed/untracked source/docs belong to this task; no original WIP or owner drift.
+Prior base CI37676924581 SUCCESS. No ownership or runtime-env changes.
+
+Mode audit/targeted implementation/verification; gaps code, UX and local evidence.
+Reused safety/pipeline/outbox/recovery, profiles/settings/readiness, API clients,
+design system/i18n and existing targeted suites. Risks: duplicate/stale sends,
+private-data leakage, automatic writes without permission, lost settings/drafts.
+Plan executed: focused isolated backend regressions after coherent fixes, affected/
+dependent suites + system/drift, targeted isolated UI/API desktop/mobile/locales/
+keyboard, final build/bundle. No full-project local gate, working DB or new install.
+
+Implemented deterministic handoff acknowledgement with outbox idempotency and
+revocation guards; empty-reply and mid-turn call-limit handoff fixes. One booking
+control saves both permissions/settings; safe mode guards; advanced disclosures;
+actual dental template respects saved permissions. No schema, new role or new
+BusinessEvent; existing activity/audit/notifications retained. Details and exact
+commands/skips/errors: [report](../inbox-local-pilot-20261008.md).
+
+Verification: 241 scoped backend PASS before final call-limit fix; 72 affected
+tests PASS after fix, system/drift PASS. 16 selected browser scenarios PASS and
+one localized mobile recheck after i18n ordering fix. Build/types/i18n/widget and
+bundle PASS; representative screenshots reviewed. Live final 43/43 PASS plus
+semantic output/record review; run customer_pilot-1791405340114934200. Cumulative
+145 reservations, 143 received calls, USD0.1416664 including failure reserves
+of USD1. Final Python/i18n manifest matches. No more paid calls needed.
+
+Evidence `output/inbox-local-pilot-20261008/`: append-only live cases/transport/
+manifests + cumulative ledger, semantic-review.json, backend/browser/build logs.
+All failed attempts retained: initial missing notice/takeover RED, first live
+38/39 with call-limit defect, fixture-quota browser failures, bad selectors/grep,
+two nonexistent backend labels and i18n build error. Corrected runs cited in report.
+
+Completion DoD remaining: final source/docs/index/secret review and diff hygiene,
+conventional commit, fetch/prove fast-forward normal push HEAD:main, remote SHA
+readback and actual CI. Do not call CI green before readback. Publication receipt
+goes in local publication.json and final response; candidate is report's commit.
+Next product boundary is real channel/target environment/staff acceptance, excluded
+here and not automatically authorized. No own server/job is intentionally retained.
+
 ## INBOX-LIVE-ACCEPTANCE-20261008 — behavioral PASS; publication below
 
 Owner authorized real-model acceptance of ordinary inquiries, booking, protection

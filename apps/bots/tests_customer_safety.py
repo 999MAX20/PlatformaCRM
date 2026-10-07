@@ -5,6 +5,7 @@ from django.test import TestCase
 
 from apps.bots import tests_runtime_configuration as fixtures
 from apps.bots.models import BotMessage
+from apps.bots.safety_content import safety_text
 from apps.conversations.ai_qualification import ConversationQualification, _parse_qualification
 from apps.conversations.auto_pipeline import maybe_run_auto_pipeline
 from apps.ai_core.ai_client import AIClientError, AIClientResult
@@ -86,7 +87,8 @@ class CustomerBoundaryTests(TestCase):
                 self.conversation.save()
                 result = self.run_message(self.incoming(f"Synthetic request {kind}"), kind)
                 self.assertEqual(result.status, "safety_handoff")
-                self.assertIsNone(result.reply_message)
+                self.assertEqual(result.reply_message.text, safety_text(self.conversation, "handoff"))
+                self.assertEqual(result.reply_message.sender_type, BotMessage.SenderTypes.SYSTEM)
 
     def test_missing_classification_is_uncertain_and_unknown_category_invalid(self):
         self.assertEqual(_parse_qualification('{"intent":"other","summary":"Valid"}').request_kind, "uncertain")
@@ -95,7 +97,8 @@ class CustomerBoundaryTests(TestCase):
     def test_suspicious_instruction_in_first_off_topic_cannot_override_mandatory_review(self):
         result = self.run_message(self.incoming("Unrelated request requiring staff"), "off_topic", requires_human_review=True)
         self.assertEqual(result.status, "safety_handoff")
-        self.assertIsNone(result.reply_message)
+        self.assertEqual(result.reply_message.text, safety_text(self.conversation, "handoff"))
+        self.assertEqual(result.reply_message.sender_type, BotMessage.SenderTypes.SYSTEM)
 
 
 class CustomerProviderBoundaryTests(TestCase):

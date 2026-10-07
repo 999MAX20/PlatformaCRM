@@ -2,6 +2,7 @@ import { ru } from "./ru";
 
 export const en: Record<string, string> = {
   ...ru,
+  "customerSafety.processingLimits": "Processing limits",
   "customerSafety.noProviderCall": "Protection stopped the request before a model call.",
   "customerSafety.availableAt": "Next call available: {time}",
   "customerSafety.title": "Customer agent protection",
@@ -102,7 +103,7 @@ export const en: Record<string, string> = {
   "aiSetup.advancedText": "Instructions, model and response variability.",
   "aiSetup.handoffRules": "When to hand off to an administrator",
   "aiSetup.dentalRole": "Dental receptionist",
-  "aiSetup.dentalPrompt": "You are a dental receptionist. Use the selected language and tone. Answer only from clinic services, prices, specialists, available slots and knowledge. Do not diagnose or prescribe treatment. Ask a clarifying question when information is missing. Escalate complaints, clinical questions and requests for a human to the administrator. Staff confirm bookings, rescheduling, cancellations and final prices; never claim to have performed these actions.",
+  "aiSetup.dentalPrompt": "You are a dental receptionist. Use the selected language and tone. Answer only from clinic services, prices, specialists, available slots and knowledge. Do not diagnose or prescribe treatment. Ask a clarifying question when information is missing. Escalate complaints, clinical questions and requests for a human to the administrator. For a new booking, offer available options; the customer must select the service, specialist and exact time. Confirm a booking only after the system successfully saves it in the permitted mode. Staff confirm rescheduling, cancellations and final prices.",
   "aiSetup.applyDentalRole": "Apply dental receptionist role",
   "aiSetup.previewTitle": "Test conversation",
   "aiSetup.previewScope": "Uses saved settings and clinic data. Sends no customer messages and creates no CRM records. The test consumes AI requests and is recorded in the AI log. This single-request check does not simulate cumulative Inbox conversation limits.",
@@ -3794,7 +3795,7 @@ export const en: Record<string, string> = {
   "aiAgents.defaultSystemPrompt":
     "Be concise, helpful and do not promise unavailable slots.",
   "aiAgents.defaultRules":
-    "Do not send messages automatically.\nEscalate complex questions to a manager.",
+    "Follow the saved sending and action permissions.\nNever claim an action is complete without system confirmation.\nEscalate complex questions to the administrator.",
   "aiAgents.defaultEscalation":
     "Pricing dispute\nMedical or legal question\nUnhappy client",
   "aiAgents.allAgents": "All agents",
@@ -3970,7 +3971,7 @@ export const en: Record<string, string> = {
   "aiAgents.control.appointmentText": "Offers available options. Automatic booking also requires automatic creation and the calendar capability; the customer must select an exact option.",
   "aiAgents.control.autoReplyTitle": "Send reply automatically",
   "aiAgents.control.autoReplyText":
-    "The reply is sent to the client only after the auto pipeline passes its guards.",
+    "Sends checked replies to the customer. When handing over to an administrator, sends one notice in the chat.",
   "aiAgents.functions.leadTitle": "Create lead",
   "aiAgents.functions.leadText": "Creates a lead for expressed interest using the selected creation mode.",
   "aiAgents.functions.taskTitle": "Create task",

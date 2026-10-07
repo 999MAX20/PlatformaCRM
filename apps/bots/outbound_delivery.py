@@ -66,6 +66,7 @@ def create_outbound_message(
     sender_type=BotMessage.SenderTypes.MANAGER,
     idempotency_key="",
     runtime_fingerprint="",
+    handoff_notice=False,
 ):
     assert_entitlement_allows(conversation.business, EntitlementMetrics.BOT_MESSAGES)
     normalized_key = _normalize_idempotency_key(idempotency_key)
@@ -88,6 +89,11 @@ def create_outbound_message(
     from apps.ai_core.conversation_access import memory_access_fingerprint
     from apps.ai_core.inbox_runtime import inbound_binding, assert_current_inbound
     memory_fingerprint = memory_access_fingerprint(business=conversation.business, agent=conversation.bot)
+    notice_binding = inbound_binding() if handoff_notice else None
+    if handoff_notice:
+        if sender_type != BotMessage.SenderTypes.SYSTEM or user is not None or not notice_binding:
+            raise ValidationError("Customer handoff notices require a current automatic inbound request.")
+        assert_current_inbound(conversation)
     binding = inbound_binding() if sender_type == BotMessage.SenderTypes.BOT else None
     if binding:
         assert_current_inbound(conversation)
@@ -110,6 +116,8 @@ def create_outbound_message(
                     "sent_by_user_id": user.id if user and user.is_authenticated else None,
                     "delivery_mode": "outbox",
                     "memory_access_fingerprint": memory_fingerprint,
+                    **({"customer_handoff_notice": notice_binding["message_id"],
+                        "customer_handoff_epoch": notice_binding["epoch"]} if notice_binding else {}),
                     **({"in_reply_to_message_id": binding["message_id"], "memory_epoch": binding["epoch"], "memory_revision": binding["revision"]} if binding else {}),
                     **({"agent_runtime_fingerprint": runtime_fingerprint} if runtime_fingerprint else {}),
                 },
@@ -183,6 +191,11 @@ def deliver_outbound_message(message_id):
         return BotMessage.objects.filter(id=message_id).first()
 
     conversation = message.conversation
+    if (message.payload_json or {}).get("customer_handoff_notice"):
+        from apps.bots.handoff_notice import notice_is_current
+        if not notice_is_current(message):
+            return _finish_delivery(message, result={"ok": False,
+                "reason": "Customer handoff notice is no longer current.", "retryable": False})
     if message.sender_type == BotMessage.SenderTypes.BOT:
         from apps.bots.lifecycle import conversation_ai_block_reason
         from apps.bots.runtime_configuration import agent_runtime_fingerprint

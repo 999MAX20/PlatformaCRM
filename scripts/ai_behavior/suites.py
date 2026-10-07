@@ -119,6 +119,10 @@ class Evaluation:
         from scripts.ai_behavior.customer_cases import run_customer_acceptance
         run_customer_acceptance(self)
 
+    def customer_pilot(self):
+        from scripts.ai_behavior.customer_cases import run_customer_acceptance
+        run_customer_acceptance(self, extended=True)
+
     def final_responses(self):
         for suite in (self.profiles, self.scope, self.dialogue, self.analytics, self.temperature):
             suite()

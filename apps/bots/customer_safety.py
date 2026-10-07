@@ -84,7 +84,10 @@ def set_customer_ai_state(*, conversation, actor, enabled):
     if enabled:
         current.handoff_required = False
         current.handoff_reason = ""
-    current.save(update_fields=["bot_enabled", "handoff_required", "handoff_reason", "updated_at"])
+    from apps.bots.handoff_notice import NOTICE_SOURCE
+    current.metadata_json = dict(current.metadata_json or {})
+    current.metadata_json.pop(NOTICE_SOURCE, None)
+    current.save(update_fields=["bot_enabled", "handoff_required", "handoff_reason", "metadata_json", "updated_at"])
     metadata = {"kind": "customer_ai_state", "enabled": enabled, "usage_preserved": True}
     write_actor_audit_log(actor=actor, action=AuditLog.Actions.UPDATE, instance=current, metadata=metadata)
     create_activity_event(business=current.business, actor=actor, instance=current, event_type="customer_ai_state",

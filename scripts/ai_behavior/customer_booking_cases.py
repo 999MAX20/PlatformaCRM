@@ -3,12 +3,15 @@ from django.utils.dateparse import parse_datetime
 from apps.scheduling.models import Appointment
 
 
-def run_booking(c):
+def run_booking(c, *, template=False):
     e, lab = c.e, c.lab
-    for label in ("exact-replay", "became-busy", "no-consent", "staff-policy", "tool-disabled"):
+    for label in (("exact-replay",) if template else ("exact-replay", "became-busy", "no-consent", "staff-policy", "tool-disabled")):
         def scenario(mode=label):
             tools = ["create_client", "create_lead", "create_task", "create_deal", "handoff_to_manager"]
             options = {"tools": tools} if mode == "tool-disabled" else {}
+            if template:
+                from scripts.ai_behavior.customer_pilot_cases import dental_template
+                options.update(dental_template("ru"))
             c.configure(booking=True, automatic=mode != "staff-policy", **options)
             conversation, message = c.fresh("Хочу записаться на консультацию Luma к Alex Birch. Предложите свободное время.", linked=True)
             initial_appointments = Appointment.objects.count()
@@ -54,5 +57,5 @@ def run_booking(c):
             return 200, {**data, "offer": first_data, "selected_slot": slot, "actual_record": record,
                          "booking": result.booking.status if result.booking else None,
                          "delivery_receipt": "controlled_synthetic_acknowledgement"}
-        e.run("booking-"+label, scenario, rubric="No appointment before consent; exact same-business/client/service/resource/time; replay free and unique; busy/no consent/staff policy/disabled tool never auto-book")
+        e.run(("template-booking-" if template else "booking-")+label, scenario, rubric="No appointment before consent; exact same-business/client/service/resource/time; replay free and unique; busy/no consent/staff policy/disabled tool never auto-book")
     c.configure()

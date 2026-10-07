@@ -43,7 +43,9 @@ export function CustomerSafetySettings({ botDraft, setBotDraft, canManage }: {
       onChange={event => change({ off_topic_handoff_after: Number(event.target.value) })}
       options={[1, 2, 3].map(value => ({ value: String(value), label: t(`customerSafety.offTopic${value}`) }))} />
     <p className="text-sm text-platforma-subtle">{t("customerSafety.offTopicHint")}</p>
-    <div className="grid gap-4 sm:grid-cols-2">
+    <details>
+      <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 text-sm font-semibold">{t("customerSafety.processingLimits")}</summary>
+      <div className="grid gap-4 pt-3 sm:grid-cols-2">
       <Input type="number" min={1} max={30} step={1} label={t("customerSafety.callLimit")} disabled={!canManage}
         value={config.calls_per_24h} onChange={event => change({ calls_per_24h: Number(event.target.value) })} />
       <Input type="number" min={3} max={30} step={1} label={t("customerSafety.messageRate")} disabled={!canManage}
@@ -52,8 +54,9 @@ export function CustomerSafetySettings({ botDraft, setBotDraft, canManage }: {
         value={config.repeat_handoff_after} onChange={event => change({ repeat_handoff_after: Number(event.target.value) })} />
       <Input type="number" min={256} max={8000} step={1} label={t("customerSafety.messageLength")} disabled={!canManage}
         value={config.max_message_chars} onChange={event => change({ max_message_chars: Number(event.target.value) })} />
-    </div>
-    <p className="text-sm text-platforma-subtle">{t("customerSafety.budgetHint")}</p>
+      </div>
+      <p className="mt-3 text-sm text-platforma-subtle">{t("customerSafety.budgetHint")}</p>
+    </details>
     <p className="text-sm text-platforma-subtle">{t("customerSafety.requiredPolicy")}</p>
   </section>;
 }
