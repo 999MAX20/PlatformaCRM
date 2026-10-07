@@ -1,6 +1,6 @@
 # CRM Production Layer Plan
 
-## Client Inbox safety — 2026-10-07, locally accepted
+## Client Inbox safety — 2026-10-07, published; CI pending
 
 Owner selected the customer agent for the pilot; staff CRM/Analytics development
 is paused without deleting existing behavior. Current work adds bounded provider

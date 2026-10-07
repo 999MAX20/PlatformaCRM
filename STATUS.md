@@ -13,7 +13,10 @@ Desktop 4 и mobile 3 PASS; финальная мобильная проверк
 обрезки. Build/types/i18n/bundle PASS. Рабочие миграции разрешены и применены
 с backup, прежние данные 117 таблиц сохранены; localhost 8000/5173 HTTP 200.
 [Проверки и доставка](docs/testing/inbox-agent-safety-20261007.md).
-Следующее: commit, normal push в origin/main и фактический результат CI.
+Коммит приложения555a6ce опубликован в origin/main; SHA подтверждён, static PASS.
+[CI37653976762](https://github.com/999MAX20/PlatformaCRM/actions/runs/37653976762)
+выполняется; это ещё не PASS. Осталось проверить фактический CI приложения и
+квитанции; результаты сохраняются в локальном publication-final.json и ответе.
 
 06.10: AI-AGENT-CONTINUITY-20261006 — владелец согласовал реализацию полного
 предложения: исправления AI, память Inbox/CRM, единая модель и надёжные действия

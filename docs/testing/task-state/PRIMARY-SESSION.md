@@ -1,6 +1,6 @@
 # PRIMARY-SESSION — PlatformaCRM
 
-## INBOX-AGENT-SAFETY-20261007 — locally accepted, publication pending
+## INBOX-AGENT-SAFETY-20261007 — published, actual CI pending
 
 - Same registered generation3 owner, canonical root and codex/ui-testing-toolkit;
   starting HEAD 9fabae07e96c14ff52ae9deb11bfb76d781b5626. All 60 changed paths are
@@ -14,8 +14,14 @@
   Completion build/types/i18n/bundle PASS; affected screenshots reviewed.
 - Owner-authorized working migration applied with backup;117 original tables
   preserved. Canonical backend6316/frontend16012, localhost8000/5173 HTTP200.
-- Next: reviewed explicit-path commit, static real range, normal HEAD:main push,
-  remote SHA readback and actual CI. Do not start a new phase.
+- Application555a6ce14f7374028d768fbe1841e4161f9d694c normal-pushed to origin/main;
+  remote SHA matched, static gate on9fabae07..555a6ce PASS. CI37653976762 running.
+- Receipt-only plan: update current status/evidence entries, review four docs,
+  links and working/index/real-range hygiene, then normal push/readback. Unchanged
+  application gates are reused; no additional local app suite for documentation.
+- Next: actual CI for application and receipt; final result in ignored
+  output/inbox-agent-safety-20261007/publication-final.json and final response.
+  Avoid a self-referential receipt loop. No new phase or deployment.
 
 ## AI-AGENT-CONTINUITY-20261006 — published, actual CI pending
 

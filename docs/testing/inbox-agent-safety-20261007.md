@@ -236,3 +236,22 @@ push CI is inspected separately. Earlier failures and their resolutions remain a
 
 Next: commit the reviewed task paths, static gate against the real starting base,
 normal push HEAD:main and read back remote SHA/actual CI. No new phase or CD.
+
+### Publication receipt — 7 October 2026, 16:41 UTC
+
+Application commit555a6ce14f7374028d768fbe1841e4161f9d694c contains all60 reviewed
+paths; branch codex/ui-testing-toolkit in the canonical checkout. Static command:
+`.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref 9fabae07e96c14ff52ae9deb11bfb76d781b5626`
+PASS (static-completion.log), including system check and real committed-range hygiene.
+Explicit fetch confirmed origin/main equals starting base; normal `git push origin
+HEAD:main` succeeded. `git ls-remote origin refs/heads/main` returned the exact
+application SHA. Working tree clean immediately after publication. Only ci.yml is
+push-triggered; no deployment was started.
+
+[Application CI37653976762](https://github.com/999MAX20/PlatformaCRM/actions/runs/37653976762)
+is IN_PROGRESS at receipt time, not PASS. Receipt scope is four documentation files;
+links/consistency and working/index/real-range hygiene apply, with unchanged local
+application checks reused. Its final SHA and actual application/receipt CI results
+will be recorded in ignored output/inbox-agent-safety-20261007/publication-final.json
+and the final response; no endless receipt commits. Any CI failure remains actionable
+within this task. CRM/Analytics remains paused; no subsequent phase started.
