@@ -1668,7 +1668,7 @@ test("owner summary omits duplicate appointment rows and manager queue deduplica
   await login(page, users.owner, /\/app/);
   await expect.poll(() => duplicatedAppointmentId).toBeGreaterThan(0);
   await expect(page.getByTestId("dashboard-workspace-ready")).toBeVisible();
-  await expect(page.getByTestId("dashboard-appointment-row")).toHaveCount(0);
+  await expect(page.locator(`[data-testid="dashboard-appointment-row"][data-appointment-id="${duplicatedAppointmentId}"]`)).toHaveCount(1);
 
   duplicatedAppointmentId = undefined;
   await login(page, users.manager, /\/app/);

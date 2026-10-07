@@ -65,51 +65,34 @@ test("daily workspaces preserve recoverable and role-valid actions", async () =>
 test("owner dashboard fetches and renders capability-scoped daily modules", async () => {
   const [page, dashboard] = await Promise.all([
     source("features/dashboard/DashboardPage.tsx"),
-    source("features/dashboard/OwnerDashboard.tsx"),
+    source("features/dashboard/OperationalDashboard.tsx"),
   ]);
 
-  assert.match(page, /clients:\s*!isOwnerView && dailyAccess\.clients/);
-  assert.match(page, /leads:\s*dailyAccess\.leads/);
-  assert.match(page, /appointments:\s*dailyAccess\.appointments/);
-  assert.match(page, /tasks:\s*dailyAccess\.tasks/);
-  assert.match(page, /canViewLeads=\{dailyAccess\.leads\}/);
-  assert.match(page, /canViewAppointments=\{dailyAccess\.appointments\}/);
-  assert.match(page, /canViewTasks=\{dailyAccess\.tasks\}/);
-  assert.match(dashboard, /\{canViewLeads \? \(/);
-  assert.match(dashboard, /\{canViewAppointments \? \(/);
-  assert.match(dashboard, /\{canViewTasks \? \(/);
+  assert.match(page, /workQueuesApi\.get/);
+  assert.doesNotMatch(page, /useCrmEntities|appointmentsApi\.list|tasksApi\.list/);
+  for (const resource of ["leads", "deals", "appointments", "tasks", "conversations"]) {
+    assert.ok(page.includes(`${resource}: permitted("${resource}")`));
+  }
+  assert.match(dashboard, /access\[resource\] && data\.available\[resource\]/);
+  assert.match(dashboard, /metrics\.filter\(\(metric\) => canSee\(metric\.resource\)\)/);
+  assert.match(dashboard, /data\.attention\.filter\(\(item\) => canSee\(resourceByType\[item\.type\]\)\)/);
 });
 
-test("owner and manager dashboard readiness follows the core loading guard", async () => {
-  const dashboards = await Promise.all([
-    source("features/dashboard/OwnerDashboard.tsx"),
-    source("features/dashboard/ManagerDashboard.tsx"),
-  ]);
-
-  for (const dashboard of dashboards) {
-    const loadingGuard = dashboard.indexOf("if (isCoreDataLoading)");
-    const readyMarker = dashboard.indexOf(
-      'data-testid="dashboard-workspace-ready"',
-    );
-
-    assert.notEqual(loadingGuard, -1);
-    assert.notEqual(readyMarker, -1);
-    assert.ok(loadingGuard < readyMarker);
-    assert.match(dashboard.slice(loadingGuard, readyMarker), /return\s*\(/);
-  }
+test("shared owner and manager operations render only after loading and error guards", async () => {
+  const dashboard = await source("features/dashboard/OperationalDashboard.tsx");
+  const readyMarker = dashboard.indexOf('data-testid="dashboard-operations"');
+  const loadingGuard = dashboard.indexOf("if (loading || !data) return <LoadingState />");
+  const errorGuard = dashboard.indexOf("if (error)");
+  assert.ok(errorGuard >= 0 && errorGuard < loadingGuard);
+  assert.ok(loadingGuard >= 0 && loadingGuard < readyMarker);
+  assert.doesNotMatch(dashboard, /summary\.[a-z_]+ \|\| 0/);
 });
 
 test("owner AI brief does not substitute unsourced local recommendations", async () => {
   const dashboard = await source("features/dashboard/OwnerDashboard.tsx");
-  const briefBuilder = dashboard.slice(
-    dashboard.indexOf("function buildBriefItems"),
-    dashboard.indexOf("export function OwnerDashboard"),
-  );
-
-  assert.doesNotMatch(briefBuilder, /if \(overdueTasks > 0\)/);
-  assert.doesNotMatch(briefBuilder, /if \(newLeadsCount > 0\)/);
-  assert.match(briefBuilder, /ownerBrief\?\.recommendations/);
-  assert.match(briefBuilder, /const sourceLabels = recommendation\.source_ids/);
-  assert.match(briefBuilder, /sourcesById\.get\(sourceId\)\?\.label/);
-  assert.match(briefBuilder, /sourceLabels,/);
+  assert.match(dashboard, /ownerBrief\?\.recommendations/);
+  assert.match(dashboard, /item\.source_ids\.some\(\(id\) => ownerBrief\?\.sources\.some/);
+  assert.match(dashboard, /source\.id === id/);
+  assert.match(dashboard, /recommendation\.labels\.join/);
+  assert.doesNotMatch(dashboard, /if \(overdueTasks > 0\)|if \(newLeadsCount > 0\)/);
 });

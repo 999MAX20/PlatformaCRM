@@ -1,10 +1,12 @@
+from datetime import datetime, timezone as dt_timezone
+
 from django.test import TestCase
 from django.utils import timezone
 from rest_framework.test import APIClient
 
 from apps.accounts.models import User
 from apps.bots.models import Bot, BotConversation
-from apps.businesses.models import Business, BusinessMember
+from apps.businesses.models import Business, BusinessCapability, BusinessMember, BusinessRole, RolePermission
 from apps.clients.models import Client
 from apps.crm.models import Deal, Pipeline, PipelineStage
 from apps.leads.models import Lead
@@ -137,7 +139,7 @@ class WorkQueuesTests(TestCase):
         self.assertEqual(response.data["summary"]["handoff_conversations"], 1)
         self.assertEqual(response.data["summary"]["unread_sla_overdue_conversations"], 1)
         self.assertEqual(response.data["summary"]["handoff_sla_overdue_conversations"], 1)
-        self.assertEqual(response.data["summary"]["total_attention"], 8)
+        self.assertEqual(response.data["summary"]["total_attention"], 6)
         self.assertEqual(response.data["queues"]["sla_overdue_deals"][0]["id"], sla_deal.id)
         self.assertEqual(response.data["queues"]["appointment_confirmations"][0]["id"], appointment_to_confirm.id)
         self.assertEqual(response.data["queues"]["unread_conversations"][0]["id"], conversation.id)
@@ -166,6 +168,78 @@ class WorkQueuesTests(TestCase):
         response = self.api.get("/api/work-queues/", {"business": self.other_business.id})
 
         self.assertEqual(response.status_code, 403)
+
+    def test_operational_counts_are_distinct_and_not_limited_to_preview(self):
+        now = timezone.now()
+        for index in range(7):
+            Deal.objects.create(
+                business=self.business, client=self.client, pipeline=self.pipeline,
+                stage=self.stage, title=f"Deal {index}",
+                stage_entered_at=now - timezone.timedelta(hours=2),
+            )
+            BotConversation.objects.create(
+                business=self.business, bot=self.bot, external_user_id=f"visitor-{index}",
+                unread_count=2, handoff_required=True,
+                last_inbound_at=now - timezone.timedelta(minutes=60 + index),
+            )
+        payload = build_work_queues(business=self.business, user=self.owner, limit=4, now=now)
+        self.assertEqual(payload["summary"]["attention_deals"], 7)
+        self.assertEqual(payload["summary"]["waiting_conversations"], 7)
+        self.assertEqual(payload["summary"]["total_attention"], 14)
+        items = payload["attention"]
+        self.assertEqual(len(items), 4)
+        self.assertEqual(len({(item["type"], item["id"]) for item in items}), 4)
+        self.assertTrue(all(item["type"] == "conversation" for item in items))
+        self.assertEqual(items[0]["title"], "visitor-6")
+        again = build_work_queues(business=self.business, user=self.owner, limit=4, now=now)
+        self.assertEqual(items, again["attention"])
+
+    def test_today_uses_business_day_and_confirmations_are_today_only(self):
+        self.business.timezone = "Asia/Almaty"
+        now = datetime(2026, 10, 8, 20, tzinfo=dt_timezone.utc)  # Oct 9 locally.
+        for hour, status in [(18, "created"), (19, "completed"), (21, "created"),
+                             (22, "cancelled"), (43, "created")]:
+            start = now.replace(hour=0) + timezone.timedelta(hours=hour)
+            Appointment.objects.create(
+                business=self.business, client=self.client, service=self.service,
+                resource=self.resource, start_at=start, end_at=start + timezone.timedelta(hours=1),
+                status=status,
+            )
+        payload = build_work_queues(business=self.business, user=self.owner, now=now)
+        self.assertEqual(payload["day"], "2026-10-09")
+        self.assertEqual(payload["timezone"], "Asia/Almaty")
+        self.assertEqual(payload["summary"]["today_appointments"], 2)
+        self.assertEqual(payload["summary"]["today_confirmations"], 1)
+        self.assertEqual(payload["queues"]["upcoming_appointments"][0]["resource_name"], "Room 1")
+
+    def test_disabled_module_cannot_reappear_as_unassigned_work(self):
+        Task.objects.create(business=self.business, title="Hidden task", due_at=timezone.now())
+        BusinessCapability.objects.update_or_create(
+            business=self.business, module_key="tasks", defaults={"is_enabled": False},
+        )
+        payload = build_work_queues(business=self.business, user=self.owner)
+        self.assertEqual(payload["summary"]["unassigned_tasks"], 0)
+        self.assertEqual(payload["queues"]["unassigned_tasks"], [])
+        self.assertFalse(payload["available"]["tasks"])
+
+    def test_denied_manager_cannot_retrieve_unassigned_work(self):
+        manager = User.objects.create_user(username="denied-manager", password="pass")
+        role = BusinessRole.objects.create(business=self.business, name="Restricted manager")
+        BusinessMember.objects.create(
+            business=self.business, user=manager, role=BusinessMember.Roles.MANAGER, business_role=role,
+        )
+        RolePermission.objects.create(
+            business_role=role, resource="tasks", action="view", is_allowed=False, scope="none",
+        )
+        Task.objects.create(business=self.business, title="Hidden task", due_at=timezone.now())
+        payload = build_work_queues(business=self.business, user=manager)
+        self.assertEqual(payload["summary"]["overdue_tasks"], 0)
+        self.assertEqual(payload["summary"]["unassigned_tasks"], 0)
+        self.assertFalse(payload["available"]["tasks"])
+
+    def test_invalid_business_is_validation_error(self):
+        response = self.api.get("/api/work-queues/", {"business": "invalid"})
+        self.assertEqual(response.status_code, 400)
 
     def test_overdue_task_escalation_levels_are_server_defined(self):
         now = timezone.now()

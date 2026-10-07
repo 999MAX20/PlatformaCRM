@@ -21,6 +21,27 @@ export function shiftDateValue(value: string, days: number) {
   return toDateInputValue(nextDate);
 }
 
+export function shiftCalendarPeriod(value: string, direction: number, viewMode: CalendarViewMode) {
+  if (viewMode !== "month") return shiftDateValue(value, direction * (viewMode === "week" ? 7 : 1));
+  const current = parseDate(value);
+  const target = new Date(current.getFullYear(), current.getMonth() + direction, 1);
+  const lastDay = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+  target.setDate(Math.min(current.getDate(), lastDay));
+  return toDateInputValue(target);
+}
+
+export function formatCalendarPeriod(value: string, locale: string, viewMode: CalendarViewMode) {
+  if (viewMode === "month") {
+    return new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(parseDate(value));
+  }
+  if (viewMode === "week") {
+    const days = getWeekDates(value);
+    const formatter = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric" });
+    return `${formatter.format(days[0])} — ${formatter.format(days[6])}`;
+  }
+  return formatPickerDate(value, locale);
+}
+
 export function isDateValue(value: string | null) {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   return toDateInputValue(parseDate(value)) === value;

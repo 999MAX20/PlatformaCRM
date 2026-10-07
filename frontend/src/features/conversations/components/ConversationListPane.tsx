@@ -110,6 +110,7 @@ export function ConversationListPane({
           advancedFilters: t("conversations.advancedFilters"),
           resetFilters: t("conversations.resetFilters"),
           agent: t("conversations.agent"),
+          owner: t("leads.responsible"),
           channel: t("conversations.channel"),
           priority: t("conversations.priority"),
           status: t("conversations.status"),
@@ -222,7 +223,13 @@ export function ConversationListPane({
         {loading ? <div className="p-5"><LoadingState /></div> : null}
         {!loading && !items.length ? (
           <div className="p-5">
-            <EmptyState title={t("conversations.emptyTitle")} description={t("conversations.emptyText")} />
+            <EmptyState
+              title={t(hasActiveFilters ? "conversations.emptyFilteredTitle" : "conversations.emptyTitle")}
+              description={t(hasActiveFilters ? "conversations.emptyFilteredText" : "conversations.emptyText")}
+              action={hasActiveFilters
+                ? <Button variant="secondary" onClick={onReset}>{t("conversations.resetFilters")}</Button>
+                : canViewIntegrations ? <Link className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control border border-platforma-control px-4 py-2 text-sm font-semibold text-platforma-text hover:bg-surface-hover" to="/app/integrations">{t("conversations.openIntegrations")}</Link> : undefined}
+            />
           </div>
         ) : null}
         {sortedItems.map((conversation) => (

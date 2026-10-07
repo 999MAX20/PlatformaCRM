@@ -81,23 +81,23 @@ test("F-201 desktop roles receive legitimate daily routes and controls", async (
   test.setTimeout(120_000);
 
   await login(page, users.owner);
-  await expect(page.locator('main a[href="/app/tasks"]').first()).toBeVisible();
-  await expect(page.locator('main a[href="/app/calendar"]').first()).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
   await expect(page.locator('nav a[href="/app/settings"]')).toBeVisible();
   await expect(page.locator('nav a[href="/app/deals"]')).toBeVisible();
   await expectHealthyWorkspace(page);
 
   await login(page, users.administrator);
-  await expect(page.locator('main a[href="/app/tasks"]').first()).toBeVisible();
-  await expect(page.locator('main a[href="/app/calendar"]').first()).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
   await expect(page.locator('nav a[href="/app/settings"]')).toBeVisible();
   await expect(page.locator('nav a[href="/app/deals"]')).toBeVisible();
   await expectHealthyWorkspace(page);
 
   await login(page, users.manager);
-  await expect(page.getByTestId("role-daily-actions")).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/tasks"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/calendar"]')).toBeVisible();
+  await expect(page.getByTestId("dashboard-operations")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
   await expect(page.locator('nav a[href="/app/settings"]')).toHaveCount(0);
   await expect(page.locator('nav a[href="/app/deals"]')).toBeVisible();
   await navigateClient(page, "/app/settings");
@@ -105,16 +105,16 @@ test("F-201 desktop roles receive legitimate daily routes and controls", async (
   await expectHealthyWorkspace(page);
 
   await login(page, users.operator);
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/tasks"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/conversations"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/deals"]')).toHaveCount(0);
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-waiting_conversations")).toBeVisible();
+  await expect(page.getByTestId("dashboard-operations").locator('a[href^="/app/deals"]')).toHaveCount(0);
   await expectHealthyWorkspace(page);
 
   await login(page, users.specialist);
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/tasks"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/calendar"]')).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
   await expect(page.locator('nav a[href="/app/deals"]')).toHaveCount(0);
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/conversations"]')).toHaveCount(0);
+  await expect(page.getByTestId("dashboard-metric-waiting_conversations")).toHaveCount(0);
 
   await navigateClient(page, "/app/tasks");
   await expect(page.getByRole("button", { name: /Quick task|Быстрая задача|Жылдам тапсырма/i })).toHaveCount(0);
@@ -193,8 +193,8 @@ test("F-201 mobile owner, manager, operator and specialist daily routes stay usa
   });
 
   await login(page, users.owner);
-  await expect(page.locator('main a[href="/app/tasks"]').first()).toBeVisible();
-  await expect(page.locator('main a[href="/app/calendar"]').first()).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
   await navigateClient(page, "/app/tasks");
   await expect(page.locator('[data-testid="page-primary-action"]:visible')).toBeVisible();
   await navigateClient(page, "/app/conversations");
@@ -204,15 +204,15 @@ test("F-201 mobile owner, manager, operator and specialist daily routes stay usa
   await expectHealthyWorkspace(page);
 
   await login(page, users.administrator);
-  await expect(page.locator('main a[href="/app/tasks"]').first()).toBeVisible();
-  await expect(page.locator('main a[href="/app/calendar"]').first()).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
   await navigateClient(page, "/app/settings");
   await expect(page.getByRole("alert")).toHaveCount(0);
   await expectHealthyWorkspace(page);
 
   await login(page, users.manager);
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/tasks"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/calendar"]')).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
   await navigateClient(page, "/app/tasks");
   await expect(page.locator('[data-testid="page-primary-action"]:visible')).toBeVisible();
   await navigateClient(page, "/app/conversations");
@@ -222,9 +222,9 @@ test("F-201 mobile owner, manager, operator and specialist daily routes stay usa
   await expectHealthyWorkspace(page);
 
   await login(page, users.operator);
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/tasks"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/conversations"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/deals"]')).toHaveCount(0);
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-waiting_conversations")).toBeVisible();
+  await expect(page.getByTestId("dashboard-operations").locator('a[href^="/app/deals"]')).toHaveCount(0);
   await navigateClient(page, "/app/tasks");
   await expect(page.getByTestId("page-primary-action")).toHaveCount(0);
   await expect(page.locator('[data-task-filter="my"]').first()).toBeVisible();
@@ -233,9 +233,9 @@ test("F-201 mobile owner, manager, operator and specialist daily routes stay usa
   await expectHealthyWorkspace(page);
 
   await login(page, users.specialist);
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/tasks"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/calendar"]')).toBeVisible();
-  await expect(page.getByTestId("role-daily-actions").locator('a[href^="/app/conversations"]')).toHaveCount(0);
+  await expect(page.getByTestId("dashboard-metric-overdue_tasks")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-waiting_conversations")).toHaveCount(0);
   await navigateClient(page, "/app/tasks");
   await expect(page.getByTestId("page-primary-action")).toHaveCount(0);
   await expect(page.locator('[data-task-filter="my"]').first()).toBeVisible();

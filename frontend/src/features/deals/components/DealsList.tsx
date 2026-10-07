@@ -278,7 +278,7 @@ export function DealsList({
             </header>
             <div data-testid={`deals-kanban-scroll-${group.id}`} className="no-scrollbar min-h-0 flex-1 space-y-1.5 overflow-y-auto overscroll-y-contain bg-surface-muted p-1.5">
               {!group.rows.length ? <div className="px-2 py-3 text-center">
-                <p className="text-xs text-platforma-muted">{t("deals.notFoundTitle")}</p>
+                <p className="text-xs text-platforma-muted">{t(hasFilters ? "deals.notFoundTitle" : "deals.emptyStage")}</p>
                 {hasFilters ? <Button type="button" size="sm" variant="ghost" className="mt-2" onClick={onResetFilters}>{t("tasks.resetFilters")}</Button> : null}
               </div> : null}
               {group.rows

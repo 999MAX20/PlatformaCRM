@@ -85,7 +85,7 @@ export function LeadForm({
   }, [businessId, clientId, initial?.id]);
 
   return (
-    <form data-testid="lead-action-form" className="grid gap-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-card sm:p-5" onSubmit={form.handleSubmit(async (values) => {
+    <form data-testid="lead-action-form" className="space-y-4" onSubmit={form.handleSubmit(async (values) => {
       try {
         await onSubmit({ ...values, business: businessId, source: values.source as Lead["source"], service: values.service || null, responsible_user: values.responsible_user || null });
       } catch {
@@ -99,16 +99,6 @@ export function LeadForm({
           description={t("leadForm.needClientText")}
           action={<Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-platforma-warning underline-offset-4 hover:underline" to="/app/clients?create=1">
             {t("clients.create")}
-          </Link>}
-        />
-      ) : null}
-      {!hasServices ? (
-        <StatusNotice
-          tone="info"
-          title={t("leadForm.serviceLaterTitle")}
-          description={t("leadForm.serviceLaterText")}
-          action={<Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-bold text-platforma-info underline-offset-4 hover:underline" to="/app/business/services">
-            {t("services.title")}
           </Link>}
         />
       ) : null}
@@ -143,7 +133,11 @@ export function LeadForm({
           </div>}
         />
       ) : null}
-      <Select label={t("appointment.service")} options={[{ value: "", label: t("leadForm.noService") }, ...selectableServices.map((service) => ({ value: service.id, label: service.name }))]} {...form.register("service")} />
+      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="space-y-1.5">
+        <Select label={t("appointment.service")} options={[{ value: "", label: t("leadForm.noService") }, ...selectableServices.map((service) => ({ value: service.id, label: service.name }))]} {...form.register("service")} />
+        {!hasServices ? <p className="text-xs leading-5 text-platforma-subtle">{t("leadForm.serviceLaterText")} <Link className="platforma-focus-ring rounded-control text-brand-700 underline" to="/app/business/services">{t("services.title")}</Link></p> : null}
+      </div>
       <Select label={t("appointment.source")} options={[
         { value: "manual", label: t("clients.sourceManual") },
         { value: "website", label: t("clients.sourceWebsite") },
@@ -168,8 +162,11 @@ export function LeadForm({
           {...form.register("responsible_user")}
         />
       ) : null}
-      <Textarea label={t("leadForm.message")} {...form.register("message")} />
-      <Button data-testid="lead-action-submit" type="submit" isLoading={form.formState.isSubmitting} disabled={!hasClients}>{duplicates.length || relatedLeadsCount ? t("clients.createAnyway") : t("clients.save")}</Button>
+      </div>
+      <Textarea label={t("leadForm.message")} rows={3} {...form.register("message")} />
+      <div className="sticky bottom-0 flex justify-end border-t border-platforma-border bg-surface-card py-3">
+        <Button data-testid="lead-action-submit" type="submit" className="w-full sm:w-auto" isLoading={form.formState.isSubmitting} disabled={!hasClients}>{duplicates.length || relatedLeadsCount ? t("clients.createAnyway") : t("clients.save")}</Button>
+      </div>
     </form>
   );
 }

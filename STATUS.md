@@ -1,5 +1,13 @@
 # PlatformaCRM — текущий статус
 
+08.10.2026. UI-OPERATIONS-20261008: согласованный пакет шести экранов реализован
+и локально проверен. Главная использует полные scoped-счётчики без двойного
+учёта, остальные рабочие экраны исправлены по аудиту. 78 backend и 9 unit PASS,
+desktop/mobile/tablet flows, build/types/i18n/bundle PASS.
+[Отчёт](docs/testing/ui-operations-20261008.md) фиксирует scope, ошибки и границы;
+итоговые commit/push/CI — в ответе задачи и публикационном receipt.
+Клиентский AI-пилот сохранён без новых платных вызовов и внешних отправок.
+
 08.10.2026. PREPROD-AI-EVIDENCE-20261008: обновлён
 [паспорт клиентского AI](docs/pre-production/customer-ai-agent.md) с матрицей
 выполненных поведенческих проверок, исправлениями, версией и успешным CI `de1867b`.
@@ -30,7 +38,8 @@ PASS; итоговый commit определяется Git history, SHA/CI фи�
 
 [Паспорта](docs/pre-production/README.md) · [что реализовано](docs/pre-production/capabilities.md)
 · [действующие требования](docs/README.md) · [открытая приёмка](docs/current/acceptance.md).
-Внешние интеграции, gateway и billing отложены. Текущий этап ограничен локальным клиентским AI.
+Внешние интеграции, gateway и billing отложены. Пакет операционного UI завершён
+в локальной приёмке; следующий продуктовый этап не назначен. Развитие CRM AI на паузе.
 
 Canonical root `C:/Users/user/Desktop/PlatformaCRM`; branch `codex/ui-testing-toolkit`.
 Generation 4 primary, transition idle — [.codex/project-session.json](.codex/project-session.json).

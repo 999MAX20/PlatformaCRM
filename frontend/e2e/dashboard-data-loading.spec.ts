@@ -23,37 +23,45 @@ function watchDailyLists(page: Page) {
   return requests;
 }
 
-test("owner summary supplies visible counts without daily list preloads", async ({ page }) => {
+test("operational summary supplies full visible counts without daily list preloads", async ({ page }) => {
   const requests = watchDailyLists(page);
-  const summary = page.waitForResponse(response => new URL(response.url()).pathname === "/api/analytics/owner-dashboard/" && response.request().method() === "GET");
+  const summary = page.waitForResponse(response => new URL(response.url()).pathname === "/api/work-queues/" && response.request().method() === "GET");
   await login(page, "business_owner@example.com");
   const response = await summary;
   expect(response.ok()).toBeTruthy();
-  const metrics = await response.json();
-  const leadMetric = page.getByTestId("dashboard-workspace-ready").locator('a[href="/app/leads"]').filter({ hasText: "Новые лиды" });
-  await expect(leadMetric.locator(".tabular-nums")).toHaveText(String(metrics.new_leads));
-  const appointmentMetric = page.getByTestId("dashboard-workspace-ready").locator('a[href="/app/calendar"]').filter({ hasText: "Записи сегодня" });
-  await expect(appointmentMetric.locator(".tabular-nums")).toHaveText(String(metrics.appointments_today));
+  const metrics = (await response.json()).summary;
+  for (const key of ["today_appointments", "today_confirmations", "waiting_conversations", "overdue_tasks"]) {
+    await expect(page.getByTestId(`dashboard-metric-${key}`).locator(".tabular-nums")).toHaveText(String(metrics[key]));
+  }
   expect(requests).toEqual([]);
 });
 
-test("owner summary failure still loads permitted daily lists and shows fallback", async ({ page }) => {
+test("financial failure preserves operational data and never falls back to list lengths", async ({ page }) => {
   const requests = watchDailyLists(page);
   await page.route("**/api/analytics/owner-dashboard/**", route => route.fulfill({ status: 503, json: { detail: "Unavailable" } }));
-  const lists = dailyLists.map(path => page.waitForResponse(response => new URL(response.url()).pathname === path && response.request().method() === "GET"));
   await login(page, "business_owner@example.com");
-  const responses = await Promise.all(lists);
-  for (const response of responses) expect(response.ok()).toBeTruthy();
-  expect(requests.sort()).toEqual([...dailyLists].sort());
-  const leadsPayload = await responses[0].json();
-  const pending = (Array.isArray(leadsPayload) ? leadsPayload : leadsPayload.results).filter((lead: { status: string }) => ["new", "contacted", "in_progress"].includes(lead.status));
-  const leadMetric = page.getByTestId("dashboard-workspace-ready").locator('a[href="/app/leads"]').filter({ hasText: "Новые лиды" });
-  await expect(leadMetric.locator(".tabular-nums")).toHaveText(String(pending.length));
+  await expect(page.getByTestId("dashboard-finance").getByRole("alert")).toBeVisible();
+  await expect(page.getByTestId("dashboard-metric-today_appointments")).toBeVisible();
+  expect(requests).toEqual([]);
+  await page.unroute("**/api/analytics/owner-dashboard/**");
+  await page.getByTestId("dashboard-finance").getByRole("button").click();
+  await expect(page.getByTestId("dashboard-finance").getByRole("alert")).toHaveCount(0);
 });
 
-test("manager workspace retains the daily entity lists", async ({ page }) => {
+test("manager uses scoped operational data without broad daily list preloads", async ({ page }) => {
   const requests = watchDailyLists(page);
   await login(page, "business_manager@example.com");
-  expect(requests.sort()).toEqual([...dailyLists].sort());
-  await expect(page.getByTestId("role-daily-metrics")).toBeVisible();
+  await expect(page.getByTestId("dashboard-operations")).toBeVisible();
+  expect(requests).toEqual([]);
+  await expect(page.getByTestId("dashboard-finance")).toHaveCount(0);
+});
+
+test("denied operational data is not displayed as zero or all clear", async ({ page }) => {
+  await page.route(/\/api\/work-queues\/(?:\?.*)?$/, route => route.fulfill({
+    status: 403, json: { detail: "Permission denied", code: "permission_denied" },
+  }));
+  await login(page, "business_owner@example.com");
+  await expect(page.getByTestId("dashboard-priority-error")).toBeVisible();
+  await expect(page.getByTestId("dashboard-operations")).toHaveCount(0);
+  await expect(page.getByTestId("dashboard-priority-error").getByRole("button")).toHaveCount(0);
 });

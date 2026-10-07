@@ -39,10 +39,11 @@ export function SettingsNavigation({
 }: SettingsNavigationProps) {
   return (
     <aside className="xl:sticky xl:top-20 xl:self-start">
-      <Surface variant="outlined" padding="sm" className="shadow-soft">
+      <Surface variant="muted" padding="sm" className="border-0 shadow-none">
         <Select
           className="min-h-10 rounded-control xl:hidden"
           value={activeSettingsSection}
+          aria-label={navigationTitle}
           onChange={(event) => {
             setActiveSettingsSection(event.target.value);
             window.location.hash = event.target.value;
@@ -53,21 +54,13 @@ export function SettingsNavigation({
           }))}
         />
         <div className="hidden xl:block">
-          <div className="mb-2 px-2 py-1">
-            <p className="text-sm font-bold text-platforma-text">
-              {navigationTitle}
-            </p>
-          </div>
-          <nav className="space-y-1.5">
+          <nav className="space-y-1.5" aria-label={navigationTitle}>
             {translatedSettingsGroups.map((groupItem) => {
               const groupOpen = openSettingsGroups[groupItem.key];
-              const hasActiveSection = groupItem.sections.some(
-                (section) => section.id === activeSettingsSection,
-              );
               return (
                 <div
                   key={groupItem.key}
-                  className="rounded-control border border-platforma-border bg-surface-card p-1"
+                  className="rounded-control p-1"
                 >
                   <button
                     type="button"
@@ -86,7 +79,7 @@ export function SettingsNavigation({
                       className={`transition-transform ${groupOpen ? "rotate-180" : ""}`}
                     />
                   </button>
-                  {groupOpen || hasActiveSection ? (
+                  {groupOpen ? (
                     <div className="mt-1 space-y-1">
                       {groupItem.sections.map((section) => {
                         const active = section.id === activeSettingsSection;
@@ -94,6 +87,7 @@ export function SettingsNavigation({
                           <a
                             key={section.id}
                             href={`#${section.id}`}
+                            aria-current={active ? "page" : undefined}
                             className={`block rounded-lg px-2.5 py-2 text-sm font-bold transition ${
                               active
                                 ? "bg-brand-50 text-brand-700 shadow-xs ring-1 ring-brand-100"

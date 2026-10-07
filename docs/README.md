@@ -22,6 +22,7 @@
 | Точные проверки и изоляция | [Testing](testing/testing.md), [UI toolkit](testing/ui-testing-toolkit.md) |
 | Текущая задача и передача | [Checkpoint](testing/task-state/PRIMARY-SESSION.md), [handoff](../actual_docs/PROJECT_HANDOFF.md), [протокол](testing/SESSION_ROLLOVER.md) |
 | Регрессионные прецеденты | [ZR rules](../actual_docs/DEFECT_KNOWLEDGE_BASE.md) |
+| Evidence операционного UI-пакета 08.10 | [Проверки шести экранов](testing/ui-operations-20261008.md) |
 
 ## История и новые документы
 

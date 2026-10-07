@@ -11,11 +11,13 @@ export function CalendarPicker({
   labels,
   locale,
   todayValue,
+  periodLabel,
 }: {
   value: string;
   onChange: (value: string) => void;
   locale: string;
   todayValue: string;
+  periodLabel?: string;
   labels: {
     previousMonth: string;
     nextMonth: string;
@@ -33,16 +35,17 @@ export function CalendarPicker({
   }
 
   return (
-    <div className="relative w-full sm:w-auto">
+    <div className="relative min-w-0 flex-1 sm:flex-none">
       <Button
         variant="secondary"
-        className="h-11 w-full justify-between rounded-2xl px-4 sm:min-w-[210px]"
+        className="h-10 w-full justify-between gap-2 px-3 sm:min-w-[210px]"
+        aria-expanded={open}
         onClick={() => {
           setMonthDate(parseDate(value));
           setOpen((current) => !current);
         }}
       >
-        <span className="truncate">{formatPickerDate(value, locale)}</span>
+        <span className="whitespace-normal text-left">{periodLabel || formatPickerDate(value, locale)}</span>
         <CalendarDays size={18} />
       </Button>
       {open ? (

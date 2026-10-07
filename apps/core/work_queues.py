@@ -2,7 +2,7 @@ from django.db.models import Count, Q
 from django.utils import timezone
 
 from apps.bots.models import BotConversation
-from apps.businesses.access import Actions, Resources, scope_queryset, user_scope_for
+from apps.businesses.access import Actions, Resources, can, scope_queryset, user_scope_for
 from apps.businesses.capabilities import is_module_enabled
 from apps.businesses.models import BusinessMember, RolePermission
 from apps.crm.models import Deal
@@ -10,6 +10,7 @@ from apps.leads.models import Lead
 from apps.scheduling.models import Appointment
 from apps.tasks.escalation import task_overdue_escalation
 from apps.tasks.models import Task
+from apps.core.operational_dashboard import operational_summary, attention_preview
 
 
 OPEN_TASK_STATUSES = [Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS]
@@ -78,12 +79,12 @@ def build_work_queues(*, business, user=None, limit=10, now=None):
     ).exclude(assigned_to=user).order_by("-last_message_at", "-updated_at") if user else conversation_scope.none()
 
     queues = {
-        "overdue_tasks": [_task_item(task, now=now) for task in overdue_tasks[:limit]],
-        "stale_leads": [_lead_item(lead, now=now) for lead in stale_leads[:limit]],
-        "sla_overdue_deals": [_deal_item(deal, now=now, reason="sla_overdue") for deal in sla_overdue_deals[:limit]],
-        "no_next_action_deals": [_deal_item(deal, now=now, reason="no_next_action") for deal in no_next_action_deals[:limit]],
+        "overdue_tasks": [_task_item(task, now=now) for task in overdue_tasks.order_by("due_at", "pk")[:limit]],
+        "stale_leads": [_lead_item(lead, now=now) for lead in stale_leads.order_by("updated_at", "pk")[:limit]],
+        "sla_overdue_deals": [_deal_item(deal, now=now, reason="sla_overdue") for deal in sla_overdue_deals.order_by("stage_entered_at", "pk")[:limit]],
+        "no_next_action_deals": [_deal_item(deal, now=now, reason="no_next_action") for deal in no_next_action_deals.order_by("updated_at", "pk")[:limit]],
         "upcoming_appointments": [_appointment_item(appointment) for appointment in upcoming_appointments[:limit]],
-        "appointment_confirmations": [_appointment_item(appointment) for appointment in appointment_confirmations[:limit]],
+        "appointment_confirmations": [_appointment_item(appointment) for appointment in appointment_confirmations.order_by("start_at", "pk")[:limit]],
         "unread_conversations": [_conversation_item(conversation, reason="unread", now=now) for conversation in unread_conversations[:limit]],
         "handoff_conversations": [_conversation_item(conversation, reason="handoff_required", now=now) for conversation in handoff_conversations[:limit]],
         "unread_sla_overdue_conversations": [
@@ -122,19 +123,39 @@ def build_work_queues(*, business, user=None, limit=10, now=None):
         user=user,
         now=now,
     )
+    operational = operational_summary(
+        business=business, appointment_scope=appointment_scope,
+        conversation_scope=conversation_scope, open_deals=open_deals,
+        sla_deals=sla_overdue_deals, no_action_deals=no_next_action_deals, now=now,
+    )
+    summary.update(operational["summary"])
     summary["total_attention"] = (
         summary["overdue_tasks"]
         + summary["stale_leads"]
-        + summary["sla_overdue_deals"]
-        + summary["no_next_action_deals"]
+        + summary["attention_deals"]
         + summary["appointment_confirmations"]
-        + summary["unread_conversations"]
-        + summary["handoff_conversations"]
+        + summary["waiting_conversations"]
     )
+    # Each category contributes its earliest limit rows before global ordering.
+    # Duplicates across categories retain their most urgent reason.
+    candidates = [
+        *queues["overdue_tasks"], *queues["stale_leads"], *queues["sla_overdue_deals"],
+        *queues["no_next_action_deals"], *queues["appointment_confirmations"],
+        *[_conversation_item(item, reason="handoff_required" if item.handoff_required else "unread", now=now)
+          for item in operational["waiting"].select_related("client").order_by("last_inbound_at", "pk")[:limit]],
+    ]
     return {
         "business": business.id,
         "generated_at": now.isoformat(),
         "limit": limit,
+        "day": operational["day"],
+        "timezone": operational["timezone"],
+        "available": {
+            resource: is_module_enabled(business, module) and (user is None or can(user, business, resource, Actions.VIEW).allowed)
+            for resource, module in [("tasks", "tasks"), ("leads", "leads"), ("deals", "deals"),
+                                     ("appointments", "appointments"), ("conversations", "inbox")]
+        },
+        "attention": attention_preview(candidates, limit=limit),
         "scope": {
             "tasks": user_scope_for(user, business, Resources.TASKS, Actions.VIEW) if user else RolePermission.Scopes.BUSINESS,
             "leads": user_scope_for(user, business, Resources.LEADS, Actions.VIEW) if user else RolePermission.Scopes.BUSINESS,
@@ -311,18 +332,15 @@ def _scoped_work_querysets(*, business, user):
 
     membership = business.members.filter(user=user, is_active=True).first()
     if business.owner_id == user.id or (membership and membership.role in {BusinessMember.Roles.ADMIN, BusinessMember.Roles.MANAGER}):
-        task_scope = _active_tasks().filter(business=business).filter(
-            Q(id__in=task_scope.values("id")) | Q(assignee__isnull=True)
-        )
-        lead_scope = Lead.objects.filter(business=business, is_archived=False).filter(
-            Q(id__in=lead_scope.values("id")) | Q(responsible_user__isnull=True)
-        )
-        deal_scope = Deal.objects.filter(business=business, is_archived=False).filter(
-            Q(id__in=deal_scope.values("id")) | Q(owner__isnull=True)
-        )
-        conversation_scope = BotConversation.objects.filter(business=business, is_archived=False).filter(
-            Q(id__in=conversation_scope.values("id")) | Q(assigned_to__isnull=True)
-        )
+        def with_unassigned(scoped, base, resource, module, field):
+            if not is_module_enabled(business, module) or not can(user, business, resource, Actions.VIEW).allowed:
+                return scoped.none()
+            return base.filter(Q(id__in=scoped.values("id")) | Q(**{f"{field}__isnull": True}))
+
+        task_scope = with_unassigned(task_scope, _active_tasks().filter(business=business), Resources.TASKS, "tasks", "assignee")
+        lead_scope = with_unassigned(lead_scope, Lead.objects.filter(business=business, is_archived=False), Resources.LEADS, "leads", "responsible_user")
+        deal_scope = with_unassigned(deal_scope, Deal.objects.filter(business=business, is_archived=False), Resources.DEALS, "deals", "owner")
+        conversation_scope = with_unassigned(conversation_scope, BotConversation.objects.filter(business=business, is_archived=False), Resources.CONVERSATIONS, "inbox", "assigned_to")
     return task_scope, lead_scope, deal_scope, appointment_scope, conversation_scope
 
 
@@ -487,6 +505,7 @@ def _lead_item(lead, *, now):
         "client_id": lead.client_id,
         "responsible_user_id": lead.responsible_user_id,
         "age_hours": _hours_since(lead.updated_at, now=now),
+        "attention_at": lead.updated_at.isoformat(),
         "href": f"/app/leads?lead={lead.id}",
     }
 
@@ -507,6 +526,7 @@ def _deal_item(deal, *, now, reason):
         "currency": deal.currency,
         "risk_level": risk_level,
         "risk_percent": risk_percent,
+        "attention_at": (deal.stage_entered_at if reason == "sla_overdue" and deal.stage_entered_at else deal.updated_at).isoformat(),
         "href": f"/app/deals?deal={deal.id}",
     }
 
@@ -521,6 +541,7 @@ def _appointment_item(appointment):
         "lead_id": appointment.lead_id,
         "service_id": appointment.service_id,
         "resource_id": appointment.resource_id,
+        "resource_name": appointment.resource.name if appointment.resource else "",
         "start_at": appointment.start_at.isoformat(),
         "end_at": appointment.end_at.isoformat(),
         "href": f"/app/calendar?appointment={appointment.id}",

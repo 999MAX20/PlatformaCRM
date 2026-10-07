@@ -4,6 +4,7 @@ import { Button } from "../../../components/ui/Button";
 import { cn } from "../../../lib/cn";
 import { CalendarPicker } from "./CalendarPicker";
 import { CalendarResourceFilters } from "./CalendarFilters";
+import { formatCalendarPeriod } from "../calendarUtils";
 import type { CalendarTranslate, CalendarViewMode, SearchableCalendarFilterOption } from "../calendarTypes";
 
 export function CalendarToolbar({
@@ -67,7 +68,7 @@ export function CalendarToolbar({
     <section className="mb-4 rounded-card border border-platforma-border bg-platforma-card p-3 shadow-xs">
       <div className="flex flex-col gap-3 2xl:flex-row 2xl:items-center 2xl:justify-between">
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="secondary" size="icon" className="h-10 w-10" onClick={() => onShiftDate(-1)} aria-label={t("calendar.previousDay")}>
+          <Button variant="secondary" size="icon" className="h-10 w-10 shrink-0" onClick={() => onShiftDate(-1)} aria-label={t(viewMode === "month" ? "calendar.previousMonth" : viewMode === "week" ? "calendar.previousWeek" : "calendar.previousDay")}>
             <ChevronLeft size={18} />
           </Button>
           <CalendarPicker
@@ -75,6 +76,7 @@ export function CalendarToolbar({
             onChange={onDateChange}
             locale={locale}
             todayValue={todayValue}
+            periodLabel={formatCalendarPeriod(date, locale, viewMode)}
             labels={{
               previousMonth: t("calendar.previousMonth"),
               nextMonth: t("calendar.nextMonth"),
@@ -82,7 +84,7 @@ export function CalendarToolbar({
               weekdays: weekDays,
             }}
           />
-          <Button variant="secondary" size="icon" className="h-10 w-10" onClick={() => onShiftDate(1)} aria-label={t("calendar.nextDay")}>
+          <Button variant="secondary" size="icon" className="h-10 w-10 shrink-0" onClick={() => onShiftDate(1)} aria-label={t(viewMode === "month" ? "calendar.nextMonth" : viewMode === "week" ? "calendar.nextWeek" : "calendar.nextDay")}>
             <ChevronRight size={18} />
           </Button>
           <Button variant="secondary" className="h-10 px-3" onClick={() => onDateChange(todayValue)}>
@@ -99,6 +101,7 @@ export function CalendarToolbar({
                 key={item.value}
                 type="button"
                 data-testid={`calendar-view-${item.value}`}
+                aria-pressed={viewMode === item.value}
                 className={cn(
                   "rounded-control px-3 py-2 text-xs font-bold transition sm:text-sm",
                   viewMode === item.value ? "bg-platforma-card text-brand-700 shadow-xs" : "text-platforma-muted hover:bg-surface-hover hover:text-platforma-text",

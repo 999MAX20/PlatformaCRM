@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 import { businessConnectorsApi } from "../../api/connectors";
@@ -40,6 +41,14 @@ function createSchema(t: (key: string) => string) {
 }
 
 type Values = z.infer<ReturnType<typeof createSchema>>;
+const groups = ["profile", "appointments", "finance", "appearance"] as const;
+type Group = (typeof groups)[number];
+const fieldGroups: Partial<Record<keyof Values, Group>> = {
+  timezone: "appointments", booking_buffer_minutes: "appointments", cancellation_policy: "appointments",
+  currency: "finance", legal_name: "finance", tax_id: "finance", invoice_email: "finance",
+  financial_source_mode: "finance", financial_connector: "finance", prepayment_policy: "finance",
+  brand_color: "appearance", brand_logo_url: "appearance",
+};
 
 export function BusinessSettingsForm({
   initial,
@@ -49,9 +58,11 @@ export function BusinessSettingsForm({
   onSubmit: (payload: Partial<Business>) => Promise<unknown>;
 }) {
   const { t } = useI18n();
+  const [activeGroup, setActiveGroup] = useState<Group>("profile");
   const connectors = useQuery({ queryKey: ["financial-source-options", initial?.id], queryFn: () => businessConnectorsApi.list({ business: initial!.id }), enabled: Boolean(initial?.id) });
   const form = useForm<Values>({
     resolver: zodResolver(createSchema(t)),
+    shouldFocusError: false,
     defaultValues: {
       name: initial?.name || "",
       slug: initial?.slug || "",
@@ -80,7 +91,21 @@ export function BusinessSettingsForm({
   });
 
   return (
-    <form className="grid gap-4" onSubmit={form.handleSubmit((values) => onSubmit({ ...values, financial_connector: values.financial_source_mode === "external" && values.financial_connector ? Number(values.financial_connector) : null } as Partial<Business>))}>
+    <form className="grid gap-4" onSubmit={form.handleSubmit(
+      (values) => onSubmit({ ...values, financial_connector: values.financial_source_mode === "external" && values.financial_connector ? Number(values.financial_connector) : null } as Partial<Business>),
+      (errors) => {
+        const field = Object.keys(errors)[0] as keyof Values;
+        setActiveGroup(fieldGroups[field] || "profile");
+        window.requestAnimationFrame(() => form.setFocus(field));
+      },
+    )}>
+      <div className="grid grid-cols-2 gap-1 rounded-control bg-surface-muted p-1 lg:grid-cols-4">
+        {groups.map((group) => <button key={group} type="button" aria-pressed={activeGroup === group}
+          className={`platforma-focus-ring min-h-10 rounded-control px-3 py-2 text-sm font-semibold ${activeGroup === group ? "bg-surface-card text-brand-700 shadow-xs" : "text-platforma-subtle hover:bg-surface-hover"}`}
+          onClick={() => setActiveGroup(group)}>{t(`businessForm.group.${group}`)}</button>)}
+      </div>
+      <fieldset hidden={activeGroup !== "profile"} className="space-y-4">
+      <legend className="sr-only">{t("businessForm.group.profile")}</legend>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("businessForm.name")} error={form.formState.errors.name?.message} {...form.register("name")} />
         <Input label={t("businessForm.slug")} error={form.formState.errors.slug?.message} {...form.register("slug")} />
@@ -95,7 +120,11 @@ export function BusinessSettingsForm({
           { value: "medical", label: t("businessType.medical") },
           { value: "other", label: t("businessType.other") },
         ]} {...form.register("business_type")} />
-        <Input label={t("businessForm.timezone")} placeholder="Asia/Almaty" {...form.register("timezone")} />
+        <Select label={t("businessForm.language")} options={[
+          { value: "ru", label: t("language.ru") },
+          { value: "kk", label: t("language.kk") },
+          { value: "en", label: t("language.en") },
+        ]} {...form.register("language")} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("businessForm.city")} {...form.register("city")} />
@@ -109,19 +138,26 @@ export function BusinessSettingsForm({
         <Input label="Telegram" {...form.register("telegram")} />
         <Input label="Instagram" {...form.register("instagram")} />
       </div>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Select label={t("businessForm.language")} options={[
-          { value: "ru", label: t("language.ru") },
-          { value: "kk", label: t("language.kk") },
-          { value: "en", label: t("language.en") },
-        ]} {...form.register("language")} />
+      <Input label={t("businessForm.slaMinutes")} type="number" error={form.formState.errors.sla_minutes?.message} {...form.register("sla_minutes")} />
+      </fieldset>
+      <fieldset hidden={activeGroup !== "appointments"} className="space-y-4">
+        <legend className="sr-only">{t("businessForm.group.appointments")}</legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input label={t("businessForm.timezone")} placeholder="Asia/Almaty" {...form.register("timezone")} />
+          <Input label={t("businessForm.bookingBufferMinutes")} type="number" error={form.formState.errors.booking_buffer_minutes?.message} {...form.register("booking_buffer_minutes")} />
+        </div>
+        <Textarea label={t("businessForm.cancellationPolicy")} rows={3} {...form.register("cancellation_policy")} />
+      </fieldset>
+      <fieldset hidden={activeGroup !== "finance"} className="space-y-4">
+      <legend className="sr-only">{t("businessForm.group.finance")}</legend>
+      <div className="grid gap-4 sm:grid-cols-2">
         <Select label={t("businessForm.currency")} options={[
           { value: "KZT", label: "KZT" },
           { value: "USD", label: "USD" },
           { value: "EUR", label: "EUR" },
           { value: "RUB", label: "RUB" },
         ]} {...form.register("currency")} />
-        <Input label={t("businessForm.slaMinutes")} type="number" error={form.formState.errors.sla_minutes?.message} {...form.register("sla_minutes")} />
+        <Input label={t("businessForm.invoiceEmail")} error={form.formState.errors.invoice_email?.message} {...form.register("invoice_email")} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("businessForm.legalName")} {...form.register("legal_name")} />
@@ -132,19 +168,18 @@ export function BusinessSettingsForm({
         {form.watch("financial_source_mode") === "external" && <Select label={t("aiHistory.integration")} disabled={connectors.isLoading || connectors.isError} options={[{ value: "", label: t("aiHistory.notSelected") }, ...(connectors.data || []).filter(item => item.capability === "finance").map(item => ({ value: String(item.id), label: item.name }))]} {...form.register("financial_connector")} />}
       </div>
       {connectors.isError && form.watch("financial_source_mode") === "external" && <p role="alert" className="text-sm text-platforma-danger">{t("aiHistory.integrationUnavailable")}</p>}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Input label={t("businessForm.invoiceEmail")} error={form.formState.errors.invoice_email?.message} {...form.register("invoice_email")} />
-        <Input label={t("businessForm.bookingBufferMinutes")} type="number" error={form.formState.errors.booking_buffer_minutes?.message} {...form.register("booking_buffer_minutes")} />
-      </div>
+      <Textarea label={t("businessForm.prepaymentPolicy")} rows={3} {...form.register("prepayment_policy")} />
+      </fieldset>
+      <fieldset hidden={activeGroup !== "appearance"} className="space-y-4">
+      <legend className="sr-only">{t("businessForm.group.appearance")}</legend>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("businessForm.brandColor")} placeholder="#1D4ED8" {...form.register("brand_color")} />
         <Input label={t("businessForm.brandLogoUrl")} error={form.formState.errors.brand_logo_url?.message} {...form.register("brand_logo_url")} />
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Textarea label={t("businessForm.cancellationPolicy")} rows={4} {...form.register("cancellation_policy")} />
-        <Textarea label={t("businessForm.prepaymentPolicy")} rows={4} {...form.register("prepayment_policy")} />
+      </fieldset>
+      <div className="sticky bottom-0 flex justify-end border-t border-platforma-border bg-surface-card py-3">
+        <Button type="submit" className="w-full sm:w-auto" isLoading={form.formState.isSubmitting}>{t("businessForm.save")}</Button>
       </div>
-      <Button type="submit" isLoading={form.formState.isSubmitting}>{t("businessForm.save")}</Button>
     </form>
   );
 }

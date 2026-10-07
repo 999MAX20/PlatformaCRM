@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { settingsGroupOrder, type SettingsGroupKey, type SettingsSectionConfig } from "../settingsConfig";
+import { settingsGroupOrder, settingsSectionGroupFallback, type SettingsGroupKey, type SettingsSectionConfig } from "../settingsConfig";
 
 export function useSettingsSectionNavigation(allowedSettingsSections: SettingsSectionConfig[]) {
   const [activeSettingsSection, setActiveSettingsSection] = useState(() => window.location.hash.replace("#", "") || "business-profile");
@@ -12,6 +12,12 @@ export function useSettingsSectionNavigation(allowedSettingsSections: SettingsSe
     advanced: false,
   });
   const allowedSettingsSectionIds = useMemo(() => new Set(allowedSettingsSections.map((section) => section.id)), [allowedSettingsSections]);
+
+  useEffect(() => {
+    const section = allowedSettingsSections.find((item) => item.id === activeSettingsSection);
+    const group = section?.group || settingsSectionGroupFallback[activeSettingsSection];
+    if (group) setOpenSettingsGroups((current) => current[group] ? current : { ...current, [group]: true });
+  }, [activeSettingsSection, allowedSettingsSections]);
 
   useEffect(() => {
     function handleHashChange() {

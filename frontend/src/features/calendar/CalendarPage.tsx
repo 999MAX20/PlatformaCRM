@@ -54,7 +54,7 @@ import {
   isDateValue,
   isWorkingHourSlot,
   normalizeTimeZone,
-  shiftDateValue,
+  shiftCalendarPeriod,
   toDateInputValue,
 } from "./calendarUtils";
 import { AppointmentDrawerPanel } from "./components/AppointmentDrawerPanel";
@@ -564,7 +564,7 @@ export function CalendarPage() {
       };
 
   function shiftDate(days: number) {
-    setDate(shiftDateValue(date, days));
+    setDate(shiftCalendarPeriod(date, days, viewMode));
   }
 
   function selectAppointment(appointment: Appointment) {

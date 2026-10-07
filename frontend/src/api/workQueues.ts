@@ -13,7 +13,8 @@ export type WorkQueueKey =
   | "unread_sla_overdue_conversations"
   | "handoff_sla_overdue_conversations";
 
-export type WorkQueueSummary = Record<WorkQueueKey | "total_attention", number>;
+export type WorkQueueSummary = Record<WorkQueueKey | "total_attention" | "today_appointments" | "today_confirmations" | "waiting_conversations" | "attention_deals", number>;
+export type WorkQueueResource = "tasks" | "leads" | "deals" | "appointments" | "conversations";
 
 export type TaskEscalationLevel = "none" | "watch" | "escalate" | "critical" | string;
 
@@ -69,6 +70,7 @@ export type WorkQueueAppointmentItem = WorkQueueBaseItem & {
   lead_id: Id | null;
   service_id: Id;
   resource_id: Id | null;
+  resource_name: string;
   start_at: string;
   end_at: string;
 };
@@ -103,6 +105,11 @@ export type WorkQueuesResponse = {
   business: Id;
   generated_at: string;
   limit: number;
+  day: string;
+  timezone: string;
+  available: Record<WorkQueueResource, boolean>;
+  scope: Record<WorkQueueResource, "own" | "team" | "business" | "none" | null>;
+  attention: Array<WorkQueueItem & { attention_reason: string; attention_at: string | null }>;
   summary: WorkQueueSummary;
   queues: {
     overdue_tasks: WorkQueueTaskItem[];

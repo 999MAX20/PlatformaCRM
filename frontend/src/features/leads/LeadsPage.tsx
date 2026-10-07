@@ -114,7 +114,6 @@ export function LeadsPage() {
   useLeadsPageHeader({
     t,
     onCreateLead: openCreateLead,
-    onToggleFilters: toggleSavedFilters,
   });
 
   const {

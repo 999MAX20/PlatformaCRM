@@ -1,5 +1,5 @@
 import type React from "react";
-import { CheckCheck, Plus, SlidersHorizontal } from "lucide-react";
+import { CheckCheck, Inbox } from "lucide-react";
 
 import {
   CrmDataTable,
@@ -74,7 +74,6 @@ export function LeadsWorkspaceTable({
   onExportExcel,
   onShareView,
   onOpenImport,
-  onOpenCreate,
   onSelectLead,
   onOpenLead,
   onToggleBulkLead,
@@ -224,7 +223,7 @@ export function LeadsWorkspaceTable({
         contentClassName="flex min-h-0 flex-1 flex-col"
       >
         <div className="min-h-0 flex-1 overflow-auto">
-        <div className="sticky top-0 z-10 hidden bg-surface-card lg:block">
+        {rows.length > 0 ? <div className="sticky top-0 z-10 hidden bg-surface-card lg:block">
           <div
             className={CRM_TABLE_HEADER_GRID_CLASS}
             style={{
@@ -256,13 +255,13 @@ export function LeadsWorkspaceTable({
             ))}
             <span>{t("leads.actions")}</span>
           </div>
-        </div>
+        </div> : null}
         <div className="min-h-0">
           {!rows.length ? (
             <div className="grid h-full min-h-[320px] place-items-center p-5">
               <div className="max-w-sm text-center">
                 <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700">
-                  <Plus size={22} />
+                  <Inbox size={22} />
                 </div>
                 <h3 className="mt-4 text-lg font-bold text-platforma-text">
                   {hasFilters
@@ -286,17 +285,7 @@ export function LeadsWorkspaceTable({
                     >
                       {t("tasks.resetFilters")}
                     </Button>
-                  ) : (
-                    <>
-                      <Button onClick={onOpenCreate}>
-                        <Plus size={16} /> {t("leads.createFirstLead")}
-                      </Button>
-                      <Button variant="secondary" onClick={onOpenImport}>
-                        <SlidersHorizontal size={16} />{" "}
-                        {t("leads.setupIntegrations")}
-                      </Button>
-                    </>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -352,7 +341,7 @@ export function LeadsWorkspaceTable({
           )}
         </div>
         </div>
-        <LeadsPagination
+        {rows.length > 0 ? <LeadsPagination
           page={safePage}
           pageSize={pageSize}
           total={totalLeadCount}
@@ -367,7 +356,7 @@ export function LeadsWorkspaceTable({
           nextLabel={t("pagination.next")}
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
-        />
+        /> : null}
       </CrmDataTable>
     </CrmTableSurface>
   );

@@ -837,16 +837,6 @@ export function SettingsPage() {
 
   return (
     <div data-testid="settings-workspace-ready">
-      <section className="mb-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-platforma-text">
-            {t("settings.title")}
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-platforma-subtle">
-            {t("settings.description")}
-          </p>
-        </div>
-      </section>
       {mutation.error ? (
         <div className="mb-4">
           <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} />

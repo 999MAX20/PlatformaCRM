@@ -61,6 +61,10 @@ def work_queues(request):
     business_id = request.query_params.get("business")
     if not business_id:
         raise ValidationError({"business": "This query parameter is required."})
+    try:
+        business_id = int(business_id)
+    except (TypeError, ValueError):
+        raise ValidationError({"business": "A valid business ID is required."})
     business = Business.objects.filter(id=business_id).first()
     if business is None or not user_can_access_business(request.user, business):
         raise PermissionDenied("Business is not available.")

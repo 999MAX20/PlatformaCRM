@@ -9,9 +9,13 @@ Backend routes: [config/urls.py](../../config/urls.py).
 Reachable UI: [router.tsx](../../frontend/src/app/router.tsx).
 API слой: [frontend/src/api](../../frontend/src/api).
 Это общая карта, не замена подробным паспортам и не новый backlog.
+Дополнение 08.10: [операционный UI-пакет](../testing/ui-operations-20261008.md)
+обновляет шесть экранов и scoped work queues; это отдельная локальная проверка,
+не общая сертификация или новая разработка CRM-аналитика.
 
 | Область | Что присутствует в реализации | Источник / граница оставшейся работы |
 | --- | --- | --- |
+| Операционная Главная | Полные distinct-счётчики, очередь действий, ближайшие записи, честное отсутствие финансовых данных | [work queues](../../apps/core/work_queues.py), [UI](../../frontend/src/features/dashboard/OperationalDashboard.tsx); локальная приёмка пакета 08.10, target/полный рабочий день отдельно |
 | Клиенты | Карточки, поиск/связи, история, archive/restore, проверка активных зависимостей | [clients](../../apps/clients), [services](../../apps/clients/services.py); общие edge cases и приёмка FC остаются |
 | Заявки | Lifecycle, ответственный, конверсия/связи, lost reason | [leads](../../apps/leads/services.py), [tests](../../apps/leads/tests_crm_light.py); не обходить services |
 | Сделки/воронки | Стадии, terminal actions, связи и история | [crm](../../apps/crm/services.py); новые stage-policy сценарии D-08 требуют правила |

@@ -442,13 +442,14 @@ export function ConversationsPage() {
         filters.status ||
         filters.unread ||
         filters.handoff_required ||
-        filters.bot_enabled,
+        filters.bot_enabled || filters.search,
       ),
     [filters],
   );
 
   const activeFilterSummary = useMemo(() => {
     const parts: string[] = [];
+    if (filters.search) parts.push(filters.search);
     if (filters.bot) parts.push(t("conversations.agent"));
     if (filters.channel) parts.push(channelLabel(filters.channel, t));
     if (filters.priority)
@@ -465,6 +466,8 @@ export function ConversationsPage() {
       parts.push(t("conversations.assignedToMeFilter"));
     if (filters.assigned_to === "unassigned")
       parts.push(t("conversations.unassigned"));
+    if (filters.assigned_to && !["me", "unassigned"].includes(filters.assigned_to))
+      parts.push(t("leads.responsible"));
     if (filters.status === "open") parts.push(t("conversations.active"));
     if (filters.status === "closed") parts.push(t("status.closed"));
     return parts;
@@ -1336,9 +1339,10 @@ export function ConversationsPage() {
         style={{ height: "100%", minHeight: 0 }}
         className={cn(
           "overflow-hidden border border-platforma-border shadow-soft lg:grid-cols-[288px_minmax(0,1fr)]",
-          inspectorOpen
-            ? "xl:grid-cols-[288px_minmax(640px,1fr)_284px] 2xl:grid-cols-[288px_minmax(760px,1fr)_284px]"
+          inspectorOpen && selected
+            ? "xl:grid-cols-[288px_minmax(0,1fr)_284px]"
             : "xl:grid-cols-[288px_minmax(0,1fr)]",
+          !items.length && !selected && "lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-1",
         )}
       >
         <ConversationListPane
@@ -1385,7 +1389,7 @@ export function ConversationsPage() {
           t={t}
         />
 
-        <ConversationThreadPane
+        {items.length || selected ? <ConversationThreadPane
           mobileActions={selected ? <>
             <Button variant="ai" onClick={previewSelectedPipeline} disabled={!canSuggestAiPipeline} isLoading={qualifyMutation.isPending}>
               {t("conversations.previewQualification")}
@@ -1440,12 +1444,12 @@ export function ConversationsPage() {
           }
           reopenPending={reopenMutation.isPending}
           t={t}
-        />
+        /> : null}
 
         <aside
           className={cn(
             "hidden min-h-0 flex-col gap-3 overflow-y-auto border-l border-platforma-border bg-surface-muted p-3 xl:flex",
-            !inspectorOpen && "xl:hidden",
+            (!inspectorOpen || !selected) && "xl:hidden",
           )}
         >
           {selected ? (

@@ -218,6 +218,10 @@
     {
       "path": "docs/testing/inbox-local-pilot-20261008.md",
       "role": "evidence"
+    },
+    {
+      "path": "docs/testing/ui-operations-20261008.md",
+      "role": "evidence"
     }
   ]
 }

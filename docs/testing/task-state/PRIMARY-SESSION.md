@@ -1,5 +1,80 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## UI-OPERATIONS-20261008 — implementation and local acceptance complete
+
+Source: owner-approved UI/UX audit relayed by task
+`01a0f32f-7d02-7263-a53d-496c8f9787f5` with explicit instruction to implement the
+whole package in this registered primary. This is new scope, not ownership
+transfer. Same generation 4 primary, root `C:/Users/user/Desktop/PlatformaCRM`,
+branch `codex/ui-testing-toolkit`, clean starting HEAD
+`79ffca5c2b4437750bb7559ce34453ab6c247a29`; no pre-existing changes.
+Mode targeted defect correction and approved UI implementation; gaps code/data/UX.
+
+Observable result and complete authorized scope:
+- Leads: one create CTA, correctly named import in additional actions, consistent
+  terminology, one nearby filter entry, no empty pagination/selection; distinguish
+  no data/filter-empty/error. Compact creation form without losing fields.
+- Deals: risk is attention, not hot sales; next task/action/date and no-step filter
+  agree; honest empty columns and readable entity hierarchy, existing kanban retained.
+- Calendar: day/week/month arrows and period heading match view, month/year boundaries
+  and selected-mode accessibility; compact controls, slot creation preserved.
+- Inbox: coherent empty state; readable filters with separate owner/AI-agent labels,
+  filter icon/count; populated conversations, CRM context, drafts and AI pilot preserved.
+- Settings: group business profile/contacts, appointments, finance and appearance;
+  keep fields/permissions/drafts/save behavior; remove redundant framing/headings;
+  group expansion matches visible children and accessibility state.
+- Dashboard: real scoped today appointments/confirmations, waiting conversations
+  and overdue tasks; full distinct counts separate from previews. Ordered/deduplicated
+  entity action queue plus upcoming appointments; owner finance uses actual net
+  receipts/source/period/freshness, useful grounded AI summary stays compact.
+  Correct deep links, unavailable/error states never mean zero or all clear.
+
+Approved layout reference (conditional data only):
+`C:/Users/user/.codex/visualizations/2026/09/30/01a0f32f-7d02-7263-a53d-496c8f9787f5/crm-dashboard-proposal.html`.
+Use composition, existing neutral/emerald tokens and RU/KK/EN. No demo data or
+role-switch UI. Reuse workQueues/analytics selectors, current API clients, controls,
+forms, scopes and existing tests. Minimal read-contract extensions if needed;
+no new lifecycle/booking/money policy, notification, audit/BusinessEvent types,
+CRM AI development, paid AI calls, external messages/integrations or deployment.
+No schema/environment change expected; no working-DB seed/migration, dependency
+reinstall, alternate source tree or stopping other processes.
+
+Verification plan: before dependent UI, isolated backend regression for each
+coherent count/queue change: overlaps, totals beyond preview limit, stable order,
+role/tenant/capability scope and invalid input. Calendar unit/interaction checks
+include different views and month/year boundaries. Targeted reachable browser
+flows desktop/mobile, keyboard, RU/KK/EN, empty/filter-empty/error/recovery and
+populated Inbox. Preserve customer AI safety/recovery/permissions through affected
+regressions. Final frontend build/types/i18n/bundle, affected/dependent backend
+tests + system/migration drift; no blanket full E2E absent demonstrated need.
+Record exact commands/snapshots/results and preserved failures. Finish all six
+areas, reviewed docs/checkpoint/STATUS, conventional commit and normal HEAD:main
+push with remote SHA and actual CI. No intermediate approval gates or new phases.
+
+Implementation checkpoint: all six areas are implemented in the same dirty
+snapshot above. Work queues now expose full distinct operational counts, business
+day/timezone, availability/scope and ordered entity previews; disabled/denied
+modules cannot reappear through unassigned rows. Backend regression was red
+before the fix; the focused gate passed before dependent UI. Query-budget failure
+(63 versus 58) was corrected by reusing already loaded category previews.
+Final affected/dependent backend gate: 78 tests PASS, system check PASS, no migration
+drift; `output/ui-operations-20261008/backend-1791411501420078900.log`.
+Calendar/dashboard/policy unit checks: 9 PASS. Six desktop flows passed across
+targeted runs; all six mobile flows PASS in `browser-1791411479584303500.log`.
+Screenshots inspected for compact form, calendar, settings, Inbox and dashboard.
+Earlier selector mismatches and build errors are retained in the same output
+directory; they were corrected rather than waived. Additional role/recovery and
+navigation-accessibility checks passed: 7 desktop, 4 mobile and 2 tablet scenarios.
+Isolated build/types/i18n/widget/bundle PASS; the post-success helper stdout
+encoding issue is documented, not a product failure.
+[Final evidence and exact checks](../ui-operations-20261008.md) preserve earlier
+failures and exclusions. Updated frontend/CRM contracts and capability map.
+Documentation registry/link/archive checks PASS: 55 active documents, 359 local
+links, 14 anchors, 38 plain paths; preserved archive unchanged. Working diff
+hygiene PASS; entire intended source/tests/docs and new files reviewed. Final
+publication SHA, committed-range/index checks and actual CI are recorded in the
+task response and `output/ui-operations-20261008/publication.json`; no new phase.
+
 ## PREPROD-AI-EVIDENCE-20261008 — documentation update
 
 Owner request: update pre-prod with completed customer-agent behavior checks.
