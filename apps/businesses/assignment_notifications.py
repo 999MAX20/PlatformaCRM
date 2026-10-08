@@ -1,6 +1,7 @@
 from django.utils import timezone
 
 from apps.notifications.models import Notification
+from apps.notifications.routing import filter_notification_recipients
 
 
 def create_assignment_notifications(*, business, previous_user, new_user, text, action_url, include_new=True):
@@ -9,6 +10,10 @@ def create_assignment_notifications(*, business, previous_user, new_user, text, 
         recipients.append((new_user, text))
     if previous_user is not None and previous_user != new_user:
         recipients.append((previous_user, f"Work item reassigned: {text}"))
+    allowed = {user.id for user in filter_notification_recipients(
+        business=business, users=[user for user, _ in recipients],
+        category=Notification.Categories.TASKS, priority=Notification.Priorities.NORMAL,
+    )}
     return Notification.objects.bulk_create(
         [
             Notification(
@@ -23,5 +28,6 @@ def create_assignment_notifications(*, business, previous_user, new_user, text, 
                 action_label="Open",
             )
             for recipient, message in recipients
+            if recipient.id in allowed
         ]
     )

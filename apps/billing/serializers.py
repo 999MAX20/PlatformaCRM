@@ -61,3 +61,18 @@ class UsageCounterSerializer(serializers.ModelSerializer):
         model = UsageCounter
         fields = ["id", "business", "period_start", "period_end", "metric", "value"]
         read_only_fields = fields
+
+
+class SubscriptionSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ["billing_email", "payment_method", "invoice_details_json"]
+
+    def validate_invoice_details_json(self, value):
+        if not isinstance(value, dict):
+            raise serializers.ValidationError("Must be an object.")
+        return value
+
+
+class PlanChangeSerializer(serializers.Serializer):
+    plan = serializers.PrimaryKeyRelatedField(queryset=SubscriptionPlan.objects.filter(is_active=True))

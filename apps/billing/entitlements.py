@@ -153,6 +153,8 @@ def assert_entitlement_allows(business, metric, requested=1):
 
 
 def entitlement_summary(business):
+    period_start, period_end = current_usage_period()
+    monthly_metrics = {EntitlementMetrics.AI_REQUESTS, EntitlementMetrics.BOT_MESSAGES, EntitlementMetrics.CONVERSATIONS}
     return [
         {
             "metric": metric,
@@ -162,6 +164,10 @@ def entitlement_summary(business):
             "is_limited": result.is_limited,
             "is_over_limit": result.is_over_limit,
             "plan_code": result.plan_code,
+            "period_kind": "month" if metric in monthly_metrics else "current",
+            "period_start": period_start if metric in monthly_metrics else None,
+            "period_end": period_end if metric in monthly_metrics else None,
+            "unit": "MiB" if metric == EntitlementMetrics.STORAGE_MB else "count",
         }
         for metric in [
             EntitlementMetrics.USERS,

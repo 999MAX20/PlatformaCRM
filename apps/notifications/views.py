@@ -153,6 +153,10 @@ class NotificationPreferenceViewSet(TenantModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        if "business" in self.request.query_params:
+            from rest_framework.fields import IntegerField
+
+            queryset = queryset.filter(business_id=IntegerField(min_value=1).run_validation(self.request.query_params["business"]))
         user_filter = self.request.query_params.get("user")
         category_filter = self.request.query_params.get("category")
         if user_filter == "me":

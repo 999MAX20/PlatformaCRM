@@ -73,6 +73,14 @@ def deliver_notification(notification, *, claimed=False):
             return {"notification_id": notification_id, "status": "skipped", "reason": f"Notification is {current_status or 'missing'}."}
     if notification.status != Notification.Statuses.SENDING:
         return {"notification_id": notification.id, "status": "skipped", "reason": "Notification is not pending."}
+    claim = _owned_claim(notification)
+    if not claim.exists():
+        return {"notification_id": notification.id, "status": "skipped", "reason": "Notification claim was revoked."}
+    from apps.scheduling.message_settings import appointment_notification_is_current, appointment_notification_scenario
+    scenario = appointment_notification_scenario(notification)
+    if scenario and not appointment_notification_is_current(notification, scenario):
+        claim.update(status=Notification.Statuses.CANCELLED, locked_at=None, next_retry_at=None, updated_at=timezone.now())
+        return {"notification_id": notification.id, "status": "cancelled", "reason": "Appointment message is no longer applicable."}
 
     try:
         result = _deliver(notification)
@@ -92,12 +100,11 @@ def deliver_notification(notification, *, claimed=False):
         notification.provider_reference = str(
             result.get("provider_reference") or result.get("message_id") or result.get("id") or ""
         )[:255]
-        notification.save(
-            update_fields=[
-                "status", "delivered_at", "failed_at", "locked_at", "last_error",
-                "provider_reference", "updated_at",
-            ]
-        )
+        changed = claim.update(status=notification.status, delivered_at=notification.delivered_at,
+            failed_at=None, locked_at=None, last_error="", provider_reference=notification.provider_reference, updated_at=timezone.now())
+        if not changed:
+            _write_delivery_activity(notification, status="claim_revoked", result={"provider_acknowledged": True})
+            return {"notification_id": notification.id, "status": "skipped", "reason": "Claim revoked during delivery; provider acknowledged the attempt."}
         _write_delivery_activity(notification, status="sent", result=result)
         return {"notification_id": notification.id, "status": "sent", "result": result}
 
@@ -111,6 +118,7 @@ def deliver_notification(notification, *, claimed=False):
 
 
 def _record_delivery_failure(notification, *, reason, retryable):
+    claim = _owned_claim(notification)
     notification.last_error = reason
     notification.locked_at = None
     if retryable and notification.attempts < notification.max_attempts:
@@ -122,10 +130,14 @@ def _record_delivery_failure(notification, *, reason, retryable):
         notification.status = Notification.Statuses.FAILED
         notification.next_retry_at = None
         notification.failed_at = timezone.now()
-    notification.save(
-        update_fields=["status", "last_error", "locked_at", "next_retry_at", "failed_at", "updated_at"]
-    )
-    return notification.status
+    changed = claim.update(status=notification.status, last_error=notification.last_error, locked_at=None,
+        next_retry_at=notification.next_retry_at, failed_at=notification.failed_at, updated_at=timezone.now())
+    return notification.status if changed else "skipped"
+
+
+def _owned_claim(notification):
+    return Notification.objects.filter(pk=notification.pk, status=Notification.Statuses.SENDING,
+        attempts=notification.attempts, locked_at=notification.locked_at)
 
 
 def _is_retryable_result(result):
@@ -210,9 +222,14 @@ def handle_appointment_followup_reply(*, business, channel, external_user_id, te
 
 
 def _deliver(notification):
+    from apps.scheduling.message_settings import appointment_notification_scenario
+    managed_followup = appointment_notification_scenario(notification) is not None
     if notification.channel == Notification.Channels.SYSTEM:
         return {"ok": True, "provider": "system"}
     if notification.channel == Notification.Channels.EMAIL:
+        from apps.notifications.channels import email_delivery_configured
+        if managed_followup and not email_delivery_configured():
+            return {"ok": False, "reason": "Email delivery is not configured."}
         email = notification.client.email if notification.client_id else ""
         if not email:
             return {"ok": False, "reason": "Client email is missing."}
@@ -225,7 +242,8 @@ def _deliver(notification):
         )
         return {"ok": bool(sent), "provider": "email", "sent": sent}
     if notification.channel in {Notification.Channels.TELEGRAM, Notification.Channels.WHATSAPP}:
-        channel = _active_bot_channel(notification.business, notification.channel)
+        from apps.notifications.channels import active_delivery_channel
+        channel = active_delivery_channel(notification.business, notification.channel) if managed_followup else _active_bot_channel(notification.business, notification.channel)
         if channel is None:
             return {"ok": False, "reason": f"{notification.channel} channel is not connected."}
         recipient_id = _recipient_id(notification)

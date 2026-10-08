@@ -8,6 +8,21 @@ from apps.conversations.models import QuickReplyTemplate
 
 
 class QuickReplyTemplateTests(TestCase):
+    def test_conversation_writes_do_not_authorize_template_management(self):
+        from apps.businesses.models import RolePermission
+        role = BusinessRole.objects.create(business=self.business, name="Conversation writer")
+        BusinessMember.objects.filter(business=self.business, user=self.support).update(business_role=role)
+        for action in ("view", "create", "update", "delete"):
+            RolePermission.objects.create(business_role=role, resource="conversations", action=action, scope="business")
+        RolePermission.objects.create(business_role=role, resource="conversations", action="manage", scope="none", is_allowed=False)
+        template = QuickReplyTemplate.objects.create(business=self.business, title="Saved", text="Reply")
+        self.api.force_authenticate(self.support)
+        self.assertEqual(self.api.post("/api/quick-replies/", {"business": self.business.pk, "title": "Forbidden", "text": "Reply"}, format="json").status_code, 403)
+        self.assertEqual(self.api.patch(f"/api/quick-replies/{template.pk}/", {"title": "Forbidden"}, format="json").status_code, 403)
+        self.assertEqual(self.api.delete(f"/api/quick-replies/{template.pk}/").status_code, 403)
+        template.refresh_from_db()
+        self.assertEqual(template.title, "Saved")
+
     def setUp(self):
         self.api = APIClient()
         self.owner = User.objects.create_user(username="qr-owner", email="qr-owner@example.com", password="pass")

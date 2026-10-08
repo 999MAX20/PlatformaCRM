@@ -8,6 +8,43 @@ from apps.businesses.models import BusinessMember
 from apps.core.models import CustomFieldDefinition, CustomFieldValue
 
 
+def custom_field_entity_access(*, actor, business, entity_type, entity_id, action="update"):
+    from django.apps import apps
+    from apps.businesses.access import Actions, Resources, assert_can
+    from apps.businesses.capabilities import assert_resource_enabled
+    from apps.core.permissions import user_can_access_business
+    from rest_framework.exceptions import PermissionDenied
+
+    entities = {
+        "client": ("clients.Client", Resources.CLIENTS),
+        "lead": ("leads.Lead", Resources.LEADS),
+        "deal": ("crm.Deal", Resources.DEALS),
+        "appointment": ("scheduling.Appointment", Resources.APPOINTMENTS),
+    }
+    if not user_can_access_business(actor, business):
+        raise PermissionDenied("Business is not available.")
+    if entity_type not in entities or not str(entity_id).isdigit() or not 0 < int(entity_id) <= 9223372036854775807 or str(entity_id) != str(int(entity_id)):
+        raise ValidationError({"entity_id": "CRM record is not available."})
+    model_name, resource = entities[entity_type]
+    entity = apps.get_model(model_name).objects.filter(business=business, pk=entity_id).first()
+    if entity is None:
+        raise ValidationError({"entity_id": "CRM record is not available."})
+    assert_resource_enabled(business, resource)
+    assert_can(actor, business, Resources.SETTINGS, Actions.VIEW)
+    assert_can(actor, business, resource, Actions.VIEW, obj=entity)
+    assert_can(actor, business, resource, action, obj=entity)
+    return entity
+
+
+def assert_custom_field_editable(definition, actor):
+    from rest_framework.exceptions import PermissionDenied
+
+    if not definition.is_active:
+        raise ValidationError({"definition": "Inactive fields cannot be edited."})
+    if not all(custom_field_role_allowed(definition, actor, action) for action in ("view", "edit")):
+        raise PermissionDenied("You cannot edit this custom field.")
+
+
 def custom_field_role_allowed(definition, user, action):
     roles = (definition.permissions_json or {}).get(f"{action}_roles") or []
     if not roles:
@@ -106,13 +143,14 @@ def _normalize_value(definition, value):
         return value
     if field_type in {CustomFieldDefinition.FieldTypes.NUMBER, CustomFieldDefinition.FieldTypes.MONEY}:
         return _normalize_decimal(value)
-    if field_type == CustomFieldDefinition.FieldTypes.DATE:
-        if not isinstance(value, str) or parse_date(value) is None:
-            raise ValidationError({"value_json": "Value must be an ISO date string."})
-        return value
-    if field_type == CustomFieldDefinition.FieldTypes.DATETIME:
-        if not isinstance(value, str) or parse_datetime(value) is None:
-            raise ValidationError({"value_json": "Value must be an ISO datetime string."})
+    if field_type in {CustomFieldDefinition.FieldTypes.DATE, CustomFieldDefinition.FieldTypes.DATETIME}:
+        parser = parse_date if field_type == CustomFieldDefinition.FieldTypes.DATE else parse_datetime
+        try:
+            valid = isinstance(value, str) and parser(value) is not None
+        except ValueError:
+            valid = False
+        if not valid:
+            raise ValidationError({"value_json": f"Value must be an ISO {field_type} string."})
         return value
     if field_type == CustomFieldDefinition.FieldTypes.SELECT:
         if not isinstance(value, str):

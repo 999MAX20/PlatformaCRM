@@ -1,7 +1,8 @@
 from django.db.models import Count
-from django.utils.dateparse import parse_datetime
+from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -17,7 +18,14 @@ from apps.core.serializers import AuditLogSerializer, LoginHistorySerializer, Su
 def _security_business(request):
     business_id = request.query_params.get("business") or request.data.get("business")
     businesses = accessible_businesses(request.user)
-    business = businesses.filter(id=business_id).first() if business_id else businesses.first()
+    if business_id is not None:
+        business_id = serializers.IntegerField(min_value=1).run_validation(business_id)
+        business = businesses.filter(id=business_id).first()
+    else:
+        candidates = list(businesses[:2])
+        if len(candidates) > 1:
+            raise ValidationError({"business": "Select a business."})
+        business = candidates[0] if candidates else None
     if not business:
         raise PermissionDenied("Business is required.")
     assert_can(request.user, business, Resources.AUDIT_LOGS, Actions.VIEW)
@@ -33,7 +41,7 @@ def _apply_audit_filters(queryset, request):
     date_from = request.query_params.get("date_from")
     date_to = request.query_params.get("date_to")
     if actor:
-        queryset = queryset.filter(actor_id=actor)
+        queryset = queryset.filter(actor_id=serializers.IntegerField(min_value=1).run_validation(actor))
     if entity_type:
         queryset = queryset.filter(entity_type=entity_type)
     if action:
@@ -43,11 +51,11 @@ def _apply_audit_filters(queryset, request):
     if category:
         queryset = queryset.filter(category=category)
     if date_from:
-        parsed = parse_datetime(date_from)
-        queryset = queryset.filter(created_at__gte=parsed or date_from)
+        parsed = serializers.DateTimeField().run_validation(date_from)
+        queryset = queryset.filter(created_at__gte=parsed)
     if date_to:
-        parsed = parse_datetime(date_to)
-        queryset = queryset.filter(created_at__lte=parsed or date_to)
+        parsed = serializers.DateTimeField().run_validation(date_to)
+        queryset = queryset.filter(created_at__lte=parsed)
     return queryset
 
 
@@ -80,7 +88,7 @@ def security_risk_summary(request):
     logs = AuditLog.objects.filter(business=business)
     log_counts = {row["risk_level"]: row["count"] for row in logs.values("risk_level").annotate(count=Count("id"))}
     failed_logins = LoginHistory.objects.filter(business=business, status=LoginHistory.Statuses.FAILED).count()
-    active_support_grants = SupportAccessGrant.objects.filter(business=business, is_active=True).count()
+    active_support_grants = SupportAccessGrant.objects.filter(business=business, is_active=True, expires_at__gt=timezone.now()).count()
     return Response(
         {
             "business": business.id,
@@ -102,7 +110,7 @@ class SupportAccessGrantViewSet(ModelViewSet):
         queryset = self.queryset.filter(business_id__in=allowed_ids)
         business_id = self.request.query_params.get("business")
         if business_id:
-            queryset = queryset.filter(business_id=business_id)
+            queryset = queryset.filter(business_id=serializers.IntegerField(min_value=1).run_validation(business_id))
         return queryset
 
     def perform_create(self, serializer):

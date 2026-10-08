@@ -293,6 +293,12 @@ class AppointmentMessageSettingViewSet(TenantModelViewSet):
     queryset = AppointmentMessageSetting.objects.select_related("business")
     serializer_class = AppointmentMessageSettingSerializer
     access_resource = Resources.SETTINGS
+    http_method_names = ["get", "patch", "head", "options"]
+
+    def perform_update(self, serializer):
+        from apps.scheduling.message_settings import update_appointment_message_setting
+        self._enforce_business_access(serializer)
+        serializer.instance = update_appointment_message_setting(request=self.request, setting=serializer.instance, changes=serializer.validated_data)
 
     def list(self, request, *args, **kwargs):
         business_id = request.query_params.get("business")

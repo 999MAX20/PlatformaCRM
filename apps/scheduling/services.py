@@ -367,8 +367,9 @@ def apply_appointment_status(
     activity_metadata=None,
     activity_source="api",
 ):
+    Business.objects.select_for_update().get(pk=appointment.business_id)
     appointment = (
-        Appointment.objects.select_for_update()
+        Appointment.objects.select_for_update(of=("self",))
         .select_related("business", "client", "lead", "lead__responsible_user", "service", "resource", "resource__linked_user")
         .get(pk=appointment.pk)
     )
@@ -550,8 +551,14 @@ def _appointment_follow_up_task_spec(appointment, *, reason=""):
 
 
 def notify_appointment_responsible(appointment, text, *, actor=None, priority=None):
+    from apps.notifications.routing import filter_notification_recipients
+
     recipient = appointment_responsible_user(appointment, actor=actor)
     if recipient is None:
+        return None
+    priority = priority or Notification.Priorities.NORMAL
+    if not filter_notification_recipients(business=appointment.business, users=[recipient],
+                                         category=Notification.Categories.SALES, priority=priority):
         return None
     return Notification.objects.create(
         business=appointment.business,
@@ -560,7 +567,7 @@ def notify_appointment_responsible(appointment, text, *, actor=None, priority=No
         appointment=appointment,
         channel=Notification.Channels.SYSTEM,
         category=Notification.Categories.SALES,
-        priority=priority or Notification.Priorities.NORMAL,
+        priority=priority,
         text=text,
         send_at=timezone.now(),
         status=Notification.Statuses.PENDING,
@@ -608,95 +615,70 @@ def run_appointment_completed_automations(appointment):
     )
 
 
+@transaction.atomic
 def schedule_appointment_followups(appointment, *, responsible_user=None):
+    Business.objects.select_for_update().get(pk=appointment.business_id)
+    appointment = Appointment.objects.select_related("business", "client", "service", "resource", "lead", "lead__responsible_user").get(pk=appointment.pk)
     if appointment.status in {Appointment.Statuses.CANCELLED, Appointment.Statuses.COMPLETED, Appointment.Statuses.NO_SHOW}:
         return []
 
     cancel_appointment_followups(appointment)
-    now = timezone.now()
     notifications = []
-    system_recipient = responsible_user or appointment_responsible_user(appointment)
-    for kind, label, send_at, text, channel in _appointment_followup_specs(appointment):
-        if send_at <= now:
-            send_at = now + timedelta(minutes=5)
-        recipient = None if channel != Notification.Channels.SYSTEM else system_recipient
-        notifications.append(
-            Notification.objects.create(
-                business=appointment.business,
-                recipient=recipient,
-                client=appointment.client,
-                appointment=appointment,
-                channel=channel,
-                category=Notification.Categories.SALES,
-                priority=Notification.Priorities.HIGH if kind == "confirmation" else Notification.Priorities.NORMAL,
-                text=text,
-                send_at=send_at,
-                status=Notification.Statuses.PENDING,
-                action_url=f"/app/calendar?appointment={appointment.id}",
-                action_label=label,
-            )
-        )
+    for scenario in [AppointmentMessageSetting.Scenarios.CONFIRMATION, AppointmentMessageSetting.Scenarios.REMINDER]:
+        notification = queue_appointment_message(appointment, get_appointment_message_setting(appointment.business, scenario), responsible_user=responsible_user)
+        if notification is not None:
+            notifications.append(notification)
     return notifications
 
 
+@transaction.atomic
 def schedule_post_service_followup(appointment, *, responsible_user=None):
+    Business.objects.select_for_update().get(pk=appointment.business_id)
+    appointment = Appointment.objects.select_related("business", "client", "service", "resource", "lead", "lead__responsible_user").get(pk=appointment.pk)
     if appointment.status != Appointment.Statuses.COMPLETED:
         return None
     setting = get_appointment_message_setting(appointment.business, AppointmentMessageSetting.Scenarios.THANK_YOU)
-    if not setting.is_enabled:
-        return None
+    from apps.scheduling.message_settings import UNFINISHED_DELIVERY_STATUSES
     Notification.objects.filter(
         business=appointment.business,
         appointment=appointment,
-        status=Notification.Statuses.PENDING,
-        action_label=APPOINTMENT_THANK_YOU_LABEL,
-    ).update(status=Notification.Statuses.CANCELLED, updated_at=timezone.now())
-
-    channel = _appointment_notification_channel(appointment.client, setting.channel_policy)
-    recipient = None if channel != Notification.Channels.SYSTEM else (responsible_user or appointment_responsible_user(appointment))
-    send_at = max(timezone.now() + timedelta(minutes=5), appointment.end_at + timedelta(minutes=setting.offset_minutes))
-    return Notification.objects.create(
-        business=appointment.business,
-        recipient=recipient,
-        client=appointment.client,
-        appointment=appointment,
-        channel=channel,
-        category=Notification.Categories.SALES,
-        priority=Notification.Priorities.NORMAL,
-        text=render_appointment_message(appointment, setting.template_text),
-        send_at=send_at,
-        status=Notification.Statuses.PENDING,
-        action_url=f"/app/calendar?appointment={appointment.id}",
-        action_label=APPOINTMENT_THANK_YOU_LABEL,
-    )
+        status__in=UNFINISHED_DELIVERY_STATUSES,
+        action_label__in=[APPOINTMENT_THANK_YOU_LABEL, setting.label],
+    ).update(status=Notification.Statuses.CANCELLED, next_retry_at=None, locked_at=None, updated_at=timezone.now())
+    return queue_appointment_message(appointment, setting, responsible_user=responsible_user)
 
 
 def cancel_appointment_followups(appointment):
+    from apps.scheduling.message_settings import UNFINISHED_DELIVERY_STATUSES
     labels = {APPOINTMENT_CONFIRMATION_LABEL, APPOINTMENT_REMINDER_LABEL, APPOINTMENT_THANK_YOU_LABEL}
+    labels.update(appointment.business.appointment_message_settings.values_list("label", flat=True))
     return Notification.objects.filter(
         business=appointment.business,
         appointment=appointment,
-        status=Notification.Statuses.PENDING,
+        status__in=UNFINISHED_DELIVERY_STATUSES,
         action_label__in=labels,
-    ).update(status=Notification.Statuses.CANCELLED, updated_at=timezone.now())
+    ).update(status=Notification.Statuses.CANCELLED, next_retry_at=None, locked_at=None, updated_at=timezone.now())
 
 
-def _appointment_followup_specs(appointment):
-    specs = []
-    for scenario in [AppointmentMessageSetting.Scenarios.CONFIRMATION, AppointmentMessageSetting.Scenarios.REMINDER]:
-        setting = get_appointment_message_setting(appointment.business, scenario)
-        if not setting.is_enabled:
-            continue
-        specs.append(
-            (
-                scenario,
-                setting.label,
-                appointment.start_at + timedelta(minutes=setting.offset_minutes),
-                render_appointment_message(appointment, setting.template_text),
-                _appointment_notification_channel(appointment.client, setting.channel_policy),
-            )
-        )
-    return specs
+def queue_appointment_message(appointment, setting, *, responsible_user=None):
+    from apps.notifications.routing import filter_notification_recipients
+
+    if not setting.is_enabled:
+        return None
+    channel = _appointment_notification_channel(appointment.client, setting.channel_policy)
+    recipient = None if channel != Notification.Channels.SYSTEM else (responsible_user or appointment_responsible_user(appointment))
+    priority = Notification.Priorities.HIGH if setting.scenario == "confirmation" else Notification.Priorities.NORMAL
+    if recipient is not None and not filter_notification_recipients(business=appointment.business, users=[recipient], category=Notification.Categories.SALES, priority=priority):
+        return None
+    anchor = appointment.end_at if setting.scenario == "thank_you" else appointment.start_at
+    return Notification.objects.create(
+        business=appointment.business, recipient=recipient, client=appointment.client, appointment=appointment,
+        channel=channel, category=Notification.Categories.SALES, priority=priority,
+        text=render_appointment_message(appointment, setting.template_text),
+        send_at=max(timezone.now() + timedelta(minutes=5), anchor + timedelta(minutes=setting.offset_minutes)),
+        status=Notification.Statuses.PENDING, action_url=f"/app/calendar?appointment={appointment.id}",
+        action_label=APPOINTMENT_MESSAGE_DEFAULTS[setting.scenario]["label"],
+    )
 
 
 def ensure_appointment_message_settings(business):
@@ -759,15 +741,8 @@ def _appointment_notification_channel(client, channel_policy):
 
 
 def _preferred_client_channel(client):
-    if client.telegram_id:
-        return Notification.Channels.TELEGRAM
-    if client.whatsapp_id:
-        return Notification.Channels.WHATSAPP
-    if client.email:
-        return Notification.Channels.EMAIL
-    if client.phone:
-        return Notification.Channels.SMS
-    return Notification.Channels.SYSTEM
+    from apps.notifications.channels import preferred_client_delivery_channel
+    return preferred_client_delivery_channel(client)
 
 
 class _SafeFormatDict(dict):

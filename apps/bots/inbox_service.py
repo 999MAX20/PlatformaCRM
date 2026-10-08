@@ -71,7 +71,13 @@ def register_bot_message(message, actor=None):
 
 
 def create_inbound_message_notifications(conversation, message):
-    recipients = _chat_notification_recipients(conversation)
+    from apps.notifications.routing import filter_notification_recipients
+
+    priority = Notification.Priorities.HIGH if conversation.handoff_required else Notification.Priorities.NORMAL
+    recipients = filter_notification_recipients(
+        business=conversation.business, users=_chat_notification_recipients(conversation),
+        category=Notification.Categories.SALES, priority=priority,
+    )
     if not recipients:
         return []
 
@@ -87,7 +93,7 @@ def create_inbound_message_notifications(conversation, message):
             client=conversation.client,
             channel=Notification.Channels.SYSTEM,
             category=Notification.Categories.SALES,
-            priority=Notification.Priorities.HIGH if conversation.handoff_required else Notification.Priorities.NORMAL,
+            priority=priority,
             text=f"Новое сообщение в {channel}: {title} — {preview}",
             send_at=now,
             status=Notification.Statuses.PENDING,

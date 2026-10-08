@@ -1,6 +1,7 @@
 import { apiClient, unwrapList } from "./client";
 import type { PaginatedResponse } from "./client";
 import type { BusinessInvitation, BusinessMembershipSummary, BusinessRole, Id, RolePermission, TeamDepartment, TeamMember } from "../types";
+import { createCrudApi } from "./crud";
 
 export type PermissionCatalog = {
   resources: { resource: string; actions: string[] }[];
@@ -8,6 +9,10 @@ export type PermissionCatalog = {
 };
 
 export const teamApi = {
+  allMembers: (business?: Id) => createCrudApi<TeamMember>("/api/team/members/").listAll({ business }),
+  allRoles: (business?: Id) => createCrudApi<BusinessRole>("/api/team/roles/").listAll({ business }),
+  allInvitations: (business?: Id) => createCrudApi<BusinessInvitation>("/api/team/invitations/").listAll({ business }),
+  allDepartments: (business?: Id) => createCrudApi<TeamDepartment>("/api/team/departments/").listAll({ business }),
   members: async (business?: Id) => {
     const { data } = await apiClient.get<TeamMember[] | PaginatedResponse<TeamMember>>("/api/team/members/", {
       params: business ? { business } : undefined,
@@ -68,6 +73,10 @@ export const teamApi = {
   },
   updatePermission: async ({ id, payload }: { id: Id; payload: Partial<RolePermission> }) => {
     const { data } = await apiClient.patch<RolePermission>(`/api/team/role-permissions/${id}/`, payload);
+    return data;
+  },
+  updateVisibility: async ({ id, permission_ids, scope }: { id: Id; permission_ids: Id[]; scope: RolePermission["scope"] }) => {
+    const { data } = await apiClient.post<BusinessRole>(`/api/team/roles/${id}/visibility/`, { permission_ids, scope });
     return data;
   },
   departments: async (business?: Id) => {

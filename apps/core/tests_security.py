@@ -59,6 +59,26 @@ class SecurityCenterTests(APITestCase):
         forbidden = self.client.get("/api/security/audit/", {"business": self.business.id})
         self.assertEqual(forbidden.status_code, 403)
 
+    def test_summary_excludes_expired_or_disabled_support_grants(self):
+        for active, delta in ((True, -1), (False, 1), (True, 1)):
+            SupportAccessGrant.objects.create(business=self.business, user=self.support, is_active=active, reason="Settings check", expires_at=timezone.now() + timezone.timedelta(days=delta))
+        self.client.force_authenticate(self.owner)
+        response = self.client.get("/api/security/risk-summary/", {"business": self.business.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["active_support_grants"], 1)
+
+    def test_security_rejects_ambiguous_business_and_invalid_filters(self):
+        second = Business.objects.create(owner=self.owner, name="Second", slug="security-second")
+        self.client.force_authenticate(self.owner)
+        for endpoint in ("audit", "risk-summary", "login-history"):
+            url = f"/api/security/{endpoint}/"
+            self.assertEqual(self.client.get(url).status_code, 400)
+            self.assertEqual(self.client.get(url, {"business": "invalid"}).status_code, 400)
+            response = self.client.get(url, {"business": second.pk})
+            self.assertEqual(response.status_code, 200)
+        for query in ({"actor": "invalid"}, {"date_from": "invalid"}, {"date_to": "invalid"}):
+            self.assertEqual(self.client.get("/api/security/audit/", {"business": self.business.pk, **query}).status_code, 400)
+
     def test_login_history_response_masks_secret_metadata_and_user_agent(self):
         self.client.force_authenticate(self.owner)
 

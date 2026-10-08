@@ -16,7 +16,6 @@ export const accessGroups = [
   { key: "tasks", resources: ["tasks"] },
   { key: "analytics", resources: ["analytics"] },
   { key: "settings", resources: ["settings"] },
-  { key: "export", resources: ["billing"] },
   { key: "security", resources: ["team", "audit_logs"] },
 ];
 
@@ -70,7 +69,6 @@ export const appointmentChannelOptions = [
   { value: "telegram", labelKey: "settings.appointmentMessages.channel.telegram" },
   { value: "whatsapp", labelKey: "settings.appointmentMessages.channel.whatsapp" },
   { value: "email", labelKey: "settings.appointmentMessages.channel.email" },
-  { value: "sms", labelKey: "settings.appointmentMessages.channel.sms" },
   { value: "system", labelKey: "settings.appointmentMessages.channel.system" },
 ];
 

@@ -251,6 +251,15 @@ class AppointmentStatusReasonSerializer(serializers.Serializer):
 
 
 class AppointmentMessageSettingSerializer(serializers.ModelSerializer):
+    available_channels = serializers.SerializerMethodField()
+
+    def get_available_channels(self, obj):
+        from apps.notifications.channels import available_appointment_channels
+        cache = self.context.setdefault("appointment_channels", {})
+        if obj.business_id not in cache:
+            cache[obj.business_id] = available_appointment_channels(obj.business)
+        return cache[obj.business_id]
+
     class Meta:
         model = AppointmentMessageSetting
         fields = [
@@ -262,10 +271,27 @@ class AppointmentMessageSettingSerializer(serializers.ModelSerializer):
             "offset_minutes",
             "channel_policy",
             "template_text",
+            "available_channels",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["created_at", "updated_at"]
+        read_only_fields = ["business", "scenario", "label", "created_at", "updated_at"]
+
+    def validate_template_text(self, value):
+        from string import Formatter
+        allowed = {"business_name", "client_name", "service_name", "resource_name", "resource_text", "date", "time", "end_time", "address", "address_text"}
+        try:
+            for _, field, spec, conversion in Formatter().parse(value):
+                if field is not None and (field not in allowed or spec or conversion):
+                    raise ValueError()
+        except ValueError:
+            raise serializers.ValidationError("Use supported placeholders without formatting or attribute access.")
+        return value
+
+    def validate_channel_policy(self, value):
+        if value == AppointmentMessageSetting.ChannelPolicies.SMS:
+            raise serializers.ValidationError("SMS delivery is not available. Select another channel.")
+        return value
 
     def validate(self, attrs):
         offset_minutes = attrs.get("offset_minutes", getattr(self.instance, "offset_minutes", 0))
@@ -276,6 +302,10 @@ class AppointmentMessageSettingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Thank-you offset must be after appointment end.")
         if abs(offset_minutes) > 60 * 24 * 30:
             raise serializers.ValidationError("offset_minutes is too large.")
+        policy = attrs.get("channel_policy", getattr(self.instance, "channel_policy", "auto"))
+        enabled = attrs.get("is_enabled", getattr(self.instance, "is_enabled", True))
+        if self.instance and enabled and policy not in self.get_available_channels(self.instance):
+            raise serializers.ValidationError({"channel_policy": "This delivery channel is unavailable. Configure it or select another channel."})
         return attrs
 
 

@@ -45,8 +45,35 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
             roles = value.get(key) or []
             if not isinstance(roles, list):
                 raise serializers.ValidationError(f"{key} must be a list.")
-            normalized[key] = [str(role).strip() for role in roles if str(role).strip()]
+            from apps.businesses.models import BusinessMember
+            if any(not isinstance(role, str) or role not in BusinessMember.Roles.values for role in roles):
+                raise serializers.ValidationError(f"{key} contains an unknown membership role.")
+            normalized[key] = list(dict.fromkeys(roles))
         return normalized
+
+    def validate_options_json(self, value):
+        if not isinstance(value, dict) or not isinstance(value.get("options", []), list):
+            raise serializers.ValidationError("Options must be an object containing an options list.")
+        seen = set()
+        for option in value.get("options", []):
+            key = option.get("value", option.get("key", option.get("label"))) if isinstance(option, dict) else option
+            if not isinstance(key, str) or not key.strip() or key in seen:
+                raise serializers.ValidationError("Options must have unique, non-empty string values.")
+            seen.add(key)
+        return value
+
+    def validate(self, attrs):
+        if self.instance and self.instance.values.exists():
+            for key in ("entity_type", "key", "field_type"):
+                if key in attrs and attrs[key] != getattr(self.instance, key):
+                    raise serializers.ValidationError({key: "Cannot change this property after values have been saved."})
+            if "options_json" in attrs:
+                from copy import copy
+                candidate = copy(self.instance)
+                candidate.options_json = attrs["options_json"]
+                for saved in self.instance.values.all():
+                    validate_custom_field_value(definition=candidate, value_json=saved.value_json)
+        return attrs
 
 
 class CustomFieldValueSerializer(serializers.ModelSerializer):
@@ -72,6 +99,10 @@ class CustomFieldValueSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Definition must belong to the selected business.")
         if definition and entity_type and definition.entity_type != entity_type:
             raise serializers.ValidationError("Definition entity_type must match value entity_type.")
+        if self.instance:
+            for key in ("definition", "entity_type", "entity_id"):
+                if key in attrs and attrs[key] != getattr(self.instance, key):
+                    raise serializers.ValidationError({key: "Value identity cannot be changed."})
         if definition and "value_json" in attrs:
             attrs["value_json"] = validate_custom_field_value(definition=definition, value_json=attrs.get("value_json"))
         return attrs

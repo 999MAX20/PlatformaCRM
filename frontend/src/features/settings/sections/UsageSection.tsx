@@ -1,4 +1,7 @@
 import { Card, CardBody } from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
+import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
+import { getApiErrorMessage } from "../../../api/client";
 import type { EntitlementSummaryItem, UsageSummaryItem } from "../../../types";
 import type { Translate } from "../settingsUtils";
 
@@ -6,6 +9,9 @@ type UsageSectionProps = {
   className: string;
   formatMetric: (metric: string, t: Translate) => string;
   isLoading: boolean;
+  error: unknown;
+  onRetry: () => void;
+  locale: string;
   items: Array<EntitlementSummaryItem | UsageSummaryItem>;
   t: Translate;
 };
@@ -14,6 +20,9 @@ export function UsageSection({
   className,
   formatMetric,
   isLoading,
+  error,
+  onRetry,
+  locale,
   items,
   t,
 }: UsageSectionProps) {
@@ -31,11 +40,11 @@ export function UsageSection({
             {t("settings.usageText")}
           </p>
         </div>
-        <div className="grid gap-3 md:grid-cols-4">
+        {isLoading ? <LoadingState /> : error ? <ErrorState error={error} message={getApiErrorMessage(error)} action={<Button type="button" variant="secondary" onClick={onRetry}>{t("common.retry")}</Button>} /> : <div className="grid gap-3 md:grid-cols-4">
           {items.map((item) => {
-            const percent = item.limit
+            const percent = item.limit && item.limit > 0
               ? Math.min(100, Math.round((item.value / item.limit) * 100))
-              : 0;
+              : item.value > 0 ? 100 : 0;
             return (
               <div
                 key={item.metric}
@@ -45,19 +54,20 @@ export function UsageSection({
                   {formatMetric(item.metric, t)}
                 </p>
                 <p className="mt-2 text-2xl font-bold text-platforma-text">
-                  {item.value}
+                  {item.value.toLocaleString(locale, { maximumFractionDigits: 2 })}
                   <span className="text-sm font-semibold text-platforma-faint">
                     {" "}
-                    / {item.limit ?? "в€ћ"}
+                    / {item.limit === null ? t("settings.unlimited") : item.limit.toLocaleString(locale)}
                   </span>
                 </p>
-                <div className="mt-3 h-2 rounded-full bg-surface-card">
+                <p className="mt-1 text-xs text-platforma-subtle">{item.period_kind === "month" && item.period_start ? t("settings.usageMonth", { month: new Date(item.period_start).toLocaleDateString(locale, { month: "long", year: "numeric", timeZone: "UTC" }) }) : t("settings.usageCurrent")}</p>
+                {item.limit !== null ? <div className="mt-3 h-2 rounded-full bg-surface-card" role="progressbar" aria-label={formatMetric(item.metric, t)} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}>
                   <div
                     className="h-2 rounded-full bg-ai-gradient"
-                    style={{ width: `${item.limit ? percent : 8}%` }}
+                    style={{ width: `${percent}%` }}
                   />
-                </div>
-                {item.is_over_limit ? (
+                </div> : null}
+                {item.limit !== null && item.value >= item.limit ? (
                   <p className="mt-2 text-xs font-semibold text-platforma-danger">
                     {t("settings.limitReached")}
                   </p>
@@ -73,7 +83,7 @@ export function UsageSection({
           {!isLoading && !items.length ? (
             <p className="text-sm text-platforma-subtle">{t("settings.noUsage")}</p>
           ) : null}
-        </div>
+        </div>}
       </CardBody>
     </Card>
   );

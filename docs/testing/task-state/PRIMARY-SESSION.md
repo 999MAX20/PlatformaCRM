@@ -1,5 +1,125 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## SETTINGS-FUNCTIONAL-20261008 — functional settings completion
+
+Owner-authorized scope transferred by the read-only settings audit task after Inbox
+completion: all ten existing settings sections, no cosmetic redesign/new navigation.
+Generation 4 primary; canonical root and branch unchanged. Clean starting snapshot
+`33b316d9cfdb44aab2601ddedbb9830f5fb6b4d4`. Mode: domain/API/frontend corrections and
+source-backed evidence. Reuse existing settings, role permissions, tenant scoping,
+notification scheduling/delivery, billing metadata, API clients and shared controls.
+Trace each setting/action through UI, API, storage, runtime consumer, permission and
+verification. Retain working controls; fix broken behavior; make reference-only
+metadata honest; remove inert editing without deleting saved data. Cover business,
+team, roles, security, appointment messages, personal notifications, quick replies,
+billing, usage and custom fields. Preserve approved specialist/history semantics,
+role presets, financial-source choices and provider/AI development boundaries.
+No new billing provider, quotas, commercial policy, lifecycle/permission framework,
+clinical behavior, schema or paid/external calls; no working-DB migration/seed/reset.
+Risks: wrong-tenant reads/writes, partial permission changes, stale notification jobs,
+misleading saved settings, hidden permission denial and stale form/cache state.
+Checks: focused isolated backend tests after each coherent service/API correction,
+before dependent UI; then affected/dependent suites, system/migration checks,
+targeted reachable desktop/mobile and RU/KK/EN UI flows, final frontend build/types.
+Use mocks for external delivery and disposable databases. No full local release
+suite without demonstrated need. Record registry/evidence, review explicit paths,
+normal-push verified change to main and inspect actual CI. Initial next step:
+selected-business billing resolution and atomic role visibility changes.
+
+Local completion 09.10: all ten sections are mapped in the registered
+[settings evidence](../settings-functional-20261008.md). Selected-business queries,
+atomic role scopes preserving grants, actual membership checks, security counters,
+notification preferences and delivery readiness/reconciliation are corrected.
+Reference-only settings preserve stored metadata without promising runtime behavior.
+Custom definitions/values enforce tenant, entity access, role, types and retention;
+card controls preserve typed arrays/booleans and untouched values. Forms retain drafts
+and show real loading/error/recovery states. Appointment input overflow found during
+visual inspection was corrected and verified at desktop/mobile widths.
+
+Verification uses the existing dependencies and `scripts.codex_verify.isolated_runtime`
+through the ignored helpers in `output/settings-functional-20261008/`. Commands:
+`.venv/Scripts/python.exe output/settings-functional-20261008/verify_backend.py <labels>`;
+logs below are relative to that directory. Evidence is reused only for unchanged inputs.
+- `apps.billing.tests_settings_scope apps.billing.tests.BillingFoundationTests`:
+  20 PASS, `backend-1791483108063750200.log` (selected business, denial, invalid
+  metadata, audit rollback, current/monthly usage); unchanged since that run.
+- `apps.businesses.tests_access.TeamAccessTests apps.businesses.tests_role_visibility
+  apps.businesses.tests_settings_team`: 40 PASS,
+  `backend-1791483005594091600.log`; `apps.businesses.tests_settings_team`: 4 PASS,
+  `backend-1791483180228940500.log`.
+- `apps.core.tests_security`: 13 PASS, `backend-1791483348303765700.log`.
+- `apps.scheduling.tests_settings_delivery apps.notifications.tests`: 26 PASS,
+  `backend-1791484223189422400.log`; `apps.notifications.tests_settings_preferences`: 4 PASS,
+  `backend-1791484923598116500.log`.
+- Broad affected run `apps.scheduling apps.notifications apps.billing
+  apps.businesses.tests_access apps.businesses.tests_member_deactivation
+  apps.businesses.tests_role_visibility apps.businesses.tests_settings_team
+  apps.core.tests_security apps.core.tests_custom_fields
+  apps.conversations.tests_quick_replies`: 200/202 passed,
+  `backend-1791485572718350100.log`. Two legacy Telegram fixtures had client IDs
+  but no ready channel; fixtures were completed with enabled/active synthetic
+  transport, without weakening channel expectations. `apps.scheduling.tests`:
+  49 PASS, `backend-1791485937050184400.log`.
+- Later queue-lock + extended-field run `apps.scheduling.tests_settings_delivery
+  apps.scheduling.tests apps.notifications apps.core.tests_custom_fields`:
+  99/100 passed, `backend-1791486206843899800.log`; the new reschedule test needed
+  a staff Resource under the existing booking contract. Fixture corrected.
+- Final `apps.scheduling.tests_settings_delivery apps.businesses.tests_role_visibility
+  apps.businesses.tests_settings_team apps.core.tests_api_contracts`: 25 PASS,
+  `backend-1791486447962966600.log`, covering final lock changes and corrected
+  reschedule/cancel fixture. Earlier failed runs are not labelled whole-suite PASS.
+- Final `apps.core.tests_custom_fields apps.core.tests_crm_projection_access`:
+  41 PASS, `backend-1791487029812351200.log`, including invalid calendar dates,
+  explicit business selectors, scope/role denial, typed data and audit rollback.
+
+Browser command:
+`.venv/Scripts/python.exe output/settings-functional-20261008/verify_ui.py <project> settings-functional.spec.ts [--grep ...]`.
+Eleven distinct scenarios are verified on desktop and mobile, using real local APIs,
+disposable fixtures and injected 503 only for recovery. RU/KK/EN all ten sections,
+profile persistence/invalid timezone, appointment drafts, preference load recovery,
+custom definition/card/deactivate, billing metadata/plan preference, atomic visibility,
+quick reply to Inbox draft, and manual invitation/revoke/department/login toggle.
+- Desktop profile passed in `browser-1791486217224581800.log`; preferences passed
+  in `browser-1791486508651367200.log`. Those runs subsequently stopped on unrelated
+  test-selector errors, retained in the logs. Corrected appointment/card tests passed
+  later; the failures are not product acceptance exceptions.
+- Desktop billing/role/quick-reply/team: 4 PASS, `browser-1791486967464559000.log`.
+- Final desktop locales/appointment/custom fields: 5 PASS,
+  `browser-1791487275581052600.log`, including edit-role picker, required metadata
+  read-only state and label edit retaining object-based choice labels.
+- Mobile complete run: 11 PASS, `browser-1791487071203693200.log`; final extended
+  custom-field flow: 1 PASS, `browser-1791487365894026900.log`.
+- Custom-card checkbox selector was scoped to its field group so retained fields
+  from a previous run do not collide. Desktop `--grep 'custom definition'
+  --repeat-each=2`: 2 PASS, `browser-1791487662533786100.log` on the same disposable DB.
+- Harness fixes used the actual client drawer route, localized MiB label and the
+  Select's accessible name including its selected value. Initial raw-key assertion
+  matched concatenated English prose; narrowed to actual leaf text. No required
+  behavior/assertion was removed. Reviewed screenshots include desktop business,
+  appointment cards and mobile RU appointment/KK custom fields; final desktop
+  RU/KK/EN screenshots are in the last desktop run.
+
+`.venv/Scripts/python.exe output/settings-functional-20261008/verify_frontend.py`:
+`npm run build` (i18n, TypeScript, app, widget) and `npm run check:bundle` PASS,
+`frontend-isolated-final.log`. Isolated `manage.py check` and
+`manage.py makemigrations --check --dry-run` passed 08.10 19:12 UTC; later field
+value validation did not change models/configuration. No schema changes detected.
+Full local release/E2E gate skipped under proportional affected-scope verification.
+SQLite and mocks do not certify PostgreSQL lock contention or live provider delivery.
+No working-DB writes/migrations, dependency installs, external messages, payments,
+paid AI calls, notification categories, BusinessEvents or new permission framework.
+An already-started provider request cannot be recalled; a revoked claim stays revoked.
+
+Working diff, 57 intended changed/new paths, Markdown links, registry JSON and
+credential-shaped-content review PASS. Publication uses a conventional Settings
+commit and normal push to main; exact commit/remote readback and actual CI receipt
+are reported in the task completion message. Base Inbox commit `33b316d9` CI
+completed successfully (run `37819153554`). Fetch/readback
+confirmed actual remote main still equals that base; the limited local fetch refspec
+required explicitly refreshing `refs/remotes/origin/main`. No conflicting writer.
+The separate docs architecture task `01a0f32f-7d02-7263-a53d-496c8f9787f5` remains
+read-only while Settings verification/publication completes; no write lease yet.
+
 ## INBOX-RELINK-20261008 — confirmed client replacement
 
 Owner approved and requested implementation of the described confirmation dialog.

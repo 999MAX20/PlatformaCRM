@@ -118,8 +118,9 @@ export type UsageSummaryItem = {
   limit_bytes?: number | null;
   is_limited: boolean;
   is_over_limit: boolean;
-  period_start?: string;
-  period_end?: string;
+  period_kind?: "month" | "current";
+  period_start?: string | null;
+  period_end?: string | null;
 };
 
 export type EntitlementSummaryItem = {
@@ -130,6 +131,10 @@ export type EntitlementSummaryItem = {
   is_limited: boolean;
   is_over_limit: boolean;
   plan_code: string | null;
+  period_kind?: "month" | "current";
+  period_start?: string | null;
+  period_end?: string | null;
+  unit?: "MiB" | "count";
 };
 
 export type PlatformOperationsSummary = {
@@ -1010,6 +1015,7 @@ export type Appointment = {
 };
 
 export type AppointmentMessageSetting = {
+  available_channels?: string[];
   id: Id;
   business: Id;
   scenario: "confirmation" | "reminder" | "thank_you";
@@ -1533,7 +1539,7 @@ export type CustomFieldDefinition = {
     | "phone"
     | "email"
     | "url";
-  options_json: { options?: string[] } & Record<string, unknown>;
+  options_json: { options?: Array<string | { value?: string; key?: string; label?: string }> } & Record<string, unknown>;
   permissions_json: { view_roles?: string[]; edit_roles?: string[] } & Record<string, unknown>;
   is_required: boolean;
   is_active: boolean;
@@ -1556,6 +1562,7 @@ export type CustomFieldValue = {
 export type CrmCardCustomField = {
   definition: CustomFieldDefinition;
   value: CustomFieldValue | null;
+  can_edit?: boolean;
 };
 
 export type AutomationRule = {

@@ -33,14 +33,9 @@ def increment_usage(business, metric, amount=1):
 
 def check_limit(business, metric):
     period_start, period_end = current_period()
-    counter = UsageCounter.objects.filter(
-        business=business,
-        period_start=period_start,
-        period_end=period_end,
-        metric=metric,
-    ).first()
-    value = counter.value if counter else 0
     entitlement = check_entitlement(business, metric, requested=0)
+    value = entitlement.value
+    is_monthly = metric in {UsageCounter.Metrics.AI_REQUESTS, UsageCounter.Metrics.BOT_MESSAGES, UsageCounter.Metrics.CONVERSATIONS}
     limit = entitlement.limit
     return {
         "metric": metric,
@@ -48,8 +43,9 @@ def check_limit(business, metric):
         "limit": limit,
         "is_limited": limit is not None,
         "is_over_limit": bool(limit is not None and value >= int(limit)),
-        "period_start": period_start,
-        "period_end": period_end,
+        "period_kind": "month" if is_monthly else "current",
+        "period_start": period_start if is_monthly else None,
+        "period_end": period_end if is_monthly else None,
     }
 
 

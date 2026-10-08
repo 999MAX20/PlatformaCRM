@@ -1,4 +1,5 @@
 from django.utils import timezone
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from rest_framework import serializers
 
 from apps.accounts.models import User
@@ -24,6 +25,13 @@ class BusinessSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["owner", "created_at", "updated_at"]
     read_only_fields = ["owner", "created_at", "updated_at"]
+
+    def validate_timezone(self, value):
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError):
+            raise serializers.ValidationError("Select a valid IANA time zone.")
+        return value
 
     def validate(self, attrs):
         connector = attrs.get("financial_connector", getattr(self.instance, "financial_connector", None))
@@ -179,6 +187,11 @@ class BusinessRoleSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["created_at", "updated_at"]
+
+
+class RoleVisibilitySerializer(serializers.Serializer):
+    permission_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), allow_empty=False, max_length=500)
+    scope = serializers.ChoiceField(choices=RolePermission.Scopes.choices)
 
 
 class RolePresetSerializer(serializers.ModelSerializer):

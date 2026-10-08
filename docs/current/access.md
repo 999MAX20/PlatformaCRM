@@ -34,6 +34,14 @@ Business type — метаданные, не автоматическое скр
 агрегаты, AI и автоматизации. Выключение не удаляет данные; повторное включение
 возвращает доступ согласно текущим правам. Settings изменения требуют своих прав.
 
+Кнопки области видимости роли меняют только scope выбранных существующих permissions
+одним атомарным действием `team:manage`; `is_allowed` каждого действия сохраняется.
+NONE не стирает набор разрешённых действий. Управление определениями custom fields
+требует `settings:update`; запись значения также требует доступа VIEW/UPDATE к самой
+CRM-сущности и разрешённой роли поля. Списки значений ограничиваются объектным scope.
+Право менять обычные сообщения не заменяет `conversations:manage` для общих быстрых
+ответов. Реестр и граница проверки — [Settings evidence](../testing/settings-functional-20261008.md).
+
 Код: [tenant viewsets](../../apps/core/viewsets.py),
 [capabilities](../../apps/businesses/capabilities.py),
 [CRM projections](../../apps/core/crm_cards.py).

@@ -136,6 +136,10 @@ def _custom_field_payload(business, *, actor, client=None, lead=None, deal=None,
     entity_type, entity_id = _custom_field_entity(client=client, lead=lead, deal=deal, appointment=appointment)
     if not entity_type or not entity_id or not can(actor, business, Resources.SETTINGS, Actions.VIEW).allowed:
         return []
+    entity = appointment or deal or lead or client
+    resource = {"client": Resources.CLIENTS, "lead": Resources.LEADS,
+                "deal": Resources.DEALS, "appointment": Resources.APPOINTMENTS}[entity_type]
+    editable = can(actor, business, resource, Actions.UPDATE, obj=entity).allowed
     definitions = [
         definition for definition in CustomFieldDefinition.objects.filter(
             business=business, entity_type=entity_type, is_active=True,
@@ -155,6 +159,7 @@ def _custom_field_payload(business, *, actor, client=None, lead=None, deal=None,
         {
             "definition": CustomFieldDefinitionSerializer(definition).data,
             "value": CustomFieldValueSerializer(values[definition.id]).data if definition.id in values else None,
+            "can_edit": editable and custom_field_role_allowed(definition, actor, "edit"),
         }
         for definition in definitions
     ]

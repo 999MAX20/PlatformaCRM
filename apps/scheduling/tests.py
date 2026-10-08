@@ -2,11 +2,12 @@ from datetime import date, datetime, time, timedelta
 from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
 
 from apps.accounts.models import User
+from apps.bots.models import Bot, BotChannel
 from apps.activities.models import ActivityEvent, Note
 from apps.activities.taxonomy import ActivityEvents
 from apps.analytics.models import AnalyticsEvent
@@ -30,6 +31,11 @@ from apps.tasks.models import Task
 
 
 class CorePlatformTests(TestCase):
+    def ready_telegram_channel(self):
+        bot = Bot.objects.create(business=self.business, name="Test transport", status="active")
+        return BotChannel.objects.create(bot=bot, channel="telegram", status="active",
+                                         config_json={"bot_token": "synthetic-settings-test-token"})
+
     def setUp(self):
         self.owner = User.objects.create_user(
             username="owner",
@@ -213,7 +219,9 @@ class CorePlatformTests(TestCase):
             ).exists()
         )
 
+    @override_settings(TELEGRAM_ENABLED=True)
     def test_appointment_followups_prefer_client_channel_and_schedule_confirmation_and_reminder(self):
+        self.ready_telegram_channel()
         client = Client.objects.create(
             business=self.business,
             full_name="Telegram Client",
@@ -286,7 +294,9 @@ class CorePlatformTests(TestCase):
         self.assertEqual(notification.send_at, start_at - timedelta(minutes=180))
         self.assertIn("Здравствуйте, Aruzhan. Услуга: Haircut.", notification.text)
 
+    @override_settings(TELEGRAM_ENABLED=True)
     def test_completed_appointment_schedules_post_service_thank_you(self):
+        self.ready_telegram_channel()
         client = Client.objects.create(
             business=self.business,
             full_name="Telegram Client",

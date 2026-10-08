@@ -23,6 +23,7 @@ from apps.businesses.serializers import (
     BusinessSerializer,
     PermissionCatalogSerializer,
     RolePermissionSerializer,
+    RoleVisibilitySerializer,
     RoutingPolicySerializer,
     TeamMemberManagementSerializer,
     TeamMemberSerializer,
@@ -33,6 +34,7 @@ from apps.core.date_ranges import parse_bounded_date_range
 from apps.core.domain_errors import InvitationAccountAuthenticationRequired
 from apps.core.models import AuditLog
 from apps.core.permissions import IsTenantMember, accessible_businesses, is_platform_admin, platform_admin_has_global_access
+from apps.core.tenant_ownership import assert_tenant_ownership_unchanged
 from apps.core.viewsets import TenantModelViewSet
 from apps.crm.models import Deal
 from apps.leads.models import Lead
@@ -62,6 +64,7 @@ class BusinessViewSet(ModelViewSet):
         ensure_default_roles(business)
         write_audit_log(self.request, AuditLog.Actions.CREATE, business)
 
+    @transaction.atomic
     def perform_update(self, serializer):
         assert_can(self.request.user, serializer.instance, Resources.SETTINGS, Actions.UPDATE)
         business = serializer.save()
@@ -139,8 +142,17 @@ class TeamAccessMixin:
 
     def check_team_permission(self, action=Actions.MANAGE, instance=None):
         if instance is not None:
-            self._current_instance = instance
-        business = self.get_business_from_request()
+            business = getattr(instance, "business", None)
+            if business is None and hasattr(instance, "business_role"):
+                business = instance.business_role.business
+            if business is None and hasattr(instance, "team"):
+                business = instance.team.business
+            if business is None and hasattr(instance, "member"):
+                business = instance.member.business
+            if business is None:
+                raise PermissionDenied("Business is required.")
+        else:
+            business = self.get_business_from_request()
         assert_can(self.request.user, business, self.business_resource, action)
         return business
 
@@ -149,12 +161,16 @@ class TeamAccessMixin:
         instance = serializer.save()
         write_audit_log(self.request, AuditLog.Actions.CREATE, instance, business=business)
 
+    @transaction.atomic
     def perform_update(self, serializer):
         instance = self.get_object()
         business = self.check_team_permission(Actions.MANAGE, instance=instance)
+        lookup = "team__business" if isinstance(instance, TeamMember) else "business"
+        assert_tenant_ownership_unchanged(serializer, business_lookup=lookup)
         instance = serializer.save()
         write_audit_log(self.request, AuditLog.Actions.UPDATE, instance, business=business)
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         business = self.check_team_permission(Actions.MANAGE, instance=instance)
@@ -190,6 +206,16 @@ class BusinessRoleViewSet(TeamAccessMixin, ModelViewSet):
         queryset = self.queryset.filter(business_id__in=self.accessible_business_ids(Actions.VIEW))
         return self.filter_requested_business(queryset)
 
+    @action(detail=True, methods=["post"])
+    def visibility(self, request, pk=None):
+        from apps.businesses.role_services import update_role_visibility
+
+        role = self.get_object()
+        serializer = RoleVisibilitySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        role = update_role_visibility(request=request, role=role, **serializer.validated_data)
+        return Response(self.get_serializer(role).data)
+
 
 class RolePermissionViewSet(TeamAccessMixin, ModelViewSet):
     serializer_class = RolePermissionSerializer
@@ -213,9 +239,14 @@ class RolePermissionViewSet(TeamAccessMixin, ModelViewSet):
         instance = serializer.save()
         write_audit_log(self.request, AuditLog.Actions.UPDATE, instance.business_role, business=business, metadata={"permission": str(instance)})
 
+    @transaction.atomic
     def perform_update(self, serializer):
         instance = self.get_object()
         business = self.check_team_permission(Actions.MANAGE, instance=instance)
+        BusinessRole.objects.select_for_update().get(pk=instance.business_role_id)
+        instance = RolePermission.objects.select_for_update().get(pk=instance.pk)
+        serializer.instance = instance
+        assert_tenant_ownership_unchanged(serializer, business_lookup="business_role__business")
         before = {"scope": instance.scope, "is_allowed": instance.is_allowed}
         instance = serializer.save()
         write_audit_log(

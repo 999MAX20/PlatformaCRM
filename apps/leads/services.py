@@ -506,7 +506,12 @@ def create_follow_up_task_from_lead(*, lead: Lead, actor, title: str, descriptio
 
 
 def notify_responsible(lead: Lead, text: str, *, action_url=None):
+    from apps.notifications.routing import filter_notification_recipients
+
     if not lead.responsible_user_id:
+        return None
+    if not filter_notification_recipients(business=lead.business, users=[lead.responsible_user],
+                                         category=Notification.Categories.SALES, priority=Notification.Priorities.NORMAL):
         return None
     return Notification.objects.create(
         business=lead.business,

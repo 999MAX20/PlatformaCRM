@@ -316,7 +316,8 @@ export function ConversationsPage() {
   const quickReplies = useQuery({
     queryKey: ["quick-replies", businessId, selected?.channel],
     queryFn: () =>
-      quickRepliesApi.list({
+      quickRepliesApi.listAll({
+        business: selected?.business || businessId,
         channel: selected?.channel || "all",
         is_active: true,
       }),

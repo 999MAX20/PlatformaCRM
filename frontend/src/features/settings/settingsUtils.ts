@@ -42,27 +42,27 @@ export function formatPrice(value: string | undefined, t: Translate, locale: str
 
 export function roleVisibility(role: BusinessRole) {
   const allowedScopes = role.permissions
-    .filter((permission) => permission.is_allowed)
+    .filter((permission) => permission.is_allowed && (permission.action === "view" || permission.action === "manage"))
     .map((permission) => permission.scope);
-  if (allowedScopes.includes("business")) return "business";
-  if (allowedScopes.includes("team")) return "team";
-  if (allowedScopes.includes("own")) return "own";
-  return "none";
+  const scopes = new Set(allowedScopes);
+  return scopes.size > 1 ? "mixed" : allowedScopes[0] || "none";
 }
 
 export function translatedVisibilityLabel(scope: string, t: Translate) {
+  if (scope === "mixed") return t("settings.visibility.mixed");
   if (scope === "business" || scope === "team" || scope === "own") return t(`settings.visibility.${scope}`);
   return t("settings.noAccess");
 }
 
 export function translatedVisibilityDescription(scope: string, t: Translate) {
+  if (scope === "mixed") return t("settings.visibility.mixed.text");
   if (scope === "business" || scope === "team" || scope === "own") return t(`settings.visibility.${scope}.text`);
   return t("settings.noAccessText");
 }
 
 export function roleSummary(role: BusinessRole, t: Translate) {
   const visibleResources = Array.from(
-    new Set(role.permissions.filter((permission) => permission.is_allowed).map((permission) => permission.resource)),
+    new Set(role.permissions.filter((permission) => permission.is_allowed && permission.scope !== "none" && (permission.action === "view" || permission.action === "manage")).map((permission) => permission.resource)),
   );
   if (!visibleResources.length) return t("settings.roleSummaryNone");
   const names = visibleResources.slice(0, 4).map((resource) => permissionResourceLabel(resource, t));
@@ -81,10 +81,12 @@ export function entityLabel(entity: string, t: Translate) {
 
 export function auditEventTitle(action: string, entityType: string, t: Translate) {
   const actionKey = action === "create" || action === "update" || action === "delete" || action === "export" || action === "login" ? action : "change";
-  const entityKey = entityType === "BusinessRole" || entityType === "BusinessMembership" || entityType === "ImportJob" || entityType === "LeadForm" ? entityType : "record";
+  const entityKey = entityType === "BusinessMember" ? "BusinessMembership" : entityType;
+  const resources: Record<string, string> = { Client: "clients", Lead: "leads", Deal: "deals", Appointment: "appointments", Task: "tasks", Business: "settings", Subscription: "billing", Notification: "notifications", Bot: "integrations", BotChannel: "integrations", Conversation: "conversations", BotConversation: "conversations" };
+  const entity = ["BusinessRole", "BusinessMembership", "ImportJob", "LeadForm"].includes(entityKey) ? t(`settings.auditEntity.${entityKey}`) : resources[entityType] ? permissionResourceLabel(resources[entityType], t) : entityType;
   return t("settings.auditEventTitle", {
-    action: t(`settings.auditAction.${actionKey}`),
-    entity: t(`settings.auditEntity.${entityKey}`),
+    action: actionKey === "change" ? action : t(`settings.auditAction.${actionKey}`),
+    entity,
   });
 }
 
@@ -106,14 +108,11 @@ export function customFieldSummary(field: CustomFieldDefinition, t: Translate) {
   });
 }
 
-export function groupLevel(role: BusinessRole, resources: string[]): RolePermission["scope"] {
+export function groupLevel(role: BusinessRole, resources: string[]): RolePermission["scope"] | "mixed" {
   const permissions = role.permissions.filter((permission) => resources.includes(permission.resource));
   if (!permissions.length || permissions.every((permission) => !permission.is_allowed)) return "none";
   const scopes = permissions.filter((permission) => permission.is_allowed).map((permission) => permission.scope);
-  if (scopes.includes("business")) return "business";
-  if (scopes.includes("team")) return "team";
-  if (scopes.includes("own")) return "own";
-  return "none";
+  return new Set(scopes).size > 1 ? "mixed" : scopes[0] || "none";
 }
 
 export function riskClass(risk: string) {

@@ -24,19 +24,12 @@ function createSchema(t: (key: string) => string) {
     telegram: z.string().optional(),
     instagram: z.string().optional(),
     timezone: z.string().min(1),
-    language: z.string().min(1),
     currency: z.string().min(1),
     financial_source_mode: z.enum(["external", "manual"]),
     financial_connector: z.string().optional(),
     legal_name: z.string().optional(),
     tax_id: z.string().optional(),
     invoice_email: z.string().email().or(z.literal("")).optional(),
-    brand_color: z.string().optional(),
-    brand_logo_url: z.string().url().or(z.literal("")).optional(),
-    cancellation_policy: z.string().optional(),
-    prepayment_policy: z.string().optional(),
-    sla_minutes: z.coerce.number().int().min(0),
-    booking_buffer_minutes: z.coerce.number().int().min(0),
   });
 }
 
@@ -44,10 +37,9 @@ type Values = z.infer<ReturnType<typeof createSchema>>;
 const groups = ["profile", "appointments", "finance", "appearance"] as const;
 type Group = (typeof groups)[number];
 const fieldGroups: Partial<Record<keyof Values, Group>> = {
-  timezone: "appointments", booking_buffer_minutes: "appointments", cancellation_policy: "appointments",
+  timezone: "appointments",
   currency: "finance", legal_name: "finance", tax_id: "finance", invoice_email: "finance",
-  financial_source_mode: "finance", financial_connector: "finance", prepayment_policy: "finance",
-  brand_color: "appearance", brand_logo_url: "appearance",
+  financial_source_mode: "finance", financial_connector: "finance",
 };
 
 export function BusinessSettingsForm({
@@ -59,7 +51,7 @@ export function BusinessSettingsForm({
 }) {
   const { t } = useI18n();
   const [activeGroup, setActiveGroup] = useState<Group>("profile");
-  const connectors = useQuery({ queryKey: ["financial-source-options", initial?.id], queryFn: () => businessConnectorsApi.list({ business: initial!.id }), enabled: Boolean(initial?.id) });
+  const connectors = useQuery({ queryKey: ["financial-source-options", initial?.id], queryFn: () => businessConnectorsApi.listAll({ business: initial!.id }), enabled: Boolean(initial?.id) });
   const form = useForm<Values>({
     resolver: zodResolver(createSchema(t)),
     shouldFocusError: false,
@@ -74,19 +66,12 @@ export function BusinessSettingsForm({
       telegram: initial?.telegram || "",
       instagram: initial?.instagram || "",
       timezone: initial?.timezone || "Asia/Almaty",
-      language: initial?.language || "ru",
       currency: initial?.currency || "KZT",
       financial_source_mode: initial?.financial_source_mode || "external",
       financial_connector: initial?.financial_connector ? String(initial.financial_connector) : "",
       legal_name: initial?.legal_name || "",
       tax_id: initial?.tax_id || "",
       invoice_email: initial?.invoice_email || "",
-      brand_color: initial?.brand_color || "",
-      brand_logo_url: initial?.brand_logo_url || "",
-      cancellation_policy: initial?.cancellation_policy || "",
-      prepayment_policy: initial?.prepayment_policy || "",
-      sla_minutes: initial?.sla_minutes ?? 120,
-      booking_buffer_minutes: initial?.booking_buffer_minutes ?? 0,
     },
   });
 
@@ -119,12 +104,8 @@ export function BusinessSettingsForm({
           { value: "education", label: t("businessType.education") },
           { value: "medical", label: t("businessType.medical") },
           { value: "other", label: t("businessType.other") },
-        ]} {...form.register("business_type")} />
-        <Select label={t("businessForm.language")} options={[
-          { value: "ru", label: t("language.ru") },
-          { value: "kk", label: t("language.kk") },
-          { value: "en", label: t("language.en") },
-        ]} {...form.register("language")} />
+        ]} {...form.register("business_type")} value={form.watch("business_type")} />
+        <Input label={t("businessForm.languageMetadata")} value={initial?.language || "—"} readOnly />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("businessForm.city")} {...form.register("city")} />
@@ -138,15 +119,17 @@ export function BusinessSettingsForm({
         <Input label="Telegram" {...form.register("telegram")} />
         <Input label="Instagram" {...form.register("instagram")} />
       </div>
-      <Input label={t("businessForm.slaMinutes")} type="number" error={form.formState.errors.sla_minutes?.message} {...form.register("sla_minutes")} />
+      <Input label={t("businessForm.slaMinutes")} value={initial?.sla_minutes ?? "—"} readOnly />
+      <p className="text-sm text-platforma-subtle">{t("businessForm.profileMetadata")}</p>
       </fieldset>
       <fieldset hidden={activeGroup !== "appointments"} className="space-y-4">
         <legend className="sr-only">{t("businessForm.group.appointments")}</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <Input label={t("businessForm.timezone")} placeholder="Asia/Almaty" {...form.register("timezone")} />
-          <Input label={t("businessForm.bookingBufferMinutes")} type="number" error={form.formState.errors.booking_buffer_minutes?.message} {...form.register("booking_buffer_minutes")} />
+          <Input label={t("businessForm.bookingBufferMinutes")} value={initial?.booking_buffer_minutes ?? "—"} readOnly />
         </div>
-        <Textarea label={t("businessForm.cancellationPolicy")} rows={3} {...form.register("cancellation_policy")} />
+        <Textarea label={t("businessForm.cancellationPolicy")} rows={3} value={initial?.cancellation_policy || ""} readOnly />
+        <p className="text-sm text-platforma-subtle">{t("businessForm.bookingMetadata")}</p>
       </fieldset>
       <fieldset hidden={activeGroup !== "finance"} className="space-y-4">
       <legend className="sr-only">{t("businessForm.group.finance")}</legend>
@@ -156,7 +139,7 @@ export function BusinessSettingsForm({
           { value: "USD", label: "USD" },
           { value: "EUR", label: "EUR" },
           { value: "RUB", label: "RUB" },
-        ]} {...form.register("currency")} />
+        ]} {...form.register("currency")} value={form.watch("currency")} />
         <Input label={t("businessForm.invoiceEmail")} error={form.formState.errors.invoice_email?.message} {...form.register("invoice_email")} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -164,18 +147,20 @@ export function BusinessSettingsForm({
         <Input label={t("businessForm.taxId")} {...form.register("tax_id")} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Select label={t("aiHistory.sourceSetting")} options={[{ value: "manual", label: t("aiHistory.manual") }, { value: "external", label: t("aiHistory.external") }]} {...form.register("financial_source_mode")} />
-        {form.watch("financial_source_mode") === "external" && <Select label={t("aiHistory.integration")} disabled={connectors.isLoading || connectors.isError} options={[{ value: "", label: t("aiHistory.notSelected") }, ...(connectors.data || []).filter(item => item.capability === "finance").map(item => ({ value: String(item.id), label: item.name }))]} {...form.register("financial_connector")} />}
+        <Select label={t("aiHistory.sourceSetting")} options={[{ value: "manual", label: t("aiHistory.manual") }, { value: "external", label: t("aiHistory.external") }]} {...form.register("financial_source_mode")} value={form.watch("financial_source_mode")} />
+        {form.watch("financial_source_mode") === "external" && <Select label={t("aiHistory.integration")} disabled={connectors.isLoading || connectors.isError} options={[{ value: "", label: t("aiHistory.notSelected") }, ...(connectors.data || []).filter(item => item.capability === "finance").map(item => ({ value: String(item.id), label: item.name }))]} {...form.register("financial_connector")} value={form.watch("financial_connector")} />}
       </div>
       {connectors.isError && form.watch("financial_source_mode") === "external" && <p role="alert" className="text-sm text-platforma-danger">{t("aiHistory.integrationUnavailable")}</p>}
-      <Textarea label={t("businessForm.prepaymentPolicy")} rows={3} {...form.register("prepayment_policy")} />
+      <Textarea label={t("businessForm.prepaymentPolicy")} rows={3} value={initial?.prepayment_policy || ""} readOnly />
+      <p className="text-sm text-platforma-subtle">{t("businessForm.prepaymentMetadata")}</p>
       </fieldset>
       <fieldset hidden={activeGroup !== "appearance"} className="space-y-4">
       <legend className="sr-only">{t("businessForm.group.appearance")}</legend>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Input label={t("businessForm.brandColor")} placeholder="#1D4ED8" {...form.register("brand_color")} />
-        <Input label={t("businessForm.brandLogoUrl")} error={form.formState.errors.brand_logo_url?.message} {...form.register("brand_logo_url")} />
+        <Input label={t("businessForm.brandColor")} value={initial?.brand_color || ""} readOnly />
+        <Input label={t("businessForm.brandLogoUrl")} value={initial?.brand_logo_url || ""} readOnly />
       </div>
+      <p className="text-sm text-platforma-subtle">{t("businessForm.appearanceMetadata")}</p>
       </fieldset>
       <div className="sticky bottom-0 flex justify-end border-t border-platforma-border bg-surface-card py-3">
         <Button type="submit" className="w-full sm:w-auto" isLoading={form.formState.isSubmitting}>{t("businessForm.save")}</Button>

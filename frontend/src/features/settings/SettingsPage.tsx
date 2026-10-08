@@ -6,7 +6,6 @@ import {
   CalendarClock,
   Copy,
   Send,
-  ShieldAlert,
   ShieldCheck,
   SlidersHorizontal,
 } from "lucide-react";
@@ -51,6 +50,8 @@ import type {
 } from "../../types";
 import { SettingsNavigation } from "./components/SettingsNavigation";
 import { TeamAccessControl } from "./components/TeamAccessControl";
+import { CustomFieldRolePicker } from "./components/CustomFieldRolePicker";
+import { customFieldOptions } from "../../lib/customFields";
 import { useSettingsSectionNavigation } from "./hooks/useSettingsSectionNavigation";
 import { BillingSection } from "./sections/BillingSection";
 import { UsageSection } from "./sections/UsageSection";
@@ -71,7 +72,6 @@ import {
   customFieldSummary,
   entityLabel,
   formatMetric,
-  formatPrice,
   groupLevel,
   loginStatusLabel,
   parseRoleList,
@@ -85,6 +85,11 @@ import {
 } from "./settingsUtils";
 
 export function SettingsPage() {
+  const { business } = useActiveBusiness();
+  return <BusinessSettingsPage key={business?.id ?? "no-business"} />;
+}
+
+function BusinessSettingsPage() {
   const { t, language } = useI18n();
   const confirmAction = useActionConfirm();
   const queryClient = useQueryClient();
@@ -118,6 +123,7 @@ export function SettingsPage() {
     "conversations",
     "manage",
   );
+  const canUpdateNotifications = hasPermission(user, business?.id, "notifications", "update");
 
   async function confirmDelete(label: string) {
     const result = await confirmAction({
@@ -175,24 +181,19 @@ export function SettingsPage() {
     settingsSectionClass,
   } = useSettingsSectionNavigation(allowedSettingsSections);
   const subscription = useQuery({
-    queryKey: ["current-subscription"],
-    queryFn: billingApi.currentSubscription,
-    enabled: Boolean(canViewBilling),
+    queryKey: ["current-subscription", business?.id],
+    queryFn: () => billingApi.currentSubscription(business!.id),
+    enabled: Boolean(business && canViewBilling),
   });
   const plans = useQuery({
     queryKey: ["billing-plans"],
     queryFn: billingApi.plans,
     enabled: Boolean(canViewBilling),
   });
-  const usage = useQuery({
-    queryKey: ["billing-usage-summary"],
-    queryFn: billingApi.usageSummary,
-    enabled: Boolean(canViewBilling),
-  });
   const entitlements = useQuery({
-    queryKey: ["billing-entitlements"],
-    queryFn: billingApi.entitlements,
-    enabled: Boolean(canViewBilling),
+    queryKey: ["billing-entitlements", business?.id],
+    queryFn: () => billingApi.entitlements(business!.id),
+    enabled: Boolean(business && canViewBilling),
   });
   const [fieldForm, setFieldForm] = useState({
     entity_type: "client" as CrmEntityType,
@@ -220,7 +221,7 @@ export function SettingsPage() {
   });
   const customFields = useQuery({
     queryKey: ["custom-fields", business?.id],
-    queryFn: () => customFieldsApi.list(),
+    queryFn: () => customFieldsApi.listAll({ business: business?.id }),
     enabled: Boolean(
       business &&
       canManageSettings &&
@@ -229,17 +230,17 @@ export function SettingsPage() {
   });
   const teamMembers = useQuery({
     queryKey: ["team-members", business?.id],
-    queryFn: () => teamApi.members(business?.id),
+    queryFn: () => teamApi.allMembers(business?.id),
     enabled: Boolean(business && canViewTeam),
   });
   const teamRoles = useQuery({
     queryKey: ["team-roles", business?.id],
-    queryFn: () => teamApi.roles(business?.id),
+    queryFn: () => teamApi.allRoles(business?.id),
     enabled: Boolean(business && canViewTeam),
   });
   const invitations = useQuery({
     queryKey: ["team-invitations", business?.id],
-    queryFn: () => teamApi.invitations(business?.id),
+    queryFn: () => teamApi.allInvitations(business?.id),
     enabled: Boolean(business && canManageTeam),
   });
   const [inviteForm, setInviteForm] = useState({
@@ -255,11 +256,12 @@ export function SettingsPage() {
   const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
   const [advancedAccessOpen, setAdvancedAccessOpen] = useState(false);
   const [copiedInviteId, setCopiedInviteId] = useState<number | null>(null);
+  const [copyInviteError, setCopyInviteError] = useState("");
   const [lastCreatedInvite, setLastCreatedInvite] =
     useState<BusinessInvitation | null>(null);
   const departments = useQuery({
     queryKey: ["team-departments", business?.id],
-    queryFn: () => teamApi.departments(business?.id),
+    queryFn: () => teamApi.allDepartments(business?.id),
     enabled: Boolean(business && canViewTeam),
   });
   const [departmentName, setDepartmentName] = useState("");
@@ -300,7 +302,7 @@ export function SettingsPage() {
   });
   const supportGrants = useQuery({
     queryKey: ["security-support-grants", business?.id],
-    queryFn: securityApi.supportGrants.list,
+    queryFn: () => securityApi.supportGrants.listAll({ business: business?.id }),
     enabled: Boolean(business && canViewAudit),
     retry: false,
   });
@@ -312,8 +314,8 @@ export function SettingsPage() {
   });
   const notificationPreferences = useQuery({
     queryKey: ["notification-preferences", business?.id, user?.id],
-    queryFn: () => notificationsApi.preferences.list({ user: "me" }),
-    enabled: Boolean(business?.id && user?.id),
+    queryFn: () => notificationsApi.preferences.listAll({ business: business?.id, user: "me" }),
+    enabled: Boolean(business?.id && user?.id && canViewNotifications),
   });
   const preferenceByCategory = useMemo(
     () =>
@@ -330,11 +332,11 @@ export function SettingsPage() {
     if (!current) return;
     const details = current.invoice_details_json || {};
     setBillingSettingsForm({
-      billing_email: current.billing_email || business?.invoice_email || "",
+      billing_email: current.billing_email || "",
       payment_method: current.payment_method || "",
-      invoice_name: String(details.name || business?.legal_name || ""),
-      invoice_tax_id: String(details.tax_id || business?.tax_id || ""),
-      invoice_address: String(details.address || business?.address || ""),
+      invoice_name: String(details.name || ""),
+      invoice_tax_id: String(details.tax_id || ""),
+      invoice_address: String(details.address || ""),
     });
     setSelectedPlanId(
       current.requested_plan
@@ -343,13 +345,7 @@ export function SettingsPage() {
           ? String(current.plan.id)
           : "",
     );
-  }, [
-    business?.address,
-    business?.invoice_email,
-    business?.legal_name,
-    business?.tax_id,
-    subscription.data,
-  ]);
+  }, [subscription.data?.id]);
 
   const [editingQuickReplyId, setEditingQuickReplyId] = useState<number | null>(
     null,
@@ -363,7 +359,7 @@ export function SettingsPage() {
   });
   const quickReplies = useQuery({
     queryKey: ["quick-replies", business?.id],
-    queryFn: quickRepliesApi.list,
+    queryFn: () => quickRepliesApi.listAll({ business: business?.id }),
     enabled: Boolean(business && canManageConversations),
   });
   const notificationPreferenceMutation = useMutation({
@@ -411,7 +407,7 @@ export function SettingsPage() {
       return customFieldsApi.create({
         business: business.id,
         entity_type: fieldForm.entity_type,
-        key: fieldForm.key || slugify(fieldForm.label),
+        key: fieldForm.key || slugify(fieldForm.label).replace(/[^a-z0-9_-]/g, "").replace(/^[-_]+|[-_]+$/g, "").slice(0, 64) || `field_${Date.now().toString(36)}`,
         label: fieldForm.label,
         field_type: fieldForm.field_type,
         options_json: {
@@ -424,7 +420,6 @@ export function SettingsPage() {
           view_roles: parseRoleList(fieldForm.view_roles),
           edit_roles: parseRoleList(fieldForm.edit_roles),
         },
-        is_required: false,
         is_active: true,
         sort_order: 0,
       });
@@ -470,7 +465,7 @@ export function SettingsPage() {
     },
   });
   const updatePermissionMutation = useMutation({
-    mutationFn: teamApi.updatePermission,
+    mutationFn: teamApi.updateVisibility,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["team-roles"] });
       queryClient.invalidateQueries({ queryKey: ["auth-me"] });
@@ -595,8 +590,18 @@ export function SettingsPage() {
       id: number;
       payload: Partial<AppointmentMessageSetting>;
     }) => appointmentMessageSettingsApi.update({ id, payload }),
-    onSuccess: () => {
-      setAppointmentMessageDrafts({});
+    onSuccess: (saved, { id, payload }) => {
+      queryClient.setQueryData<AppointmentMessageSetting[]>(["appointment-message-settings", business?.id], (rows) => rows?.map((row) => Number(row.id) === id ? saved : row));
+      setAppointmentMessageDrafts((current) => {
+        const remaining = { ...current[id] };
+        for (const key of Object.keys(payload) as Array<keyof AppointmentMessageSetting>) {
+          if (remaining[key] === payload[key]) delete remaining[key];
+        }
+        const next = { ...current };
+        if (Object.keys(remaining).length) next[id] = remaining;
+        else delete next[id];
+        return next;
+      });
       queryClient.invalidateQueries({
         queryKey: ["appointment-message-settings"],
       });
@@ -605,9 +610,10 @@ export function SettingsPage() {
   const billingSettingsMutation = useMutation({
     mutationFn: () =>
       billingApi.updateSettings({
+        business: business!.id,
         billing_email: billingSettingsForm.billing_email,
-        payment_method: billingSettingsForm.payment_method,
         invoice_details_json: {
+          ...subscription.data?.invoice_details_json,
           name: billingSettingsForm.invoice_name,
           tax_id: billingSettingsForm.invoice_tax_id,
           address: billingSettingsForm.invoice_address,
@@ -617,12 +623,7 @@ export function SettingsPage() {
       queryClient.invalidateQueries({ queryKey: ["current-subscription"] }),
   });
   const planChangeMutation = useMutation({
-    mutationFn: (plan: Id) => billingApi.requestPlanChange(plan),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["current-subscription"] }),
-  });
-  const billingStatusMutation = useMutation({
-    mutationFn: (action: "pause" | "resume" | "cancel") => billingApi[action](),
+    mutationFn: (plan: Id) => billingApi.requestPlanChange(plan, business!.id),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["current-subscription"] }),
   });
@@ -645,9 +646,7 @@ export function SettingsPage() {
       label: field.label,
       key: field.key,
       field_type: field.field_type,
-      options: Array.isArray(field.options_json?.options)
-        ? (field.options_json.options as string[]).join(", ")
-        : "",
+      options: customFieldOptions(field).map((option) => option.value).join(", "),
       view_roles: Array.isArray(field.permissions_json?.view_roles)
         ? field.permissions_json.view_roles.join(", ")
         : "",
@@ -661,22 +660,23 @@ export function SettingsPage() {
   }
 
   function customFieldPayloadFromEdit(): Partial<CustomFieldDefinition> {
+    const original = customFields.data?.find((field) => Number(field.id) === editingCustomFieldId);
+    const optionsChanged = customFieldEditForm.options !== (original ? customFieldOptions(original).map((option) => option.value).join(", ") : "");
     return {
       entity_type: customFieldEditForm.entity_type,
       label: customFieldEditForm.label,
       key: customFieldEditForm.key || slugify(customFieldEditForm.label),
       field_type: customFieldEditForm.field_type,
-      options_json: {
+      ...(optionsChanged && ["select", "multiselect"].includes(customFieldEditForm.field_type) ? { options_json: {
         options: customFieldEditForm.options
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
-      },
+      } } : {}),
       permissions_json: {
         view_roles: parseRoleList(customFieldEditForm.view_roles),
         edit_roles: parseRoleList(customFieldEditForm.edit_roles),
       },
-      is_required: customFieldEditForm.is_required,
       is_active: customFieldEditForm.is_active,
       sort_order: Number(customFieldEditForm.sort_order || 0),
     };
@@ -687,6 +687,7 @@ export function SettingsPage() {
   const currentPlan = subscription.data?.plan;
   const hasSubscription = Boolean(subscription.data && currentPlan);
   const members = teamMembers.data || [];
+  const activeMembership = user?.memberships?.find((membership) => String(membership.business) === String(business?.id));
   const roles = teamRoles.data || [];
   const canonicalRoleKeys = new Set(teamRoleOptions.map((option) => option.value));
   const visibleRoles = roles.filter(
@@ -706,8 +707,9 @@ export function SettingsPage() {
     roles.find((role) => role.preset_key === selectedMemberRole) ||
     roles.find((role) => role.preset_key === "specialist") ||
     visibleRoles[0];
-  const selectedVisibility = selectedRole
-    ? roleVisibility(selectedRole)
+  const memberRole = roles.find((role) => Number(role.id) === Number(selectedMember?.business_role)) || roles.find((role) => role.preset_key === selectedMemberRole);
+  const selectedVisibility = memberRole
+    ? roleVisibility(memberRole)
     : "none";
   const translatedTeamRoleOptions = teamRoleOptions.map((option) => ({
     ...option,
@@ -778,17 +780,12 @@ export function SettingsPage() {
     level: RolePermission["scope"],
   ) {
     if (!selectedRole) return;
-    selectedRole.permissions
+    const permission_ids = selectedRole.permissions
       .filter((permission) => groupResources.includes(permission.resource))
-      .forEach((permission) => {
-        updatePermissionMutation.mutate({
-          id: permission.id,
-          payload: {
-            is_allowed: level !== "none",
-            scope: level,
-          },
-        });
-      });
+      .map((permission) => permission.id);
+    if (permission_ids.length) {
+      updatePermissionMutation.mutate({ id: selectedRole.id, permission_ids, scope: level });
+    }
   }
 
   function inviteUrl(path: string) {
@@ -824,7 +821,14 @@ export function SettingsPage() {
     id: number;
     invite_path: string;
   }) {
-    await navigator.clipboard?.writeText(inviteMessage(invitation.invite_path));
+    setCopyInviteError("");
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error(t("settings.copyUnavailable"));
+      await navigator.clipboard.writeText(inviteMessage(invitation.invite_path));
+    } catch {
+      setCopyInviteError(t("settings.copyUnavailable"));
+      return;
+    }
     setCopiedInviteId(invitation.id);
     window.setTimeout(
       () =>
@@ -894,9 +898,8 @@ export function SettingsPage() {
                   />
                 </div>
               ) : null}
-              {appointmentMessageSettings.isLoading ? (
-                <LoadingState />
-              ) : (
+              <SettingsQueryState queries={[appointmentMessageSettings]} />
+              {appointmentMessageSettings.isLoading || appointmentMessageSettings.isError ? null : (
                 <div className="grid gap-4 xl:grid-cols-3">
                   {appointmentMessages.map((setting) => {
                     const meta = appointmentScenarioLabels[setting.scenario];
@@ -909,10 +912,17 @@ export function SettingsPage() {
                     const hasDraft = Boolean(
                       appointmentMessageDrafts[Number(setting.id)],
                     );
+                    const selectedChannel = String(appointmentMessageValue(setting, "channel_policy"));
+                    const availableChannels = setting.available_channels || ["auto", "system"];
+                    const channelChoices = appointmentChannelOptions.filter((option) => availableChannels.includes(option.value) || option.value === selectedChannel).map((option) => ({
+                      value: option.value,
+                      label: availableChannels.includes(option.value) ? t(option.labelKey) : t("settings.appointmentMessages.unavailableChannel", { channel: t(option.labelKey) }),
+                    }));
+                    if (!channelChoices.some((option) => option.value === selectedChannel)) channelChoices.push({ value: selectedChannel, label: t("settings.appointmentMessages.unavailableChannel", { channel: selectedChannel === "sms" ? "SMS" : selectedChannel }) });
                     return (
                       <div
                         key={setting.id}
-                        className="flex flex-col rounded-card border border-platforma-border bg-surface-muted p-4"
+                        className="flex min-w-0 flex-col rounded-card border border-platforma-border bg-surface-muted p-4"
                       >
                         <div className="mb-4 flex items-start justify-between gap-3">
                           <div>
@@ -943,7 +953,7 @@ export function SettingsPage() {
                               : t("settings.paused")}
                           </button>
                         </div>
-                        <div className="grid gap-3">
+                        <div className="grid min-w-0 grid-cols-1 gap-3">
                           <Input
                             label={
                               setting.scenario === "thank_you"
@@ -987,13 +997,9 @@ export function SettingsPage() {
                                 },
                               }))
                             }
-                            options={appointmentChannelOptions.map(
-                              (option) => ({
-                                value: option.value,
-                                label: t(option.labelKey),
-                              }),
-                            )}
+                            options={channelChoices}
                           />
+                          <p className="text-xs text-platforma-subtle">{t("settings.appointmentMessages.channelStatus")}</p>
                           <Textarea
                             label={t(
                               "settings.appointmentMessages.templateText",
@@ -1043,6 +1049,8 @@ export function SettingsPage() {
             className={settingsSectionClass("team-access")}
           >
             <CardBody>
+              <SettingsQueryState queries={[teamMembers, teamRoles, invitations, departments]} />
+              {copyInviteError ? <ErrorState message={copyInviteError} /> : null}
               <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
@@ -1056,7 +1064,7 @@ export function SettingsPage() {
                   </p>
                 </div>
                 <div className="rounded-2xl border border-platforma-border bg-surface-muted px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-platforma-subtle">
-                  {user?.memberships?.[0]?.role || "role"} ·{" "}
+                  {activeMembership ? t(`settings.role.${activeMembership.role}`) : user?.email || "—"} ·{" "}
                   {user?.effective_permissions?.[String(business?.id || "")]
                     ?.length || 0}{" "}
                   {t("settings.permissions")}
@@ -1126,6 +1134,7 @@ export function SettingsPage() {
                         )
                       }
                       disabled={
+                        !canManageTeam ||
                         !selectedMember ||
                         selectedMember.role === "owner" ||
                         updateMemberMutation.isPending
@@ -1254,7 +1263,7 @@ export function SettingsPage() {
                       <TeamAccessControl key={selectedMember.id} member={selectedMember} canManage={canManageTeam} />
                     </div>
                   ) : null}
-                  {!teamMembers.isLoading && !members.length ? (
+                  {teamMembers.isSuccess && !members.length ? (
                     <div className="mt-4 rounded-2xl bg-surface-muted px-4 py-5 text-sm text-platforma-subtle">
                       {t("settings.teamEmpty")}
                     </div>
@@ -1280,6 +1289,7 @@ export function SettingsPage() {
                         inviteMutation.mutate();
                       }}
                     >
+                      <fieldset disabled={!canManageTeam || inviteMutation.isPending} className="contents">
                       <div>
                         <Input
                           label={t("settings.loginEmail")}
@@ -1390,6 +1400,7 @@ export function SettingsPage() {
                           {t("settings.createInvite")}
                         </Button>
                       </div>
+                      </fieldset>
                     </form>
                     {lastCreatedInvite ? (
                       <div className="mt-4 rounded-card border border-platforma-success/[0.18] bg-[var(--platforma-success-soft)] p-4">
@@ -1428,9 +1439,8 @@ export function SettingsPage() {
                         </div>
                       </div>
                     ) : null}
-                    <div className="mt-4 space-y-2">
+                    <div className="mt-4 max-h-96 space-y-2 overflow-y-auto">
                       {(invitations.data || [])
-                        .slice(0, 4)
                         .map((invitation) => (
                           <div
                             key={invitation.id}
@@ -1490,7 +1500,7 @@ export function SettingsPage() {
                             </div>
                           </div>
                         ))}
-                      {!invitations.isLoading && !invitations.data?.length ? (
+                      {invitations.isSuccess && !invitations.data?.length ? (
                         <p className="text-sm text-platforma-subtle">
                           {t("settings.noInvites")}
                         </p>
@@ -1509,6 +1519,7 @@ export function SettingsPage() {
                       if (departmentName.trim()) departmentMutation.mutate();
                     }}
                   >
+                    <fieldset disabled={!canManageTeam || departmentMutation.isPending} className="contents">
                     <Input
                       value={departmentName}
                       onChange={(event) =>
@@ -1520,10 +1531,12 @@ export function SettingsPage() {
                       type="submit"
                       variant="secondary"
                       className="min-h-[48px] px-5"
+                      aria-label={t("settings.add")}
                       isLoading={departmentMutation.isPending}
                     >
                       +
                     </Button>
+                    </fieldset>
                   </form>
                   <div className="mt-4 space-y-2">
                     {(departments.data || []).map((department) => (
@@ -1540,7 +1553,7 @@ export function SettingsPage() {
                         </p>
                       </div>
                     ))}
-                    {!departments.isLoading && !departments.data?.length ? (
+                    {departments.isSuccess && !departments.data?.length ? (
                       <p className="text-sm text-platforma-subtle">
                         {t("settings.noDepartments")}
                       </p>
@@ -1574,8 +1587,7 @@ export function SettingsPage() {
                         {t("settings.highRisk")}
                       </p>
                       <p className="text-xl font-semibold text-platforma-danger">
-                        {(securityRisk.data?.risk_counts.high || 0) +
-                          (securityRisk.data?.risk_counts.critical || 0)}
+                        {securityRisk.data && !securityRisk.error ? securityRisk.data.risk_counts.high + securityRisk.data.risk_counts.critical : "—"}
                       </p>
                     </div>
                     <div className="rounded-control bg-[var(--platforma-warning-soft)] px-3 py-2">
@@ -1583,7 +1595,7 @@ export function SettingsPage() {
                         {t("settings.failedLogins")}
                       </p>
                       <p className="text-xl font-semibold text-platforma-warning">
-                        {securityRisk.data?.failed_logins || 0}
+                        {securityRisk.data && !securityRisk.error ? securityRisk.data.failed_logins : "—"}
                       </p>
                     </div>
                     <div className="rounded-2xl bg-brand-50 px-3 py-2">
@@ -1591,29 +1603,14 @@ export function SettingsPage() {
                         {t("settings.support")}
                       </p>
                       <p className="text-xl font-semibold text-brand-800">
-                        {securityRisk.data?.active_support_grants || 0}
+                        {securityRisk.data && !securityRisk.error ? securityRisk.data.active_support_grants : "—"}
                       </p>
                     </div>
                   </div>
                 </div>
-                {securityRisk.error || auditLogs.error || loginHistory.error ? (
-                  <div className="mb-4 rounded-card border border-platforma-warning/[0.24] bg-[var(--platforma-warning-soft)] p-4">
-                    <div className="flex gap-3">
-                      <ShieldAlert
-                        className="mt-0.5 text-platforma-warning"
-                        size={20}
-                      />
-                      <div>
-                        <p className="font-semibold text-platforma-warning">
-                          {t("settings.securityHidden")}
-                        </p>
-                        <p className="mt-1 text-sm leading-6 text-platforma-warning">
-                          {t("settings.securityHiddenText")}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
+                <p className="mb-4 text-sm text-platforma-subtle">{t("settings.securityPeriod")}</p>
+                {securityRisk.isLoading || auditLogs.isLoading || loginHistory.isLoading || supportGrants.isLoading ? <LoadingState /> : null}
+                {securityRisk.error || auditLogs.error || loginHistory.error || supportGrants.error ? <div className="mb-4"><ErrorState error={securityRisk.error || auditLogs.error || loginHistory.error || supportGrants.error} action={<Button type="button" variant="secondary" onClick={() => { void securityRisk.refetch(); void auditLogs.refetch(); void loginHistory.refetch(); void supportGrants.refetch(); }}>{t("common.retry")}</Button>} /></div> : null}
                 <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
                   <div className="rounded-card border border-platforma-border bg-surface-card p-4">
                     <div className="mb-3 flex items-center justify-between">
@@ -1621,11 +1618,11 @@ export function SettingsPage() {
                         {t("settings.riskEvents")}
                       </h3>
                       <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-platforma-subtle">
-                        {auditLogs.data?.length || 0} {t("settings.events")}
+                        {auditLogs.isLoading || auditLogs.error ? "—" : auditLogs.data?.length || 0} {t("settings.events")}
                       </span>
                     </div>
                     <div className="max-h-80 space-y-2 overflow-y-auto">
-                      {(auditLogs.data || []).slice(0, 8).map((log) => (
+                      {(auditLogs.data || []).map((log) => (
                         <div
                           key={log.id}
                           className="rounded-2xl border border-platforma-border bg-surface-muted p-3"
@@ -1637,10 +1634,10 @@ export function SettingsPage() {
                                   log.action,
                                   log.entity_type,
                                   t,
-                                )}
+                                )} #{log.entity_id}
                               </p>
                               <p className="mt-1 text-xs text-platforma-subtle">
-                                {log.actor_email || "system"} ·{" "}
+                                {log.actor_email || t("settings.systemActor")} ·{" "}
                                 {new Date(log.created_at).toLocaleString(
                                   locale,
                                 )}
@@ -1652,7 +1649,7 @@ export function SettingsPage() {
                           </div>
                         </div>
                       ))}
-                      {!auditLogs.isLoading && !auditLogs.data?.length ? (
+                      {!auditLogs.isLoading && !auditLogs.error && !auditLogs.data?.length ? (
                         <p className="rounded-2xl bg-surface-muted p-4 text-sm text-platforma-subtle">
                           {t("settings.noAuditEvents")}
                         </p>
@@ -1664,8 +1661,8 @@ export function SettingsPage() {
                       <h3 className="font-bold text-platforma-text">
                         {t("settings.logins")}
                       </h3>
-                      <div className="mt-3 space-y-2">
-                        {(loginHistory.data || []).slice(0, 5).map((item) => (
+                      <div className="mt-3 max-h-80 space-y-2 overflow-y-auto">
+                        {(loginHistory.data || []).map((item) => (
                           <div
                             key={item.id}
                             className="flex items-center justify-between rounded-2xl bg-surface-muted px-3 py-2"
@@ -1692,7 +1689,7 @@ export function SettingsPage() {
                             </span>
                           </div>
                         ))}
-                        {!loginHistory.isLoading &&
+                        {!loginHistory.isLoading && !loginHistory.error &&
                         !loginHistory.data?.length ? (
                           <p className="text-sm text-platforma-subtle">
                             {t("settings.noLoginHistory")}
@@ -1704,8 +1701,8 @@ export function SettingsPage() {
                       <h3 className="font-bold text-platforma-text">
                         {t("settings.supportAccess")}
                       </h3>
-                      <div className="mt-3 space-y-2">
-                        {(supportGrants.data || []).slice(0, 4).map((grant) => (
+                      <div className="mt-3 max-h-80 space-y-2 overflow-y-auto">
+                        {(supportGrants.data || []).map((grant) => (
                           <div
                             key={grant.id}
                             className="rounded-2xl bg-surface-muted px-3 py-2"
@@ -1715,7 +1712,7 @@ export function SettingsPage() {
                             </p>
                             <p className="text-xs text-platforma-subtle">
                               {grant.is_active
-                                ? t("settings.active")
+                                ? new Date(grant.expires_at).getTime() > Date.now() ? t("settings.active") : t("settings.expired")
                                 : t("settings.inactive")}{" "}
                               · {t("settings.until")}{" "}
                               {new Date(grant.expires_at).toLocaleString(
@@ -1724,7 +1721,7 @@ export function SettingsPage() {
                             </p>
                           </div>
                         ))}
-                        {!supportGrants.isLoading &&
+                        {!supportGrants.isLoading && !supportGrants.error &&
                         !supportGrants.data?.length ? (
                           <p className="text-sm text-platforma-subtle">
                             {t("settings.noSupportGrants")}
@@ -1742,6 +1739,7 @@ export function SettingsPage() {
             className={settingsSectionClass("notification-preferences")}
           >
             <CardBody>
+              <SettingsQueryState queries={[notificationPreferences]} />
               <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
@@ -1771,7 +1769,7 @@ export function SettingsPage() {
                 <p className="rounded-2xl bg-surface-muted p-4 text-sm font-semibold text-platforma-subtle">
                   {t("account.notificationsNoBusiness")}
                 </p>
-              ) : (
+              ) : notificationPreferences.isLoading || notificationPreferences.isError ? null : (
                 <div className="grid gap-3 lg:grid-cols-2">
                   {notificationCategories.map((item) => {
                     const preference = preferenceByCategory.get(item.category);
@@ -1792,7 +1790,7 @@ export function SettingsPage() {
                           </div>
                           <button
                             type="button"
-                            disabled={notificationPreferenceMutation.isPending}
+                            disabled={!canUpdateNotifications || notificationPreferences.isLoading || notificationPreferences.isError || notificationPreferenceMutation.isPending}
                             onClick={() =>
                               notificationPreferenceMutation.mutate({
                                 category: item.category,
@@ -1822,6 +1820,7 @@ export function SettingsPage() {
             className={settingsSectionClass("quick-replies")}
           >
             <CardBody>
+              <SettingsQueryState queries={[quickReplies]} />
               <div className="mb-4">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
                   {t("settings.quickRepliesEyebrow")}
@@ -2090,7 +2089,7 @@ export function SettingsPage() {
                     )}
                   </div>
                 ))}
-                {!quickReplies.isLoading && !quickReplies.data?.length ? (
+                {quickReplies.isSuccess && !quickReplies.data?.length ? (
                   <p className="text-sm text-platforma-subtle">
                     {t("settings.noQuickReplies")}
                   </p>
@@ -2100,6 +2099,7 @@ export function SettingsPage() {
           </Card>
           <Card id="roles" className={settingsSectionClass("roles")}>
             <CardBody>
+              <SettingsQueryState queries={[teamRoles]} />
               <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
@@ -2154,7 +2154,7 @@ export function SettingsPage() {
                     </span>
                   </button>
                 ))}
-                {!teamRoles.isLoading && !visibleRoles.length ? (
+                {teamRoles.isSuccess && !visibleRoles.length ? (
                   <p className="text-sm text-platforma-subtle">
                     {t("settings.noRoles")}
                   </p>
@@ -2193,6 +2193,7 @@ export function SettingsPage() {
                                   )
                                   .join(" · ")}
                               </p>
+                              {level === "mixed" ? <p className="mt-1 text-sm text-platforma-subtle">{translatedVisibilityLabel(level, t)}</p> : null}
                             </div>
                             <div className="flex flex-wrap gap-2">
                               {(
@@ -2214,6 +2215,7 @@ export function SettingsPage() {
                                     applyGroupLevel(group.resources, scope)
                                   }
                                   isLoading={updatePermissionMutation.isPending}
+                                  disabled={!canManageTeam || !selectedRole.permissions.some((permission) => group.resources.includes(permission.resource) && permission.is_allowed)}
                                 >
                                   {translatedVisibilityLabel(scope, t)}
                                 </Button>
@@ -2236,19 +2238,14 @@ export function SettingsPage() {
             error={
               billingSettingsMutation.error ||
               planChangeMutation.error ||
-              billingStatusMutation.error
+              subscription.error || plans.error
             }
-            formatPrice={formatPrice}
             hasSubscription={hasSubscription}
-            isBillingStatusPending={billingStatusMutation.isPending}
             isPlanChangePending={planChangeMutation.isPending}
             isSavingBillingSettings={billingSettingsMutation.isPending}
-            locale={locale}
             onRequestPlanChange={(plan) => planChangeMutation.mutate(plan)}
             onSaveBillingSettings={() => billingSettingsMutation.mutate()}
-            onSubscriptionStatusAction={(action) =>
-              billingStatusMutation.mutate(action)
-            }
+            onRetry={() => { void subscription.refetch(); void plans.refetch(); }}
             plans={plans.data || []}
             selectedPlanId={selectedPlanId}
             setBillingSettingsForm={setBillingSettingsForm}
@@ -2260,8 +2257,11 @@ export function SettingsPage() {
           <UsageSection
             className={settingsSectionClass("usage")}
             formatMetric={formatMetric}
-            isLoading={entitlements.isLoading || usage.isLoading}
-            items={entitlements.data || usage.data || []}
+            isLoading={entitlements.isLoading}
+            error={entitlements.error}
+            onRetry={() => { void entitlements.refetch(); }}
+            locale={locale}
+            items={entitlements.data || []}
             t={t}
           />
           <Card
@@ -2269,6 +2269,7 @@ export function SettingsPage() {
             className={settingsSectionClass("custom-fields")}
           >
             <CardBody>
+              <SettingsQueryState queries={[customFields]} />
               <div className="mb-4">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
                   {t("settings.customFieldsEyebrow")}
@@ -2345,6 +2346,9 @@ export function SettingsPage() {
                     })
                   }
                   options={[
+                    { value: "money", label: t("settings.customFieldType.money") },
+                    { value: "datetime", label: t("settings.customFieldType.datetime") },
+                    { value: "multiselect", label: t("settings.customFieldType.multiselect") },
                     {
                       value: "text",
                       label: t("settings.customFieldType.text"),
@@ -2380,33 +2384,14 @@ export function SettingsPage() {
                 <Input
                   label={t("settings.options")}
                   placeholder="A, B, C"
+                  disabled={!["select", "multiselect"].includes(fieldForm.field_type)}
                   value={fieldForm.options}
                   onChange={(event) =>
                     setFieldForm({ ...fieldForm, options: event.target.value })
                   }
                 />
-                <Input
-                  label="View roles"
-                  placeholder="owner, admin, manager"
-                  value={fieldForm.view_roles}
-                  onChange={(event) =>
-                    setFieldForm({
-                      ...fieldForm,
-                      view_roles: event.target.value,
-                    })
-                  }
-                />
-                <Input
-                  label="Edit roles"
-                  placeholder="owner, admin"
-                  value={fieldForm.edit_roles}
-                  onChange={(event) =>
-                    setFieldForm({
-                      ...fieldForm,
-                      edit_roles: event.target.value,
-                    })
-                  }
-                />
+                <CustomFieldRolePicker label={t("settings.viewRoles")} value={fieldForm.view_roles} onChange={(value) => setFieldForm({ ...fieldForm, view_roles: value })} />
+                <CustomFieldRolePicker label={t("settings.editRoles")} value={fieldForm.edit_roles} onChange={(value) => setFieldForm({ ...fieldForm, edit_roles: value })} />
                 <div className="flex items-end">
                   <Button
                     type="submit"
@@ -2477,17 +2462,17 @@ export function SettingsPage() {
                                 value: "number",
                                 label: t("settings.customFieldType.number"),
                               },
-                              { value: "money", label: "Money" },
+                              { value: "money", label: t("settings.customFieldType.money") },
                               {
                                 value: "date",
                                 label: t("settings.customFieldType.date"),
                               },
-                              { value: "datetime", label: "Datetime" },
+                              { value: "datetime", label: t("settings.customFieldType.datetime") },
                               {
                                 value: "select",
                                 label: t("settings.customFieldType.select"),
                               },
-                              { value: "multiselect", label: "Multiselect" },
+                              { value: "multiselect", label: t("settings.customFieldType.multiselect") },
                               {
                                 value: "boolean",
                                 label: t("settings.customFieldType.boolean"),
@@ -2516,7 +2501,8 @@ export function SettingsPage() {
                           required
                         />
                         <Input
-                          label="Key"
+                          label={t("settings.fieldKey")}
+                          required pattern="[a-zA-Z0-9_-]+" maxLength={64}
                           value={customFieldEditForm.key}
                           onChange={(event) =>
                             setCustomFieldEditForm({
@@ -2528,7 +2514,8 @@ export function SettingsPage() {
                         <Input
                           label={t("settings.options")}
                           placeholder="A, B, C"
-                          value={customFieldEditForm.options}
+                          disabled={!["select", "multiselect"].includes(customFieldEditForm.field_type)}
+                  value={customFieldEditForm.options}
                           onChange={(event) =>
                             setCustomFieldEditForm({
                               ...customFieldEditForm,
@@ -2536,30 +2523,10 @@ export function SettingsPage() {
                             })
                           }
                         />
+                        <CustomFieldRolePicker label={t("settings.viewRoles")} value={customFieldEditForm.view_roles} onChange={(value) => setCustomFieldEditForm({ ...customFieldEditForm, view_roles: value })} />
+                        <CustomFieldRolePicker label={t("settings.editRoles")} value={customFieldEditForm.edit_roles} onChange={(value) => setCustomFieldEditForm({ ...customFieldEditForm, edit_roles: value })} />
                         <Input
-                          label="View roles"
-                          placeholder="owner, admin, manager"
-                          value={customFieldEditForm.view_roles}
-                          onChange={(event) =>
-                            setCustomFieldEditForm({
-                              ...customFieldEditForm,
-                              view_roles: event.target.value,
-                            })
-                          }
-                        />
-                        <Input
-                          label="Edit roles"
-                          placeholder="owner, admin"
-                          value={customFieldEditForm.edit_roles}
-                          onChange={(event) =>
-                            setCustomFieldEditForm({
-                              ...customFieldEditForm,
-                              edit_roles: event.target.value,
-                            })
-                          }
-                        />
-                        <Input
-                          label="Sort order"
+                          label={t("settings.sortOrder")}
                           type="number"
                           value={customFieldEditForm.sort_order}
                           onChange={(event) =>
@@ -2574,14 +2541,9 @@ export function SettingsPage() {
                             <input
                               type="checkbox"
                               checked={customFieldEditForm.is_required}
-                              onChange={(event) =>
-                                setCustomFieldEditForm({
-                                  ...customFieldEditForm,
-                                  is_required: event.target.checked,
-                                })
-                              }
+                              disabled
                             />
-                            {t("settings.customFieldRequired")}
+                            {t("settings.customFieldRequiredMetadata")}
                           </label>
                           <label className="flex items-center gap-2">
                             <input
@@ -2703,7 +2665,7 @@ export function SettingsPage() {
                     )}
                   </div>
                 ))}
-                {!customFields.isLoading && !customFields.data?.length ? (
+                {customFields.isSuccess && !customFields.data?.length ? (
                   <p className="text-sm text-platforma-subtle">
                     {t("settings.noCustomFields")}
                   </p>
@@ -2715,4 +2677,11 @@ export function SettingsPage() {
       </div>
     </div>
   );
+}
+
+function SettingsQueryState({ queries }: { queries: Array<{ isLoading: boolean; error: unknown; refetch: () => Promise<unknown> }> }) {
+  const { t } = useI18n();
+  const error = queries.find((query) => query.error)?.error;
+  if (error) return <ErrorState error={error} message={getApiErrorMessage(error)} action={<Button type="button" variant="secondary" onClick={() => { void Promise.all(queries.map((query) => query.refetch())); }}>{t("common.retry")}</Button>} />;
+  return queries.some((query) => query.isLoading) ? <LoadingState /> : null;
 }
