@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Inbox } from "lucide-react";
+import { ArrowRight, Inbox } from "lucide-react";
 import type { InboxConversation, InboxFilters } from "../../../api/inbox";
 import type { InboxSummary } from "../../../api/inbox";
 import { Link } from "react-router";
@@ -131,15 +131,15 @@ export function ConversationListPane({
       />
 
       {priorityActions.length ? (
-        <div className="space-y-2 border-b border-platforma-border bg-surface-warm px-3 py-3" data-testid="inbox-priority-actions">
+        <div className="border-b border-platforma-border bg-surface-warm px-3 py-1" data-testid="inbox-priority-actions">
           {priorityActions.slice(0, 3).map((action) => (
             <Link
               key={`${action.href}-${action.label}`}
               to={action.href}
-              className="flex min-h-9 items-center justify-between gap-2 rounded-control border border-platforma-border bg-surface-card px-3 text-xs font-bold text-platforma-text transition hover:border-brand-100 hover:bg-brand-50"
+              className="platforma-focus-ring flex min-h-11 items-center justify-between gap-2 rounded-control px-1 text-xs font-semibold text-platforma-text transition hover:bg-brand-50 lg:min-h-8"
             >
               <span className="truncate">{action.code ? t(`conversations.nextAction.${action.code}`) : action.label}</span>
-              <span className="shrink-0 text-brand-700">{t("conversations.openPriority")}</span>
+              <ArrowRight aria-hidden="true" size={14} className="shrink-0 text-brand-700" />
             </Link>
           ))}
         </div>
@@ -222,7 +222,7 @@ export function ConversationListPane({
         </div>
       ) : null}
 
-      <div className="min-h-0 flex-1 overflow-y-auto pb-28 lg:pb-0">
+      <div className="min-h-0 flex-1 overflow-y-auto">
         {loading ? <div className="p-5"><LoadingState /></div> : null}
         {!loading && !items.length ? (
           <div className="pointer-events-none absolute inset-0 grid place-items-center px-5 text-center">

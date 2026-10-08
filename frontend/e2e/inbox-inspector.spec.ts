@@ -21,6 +21,40 @@ async function openContext(page: Page, label = ru["conversations.aboutClient"]) 
   return panel;
 }
 
+test("thread menu preserves memory confirmation, history and an unsent reply", async ({ page }) => {
+  const session = await crmSession(page);
+  const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
+  const before = await session.list<{ id: number }>(`inbox/conversations/${conversation.id}/messages`);
+  let resetRequests = 0;
+  page.on("request", request => {
+    if (request.method() === "POST" && request.url().endsWith(`/inbox/conversations/${conversation.id}/reset-ai-memory/`)) resetRequests += 1;
+  });
+  await page.goto(`/app/conversations/${conversation.id}`);
+  const composer = page.getByTestId("inbox-action-composer");
+  await composer.fill("Keep this unsent reply");
+  await expect(page.getByRole("button", { name: ru["agentChat.reset"], exact: true })).toHaveCount(0);
+  const menu = page.getByRole("button", { name: ru["conversations.dialogActions"], exact: true });
+  await menu.focus();
+  await page.keyboard.press("Enter");
+  const reset = page.getByRole("menuitem", { name: ru["agentChat.reset"], exact: true });
+  await reset.focus();
+  await page.keyboard.press("Enter");
+  const dialog = page.getByRole("dialog", { name: ru["agentChat.reset"], exact: true });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: ru["common.cancel"], exact: true }).click();
+  expect(resetRequests).toBe(0);
+  await expect(composer).toHaveValue("Keep this unsent reply");
+  await menu.click();
+  await reset.click();
+  const resetDone = page.waitForResponse(response => response.url().endsWith(`/inbox/conversations/${conversation.id}/reset-ai-memory/`) && response.request().method() === "POST");
+  await dialog.getByRole("button", { name: ru["agentChat.reset"], exact: true }).click();
+  expect((await resetDone).ok()).toBe(true);
+  expect(resetRequests).toBe(1);
+  await expect(composer).toHaveValue("Keep this unsent reply");
+  const after = await session.list<{ id: number }>(`inbox/conversations/${conversation.id}/messages`);
+  expect(after.map(message => message.id)).toEqual(before.map(message => message.id));
+});
+
 test("real client, appointment, lead and deal links preserve the unsent reply", async ({ page }, info) => {
   const session = await crmSession(page);
   const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];

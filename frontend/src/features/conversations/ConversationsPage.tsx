@@ -59,16 +59,16 @@ import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useAuth } from "../auth/AuthProvider";
 import { ConversationListPane } from "./components/ConversationListPane";
-import { ActionMenu, type ActionMenuItem } from "../../components/ui/ActionMenu";
+import type { ActionMenuItem } from "../../components/ui/ActionMenu";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { InboxCustomerContext } from "./components/InboxCustomerContext";
 import { appendReplyDraft, useInboxDraft } from "./hooks/useInboxDraft";
 import { ConversationThreadPane } from "./components/ConversationThreadPane";
+import { InboxMemoryControl } from "./components/InboxMemoryControl";
 import { MessageDeliveryDetails } from "./components/MessageDeliveryDetails";
 import { PipelineConfirmationDialog, type PipelineReview } from "./components/PipelineConfirmationDialog";
 import {
   channelOptions,
-  CONVERSATIONS_SHELL_OFFSET,
   priorityOptions,
 } from "./conversationConstants";
 import {
@@ -1307,8 +1307,7 @@ export function ConversationsPage() {
   return (
     <div
       data-testid="inbox-workspace-ready"
-      className="-mx-2 overflow-hidden sm:-mx-3 lg:-mx-4"
-      style={{ height: `calc(100dvh - ${CONVERSATIONS_SHELL_OFFSET}px)` }}
+      className="h-[calc(100dvh-var(--app-header-height)-2rem-var(--inbox-mobile-nav))] overflow-hidden"
     >
       <WorkQueueLayout
         style={{ height: "100%", minHeight: 0 }}
@@ -1371,16 +1370,14 @@ export function ConversationsPage() {
             <Button ref={contextTriggerRef} variant="ghost" size="sm" onClick={() => desktopInspector ? setInspectorOpen(state => !state) : setMobileInspectorOpen(true)} aria-expanded={desktopInspector ? inspectorOpen : mobileInspectorOpen}>
               <UserRound size={16} />{t("conversations.aboutClient")}
             </Button>
-            {threadMenu.length ? <ActionMenu label={t("conversations.dialogActions")} items={threadMenu} /> : null}
+            {selected ? <InboxMemoryControl key={selected.id} conversation={selected} items={threadMenu} /> : null}
           </>}
-          aiActions={<div className="min-w-0 flex-1">
-            <div className="flex flex-wrap gap-2">
+          aiActions={<>
               {canSuggestAi ? <Button variant="ghost" size="sm" onClick={() => selected && suggestMutation.mutate(selected.id)} disabled={!canUpdate || selected?.status !== "open"} isLoading={suggestMutation.isPending}><Sparkles size={16} />{t("conversations.prepareReply")}</Button> : null}
               {suggestedReply ? <Button variant="secondary" size="sm" disabled={!canUpdate || selected?.status !== "open"} onClick={() => { insertQuickReply(suggestedReply); setSuggestedReply(""); }}>{t("conversations.useSuggestedReply")}</Button> : null}
-            </div>
-            {suggestMutation.isError && suggestMutation.variables === selected?.id ? <p role="alert" className="mt-2 text-xs text-platforma-danger">{getApiErrorMessage(suggestMutation.error)}</p> : null}
-            {suggestedReply ? <p className="mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap text-sm text-platforma-text">{suggestedReply}</p> : null}
-          </div>}
+            {suggestMutation.isError && suggestMutation.variables === selected?.id ? <p role="alert" className="w-full text-xs text-platforma-danger">{getApiErrorMessage(suggestMutation.error)}</p> : null}
+            {suggestedReply ? <p className="max-h-32 w-full overflow-y-auto whitespace-pre-wrap text-sm text-platforma-text">{suggestedReply}</p> : null}
+          </>}
           renderDelivery={message => <MessageDeliveryDetails message={message} canRetry={canUpdate} retryPending={retryMessageMutation.isPending && retryMessageMutation.variables?.messageId === message.id} onRetry={() => {
             if (!selected || retryMessageMutation.isPending) return;
             let key = retryKeys.current.get(message.id);

@@ -2995,7 +2995,7 @@ export const en: Record<string, string> = {
   "conversations.createDeal": "Create deal",
   "conversations.openDeal": "Open deal",
   "conversations.createTask": "Create task",
-  "conversations.quickRepliesButton": "Replies",
+  "conversations.quickRepliesButton": "Quick replies",
   "conversations.quickRepliesTitle": "Quick replies",
   "conversations.quickRepliesSearch": "Search reply template...",
   "conversations.noQuickRepliesText":

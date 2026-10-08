@@ -43,7 +43,7 @@ export function ConversationComposer({
           title={t("conversations.closedReplyNotice")}
         />
       ) : null}
-      <div className="mb-2 flex flex-wrap items-center gap-2">
+      <div className="mb-1 flex flex-wrap items-center gap-1">
         {aiActions}
         <Button variant="ghost" size="sm" disabled={!canReply || selected.status === "closed"} onClick={onOpenQuickReplies}>
           <Tags size={15} /> {t("conversations.quickRepliesButton")}
@@ -52,6 +52,7 @@ export function ConversationComposer({
       <div className="flex items-end gap-2 rounded-card border border-platforma-border bg-platforma-card px-3 py-2 shadow-xs">
         <textarea
           data-testid="inbox-action-composer"
+          aria-label={t("conversations.replyPlaceholder")}
           ref={composerRef}
           rows={1}
           className="platforma-focus-ring max-h-28 min-h-10 min-w-0 flex-1 resize-none bg-transparent py-2 text-sm text-platforma-text outline-hidden placeholder:text-platforma-muted disabled:bg-disabled-surface disabled:text-disabled-content disabled:placeholder:text-disabled-content disabled:opacity-100"

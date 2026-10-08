@@ -101,6 +101,7 @@ function CommandPaletteController() {
 export function AppLayout() {
   const [pageHeader, setPageHeader] = useState<PageHeaderConfig | null>(null);
   const location = useLocation();
+  const isInboxWorkspace = /^\/app\/conversations(?:\/|$)/.test(location.pathname);
   const pageHeaderActions = useMemo(() => ({ setPageHeader }), []);
   const usesWideCrmWorkspace = /^\/app\/(leads|clients|deals|ai-agents)(?:\/|$)/.test(
     location.pathname,
@@ -115,12 +116,12 @@ export function AppLayout() {
       <PageHeaderContext.Provider value={pageHeaderActions}>
         <div className="relative flex min-h-screen">
           <DesktopSidebar />
-          <div className={`flex min-w-0 flex-1 flex-col ${usesEdgeToEdgeCrm ? "pb-[calc(5.5rem+env(safe-area-inset-bottom))]" : "pb-28"} lg:pb-0`}>
+          <div className={`flex min-w-0 flex-1 flex-col ${isInboxWorkspace ? "" : usesEdgeToEdgeCrm ? "pb-[calc(5.5rem+env(safe-area-inset-bottom))]" : "pb-28"} lg:pb-0`}>
             <WorkspaceNavigation pageHeader={pageHeader} />
             <main
               data-workspace-content
               key={workspaceAnimationKey}
-              className={`animate-fade-in mx-auto w-full flex-1 ${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}
+              className={`animate-fade-in mx-auto w-full flex-1 ${isInboxWorkspace ? "[--inbox-mobile-nav:calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] lg:[--inbox-mobile-nav:0px] px-4 pb-[calc(1rem+var(--inbox-mobile-nav))] pt-[calc(var(--app-header-height)+1rem)] max-w-none" : `${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}`}
             >
               <MeasuredWorkspaceOutlet />
             </main>

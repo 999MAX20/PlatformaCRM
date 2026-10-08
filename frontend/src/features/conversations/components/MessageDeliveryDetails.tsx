@@ -79,10 +79,8 @@ export function MessageDeliveryDetails({
           <Icon aria-hidden="true" className={status === "sending" || status === "retrying" ? "animate-spin motion-reduce:animate-none" : ""} size={15} />
         </p>
         <Pill className={statusClass(status)}>{t(statusCopy[status])}</Pill>
-      </div>
-      {status !== "delivered" ? <p className="mt-1 text-xs text-platforma-muted">{t(statusHelp[status])}</p> : null}
       {attempts > 0 && status !== "delivered" ? (
-        <p className="mt-2 text-[11px] font-bold text-platforma-muted">
+        <p className="text-[11px] text-platforma-muted">
           {t("conversations.deliveryAttempts", { attempts, max: maxAttempts })}
         </p>
       ) : null}
@@ -90,14 +88,17 @@ export function MessageDeliveryDetails({
         <Button
           type="button"
           data-testid="message-delivery-retry"
-          className="mt-3 h-9 rounded-control px-3 text-xs"
-          variant="secondary"
+          className="min-h-11 px-2 text-xs lg:min-h-9"
+          size="sm"
+          variant="ghost"
           onClick={onRetry}
           isLoading={retryPending}
         >
           <RefreshCw size={14} /> {t("conversations.retryDelivery")}
         </Button>
       ) : null}
+      </div>
+      {status !== "delivered" ? <p className="mt-1 text-xs text-platforma-muted">{t(statusHelp[status])}</p> : null}
       {status === "failed" && !canRetry ? (
         <p className="mt-3 text-xs font-semibold text-platforma-muted">
           {t("conversations.deliveryRetryNotAllowed")}

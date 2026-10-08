@@ -35,13 +35,17 @@ export function ConversationItem({
   return (
     <div
       role="button"
+      aria-current={active ? "true" : undefined}
       tabIndex={0}
       onClick={onClick}
       onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") onClick();
+        if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          onClick();
+        }
       }}
       className={cn(
-        "group relative w-full border-b border-platforma-border px-3 py-2.5 text-left transition hover:bg-surface-hover",
+        "platforma-focus-ring group relative w-full border-b border-platforma-border px-3 py-1 text-left transition hover:bg-surface-hover",
         active ? "bg-brand-50/80 before:absolute before:bottom-0 before:left-0 before:top-0 before:w-1 before:bg-[var(--platforma-brand-content)]" : "bg-platforma-card",
       )}
     >
@@ -49,7 +53,7 @@ export function ConversationItem({
         {selectable ? (
           <button
             type="button"
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-control text-platforma-muted hover:bg-platforma-card"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-control text-platforma-muted hover:bg-platforma-card lg:h-9 lg:w-9"
             onClick={(event) => {
               event.stopPropagation();
               onToggleSelected();
@@ -59,23 +63,19 @@ export function ConversationItem({
             {selectedForBulk ? <CheckSquare size={19} /> : <Square size={19} />}
           </button>
         ) : null}
-        <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full border border-platforma-border bg-platforma-card text-xs font-bold text-brand-700 shadow-xs">
+        <div aria-hidden="true" className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-platforma-border bg-platforma-card text-xs font-bold text-brand-700">
           {initials || <MessageSquare size={16} />}
-          <span className={cn("absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full border-2 border-platforma-card", conversation.channel === "telegram" ? "bg-sky-500" : conversation.channel === "whatsapp" ? "bg-emerald-500" : conversation.channel === "instagram" ? "bg-pink-500" : "bg-platforma-muted")} />
-          {unread > 0 ? (
-            <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">
-              {unread}
-            </span>
-          ) : null}
         </div>
         <div className="min-w-0 flex-1 text-left">
           <div className="flex items-center gap-2">
-            <p className="min-w-0 flex-1 truncate text-sm font-bold text-platforma-text">{conversationTitle(conversation, t)}</p>
-            <span className="shrink-0 text-[11px] font-bold text-platforma-muted">{formatDateTime(conversation.last_message_at)}</span>
+            <p title={conversationTitle(conversation, t)} className="min-w-0 flex-1 truncate text-sm font-semibold leading-5 text-platforma-text">{conversationTitle(conversation, t)}</p>
+            <span className="shrink-0 text-[11px] text-platforma-muted">{formatDateTime(conversation.last_message_at)}</span>
           </div>
-          <p className="mt-0.5 truncate text-xs font-semibold leading-5 text-platforma-muted">{preview}</p>
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-            <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-[10px] font-bold text-platforma-muted">{channelLabel(conversation.channel, t)}</span>
+          <div className="flex items-center gap-2"><p className="min-w-0 flex-1 truncate text-xs leading-4 text-platforma-muted">{preview}</p>
+            {unread > 0 ? <span className="grid h-4 min-w-4 shrink-0 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">{unread}</span> : null}
+          </div>
+          <div className="mt-1 flex flex-wrap items-center gap-1.5 leading-4">
+            <span className="text-[11px] text-platforma-muted">{channelLabel(conversation.channel, t)}</span>
             {conversation.handoff_required ? <span className="rounded-full bg-[var(--platforma-danger-soft)] px-1.5 py-0.5 text-[10px] font-bold text-platforma-danger">{t("conversations.noReply")}</span> : null}
             {isSlaOverdue ? <span className="rounded-full bg-[var(--platforma-danger-soft)] px-1.5 py-0.5 text-[10px] font-bold text-platforma-danger">{t("conversations.slaOverdue")}</span> : null}
             {!conversation.handoff_required && !conversation.bot_enabled ? <span className="rounded-full bg-[var(--platforma-warning-soft)] px-1.5 py-0.5 text-[10px] font-bold text-platforma-warning">{t("conversations.paused")}</span> : null}

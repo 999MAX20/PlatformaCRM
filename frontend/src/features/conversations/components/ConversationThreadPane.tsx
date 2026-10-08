@@ -18,7 +18,6 @@ import { channelLabel, conversationTitle } from "../conversationUtils";
 import { ConversationComposer } from "./ConversationComposer";
 import { Pill, Tooltip } from "./ConversationPrimitives";
 import { MessageBubble } from "./MessageBubble";
-import { InboxMemoryControl } from "./InboxMemoryControl";
 
 type ConversationThreadPaneProps = {
   selected: InboxConversation | null;
@@ -118,16 +117,15 @@ export function ConversationThreadPane({
       ) : (
         <>
           {mobileActions ? <div className="flex flex-wrap gap-2 border-b border-platforma-border p-3 xl:hidden">{mobileActions}</div> : null}
-          <div className="border-b border-platforma-border bg-platforma-card px-4 py-3">
-            <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-              <div className="min-w-0">
+          <div data-testid="inbox-thread-header" className="shrink-0 border-b border-platforma-border bg-platforma-card px-3 py-2">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h2 className="truncate text-lg font-bold text-platforma-text">
+                  <h2 title={conversationTitle(selected, t)} className="truncate text-base font-bold text-platforma-text">
                     {conversationTitle(selected, t)}
                   </h2>
                 </div>
-                {selected.assigned_to_email ? <p className="mt-1 truncate text-xs text-platforma-muted">{selected.assigned_to_email}</p> : null}
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                <div className="mt-1 flex flex-wrap items-center gap-1.5">
                   <Pill className="bg-brand-50 text-brand-700 ring-brand-100">
                     {channelLabel(selected.channel, t)}
                   </Pill>
@@ -145,16 +143,17 @@ export function ConversationThreadPane({
                       {t("conversations.needsOperator")}
                     </Pill>
                   ) : null}
+                  {selected.assigned_to_email ? <span title={selected.assigned_to_email} className="min-w-0 truncate text-xs text-platforma-muted">{selected.assigned_to_email}</span> : null}
                 </div>
               </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                {headerActions}
-                <InboxMemoryControl key={selected.id} conversation={selected} />
+              <div className="flex shrink-0 items-center gap-1">{headerActions}</div>
+            </div>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
                 <Tooltip label={t("conversations.assignTooltip")}>
                   <Button
                     data-conversation-action-id="assign"
-                    className="h-9 rounded-control px-3 text-xs"
+                    size="sm"
+                    className="min-h-11 px-2.5 text-xs lg:min-h-9"
                     variant="secondary"
                     disabled={!canUpdate}
                     onClick={onAssign}
@@ -173,7 +172,8 @@ export function ConversationThreadPane({
                 >
                   <Button
                     data-conversation-action-id="toggle-bot"
-                    className="h-9 rounded-control px-3 text-xs"
+                    size="sm"
+                    className="min-h-11 px-2.5 text-xs lg:min-h-9"
                     variant={selected.bot_enabled ? "warning" : "secondary"}
                     disabled={!canToggleBot || selected.status !== "open" || (!selected.bot_enabled && selected.ai_safety?.calls_remaining === 0)}
                     onClick={onToggleBot}
@@ -198,7 +198,8 @@ export function ConversationThreadPane({
                   <Tooltip label={t("conversations.reopenTooltip")}>
                     <Button
                       data-conversation-action-id="reopen"
-                      className="h-9 rounded-control px-3 text-xs"
+                      size="sm"
+                      className="min-h-11 px-2.5 text-xs lg:min-h-9"
                       variant="secondary"
                       onClick={onReopenConversation}
                       disabled={!canUpdate}
@@ -212,7 +213,8 @@ export function ConversationThreadPane({
                   <Tooltip label={t("conversations.closeTooltip")}>
                     <Button
                       data-conversation-action-id="close"
-                      className="h-9 rounded-control px-3 text-xs"
+                      size="sm"
+                      className="min-h-11 px-2.5 text-xs lg:min-h-9"
                       variant="secondary"
                       onClick={onCloseConversation}
                       disabled={!canUpdate}
@@ -224,9 +226,7 @@ export function ConversationThreadPane({
                   </Tooltip>
                 )}
               </div>
-            </div>
-            {selected.ai_safety && <div className="mt-2 space-y-1 text-xs text-platforma-subtle">
-              <p>{t("customerSafety.usage", { used: selected.ai_safety.calls_used, limit: selected.ai_safety.calls_limit })}</p>
+            {selected.ai_safety && (availableLabel || selected.handoff_required || (!selected.bot_enabled && selected.ai_safety.reason)) && <div className="mt-2 space-y-1 text-xs text-platforma-subtle">
               {availableLabel && <p>{t("customerSafety.availableAt", { time: availableLabel })}</p>}
               {selected.handoff_required && selected.handoff_reason && <p role="status">{selected.handoff_reason}</p>}
               {!selected.bot_enabled && selected.ai_safety.reason && <p>{t("customerSafety.resumeHint")}</p>}
@@ -235,7 +235,7 @@ export function ConversationThreadPane({
 
           <div
             ref={messageScrollRef}
-            className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-surface-warm p-5 pb-28 lg:pb-5"
+            className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-surface-warm p-4"
           >
             {messagesLoading ? (
               <LoadingState />
@@ -258,7 +258,7 @@ export function ConversationThreadPane({
               />
             ) : null}
             {messageList.length ? (
-              <div className="sticky top-0 z-10 flex justify-center">
+              <div className="flex justify-center">
                 <span className="rounded-full bg-platforma-card/90 px-3 py-1 text-xs font-bold text-platforma-muted shadow-xs ring-1 ring-platforma-border">
                   {t("common.today")}
                 </span>

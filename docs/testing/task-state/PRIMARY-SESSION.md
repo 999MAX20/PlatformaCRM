@@ -1,5 +1,89 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-DENSITY-20261008 — active Inbox layout and operator review
+
+Owner requests equal container gutters and analysis/improvement of bulky rows,
+crowded thread controls/composer and undifferentiated inspector information.
+Mode frontend implementation + bounded UX review, same canonical owner/root/branch;
+clean base b3959e99e9cc75223bbf14362fafb61490740c9c. Read current frontend and
+verification contracts; reuse shared layout/buttons/menu and existing actions/i18n.
+Live Chrome 1536x639 CSS viewport: container x88/y64/w1424/h535.2, app header
+height56.8/sidebar64: top7.2, sides24, bottom39.8. Root causes: max-width/negative
+margins, unrelated fixed104px height offset, ungrouped controls. Change only Inbox
+route layout, list density, thread action grouping, composer and inspector sections.
+Keep permissions/API/drafts/confirmations/retry identities and all existing actions.
+No backend/AI policy changes, new messages/provider calls or working-data mutations.
+Risk: shared AppLayout route branch, relocated memory action and responsive overflow.
+Checks: affected existing isolated inspector desktop/mobile critical flows, memory
+confirmation cancel/permission visibility, keyboard/long RU/KK/EN and live geometry;
+empty Inbox and one non-Inbox layout representative. One final isolated build/types/
+i18n/bundle and diff/docs review. No full-project or backend gate for unchanged APIs.
+Review findings must distinguish reproduced UI issues from unproven product gaps.
+
+Implemented: route-scoped 16px gutters with dvh and mobile nav/safe-area clearance;
+removed negative margins and fixed104px offset. Rows now 68.8px in owner's browser
+(about88px in supplied original screenshot); smaller avatar, quiet status metadata,
+unread badge separated from avatar. Priority links remain reachable as compact rows.
+Thread identity/context and working actions are grouped separately; memory reset and
+AI usage moved into the existing menu. Confirmation, role checks, pending/error/success
+feedback retained; exhaustion/handoff warnings remain inline. Composer tools grouped,
+RU/KK/EN quick-reply label clarified, editor gets an accessible name. Message retry
+remains at the same message with compact status/attempt/action placement. Inspector
+uses separate flat sections/icons/dividers and clear link arrows. Removed floating
+today marker overlap, but did not change its pre-existing date semantics.
+Row keyboard activation prevents Space scrolling and nested bulk-selection events
+from also opening the conversation. No shared ActionMenu behavior changed.
+
+Verification on canonical dirty snapshot, helpers under ignored
+`output/inbox-density-20261008/`, isolated DB/ports and existing dependencies:
+
+- `.venv/Scripts/python.exe output/inbox-density-20261008/verify_ui.py desktop-chromium inbox-inspector.spec.ts --grep 'real client|AI inserts|CRM menu'`
+  — 3 PASS, `browser-1791476572189000600.log`: actual four-entity links/Back/draft,
+  RU/KK/EN, editable AI insertion without send, retry identity, granular CRM approval.
+- Same helper `mobile-chromium inbox-inspector.spec.ts --grep 'thread menu|real client|AI inserts|CRM menu|switching conversations'`
+  — 5 PASS, `browser-1791476734384221300.log`: mobile equivalents plus switching/
+  late-send drafts and new memory-menu regression (cancel sends no request, confirm
+  sends once, persisted message history and unsent draft retained).
+- Same helper `desktop-chromium ui-operations.spec.ts --grep 'Inbox channel|deals show'`
+  — 3 PASS, `browser-1791476882861581600.log`: empty Inbox/filter/CTA/restricted user
+  and non-Inbox Deal layout representative for shared AppLayout's route branch.
+- Same helper `desktop-chromium inbox-inspector.spec.ts --grep 'thread menu|context handles'`
+  — 1 PASS, `browser-1791477001940939000.log`. Only the memory-menu test matched;
+  the `context handles` alternative matches no test and is not claimed as coverage.
+- `node --test frontend/scripts/tests/inbox-delivery-policy.test.mjs` — 2 PASS.
+- `.venv/Scripts/python.exe output/inbox-density-20261008/verify_frontend.py` — one
+  final isolated build/types/i18n/app/widget + bundle PASS, `frontend-isolated-final.log`.
+  No dependency reinstall, API/schema changes, backend/full E2E or live-provider run.
+- Live Chrome, actual current test data: desktop 1536x639 CSS viewport, gutters
+  left/right16, top16.2, bottom15.8, no horizontal overflow; row68.8, typical thread
+  header109.3. Mobile viewport394x851: left16/right16.4, top16.2, gap to bottom nav16.4;
+  editor bottom739.6 before nav top777.6, no overlap/overflow. Temporary viewport
+  reset, user's current conversation/filter preserved. Desktop and mobile screenshots
+  reviewed, including KK. HMR briefly invalidated I18nProvider during dictionary edit;
+  normal reload recovered, isolated fresh loads passed, no app failure persisted.
+
+Bounded review findings, not authorization for another phase:
+
+- Supplied/live Alina reply says no appointment information while inspector displays
+  an appointment. `apps/bots/ai.py` intentionally builds customer-safe reply context
+  rather than passing the inspector projection. Investigate controlled appointment
+  grounding separately with client identity/permissions; do not expose private CRM
+  fields to a public agent merely to improve the reply.
+- Composer supports text, templates and editable AI draft; MessageBubble displays
+  incoming attachments, but there is no outgoing upload control in this flow.
+- Conversation filters accept `search`, but this page currently installs only a title
+  in setPageHeader; there is no dedicated history-search control. Global CRM search
+  is not a search within this thread. Useful follow-up for longer conversations.
+- Static date marker still says today regardless of historical messages. Also
+  markRead is called by selectConversation; direct URL entry does not use that path.
+  Owner's direct-entry conversation remained unread. These are existing correctness
+  follow-ups, not fixed by density changes or claimed covered by the above checks.
+- Demo delivery failures are expected: the dedicated synthetic bot has no channel;
+  no delivery-readiness conclusion can be drawn from these test conversations.
+
+Final reviewed diff, commit/push/readback and actual CI in local publication receipt
+and final response. No working-DB edits or paid model/provider calls by this task.
+
 ## INBOX-DEMO-20261008 — owner-requested local inspector examples
 
 Mode operation, environment gap: owner explicitly requests test conversations in

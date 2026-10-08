@@ -3006,7 +3006,7 @@ export const kk: Record<string, string> = {
   "conversations.createDeal": "Мәміле жасау",
   "conversations.openDeal": "Мәмілені ашу",
   "conversations.createTask": "Тапсырма жасау",
-  "conversations.quickRepliesButton": "Жауаптар",
+  "conversations.quickRepliesButton": "Жылдам жауаптар",
   "conversations.quickRepliesTitle": "Жылдам жауаптар",
   "conversations.quickRepliesSearch": "Жауап шаблонын іздеу...",
   "conversations.noQuickRepliesText":

@@ -1,4 +1,3 @@
-export const CONVERSATIONS_SHELL_OFFSET = 104;
 export const CONVERSATIONS_PRESET_STORAGE_KEY = "zani_conversations_filters_v1";
 
 export const priorityOptions = [

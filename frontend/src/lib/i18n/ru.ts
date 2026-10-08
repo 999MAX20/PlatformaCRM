@@ -3006,7 +3006,7 @@ export const ru: Record<string, string> = {
   "conversations.createDeal": "Создать сделку",
   "conversations.openDeal": "Открыть сделку",
   "conversations.createTask": "Создать задачу",
-  "conversations.quickRepliesButton": "Ответы",
+  "conversations.quickRepliesButton": "Быстрые ответы",
   "conversations.quickRepliesTitle": "Быстрые ответы",
   "conversations.quickRepliesSearch": "Найти шаблон ответа...",
   "conversations.noQuickRepliesText":
