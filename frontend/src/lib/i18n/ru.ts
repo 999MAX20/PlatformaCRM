@@ -2825,7 +2825,7 @@ export const ru: Record<string, string> = {
   "conversations.loadingInbox": "Загружаем inbox...",
   "conversations.emptyTitle": "Диалогов пока нет",
   "conversations.emptyText":
-    "Новые обращения с сайта и Telegram появятся здесь автоматически.",
+    "Новые обращения с подключённых каналов появятся здесь автоматически.",
   "conversations.pauseBot": "Остановить бота",
   "conversations.enableBot": "Включить бота",
   "conversations.closedFromInbox": "Закрыто из inbox",

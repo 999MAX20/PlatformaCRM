@@ -2,6 +2,20 @@
 
 ## INBOX-EMPTY-FILTERS-20261008 — targeted owner refinements
 
+Follow-up during publication: owner requests channel-neutral empty-state copy:
+«Новые обращения с подключённых каналов появятся здесь автоматически»; keep the
+title. Base `aa323fae7231313efd3a05bda149467b02936553` already normal-pushed and
+remote read back. Scope only RU/KK/EN emptyText translations and this evidence;
+reuse passed interaction/permission checks. Risk copy/layout only. Check affected
+desktop/mobile empty view, i18n/build and diff hygiene; no backend/full E2E.
+Follow-up result: RU/KK/EN copy changed, title unchanged. Same isolated build
+command rerun after translations: PASS. Browser command above with grep
+`"Inbox channel shortcut and"` and both `--project=desktop-chromium` /
+`--project=mobile-chromium`: 2 PASS; log `browser-1791440356262436900.log` in
+UI-OPERATIONS output. New desktop/mobile empty screenshots inspected; text fits.
+Original UI commit CI `37736805660` was in progress at readback. Follow-up
+commit/normal push/remote SHA and current CI recorded in final response/receipt.
+
 Owner requests after rollback: remove the list empty-state card border, align
 three empty panels, move connect-channel CTA into the empty thread and open the
 customer agent Channels section, widen the two quick-filter menus and hide their

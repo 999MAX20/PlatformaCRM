@@ -2826,7 +2826,7 @@ export const kk: Record<string, string> = {
   "conversations.loadingInbox": "Inbox жүктелуде...",
   "conversations.emptyTitle": "Диалогтар әзірге жоқ",
   "conversations.emptyText":
-    "Сайт пен Telegram-нан жаңа өтініштер осында автоматты түрде пайда болады.",
+    "Қосылған арналардан жаңа өтініштер осында автоматты түрде пайда болады.",
   "conversations.pauseBot": "Ботты тоқтату",
   "conversations.enableBot": "Ботты қосу",
   "conversations.closedFromInbox": "Inbox арқылы жабылды",

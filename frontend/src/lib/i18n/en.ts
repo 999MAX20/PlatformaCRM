@@ -2814,7 +2814,7 @@ export const en: Record<string, string> = {
   "conversations.loadingInbox": "Loading inbox...",
   "conversations.emptyTitle": "No conversations yet",
   "conversations.emptyText":
-    "New website and Telegram requests will appear here automatically.",
+    "New requests from connected channels will appear here automatically.",
   "conversations.pauseBot": "Pause bot",
   "conversations.enableBot": "Enable bot",
   "conversations.closedFromInbox": "Closed from inbox",
