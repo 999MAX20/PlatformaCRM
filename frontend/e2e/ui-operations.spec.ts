@@ -175,6 +175,35 @@ test("Inbox channel shortcut respects restricted access", async ({ page }) => {
   await expect(page.getByRole("link", { name: ru["conversations.nextAction.connect_channel"], exact: true })).toHaveCount(0);
 });
 
+for (const role of ["owner", "operator"] as const) {
+  test(`sidebar standalone navigation respects ${role} access`, async ({ page }, info) => {
+    await crmSession(page, `business_${role}@example.com`);
+    const mobile = info.project.name === "mobile-chromium";
+    const sidebar = page.getByTestId(mobile ? "mobile-sidebar" : "desktop-sidebar");
+    if (mobile) await page.getByTestId("header-mobile-menu-trigger").click();
+    await expect(sidebar).toBeVisible();
+    for (const key of ["nav.channels", "nav.control"]) {
+      await expect(sidebar.getByRole("button", { name: ru[key], exact: true })).toHaveCount(0);
+    }
+    for (const path of ["integrations", "analytics", "timeline"]) {
+      await expect(sidebar.locator(`a[href="/app/${path}"]`)).toHaveCount(role === "owner" ? 1 : 0);
+    }
+    if (role === "operator") return;
+    await page.screenshot({ path: info.outputPath("sidebar-default.png"), fullPage: true });
+    if (!mobile) await sidebar.hover();
+    await page.screenshot({ path: info.outputPath("sidebar-expanded.png"), fullPage: true, animations: "disabled" });
+    for (const path of ["integrations", "analytics", "timeline"]) {
+      if (mobile && !(await sidebar.isVisible())) await page.getByTestId("header-mobile-menu-trigger").click();
+      const link = sidebar.locator(`a[href="/app/${path}"]`);
+      await link.focus();
+      await link.press("Enter");
+      await expect(page).toHaveURL(new RegExp(`/app/${path}(?:[?#].*)?$`));
+      if (mobile) await expect(sidebar).toBeHidden();
+    }
+    await noOverflow(page);
+  });
+}
+
 test("business settings retain drafts across groups, reveal invalid fields and recover a failed save", async ({ page }, info) => {
   const session = await crmSession(page);
   await page.goto("/app/settings#business-profile");

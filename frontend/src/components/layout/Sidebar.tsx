@@ -56,22 +56,10 @@ const desktopSections = [
       { to: "/app/calendar", label: "nav.calendar", icon: CalendarDays, resource: "appointments" },
       { to: "/app/conversations", label: "nav.conversations", icon: MessageSquareText, resource: "conversations" },
       { to: "/app/ai-agents", label: "nav.aiAgents", icon: Bot, resource: "ai_automation" },
-      {
-        label: "nav.channels",
-        icon: PlugZap,
-        children: [
-          { to: "/app/integrations", label: "nav.integrations", icon: PlugZap, resource: "integrations" },
-        ],
-      },
+      { to: "/app/integrations", label: "nav.integrations", icon: PlugZap, resource: "integrations" },
       { to: "/app/business", label: "nav.business", icon: Building2, resource: "settings" },
-      {
-        label: "nav.control",
-        icon: BarChart3,
-        children: [
-          { to: "/app/analytics", label: "nav.analytics", icon: BarChart3, resource: "analytics" },
-          { to: "/app/timeline", label: "nav.timeline", icon: Clock3, resource: "analytics" },
-        ],
-      },
+      { to: "/app/analytics", label: "nav.analytics", icon: BarChart3, resource: "analytics" },
+      { to: "/app/timeline", label: "nav.timeline", icon: Clock3, resource: "analytics" },
       { to: "/app/settings", label: "nav.settings", icon: Settings, resource: "settings", action: "update" },
     ],
   },
@@ -90,22 +78,10 @@ const mobileDrawerSections = [
       { to: "/app/calendar", label: "nav.calendar", icon: CalendarDays, resource: "appointments" },
       { to: "/app/conversations", label: "nav.conversations", icon: MessageSquareText, resource: "conversations" },
       { to: "/app/ai-agents", label: "nav.aiAgents", icon: Bot, resource: "ai_automation" },
-      {
-        label: "nav.channels",
-        icon: PlugZap,
-        children: [
-          { to: "/app/integrations", label: "nav.integrations", icon: PlugZap, resource: "integrations" },
-        ],
-      },
+      { to: "/app/integrations", label: "nav.integrations", icon: PlugZap, resource: "integrations" },
       { to: "/app/business", label: "nav.business", icon: Building2, resource: "settings" },
-      {
-        label: "nav.control",
-        icon: BarChart3,
-        children: [
-          { to: "/app/analytics", label: "nav.analytics", icon: BarChart3, resource: "analytics" },
-          { to: "/app/timeline", label: "nav.timeline", icon: Clock3, resource: "analytics" },
-        ],
-      },
+      { to: "/app/analytics", label: "nav.analytics", icon: BarChart3, resource: "analytics" },
+      { to: "/app/timeline", label: "nav.timeline", icon: Clock3, resource: "analytics" },
       { to: "/app/settings", label: "nav.settings", icon: Settings, resource: "settings", action: "update" },
     ],
   },

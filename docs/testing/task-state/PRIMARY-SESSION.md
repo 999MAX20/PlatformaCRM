@@ -1,5 +1,40 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## SIDEBAR-FLAT-NAV-20261008 — owner-requested navigation simplification
+
+Mode targeted UI implementation. Owner requests removing Channels/Control
+group containers and showing their contents as independent sidebar entries.
+Reuse existing Integration, Analytics and Timeline links, icons, active states,
+permission filters and mobile drawer. Same primary/root/branch; clean base
+`73582953ec50f20112b4caf5dbbe62095edf4948`. Scope Sidebar navigation configuration
+and evidence; no routes, permissions, backend, notifications, BusinessEvent, AI,
+migrations or environment changes. Risk navigation visibility/reachability.
+Checks: affected desktop collapsed/expanded + mobile drawer, keyboard navigation,
+representative allowed/restricted roles; one isolated frontend build/types/i18n/
+bundle and diff/docs consistency. No full E2E/backend suite. Normal commit/push
+and remote SHA/actual CI readback after scoped PASS.
+
+Implementation: only the two sidebar configuration arrays were flattened. The
+three original links/icons/permission resources and their order are preserved;
+top-level active states, keyboard navigation and mobile close-on-navigation are
+reused. Visible RU names remain «Подключения», «Аналитика», «История».
+Checks: `node --test scripts/tests/sidebar-navigation-policy.test.mjs` in
+frontend — 7 PASS. `.venv/Scripts/python.exe output/sidebar-flat-nav-20261008/verify_frontend.py`
+— isolated build/types/i18n/widget/bundle PASS.
+`.venv/Scripts/python.exe output/ui-operations-20261008/verify_ui.py desktop-chromium ui-operations.spec.ts --grep "sidebar standalone" --project=mobile-chromium`
+— 4 PASS (owner/operator desktop/mobile), log `browser-1791443167223872900.log`.
+Owner's three direct keyboard routes and mobile drawer closing verified;
+operator cannot see the restricted links. Desktop collapsed/expanded and mobile
+screenshots inspected. Original expanded screenshot caught a width transition;
+capture now disables animations. Focused desktop owner recheck (`--grep
+"sidebar standalone navigation respects owner"` without mobile project) 1 PASS,
+`browser-1791443292272058700.log`; completed expansion visually checked.
+Docs validator — 55 documents/363 links/14 anchors/38 paths, 198 archived
+sources intact PASS. No backend/full E2E: navigation configuration only.
+No dependency install, working-DB changes or external provider calls.
+Task complete locally; reviewed working/index/committed diff, normal push and
+remote SHA readback recorded with actual CI in final response/local receipt.
+
 ## INBOX-EMPTY-FILTERS-20261008 — targeted owner refinements
 
 Follow-up during publication: owner requests channel-neutral empty-state copy:
