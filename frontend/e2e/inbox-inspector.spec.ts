@@ -58,7 +58,7 @@ test("thread menu preserves memory confirmation, history and an unsent reply", a
 test("real client, appointment, lead and deal links preserve the unsent reply", async ({ page }, info) => {
   const session = await crmSession(page);
   const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
-  const client = await session.create<{ id: number }>("clients", { full_name: "Inspector customer", notes: "Call in the afternoon", phone: "+77001234567" });
+  const client = await session.create<{ id: number }>("clients", { full_name: "Inspector customer", notes: "Call in the afternoon", phone: "+77001234567", source: "website" });
   await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: client.id });
   await session.action(`inbox/conversations/${conversation.id}/create-deal`, { title: "Inspector consultation" });
   const resource = await session.create<{ id: number }>("resources", { name: "Inspector specialist", weekly_schedule: Array.from({ length: 7 }, (_, weekday) => ({ weekday, start_time: "09:00", end_time: "20:00", is_day_off: false })) });
@@ -84,9 +84,25 @@ test("real client, appointment, lead and deal links preserve the unsent reply", 
     await panel.locator(`a[href="${href}"]`).click();
     await expect(page).toHaveURL(new RegExp(`${href.replaceAll("?", "\\?")}$`));
     await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
+    if (href === context.client.data!.href) {
+      await page.getByTestId("client-edit-action").click();
+      const edit = page.getByRole("dialog", { name: ru["clients.editTitle"], exact: true });
+      await expect(edit.getByRole("combobox", { name: `${ru["appointment.source"]} ${ru["clients.sourceWebsite"]}`, exact: true })).toBeVisible();
+      await edit.getByRole("textbox", { name: ru["clients.notes"], exact: true }).fill("Call in the afternoon; source preserved");
+      await edit.getByTestId("client-action-submit").click();
+      await expect(edit).not.toBeVisible();
+      expect((await session.read(`clients/${client.id}`)).source).toBe("website");
+    }
     await page.goBack();
     await expect(composer).toHaveValue("Unsent reply  ");
   }
+  panel = await openContext(page);
+  await panel.getByRole("button", { name: ru["conversations.bookClient"], exact: true }).click();
+  const booking = page.getByRole("dialog", { name: ru["calendar.newBooking"], exact: true });
+  await expect(booking).toBeVisible();
+  await expect(booking.getByRole("combobox", { name: /Inspector customer/ })).toBeVisible();
+  await page.goBack();
+  await expect(composer).toHaveValue("Unsent reply  ");
   for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await page.evaluate(value => localStorage.setItem("ai_smb_language", value), locale);
     await page.reload();
@@ -99,6 +115,69 @@ test("real client, appointment, lead and deal links preserve the unsent reply", 
       await expect(page.getByRole("button", { name: copy["conversations.aboutClient"], exact: true })).toBeFocused();
     }
   }
+});
+
+test("message date separators and times use the business timezone", async ({ page }) => {
+  const session = await crmSession(page);
+  const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
+  const context: InboxContext = await session.read(`inbox/conversations/${conversation.id}/context`);
+  const timestamps = ["2020-01-01T18:00:00Z", "2020-01-01T18:30:00Z", "2020-01-02T20:00:00Z"];
+  const formatDate = new Intl.DateTimeFormat("ru", { day: "numeric", month: "short", year: "numeric", timeZone: context.timezone });
+  const formatTime = new Intl.DateTimeFormat("ru", { hour: "2-digit", minute: "2-digit", timeZone: context.timezone });
+  await page.route(`**/api/inbox/conversations/${conversation.id}/messages/**`, route => route.fulfill({ json: {
+    count: 3, next: null, previous: null, has_more: false,
+    results: timestamps.map((created_at, index) => ({ id: 93000 + index, conversation: conversation.id, direction: "inbound", sender_type: "client", text: `Historical request ${index}`, created_at, status: "received", payload_json: {}, attachments: [] })),
+  } }));
+  await page.goto(`/app/conversations/${conversation.id}`);
+  await expect(page.getByTestId("inbox-message-date")).toHaveText([...new Set(timestamps.map(value => formatDate.format(new Date(value))))]);
+  for (const [index, timestamp] of timestamps.entries()) {
+    await expect(page.locator(`[data-message-id="${93000 + index}"]`).getByText(formatTime.format(new Date(timestamp)), { exact: true })).toBeVisible();
+  }
+});
+
+test("direct entry marks read once and explicit unread survives context refresh", async ({ page }) => {
+  const session = await crmSession(page);
+  const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
+  await session.action(`inbox/conversations/${conversation.id}/mark-unread`);
+  let reads = 0;
+  page.on("request", request => {
+    if (request.method() === "POST" && request.url().endsWith(`/inbox/conversations/${conversation.id}/mark-read/`)) reads++;
+  });
+  await page.goto(`/app/conversations/${conversation.id}`);
+  await expect.poll(() => reads).toBe(1);
+  await expect.poll(async () => (await session.read(`inbox/conversations/${conversation.id}`)).unread_count).toBe(0);
+  await page.getByRole("button", { name: ru["conversations.dialogActions"], exact: true }).click();
+  await page.getByRole("menuitem", { name: ru["conversations.markUnreadAction"], exact: true }).click();
+  await expect.poll(async () => (await session.read(`inbox/conversations/${conversation.id}`)).unread_count).toBeGreaterThan(0);
+  await page.getByRole("button", { name: ru["conversations.dialogActions"], exact: true }).click();
+  await page.getByRole("menuitem", { name: `${ru["conversations.priority"]}: ${ru["status.high"]}`, exact: true }).click();
+  await expect.poll(async () => (await session.read(`inbox/conversations/${conversation.id}`)).priority).toBe("high");
+  expect((await session.read(`inbox/conversations/${conversation.id}`)).unread_count).toBeGreaterThan(0);
+  expect(reads).toBe(1);
+});
+
+test("task from a reopened conversation keeps the customer request and readable status", async ({ page }) => {
+  const session = await crmSession(page);
+  const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
+  const messages = await session.list<{ text: string; direction: string; sender_type: string }>(`inbox/conversations/${conversation.id}/messages`);
+  const customer = [...messages].reverse().find(message => message.direction === "inbound" && message.sender_type !== "system" && message.text?.trim());
+  expect(customer).toBeTruthy();
+  await session.action(`inbox/conversations/${conversation.id}/close`);
+  await session.action(`inbox/conversations/${conversation.id}/reopen`);
+  await page.goto(`/app/conversations/${conversation.id}`);
+  await expect(page.locator("[data-message-id]").filter({ hasText: "Conversation reopened." }).last()).toBeVisible();
+  await page.getByRole("button", { name: ru["conversations.dialogActions"], exact: true }).click();
+  await page.getByRole("menuitem", { name: ru["conversations.createTask"], exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: ru["conversations.createTaskTitle"], exact: true });
+  await expect(dialog.getByRole("textbox", { name: ru["tasks.description"], exact: true })).toHaveValue(customer!.text);
+  const created = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/inbox/conversations/${conversation.id}/create-task/`));
+  await dialog.getByRole("button", { name: ru["conversations.createTask"], exact: true }).click();
+  expect((await created).ok()).toBeTruthy();
+  const panel = await openContext(page);
+  await panel.locator('a[href*="/app/tasks?"]').click();
+  await expect(page).toHaveURL(/\/app\/tasks\/\d+$/);
+  await expect(page.getByText(/tasks\.(statusLabel|priorityLabel)\./)).toHaveCount(0);
+  await expect(page.getByText(customer!.text, { exact: true })).toBeVisible();
 });
 
 test("context errors recover locally and denied children show no leaked identities", async ({ page }) => {

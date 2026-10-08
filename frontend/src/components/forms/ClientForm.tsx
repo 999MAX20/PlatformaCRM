@@ -133,6 +133,7 @@ export function ClientForm({
           { value: "other", label: t("clients.sourceOther") },
         ]}
         {...form.register("source")}
+        value={form.watch("source")}
       />
       <Input label={t("clients.sourceDetail")} {...form.register("source_detail")} />
       <Textarea label={t("clients.notes")} {...form.register("notes")} />

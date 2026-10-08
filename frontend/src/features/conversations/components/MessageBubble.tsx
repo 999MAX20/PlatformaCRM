@@ -6,7 +6,7 @@ import type { Translate } from "../conversationTypes";
 import { formatMessageTime } from "../conversationUtils";
 import { AttachmentScanStatus } from "../../../components/crm/AttachmentScanStatus";
 
-export function MessageBubble({ message, t }: { message: InboxMessage; t: Translate }) {
+export function MessageBubble({ message, t, language, timeZone }: { message: InboxMessage; t: Translate; language: string; timeZone: string }) {
   const system = message.sender_type === "system";
   const inbound = message.direction === "inbound";
   const ai = message.sender_type === "bot" || message.sender_type === "ai";
@@ -15,7 +15,7 @@ export function MessageBubble({ message, t }: { message: InboxMessage; t: Transl
     : message.sender_type === "manager"
       ? t("conversations.senderManager")
       : t("conversations.senderClient");
-  const time = formatMessageTime(message.created_at || message.sent_at);
+  const time = formatMessageTime(message.created_at || message.sent_at, language, timeZone);
 
   if (system) {
     return (

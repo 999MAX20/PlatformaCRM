@@ -230,10 +230,10 @@ export function ConversationListPane({
               <div className="absolute inset-x-0 bottom-full mb-3 flex justify-center text-platforma-subtle">
                 <Inbox aria-hidden="true" size={22} />
               </div>
-              <p className="text-base font-semibold text-platforma-ink">{t("conversations.emptyTitle")}</p>
+              <p className="text-base font-semibold text-platforma-ink">{t(hasActiveFilters ? "common.noResults" : "conversations.emptyTitle")}</p>
               <div className="absolute inset-x-0 top-full mt-2 text-sm leading-6 text-platforma-subtle">
-                <p>{t("conversations.emptyText")}</p>
-                {connectChannelAction ? <div className="pointer-events-auto mt-4 lg:hidden">{connectChannelAction}</div> : null}
+                {hasActiveFilters ? <Button className="pointer-events-auto" variant="secondary" size="sm" onClick={onReset}>{t("conversations.resetFilters")}</Button> : <p>{t("conversations.emptyText")}</p>}
+                {!hasActiveFilters && connectChannelAction ? <div className="pointer-events-auto mt-4 lg:hidden">{connectChannelAction}</div> : null}
               </div>
             </div>
           </div>

@@ -64,11 +64,12 @@ export function formatDateTime(value?: string | null) {
   }).format(new Date(value));
 }
 
-export function formatMessageTime(value?: string | null) {
+export function formatMessageTime(value?: string | null, language = "ru-RU", timeZone = "UTC") {
   if (!value) return "";
-  return new Intl.DateTimeFormat("ru-RU", {
+  return new Intl.DateTimeFormat(language, {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone,
   }).format(new Date(value));
 }
 

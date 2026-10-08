@@ -1,5 +1,91 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-MANUAL-20261008 — operator workflow acceptance
+
+Owner explicitly requests manual Inbox review including inspector context/actions,
+correct entity links, client/lead/deal/task/appointment creation and management,
+and an efficient operator workflow. Mode manual verification + repair of reproduced
+in-scope defects; not a new workflow engine or permission policy. Same registered
+primary/root/branch; clean base ccee758e4f015a97b3cce43e38ac4db823d7d3a2.
+Reuse current Inbox/API/domain services and existing acceptance evidence. Verify
+live local owner session Business 2, with a backed-up, separate identifiable QA
+conversation batch; preserve user's active demo conversations/drafts. No resets,
+working migrations, real external recipients or paid model calls. AI/transport
+behavior can use isolated provider fixtures and must be reported as such.
+Manual matrix: empty/partial/full inspector, create/link/change client/lead/deal,
+appointment prefill/save/navigation, task creation, exact links/Back/draft, queue
+filters/unread/assignment/priority/bulk, close/reopen, bot readiness, templates,
+delivery failure/retry and CRM preview/confirmation. Existing lifecycle/tenant/role
+contracts are acceptance; UI alone cannot prove backend security or concurrency.
+Risk/check plan: confirm local source roots/DB/business, backup before QA writes,
+trace each mutation through normal services. For backend fixes run focused isolated
+regressions before dependent work, then affected/system/drift; frontend fixes need
+targeted interactions/responsive/manual evidence and one final build. No full-project
+suite absent demonstrated impact. Record exact PASS/FAIL/blocked boundaries; persist
+results and publish any verified code/docs under standing authorization.
+
+08.10 manual result (publication pending): real local Chrome owner session,
+canonical backend :8000 and frontend :5173; dedicated conversations 5/6 in Business 2.
+Backup `output/inbox-manual-20261008/before.sqlite3` passed integrity_check;
+bootstrap/manifest in the same ignored evidence directory. Existing conversations
+1–4 and the owner's active browser tab were not edited by the test sequence.
+Created through UI: client152, lead89, deal71, task62, appointment86. Both QA
+conversations link to the same QA client/lead/deal. Appointment confirmed, lead/task
+taken into work; source website preserved while saving synthetic email/notes.
+No external delivery, paid model call, reset or working-DB migration was performed.
+
+Manual PASS: empty → client → lead/deal → appointment/task; existing relation
+pickers; exact entity routes and reverse links; appointment confirmation and task/
+lead lifecycle action; client edit reflected in inspector; draft across navigation,
+reload, filtering and close/reopen; assignment/priority; bot resume correctly
+rejected without channel; empty quick-reply state; filtered empty/reset; selected
+two-QA-only bulk mark-read. AI draft/delivery retry/CRM preview confirmation and
+permission/error recovery are separately verified with isolated provider fixtures,
+not asserted as real-channel manual delivery.
+
+Reproduced/repaired frontend defects: direct entry did not mark the opened thread
+read (now once per visible selection, preserving explicit unread through polling);
+booking shortcut disappeared when appointments existed; task/lead prefill used
+the last system/outbound event instead of latest loaded inbound customer text;
+all historical messages were labelled today (now date groups and times use business
+timezone); task metrics/CRM quick actions/won status/priority summary leaked raw
+translation keys or IDs; shared ClientForm source selector displayed manual for
+website clients (controlled by existing form state); no-match filter looked like
+an entirely empty Inbox. No new API, lifecycle, permission or model contract.
+
+Open policy found by code review: link-client changes only conversation.client;
+existing lead/deal links may belong to another client in the same Business.
+Owner asked for explanation and recommendation, not yet selected a rule. Current
+recommendation: explicit confirmation to detach incompatible links while preserving
+the original entities/history, then link the new client's work. This is a proposal,
+not approved behavior; no backend relinking changes made. Other limits observed:
+resume denial gives generic validation copy; system activity text still comes from
+existing English backend events; no dedicated history search/outgoing attachment
+composer. These are not represented as fixed or as live-provider readiness.
+
+Verification receipts under `output/inbox-manual-20261008/` using isolated_runtime,
+existing dependencies, disposable DB/ports and mocked external providers:
+- `verify_ui.py desktop-chromium inbox-inspector.spec.ts` — 11 PASS,
+  `browser-1791478911166096000.log`, including AI/delivery/approval/error/permission
+  cases, real CRM routes, booking with existing visits, source edit, dates and tasks.
+- `verify_ui.py mobile-chromium inbox-inspector.spec.ts --grep 'real client|message date|direct entry|reopened conversation|context errors'`
+  — first three PASS in `browser-1791479073627894200.log`; task check failed because
+  its locator selected the hidden list preview rather than thread event. Corrected
+  selector; `--grep 'reopened conversation|context errors'` — 2 PASS,
+  `browser-1791479255733373000.log`. Mobile RU screenshot visually inspected.
+- Initial desktop focused run: 2 PASS, task check selected datetime instead of
+  description. Label selector corrected; focused task rerun PASS
+  `browser-1791478530961526400.log`, then full 11-case scoped run above passed.
+- Final direct-entry regression rerun PASS `browser-1791479413216119100.log`.
+- Build first caught optional unread_count TS error; null-safe guard added.
+  `verify_frontend.py` (npm build: i18n/types/app/widget + check:bundle) then PASS;
+  final repeat after one read-selection deduplication line PASS, exit 0,
+  `frontend-isolated-final.log`; no new dependency installation.
+Backend/system/migration/full-project/live-provider gates not run: frontend-only
+change, no migration/infra/AI policy change; scoped checks do not certify them.
+Next: diff/docs/secret review, normal commit/push/main readback
+and actual CI. Keep relinking decision open unless owner explicitly selects it.
+
 ## INBOX-DENSITY-20261008 — active Inbox layout and operator review
 
 Owner requests equal container gutters and analysis/improvement of bulky rows,

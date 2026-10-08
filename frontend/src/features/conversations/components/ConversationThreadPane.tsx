@@ -1,6 +1,7 @@
 import type { ReactNode, Ref } from "react";
 import { useI18n } from "../../../lib/i18n";
 import { useActiveBusiness } from "../../../hooks/useBusiness";
+import { dateInTimeZone } from "../../../lib/format";
 import {
   CheckCheck,
   MessageSquare,
@@ -92,6 +93,8 @@ export function ConversationThreadPane({
 }: ConversationThreadPaneProps) {
   const { language } = useI18n();
   const { business } = useActiveBusiness();
+  const messageDay = (message: InboxMessage) => dateInTimeZone(message.created_at, business?.timezone || "UTC");
+  const today = dateInTimeZone(new Date(), business?.timezone || "UTC");
   const availableAt = selected?.ai_safety?.next_call_available_at;
   const availableLabel = availableAt ? new Intl.DateTimeFormat(language, {
     dateStyle: "short", timeStyle: "short", timeZone: business?.timezone || "UTC",
@@ -257,16 +260,18 @@ export function ConversationThreadPane({
                 description={t("conversations.noMessagesText")}
               />
             ) : null}
-            {messageList.length ? (
-              <div className="flex justify-center">
-                <span className="rounded-full bg-platforma-card/90 px-3 py-1 text-xs font-bold text-platforma-muted shadow-xs ring-1 ring-platforma-border">
-                  {t("common.today")}
-                </span>
-              </div>
-            ) : null}
-            {messageList.map((message) => (
+            {messageList.map((message, index) => (
               <div key={message.id} data-message-id={message.id}>
-                <MessageBubble message={message} t={t} />
+                {index === 0 || messageDay(message) !== messageDay(messageList[index - 1]) ? (
+                  <div className="mb-3 flex justify-center" data-testid="inbox-message-date">
+                    <span className="rounded-full bg-platforma-card/90 px-3 py-1 text-xs font-bold text-platforma-muted shadow-xs ring-1 ring-platforma-border">
+                      {messageDay(message) === today ? t("common.today") : new Intl.DateTimeFormat(language, {
+                        day: "numeric", month: "short", year: "numeric", timeZone: business?.timezone || "UTC",
+                      }).format(new Date(message.created_at))}
+                    </span>
+                  </div>
+                ) : null}
+                <MessageBubble message={message} t={t} language={language} timeZone={business?.timezone || "UTC"} />
                 {message.direction === "outbound" && message.sender_type !== "system" ? renderDelivery(message) : null}
               </div>
             ))}

@@ -295,11 +295,11 @@ export function TaskWorkspacePage() {
       <EntityWorkspaceMetrics>
         <TaskMetric
           label={t("tasks.status")}
-          value={t(`tasks.statusLabel.${task.status}`)}
+          value={t(`status.${task.status}`)}
         />
         <TaskMetric
           label={t("tasks.priority")}
-          value={t(`tasks.priorityLabel.${task.priority}`)}
+          value={t(`status.${task.priority}`)}
         />
         <TaskMetric
           label={t("tasks.dueAt")}

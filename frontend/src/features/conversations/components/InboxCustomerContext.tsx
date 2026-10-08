@@ -79,7 +79,8 @@ export function InboxCustomerContext({ data, loading, error, retrying, menuItems
             <StatusBadge status={appointment.status} size="sm" className="mt-2" />
           </div>)}</div>
           {appointments.has_more && client ? <div className="mt-2">{entityLink(client.href, t("conversations.moreClientAppointments"))}</div> : null}
-        </section> : data.actions.book && client ? <section className="border-t border-platforma-border py-4"><Button variant="secondary" size="sm" onClick={() => onNavigate(`/app/calendar?create=1&client=${client.id}`)}><CalendarPlus size={16} />{t("conversations.bookClient")}</Button></section> : null}
+        </section> : null}
+        {data.actions.book && client ? <section className="border-t border-platforma-border py-4"><Button variant="secondary" size="sm" onClick={() => onNavigate(`/app/calendar?create=1&client=${client.id}`)}><CalendarPlus size={16} />{t("conversations.bookClient")}</Button></section> : null}
         {deal || lead || task || data.deal.state === "forbidden" || data.lead.state === "forbidden" ? <section aria-label={t("conversations.relatedWork")}>
           {deal ? <section className={sectionClass} aria-label={t("conversations.linkedDeal")}><h3 className={headingClass}><BriefcaseBusiness size={16} aria-hidden="true" />{t("conversations.linkedDeal")}</h3>
             {entityLink(deal.href, deal.title || t("conversations.dealFallback", { id: deal.id }))}

@@ -134,6 +134,8 @@ export function ConversationsPage() {
   const [addLinkOpen, setAddLinkOpen] = useState(false);
   const [automationOpen, setAutomationOpen] = useState(false);
   const desktopInspector = useMediaQuery("(min-width: 1280px)");
+  const desktopThread = useMediaQuery("(min-width: 1024px)");
+  const readSelectionRef = useRef<string | null>(null);
   const contextTriggerRef = useRef<HTMLButtonElement>(null);
   const retryKeys = useRef(new Map<number, string>());
   const [suggestedReply, setSuggestedReply] = useState("");
@@ -410,7 +412,7 @@ export function ConversationsPage() {
     if (filters.bot) parts.push(t("conversations.agent"));
     if (filters.channel) parts.push(channelLabel(filters.channel, t));
     if (filters.priority)
-      parts.push(`${t("conversations.priority")}: ${filters.priority}`);
+      parts.push(`${t("conversations.priority")}: ${t(`status.${filters.priority}`)}`);
     if (filters.unread === "true")
       parts.push(t("conversations.unreadMessages"));
     if (filters.handoff_required === "true")
@@ -641,7 +643,8 @@ export function ConversationsPage() {
     const query = params.toString();
     navigate(`/app/conversations/${id}${query ? `?${query}` : ""}`);
     const conversation = items.find((item) => item.id === id);
-    if ((conversation?.unread_count || 0) > 0) {
+    if (id === selected?.id && context.data?.actions.update && (conversation?.unread_count || 0) > 0) {
+      readSelectionRef.current = `${user?.id}:${selected.business}:${selected.id}`;
       markReadMutation.mutate(id);
     }
   }
@@ -778,6 +781,19 @@ export function ConversationsPage() {
     },
     onError: (error) => notifyError(error),
   });
+
+  useEffect(() => {
+    if (!selected || (!desktopThread && !mobileThreadOpen)) {
+      readSelectionRef.current = null;
+      return;
+    }
+    if (!messages.isSuccess || !context.data?.actions.update) return;
+    const key = `${user?.id}:${selected.business}:${selected.id}`;
+    if (readSelectionRef.current === key) return;
+    // Only mark on opening: an explicit "unread" action must survive polling.
+    readSelectionRef.current = key;
+    if ((selected.unread_count || 0) > 0) markReadMutation.mutate(selected.id);
+  }, [selected, user?.id, desktopThread, mobileThreadOpen, messages.isSuccess, context.data?.actions.update, markReadMutation.mutate]);
 
   const markUnreadMutation = useMutation({
     mutationFn: inboxApi.markUnread,
@@ -1126,7 +1142,7 @@ export function ConversationsPage() {
     if (!selected) return;
     createLeadMutation.mutate({
       conversationId: selected.id,
-      message: lastMessage?.text || undefined,
+      message: lastCustomerMessage?.text || undefined,
     });
   }
 
@@ -1146,7 +1162,7 @@ export function ConversationsPage() {
       title: t("conversations.followUpTaskTitle", {
         title: conversationTitle(selected, t),
       }),
-      description: lastMessage?.text || "",
+      description: lastCustomerMessage?.text || "",
       priority:
         selected.priority === "urgent" ||
         selected.priority === "high" ||
@@ -1227,6 +1243,9 @@ export function ConversationsPage() {
   }, [messages.data]);
   const canLoadMoreMessages = Boolean(messages.hasNextPage);
   const lastMessage = messageList[messageList.length - 1];
+  const lastCustomerMessage = [...messageList].reverse().find(message =>
+    message.direction === "inbound" && message.sender_type !== "system" && message.text?.trim(),
+  );
   const lastMessageSignature = lastMessage
     ? `${lastMessage.id}:${lastMessage.created_at || lastMessage.sent_at || ""}:${lastMessage.text || ""}`
     : "";
