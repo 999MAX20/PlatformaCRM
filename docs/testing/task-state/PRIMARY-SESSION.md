@@ -1,5 +1,38 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-DEMO-20261008 — owner-requested local inspector examples
+
+Mode operation, environment gap: owner explicitly requests test conversations in
+the currently signed-in local Inbox. Browser confirms business_owner@example.com;
+Business 2 (Zani E2E Demo), user 2, empty Inbox. Canonical backend/frontend roots
+verified for ports 8000/5173; local SQLite, branch codex/ui-testing-toolkit,
+clean starting HEAD 951c8e806125fe28feb7b174b744d362533a4e2a, same primary writer.
+Create one identifiable additive demo batch, with backup and atomic rollback:
+linked client/deal/lead/task/appointment, multiple appointments, and unlinked visitor.
+Reuse existing CRM API/services; fixture conversations/messages have no external
+channel or delivery queue. No resets, migrations, permissions or paid AI calls.
+Risk/checks: assert exact local DB/business/owner and no active automation; verify
+entity relations and context projection, then visible live-browser inspector.
+Completion: persist manifest/evidence, docs diff hygiene and normal publication.
+No app build/test suite needed for a data-only operation with unchanged product code.
+
+Completed: additive batch `inbox-demo-20261008`, conversations 1–4, three new
+clients, three leads, one deal, one task and appointments 83–85. Dedicated paused
+demo bot 13 has no channels; all conversations have bot_enabled=False, synthetic
+messages have no queued/retrying outbox. Existing data/settings preserved.
+`manage.py shell -c "exec(open('output/inbox-demo-20261008/seed.py', encoding='utf-8').read())"`
+PASS: existing authorized APIs/services create CRM links and validate available
+appointment slots. Context reads for all four scenarios PASS: full context with
+conversation appointment provenance, two client appointments, lead-only client,
+and unlinked visitor. Backup SQLite integrity_check PASS before writes; batch
+created atomically. Ignored local `output/inbox-demo-20261008/` contains seed script,
+`before.sqlite3` backup and `manifest.json`; no DB or messages committed to Git.
+Chrome at `http://127.0.0.1:5173/app/conversations/1` verified actual four-item list,
+client/note/email, tomorrow's appointment/service/specialist, 15000 KZT deal,
+lead and next task with exact links; left open for owner. No server restart needed.
+Data-only operation: no product-code changes, migrations, builds or provider tests.
+Final docs/index/committed diff and publication recorded in local receipt.
+
 ## INBOX-INSPECTOR-20261008 — approved customer context and action placement
 
 Mode implementation, code/UX gap. Owner approved inspector reference and explicitly
