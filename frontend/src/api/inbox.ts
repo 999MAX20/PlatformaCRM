@@ -5,6 +5,25 @@ import type { Appointment, BotConversation, BotMessage, Client, Deal, DuplicateC
 
 export type InboxConversation = BotConversation;
 export type InboxMessage = BotMessage;
+export type InboxLinkCandidate = { id: number; title: string; detail: string };
+
+type ContextSection<T> = { state: "available" | "empty" | "forbidden"; data: T | null };
+export type InboxContext = {
+  conversation_id: number;
+  business: number;
+  timezone: string;
+  client: ContextSection<{ id: number; name: string; phone: string; email: string; notes: string; href: string; is_archived: boolean }>;
+  lead: ContextSection<{ id: number; title: string; status: string; href: string }>;
+  deal: ContextSection<{ id: number; title: string; status: string; stage_name: string; amount: string | null; currency: string; href: string }>;
+  appointments: {
+    state: "available" | "empty" | "forbidden";
+    kind: "conversation" | "client";
+    items: Array<{ id: number; start_at: string; end_at: string; status: string; service_name: string; resource_name: string; href: string }>;
+    has_more: boolean;
+  };
+  task: { id: number; title: string; due_at: string | null; href: string } | null;
+  actions: Record<"update" | "link_client" | "create_client" | "link_lead" | "create_lead" | "link_deal" | "create_deal" | "create_task" | "book", boolean>;
+};
 
 export type InboxSummary = {
   total: number;
@@ -138,6 +157,13 @@ function cleanParams(filters: InboxFilters) {
 }
 
 export const inboxApi = {
+  async linkCandidates(conversationId: Id, kind: "client" | "lead" | "deal", term: string) {
+    const { data } = await apiClient.get<InboxLinkCandidate[]>(`/api/inbox/conversations/${conversationId}/link-candidates/`, { params: { kind, term } });
+    return data;
+  },
+  async getContext(conversationId: Id) {
+    return (await apiClient.get<InboxContext>(`/api/inbox/conversations/${conversationId}/context/`)).data;
+  },
   async resetAIMemory(conversationId: Id) {
     return (await apiClient.post<InboxConversation>(`/api/inbox/conversations/${conversationId}/reset-ai-memory/`)).data;
   },

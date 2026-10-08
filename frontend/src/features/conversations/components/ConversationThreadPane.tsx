@@ -25,6 +25,10 @@ type ConversationThreadPaneProps = {
   connectChannelAction?: ReactNode;
   mobileThreadOpen: boolean;
   mobileActions?: ReactNode;
+  headerActions?: ReactNode;
+  aiActions?: ReactNode;
+  canUpdate: boolean;
+  renderDelivery: (message: InboxMessage) => ReactNode;
   onMobileClose: () => void;
   messageScrollRef: Ref<HTMLDivElement>;
   messageEndRef: Ref<HTMLDivElement>;
@@ -57,6 +61,10 @@ export function ConversationThreadPane({
   connectChannelAction,
   mobileThreadOpen,
   mobileActions,
+  headerActions,
+  aiActions,
+  canUpdate,
+  renderDelivery,
   onMobileClose,
   messageScrollRef,
   messageEndRef,
@@ -118,6 +126,7 @@ export function ConversationThreadPane({
                     {conversationTitle(selected, t)}
                   </h2>
                 </div>
+                {selected.assigned_to_email ? <p className="mt-1 truncate text-xs text-platforma-muted">{selected.assigned_to_email}</p> : null}
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   <Pill className="bg-brand-50 text-brand-700 ring-brand-100">
                     {channelLabel(selected.channel, t)}
@@ -140,13 +149,14 @@ export function ConversationThreadPane({
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
+                {headerActions}
                 <InboxMemoryControl key={selected.id} conversation={selected} />
                 <Tooltip label={t("conversations.assignTooltip")}>
                   <Button
                     data-conversation-action-id="assign"
                     className="h-9 rounded-control px-3 text-xs"
                     variant="secondary"
-                    disabled={!selected}
+                    disabled={!canUpdate}
                     onClick={onAssign}
                     isLoading={assignPending}
                     aria-label={t("conversations.takeDialog")}
@@ -191,6 +201,7 @@ export function ConversationThreadPane({
                       className="h-9 rounded-control px-3 text-xs"
                       variant="secondary"
                       onClick={onReopenConversation}
+                      disabled={!canUpdate}
                       isLoading={reopenPending}
                       aria-label={t("conversations.openDialog")}
                     >
@@ -204,6 +215,7 @@ export function ConversationThreadPane({
                       className="h-9 rounded-control px-3 text-xs"
                       variant="secondary"
                       onClick={onCloseConversation}
+                      disabled={!canUpdate}
                       isLoading={closePending}
                       aria-label={t("conversations.closeDialog")}
                     >
@@ -253,7 +265,10 @@ export function ConversationThreadPane({
               </div>
             ) : null}
             {messageList.map((message) => (
-              <MessageBubble key={message.id} message={message} t={t} />
+              <div key={message.id} data-message-id={message.id}>
+                <MessageBubble message={message} t={t} />
+                {message.direction === "outbound" && message.sender_type !== "system" ? renderDelivery(message) : null}
+              </div>
             ))}
             <div ref={messageEndRef} aria-hidden="true" />
           </div>
@@ -263,6 +278,8 @@ export function ConversationThreadPane({
             draft={draft}
             composerRef={composerRef}
             sendPending={sendPending}
+            canReply={canUpdate}
+            aiActions={aiActions}
             onDraftChange={onDraftChange}
             onResizeComposer={onResizeComposer}
             onOpenQuickReplies={onOpenQuickReplies}

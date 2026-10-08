@@ -148,6 +148,25 @@ class InboxConversationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["metadata_json"] = sanitize_config(data.get("metadata_json") or {})
+        from apps.conversations.inbox_context import inbox_list_link_visibility, readable_inbox_links
+
+        actor = getattr(self.context.get("request"), "user", None) or self.context.get("actor")
+        parent_instances = getattr(self.parent, "instance", None)
+        if parent_instances is not None:
+            cache_key = "inbox_link_visibility"
+            if cache_key not in self.context:
+                self.context[cache_key] = inbox_list_link_visibility(list(parent_instances), actor=actor)
+            visible = {key: getattr(instance, key) if getattr(instance, f"{key}_id") in
+                       self.context[cache_key].get((instance.business_id, key), set()) else None
+                       for key in ("client", "lead", "deal")}
+        else:
+            visible = readable_inbox_links(instance, actor)
+        for relation, entity in visible.items():
+            if entity is None:
+                data[relation] = None
+        if visible["client"] is None:
+            data["client_name"] = ""
+            data["client_phone"] = ""
         return data
 
 

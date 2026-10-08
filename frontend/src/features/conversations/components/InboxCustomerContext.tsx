@@ -1,0 +1,96 @@
+import { ArrowUpRight, CalendarPlus, Link2, UserRound, X } from "lucide-react";
+
+import type { InboxContext } from "../../../api/inbox";
+import { ActionMenu, type ActionMenuItem } from "../../../components/ui/ActionMenu";
+import { Button } from "../../../components/ui/Button";
+import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
+import { StatusBadge } from "../../../components/ui/StatusBadge";
+import { useI18n } from "../../../lib/i18n";
+
+type Props = {
+  data?: InboxContext;
+  loading: boolean;
+  error: unknown;
+  retrying: boolean;
+  menuItems: ActionMenuItem[];
+  inDrawer?: boolean;
+  onRetry: () => void;
+  onClose: () => void;
+  onNavigate: (href: string) => void;
+  onLinkClient: () => void;
+  onAddLink: () => void;
+};
+
+export function InboxCustomerContext({ data, loading, error, retrying, menuItems, inDrawer, onRetry, onClose, onNavigate, onLinkClient, onAddLink }: Props) {
+  const { t, language } = useI18n();
+  const client = data?.client.data;
+  const appointments = data?.appointments;
+  const deal = data?.deal.data;
+  const lead = data?.lead.data;
+  const task = data?.task;
+  const linkClass = "platforma-focus-ring inline-flex min-h-10 items-center gap-1 text-left text-sm font-semibold text-brand-600 hover:text-brand-700 [overflow-wrap:anywhere]";
+  function entityLink(href: string, label: string) {
+    return <a href={href} className={linkClass} onClick={event => {
+      if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault(); onNavigate(href);
+    }}>{label}<ArrowUpRight aria-hidden="true" size={14} className="shrink-0" /></a>;
+  }
+  function dateLabel(value: string, timeOnly = false) {
+    return new Intl.DateTimeFormat(language, {
+      ...(timeOnly ? {} : { day: "numeric" as const, month: "short" as const, year: "numeric" as const }),
+      hour: "2-digit", minute: "2-digit", timeZone: data?.timezone || "UTC",
+    }).format(new Date(value));
+  }
+  function unavailable(section: string) {
+    return <p className="text-xs text-platforma-muted" data-testid={`inbox-context-${section}-forbidden`}>{t(`conversations.contextDenied.${section}`)}</p>;
+  }
+  const canAdd = data && (["lead", "deal"] as const).some(kind => data[kind].state === "empty" && (data.actions[`link_${kind}`] || data.actions[`create_${kind}`]));
+  return <div className="flex min-h-0 flex-1 flex-col bg-surface-card" data-testid="inbox-customer-context">
+    <header className="flex min-h-16 shrink-0 items-center gap-2 border-b border-platforma-border px-4">
+      <h2 className="min-w-0 flex-1 text-base font-bold text-platforma-text">{t("conversations.aboutClient")}</h2>
+      {menuItems.length ? <ActionMenu label={t("conversations.contextActions")} items={menuItems} overlay={inDrawer ? "drawer" : undefined} /> : null}
+      <Button variant="icon" size="icon" onClick={onClose} aria-label={t("conversations.closeContext")}><X size={18} /></Button>
+    </header>
+    <div className="min-h-0 flex-1 overflow-y-auto px-4" aria-busy={loading}>
+      {loading ? <div className="py-5"><LoadingState /></div> : error ? <div className="py-5"><ErrorState error={error} message={t("conversations.contextLoadError")} action={<Button variant="secondary" size="sm" onClick={onRetry} isLoading={retrying}>{t("common.retry")}</Button>} /></div> : data ? <>
+        <section className="py-5" aria-label={t("common.client")}>
+          {client ? <>
+            <div className="flex items-start gap-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-700"><UserRound size={20} aria-hidden="true" /></span>
+              <div className="min-w-0">
+                {entityLink(client.href, client.name || t("conversations.clientFallback", { id: client.id }))}
+                {client.phone ? <p className="break-words text-sm text-platforma-muted">{client.phone}</p> : null}
+                {client.email ? <p className="text-sm text-platforma-muted [overflow-wrap:anywhere]">{client.email}</p> : null}
+                {!client.phone && !client.email ? <p className="text-xs text-platforma-muted">{t("conversations.noContact")}</p> : null}
+              </div>
+            </div>
+            {client.notes ? <p className="mt-3 line-clamp-3 whitespace-pre-wrap text-sm text-platforma-text [overflow-wrap:anywhere]">{client.notes}</p> : null}
+          </> : data.client.state === "forbidden" ? unavailable("client") : data.actions.link_client || data.actions.create_client ?
+            <Button variant="secondary" size="sm" onClick={onLinkClient}><Link2 size={16} />{t("conversations.linkClientAction")}</Button> : null}
+        </section>
+        {appointments?.state === "forbidden" ? <section className="border-t border-platforma-border py-4">{unavailable("appointments")}</section> : appointments?.items.length ? <section className="border-t border-platforma-border py-5" aria-label={t("calendar.title")}>
+          <h3 className="mb-3 text-sm font-bold text-platforma-text">{t(appointments.kind === "conversation" ? "conversations.contextAppointments" : "conversations.clientUpcomingAppointments")}</h3>
+          <div className="space-y-4">{appointments.items.map(appointment => <div key={appointment.id}>
+            {entityLink(appointment.href, `${dateLabel(appointment.start_at)} – ${dateLabel(appointment.end_at, true)}`)}
+            {appointment.service_name ? <p className="text-sm text-platforma-text [overflow-wrap:anywhere]">{appointment.service_name}</p> : null}
+            {appointment.resource_name ? <p className="mt-1 text-xs text-platforma-muted [overflow-wrap:anywhere]">{appointment.resource_name}</p> : null}
+            <StatusBadge status={appointment.status} size="sm" className="mt-2" />
+          </div>)}</div>
+          {appointments.has_more && client ? <div className="mt-2">{entityLink(client.href, t("conversations.moreClientAppointments"))}</div> : null}
+        </section> : data.actions.book && client ? <section className="border-t border-platforma-border py-4"><Button variant="secondary" size="sm" onClick={() => onNavigate(`/app/calendar?create=1&client=${client.id}`)}><CalendarPlus size={16} />{t("conversations.bookClient")}</Button></section> : null}
+        {deal || lead || task || data.deal.state === "forbidden" || data.lead.state === "forbidden" ? <section className="space-y-4 border-t border-platforma-border py-5" aria-label={t("conversations.relatedWork")}>
+          {deal ? <div><h3 className="text-xs font-semibold text-platforma-muted">{t("conversations.linkedDeal")}</h3>
+            {entityLink(deal.href, deal.title || t("conversations.dealFallback", { id: deal.id }))}
+            {deal.stage_name ? <p className="text-xs text-platforma-muted [overflow-wrap:anywhere]">{deal.stage_name}</p> : <StatusBadge status={deal.status} size="sm" />}
+            {deal.amount !== null && deal.currency ? <p className="mt-2 text-sm tabular-nums text-platforma-text">{new Intl.NumberFormat(language, { style: "currency", currency: deal.currency, maximumFractionDigits: 2 }).format(Number(deal.amount))}</p> : null}
+          </div> : data.deal.state === "forbidden" ? unavailable("deal") : null}
+          {lead ? <div><h3 className="text-xs font-semibold text-platforma-muted">{t("conversations.linkedLead")}</h3>
+            {entityLink(lead.href, lead.title || t("conversations.leadFallback", { id: lead.id }))}<div><StatusBadge status={lead.status} size="sm" /></div>
+          </div> : data.lead.state === "forbidden" ? unavailable("lead") : null}
+          {task ? <div><h3 className="text-xs font-semibold text-platforma-muted">{t("conversations.nextTask")}</h3>{entityLink(task.href, task.title)}{task.due_at ? <p className="text-xs tabular-nums text-platforma-muted">{dateLabel(task.due_at)}</p> : null}</div> : null}
+        </section> : null}
+        {canAdd ? <div className="border-t border-platforma-border py-4"><Button variant="ghost" size="sm" onClick={onAddLink}><Link2 size={16} />{t("conversations.addLink")}</Button></div> : null}
+      </> : null}
+    </div>
+  </div>;
+}

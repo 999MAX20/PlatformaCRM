@@ -8,16 +8,9 @@ import {
 } from "@tanstack/react-query";
 import {
   BellDot,
-  CalendarCheck,
   CheckSquare,
-  ExternalLink,
   Link2,
-  PanelRightClose,
-  PanelRightOpen,
-  PauseCircle,
-  PlayCircle,
   Sparkles,
-  Tags,
   UserRound,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -31,10 +24,7 @@ import {
 
 import { getApiErrorMessage, getApiFieldErrors } from "../../api/client";
 import { botsApi } from "../../api/bots";
-import { clientsApi } from "../../api/clients";
 import { businessConnectorsApi } from "../../api/connectors";
-import { dealsApi } from "../../api/deals";
-import { leadsApi } from "../../api/leads";
 import { quickRepliesApi } from "../../api/quickReplies";
 import {
   INBOX_MESSAGES_PAGE_SIZE,
@@ -53,8 +43,9 @@ import { WorkQueueLayout } from "../../components/layout/WorkQueueLayout";
 import { useNotification } from "../../components/notifications/NotificationProvider";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
-import { Dialog } from "../../components/ui/Overlay";
+import { Dialog, Drawer } from "../../components/ui/Overlay";
 import { Select } from "../../components/ui/Select";
+import { StatusBadge } from "../../components/ui/StatusBadge";
 import {
   EmptyState,
   ErrorState,
@@ -68,7 +59,10 @@ import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useAuth } from "../auth/AuthProvider";
 import { ConversationListPane } from "./components/ConversationListPane";
-import { Pill } from "./components/ConversationPrimitives";
+import { ActionMenu, type ActionMenuItem } from "../../components/ui/ActionMenu";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { InboxCustomerContext } from "./components/InboxCustomerContext";
+import { appendReplyDraft, useInboxDraft } from "./hooks/useInboxDraft";
 import { ConversationThreadPane } from "./components/ConversationThreadPane";
 import { MessageDeliveryDetails } from "./components/MessageDeliveryDetails";
 import { PipelineConfirmationDialog, type PipelineReview } from "./components/PipelineConfirmationDialog";
@@ -100,10 +94,6 @@ function searchWithoutLegacyConversation(searchParams: URLSearchParams) {
 function isIntegrationsAction(href: string) {
   const path = href.split(/[?#]/, 1)[0].replace(/\/+$/, "");
   return path === "/app/integrations" || path.startsWith("/app/integrations/");
-}
-
-function inboxDraftKey(businessId: number | string, conversationId: number | string) {
-  return `zani_inbox_draft:${businessId}:${conversationId}`;
 }
 
 function createIdempotencyKey(scope: string) {
@@ -140,9 +130,14 @@ export function ConversationsPage() {
   );
   const [inspectorOpen, setInspectorOpen] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [draft, setDraft] = useState("");
+  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
+  const [addLinkOpen, setAddLinkOpen] = useState(false);
+  const [automationOpen, setAutomationOpen] = useState(false);
+  const desktopInspector = useMediaQuery("(min-width: 1280px)");
+  const contextTriggerRef = useRef<HTMLButtonElement>(null);
+  const retryKeys = useRef(new Map<number, string>());
   const [suggestedReply, setSuggestedReply] = useState("");
-  const draftHydratingRef = useRef(false);
+
   const sendIdempotencyRef = useRef<{ conversationId: number; text: string; key: string } | null>(null);
   const [quickRepliesOpen, setQuickRepliesOpen] = useState(false);
   const [pipelineReview, setPipelineReview] = useState<PipelineReview | null>(null);
@@ -164,24 +159,6 @@ export function ConversationsPage() {
   const { user } = useAuth();
   const { business } = useActiveBusiness();
   const businessId = business?.id;
-  const canSuggestAi = hasPermission(
-    user,
-    business?.id,
-    "ai_assistant",
-    "suggest",
-  );
-  const canSuggestAiPipeline = hasPermission(
-    user,
-    business?.id,
-    "ai_pipeline",
-    "suggest",
-  );
-  const canRunAiPipeline = hasPermission(
-    user,
-    business?.id,
-    "ai_pipeline",
-    "execute",
-  );
   const canViewIntegrations = hasPermission(
     user,
     business?.id,
@@ -290,26 +267,44 @@ export function ConversationsPage() {
 
   const selected = selectedFromList || selectedConversation.data || null;
 
+  const canSuggestAi = hasPermission(
+    user,
+    selected?.business,
+    "ai_assistant",
+    "suggest",
+  );
+  const canSuggestAiPipeline = hasPermission(
+    user,
+    selected?.business,
+    "ai_pipeline",
+    "suggest",
+  );
+  const canRunAiPipeline = hasPermission(
+    user,
+    selected?.business,
+    "ai_pipeline",
+    "execute",
+  );
+  const { draft, draftKey, setDraft, clearSentDraft } = useInboxDraft(user?.id, selected?.business, selected?.id);
+  const currentConversationRef = useRef(selected?.id);
+  currentConversationRef.current = selected?.id;
+  const context = useQuery({
+    queryKey: ["inbox-context", user?.id, selected?.business, selected?.id],
+    queryFn: () => inboxApi.getContext(selected!.id),
+    enabled: Boolean(selected), retry: false,
+    refetchInterval: realtimeIntervals.inboxConversationsMs,
+  });
+  const canUpdate = context.data?.actions.update ?? hasPermission(user, selected?.business, "conversations", "update");
   useEffect(() => {
-    draftHydratingRef.current = true;
     setSuggestedReply("");
-    if (!businessId || !selected?.id) {
-      setDraft("");
-      return;
-    }
-    setDraft(sessionStorage.getItem(inboxDraftKey(businessId, selected.id)) || "");
-  }, [businessId, selected?.id]);
-
-  useEffect(() => {
-    if (draftHydratingRef.current) {
-      draftHydratingRef.current = false;
-      return;
-    }
-    if (!businessId || !selected?.id) return;
-    const key = inboxDraftKey(businessId, selected.id);
-    if (draft) sessionStorage.setItem(key, draft);
-    else sessionStorage.removeItem(key);
-  }, [businessId, draft, selected?.id]);
+    setMobileInspectorOpen(false);
+    setCrmLinkModal(null);
+    setAddLinkOpen(false);
+    setAutomationOpen(false);
+    setPipelineReview(null);
+    setTaskModalOpen(false);
+    setQuickRepliesOpen(false);
+  }, [user?.id, selected?.business, selected?.id]);
 
   const quickReplies = useQuery({
     queryKey: ["quick-replies", businessId, selected?.channel],
@@ -321,55 +316,17 @@ export function ConversationsPage() {
     enabled: Boolean(businessId && selected?.channel),
   });
 
-  const clientLinkCandidates = useQuery({
-    queryKey: ["inbox-link-clients", businessId, crmLinkSearch],
-    queryFn: async () => {
-      const result = await clientsApi.listFiltered({
-        q: crmLinkSearch,
-        page_size: 8,
-      });
-      return result.clients;
-    },
-    enabled: Boolean(businessId && crmLinkModal === "client"),
-  });
-
-  const leadLinkCandidates = useQuery({
-    queryKey: ["inbox-link-leads", businessId, crmLinkSearch],
-    queryFn: async () => {
-      const result = await leadsApi.listPaginated({
-        search: crmLinkSearch,
-        page_size: 8,
-      });
-      return result.results;
-    },
-    enabled: Boolean(businessId && crmLinkModal === "lead"),
-  });
-
-  const dealLinkCandidates = useQuery({
-    queryKey: ["inbox-link-deals", businessId, crmLinkSearch],
-    queryFn: async () => {
-      const result = await dealsApi.listPaginated({
-        search: crmLinkSearch,
-        page_size: 8,
-      });
-      return result.results;
-    },
-    enabled: Boolean(businessId && crmLinkModal === "deal"),
+  const linkCandidates = useQuery({
+    queryKey: ["inbox-link-candidates", user?.id, selected?.business, selected?.id, crmLinkModal, crmLinkSearch],
+    queryFn: () => inboxApi.linkCandidates(selected!.id, crmLinkModal!, crmLinkSearch),
+    enabled: Boolean(selected && crmLinkModal && context.data?.actions[`link_${crmLinkModal}`]),
+    retry: false,
   });
 
   useEffect(() => {
-    setPageHeader({
-      title: t("nav.conversations"),
-      primaryAction: selected
-        ? {
-            label: t("conversations.context"),
-            icon: inspectorOpen ? PanelRightClose : PanelRightOpen,
-            onClick: () => setInspectorOpen((state) => !state),
-          }
-        : undefined,
-    });
+    setPageHeader({ title: t("nav.conversations") });
     return () => setPageHeader(null);
-  }, [inspectorOpen, selected, setPageHeader, t]);
+  }, [setPageHeader, t]);
 
   useEffect(() => {
     if (selectedId || conversations.isLoading || !items.length) return;
@@ -697,6 +654,7 @@ export function ConversationsPage() {
         exact: false,
       }),
       queryClient.invalidateQueries({ queryKey: ["inbox-conversations"] }),
+      queryClient.invalidateQueries({ queryKey: ["inbox-context"] }),
       queryClient.invalidateQueries({
         queryKey: ["inbox-conversation", selected?.id],
       }),
@@ -885,7 +843,8 @@ export function ConversationsPage() {
       if (!canSuggestAi) throw new Error(t("conversations.aiReplyForbidden"));
       return inboxApi.suggestReply(conversationId);
     },
-    onSuccess: (data) => {
+    onSuccess: (data, conversationId) => {
+      if (currentConversationRef.current !== conversationId) return;
       setSuggestedReply(data.suggested_reply);
       setNotice(t("conversations.aiDraftReady"));
     },
@@ -917,14 +876,11 @@ export function ConversationsPage() {
   });
 
   const sendMutation = useMutation({
-    mutationFn: inboxApi.sendMessage,
-    onSuccess: async () => {
+    mutationFn: (payload: Parameters<typeof inboxApi.sendMessage>[0] & { draftKey: string | null }) => inboxApi.sendMessage(payload),
+    onSuccess: async (_result, variables) => {
       sendIdempotencyRef.current = null;
-      setDraft("");
-      setSuggestedReply("");
-      if (businessId && selected?.id) {
-        sessionStorage.removeItem(inboxDraftKey(businessId, selected.id));
-      }
+      clearSentDraft(variables.draftKey, variables.text);
+      if (currentConversationRef.current === Number(variables.conversationId)) setSuggestedReply("");
       setNotice(t("conversations.replySent"), "success");
       await invalidateInbox();
     },
@@ -934,7 +890,8 @@ export function ConversationsPage() {
 
   const retryMessageMutation = useMutation({
     mutationFn: inboxApi.retryMessage,
-    onSuccess: async () => {
+    onSuccess: async (_result, variables) => {
+      retryKeys.current.delete(Number(variables.messageId));
       setNotice(t("conversations.messageRetried"), "success");
       await invalidateInbox();
     },
@@ -954,6 +911,7 @@ export function ConversationsPage() {
         );
         return;
       }
+      setCrmLinkModal(null);
       setNotice(
         result.created
           ? t("conversations.clientCreatedShort")
@@ -980,6 +938,7 @@ export function ConversationsPage() {
   const createLeadMutation = useMutation({
     mutationFn: inboxApi.createLead,
     onSuccess: async () => {
+      setAddLinkOpen(false);
       setNotice(t("conversations.leadCreatedShort"));
       await Promise.all([
         invalidateInbox(),
@@ -1002,6 +961,7 @@ export function ConversationsPage() {
   const createDealMutation = useMutation({
     mutationFn: inboxApi.createDeal,
     onSuccess: async () => {
+      setAddLinkOpen(false);
       setNotice(t("conversations.dealCreatedShort"));
       await Promise.all([
         invalidateInbox(),
@@ -1026,7 +986,7 @@ export function ConversationsPage() {
     onSuccess: async () => {
       setNotice(t("conversations.taskCreatedShort"), "success");
       setTaskModalOpen(false);
-      await queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      await Promise.all([queryClient.invalidateQueries({ queryKey: ["tasks"] }), invalidateInbox()]);
     },
     onError: (error) => notifyError(error),
   });
@@ -1147,26 +1107,19 @@ export function ConversationsPage() {
   ) : undefined;
   function sendReply() {
     const text = draft.trim();
-    if (!selected || !text) return;
+    if (!selected || !text || !canUpdate || selected.status !== "open" || sendMutation.isPending) return;
     const previousRequest = sendIdempotencyRef.current;
     const idempotencyKey = previousRequest?.conversationId === selected.id && previousRequest.text === text
       ? previousRequest.key
       : createIdempotencyKey(`inbox:send:${selected.id}`);
     sendIdempotencyRef.current = { conversationId: selected.id, text, key: idempotencyKey };
-    sendMutation.mutate({ conversationId: selected.id, text, idempotencyKey });
+    sendMutation.mutate({ conversationId: selected.id, text, idempotencyKey, draftKey });
   }
 
   function insertQuickReply(text: string) {
-    setDraft((current) =>
-      current.trim() ? `${current.trimEnd()}\n${text}` : text,
-    );
+    setDraft(current => appendReplyDraft(current, text));
     setQuickRepliesOpen(false);
     window.requestAnimationFrame(() => composerRef.current?.focus());
-  }
-
-  function openEntity(path: string, id?: number | string | null) {
-    if (!id) return;
-    navigate(`${path}/${id}`);
   }
 
   function createLinkedLead() {
@@ -1219,6 +1172,10 @@ export function ConversationsPage() {
   }
 
   function openCrmLinkModal(target: "client" | "lead" | "deal") {
+    linkClientMutation.reset();
+    linkLeadMutation.reset();
+    linkDealMutation.reset();
+    createClientMutation.reset();
     setCrmLinkSearch("");
     setCrmLinkModal(target);
   }
@@ -1262,16 +1219,12 @@ export function ConversationsPage() {
   const canApplyPipeline = canRunAiPipeline && Boolean(selectedInsight);
   const pipelineAllowedActions: PipelineAction[] = ([
     ["create_lead", "leads"], ["create_task", "tasks"], ["create_deal", "deals"],
-  ] as const).filter(([, resource]) => hasPermission(user, business?.id, resource, "create"))
+  ] as const).filter(([, resource]) => hasPermission(user, selected?.business, resource, "create"))
     .map(([action]) => action);
   const messageList = useMemo(() => {
     if (!messages.data) return [];
     return [...messages.data.pages].reverse().flatMap((page) => page.results);
   }, [messages.data]);
-  const latestOutboundMessage = [...messageList].reverse().find(
-    (message) => message.direction === "outbound" && message.sender_type !== "system",
-  ) || null;
-  const canRetryDelivery = hasPermission(user, business?.id, "conversations", "update");
   const canLoadMoreMessages = Boolean(messages.hasNextPage);
   const lastMessage = messageList[messageList.length - 1];
   const lastMessageSignature = lastMessage
@@ -1336,6 +1289,21 @@ export function ConversationsPage() {
     );
   }
 
+  function closeContext() {
+    setMobileInspectorOpen(false);
+    if (desktopInspector) { setInspectorOpen(false); contextTriggerRef.current?.focus(); }
+  }
+  const contextMenu: ActionMenuItem[] = (["client", "lead", "deal"] as const)
+    .filter(kind => context.data?.[kind].state === "available" && context.data.actions[`link_${kind}`])
+    .map(kind => ({ key: kind, label: t(`conversations.changeLink.${kind}`), icon: Link2, onSelect: () => openCrmLinkModal(kind) }));
+  const threadMenu: ActionMenuItem[] = [
+    ...(canUpdate ? [{ key: "unread", label: t("conversations.markUnreadAction"), icon: BellDot, onSelect: () => selected && markUnreadMutation.mutate(selected.id) },
+      ...localizedPriorityOptions.map(option => ({ key: `priority-${option.value}`, label: `${t("conversations.priority")}: ${option.label}`, icon: BellDot, disabled: setPriorityMutation.isPending || selected?.priority === option.value, onSelect: () => selected && setPriorityMutation.mutate({ conversationId: selected.id, priority: option.value as NonNullable<InboxConversation["priority"]> }) }))] : []),
+    ...(context.data?.actions.create_task ? [{ key: "task", label: t("conversations.createTask"), icon: CheckSquare, onSelect: createLinkedTask }] : []),
+    ...(canSuggestAiPipeline || canRunAiPipeline ? [{ key: "automation", label: t("conversations.crmAutomation"), icon: Sparkles, onSelect: () => setAutomationOpen(true) }] : []),
+  ];
+  const customerContext = <InboxCustomerContext data={context.data} loading={context.isLoading} error={context.error} retrying={context.isFetching} menuItems={contextMenu} inDrawer={!desktopInspector} onRetry={() => void context.refetch()} onClose={closeContext} onNavigate={href => { setMobileInspectorOpen(false); navigate(href); }} onLinkClient={() => openCrmLinkModal("client")} onAddLink={() => setAddLinkOpen(true)} />;
+
   return (
     <div
       data-testid="inbox-workspace-ready"
@@ -1347,7 +1315,7 @@ export function ConversationsPage() {
         className={cn(
           "overflow-hidden border border-platforma-border shadow-soft lg:grid-cols-[288px_minmax(0,1fr)]",
           inspectorOpen
-            ? "xl:grid-cols-[288px_minmax(0,1fr)_284px]"
+            ? selected ? "xl:grid-cols-[288px_minmax(0,1fr)_320px]" : "xl:grid-cols-[288px_minmax(0,1fr)_284px]"
             : "xl:grid-cols-[288px_minmax(0,1fr)]",
         )}
       >
@@ -1398,14 +1366,27 @@ export function ConversationsPage() {
 
         <ConversationThreadPane
           connectChannelAction={connectChannelAction}
-          mobileActions={selected ? <>
-            <Button variant="ai" onClick={previewSelectedPipeline} disabled={!canSuggestAiPipeline} isLoading={qualifyMutation.isPending}>
-              {t("conversations.previewQualification")}
+          canUpdate={canUpdate}
+          headerActions={<>
+            <Button ref={contextTriggerRef} variant="ghost" size="sm" onClick={() => desktopInspector ? setInspectorOpen(state => !state) : setMobileInspectorOpen(true)} aria-expanded={desktopInspector ? inspectorOpen : mobileInspectorOpen}>
+              <UserRound size={16} />{t("conversations.aboutClient")}
             </Button>
-            <Button variant="secondary" onClick={runSelectedPipeline} disabled={!canApplyPipeline} isLoading={runPipelineMutation.isPending}>
-              {t("conversations.confirmPipelineTitle")}
-            </Button>
-          </> : null}
+            {threadMenu.length ? <ActionMenu label={t("conversations.dialogActions")} items={threadMenu} /> : null}
+          </>}
+          aiActions={<div className="min-w-0 flex-1">
+            <div className="flex flex-wrap gap-2">
+              {canSuggestAi ? <Button variant="ghost" size="sm" onClick={() => selected && suggestMutation.mutate(selected.id)} disabled={!canUpdate || selected?.status !== "open"} isLoading={suggestMutation.isPending}><Sparkles size={16} />{t("conversations.prepareReply")}</Button> : null}
+              {suggestedReply ? <Button variant="secondary" size="sm" disabled={!canUpdate || selected?.status !== "open"} onClick={() => { insertQuickReply(suggestedReply); setSuggestedReply(""); }}>{t("conversations.useSuggestedReply")}</Button> : null}
+            </div>
+            {suggestMutation.isError && suggestMutation.variables === selected?.id ? <p role="alert" className="mt-2 text-xs text-platforma-danger">{getApiErrorMessage(suggestMutation.error)}</p> : null}
+            {suggestedReply ? <p className="mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap text-sm text-platforma-text">{suggestedReply}</p> : null}
+          </div>}
+          renderDelivery={message => <MessageDeliveryDetails message={message} canRetry={canUpdate} retryPending={retryMessageMutation.isPending && retryMessageMutation.variables?.messageId === message.id} onRetry={() => {
+            if (!selected || retryMessageMutation.isPending) return;
+            let key = retryKeys.current.get(message.id);
+            if (!key) { key = createIdempotencyKey(`inbox:retry:${message.id}`); retryKeys.current.set(message.id, key); }
+            retryMessageMutation.mutate({ conversationId: selected.id, messageId: message.id, idempotencyKey: key });
+          }} t={t} />}
           selected={selected}
           mobileThreadOpen={mobileThreadOpen}
           onMobileClose={() => setMobileThreadOpen(false)}
@@ -1454,453 +1435,29 @@ export function ConversationsPage() {
           t={t}
         />
 
-        <aside
-          className={cn(
-            "hidden min-h-0 flex-col gap-3 overflow-y-auto border-l border-platforma-border bg-surface-muted p-3 xl:flex",
-            !inspectorOpen && "xl:hidden",
-          )}
-        >
-          {selected ? (
-            <>
-              {latestOutboundMessage ? (
-                <MessageDeliveryDetails
-                  message={latestOutboundMessage}
-                  canRetry={canRetryDelivery}
-                  retryPending={retryMessageMutation.isPending}
-                  onRetry={() => {
-                    retryMessageMutation.mutate({
-                      conversationId: selected.id,
-                      messageId: latestOutboundMessage.id,
-                      idempotencyKey: createIdempotencyKey(`inbox:retry:${latestOutboundMessage.id}`),
-                    });
-                  }}
-                  t={t}
-                />
-              ) : null}
-
-              <section className="rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-platforma-muted">
-                  {t("common.client")}
-                </p>
-                <div className="mt-3 flex items-start gap-3">
-                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-700">
-                    <UserRound size={20} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="min-w-0 flex-1 truncate font-bold text-platforma-text">
-                        {selected.client_name || conversationTitle(selected, t)}
-                      </p>
-                      <button
-                        type="button"
-                        className="grid h-7 w-7 shrink-0 place-items-center rounded-control text-platforma-muted hover:bg-surface-hover hover:text-platforma-text disabled:cursor-not-allowed disabled:bg-disabled-surface disabled:text-disabled-content disabled:ring-1 disabled:ring-disabled-border disabled:opacity-100"
-                        aria-label={t("conversations.openClientContext", {
-                          title: selected.client_name || conversationTitle(selected, t),
-                        })}
-                        disabled={!selected.client}
-                        onClick={() =>
-                          openEntity("/app/clients", selected.client)
-                        }
-                      >
-                        <ExternalLink size={14} />
-                      </button>
-                    </div>
-                    <p className="mt-1 truncate text-xs font-bold text-platforma-muted">
-                      {selected.client_phone ||
-                        selected.external_user_id ||
-                        t("conversations.noContact")}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <Pill className="bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]">
-                        {selected.client
-                          ? t("common.client")
-                          : t("conversations.newContact")}
-                      </Pill>
-                      <Pill className="bg-surface-muted text-platforma-muted ring-platforma-border">
-                        {channelLabel(selected.channel, t)}
-                      </Pill>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-platforma-muted">
-                  {t("conversations.dialogState")}
-                </p>
-                <div className="mt-3 space-y-3">
-                  <div className="flex items-center justify-between gap-3 rounded-card bg-surface-muted p-2">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
-                        {t("conversations.channel")}
-                      </p>
-                      <p className="mt-1 font-bold text-platforma-text">
-                        {channelLabel(selected.channel, t)}
-                      </p>
-                      <p className="mt-0.5 text-xs font-bold text-platforma-muted">
-                        {selected.bot_enabled
-                          ? t("conversations.channelConnected")
-                          : t("conversations.botPaused")}
-                      </p>
-                    </div>
-                    {selected.bot_enabled ? (
-                      <PlayCircle className="text-platforma-success" size={22} />
-                    ) : (
-                      <PauseCircle className="text-platforma-warning" size={22} />
-                    )}
-                  </div>
-                  <div className="rounded-card bg-surface-muted p-2">
-                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
-                      {t("conversations.responsible")}
-                    </p>
-                    <div className="mt-2 flex items-center justify-between gap-3">
-                      <div className="flex min-w-0 items-center gap-3">
-                        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-platforma-card text-xs font-bold text-platforma-text ring-1 ring-platforma-border">
-                          {(selected.assigned_to_email || "ZA")
-                            .slice(0, 2)
-                            .toUpperCase()}
-                        </div>
-                        <p className="min-w-0 truncate text-sm font-bold text-platforma-text">
-                          {selected.assigned_to_email ||
-                            t("conversations.unassigned")}
-                        </p>
-                      </div>
-                      {!selected.assigned_to ? (
-                        <Button
-                          type="button"
-                          className="h-8 rounded-control px-3 text-xs"
-                          variant="secondary"
-                          onClick={() => assignMutation.mutate(selected.id)}
-                          isLoading={assignMutation.isPending}
-                        >
-                          {t("conversations.take")}
-                        </Button>
-                      ) : null}
-                    </div>
-                  </div>
-                  <Select
-                    label={t("conversations.priority")}
-                    value={selected.priority || "normal"}
-                    options={priorityActionOptions}
-                    onChange={(event) =>
-                      setPriorityMutation.mutate({
-                        conversationId: selected.id,
-                        priority: event.target.value as NonNullable<
-                          InboxConversation["priority"]
-                        >,
-                      })
-                    }
-                    disabled={setPriorityMutation.isPending}
-                  />
-                  <Button
-                    type="button"
-                    className="h-9 rounded-control px-3 text-xs"
-                    variant="secondary"
-                    onClick={() => markUnreadMutation.mutate(selected.id)}
-                    isLoading={markUnreadMutation.isPending}
-                  >
-                    <BellDot size={15} /> {t("conversations.markUnreadAction")}
-                  </Button>
-                </div>
-              </section>
-
-              <section className="rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft">
-                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-platforma-muted">
-                  <Link2 size={15} /> {t("conversations.crmLink")}
-                </p>
-                <div className="mt-3 space-y-3">
-                  <div className="rounded-card bg-surface-muted p-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
-                          {t("common.client")}
-                        </p>
-                        <p className="truncate text-sm font-bold text-platforma-text">
-                          {selected.client_name ||
-                            (selected.client
-                              ? `#${selected.client}`
-                              : t("conversations.clientNotCreated"))}
-                        </p>
-                      </div>
-                      <Pill
-                        className={
-                          selected.client
-                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]"
-                            : "bg-surface-muted text-platforma-muted ring-platforma-border"
-                        }
-                      >
-                        {selected.client
-                          ? t("conversations.linked")
-                          : t("conversations.notLinked")}
-                      </Pill>
-                    </div>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
-                      <Button
-                        type="button"
-                        className="h-8 rounded-control px-2 text-xs"
-                        variant="secondary"
-                        onClick={() =>
-                          selected.client
-                            ? openEntity("/app/clients", selected.client)
-                            : createClientMutation.mutate({
-                                conversationId: selected.id,
-                              })
-                        }
-                        isLoading={createClientMutation.isPending}
-                      >
-                        {selected.client
-                          ? t("conversations.openClient")
-                          : t("conversations.createClient")}
-                      </Button>
-                      <Button
-                        type="button"
-                        className="h-8 rounded-control px-2 text-xs"
-                        variant="secondary"
-                        onClick={() => openCrmLinkModal("client")}
-                      >
-                        {t("conversations.linkExisting")}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="rounded-card bg-surface-muted p-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
-                          {t("leads.title")}
-                        </p>
-                        <p className="truncate text-sm font-bold text-platforma-text">
-                          {selected.lead
-                            ? `#${selected.lead}`
-                            : t("conversations.leadNotLinked")}
-                        </p>
-                      </div>
-                      <Pill
-                        className={
-                          selected.lead
-                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]"
-                            : "bg-surface-muted text-platforma-muted ring-platforma-border"
-                        }
-                      >
-                        {selected.lead
-                          ? t("conversations.linked")
-                          : t("conversations.notLinked")}
-                      </Pill>
-                    </div>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
-                      <Button
-                        type="button"
-                        className="h-8 rounded-control px-2 text-xs"
-                        variant="secondary"
-                        onClick={() =>
-                          selected.lead
-                            ? openEntity("/app/leads", selected.lead)
-                            : createLinkedLead()
-                        }
-                        isLoading={createLeadMutation.isPending}
-                      >
-                        {selected.lead
-                          ? t("conversations.openLead")
-                          : t("conversations.createLead")}
-                      </Button>
-                      <Button
-                        type="button"
-                        className="h-8 rounded-control px-2 text-xs"
-                        variant="secondary"
-                        onClick={() => openCrmLinkModal("lead")}
-                      >
-                        {t("conversations.linkExisting")}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="rounded-card bg-surface-muted p-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
-                          {t("deals.title")}
-                        </p>
-                        <p className="truncate text-sm font-bold text-platforma-text">
-                          {selected.deal
-                            ? `#${selected.deal}`
-                            : t("conversations.dealNotLinked")}
-                        </p>
-                      </div>
-                      <Pill
-                        className={
-                          selected.deal
-                            ? "bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]"
-                            : "bg-surface-muted text-platforma-muted ring-platforma-border"
-                        }
-                      >
-                        {selected.deal
-                          ? t("conversations.linked")
-                          : t("conversations.notLinked")}
-                      </Pill>
-                    </div>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
-                      <Button
-                        type="button"
-                        className="h-8 rounded-control px-2 text-xs"
-                        variant="secondary"
-                        onClick={() =>
-                          selected.deal
-                            ? openEntity("/app/deals", selected.deal)
-                            : createLinkedDeal()
-                        }
-                        isLoading={createDealMutation.isPending}
-                      >
-                        {selected.deal
-                          ? t("conversations.openDeal")
-                          : t("conversations.createDeal")}
-                      </Button>
-                      <Button
-                        type="button"
-                        className="h-8 rounded-control px-2 text-xs"
-                        variant="secondary"
-                        onClick={() => openCrmLinkModal("deal")}
-                      >
-                        {t("conversations.linkExisting")}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="button"
-                    className="h-9 w-full rounded-control px-3 text-xs"
-                    variant="secondary"
-                    onClick={createLinkedTask}
-                    isLoading={createTaskMutation.isPending}
-                  >
-                    <CheckSquare size={15} /> {t("conversations.createTask")}
-                  </Button>
-                </div>
-              </section>
-
-              <section className="rounded-card border border-ai-100 bg-ai-50 p-3 shadow-soft">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="flex items-center gap-2 font-bold text-ai-900">
-                    <Sparkles size={18} /> {t("conversations.replyHint")}
-                  </p>
-                  <span className="rounded-full bg-platforma-card/80 px-2 py-0.5 text-[10px] font-bold text-ai-700 ring-1 ring-ai-100">
-                    {t("conversations.suggestionStatus")}
-                  </span>
-                </div>
-                <p className="mt-2 text-xs font-bold leading-5 text-ai-800">
-                  {t("conversations.assistantDraftHelp")}
-                </p>
-                <p className="mt-3 text-xs font-bold uppercase tracking-[0.14em] text-ai-700">
-                  {t("conversations.recommendedReply")}
-                </p>
-                <div className="mt-3 rounded-card bg-platforma-card p-3 text-xs font-semibold leading-5 text-platforma-text">
-                  {suggestedReply || t("conversations.prepareDraftFallback")}
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <Button
-                    className="h-10 rounded-control px-3 text-xs"
-                    variant="ai"
-                    onClick={() => suggestMutation.mutate(selected.id)}
-                    isLoading={suggestMutation.isPending}
-                    disabled={!canSuggestAi}
-                  >
-                    <Sparkles size={16} /> {t("conversations.prepareReply")}
-                  </Button>
-                  <Button
-                    type="button"
-                    className="h-10 rounded-control px-3 text-xs"
-                    variant="secondary"
-                    disabled={selected.status === "closed"}
-                    onClick={() => {
-                      setQuickReplySearch("");
-                      setQuickRepliesOpen(true);
-                    }}
-                  >
-                    <Tags size={15} /> {t("conversations.quickRepliesButton")}
-                  </Button>
-                </div>
-                {suggestedReply ? (
-                  <Button
-                    type="button"
-                    className="mt-2 h-10 w-full rounded-control px-3 text-xs"
-                    variant="secondary"
-                    disabled={selected.status === "closed"}
-                    onClick={() => {
-                      setDraft(suggestedReply);
-                      window.requestAnimationFrame(() => composerRef.current?.focus());
-                    }}
-                  >
-                    {t("conversations.useSuggestedReply")}
-                  </Button>
-                ) : null}
-              </section>
-
-              <section className="rounded-card border border-ai-100 bg-surface-card p-3 shadow-soft">
-                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-ai-700">
-                  <CalendarCheck size={15} /> {t("conversations.crmAutomation")}
-                </p>
-                <div className="mt-3 rounded-card bg-ai-50 p-3">
-                  <p className="text-sm font-bold text-platforma-text">
-                    {selectedInsight?.nextAction ||
-                      (selected.handoff_required
-                        ? t("conversations.replyToClient")
-                        : t("conversations.checkLinkedLeads"))}
-                  </p>
-                  <p className="mt-2 text-xs font-bold leading-5 text-platforma-muted">
-                    {selectedInsight?.intent
-                      ? t("conversations.intentLine", {
-                          intent: selectedInsight.intent,
-                        })
-                      : t("conversations.crmAutomationPreviewFallback")}
-                    {selectedInsight?.confidence !== null &&
-                    selectedInsight?.confidence !== undefined
-                      ? ` ${t("conversations.confidenceLine", { confidence: selectedInsight.confidence })}`
-                      : ""}
-                  </p>
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <Button
-                    type="button"
-                    className="h-10 rounded-control px-3 text-xs"
-                    variant="ai"
-                    onClick={previewSelectedPipeline}
-                    disabled={!canSuggestAiPipeline}
-                    isLoading={qualifyMutation.isPending}
-                    title={
-                      !canSuggestAiPipeline
-                        ? t("permissions.hiddenTitle")
-                        : undefined
-                    }
-                  >
-                    <Sparkles size={16} />{" "}
-                    {t("conversations.previewQualification")}
-                  </Button>
-                  <Button
-                    type="button"
-                    className="h-10 rounded-control px-3 text-xs"
-                    variant="secondary"
-                    onClick={runSelectedPipeline}
-                    disabled={!canApplyPipeline}
-                    isLoading={runPipelineMutation.isPending}
-                    title={
-                      !canRunAiPipeline
-                        ? t("permissions.hiddenTitle")
-                        : !selectedInsight
-                          ? t("conversations.previewRequired")
-                          : undefined
-                    }
-                  >
-                    <Link2 size={16} /> {t("conversations.confirmPipelineTitle")}
-                  </Button>
-                </div>
-              </section>
-            </>
-          ) : (
-            <div className="grid flex-1 place-items-center text-center text-sm font-bold text-platforma-muted">
-              {t("conversations.selectContext")}
-            </div>
-          )}
+        <aside className={cn("hidden min-h-0 flex-col border-l border-platforma-border xl:flex", !inspectorOpen && "xl:hidden")}>
+          {selected ? customerContext : <div className="grid flex-1 place-items-center bg-surface-muted p-3 text-center text-sm font-bold text-platforma-muted">{t("conversations.selectContext")}</div>}
         </aside>
       </WorkQueueLayout>
+
+      <Drawer open={Boolean(selected && !desktopInspector && mobileInspectorOpen)} onClose={closeContext} ariaLabel={t("conversations.aboutClient")} size="custom" className="max-w-[340px]">
+        {customerContext}
+      </Drawer>
+      <Dialog open={automationOpen} onClose={() => setAutomationOpen(false)} title={t("conversations.crmAutomation")} size="md">
+        {selectedInsight?.summary ? <p className="mb-4 text-sm text-platforma-text">{selectedInsight.summary}</p> : null}
+        {qualifyMutation.isError ? <ErrorState error={qualifyMutation.error} /> : null}
+        <div className="flex flex-wrap gap-2">
+          <Button variant="ai" onClick={previewSelectedPipeline} disabled={!canSuggestAiPipeline} isLoading={qualifyMutation.isPending}>{t("conversations.previewQualification")}</Button>
+          <Button variant="secondary" onClick={() => { setAutomationOpen(false); runSelectedPipeline(); }} disabled={!canApplyPipeline} isLoading={runPipelineMutation.isPending}>{t("conversations.confirmPipelineTitle")}</Button>
+        </div>
+      </Dialog>
+      <Dialog open={addLinkOpen} onClose={() => setAddLinkOpen(false)} title={t("conversations.addLink")} size="sm">
+        {createLeadMutation.error || createDealMutation.error ? <ErrorState error={createLeadMutation.error || createDealMutation.error} /> : null}
+        <div className="space-y-3">{(["lead", "deal"] as const).filter(kind => context.data?.[kind].state === "empty").map(kind => <div key={kind} className="flex flex-wrap gap-2">
+          {context.data?.actions[`link_${kind}`] ? <Button variant="secondary" onClick={() => { setAddLinkOpen(false); openCrmLinkModal(kind); }}>{t(kind === "lead" ? "conversations.linkLeadTitle" : "conversations.linkDealTitle")}</Button> : null}
+          {context.data?.actions[`create_${kind}`] ? <Button variant="ghost" onClick={kind === "lead" ? createLinkedLead : createLinkedDeal} isLoading={kind === "lead" ? createLeadMutation.isPending : createDealMutation.isPending}>{t(kind === "lead" ? "conversations.createLead" : "conversations.createDeal")}</Button> : null}
+        </div>)}</div>
+      </Dialog>
 
       {pipelineReview ? <PipelineConfirmationDialog key={`${pipelineReview.conversationId}:${pipelineReview.previewId}`}
         review={pipelineReview} allowedActions={pipelineAllowedActions} pending={runPipelineMutation.isPending}
@@ -1926,10 +1483,11 @@ export function ConversationsPage() {
           />
         </div>
         <div className="max-h-[56vh] overflow-y-auto p-3">
+          {quickReplies.isError ? <ErrorState error={quickReplies.error} action={<Button variant="secondary" onClick={() => void quickReplies.refetch()}>{t("common.retry")}</Button>} /> : null}
           {quickReplies.isLoading ? (
             <LoadingState />
           ) : null}
-          {!quickReplies.isLoading && !quickReplyTemplates.length ? (
+          {!quickReplies.isLoading && !quickReplies.isError && !quickReplyTemplates.length ? (
             <EmptyState
               title={t("conversations.noTemplates")}
               description={t("conversations.noQuickRepliesText")}
@@ -1991,101 +1549,16 @@ export function ConversationsPage() {
           />
         </div>
         <div className="max-h-[56vh] overflow-y-auto p-3">
-          {crmLinkModal === "client" ? (
-            <>
-              {clientLinkCandidates.isLoading ? (
-                <LoadingState />
-              ) : null}
-              {!clientLinkCandidates.isLoading &&
-              !clientLinkCandidates.data?.length ? (
-                <EmptyState
-                  title={t("conversations.noLinkCandidates")}
-                  description={t("conversations.noLinkCandidatesText")}
-                />
-              ) : null}
-              <div className="space-y-2">
-                {(clientLinkCandidates.data || []).map((client) => (
-                  <button
-                    key={client.id}
-                    type="button"
-                    className="w-full rounded-card border border-platforma-border bg-platforma-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
-                    onClick={() => linkClientToConversation(client.id)}
-                  >
-                    <p className="text-sm font-bold text-platforma-text">
-                      {client.full_name || `#${client.id}`}
-                    </p>
-                    <p className="mt-1 text-xs font-bold text-platforma-muted">
-                      {client.phone ||
-                        client.email ||
-                        t("conversations.noContact")}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : null}
-          {crmLinkModal === "lead" ? (
-            <>
-              {leadLinkCandidates.isLoading ? (
-                <LoadingState />
-              ) : null}
-              {!leadLinkCandidates.isLoading &&
-              !leadLinkCandidates.data?.length ? (
-                <EmptyState
-                  title={t("conversations.noLinkCandidates")}
-                  description={t("conversations.noLinkCandidatesText")}
-                />
-              ) : null}
-              <div className="space-y-2">
-                {(leadLinkCandidates.data || []).map((lead) => (
-                  <button
-                    key={lead.id}
-                    type="button"
-                    className="w-full rounded-card border border-platforma-border bg-platforma-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
-                    onClick={() => linkLeadToConversation(lead.id)}
-                  >
-                    <p className="text-sm font-bold text-platforma-text">
-                      {lead.client_name || `#${lead.id}`}
-                    </p>
-                    <p className="mt-1 text-xs font-bold text-platforma-muted">
-                      {lead.message || lead.status}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : null}
-          {crmLinkModal === "deal" ? (
-            <>
-              {dealLinkCandidates.isLoading ? (
-                <LoadingState />
-              ) : null}
-              {!dealLinkCandidates.isLoading &&
-              !dealLinkCandidates.data?.length ? (
-                <EmptyState
-                  title={t("conversations.noLinkCandidates")}
-                  description={t("conversations.noLinkCandidatesText")}
-                />
-              ) : null}
-              <div className="space-y-2">
-                {(dealLinkCandidates.data || []).map((deal) => (
-                  <button
-                    key={deal.id}
-                    type="button"
-                    className="w-full rounded-card border border-platforma-border bg-platforma-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
-                    onClick={() => linkDealToConversation(deal.id)}
-                  >
-                    <p className="text-sm font-bold text-platforma-text">
-                      {deal.title || `#${deal.id}`}
-                    </p>
-                    <p className="mt-1 text-xs font-bold text-platforma-muted">
-                      {deal.client_name || deal.stage_name || deal.status}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : null}
+          {linkCandidates.isLoading ? <LoadingState /> : null}
+          {linkCandidates.isError ? <ErrorState error={linkCandidates.error} action={<Button variant="secondary" onClick={() => void linkCandidates.refetch()} isLoading={linkCandidates.isFetching}>{t("common.retry")}</Button>} /> : null}
+          {!linkCandidates.isLoading && !linkCandidates.isError && !linkCandidates.data?.length && crmLinkModal && context.data?.actions[`link_${crmLinkModal}`] ? <EmptyState title={t("conversations.noLinkCandidates")} description={t("conversations.noLinkCandidatesText")} /> : null}
+          <div className="space-y-2">{(linkCandidates.data || []).map(candidate => <Button key={candidate.id} variant="ghost" className="w-full justify-start text-left" disabled={linkClientMutation.isPending || linkLeadMutation.isPending || linkDealMutation.isPending} onClick={() => {
+            if (crmLinkModal === "client") linkClientToConversation(candidate.id);
+            if (crmLinkModal === "lead") linkLeadToConversation(candidate.id);
+            if (crmLinkModal === "deal") linkDealToConversation(candidate.id);
+          }}><span className="min-w-0"><span className="block break-words">{candidate.title || `#${candidate.id}`}</span>{crmLinkModal === "client" ? <span className="block text-xs text-platforma-muted">{candidate.detail}</span> : <StatusBadge status={candidate.detail} size="sm" />}</span></Button>)}</div>
+          {crmLinkModal === "client" && context.data?.actions.create_client ? <Button variant="secondary" className="mt-3" onClick={() => selected && createClientMutation.mutate({ conversationId: selected.id })} isLoading={createClientMutation.isPending}>{t("conversations.createClient")}</Button> : null}
+          {linkClientMutation.error || linkLeadMutation.error || linkDealMutation.error || createClientMutation.error ? <ErrorState error={linkClientMutation.error || linkLeadMutation.error || linkDealMutation.error || createClientMutation.error} /> : null}
         </div>
       </Dialog>
 

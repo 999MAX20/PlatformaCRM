@@ -49,6 +49,7 @@ from apps.conversations.inbox_serializers import (
 )
 from apps.conversations.ai_qualification import qualification_from_payload, qualify_conversation
 from apps.conversations.booking import create_appointment_from_conversation
+from apps.conversations.inbox_context import build_inbox_context, inbox_link_candidates
 from apps.conversations.inbox_helpers import (
     QUALIFICATION_PREVIEW_META_KEY,
     apply_inbox_filters,
@@ -81,6 +82,15 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
 
     serializer_class = InboxConversationSerializer
     permission_classes = [IsMerchantInboxUser]
+
+    @action(detail=True, methods=["get"], url_path="context")
+    def customer_context(self, request, pk=None):
+        return Response(build_inbox_context(self.get_object(), actor=request.user))
+
+    @action(detail=True, methods=["get"], url_path="link-candidates")
+    def link_candidates(self, request, pk=None):
+        return Response(inbox_link_candidates(self.get_object(), actor=request.user,
+                        kind=request.query_params.get("kind"), search=request.query_params.get("term", "")))
 
     @action(detail=True, methods=["post"], url_path="ai-state")
     def ai_state(self, request, pk=None):

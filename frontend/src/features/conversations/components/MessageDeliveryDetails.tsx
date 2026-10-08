@@ -72,17 +72,16 @@ export function MessageDeliveryDetails({
   return (
     <section
       data-testid="message-delivery-details"
-      className="rounded-card border border-platforma-border bg-surface-card p-3 shadow-soft"
+      className="ml-auto mt-1 max-w-[78%] px-1 text-right"
     >
-      <div className="flex items-start justify-between gap-3">
-        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-platforma-muted">
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <p className="flex items-center gap-1 text-xs text-platforma-muted">
           <Icon aria-hidden="true" className={status === "sending" || status === "retrying" ? "animate-spin motion-reduce:animate-none" : ""} size={15} />
-          {t("conversations.deliveryTitle")}
         </p>
         <Pill className={statusClass(status)}>{t(statusCopy[status])}</Pill>
       </div>
-      <p className="mt-2 text-xs font-semibold leading-5 text-platforma-muted">{t(statusHelp[status])}</p>
-      {attempts > 0 ? (
+      {status !== "delivered" ? <p className="mt-1 text-xs text-platforma-muted">{t(statusHelp[status])}</p> : null}
+      {attempts > 0 && status !== "delivered" ? (
         <p className="mt-2 text-[11px] font-bold text-platforma-muted">
           {t("conversations.deliveryAttempts", { attempts, max: maxAttempts })}
         </p>

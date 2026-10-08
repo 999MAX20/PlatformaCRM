@@ -1,5 +1,98 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-INSPECTOR-20261008 — approved customer context and action placement
+
+Mode implementation, code/UX gap. Owner approved inspector reference and explicitly
+requested implementation; scope relayed by PlatformaCRM UI task
+`01a0f32f-7d02-7263-a53d-496c8f9787f5`. Same generation 4 primary, canonical root
+`C:/Users/user/Desktop/PlatformaCRM`, branch `codex/ui-testing-toolkit`; clean base
+`d76b5101d2c183fcbb2b863332611d9c740c6a83`. No parallel writer or source copy.
+Approved change from prior Inbox rollback: selected conversation's compact
+customer inspector only, with scoped client/contact/note, honestly attributed
+upcoming appointment(s), deal/lead links and compact link/book actions. Preserve
+empty three-column Inbox, sidebar, conversation list/filter and thread design.
+Move existing delivery retry to message, AI draft/quick replies to composer,
+priority/unread/task/CRM preview actions to menus/dialogs; retain all existing
+domain services, granular approvals, safety, permissions and draft behavior.
+Reuse API layer, shared overlays/buttons/menus, semantic tokens and RU/KK/EN.
+Mobile opens the same customer context from thread header with focus restoration.
+
+Risk/check plan: linked entity permission is independent of conversation access;
+if a backend projection is needed, prove same Business, resource/object scope,
+masked/hidden children, appointment time/status/multiple results in isolated
+focused tests before UI consumption. Validate deep links, booking prefill,
+draft preservation, denied/error/loading recovery, AI insertion without send,
+message retry identity, CRM confirmation and selected/unlinked/partial context
+on desktop/mobile/keyboard/locales. Finish affected/dependent backend suites and
+system/drift checks if backend changes; targeted frontend tests/browser flows and
+one isolated build/types/i18n/bundle. No full E2E absent demonstrated broad risk.
+No working DB reset/seed/migrations, external sends/sync, paid AI, new models or
+permissions framework. No development of CRM AI. Update evidence/current docs,
+review owned diff, conventional commit, normal push origin HEAD:main and actual
+remote SHA/CI.
+
+Implementation: scoped read-only context and link search implemented;
+conversation list masks inaccessible related IDs/names through batched child
+authorization. No schema/write-service changes. The 320px inspector and mobile
+drawer reuse existing tokens/overlays; exact entity routes, future appointments,
+client booking prefill, menus, composer AI insertion and per-message retry wired.
+Draft storage is scoped by user/business/conversation and persists before navigation;
+the prior business/conversation session key is consumed once for upgrade continuity.
+Late send/AI responses cannot overwrite another conversation's draft. Delivery retry
+retains its request key after an uncertain failure and targets the same message.
+The shared ActionMenu has an opt-in drawer/modal layer; default callers retain their
+layer. Mobile inspection reproduced a menu below the drawer; this was fixed and
+pointer/keyboard/Escape/focus retested. The obsolete inert attachment button was
+removed while moving quick replies into the composer toolbar; no upload flow changed.
+
+Verification (canonical dirty snapshot on the base above; isolated_runtime, fresh
+temporary DB/ports/uploads, no dependency installation):
+
+- `.venv/Scripts/python.exe output/inbox-inspector-20261008/verify_backend.py apps.conversations`
+  — 42 PASS, including 15 context/picker/batching tests; system/drift PASS.
+  Log `backend-1791452097344056200.log`.
+- Same helper with `apps.bots.tests.InboxBackendTests apps.bots.tests_customer_safety apps.bots.tests_safety_state apps.bots.tests_safety_recovery apps.core.tests_b5_performance.BackendPerformanceRegressionTests.test_inbox_list_query_count_does_not_scale_with_conversations_or_messages apps.core.tests_workspace_related_filters.WorkspaceRelatedFilterContractTests.test_workspace_inbox_filters_are_relation_and_tenant_scoped`
+  — 67 PASS, system/drift PASS; log `backend-1791452432247817500.log`.
+  Together 109 distinct backend tests, with resource denial, OWN/tenant boundaries,
+  capability/field masking, time/status/provenance/multiple appointments, task scope,
+  bounded list queries, existing writes, delivery and AI confirmation/safety.
+- `verify_ui.py desktop-chromium inbox-inspector.spec.ts` first three scenarios:
+  3 PASS (`browser-1791451971663822800.log`); mobile same first three: 3 PASS
+  (`browser-1791452180227713300.log`, later booking selector failed separately).
+  Existing entity pages were opened and browser Back retained the draft; RU/KK/EN,
+  desktop/mobile screenshots, no overflow, panel error recovery/denial, AI insertion
+  without send and retry identity checked. Synthetic AI/delivery/error boundaries
+  were mocked; entity links/context/appointment data used actual isolated APIs.
+- `verify_ui.py mobile-chromium inbox-inspector.spec.ts --grep 'booking shortcut|CRM menu|switching conversations'`:
+  booking/menu 1 PASS after the layer fix (`browser-1791452823177317600.log`);
+  CRM teardown route-fetch race then corrected by awaiting in-flight routes.
+  `--grep 'CRM menu|switching conversations'` mobile 2 PASS
+  (`browser-1791452948177369900.log`); the three-scenario desktop run 3 PASS
+  (`browser-1791452958951576100.log`). Proves booking client prefill, failed picker
+  recovery, exact granular confirmation, legacy draft upgrade, switching and late send.
+- `verify_ui.py mobile-chromium inbox-inspector.spec.ts --grep 'unlinked inspector'`
+  — 1 PASS (`browser-1791453575400692600.log`): single client CTA/create option,
+  missing links and real scoped existing-client link. Initial unlinked projection
+  is a controlled fixture; the resulting link/context are actual isolated APIs.
+- `verify_ui.py desktop-chromium ui-operations.spec.ts --grep 'Inbox channel'`
+  — 2 PASS (`browser-1791453162634715700.log`), preserving empty layout/filter/CTA
+  behavior and restricted access. Overall 15 distinct browser project/scenarios.
+- `node --test scripts/tests/inbox-delivery-policy.test.mjs` from frontend — 2 PASS.
+- `.venv/Scripts/python.exe output/inbox-inspector-20261008/verify_frontend.py`
+  — one final isolated `npm run build` (i18n/types/app/widget) and `npm run check:bundle`
+  PASS, `frontend-isolated-final.log`; no JS chunk >500kB, shell <400kB.
+
+All helper/log paths above are under ignored `output/inbox-inspector-20261008/`.
+Earlier failed fixture setup (unique email/Django client shadowing), picker `q`
+colliding with parent conversation search (changed to `term`), cold/warm capability
+cache measurement, dropdown selector names and initial reload selector race remain
+in evidence. Final applicable reruns passed; no failed gate is being counted green.
+No migrations/schema changes, working-DB seed/reset, external messages, paid AI or
+new permission/notification/BusinessEvent/write policy. Full project E2E/live provider
+certification skipped: bounded inspector/action placement scope. No new phase.
+Final diff/docs checks and publication SHA/remote readback/actual CI are recorded in
+the final response and local publication receipt; this is not deployed acceptance.
+
 ## INTEGRATIONS-REVIEW-20261008 — functional audit and redesign reference
 
 Owner request: full functional analysis of /integrations, redesign proposal based

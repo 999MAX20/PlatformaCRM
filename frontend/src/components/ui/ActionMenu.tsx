@@ -29,10 +29,12 @@ export function ActionMenu({
   label,
   items,
   disabled = false,
+  overlay,
 }: {
   label: string;
   items: ActionMenuItem[];
   disabled?: boolean;
+  overlay?: "drawer" | "modal";
 }) {
   const menuId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -97,6 +99,7 @@ export function ActionMenu({
     const currentIndex = enabledItems.indexOf(document.activeElement as HTMLButtonElement);
     if (event.key === "Escape") {
       event.preventDefault();
+      if (overlay) event.stopPropagation();
       closeAndRestoreFocus();
       return;
     }
@@ -141,7 +144,7 @@ export function ActionMenu({
           data-testid="action-menu"
           aria-label={label}
           className="fixed z-[var(--platforma-z-popover)] w-56 p-1.5"
-          style={position}
+          style={{ ...position, ...(overlay ? { zIndex: `calc(var(--platforma-z-${overlay}) + 1)` } : {}) }}
           onClick={(event) => event.stopPropagation()}
           onKeyDown={handleMenuKeyDown}
         >
