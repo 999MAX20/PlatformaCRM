@@ -1,5 +1,40 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INTEGRATIONS-REVIEW-20261008 — functional audit and redesign reference
+
+Owner request: full functional analysis of /integrations, redesign proposal based
+on the existing application design system, and a generated reference. Mode audit/
+design proposal, not implementation or activation of external integrations.
+Same registered primary/canonical root/branch; clean base
+`4ed44964f373a43ce195898c02d5f912edccf6ac`. Inspect the canonical /app/integrations
+route, reachable five-provider catalog, setup/import flows, API/services/permissions,
+states and tests. Distinguish static implementation, isolated reproduced behavior,
+historical evidence and live provider readiness. Use neutral/emerald tokens,
+Manrope typography and current flat sidebar. Reference uses explicitly labelled
+example states; no invented production metrics or implied provider availability.
+Checks: targeted isolated browser walkthrough/screenshots and representative
+error/permission states with mocked external boundaries; source evidence and
+proposal/reference visual+interaction QA; docs/diff hygiene. No code fixes,
+new providers, live sends/sync, working-DB writes/migrations, app dependency installs
+or broad certification/build for a proposal. Record findings and a bounded
+implementation recommendation; do not start implementation automatically.
+
+Result: [full report](../integrations-functional-review-20261008.md) records the
+five-provider inventory, reproducible generic-config 400/hidden modal error,
+needs_attention filter omission, partial-failure misleading metrics, ignored
+deep-link and static business-scope/request-state/monitoring risks. No product
+fixes or new provider scope. First isolated audit: 2 PASS; operator locator
+failed (wrong test-id, correct product denial). Corrected audit locator then
+owner/operator desktop/mobile 4 PASS. Commands/logs/boundaries in report.
+Interactive reference uses existing semantic colors, type, flat rail, service
+rows and contextual setup/import panel. Reference QA desktop/390/320px,
+validation, mock import, search/reset and Escape PASS after replacing QA
+textbox locator with native searchbox. No application rebuild/backend full
+suite: application inputs unchanged; scoped audit only. No working DB or
+external sends. Docs validator PASS: 56 active documents, 370 local links,
+14 anchors, 38 plain paths, 198 archived bodies intact; working diff hygiene
+PASS. Publication SHA/actual CI are recorded in final response/local receipt.
+
 ## SIDEBAR-FLAT-NAV-20261008 — owner-requested navigation simplification
 
 Mode targeted UI implementation. Owner requests removing Channels/Control
