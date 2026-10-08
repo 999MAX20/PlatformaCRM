@@ -1,5 +1,39 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-UI-ROLLBACK-20261008 — owner-requested rollback
+
+Owner request: restore the Inbox UI preceding `8bb54dd`; the previous version
+was preferred. Approved requirement change reopens only the Inbox UI portion of
+UI-OPERATIONS, not the other five screens. Base `8bb54ddc5c08d562ca985bbccbdfccd3de7de3bf`,
+clean canonical checkout, same primary/branch. Restore the three conversation UI
+files and their Inbox-only copy to `79ffca5`; keep AI/backend/domain behavior.
+Risk: accidentally reverting other screens or safety/recovery. Checks: exact
+source comparison, targeted empty/populated Inbox and existing manual AI-recovery
+browser flows desktop/mobile in isolation, one frontend build/types/i18n/bundle,
+documentation consistency and working/index/committed diff. No backend changes,
+new paid calls, working-DB changes, dependency installs or broad E2E. Commit and
+normal-push after checks under standing authorization.
+
+Result: exact source comparison against `79ffca5` PASS for all three UI files
+and every Inbox translation in RU/KK/EN. Restored original panels/filter row/copy;
+AI settings, provider behavior and other five screens are untouched.
+Isolated build/i18n/types/app/widget/bundle PASS via
+`.venv/Scripts/python.exe output/inbox-ui-rollback-20261008/verify_frontend.py`;
+log `output/inbox-ui-rollback-20261008/frontend-isolated-final.log`.
+Browser command prefix `.venv/Scripts/python.exe output/ui-operations-20261008/verify_ui.py`:
+desktop/mobile `ui-operations.spec.ts e2e/inbox-agent-safety.spec.ts --grep "Inbox restored|Inbox pause"`.
+Mobile 2 PASS (`browser-1791439073961115800.log`); desktop AI recovery PASS
+(`browser-1791439032766988200.log`), restored-layout test initially expected an
+unused subtitle. Corrected to the actual existing heading, then desktop
+`ui-operations.spec.ts --grep "Inbox restored"` 1 PASS
+(`browser-1791439204900938200.log`). Logs/screenshots in the UI-OPERATIONS output
+directory; original failure retained. Empty/filtered/filled views, draft and
+manual controls after AI limit verified. No product changes to satisfy the test.
+Docs validator: 55 documents, 361 links, 14 anchors, 38 plain paths PASS;
+archive preserved. No backend suites/full E2E or paid calls: runtime backend and
+AI code unchanged. Reviewed 11 task-owned paths; working/index/actual committed
+range checked for publication. Final SHA and actual CI reported in task response.
+
 ## UI-OPERATIONS-20261008 — implementation and local acceptance complete
 
 Source: owner-approved UI/UX audit relayed by task

@@ -1,4 +1,4 @@
-import { Filter, X } from "lucide-react";
+import { MoreHorizontal, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import type { InboxFilters } from "../../../api/inbox";
@@ -22,7 +22,6 @@ type ConversationQueueFiltersProps = {
     advancedFilters: string;
     resetFilters: string;
     agent: string;
-    owner: string;
     channel: string;
     priority: string;
     status: string;
@@ -73,13 +72,20 @@ export function ConversationQueueFilters({
 
   return (
     <div className="relative border-b border-platforma-border p-3">
-      <div className="grid grid-cols-[minmax(0,1fr)_44px] gap-2">
+      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_44px] gap-2">
         <Select
           className="min-h-10 rounded-control px-2.5 text-xs font-bold text-platforma-text"
           value={queueValue}
           onChange={(event) => onQueueChange(event.target.value)}
           options={queueOptions}
           aria-label={labels.filters}
+        />
+        <Select
+          className="min-h-10 rounded-control px-2.5 text-xs font-bold text-platforma-text"
+          value={ownerValue}
+          onChange={(event) => onOwnerChange(event.target.value)}
+          options={ownerOptions}
+          aria-label={labels.agent}
         />
         <button
           type="button"
@@ -91,22 +97,13 @@ export function ConversationQueueFilters({
           aria-expanded={isAdvancedOpen}
           aria-label={labels.advancedFilters}
         >
-          <Filter size={18} />
+          <MoreHorizontal size={18} />
           {advancedCount ? (
             <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">
               {advancedCount}
             </span>
           ) : null}
         </button>
-        <div className="col-span-2">
-          <Select
-            className="min-h-10 rounded-control px-2.5 text-xs font-bold text-platforma-text"
-            value={ownerValue}
-            onChange={(event) => onOwnerChange(event.target.value)}
-            options={ownerOptions}
-            aria-label={labels.owner}
-          />
-        </div>
       </div>
 
       {activeFilterSummary.length ? (

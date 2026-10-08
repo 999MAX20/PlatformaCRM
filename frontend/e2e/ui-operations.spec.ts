@@ -101,20 +101,22 @@ test("deals show a scheduled next action and an honest empty stage", async ({ pa
   await noOverflow(page);
 });
 
-test("Inbox empty state is coherent, filters are distinct and a populated conversation keeps its draft", async ({ page }, info) => {
+test("Inbox restored layout supports filters and a populated conversation keeps its draft", async ({ page }, info) => {
   const session = await crmSession(page);
   await page.route(inboxUrl, route => route.fulfill({ json: { count: 0, next: null, previous: null, results: [] } }));
   await page.goto("/app/conversations");
   await expect(page.getByText(ru["conversations.emptyTitle"], { exact: true })).toHaveCount(1);
-  await expect(page.getByText(ru["conversations.selectDialogText"], { exact: true })).not.toBeVisible();
+  if (info.project.name !== "mobile-chromium") {
+    await expect(page.getByText(ru["conversations.selectDialog"], { exact: true })).toBeVisible();
+  }
   await page.getByRole("button", { name: ru["conversations.advancedFilters"], exact: true }).click();
-  await expect(page.getByRole("combobox", { name: ru["leads.responsible"], exact: true })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: ru["conversations.agent"], exact: true })).toBeVisible();
   await expect(page.getByRole("combobox", { name: new RegExp(`^${ru["conversations.agent"]} `) })).toBeVisible();
   await page.getByRole("button", { name: ru["conversations.advancedFilters"], exact: true }).click();
   await page.screenshot({ path: info.outputPath("inbox-empty.png"), fullPage: true });
   await noOverflow(page);
   await page.goto("/app/conversations?unread=true");
-  await expect(page.getByText(ru["conversations.emptyFilteredTitle"], { exact: true })).toBeVisible();
+  await expect(page.getByText(ru["conversations.emptyTitle"], { exact: true })).toBeVisible();
   await page.unroute(inboxUrl);
   const conversations = await session.list<{ id: number }>("inbox/conversations");
   await page.goto(`/app/conversations?conversation=${conversations[0].id}`);

@@ -1,5 +1,10 @@
 # UI-OPERATIONS-20261008 — операционные экраны
 
+Позднейшее решение владельца 08.10: UI-часть Inbox этого пакета отменена,
+восстановлена версия до `8bb54dd`. Остальные пять экранов и backend/AI сохранены.
+Исходное evidence ниже описывает проверенный тогда snapshot, не текущий Inbox.
+Результат отката — [INBOX-UI-ROLLBACK в checkpoint](task-state/PRIMARY-SESSION.md).
+
 Авторизован весь пакет аудита: Заявки, Сделки, Календарь, Сообщения,
 Настройки и Главная. Canonical root `C:/Users/user/Desktop/PlatformaCRM`,
 branch `codex/ui-testing-toolkit`, исходный clean HEAD
