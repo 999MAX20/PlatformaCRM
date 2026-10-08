@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-08",
+  "asOf": "2026-10-09",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
     {
@@ -230,6 +230,62 @@
     {
       "path": "docs/testing/settings-functional-20261008.md",
       "role": "evidence"
+    },
+    {
+      "path": "docs/current/roadmap.md",
+      "role": "roadmap"
+    },
+    {
+      "path": "docs/pre-production/clients.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/leads-deals.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/scheduling.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/tasks-automations.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/inbox.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/identity-access.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/money-analytics.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/data-lifecycle.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/settings-notifications.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/integrations.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/subscription-usage.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/files-antivirus.md",
+      "role": "passport"
+    },
+    {
+      "path": "docs/pre-production/operations.md",
+      "role": "passport"
     }
   ]
 }

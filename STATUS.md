@@ -1,5 +1,12 @@
 # PlatformaCRM — текущий статус
 
+09.10.2026. DOCS-ROADMAP-20261009: составлены [единый roadmap](docs/current/roadmap.md)
+до production и [паспорта пятнадцати направлений](docs/pre-production/README.md)
+на опубликованной основе `768b2675`. Открытые acceptance IDs сопоставлены этапам;
+контракты, scoped evidence и отложенные решения сохранены. Docs-only scope,
+без новой продуктовой фазы, provider calls или deployment. Проверки/публикация —
+в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md).
+
 09.10.2026. SETTINGS-FUNCTIONAL-20261008: все десять разделов настроек исправлены
 и локально проверены без редизайна. Выбранный бизнес, атомарные права, очередь
 сообщений, предпочтения и дополнительные поля связаны с реальными потребителями;

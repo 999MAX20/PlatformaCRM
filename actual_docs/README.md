@@ -1,6 +1,8 @@
 # Служебная навигация
 
 Действующие требования собраны в [docs/README](../docs/README.md).
+Порядок движения к production — [единый roadmap](../docs/current/roadmap.md),
+фактическое состояние направлений — [паспорта](../docs/pre-production/README.md).
 В этой папке сохранены стабильные пути для инструментов:
 
 - [PROJECT_HANDOFF](PROJECT_HANDOFF.md) — состояние передачи владельца;

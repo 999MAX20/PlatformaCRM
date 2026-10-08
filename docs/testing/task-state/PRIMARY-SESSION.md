@@ -1,5 +1,47 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## DOCS-ROADMAP-20261009 — production route and domain passports
+
+Owner requested one production roadmap and substantive passports in the existing
+pre-production directory, with all preserved acceptance IDs mapped to that route.
+Docs-only implementation; gap type documentation/roadmap. Reuse current contracts,
+two AI passports, source code and published scoped evidence; no new business policy,
+product phase, runtime changes, migrations, provider calls or deployment.
+Generation 4 primary remains unchanged. Primary explicitly released sequential
+docs-writing to PlatformaCRM UI after Settings completion. Canonical root
+`C:/Users/user/Desktop/PlatformaCRM`, branch `codex/ui-testing-toolkit`, clean base
+`768b2675f38f1f00a5273f627c3f184b91e6a015`; Settings CI 37832658462 success.
+Acceptance: one route with dependencies/results/DoD/status/evidence, substantive
+passports, complete acceptance mapping, registered navigation and no false readiness.
+Risk: converting deferred policy into work or scoped PASS into production readiness.
+Checks: source/contract consistency, links, JSON registry, acceptance ID coverage,
+working/index/committed-range diff hygiene and complete intended-file review.
+No application checks: code/config/dependency inputs unchanged. Finish with reviewed
+docs commit, normal push to main, remote SHA and actual CI; return the writing lease.
+
+Implementation: one `docs/current/roadmap.md` with seven result stages, dependencies,
+DoD, scoped foundations and six deferred directions; all 36 preserved acceptance
+IDs explicitly mapped, including historical closures and V1 policy boundaries.
+Thirteen new domain passports plus the two retained AI passports cover fifteen
+directions. Navigation, template, source map, project state and JSON registry updated.
+Current contracts retain their meaning; no archive bodies or primary registry changed.
+Legal placeholder bodies and commercial processing remain production boundaries.
+
+Verification 09.10 on base `768b2675` + docs patch: standard-library Python check
+via `.venv/Scripts/python.exe -` parsed the JSON registry (unique/existing paths),
+checked every local Markdown target/heading anchor in changed/new documents and
+compared the explicit 36-ID acceptance set with roadmap: PASS. Static review traced
+passport claims to current contracts, services/routes and existing evidence; checked
+all new files for unrelated/private material. `git diff --check` PASS. Index and
+real committed-range checks run at publication. No app install/build/backend/browser
+or live checks: docs-only; previous application evidence retains its original scope.
+Published commit/remote readback and actual push-triggered CI are reported in the
+task's final receipt and writing-lease return, without a self-referential commit SHA.
+Final staged checker also proved both original AI bodies preserved. Its first
+invocation incorrectly required the JSON index to register itself as a Markdown
+document; that checker-only assertion was corrected and the full check passed
+(26 docs/JSON files, 343 local links/anchors, 36 acceptance IDs).
+
 ## SETTINGS-FUNCTIONAL-20261008 — functional settings completion
 
 Owner-authorized scope transferred by the read-only settings audit task after Inbox
