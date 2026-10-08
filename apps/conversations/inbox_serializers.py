@@ -219,6 +219,7 @@ class InboxLinkLeadSerializer(serializers.Serializer):
 
 class InboxLinkClientSerializer(serializers.Serializer):
     client_id = serializers.IntegerField(required=True)
+    confirmation_token = serializers.CharField(required=False, allow_blank=True, max_length=512)
 
 
 class InboxLinkDealSerializer(serializers.Serializer):

@@ -25,6 +25,14 @@ export type InboxContext = {
   actions: Record<"update" | "link_client" | "create_client" | "link_lead" | "create_lead" | "link_deal" | "create_deal" | "create_task" | "book", boolean>;
 };
 
+export type InboxClientLinkPreview = {
+  requires_confirmation: true;
+  confirmation_token: string;
+  previous_client: { id: number; title: string } | null;
+  next_client: { id: number; title: string };
+  conflicts: Array<{ kind: "lead" | "deal"; entity: { id: number; title: string } | null }>;
+};
+
 export type InboxSummary = {
   total: number;
   unread: number;
@@ -289,9 +297,10 @@ export const inboxApi = {
     });
     return data;
   },
-  linkClient: async ({ conversationId, clientId }: { conversationId: Id; clientId: Id }) => {
-    const { data } = await apiClient.post<InboxConversation>(`/api/inbox/conversations/${conversationId}/link-client/`, {
+  linkClient: async ({ conversationId, clientId, confirmationToken }: { conversationId: Id; clientId: Id; confirmationToken?: string }) => {
+    const { data } = await apiClient.post<InboxConversation | InboxClientLinkPreview>(`/api/inbox/conversations/${conversationId}/link-client/`, {
       client_id: clientId,
+      confirmation_token: confirmationToken,
     });
     return data;
   },

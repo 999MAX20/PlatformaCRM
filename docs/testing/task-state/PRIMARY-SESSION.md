@@ -1,5 +1,73 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-RELINK-20261008 — confirmed client replacement
+
+Owner approved and requested implementation of the described confirmation dialog.
+Mode mixed domain/UI implementation; closes the client-replacement policy gap only.
+Generation 4 primary, canonical root/branch unchanged; clean base
+`101f0df8e172ac2484f17dc96d683a0a0636092e`. Reuse link-client endpoint, scoped access,
+activity/audit helpers, existing dialog, API client and locale dictionaries.
+Result: selecting a different client previews incompatible lead/deal links; explicit
+confirmation atomically changes client and detaches only those links. Entities,
+their ownership/history, messages, appointments and tasks remain intact. Same client
+is a no-op; no conflicts means immediate linking. Hidden entities have no exposed
+identity. Signed confirmation binds actor/target/current relation snapshot; changed
+relations require refreshed confirmation. Server repeats tenant/role checks.
+No lifecycle/permission framework, provider/AI policy, notification, BusinessEvent,
+schema/dependency/environment changes; no working-DB mutations or paid/external calls.
+Activity/audit record the replacement. Risk: stale confirmation, partial writes,
+privacy leaks and unintended deletion. Focused isolated backend regressions first:
+preview/no-op/compatible/confirmed, tenant/role denial, stale/forged token, rollback,
+preserved history and retry. Then affected Inbox suites, system/migration checks,
+desktop/mobile reachable confirmation/cancel/recovery, RU/KK/EN and final build.
+No full local release suite. Update current contracts/evidence and publish verified
+explicit paths via normal push; read remote SHA and actual CI.
+
+Implementation: `client_linking.py` reuses link-client with a typed 200 preview or
+the existing conversation result. Signed opaque digest expires after 10 minutes;
+hidden child identities are absent from both preview and decoded token. Same-client
+retries write no duplicate activity/audit. Transaction locks cover replacement and
+the existing link-lead/link-deal/create-client actions so stale loaded objects cannot
+restore a previous client. The old CRM qualification preview is invalidated while
+other metadata/history remains. No provider/model behavior was developed.
+
+Backend receipts (`output/inbox-relink-20261008/`, `.venv/Scripts/python.exe`):
+- `verify_backend.py apps.conversations.tests_client_linking.ClientLinkingTests`
+  — 11 PASS, `backend-1791480529448373200.log`, before dependent UI work.
+- Initial dependent set — 47 PASS, `backend-1791480763213079200.log`.
+- Approval invalidation/actor/client access regressions + AI confirmation — 25 PASS,
+  `backend-1791480880137201100.log` (intermediate; final below supersedes it).
+- Final `verify_backend.py apps.conversations.tests_client_linking.ClientLinkingTests apps.conversations.tests_ai_confirmation apps.conversations.tests_inbox_context apps.conversations.tests_inbox_tasks apps.bots.tests.InboxBackendTests`
+  — 88 PASS, `backend-1791480964102981000.log`, including 15 replacement regressions.
+  Mocks, disposable SQLite, no working DB/provider calls. Stale-write/approval,
+  replay and rollback tested; live PostgreSQL lock contention is not certified.
+
+Browser: desktop RU/KK/EN confirmed replacement, cancel, refreshed concurrent-link
+preview, injected 503 recovery, retained records/messages/draft and keyboard focus
+PASS (`browser-1791481158604242100.log`, 3 cases); RU screenshot visually inspected.
+Earlier failures retained: initial fixture did not confirm its own setup replacement
+(`browser-1791480734868264000.log`); repeated locale fixture names caused ambiguous
+locator (`browser-1791480945620263900.log`, RU flow passed); after unique names, one
+expected-text assertion still used the old names (`browser-1791481040864274900.log`).
+Fixture/assertion corrections did not weaken the runtime requirements.
+Mobile same spec — 3 PASS (`browser-1791481229203134600.log`); RU screenshot
+visually inspected, no overflow. Isolated `manage.py check` and
+`makemigrations --check --dry-run` PASS (`system-migration.log`).
+`verify_ui.py desktop-chromium inbox-inspector.spec.ts` — 11 PASS
+(`browser-1791481329224830600.log`); two existing setup steps now explicitly confirm
+their fixture relinking. Combined 17 browser cases for this change. New flow commands:
+`verify_ui.py desktop-chromium inbox-client-relink.spec.ts` and
+`verify_ui.py mobile-chromium inbox-client-relink.spec.ts`.
+`verify_frontend.py` — i18n, TypeScript, app/widget build and bundle budgets PASS
+(`frontend-isolated-final.log`). Existing dependencies reused. No full-project local
+suite, live provider, production DB/migration or real PostgreSQL contention test:
+scoped local change with disposable fixtures. Owner's running servers/data untouched.
+Changed-source/new-file/secret review, docs links and working/index diff hygiene
+reviewed for publication. Normal commit/push HEAD:main, actual range hygiene,
+remote SHA and CI receipt recorded in `output/inbox-relink-20261008/publication.json`
+and final response; CI pending is not green. No next phase is authorized.
+Prior manual-task commit 101f0df CI 37815619846 is now confirmed SUCCESS.
+
 ## INBOX-MANUAL-20261008 — operator workflow acceptance
 
 Owner explicitly requests manual Inbox review including inspector context/actions,

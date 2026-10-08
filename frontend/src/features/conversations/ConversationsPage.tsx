@@ -31,12 +31,14 @@ import {
   inboxApi,
   inboxQueryKeys,
   type InboxConversation,
+  type InboxClientLinkPreview,
   type InboxFilters,
   type InboxMessage,
   type PaginatedInboxMessageResponse,
   type PipelineAction,
   type PipelineConfirmation,
 } from "../../api/inbox";
+import { ClientLinkConfirmation } from "./components/ClientLinkConfirmation";
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { WorkQueueLayout } from "../../components/layout/WorkQueueLayout";
@@ -144,6 +146,8 @@ export function ConversationsPage() {
   const [quickRepliesOpen, setQuickRepliesOpen] = useState(false);
   const [pipelineReview, setPipelineReview] = useState<PipelineReview | null>(null);
   const [quickReplySearch, setQuickReplySearch] = useState("");
+  const [clientLinkPreview, setClientLinkPreview] = useState<InboxClientLinkPreview | null>(null);
+  const [clientLinkRefreshed, setClientLinkRefreshed] = useState(false);
   const [crmLinkModal, setCrmLinkModal] = useState<
     "client" | "lead" | "deal" | null
   >(null);
@@ -301,6 +305,7 @@ export function ConversationsPage() {
     setSuggestedReply("");
     setMobileInspectorOpen(false);
     setCrmLinkModal(null);
+    setClientLinkPreview(null);
     setAddLinkOpen(false);
     setAutomationOpen(false);
     setPipelineReview(null);
@@ -943,12 +948,19 @@ export function ConversationsPage() {
 
   const linkClientMutation = useMutation({
     mutationFn: inboxApi.linkClient,
-    onSuccess: async () => {
+    onSuccess: async (result, variables) => {
+      if (currentConversationRef.current !== variables.conversationId) return;
+      if ("requires_confirmation" in result) {
+        setClientLinkPreview(result);
+        setClientLinkRefreshed(Boolean(variables.confirmationToken));
+        return;
+      }
+      setClientLinkPreview(null);
+      setPipelineReview(null);
       setNotice(t("conversations.clientLinkedShort"));
       setCrmLinkModal(null);
       await invalidateInbox();
     },
-    onError: (error) => notifyError(error),
   });
 
   const createLeadMutation = useMutation({
@@ -1189,6 +1201,8 @@ export function ConversationsPage() {
 
   function openCrmLinkModal(target: "client" | "lead" | "deal") {
     linkClientMutation.reset();
+    setClientLinkPreview(null);
+    setClientLinkRefreshed(false);
     linkLeadMutation.reset();
     linkDealMutation.reset();
     createClientMutation.reset();
@@ -1545,17 +1559,28 @@ export function ConversationsPage() {
 
       <Dialog
         title={
-          crmLinkModal === "client"
+          clientLinkPreview ? t("conversations.clientReplacement.title") : crmLinkModal === "client"
             ? t("conversations.linkClientTitle")
             : crmLinkModal === "lead"
               ? t("conversations.linkLeadTitle")
               : t("conversations.linkDealTitle")
         }
         open={Boolean(crmLinkModal)}
-        onClose={() => setCrmLinkModal(null)}
+        onClose={() => { if (!linkClientMutation.isPending) { setCrmLinkModal(null); setClientLinkPreview(null); } }}
         size="md"
         bodyClassName="bg-platforma-card p-0"
       >
+        {clientLinkPreview ? <ClientLinkConfirmation
+          preview={clientLinkPreview}
+          refreshed={clientLinkRefreshed}
+          pending={linkClientMutation.isPending}
+          error={linkClientMutation.error}
+          onCancel={() => { setClientLinkPreview(null); linkClientMutation.reset(); }}
+          onConfirm={() => selected && linkClientMutation.mutate({
+            conversationId: selected.id, clientId: clientLinkPreview.next_client.id,
+            confirmationToken: clientLinkPreview.confirmation_token,
+          })}
+        /> : <>
         <div className="border-b border-platforma-border p-4">
           <Input
             value={crmLinkSearch}
@@ -1576,6 +1601,7 @@ export function ConversationsPage() {
           {crmLinkModal === "client" && context.data?.actions.create_client ? <Button variant="secondary" className="mt-3" onClick={() => selected && createClientMutation.mutate({ conversationId: selected.id })} isLoading={createClientMutation.isPending}>{t("conversations.createClient")}</Button> : null}
           {linkClientMutation.error || linkLeadMutation.error || linkDealMutation.error || createClientMutation.error ? <ErrorState error={linkClientMutation.error || linkLeadMutation.error || linkDealMutation.error || createClientMutation.error} /> : null}
         </div>
+        </>}
       </Dialog>
 
       <Dialog

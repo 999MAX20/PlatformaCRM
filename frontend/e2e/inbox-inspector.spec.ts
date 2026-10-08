@@ -59,7 +59,8 @@ test("real client, appointment, lead and deal links preserve the unsent reply", 
   const session = await crmSession(page);
   const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
   const client = await session.create<{ id: number }>("clients", { full_name: "Inspector customer", notes: "Call in the afternoon", phone: "+77001234567", source: "website" });
-  await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: client.id });
+  const initialLink = await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: client.id });
+  if (initialLink.requires_confirmation) await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: client.id, confirmation_token: initialLink.confirmation_token });
   await session.action(`inbox/conversations/${conversation.id}/create-deal`, { title: "Inspector consultation" });
   const resource = await session.create<{ id: number }>("resources", { name: "Inspector specialist", weekly_schedule: Array.from({ length: 7 }, (_, weekday) => ({ weekday, start_time: "09:00", end_time: "20:00", is_day_off: false })) });
   const service = await session.create<{ id: number }>("services", { name: "Inspector appointment", duration_minutes: 30, price_from: 100 });
@@ -247,7 +248,8 @@ test("booking shortcut preselects the client and link search recovers without lo
   const session = await crmSession(page);
   const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
   const customer = await session.create<{ id: number }>("clients", { full_name: "Booking shortcut customer" });
-  await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: customer.id });
+  const initialLink = await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: customer.id });
+  if (initialLink.requires_confirmation) await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: customer.id, confirmation_token: initialLink.confirmation_token });
   await page.goto(`/app/conversations/${conversation.id}`);
   await page.getByTestId("inbox-action-composer").fill("Book after confirming");
   let panel = await openContext(page);

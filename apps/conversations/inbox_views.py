@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models import OuterRef, Subquery
 from django.utils import timezone
 from rest_framework import status
@@ -28,6 +29,7 @@ from apps.businesses.capabilities import assert_resource_enabled, resource_is_en
 from apps.clients.models import Client
 from apps.clients.serializers import ClientSerializer
 from apps.clients.services import duplicate_payload, find_duplicate_clients
+from apps.conversations.client_linking import link_conversation_client
 from apps.conversations.inbox_serializers import (
     InboxAssignSerializer,
     InboxCreateAppointmentSerializer,
@@ -82,6 +84,11 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
 
     serializer_class = InboxConversationSerializer
     permission_classes = [IsMerchantInboxUser]
+
+    def _locked_link_conversation(self):
+        scoped = self.get_object()
+        # Related writes share the replacement lock; never save a stale client ID.
+        return BotConversation.objects.select_for_update().get(pk=scoped.pk, business_id=scoped.business_id)
 
     @action(detail=True, methods=["get"], url_path="context")
     def customer_context(self, request, pk=None):
@@ -487,8 +494,9 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         )
 
     @action(detail=True, methods=["post"], url_path="link-lead")
+    @transaction.atomic
     def link_lead(self, request, pk=None):
-        conversation = self.get_object()
+        conversation = self._locked_link_conversation()
         assert_can(request.user, conversation.business, Resources.CONVERSATIONS, Actions.UPDATE, obj=conversation)
         serializer = InboxLinkLeadSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -518,25 +526,17 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         serializer = InboxLinkClientSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        client = Client.objects.filter(id=serializer.validated_data["client_id"], business=conversation.business).first()
-        if client is None:
-            raise ValidationError({"client_id": "Client was not found in this business."})
-        assert_can(request.user, conversation.business, Resources.CLIENTS, Actions.VIEW, obj=client)
-        conversation.client = client
-        conversation.save(update_fields=["client", "updated_at"])
-        record_inbox_crm_activity(
-            conversation,
-            entity=client,
-            event_type=ActivityEvents.CONVERSATION_CLIENT_LINKED,
-            actor=request.user,
-            text="Conversation linked to client.",
-            metadata={"client_id": client.id},
+        conversation, preview = link_conversation_client(
+            conversation, actor=request.user, **serializer.validated_data,
         )
+        if preview is not None:
+            return Response(preview)
         return Response(self.get_serializer(conversation).data)
 
     @action(detail=True, methods=["post"], url_path="create-client")
+    @transaction.atomic
     def create_client(self, request, pk=None):
-        conversation = self.get_object()
+        conversation = self._locked_link_conversation()
         assert_can(request.user, conversation.business, Resources.CLIENTS, Actions.CREATE)
         assert_can(request.user, conversation.business, Resources.CONVERSATIONS, Actions.UPDATE, obj=conversation)
         serializer = InboxCreateClientSerializer(data=request.data)
@@ -603,8 +603,9 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         return Response(LeadSerializer(result.lead).data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path="link-deal")
+    @transaction.atomic
     def link_deal(self, request, pk=None):
-        conversation = self.get_object()
+        conversation = self._locked_link_conversation()
         assert_can(request.user, conversation.business, Resources.CONVERSATIONS, Actions.UPDATE, obj=conversation)
         assert_can(request.user, conversation.business, Resources.DEALS, Actions.VIEW)
         assert_resource_enabled(conversation.business, Resources.DEALS)
