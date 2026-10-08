@@ -101,20 +101,59 @@ test("deals show a scheduled next action and an honest empty stage", async ({ pa
   await noOverflow(page);
 });
 
-test("Inbox restored layout supports filters and a populated conversation keeps its draft", async ({ page }, info) => {
+test("Inbox channel shortcut and filters preserve the populated conversation draft", async ({ page }, info) => {
   const session = await crmSession(page);
+  const bots = await session.list<{ id: number; business: number; scenario?: string }>("bots");
+  const agent = bots.find(bot => bot.business === session.business && bot.scenario !== "crm")!;
+  expect(agent).toBeTruthy();
   await page.route(inboxUrl, route => route.fulfill({ json: { count: 0, next: null, previous: null, results: [] } }));
   await page.goto("/app/conversations");
   await expect(page.getByText(ru["conversations.emptyTitle"], { exact: true })).toHaveCount(1);
-  if (info.project.name !== "mobile-chromium") {
-    await expect(page.getByText(ru["conversations.selectDialog"], { exact: true })).toBeVisible();
-  }
+  const channelLink = page.getByRole("link", { name: ru["conversations.nextAction.connect_channel"], exact: true }).filter({ visible: true });
+  await expect(channelLink).toHaveCount(1);
+  await expect(channelLink).toHaveAttribute("href", `/app/ai-agents/${agent.id}/channels`);
+  await channelLink.focus();
+  await channelLink.press("Enter");
+  await expect(page).toHaveURL(new RegExp(`/app/ai-agents/${agent.id}/channels$`));
+  await expect(page.getByTestId("ai-agents-workspace-ready")).toBeVisible();
+  await page.goto("/app/conversations");
+  const queue = page.getByRole("combobox", { name: ru["conversations.filters"], exact: true });
+  await queue.focus();
+  await queue.press("Enter");
+  await expect(page.getByRole("listbox")).toBeVisible();
+  await page.screenshot({ path: info.outputPath("inbox-queue-menu.png"), fullPage: true });
+  await queue.press("End");
+  await queue.press("Enter");
+  await expect(page).toHaveURL(/status=closed/);
+  await expect(queue).toBeFocused();
+  await page.goto("/app/conversations");
+  const owner = page.getByRole("combobox", { name: ru["conversations.agent"], exact: true });
+  await owner.click();
+  await page.screenshot({ path: info.outputPath("inbox-owner-menu.png"), fullPage: true });
+  await owner.press("End");
+  await owner.press("Enter");
+  await expect(page).toHaveURL(/assigned_to=unassigned/);
+  await page.goto("/app/conversations");
   await page.getByRole("button", { name: ru["conversations.advancedFilters"], exact: true }).click();
   await expect(page.getByRole("combobox", { name: ru["conversations.agent"], exact: true })).toBeVisible();
   await expect(page.getByRole("combobox", { name: new RegExp(`^${ru["conversations.agent"]} `) })).toBeVisible();
+  const agentFilter = page.getByRole("combobox", { name: new RegExp(`^${ru["conversations.agent"]} `) });
+  await agentFilter.click();
+  await expect(page.getByRole("listbox")).toBeVisible();
+  await agentFilter.press("Escape");
   await page.getByRole("button", { name: ru["conversations.advancedFilters"], exact: true }).click();
   await page.screenshot({ path: info.outputPath("inbox-empty.png"), fullPage: true });
   await noOverflow(page);
+  for (const [locale, copy] of [["kk", kk], ["en", en]] as const) {
+    await page.evaluate(value => localStorage.setItem("ai_smb_language", value), locale);
+    await page.reload();
+    await expect(page.getByText(copy["conversations.emptyTitle"], { exact: true })).toBeVisible();
+    await page.getByRole("combobox", { name: copy["conversations.filters"], exact: true }).click();
+    await page.screenshot({ path: info.outputPath(`inbox-empty-${locale}.png`), fullPage: true });
+    await page.keyboard.press("Escape");
+    await noOverflow(page);
+  }
+  await page.evaluate(() => localStorage.setItem("ai_smb_language", "ru"));
   await page.goto("/app/conversations?unread=true");
   await expect(page.getByText(ru["conversations.emptyTitle"], { exact: true })).toBeVisible();
   await page.unroute(inboxUrl);
@@ -126,6 +165,14 @@ test("Inbox restored layout supports filters and a populated conversation keeps 
   await page.screenshot({ path: info.outputPath("inbox-filled.png"), fullPage: true });
   await expect(reply).toHaveValue("Synthetic unsent draft");
   await noOverflow(page);
+});
+
+test("Inbox channel shortcut respects restricted access", async ({ page }) => {
+  await crmSession(page, "business_operator@example.com");
+  await page.route(inboxUrl, route => route.fulfill({ json: { count: 0, next: null, previous: null, results: [] } }));
+  await page.goto("/app/conversations");
+  await expect(page.getByText(ru["conversations.emptyTitle"], { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: ru["conversations.nextAction.connect_channel"], exact: true })).toHaveCount(0);
 });
 
 test("business settings retain drafts across groups, reveal invalid fields and recover a failed save", async ({ page }, info) => {

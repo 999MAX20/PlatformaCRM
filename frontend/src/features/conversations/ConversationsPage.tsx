@@ -23,6 +23,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Navigate,
+  Link,
   useNavigate,
   useParams,
   useSearchParams,
@@ -1133,8 +1134,17 @@ export function ConversationsPage() {
       ),
   ).length;
   const priorityActions = (summary.data?.next_actions || []).filter(
-    (action) => canViewIntegrations || !isIntegrationsAction(action.href),
+    (action) => action.code !== "connect_channel" && (canViewIntegrations || !isIntegrationsAction(action.href)),
   );
+  const channelAgent = (bots.data || []).find((bot) => bot.business === businessId && bot.scenario !== "crm");
+  const connectChannelAction = canViewIntegrations && hasPermission(user, businessId, "ai_automation", "view") ? (
+    <Link
+      to={channelAgent ? `/app/ai-agents/${channelAgent.id}/channels` : "/app/ai-agents"}
+      className="platforma-focus-ring inline-flex min-h-10 items-center justify-center rounded-control bg-brand-500 px-4 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-600"
+    >
+      {t("conversations.nextAction.connect_channel")}
+    </Link>
+  ) : undefined;
   function sendReply() {
     const text = draft.trim();
     if (!selected || !text) return;
@@ -1337,11 +1347,12 @@ export function ConversationsPage() {
         className={cn(
           "overflow-hidden border border-platforma-border shadow-soft lg:grid-cols-[288px_minmax(0,1fr)]",
           inspectorOpen
-            ? "xl:grid-cols-[288px_minmax(640px,1fr)_284px] 2xl:grid-cols-[288px_minmax(760px,1fr)_284px]"
+            ? "xl:grid-cols-[288px_minmax(0,1fr)_284px]"
             : "xl:grid-cols-[288px_minmax(0,1fr)]",
         )}
       >
         <ConversationListPane
+          connectChannelAction={connectChannelAction}
           mobileThreadOpen={mobileThreadOpen}
           filters={filters}
           sortBy={sortBy}
@@ -1386,6 +1397,7 @@ export function ConversationsPage() {
         />
 
         <ConversationThreadPane
+          connectChannelAction={connectChannelAction}
           mobileActions={selected ? <>
             <Button variant="ai" onClick={previewSelectedPipeline} disabled={!canSuggestAiPipeline} isLoading={qualifyMutation.isPending}>
               {t("conversations.previewQualification")}

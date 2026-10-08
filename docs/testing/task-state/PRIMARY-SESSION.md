@@ -1,5 +1,49 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-EMPTY-FILTERS-20261008 — targeted owner refinements
+
+Owner requests after rollback: remove the list empty-state card border, align
+three empty panels, move connect-channel CTA into the empty thread and open the
+customer agent Channels section, widen the two quick-filter menus and hide their
+scrollbar while retaining scrolling/keyboard access. Mode implementation; UI/code
+gap. Same primary, canonical root and branch; clean base `3c2182ea7bd569c1f6afc7b53d50e9384b0fb1ed`.
+Reuse Inbox panes, existing channel route, i18n, Select and no-scrollbar utility.
+No redesign of populated Inbox, backend/AI/permissions/notifications/BusinessEvent,
+migrations, environment changes or external calls. Risk: menu clipping, keyboard
+access, mobile CTA reachability and wrong agent/permission routing.
+Checks: affected empty/filtered/populated Inbox, direct channel navigation,
+restricted-role absence, desktop/mobile + RU/KK/EN visual and keyboard inspection;
+representative default Select consumer, one isolated build/types/i18n/bundle,
+docs/link consistency and working/index/committed diff hygiene. No broad E2E or
+backend suite for unchanged services. Explicit reviewed commit/normal-push and
+remote SHA/actual CI readback complete this bounded task.
+
+Result: implementation/local acceptance PASS. List empty headline, thread CTA
+and CRM empty message share the pane centre; list card framing removed. Three
+columns fit 1280px without clipping the inspector. Existing filled panels remain.
+Channels shortcut targets the first customer (non-CRM) agent of the active
+business; no-agent fallback is the existing agent workspace. Only authorized
+roles see it; mobile empty list retains the reachable action. Expanded Select is
+opt-in for two quick filters, with full option labels, hidden scrollbar and
+keyboard active-option scrolling; default advanced-filter Select also checked.
+
+Checks (isolated disposable fixtures, no paid/external calls):
+- `.venv/Scripts/python.exe output/ui-operations-20261008/verify_ui.py desktop-chromium ui-operations.spec.ts --grep "Inbox channel"`
+  — 1 PASS, `browser-1791439955650005400.log`.
+- Same command with `mobile-chromium` — 2 PASS (flow + restricted operator),
+  `browser-1791440036828560700.log`. Direct Channels navigation by keyboard,
+  queue/owner selection, Escape/focus, default advanced Select, empty/filtered/
+  populated Inbox and unsent draft verified. RU/KK/EN desktop/mobile screenshots
+  inspected in the corresponding `output/ui-operations-20261008/browser-*` folders.
+- `.venv/Scripts/python.exe output/inbox-empty-filters-20261008/verify_frontend.py`
+  — build/types/i18n/app/widget/bundle PASS; `frontend-isolated-final.log` alongside.
+- `.venv/Scripts/python.exe output/docs-reset-20261007/verify.py` — 55 active
+  documents, 362 links, 14 anchors, 38 paths PASS; 198 archive sources intact.
+No failed checks. Backend/full E2E skipped: no backend or cross-cutting behavior
+change. No dependencies installed, working DB migrations or deployment performed.
+Working/index/actual committed range reviewed before normal publication; final
+SHA, remote readback and actual CI status are in the task response/local receipt.
+
 ## INBOX-UI-ROLLBACK-20261008 — owner-requested rollback
 
 Owner request: restore the Inbox UI preceding `8bb54dd`; the previous version

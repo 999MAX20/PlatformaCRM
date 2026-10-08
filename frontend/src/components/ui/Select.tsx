@@ -10,13 +10,16 @@ type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   error?: string;
   options: { value: string | number; label: string }[];
   placement?: "bottom" | "top";
+  /** Expand to the nearest positioned filter group instead of the trigger width. */
+  expandedMenu?: boolean;
 };
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, options, placement = "bottom", className, value, defaultValue, onChange, onBlur, disabled, required, name, "aria-label": ariaLabel, "aria-describedby": describedBy, ...props }, ref) => {
+  ({ label, error, options, placement = "bottom", expandedMenu = false, className, value, defaultValue, onChange, onBlur, disabled, required, name, "aria-label": ariaLabel, "aria-describedby": describedBy, ...props }, ref) => {
     const { t } = useI18n();
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const listboxRef = useRef<HTMLDivElement | null>(null);
     const labelId = useId();
     const valueId = useId();
     const listboxId = useId();
@@ -37,6 +40,17 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     useEffect(() => {
       if (value !== undefined) setInternalValue(String(value));
     }, [value]);
+
+    useEffect(() => {
+      if (!expandedMenu || !open) return;
+      const menu = listboxRef.current;
+      const option = menu?.children[activeIndex] as HTMLElement | undefined;
+      if (!menu || !option) return;
+      const bounds = menu.getBoundingClientRect();
+      const item = option.getBoundingClientRect();
+      if (item.top < bounds.top) menu.scrollTop -= bounds.top - item.top;
+      if (item.bottom > bounds.bottom) menu.scrollTop += item.bottom - bounds.bottom;
+    }, [activeIndex, expandedMenu, open]);
 
     useEffect(() => {
       function handleClick(event: MouseEvent) {
@@ -78,7 +92,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     }
 
     return (
-      <div ref={wrapperRef} className="relative block">
+      <div ref={wrapperRef} className={expandedMenu ? "block" : "relative block"}>
         {label ? <span id={labelId} className="mb-2 block text-sm font-semibold text-platforma-subtle">{label}</span> : null}
         <select
           ref={ref}
@@ -178,10 +192,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         </button>
         {open ? (
           <PopoverSurface
+            ref={listboxRef}
             id={listboxId}
             role="listbox"
             className={cn(
-              "absolute left-0 right-0 z-50 overflow-y-auto p-1",
+              "absolute z-50 overflow-y-auto p-1",
+              expandedMenu ? "no-scrollbar left-3 right-3" : "left-0 right-0",
               placement === "top" ? "bottom-full mb-2 max-h-64" : "top-full mt-2 max-h-72",
             )}
           >
@@ -207,7 +223,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                   onClick={() => selectValue(option.value)}
                   onMouseEnter={() => setActiveIndex(optionIndex)}
                 >
-                  <span className="min-w-0 overflow-hidden break-words leading-5 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">{option.label}</span>
+                  <span className={cn("min-w-0 break-words leading-5", !expandedMenu && "overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]")}>{option.label}</span>
                   {isSelected ? <Check aria-hidden="true" size={16} className="shrink-0" /> : null}
                 </button>
               );

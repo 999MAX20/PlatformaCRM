@@ -71,9 +71,10 @@ export function ConversationQueueFilters({
   const advancedCount = activeFilterSummary.length;
 
   return (
-    <div className="relative border-b border-platforma-border p-3">
+    <div className="relative z-10 border-b border-platforma-border p-3">
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_44px] gap-2">
         <Select
+          expandedMenu
           className="min-h-10 rounded-control px-2.5 text-xs font-bold text-platforma-text"
           value={queueValue}
           onChange={(event) => onQueueChange(event.target.value)}
@@ -81,6 +82,7 @@ export function ConversationQueueFilters({
           aria-label={labels.filters}
         />
         <Select
+          expandedMenu
           className="min-h-10 rounded-control px-2.5 text-xs font-bold text-platforma-text"
           value={ownerValue}
           onChange={(event) => onOwnerChange(event.target.value)}

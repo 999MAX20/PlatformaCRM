@@ -22,6 +22,7 @@ import { InboxMemoryControl } from "./InboxMemoryControl";
 
 type ConversationThreadPaneProps = {
   selected: InboxConversation | null;
+  connectChannelAction?: ReactNode;
   mobileThreadOpen: boolean;
   mobileActions?: ReactNode;
   onMobileClose: () => void;
@@ -53,6 +54,7 @@ type ConversationThreadPaneProps = {
 
 export function ConversationThreadPane({
   selected,
+  connectChannelAction,
   mobileThreadOpen,
   mobileActions,
   onMobileClose,
@@ -96,13 +98,13 @@ export function ConversationThreadPane({
     >
       {!selected ? (
         <div className="grid flex-1 place-items-center p-8">
-          <div className="text-center">
-            <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-card bg-platforma-card text-brand-600 shadow-xs">
+          <div className="relative text-center">
+            <div className="absolute inset-x-0 bottom-full mb-4 flex justify-center text-brand-600">
               <MessageSquare aria-hidden="true" size={26} />
             </div>
-            <p className="text-2xl font-bold text-platforma-muted">
+            {connectChannelAction || <p className="text-2xl font-bold text-platforma-muted">
               {t("conversations.selectDialog")}
-            </p>
+            </p>}
           </div>
         </div>
       ) : (

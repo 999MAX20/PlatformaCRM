@@ -1,9 +1,11 @@
+import type { ReactNode } from "react";
+import { Inbox } from "lucide-react";
 import type { InboxConversation, InboxFilters } from "../../../api/inbox";
 import type { InboxSummary } from "../../../api/inbox";
 import { Link } from "react-router";
 import { WorkQueueListPane } from "../../../components/layout/WorkQueueLayout";
 import { Button } from "../../../components/ui/Button";
-import { EmptyState, LoadingState } from "../../../components/ui/StateViews";
+import { LoadingState } from "../../../components/ui/StateViews";
 import { StatusNotice } from "../../../components/ui/StatusNotice";
 import type { InboxSort, Translate } from "../conversationTypes";
 import { ConversationItem } from "./ConversationItem";
@@ -14,6 +16,7 @@ type AgentFilterOption = { value: string | number; label: string };
 
 type ConversationListPaneProps = {
   mobileThreadOpen: boolean;
+  connectChannelAction?: ReactNode;
   filters: InboxFilters;
   sortBy: InboxSort;
   hasActiveFilters: boolean;
@@ -54,6 +57,7 @@ type ConversationListPaneProps = {
 
 export function ConversationListPane({
   mobileThreadOpen,
+  connectChannelAction,
   filters,
   sortBy,
   hasActiveFilters,
@@ -92,7 +96,7 @@ export function ConversationListPane({
   t,
 }: ConversationListPaneProps) {
   return (
-    <WorkQueueListPane mobileDetailOpen={mobileThreadOpen}>
+    <WorkQueueListPane className="relative" mobileDetailOpen={mobileThreadOpen}>
       <ConversationQueueFilters
         filters={filters}
         sortBy={sortBy}
@@ -221,8 +225,17 @@ export function ConversationListPane({
       <div className="min-h-0 flex-1 overflow-y-auto pb-28 lg:pb-0">
         {loading ? <div className="p-5"><LoadingState /></div> : null}
         {!loading && !items.length ? (
-          <div className="p-5">
-            <EmptyState title={t("conversations.emptyTitle")} description={t("conversations.emptyText")} />
+          <div className="pointer-events-none absolute inset-0 grid place-items-center px-5 text-center">
+            <div className="relative w-full">
+              <div className="absolute inset-x-0 bottom-full mb-3 flex justify-center text-platforma-subtle">
+                <Inbox aria-hidden="true" size={22} />
+              </div>
+              <p className="text-base font-semibold text-platforma-ink">{t("conversations.emptyTitle")}</p>
+              <div className="absolute inset-x-0 top-full mt-2 text-sm leading-6 text-platforma-subtle">
+                <p>{t("conversations.emptyText")}</p>
+                {connectChannelAction ? <div className="pointer-events-auto mt-4 lg:hidden">{connectChannelAction}</div> : null}
+              </div>
+            </div>
           </div>
         ) : null}
         {sortedItems.map((conversation) => (
