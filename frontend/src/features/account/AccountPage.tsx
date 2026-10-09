@@ -1,20 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { KeyRound, LogOut } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { changePassword, getCurrentUserLoginHistory, getMfaStatus, updateCurrentUser } from "../../api/auth";
 import { getApiErrorMessage } from "../../api/client";
-import { notificationsApi } from "../../api/notifications";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
-import { useActiveBusiness } from "../../hooks/useBusiness";
 import { formatDateTime } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "../auth/AuthProvider";
-import type { Notification, NotificationPreference } from "../../types";
 import { SecuritySettingRow } from "./SecuritySettingRow";
 import { ActiveSessions } from "./ActiveSessions";
 import { AvatarEditor } from "./AvatarEditor";
@@ -24,21 +21,13 @@ import { AccountSectionNav } from "./AccountSectionNav";
 import { InterfaceSettingsCard } from "./InterfaceSettingsCard";
 import { AccountAccessSummary } from "./AccountAccessSummary";
 import { DocumentLinks } from "../documents/DocumentLinks";
+import { NotificationPreferencesCard } from "./NotificationPreferencesCard";
 import "./accountPage.css";
-
-const notificationCategories: Array<{ category: Notification["category"]; titleKey: string; descriptionKey: string }> = [
-  { category: "sales", titleKey: "settings.notifications.category.sales", descriptionKey: "settings.notifications.category.sales.text" },
-  { category: "tasks", titleKey: "settings.notifications.category.tasks", descriptionKey: "settings.notifications.category.tasks.text" },
-  { category: "ai_alerts", titleKey: "settings.notifications.category.aiAlerts", descriptionKey: "settings.notifications.category.aiAlerts.text" },
-  { category: "system", titleKey: "settings.notifications.category.system", descriptionKey: "settings.notifications.category.system.text" },
-  { category: "finance", titleKey: "settings.notifications.category.finance", descriptionKey: "settings.notifications.category.finance.text" },
-];
 
 export function AccountPage() {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const { user, refreshUser, logout } = useAuth();
-  const { business } = useActiveBusiness();
   const [profileForm, setProfileForm] = useState({
     full_name: user?.full_name || "",
     phone: user?.phone || "",
@@ -54,11 +43,6 @@ export function AccountPage() {
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
-  const notificationPreferences = useQuery({
-    queryKey: ["notification-preferences", business?.id, user?.id],
-    queryFn: () => notificationsApi.preferences.list({ user: "me" }),
-    enabled: Boolean(business?.id && user?.id),
-  });
   const loginHistory = useQuery({
     queryKey: ["account-login-history", user?.id],
     queryFn: getCurrentUserLoginHistory,
@@ -72,11 +56,6 @@ export function AccountPage() {
       phone: user?.phone || "",
     });
   }, [user?.id, user?.full_name, user?.phone]);
-  const preferenceByCategory = useMemo(
-    () => new Map((notificationPreferences.data || []).map((preference) => [preference.category, preference])),
-    [notificationPreferences.data],
-  );
-
   const profileMutation = useMutation({
     mutationFn: () => updateCurrentUser(profileForm),
     onSuccess: async () => {
@@ -104,26 +83,6 @@ export function AccountPage() {
       window.setTimeout(() => setPasswordSaved(false), 2600);
     },
   });
-  const notificationPreferenceMutation = useMutation({
-    mutationFn: ({ category, enabled }: { category: Notification["category"]; enabled: boolean }) => {
-      if (!business || !user) throw new Error(t("account.businessRequired"));
-      const existing = (notificationPreferences.data || []).find((preference) => preference.category === category);
-      const payload: Partial<NotificationPreference> = {
-        business: business.id,
-        user: user.id,
-        category,
-        in_app_enabled: enabled,
-      };
-      if (existing) return notificationsApi.preferences.update({ id: existing.id, payload });
-      return notificationsApi.preferences.create(payload);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notification-preferences"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications-summary"] });
-    },
-  });
-
   return (
     <div data-account-page className="relative mx-auto max-w-[var(--account-content-width)] [&_input]:min-h-11 sm:[&_input]:min-h-10 [&_button]:min-h-11 sm:[&_button]:min-h-9">
       <AccountSectionNav />
@@ -175,22 +134,7 @@ export function AccountPage() {
         </details>
       </Card>
 
-      <Card id="notifications" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
-        <h2 className="mb-2 text-base font-bold">{t("account.notificationsEyebrow")}</h2>
-        <p className="mb-2 text-xs text-platforma-subtle">{t("account.notificationsText")}</p>
-        {notificationPreferenceMutation.error ? <ErrorState error={notificationPreferenceMutation.error} message={getApiErrorMessage(notificationPreferenceMutation.error)} /> : null}
-        {!business?.id ? <p className="text-sm">{t("account.notificationsNoBusiness")}</p> : notificationPreferences.isLoading ? <LoadingState /> : notificationPreferences.error ? <ErrorState error={notificationPreferences.error} message={getApiErrorMessage(notificationPreferences.error)} action={<Button size="sm" variant="secondary" onClick={() => void notificationPreferences.refetch()}>{t("common.retry")}</Button>} /> : <div className="divide-y divide-platforma-border">
-          {notificationCategories.map((item) => {
-            const enabled = preferenceByCategory.get(item.category)?.in_app_enabled !== false;
-            return <div key={item.category} className="flex items-center justify-between gap-3 py-2">
-              <span className="text-sm" title={t(item.descriptionKey)}>{t(item.titleKey)}</span>
-              <button type="button" role="switch" aria-checked={enabled} aria-label={t(item.titleKey)} disabled={notificationPreferenceMutation.isPending || notificationPreferences.isFetching} onClick={() => notificationPreferenceMutation.mutate({ category: item.category, enabled: !enabled })} className="platforma-focus-ring group flex w-12 shrink-0 items-center justify-center rounded-control disabled:opacity-100">
-                <span aria-hidden="true" className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors group-disabled:bg-disabled-surface group-disabled:ring-1 group-disabled:ring-disabled-border ${enabled ? "bg-brand-500" : "bg-platforma-control"}`}><span className={`h-4 w-4 rounded-full bg-white shadow-xs transition-transform group-disabled:bg-disabled-content ${enabled ? "translate-x-4" : "translate-x-0"}`} /></span>
-              </button>
-            </div>;
-          })}
-        </div>}
-      </Card>
+      <NotificationPreferencesCard />
 
       <DocumentLinks />
       <Modal

@@ -3,6 +3,7 @@ import { CalendarClock, Check, RotateCcw, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import { EntityCustomFieldsPanel } from "../../components/crm/drawers/panels";
 
 import {
   appointmentsApi,
@@ -315,6 +316,7 @@ export function AppointmentWorkspacePage() {
           </EntityWorkspaceAside>
 
           <EntityWorkspaceMain>
+            {cardQuery.data?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={cardQuery.data} entity={{ type: "appointment", id: appointment.id }} /></div> : null}
             <AppointmentSection title={t("tasks.links")}>
               <div className="flex flex-wrap gap-2">
                 {client ? (

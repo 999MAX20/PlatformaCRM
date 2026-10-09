@@ -21,14 +21,14 @@ async function open(page: Page, section: string) {
 }
 
 for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
-  test(`ten sections use scoped real data and localized states (${language})`, async ({ page }, info) => {
+  test(`settings sections use scoped real data and localized states (${language})`, async ({ page }, info) => {
     const session = await crmSession(page);
     await page.evaluate(value => localStorage.setItem("ai_smb_language", value), language);
     const selectedRequests: string[] = [];
     page.on("request", request => {
       if (request.method() === "GET" && /\/api\/(custom-fields|quick-replies|notification-preferences|billing\/(current-subscription|entitlements))\//.test(request.url())) selectedRequests.push(request.url());
     });
-    for (const section of ["business-profile", "team-access", "roles", "security-center", "appointment-messages", "notification-preferences", "quick-replies", "billing", "usage", "custom-fields"]) {
+    for (const section of ["business-profile", "team-access", "roles", "security-center", "appointment-messages", "quick-replies", "billing", "usage", "custom-fields"]) {
       const panel = await open(page, section);
       await expect(panel.locator('[role="alert"]')).toHaveCount(0);
       await expect(panel.locator("p,button,label,legend,h2").filter({ hasText: /^(settings|businessForm)\.[a-z]/ })).toHaveCount(0);
@@ -39,13 +39,14 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       }).map(control => control.getAttribute("name") || control.getAttribute("aria-label") || control.tagName))).toEqual([]);
       if (language === "ru" || ["business-profile", "appointment-messages", "usage", "custom-fields"].includes(section)) await page.screenshot({ path: info.outputPath(`${section}-${language}.png`), fullPage: true });
     }
-    expect(new Set(selectedRequests.map(url => new URL(url).pathname)).size).toBe(5);
+    expect(new Set(selectedRequests.map(url => new URL(url).pathname)).size).toBe(3);
     for (const url of selectedRequests) expect(new URL(url).searchParams.get("business")).toBe(String(session.business));
     const panel = await open(page, "business-profile");
-    await panel.getByRole("button", { name: copy["businessForm.group.appearance"], exact: true }).click();
-    await expect(panel.locator("dt").filter({ hasText: copy["businessForm.brandColor"] })).toBeVisible();
-    await expect(panel.getByLabel(copy["businessForm.brandColor"], { exact: true })).toHaveCount(0);
-    await expect(panel.locator("dt").filter({ hasText: copy["businessForm.brandLogoUrl"] })).toBeVisible();
+    await expect(panel.getByLabel(copy["businessForm.slug"], { exact: true })).toHaveCount(0);
+    await expect(panel.getByRole("button", { name: copy["businessForm.group.appointments"], exact: true })).toHaveCount(0);
+    await expect(panel.getByRole("button", { name: copy["businessForm.group.finance"], exact: true })).toHaveCount(0);
+    await expect(panel.getByRole("button", { name: copy["businessForm.group.appearance"], exact: true })).toHaveCount(0);
+    await expect(panel.getByText(copy["settings.redesign.reference"], { exact: true })).toHaveCount(0);
   });
 }
 
@@ -54,10 +55,6 @@ test("business values save while reference metadata is preserved; invalid timezo
   const before = await session.read(`businesses/${session.business}`);
   const panel = await open(page, "business-profile");
   await panel.getByLabel(ru["businessForm.city"], { exact: true }).fill("Settings city");
-  await panel.getByRole("button", { name: ru["businessForm.group.appointments"], exact: true }).click();
-  await panel.locator("summary:visible").click();
-  await expect(panel.locator("dt").filter({ hasText: ru["businessForm.bookingBufferMinutes"] })).toBeVisible();
-  await expect(panel.getByLabel(ru["businessForm.bookingBufferMinutes"], { exact: true })).toHaveCount(0);
   await panel.getByLabel(ru["businessForm.timezone"], { exact: true }).fill("Invalid/TimeZone");
   await panel.getByRole("button", { name: ru["businessForm.save"], exact: true }).click();
   await expect(page.getByRole("alert")).toBeVisible();
@@ -66,10 +63,8 @@ test("business values save while reference metadata is preserved; invalid timezo
   await panel.getByRole("button", { name: ru["businessForm.save"], exact: true }).click();
   await expect.poll(async () => (await session.read(`businesses/${session.business}`)).city).toBe("Settings city");
   const after = await session.read(`businesses/${session.business}`);
-  for (const key of ["language", "sla_minutes", "booking_buffer_minutes", "cancellation_policy", "prepayment_policy", "brand_color", "brand_logo_url"]) expect(after[key]).toEqual(before[key]);
-  await panel.getByRole("button", { name: ru["businessForm.group.finance"], exact: true }).click();
+  for (const key of ["slug", "financial_source_mode", "financial_connector", "language", "sla_minutes", "booking_buffer_minutes", "cancellation_policy", "prepayment_policy", "brand_color", "brand_logo_url"]) expect(after[key]).toEqual(before[key]);
   await panel.locator('input[name="invoice_email"]').fill("invalid-email");
-  await panel.getByRole("button", { name: ru["businessForm.group.profile"], exact: true }).click();
   await panel.getByRole("button", { name: ru["businessForm.save"], exact: true }).click();
   await expect(panel.locator('input[name="invoice_email"]')).toBeVisible();
   await expect(panel.locator('input[name="invoice_email"]')).toBeFocused();
@@ -109,7 +104,9 @@ test("personal preferences load failure recovers and toggle persists for selecte
   const session = await crmSession(page);
   let fail = true;
   await page.route("**/api/notification-preferences/**", route => fail && route.request().method() === "GET" ? route.fulfill({ status: 503, json: { detail: "Unavailable" } }) : route.continue());
-  const panel = await open(page, "notification-preferences");
+  await page.goto("/app/settings#notification-preferences");
+  await expect(page).toHaveURL(/\/app\/account#notifications$/);
+  const panel = page.locator("#notifications");
   await expect(panel.getByRole("alert")).toBeVisible({ timeout: 20_000 });
   await expect(panel.getByRole("switch")).toHaveCount(0);
   fail = false;
@@ -157,11 +154,12 @@ test("custom definition created in settings reaches typed card fields and retain
   await page.screenshot({ path: info.outputPath("custom-fields-card.png"), fullPage: true });
   const settingsPanel = await open(page, "custom-fields");
   const card = settingsPanel.getByText(label, { exact: true }).locator('xpath=ancestor::div[contains(@class,"border-b")][1]');
-  await card.getByRole("button", { name: ru["settings.disable"], exact: true }).click();
+  await card.getByRole("button", { name: ru["settings.workflow.fieldActions"] + " · " + label, exact: true }).click();
+  await page.getByRole("menuitem", { name: ru["settings.disable"], exact: true }).click();
   await expect.poll(async () => (await session.read(`custom-fields/${definition.id}`)).is_active).toBe(false);
   expect((await session.read("custom-field-values", { business: session.business, definition: definition.id })).results[0].value_json.value).toBe("Saved from card");
   const optionCard = settingsPanel.getByText(multi.label, { exact: true }).locator('xpath=ancestor::div[contains(@class,"border-b")][1]');
-  await optionCard.getByRole("button", { name: ru["settings.edit"], exact: true }).click();
+  await optionCard.getByRole("button", { name: multi.label, exact: true }).click();
   const edit = page.getByRole("dialog");
   await edit.getByLabel(ru["settings.redesign.name"], { exact: true }).fill("Renamed choices");
   await edit.locator("summary").click();
@@ -171,29 +169,25 @@ test("custom definition created in settings reaches typed card fields and retain
   expect((await session.read(`custom-fields/${multi.id}`)).options_json).toEqual(multi.options_json);
 });
 
-test("billing saves separate requisites and usage renders real periods and units", async ({ page }) => {
+test("billing is cleared without changing subscription data and usage shows server metrics", async ({ page }) => {
   const session = await crmSession(page);
-  const business = await session.read(`businesses/${session.business}`);
+  const before = await session.read("billing/current-subscription", { business: session.business });
+  const requests: string[] = [];
+  page.on("request", request => { if (/\/api\/billing\/(current-subscription|plans|settings|request-plan-change)\//.test(request.url())) requests.push(request.method()); });
   const panel = await open(page, "billing");
-  await panel.getByLabel(ru["settings.billingEmail"], { exact: true }).fill("billing-settings@example.test");
-  await panel.getByLabel(ru["settings.invoiceName"], { exact: true }).fill("Subscription payer");
-  await panel.getByRole("button", { name: ru["settings.saveBilling"], exact: true }).click();
-  await expect.poll(async () => (await session.read("billing/current-subscription", { business: session.business })).billing_email).toBe("billing-settings@example.test");
-  expect((await session.read(`businesses/${session.business}`)).invoice_email).toBe(business.invoice_email);
-  await expect(panel.getByLabel(ru["settings.paymentMethodReference"], { exact: true })).toHaveCount(0);
-  await expect(panel.getByRole("button", { name: ru["settings.pauseSubscription"], exact: true })).toHaveCount(0);
-  const subscription = await session.read("billing/current-subscription", { business: session.business });
-  const plans = await session.list<{ id: number; name: string }>("billing/plans");
-  const alternative = plans.find(plan => plan.id !== subscription.plan?.id && plan.id !== subscription.requested_plan)!;
-  expect(alternative).toBeTruthy();
-  await panel.getByRole("combobox", { name: new RegExp(ru["settings.newPlan"]) }).click();
-  await page.getByRole("option", { name: alternative.name, exact: true }).click();
-  await panel.getByRole("button", { name: ru["settings.savePlanPreference"], exact: true }).click();
-  await expect.poll(async () => (await session.read("billing/current-subscription", { business: session.business })).requested_plan).toBe(alternative.id);
-  expect((await session.read("billing/current-subscription", { business: session.business })).plan).toEqual(subscription.plan);
+  await expect(panel.locator("input,button,select,[role=combobox]")).toHaveCount(0);
+  await expect(panel).toHaveText(ru["settings.section.billing"]);
+  expect(requests).toEqual([]);
   const usage = await open(page, "usage");
+  const metrics = await session.read("billing/entitlements", { business: session.business });
+  for (const metric of metrics) {
+    const label = ru[`settings.metric.${metric.metric}`];
+    if (label) await expect(usage).toContainText(label);
+    await expect(usage).toContainText(Number(metric.value).toLocaleString("ru-RU", { maximumFractionDigits: 2 }));
+  }
   await expect(usage).toContainText(ru["settings.usageCurrent"]);
   await expect(usage).toContainText("МиБ");
+  expect(await session.read("billing/current-subscription", { business: session.business })).toEqual(before);
 });
 
 test("role action scope saves independently and recovers from a rejected request", async ({ page }) => {

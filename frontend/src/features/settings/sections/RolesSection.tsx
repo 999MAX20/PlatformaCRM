@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, Search } from "lucide-react";
+import { ArrowLeft, ChevronDown, Search } from "lucide-react";
 import { useState } from "react";
 import { teamApi } from "../../../api/team";
 import { Button } from "../../../components/ui/Button";
@@ -40,7 +40,10 @@ export function RolesSection({ model }: { model: SettingsModel; }) {
   const resources = (catalog.data?.resources || []).map(item => ({
     ...item, actions: item.actions.filter(action => !filter || (permissionResourceLabel(item.resource, t) + " " + roleActionLabel(action, t)).toLocaleLowerCase().includes(filter)),
   })).filter(item => item.actions.length);
-  return <SettingsSection id="roles" active={activeSettingsSection} title={t("settings.section.roles")}>
+  return <SettingsSection id="roles" active={activeSettingsSection} title={t("settings.section.roles")} actions={<Button type="button" variant="ghost" disabled={save.isPending}
+      onClick={() => { model.setActiveSettingsSection("team-access"); window.location.hash = "team-access"; }}>
+      <ArrowLeft size={16} />{t(model.roleEditorSource === "invite" ? "settings.workflow.backToInvitation" : model.roleEditorSource === "member" ? "settings.workflow.backToEmployee" : "settings.section.team-access")}
+    </Button>}>
     <div className="space-y-4 p-4 sm:p-5">
       <div className="grid gap-3 sm:grid-cols-2">
         <Select label={t("settings.role")} value={selectedRole ? String(selectedRole.id) : ""} disabled={save.isPending || !visibleRoles.length}

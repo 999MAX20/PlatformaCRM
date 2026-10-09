@@ -35,7 +35,7 @@ export function TeamSection({ model }: { model: SettingsModel; }) {
   }
   function configureRole(roleId?: string | number) {
     if (!roleId) return;
-    model.setSelectedRoleId(Number(roleId)); setDrawer(null);
+    model.setSelectedRoleId(Number(roleId)); model.setRoleEditorSource(drawer);
     model.setActiveSettingsSection("roles"); window.location.hash = "roles";
   }
   function invitationActions(invitation: BusinessInvitation) {
@@ -143,6 +143,8 @@ export function TeamSection({ model }: { model: SettingsModel; }) {
         <Select data-testid="team-role-select" label={t("settings.role")} value={memberDraft} disabled={!canManageTeam || selectedMember.role === "owner" || updateMemberMutation.isPending || teamRoles.isError}
           options={selectedMember.role === "owner" ? [{ value: "owner", label: t("settings.role.owner") }] : editableTeamRoleOptions.map(option => assignedRole && !assignedRole.is_system && option.value === selectedMemberRole ? { ...option, label: settingsRoleName(assignedRole, t) } : option)}
           onChange={event => { setRoleDrafts(current => ({ ...current, [Number(selectedMember.id)]: event.target.value as BusinessMembershipSummary["role"] })); updateMemberMutation.reset(); }} />
+        {canManageTeam && selectedMember.role !== "owner" && <Button type="button" variant="secondary" disabled={!memberRole || teamRoles.isLoading || teamRoles.isError || updateMemberMutation.isPending}
+          onClick={() => configureRole(memberRole?.id)}>{t("settings.workflow.editRolePermissions")}</Button>}
         {!teamRoles.isLoading && !teamRoles.isError && <RoleAccessPreview role={memberRole} baseRole={roles.find(role => role.preset_key === memberDraft)} />}
         <TeamAccessControl key={selectedMember.id} member={selectedMember} canManage={canManageTeam} />
       </div>}

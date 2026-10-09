@@ -5,21 +5,14 @@ import { auditEventTitle, loginStatusLabel, riskClass, riskLabel } from "../sett
 import type { SettingsModel } from "../useSettingsModel";
 
 export function SecuritySection({ model }: { model: SettingsModel; }) {
-  const { t, activeSettingsSection, securityRisk, auditLogs, loginHistory, supportGrants, locale, business } = model;
+  const { t, activeSettingsSection, auditLogs, loginHistory, supportGrants, locale, business } = model;
   const [tab, setTab] = useState<"audit" | "logins" | "support">("audit");
   const date = (value: string) => new Date(value).toLocaleString(locale, { timeZone: business?.timezone || undefined });
-  const metrics = [
-    { label: t("settings.highRisk"), value: securityRisk.data ? securityRisk.data.risk_counts.high + securityRisk.data.risk_counts.critical : undefined },
-    { label: t("settings.failedLogins"), value: securityRisk.data?.failed_logins },
-    { label: t("settings.support"), value: securityRisk.data?.active_support_grants },
-  ];
+  const [failedOnly, setFailedOnly] = useState(false);
+  const logins = (loginHistory.data || []).filter(item => !failedOnly || item.status !== "success");
   return <SettingsSection id="security-center" active={activeSettingsSection} title={t("settings.section.security-center")}>
     <div className="space-y-4 p-4 sm:p-5">
-      <div className="grid gap-4 border-b border-platforma-border pb-5 sm:grid-cols-3">
-        {metrics.map(metric => <div key={metric.label}><p className="text-xs text-platforma-subtle">{metric.label}</p><p className="mt-1 text-[22px] font-bold tabular-nums">{securityRisk.isLoading || securityRisk.isError ? "—" : metric.value?.toLocaleString(locale) ?? "—"}</p></div>)}
-      </div>
-      <SettingsQueryState queries={[securityRisk]} />
-      <p className="text-xs leading-5 text-platforma-subtle">{t("settings.securityPeriod")}</p>
+      <p className="text-xs leading-5 text-platforma-subtle">{t("settings.workflow.securityHistoryScope")}</p>
       <SettingsTabs value={tab} onChange={setTab} label={t("settings.section.security-center")} items={[
         { value: "audit", label: t("settings.redesign.auditTab") },
         { value: "logins", label: t("settings.redesign.loginsTab") },
@@ -36,13 +29,14 @@ export function SecuritySection({ model }: { model: SettingsModel; }) {
         </div>}
       </>}
       {tab === "logins" && <>
+        <label className="flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" checked={failedOnly} onChange={event => setFailedOnly(event.target.checked)} className="h-5 w-5 accent-brand-500" />{t("settings.workflow.failedOnly")}</label>
         <SettingsQueryState queries={[loginHistory]} />
         {loginHistory.isSuccess && <div className="divide-y divide-platforma-border">
-          {(loginHistory.data || []).map(item => <div key={item.id} className="flex items-start justify-between gap-3 py-4">
+          {logins.map(item => <div key={item.id} className="flex items-start justify-between gap-3 py-4">
             <div className="min-w-0"><p className="break-all text-sm font-semibold">{item.email || item.user_email}</p><p className="mt-1 text-xs text-platforma-subtle">{item.ip_address || t("settings.noIp")} · {date(item.created_at)}</p></div>
             <span className={"shrink-0 text-xs font-semibold " + (item.status === "success" ? "text-platforma-success" : "text-platforma-danger")}>{loginStatusLabel(item.status, t)}</span>
           </div>)}
-          {!loginHistory.data?.length && <p className="py-8 text-sm text-platforma-subtle">{t("settings.noLoginHistory")}</p>}
+          {!logins.length && <p className="py-8 text-sm text-platforma-subtle">{t(failedOnly ? "settings.workflow.noFailedLogins" : "settings.noLoginHistory")}</p>}
         </div>}
       </>}
       {tab === "support" && <>

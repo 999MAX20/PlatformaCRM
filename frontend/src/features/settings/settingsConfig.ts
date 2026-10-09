@@ -38,7 +38,6 @@ export const settingsSections: SettingsSectionConfig[] = [
   { id: "roles", group: "team", resource: "team", action: "manage" },
   { id: "security-center", group: "team", resource: "audit_logs", action: "view" },
   { id: "appointment-messages", resource: "settings", action: "update" },
-  { id: "notification-preferences", group: "communication", resource: "notifications", action: "view" },
   { id: "quick-replies", group: "communication", resource: "conversations", action: "view" },
   { id: "billing", group: "setup", resource: "billing", action: "view" },
   { id: "usage", group: "setup", resource: "billing", action: "view" },

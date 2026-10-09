@@ -1,3 +1,4 @@
+import { Navigate, useLocation } from "react-router";
 import { ForbiddenState, LoadingState } from "../../components/ui/StateViews";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { SettingsNavigation } from "./components/SettingsNavigation";
@@ -6,7 +7,6 @@ import { AppointmentMessagesSection } from "./sections/AppointmentMessagesSectio
 import { BillingSection } from "./sections/BillingSection";
 import { BusinessProfileSection } from "./sections/BusinessProfileSection";
 import { CustomFieldsSection } from "./sections/CustomFieldsSection";
-import { NotificationPreferencesSection } from "./sections/NotificationPreferencesSection";
 import { QuickRepliesSection } from "./sections/QuickRepliesSection";
 import { RolesSection } from "./sections/RolesSection";
 import { SecuritySection } from "./sections/SecuritySection";
@@ -20,7 +20,6 @@ const sections = [
   ["roles", RolesSection],
   ["security-center", SecuritySection],
   ["appointment-messages", AppointmentMessagesSection],
-  ["notification-preferences", NotificationPreferencesSection],
   ["quick-replies", QuickRepliesSection],
   ["custom-fields", CustomFieldsSection],
   ["billing", BillingSection],
@@ -28,8 +27,10 @@ const sections = [
 ] as const;
 
 export function SettingsPage() {
+  const { hash } = useLocation();
   const businessQuery = useActiveBusiness();
   const { business } = businessQuery;
+  if (hash === "#notification-preferences") return <Navigate to="/app/account#notifications" replace />;
   if (!business && businessQuery.isError) return <SettingsQueryState queries={[businessQuery]} />;
   return <BusinessSettingsPage key={business?.id ?? "no-business"} />;
 }

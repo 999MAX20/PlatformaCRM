@@ -1,5 +1,70 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## SETTINGS-WORKFLOW-20261009 — owner review and reachable flows
+
+Owner follow-up explicitly requests a simpler Settings UI plus end-to-end verification.
+Reopens prior redesign presentation on owner feedback, not its closed backend policy.
+Mode implementation + verification; gap UI/workflow/evidence. Same generation 4 primary,
+canonical root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+clean base 3026debb3b2b9078fc2764dc8f2042a55ee0e90b; no other writer/worktree/delegation.
+Observed in browser: custom-field headers misalign because independently sized grids
+reserve different widths for action buttons. Live Vite PID 11600 cwd canonical frontend,
+backend PID 16584 cwd canonical root; development profile, no Celery worker found.
+Read-only inspection of working data; mutation tests use disposable isolated fixtures.
+
+Acceptance: one Company profile/contact form; remove slug/read-only metadata and
+appointments/finance/appearance tabs; retain functional timezone, currency, invoice
+email, legal name and optional tax ID. Move finance source/connector controls into
+Integrations using existing API and existing permission. Hide roles from Settings
+navigation, retain contextual role editing from employee/invitation with selected role,
+shared-role impact and return path. Personal notifications belong to Account only;
+retain default-on delivery and per-user/per-business overrides. Inbox empty quick
+replies links to permitted template creation. Custom fields align actions/columns,
+explain their actual entity-card placement and prove creation/value persistence.
+Security review should make existing events useful, not delete security infrastructure.
+Clear Billing UI for future redesign (preserve stored data/API), verify real Usage source.
+Category titles shift left relative to section links, desktop/mobile RU/KK/EN maintained.
+Owner answer: custom message scenarios DEFERRED; no new trigger/delivery policy.
+
+Reused layers: settings sections/model, business API/form, team catalog/permission API,
+Account preferences, Inbox quick replies, CRM custom-field panels, connector API.
+No new permission framework, messaging scenario, AI/BusinessEvent change, migration,
+working-DB mutation, reset, external send/provider call or deployment. Risk: hidden
+fields accidentally cleared, shared-role changes misrepresented as individual rights,
+preferences leaking across businesses, lost drafts/return route, CRM field permissions.
+Checks: targeted browser/API flows for profile preservation, contextual roles and
+return, account preference isolation/defaults, Inbox empty-to-template-to-draft,
+custom fields across client/deal/appointment cards, security states, empty Billing,
+real Usage API mapping and responsive columns/navigation. Build/types/i18n/bundle at
+completion; focused backend checks only if backend changes become necessary; reuse
+unchanged domain proof. Diff/links/secret review, explicit commit + normal push main,
+remote SHA and actual CI. No full release suite for this bounded follow-up.
+
+Implemented the full authorized UI/workflow scope. Existing custom-field panel was
+missing from full entity pages; client reproducer failed before the minimal reuse
+fix, then client/lead/deal/appointment create/value/reload flows passed. Working UI
+read-only inspection confirms aligned columns/action menu and simplified Company.
+Desktop affected suite 24 PASS (`browser-1791557093952829900.log`), including
+contextual existing-role edit/return, finance-source retry, per-user/business
+notification isolation and Inbox empty-to-create-to-draft without sending.
+Final build/types/i18n/app+widget/bundle PASS (`frontend-isolated-final.log`): 5532
+locale keys; app shell 325.7 kB, Settings 68.7 kB, largest locale 436.3 kB before gzip.
+Changed-doc encoding/registration/local links/anchors PASS. Source/backend,
+schema and dependency inputs for earlier domain/system/drift proof unchanged.
+Mobile affected suite 24 PASS (`browser-1791557309620003800.log`). One concurrent
+desktop security-copy recheck timed out in web-server setup before any test
+(`browser-1791557376582185200.log`); sequential retry 1 PASS
+(`browser-1791557565093593600.log`), no source workaround or skipped gate.
+The failed setup remains evidence; no product failure was reproduced by that attempt.
+Mobile Company/custom-field screenshots visually reviewed; viewport overlays on full-page
+screenshots are fixed navigation/save controls, not duplicate page blocks.
+Origin/main readback remains the starting base; preceding implementation/receipt CI
+37936423372 and 37936544059 are now confirmed success via GitHub API.
+All local acceptance passed; reviewed task-owned source/tests/docs and new files.
+No unrelated WIP, credential/config changes, migrations or deployment. Next: commit,
+static gate on the actual base, normal push, remote readback and actual CI inspection.
+Details: [evidence](../settings-workflow-20261009.md).
+
 ## SETTINGS-REDESIGN-20261009 — full Settings interface
 
 Owner explicitly approved implementation across `/settings` using the five generated

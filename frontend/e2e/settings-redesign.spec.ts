@@ -124,8 +124,7 @@ test("invitation access preview follows the configured role and navigation prese
   await drawer.getByRole("button", { name: ru["settings.redesign.configureRole"], exact: true }).click();
   await expect(page.locator("#roles")).toBeVisible();
   await expect(page.locator("#roles").getByRole("combobox").first()).toContainText(ru["settings.role.operator"]);
-  await navigate(page, "team-access");
-  await invite.click();
+  await page.locator("#roles").getByRole("button", { name: ru["settings.workflow.backToInvitation"], exact: true }).click();
   await expect(drawer.getByLabel(ru["settings.fullName"], { exact: true })).toHaveValue("Draft colleague");
   await expect(drawer.getByLabel(ru["settings.loginEmail"], { exact: true })).toHaveValue("draft-colleague@example.test");
 });
@@ -142,6 +141,10 @@ test("security tabs keep error and retry local instead of showing a false empty 
   await panel.getByRole("button", { name: ru["common.retry"], exact: true }).click();
   await expect(panel.getByRole("alert")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("security-logins.png"), fullPage: true });
+  await panel.getByLabel(ru["settings.workflow.failedOnly"], { exact: true }).check();
+  await expect(panel.getByText(ru["settings.loginStatus.success"], { exact: true })).toHaveCount(0);
+  await expect(panel.getByText(ru["settings.noLoginHistory"], { exact: true })).toHaveCount(0);
+  await panel.getByLabel(ru["settings.workflow.failedOnly"], { exact: true }).uncheck();
   await panel.getByRole("button", { name: ru["settings.redesign.supportTab"], exact: true }).click();
   await expect(panel.getByText(ru["settings.noSupportGrants"], { exact: true })).toBeVisible();
 });

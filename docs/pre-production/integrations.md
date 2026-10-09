@@ -14,6 +14,9 @@ BotChannel связывает канал с Inbox. Webhooks/pull/setup/health/re
 в provider/service слое; supported mode не равен доступному live-продукту.
 Merchant UI показывает настройку/состояние/ошибку/восстановление; технический provider
 stack не должен занимать повседневную CRM.
+09.10: выбор источника финансового анализа и учётного подключения перенесён сюда
+из профиля компании с прежним `settings:update`. Сохраняется Business preference;
+само сохранение не запускает provider call и не делает connector валидным reader.
 
 Подлинность ingress проверяется до записи, tenant берётся из серверной привязки.
 OAuth/setup version и credential ownership защищают смену конфигурации; устаревший

@@ -59,13 +59,14 @@ export function CustomFieldEditor({ initial, entity, businessId, open, onClose, 
     };
     save.mutate(payload, { onError: () => window.requestAnimationFrame(() => document.querySelector<HTMLElement>('#settings-custom-field-form [aria-invalid="true"]')?.focus()) });
   }
-  return <SettingsDrawer open={open} onClose={() => { if (!save.isPending) onClose(); }} title={t(initial ? "settings.edit" : "settings.redesign.newField")}
+  return <SettingsDrawer open={open} onClose={() => { if (!save.isPending) onClose(); }} title={t(initial ? "settings.workflow.editField" : "settings.redesign.newField")}
     footer={<SettingsSaveBar drawer feedback={<SettingsFeedback error={!hasFieldError ? save.error : undefined} />}>
       <Button type="button" variant="secondary" disabled={save.isPending} onClick={onClose}>{t("common.cancel")}</Button>
       <Button type="submit" form="settings-custom-field-form" isLoading={save.isPending}>{t(initial ? "common.save" : "settings.add")}</Button>
     </SettingsSaveBar>}>
     <form id="settings-custom-field-form" onSubmit={submit}>
       <fieldset disabled={save.isPending} className="space-y-4">
+        <p className="text-sm leading-6 text-platforma-subtle">{t(`settings.workflow.fieldPlacement.${draft.entity_type}`)}</p>
         <Input label={t("settings.redesign.name")} required value={draft.label} error={errors.label?.join(" ")} onChange={event => change({ label: event.target.value })} />
         <div className="grid gap-3 sm:grid-cols-2">
           <Select label={t("settings.entity")} value={draft.entity_type} error={errors.entity_type?.join(" ")} options={fieldEntities.map(value => ({ value, label: t(`settings.customFieldEntity.${value}`) }))} onChange={event => change({ entity_type: event.target.value as CrmEntityType })} />

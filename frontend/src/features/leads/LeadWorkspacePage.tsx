@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageCircle, Phone } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
+import { EntityCustomFieldsPanel } from "../../components/crm/drawers/panels";
 
 import { appointmentsApi } from "../../api/appointments";
 import { getApiErrorMessage } from "../../api/client";
@@ -328,6 +329,7 @@ export function LeadWorkspacePage() {
         </EntityWorkspaceAside>
 
         <EntityWorkspaceMain>
+            {card?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={card} entity={{ type: "lead", id: lead.id }} /></div> : null}
           <LeadWorkspaceSection
             title={t("nav.deals")}
             icon={leadWorkspaceIcons.deals}

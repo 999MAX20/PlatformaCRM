@@ -4,6 +4,10 @@
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
     {
+      "path": "docs/testing/settings-workflow-20261009.md",
+      "role": "evidence"
+    },
+    {
       "path": ".agents/skills/zani-analyze-crm-product/references/crm-mechanics.md",
       "role": "agent-skill"
     },

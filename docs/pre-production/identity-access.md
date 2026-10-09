@@ -41,6 +41,10 @@ Signup legal IDs пока имеют placeholder-тексты; юридичес�
 [accounts](../../apps/accounts), [security API](../../apps/core/security_views.py),
 [API auth](../../frontend/src/api/auth.ts), [account UI](../../frontend/src/features/account/AccountPage.tsx).
 UI `/app/account`, `/app/settings`; API auth/team/security, отдельная platform-зона.
+09.10: роли открываются из drawer сотрудника/приглашения с возвратом и сохранением
+черновика; правится существующая общая роль, что явно обозначено в матрице.
+Личные уведомления перенесены в Account с областью Business/User. Security сохраняет
+журналы и доступы поддержки, убирает агрегаты и добавляет фильтр неуспешных входов.
 [Settings evidence](../testing/settings-functional-20261008.md) и
 [tenant tests](../../apps/core/tests_tenant_isolation.py) имеют разные границы:
 новый общий security audit здесь не выполнялся.

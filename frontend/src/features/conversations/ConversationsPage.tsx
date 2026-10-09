@@ -1521,7 +1521,11 @@ export function ConversationsPage() {
           {!quickReplies.isLoading && !quickReplies.isError && !quickReplyTemplates.length ? (
             <EmptyState
               title={t("conversations.noTemplates")}
-              description={t("conversations.noQuickRepliesText")}
+              description={t(quickReplySearch.trim() ? "settings.redesign.noMatches" : "conversations.noQuickRepliesText")}
+              action={!quickReplySearch.trim() && String(selected?.business || businessId) === String(businessId) && hasPermission(user, businessId, "conversations", "manage") ? <Link
+                to="/app/settings#quick-replies" className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control px-3 text-sm font-semibold text-brand-700 underline underline-offset-4">
+                {t("settings.workflow.createQuickReply")}
+              </Link> : undefined}
             />
           ) : null}
           <div className="space-y-2">

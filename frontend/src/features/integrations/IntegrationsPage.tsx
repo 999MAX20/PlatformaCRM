@@ -19,6 +19,7 @@ import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
 import type { BusinessConnector, ConnectorCapability } from "../../types";
 import { useAuth } from "../auth/AuthProvider";
+import { FinancialSourceSettings } from "./components/FinancialSourceSettings";
 import { ProviderCard } from "./components/ProviderCard";
 import { groupLabels, integrationProviderCatalog, type ProviderGroup, type ProviderKey } from "./config/providerCatalog";
 
@@ -200,6 +201,7 @@ export function IntegrationsPage() {
       }
     >
       <div className="space-y-5 p-3 sm:p-4">
+        {hasPermission(user, business.id, "settings", "update") && <FinancialSourceSettings key={business.id} business={business} />}
         {pageError ? <ErrorState error={pageError} message={getApiErrorMessage(pageError)} /> : null}
         <Surface padding="sm" variant="muted" className="text-sm font-semibold text-platforma-subtle">
           {t("integrations.page.merchantResultsMeta", {

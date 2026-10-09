@@ -1,10 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { appointmentMessageSettingsApi } from "../../api/appointments";
 import { billingApi } from "../../api/billing";
 import { businessesApi } from "../../api/businesses";
 import { customFieldsApi } from "../../api/customFields";
-import { notificationsApi } from "../../api/notifications";
 import { quickRepliesApi } from "../../api/quickReplies";
 import { securityApi } from "../../api/security";
 import { teamApi } from "../../api/team";
@@ -22,8 +21,6 @@ import type {
   BusinessMembershipSummary,
   CustomFieldDefinition,
   Id,
-  Notification,
-  NotificationPreference,
   QuickReplyTemplate
 } from "../../types";
 import { useAuth } from "../auth/AuthProvider";
@@ -48,13 +45,6 @@ export function useSettingsModel() {
 
   const canViewBilling = hasPermission(user, business?.id, "billing", "view");
 
-  const canManageBilling = hasPermission(
-    user,
-    business?.id,
-    "billing",
-    "manage",
-  );
-
   const canViewTeam = hasPermission(user, business?.id, "team", "view");
 
   const canManageTeam = hasPermission(user, business?.id, "team", "manage");
@@ -68,21 +58,12 @@ export function useSettingsModel() {
     "update",
   );
 
-  const canViewNotifications = hasPermission(
-    user,
-    business?.id,
-    "notifications",
-    "view",
-  );
-
   const canManageConversations = hasPermission(
     user,
     business?.id,
     "conversations",
     "manage",
   );
-
-  const canUpdateNotifications = hasPermission(user, business?.id, "notifications", "update");
 
   async function confirmDelete(label: string, action = "settings.delete") {
     const result = await confirmAction({
@@ -108,8 +89,6 @@ export function useSettingsModel() {
         if (section.id === "team-access") return canViewTeam;
         if (section.id === "roles") return canManageTeam;
         if (section.id === "security-center") return canViewAudit;
-        if (section.id === "notification-preferences")
-          return canViewNotifications;
         if (section.id === "quick-replies") return canManageConversations;
         if (section.id === "billing" || section.id === "usage")
           return canViewBilling;
@@ -127,7 +106,6 @@ export function useSettingsModel() {
       canManageTeam,
       canViewAudit,
       canViewBilling,
-      canViewNotifications,
       canViewTeam,
       user,
     ],
@@ -138,18 +116,6 @@ export function useSettingsModel() {
     allowedSettingsSectionIds,
     setActiveSettingsSection,
   } = useSettingsSectionNavigation(allowedSettingsSections);
-
-  const subscription = useQuery({
-    queryKey: ["current-subscription", business?.id],
-    queryFn: () => billingApi.currentSubscription(business!.id),
-    enabled: Boolean(business && canViewBilling),
-  });
-
-  const plans = useQuery({
-    queryKey: ["billing-plans"],
-    queryFn: billingApi.plans,
-    enabled: Boolean(canViewBilling),
-  });
 
   const entitlements = useQuery({
     queryKey: ["billing-entitlements", business?.id],
@@ -198,6 +164,7 @@ export function useSettingsModel() {
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
 
   const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
+  const [roleEditorSource, setRoleEditorSource] = useState<"member" | "invite" | null>(null);
 
   const [copiedInviteId, setCopiedInviteId] = useState<number | null>(null);
 
@@ -224,23 +191,6 @@ export function useSettingsModel() {
   const [appointmentMessageDrafts, setAppointmentMessageDrafts] = useState<
     Record<number, Partial<AppointmentMessageSetting>>
   >({});
-
-  const [billingSettingsForm, setBillingSettingsForm] = useState({
-    billing_email: "",
-    payment_method: "",
-    invoice_name: "",
-    invoice_tax_id: "",
-    invoice_address: "",
-  });
-
-  const [selectedPlanId, setSelectedPlanId] = useState("");
-
-  const securityRisk = useQuery({
-    queryKey: ["security-risk", business?.id],
-    queryFn: () => securityApi.riskSummary(business?.id),
-    enabled: Boolean(business && canViewAudit),
-    retry: false,
-  });
 
   const auditLogs = useQuery({
     queryKey: ["security-audit", business?.id],
@@ -270,43 +220,6 @@ export function useSettingsModel() {
     enabled: Boolean(business?.id && canManageSettings),
   });
 
-  const notificationPreferences = useQuery({
-    queryKey: ["notification-preferences", business?.id, user?.id],
-    queryFn: () => notificationsApi.preferences.listAll({ business: business?.id, user: "me" }),
-    enabled: Boolean(business?.id && user?.id && canViewNotifications),
-  });
-
-  const preferenceByCategory = useMemo(
-    () =>
-      new Map(
-        (notificationPreferences.data || []).map((preference) => [
-          preference.category,
-          preference,
-        ]),
-      ),
-    [notificationPreferences.data],
-  );
-
-  useEffect(() => {
-    const current = subscription.data;
-    if (!current) return;
-    const details = current.invoice_details_json || {};
-    setBillingSettingsForm({
-      billing_email: current.billing_email || "",
-      payment_method: current.payment_method || "",
-      invoice_name: String(details.name || ""),
-      invoice_tax_id: String(details.tax_id || ""),
-      invoice_address: String(details.address || ""),
-    });
-    setSelectedPlanId(
-      current.requested_plan
-        ? String(current.requested_plan)
-        : current.plan?.id
-          ? String(current.plan.id)
-          : "",
-    );
-  }, [subscription.data?.id]);
-
   const [editingQuickReplyId, setEditingQuickReplyId] = useState<number | null>(
     null,
   );
@@ -323,38 +236,6 @@ export function useSettingsModel() {
     queryKey: ["quick-replies", business?.id],
     queryFn: () => quickRepliesApi.listAll({ business: business?.id }),
     enabled: Boolean(business && canManageConversations),
-  });
-
-  const notificationPreferenceMutation = useMutation({
-    mutationFn: ({
-      category,
-      enabled,
-    }: {
-      category: Notification["category"];
-      enabled: boolean;
-    }) => {
-      if (!business || !user) throw new Error(t("account.businessRequired"));
-      const existing = (notificationPreferences.data || []).find(
-        (preference) => preference.category === category,
-      );
-      const payload: Partial<NotificationPreference> = {
-        business: business.id,
-        user: user.id,
-        category,
-        in_app_enabled: enabled,
-      };
-      if (existing)
-        return notificationsApi.preferences.update({
-          id: existing.id,
-          payload,
-        });
-      return notificationsApi.preferences.create(payload);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notification-preferences"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications-summary"] });
-    },
   });
 
   const mutation = useMutation({
@@ -537,28 +418,6 @@ export function useSettingsModel() {
     },
   });
 
-  const billingSettingsMutation = useMutation({
-    mutationFn: () =>
-      billingApi.updateSettings({
-        business: business!.id,
-        billing_email: billingSettingsForm.billing_email,
-        invoice_details_json: {
-          ...subscription.data?.invoice_details_json,
-          name: billingSettingsForm.invoice_name,
-          tax_id: billingSettingsForm.invoice_tax_id,
-          address: billingSettingsForm.invoice_address,
-        },
-      }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["current-subscription"] }),
-  });
-
-  const planChangeMutation = useMutation({
-    mutationFn: (plan: Id) => billingApi.requestPlanChange(plan, business!.id),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["current-subscription"] }),
-  });
-
   function startEditingQuickReply(template: QuickReplyTemplate) {
     setEditingQuickReplyId(Number(template.id));
     setQuickReplyEditForm({
@@ -569,8 +428,6 @@ export function useSettingsModel() {
       is_active: template.is_active,
     });
   }
-
-  const currentPlan = subscription.data?.plan;
 
   const members = teamMembers.data || [];
 
@@ -608,7 +465,7 @@ export function useSettingsModel() {
     (option) => option.value !== "owner",
   );
 
-  const translatedSettingsSections = allowedSettingsSections.map((section) => ({
+  const translatedSettingsSections = allowedSettingsSections.filter(section => section.id !== "roles").map((section) => ({
     ...section,
     label: t(`settings.section.${section.id}`),
     group:
@@ -709,17 +566,12 @@ export function useSettingsModel() {
     appointmentMessageValue,
     appointmentMessages,
     auditLogs,
-    billingSettingsForm,
-    billingSettingsMutation,
     business,
-    canManageBilling,
     canManageTeam,
-    canUpdateNotifications,
     confirmDelete,
     copiedInviteId,
     copyInvitation,
     copyInviteError,
-    currentPlan,
     customFields,
     departmentMutation,
     departmentName,
@@ -737,11 +589,6 @@ export function useSettingsModel() {
     loginHistory,
     members,
     mutation,
-    notificationPreferenceMutation,
-    notificationPreferences,
-    planChangeMutation,
-    plans,
-    preferenceByCategory,
     quickReplies,
     quickReplyChannelOptions,
     quickReplyEditForm,
@@ -751,14 +598,13 @@ export function useSettingsModel() {
     removeQuickReplyMutation,
     revokeInvitationMutation,
     roles,
-    securityRisk,
     selectedMember,
     selectedMemberRole,
-    selectedPlanId,
     selectedRole,
+    roleEditorSource,
+    setRoleEditorSource,
     setActiveSettingsSection,
     setAppointmentMessageDrafts,
-    setBillingSettingsForm,
     setCopyInviteError,
     setDepartmentName,
     setEditingQuickReplyId,
@@ -767,10 +613,8 @@ export function useSettingsModel() {
     setQuickReplyEditForm,
     setQuickReplyForm,
     setSelectedMemberId,
-    setSelectedPlanId,
     setSelectedRoleId,
     startEditingQuickReply,
-    subscription,
     supportGrants,
     t,
     teamMembers,

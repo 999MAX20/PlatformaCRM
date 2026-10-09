@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Phone } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
+import { EntityCustomFieldsPanel } from "../../components/crm/drawers/panels";
 
 import { appointmentsApi } from "../../api/appointments";
 import { getApiErrorMessage } from "../../api/client";
@@ -316,6 +317,7 @@ export function ClientWorkspacePage() {
           </EntityWorkspaceAside>
 
           <EntityWorkspaceMain>
+            {card?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={card} entity={{ type: "client", id: client.id }} /></div> : null}
             <ClientWorkspaceSection
               title={t("nav.deals")}
               icon={clientWorkspaceIcons.deals}
