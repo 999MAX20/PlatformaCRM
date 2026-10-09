@@ -1,5 +1,12 @@
 # PlatformaCRM — текущий статус
 
+09.10.2026. SETTINGS-REDESIGN-20261009: все десять разделов настроек переработаны
+по утверждённым референсам. Формы, матрица прав, предпросмотр приглашений,
+локальные ошибки и сохранение проверены desktop/mobile RU/KK/EN и tablet RU.
+Backend, browser, build/types/i18n/bundle и system/drift PASS; исправлен audit rollback
+создания разрешения. [Результат](docs/testing/settings-redesign-20261009.md),
+публикация и фактический CI — в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md).
+
 09.10.2026. DOCS-ROADMAP-20261009: составлены [единый roadmap](docs/current/roadmap.md)
 до production и [паспорта пятнадцати направлений](docs/pre-production/README.md)
 на опубликованной основе `768b2675`. Открытые acceptance IDs сопоставлены этапам;

@@ -1,112 +1,32 @@
-import { ChevronDown } from "lucide-react";
-import type { Dispatch, SetStateAction } from "react";
-
-import { Surface } from "../../../components/ui/Card";
 import { Select } from "../../../components/ui/Select";
 import type { SettingsGroupKey } from "../settingsConfig";
 
-type TranslatedSettingsSection = {
-  id: string;
-  label: string;
-};
-
-type TranslatedSettingsGroup = {
-  key: SettingsGroupKey;
-  label: string;
-  sections: TranslatedSettingsSection[];
-};
-
-type SettingsNavigationProps = {
+type Section = { id: string; label: string; };
+type Props = {
   activeSettingsSection: string;
-  openSettingsGroups: Record<SettingsGroupKey, boolean>;
-  setActiveSettingsSection: (sectionId: string) => void;
-  setOpenSettingsGroups: Dispatch<
-    SetStateAction<Record<SettingsGroupKey, boolean>>
-  >;
-  translatedSettingsGroups: TranslatedSettingsGroup[];
-  translatedSettingsSections: TranslatedSettingsSection[];
+  setActiveSettingsSection: (id: string) => void;
+  translatedSettingsGroups: { key: SettingsGroupKey; label: string; sections: Section[]; }[];
+  translatedSettingsSections: Section[];
   navigationTitle: string;
 };
 
-export function SettingsNavigation({
-  activeSettingsSection,
-  openSettingsGroups,
-  setActiveSettingsSection,
-  setOpenSettingsGroups,
-  translatedSettingsGroups,
-  translatedSettingsSections,
-  navigationTitle,
-}: SettingsNavigationProps) {
-  return (
-    <aside className="xl:sticky xl:top-20 xl:self-start">
-      <Surface variant="muted" padding="sm" className="border-0 shadow-none">
-        <Select
-          className="min-h-10 rounded-control xl:hidden"
-          value={activeSettingsSection}
-          aria-label={navigationTitle}
-          onChange={(event) => {
-            setActiveSettingsSection(event.target.value);
-            window.location.hash = event.target.value;
-          }}
-          options={translatedSettingsSections.map((section) => ({
-            value: section.id,
-            label: section.label,
-          }))}
-        />
-        <div className="hidden xl:block">
-          <nav className="space-y-1.5" aria-label={navigationTitle}>
-            {translatedSettingsGroups.map((groupItem) => {
-              const groupOpen = openSettingsGroups[groupItem.key];
-              return (
-                <div
-                  key={groupItem.key}
-                  className="rounded-control p-1"
-                >
-                  <button
-                    type="button"
-                    className="flex min-h-8 w-full items-center justify-between gap-3 rounded-control px-2.5 text-left text-[11px] font-semibold uppercase text-platforma-faint transition hover:bg-surface-hover hover:text-platforma-text"
-                    onClick={() =>
-                      setOpenSettingsGroups((current) => ({
-                        ...current,
-                        [groupItem.key]: !current[groupItem.key],
-                      }))
-                    }
-                    aria-expanded={groupOpen}
-                  >
-                    <span>{groupItem.label}</span>
-                    <ChevronDown
-                      size={16}
-                      className={`transition-transform ${groupOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-                  {groupOpen ? (
-                    <div className="mt-1 space-y-1">
-                      {groupItem.sections.map((section) => {
-                        const active = section.id === activeSettingsSection;
-                        return (
-                          <a
-                            key={section.id}
-                            href={`#${section.id}`}
-                            aria-current={active ? "page" : undefined}
-                            className={`block rounded-lg px-2.5 py-2 text-sm font-bold transition ${
-                              active
-                                ? "bg-brand-50 text-brand-700 shadow-xs ring-1 ring-brand-100"
-                                : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text"
-                            }`}
-                            onClick={() => setActiveSettingsSection(section.id)}
-                          >
-                            {section.label}
-                          </a>
-                        );
-                      })}
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
-          </nav>
+export function SettingsNavigation({ activeSettingsSection, setActiveSettingsSection, translatedSettingsGroups, translatedSettingsSections, navigationTitle }: Props) {
+  return <aside className="min-w-0 lg:sticky lg:top-20 lg:max-h-[calc(100dvh-96px)] lg:self-start lg:overflow-y-auto">
+    <div className="lg:hidden"><Select label={navigationTitle} value={activeSettingsSection}
+      onChange={event => { setActiveSettingsSection(event.target.value); window.location.hash = event.target.value; }}
+      options={translatedSettingsSections.map(section => ({ value: section.id, label: section.label }))} /></div>
+    <nav aria-label={navigationTitle} className="hidden space-y-3 py-1 lg:block">
+      {translatedSettingsGroups.map(group => <div key={group.key}>
+        <p className="mb-1 px-3 text-xs font-medium uppercase text-platforma-subtle">{group.label}</p>
+        <div className="space-y-1">
+          {group.sections.map(section => <a key={section.id} href={"#" + section.id}
+            aria-current={activeSettingsSection === section.id ? "page" : undefined}
+            className={"platforma-focus-ring flex min-h-11 items-center rounded-control px-3 py-2 text-sm font-semibold transition-colors " + (activeSettingsSection === section.id ? "bg-brand-50 text-brand-700" : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text")}
+            onClick={event => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) setActiveSettingsSection(section.id); }}>
+            {section.label}
+          </a>)}
         </div>
-      </Surface>
-    </aside>
-  );
+      </div>)}
+    </nav>
+  </aside>;
 }

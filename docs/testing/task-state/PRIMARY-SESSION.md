@@ -1,5 +1,50 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## SETTINGS-REDESIGN-20261009 — full Settings interface
+
+Owner explicitly approved implementation across `/settings` using the five generated
+desktop references after reviewing the project design system. Implementation/code gap;
+reopens presentation and interactions after SETTINGS-FUNCTIONAL closure, not its backend
+policies. Generation 4 primary; DOCS-ROADMAP writer explicitly returned the lease after
+published `5434296a7826933617b8a8fde940588b58079490`, CI 37835398541 success.
+Canonical root `C:/Users/user/Desktop/PlatformaCRM`, branch `codex/ui-testing-toolkit`,
+same clean starting HEAD; no pre-existing WIP. Single writer, no worktree/delegation.
+
+Result: coherent Settings navigation and all ten existing sections, clear forms and
+lists, contextual role/action/scope matrix and invitation access preview, local errors,
+stable save actions, desktop/mobile RU/KK/EN. Reuse semantic tokens v2, shared controls,
+drawers, existing API/hooks and real permission catalog. Preserve all four business
+groups and saved reference values. Image sample content/validation is not product policy.
+Scope: Settings, BusinessSettingsForm and necessary local components/i18n/tests/docs.
+No global-shell redesign, permission framework, new policy, migrations, working-DB
+seed/reset, provider calls or deployment. Existing tenant/permissions, notification,
+BusinessEvent and AI behavior remain; test changed permission editing UI against actual
+API. Risks: lost drafts, hidden feedback, misleading permission summaries, mobile overflow.
+
+Verification plan: focused interaction/browser regressions for navigation, drafts,
+role permissions, invitation preview and local error/retry; reachable affected sections
+and keyboard/desktop/mobile/locales. Reuse unchanged backend evidence; backend changes,
+if proven necessary, require focused tests immediately. Completion: build/types/i18n,
+bundle, affected browser suite, visual comparison to references, diff/secret review,
+explicit-path commit and normal push to main; verify remote SHA and actual CI.
+Completed locally 09.10: all ten sections use the Settings layout and local editors,
+configured-role action/scope matrix, invitation preview and stable save controls.
+Existing permission/preset/custom-role policy remains. Missing permission POST is
+now atomic with its audit: reproduced 7-test RED, immediate 11 PASS, then 52 affected
+and dependent tests PASS. No schema, notification, BusinessEvent or AI-policy change.
+Browser: full affected desktop 16 PASS + mobile 16 PASS; after final mobile width and
+role disclosure fixes, affected desktop 6 + mobile 6 PASS; tablet all-sections RU 1 PASS.
+RU/KK/EN, API/data assertions, draft persistence, local errors/retry, invitation preview,
+POST/PATCH/readonly owner and keyboard/drawer behavior covered. Visual review includes
+all ten desktop/mobile sections; final appointment controls fit mobile width.
+Build/types/i18n/widgets/bundle PASS; isolated Django check/migration drift PASS.
+Exact commands, logs, boundaries and prior failed attempts are in
+[consolidated evidence](../settings-redesign-20261009.md).
+No full release suite/live provider/PostgreSQL contention/deployment checks; scoped
+SQLite/browser evidence does not imply production readiness. Ordinary DB untouched.
+All helpers and screenshots remain ignored under output/settings-redesign.
+Next: reviewed explicit-path commit, normal push to origin main, remote SHA and actual CI.
+
 ## DOCS-ROADMAP-20261009 — production route and domain passports
 
 Owner requested one production roadmap and substantive passports in the existing

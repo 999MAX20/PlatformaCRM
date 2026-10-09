@@ -234,8 +234,10 @@ class RolePermissionViewSet(TeamAccessMixin, ModelViewSet):
             return role.business
         return super().get_business_from_request()
 
+    @transaction.atomic
     def perform_create(self, serializer):
         business = self.check_team_permission(Actions.MANAGE)
+        BusinessRole.objects.select_for_update().get(pk=serializer.validated_data["business_role"].pk)
         instance = serializer.save()
         write_audit_log(self.request, AuditLog.Actions.UPDATE, instance.business_role, business=business, metadata={"permission": str(instance)})
 

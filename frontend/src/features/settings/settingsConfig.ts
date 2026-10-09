@@ -26,7 +26,7 @@ export const visibilityOptions = [
 ] as const;
 
 export const roleGuideKeys = ["admin", "manager", "operator", "specialist"] as const;
-export const settingsGroupOrder = ["business", "team", "communication", "setup", "advanced"] as const;
+export const settingsGroupOrder = ["business", "team", "communication", "advanced", "setup"] as const;
 
 export type SettingsGroupKey = (typeof settingsGroupOrder)[number];
 

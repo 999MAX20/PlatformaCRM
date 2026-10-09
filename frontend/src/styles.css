@@ -279,6 +279,13 @@
     overflow-x: hidden;
   }
 
+  /* Settings save bars follow the viewport; clipping must not create a scroll container. */
+  html:has(.settings-workspace),
+  body:has(.settings-workspace),
+  #root:has(.settings-workspace) {
+    overflow-x: clip;
+  }
+
   html[data-scroll-lock='true'],
   html[data-scroll-lock='true'] body,
   html[data-scroll-lock='true'] #root {

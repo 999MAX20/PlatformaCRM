@@ -8,9 +8,12 @@
 
 BusinessMember/BusinessRole/RolePermission/Team задают membership и
 NONE/OWN/TEAM/BUSINESS. Presets owner/admin/manager/operator/specialist сохраняются;
-Director — название admin, профессия не permission. Видимость группы меняется
-атомарным visibility action без выдачи ранее запрещённых действий. Смешанные scopes
-показаны явно. Приглашение существующего email принимает соответствующий аккаунт;
+Director — название admin, профессия не permission. Backend сохраняет атомарный
+visibility action без выдачи ранее запрещённых действий. После редизайна 09.10 UI
+редактирует разрешение/scope отдельно для действия; строка сохраняется независимо.
+POST отсутствующего override атомарен с audit; owner остаётся readonly.
+[Проверки редизайна](../testing/settings-redesign-20261009.md) включают rollback,
+role denial и tenant boundary. Приглашение существующего email принимает соответствующий аккаунт;
 его пароль и глобальный профиль не переписываются приглашением.
 
 Личный профиль, пароль/email, свои устройства/сессии и MFA имеют отдельные действия.

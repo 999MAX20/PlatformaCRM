@@ -1,195 +1,64 @@
-import type { Dispatch, SetStateAction } from "react";
-
-import { getApiErrorMessage } from "../../../api/client";
+import { getApiFieldErrors } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
-import { Card, CardBody } from "../../../components/ui/Card";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
-import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
-import type { Id, Subscription, SubscriptionPlan } from "../../../types";
-import type { Translate } from "../settingsUtils";
+import { SettingsFeedback, SettingsReference, SettingsSaveBar, SettingsSection } from "../components/SettingsLayout";
+import { SettingsQueryState } from "../components/SettingsQueryState";
+import type { SettingsModel } from "../useSettingsModel";
 
-type BillingSettingsForm = {
-  billing_email: string;
-  payment_method: string;
-  invoice_name: string;
-  invoice_tax_id: string;
-  invoice_address: string;
-};
-
-type BillingSectionProps = {
-  canManageBilling: boolean;
-  className: string;
-  currentPlan?: SubscriptionPlan | null;
-  error: unknown;
-  hasSubscription: boolean;
-  isPlanChangePending: boolean;
-  isSavingBillingSettings: boolean;
-  onRequestPlanChange: (plan: Id) => void;
-  onSaveBillingSettings: () => void;
-  onRetry: () => void;
-  plans: SubscriptionPlan[];
-  selectedPlanId: string;
-  setBillingSettingsForm: Dispatch<SetStateAction<BillingSettingsForm>>;
-  setSelectedPlanId: (planId: string) => void;
-  subscription?: Subscription | null;
-  subscriptionIsLoading: boolean;
-  billingSettingsForm: BillingSettingsForm;
-  t: Translate;
-};
-
-export function BillingSection({
-  billingSettingsForm,
-  canManageBilling,
-  className,
-  currentPlan,
-  error,
-  hasSubscription,
-  isPlanChangePending,
-  isSavingBillingSettings,
-  onRequestPlanChange,
-  onSaveBillingSettings,
-  onRetry,
-  plans,
-  selectedPlanId,
-  setBillingSettingsForm,
-  setSelectedPlanId,
-  subscription,
-  subscriptionIsLoading,
-  t,
-}: BillingSectionProps) {
-  if (subscriptionIsLoading) return <Card id="billing" className={className}><CardBody><LoadingState /></CardBody></Card>;
-
-  return (
-    <Card id="billing" className={className}>
-      <CardBody>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">
-              {t("settings.currentPlan")}
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold text-platforma-text">
-              {currentPlan?.name || t("settings.noPlan")}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-platforma-subtle">
-              {hasSubscription
-                ? t("settings.billingRecordStatus", { status: t(`settings.subscriptionStatus.${subscription?.status}`) })
-                : t("settings.billingNoSubscription")}
-            </p>
-            {subscription?.requested_plan ? (
-              <p className="mt-2 text-sm font-bold text-platforma-warning">
-                {t("settings.savedPlanPreference", { name: plans.find((plan) => String(plan.id) === String(subscription.requested_plan))?.name || `#${subscription.requested_plan}` })}
-              </p>
-            ) : null}
-          </div>
-
+export function BillingSection({ model }: { model: SettingsModel; }) {
+  const { t, activeSettingsSection, subscription, plans, currentPlan, canManageBilling, billingSettingsForm, setBillingSettingsForm, billingSettingsMutation, planChangeMutation, selectedPlanId, setSelectedPlanId } = model;
+  const record = subscription.data;
+  const details = record?.invoice_details_json || {};
+  const errors = getApiFieldErrors(billingSettingsMutation.error);
+  const pending = billingSettingsMutation.isPending || planChangeMutation.isPending;
+  const hasFieldErrors = Boolean(errors.billing_email?.length);
+  const original = { billing_email: record?.billing_email || "", payment_method: record?.payment_method || "", invoice_name: String(details.name || ""), invoice_tax_id: String(details.tax_id || ""), invoice_address: String(details.address || "") };
+  const dirty = Object.keys(original).some(key => original[key as keyof typeof original] !== billingSettingsForm[key as keyof typeof original]);
+  function field(name: keyof typeof billingSettingsForm) {
+    return { value: billingSettingsForm[name], onChange: (event: React.ChangeEvent<HTMLInputElement>) => { setBillingSettingsForm(current => ({ ...current, [name]: event.target.value })); billingSettingsMutation.reset(); } };
+  }
+  return <SettingsSection id="billing" active={activeSettingsSection} title={t("settings.section.billing")}>
+    <div className="space-y-5 p-4 sm:p-5">
+      <SettingsQueryState queries={[subscription, plans]} />
+      {subscription.isSuccess && !record && <p className="text-sm text-platforma-subtle">{t("settings.billingNoSubscription")}</p>}
+      {record && !subscription.isError && <>
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-platforma-border pb-5">
+          <div><p className="text-xs text-platforma-subtle">{t("settings.currentPlan")}</p><h2 className="mt-1 text-base font-bold">{currentPlan?.name || t("settings.noPlan")}</h2></div>
+          <p className="text-sm text-platforma-subtle">{t("settings.billingRecordStatus", { status: t(`settings.subscriptionStatus.${record.status}`) })}</p>
         </div>
-        <p className="mt-2 text-sm text-platforma-subtle">{t("settings.billingMetadataOnly")}</p>
-        {error ? (
-          <div className="mt-4">
-            <ErrorState error={error} message={getApiErrorMessage(error)} action={<Button type="button" variant="secondary" onClick={onRetry}>{t("common.retry")}</Button>} />
+        <div className="space-y-3">
+          <h2 className="text-base font-bold">{t("settings.planPreferenceTitle")}</h2>
+          <p className="max-w-3xl text-sm leading-6 text-platforma-subtle">{t("settings.planPreferenceText")}</p>
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="min-w-0 flex-1 sm:max-w-md"><Select label={t("settings.newPlan")} value={selectedPlanId} disabled={!canManageBilling || pending || !plans.data?.length || plans.isError}
+              onChange={event => { setSelectedPlanId(event.target.value); planChangeMutation.reset(); }}
+              options={(plans.data || []).map(plan => ({ value: String(plan.id), label: plan.name }))} /></div>
+            <Button type="button" variant="secondary" disabled={!canManageBilling || pending || !selectedPlanId || !plans.data?.some(plan => String(plan.id) === selectedPlanId) || selectedPlanId === String(record.requested_plan || currentPlan?.id || "")}
+              isLoading={planChangeMutation.isPending} onClick={() => planChangeMutation.mutate(Number(selectedPlanId))}>{t("settings.savePlanPreference")}</Button>
           </div>
-        ) : null}
-        {subscription ? <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_0.8fr]">
-          <form
-            className="rounded-card border border-platforma-border bg-surface-muted p-4"
-            onSubmit={(event) => {
-              event.preventDefault();
-              onSaveBillingSettings();
-            }}
-          >
-            <h3 className="font-bold text-platforma-text">
-              {t("settings.billingPaymentsTitle")}
-            </h3>
-            <fieldset disabled={!canManageBilling || isSavingBillingSettings} className="mt-4 grid gap-3 sm:grid-cols-2">
-              <Input
-                type="email" label={t("settings.billingEmail")}
-                value={billingSettingsForm.billing_email}
-                onChange={(event) =>
-                  setBillingSettingsForm({
-                    ...billingSettingsForm,
-                    billing_email: event.target.value,
-                  })
-                }
-              />
-              <Input label={t("settings.paymentMethodReference")} readOnly
-                value={billingSettingsForm.payment_method ? (["invoice", "card", "bank_transfer"].includes(billingSettingsForm.payment_method) ? t(`settings.paymentMethod.${billingSettingsForm.payment_method === "bank_transfer" ? "bankTransfer" : billingSettingsForm.payment_method}`) : billingSettingsForm.payment_method) : t("settings.paymentMethod.empty")} />
-              <Input
-                label={t("settings.invoiceName")}
-                value={billingSettingsForm.invoice_name}
-                onChange={(event) =>
-                  setBillingSettingsForm({
-                    ...billingSettingsForm,
-                    invoice_name: event.target.value,
-                  })
-                }
-              />
-              <Input
-                label={t("settings.invoiceTaxId")}
-                value={billingSettingsForm.invoice_tax_id}
-                onChange={(event) =>
-                  setBillingSettingsForm({
-                    ...billingSettingsForm,
-                    invoice_tax_id: event.target.value,
-                  })
-                }
-              />
-              <Input
-                className="sm:col-span-2"
-                label={t("settings.invoiceAddress")}
-                value={billingSettingsForm.invoice_address}
-                onChange={(event) =>
-                  setBillingSettingsForm({
-                    ...billingSettingsForm,
-                    invoice_address: event.target.value,
-                  })
-                }
-              />
-            </fieldset>
-            <div className="mt-4">
-              <Button
-                type="submit"
-                disabled={!canManageBilling || !subscription}
-                isLoading={isSavingBillingSettings}
-              >
-                {t("settings.saveBilling")}
-              </Button>
-            </div>
-          </form>
-          <div className="rounded-card border border-platforma-border bg-surface-card p-4">
-            <h3 className="font-bold text-platforma-text">
-              {t("settings.planPreferenceTitle")}
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-platforma-subtle">
-              {t("settings.planPreferenceText")}
-            </p>
-            <div className="mt-4 grid gap-3">
-              <Select
-                disabled={!canManageBilling || isPlanChangePending || !plans.length} label={t("settings.newPlan")}
-                value={selectedPlanId}
-                onChange={(event) => setSelectedPlanId(event.target.value)}
-                options={plans.map((plan) => ({
-                  value: String(plan.id),
-                  label: plan.name,
-                }))}
-              />
-              <Button
-                type="button"
-                disabled={
-                  !canManageBilling ||
-                  !selectedPlanId ||
-                  !plans.some((plan) => String(plan.id) === selectedPlanId) ||
-                  selectedPlanId === String(subscription.requested_plan || currentPlan?.id || "")
-                }
-                onClick={() => onRequestPlanChange(Number(selectedPlanId))}
-                isLoading={isPlanChangePending}
-              >
-                {t("settings.savePlanPreference")}
-              </Button>
-            </div>
-          </div>
-        </div> : null}
-      </CardBody>
-    </Card>
-  );
+          <SettingsFeedback error={planChangeMutation.error} saved={planChangeMutation.isSuccess} />
+          {record.requested_plan && <p className="text-sm text-platforma-subtle">{t("settings.savedPlanPreference", { name: plans.data?.find(plan => String(plan.id) === String(record.requested_plan))?.name || "#" + record.requested_plan })}</p>}
+        </div>
+        <form id="settings-billing-form" onSubmit={event => { event.preventDefault(); billingSettingsMutation.mutate(undefined, { onError: () => window.requestAnimationFrame(() => document.querySelector<HTMLElement>('#settings-billing-form [aria-invalid="true"]')?.focus()) }); }}
+          className="space-y-4 border-t border-platforma-border pt-5">
+          <h2 className="text-base font-bold">{t("settings.billingPaymentsTitle")}</h2>
+          <fieldset disabled={!canManageBilling || pending} className="grid gap-3 sm:grid-cols-2">
+            <Input label={t("settings.billingEmail")} type="email" error={errors.billing_email?.join(" ")} {...field("billing_email")} />
+            <Input label={t("settings.invoiceName")} {...field("invoice_name")} />
+            <Input label={t("settings.invoiceTaxId")} {...field("invoice_tax_id")} />
+            <Input label={t("settings.invoiceAddress")} {...field("invoice_address")} />
+          </fieldset>
+        </form>
+        <SettingsReference>
+          <dl><dt className="text-xs text-platforma-subtle">{t("settings.paymentMethodReference")}</dt><dd className="mt-1 text-sm">{billingSettingsForm.payment_method ? (["invoice", "card", "bank_transfer"].includes(billingSettingsForm.payment_method) ? t(`settings.paymentMethod.${(billingSettingsForm.payment_method === "bank_transfer" ? "bankTransfer" : billingSettingsForm.payment_method)}`) : billingSettingsForm.payment_method) : t("settings.paymentMethod.empty")}</dd></dl>
+          <p className="text-xs leading-5 text-platforma-subtle">{t("settings.billingMetadataOnly")}</p>
+        </SettingsReference>
+      </>}
+    </div>
+    {record && !subscription.isError && canManageBilling && <SettingsSaveBar feedback={!hasFieldErrors && billingSettingsMutation.error ? <SettingsFeedback error={billingSettingsMutation.error} /> : dirty && !billingSettingsMutation.isSuccess ? <p className="text-sm text-platforma-subtle">{t("settings.redesign.unsaved")}</p> : <SettingsFeedback saved={billingSettingsMutation.isSuccess} />}>
+      <Button type="button" variant="secondary" disabled={!dirty || pending} onClick={() => { setBillingSettingsForm(original); billingSettingsMutation.reset(); }}>{t("common.cancel")}</Button>
+      <Button type="submit" form="settings-billing-form" disabled={!dirty || pending} isLoading={billingSettingsMutation.isPending}>{t("settings.saveBilling")}</Button>
+    </SettingsSaveBar>}
+  </SettingsSection>;
 }

@@ -75,6 +75,10 @@ export const teamApi = {
     const { data } = await apiClient.patch<RolePermission>(`/api/team/role-permissions/${id}/`, payload);
     return data;
   },
+  createPermission: async (payload: Pick<RolePermission, "business_role" | "resource" | "action" | "scope" | "is_allowed">) => {
+    const { data } = await apiClient.post<RolePermission>("/api/team/role-permissions/", payload);
+    return data;
+  },
   updateVisibility: async ({ id, permission_ids, scope }: { id: Id; permission_ids: Id[]; scope: RolePermission["scope"] }) => {
     const { data } = await apiClient.post<BusinessRole>(`/api/team/roles/${id}/visibility/`, { permission_ids, scope });
     return data;

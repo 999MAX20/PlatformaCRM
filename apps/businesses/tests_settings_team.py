@@ -5,6 +5,7 @@ from rest_framework.test import APIClient
 
 from apps.accounts.models import User
 from apps.businesses.models import Business, BusinessMember, BusinessRole, RolePermission, Team
+from apps.core.models import AuditLog
 
 
 class SettingsTeamBoundaryTests(TestCase):
@@ -68,3 +69,35 @@ class SettingsTeamBoundaryTests(TestCase):
         self.assertEqual(self.business.timezone, "Asia/Almaty")
         self.assertEqual(self.business.brand_color, "#123456")
         self.assertEqual(self.business.booking_buffer_minutes, 15)
+
+    def test_missing_permission_creation_is_audited_and_validates_scope_and_duplicate(self):
+        self.api.force_authenticate(self.owner)
+        payload = {"business_role": self.role.pk, "resource": "clients", "action": "update", "scope": "own", "is_allowed": True}
+        audit_count = AuditLog.objects.filter(business=self.business).count()
+        response = self.api.post("/api/team/role-permissions/", payload, format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(AuditLog.objects.filter(business=self.business).count(), audit_count + 1)
+        self.permission.refresh_from_db()
+        self.assertEqual(self.permission.scope, "own")
+        self.assertEqual(self.api.post("/api/team/role-permissions/", payload, format="json").status_code, 400)
+        self.assertEqual(self.api.post("/api/team/role-permissions/", {**payload, "action": "delete", "scope": "invalid"}, format="json").status_code, 400)
+        self.assertEqual(self.role.permissions.count(), 2)
+
+    def test_missing_permission_creation_cannot_use_body_business_to_bypass_role_access(self):
+        self.api.force_authenticate(self.viewer)
+        payload = {"business": self.owned_by_viewer.pk, "business_role": self.role.pk, "resource": "clients", "action": "update", "scope": "business", "is_allowed": True}
+        self.assertEqual(self.api.post("/api/team/role-permissions/", payload, format="json").status_code, 403)
+        foreign_role = BusinessRole.objects.create(business=self.owned_by_viewer, name="Foreign role")
+        self.api.force_authenticate(self.owner)
+        self.assertEqual(self.api.post("/api/team/role-permissions/", {**payload, "business": self.business.pk, "business_role": foreign_role.pk}, format="json").status_code, 403)
+        self.assertFalse(foreign_role.permissions.exists())
+        self.assertFalse(self.role.permissions.filter(action="update").exists())
+
+    def test_missing_permission_creation_rolls_back_when_audit_fails(self):
+        self.api.force_authenticate(self.owner)
+        with patch("apps.businesses.views.write_audit_log", side_effect=RuntimeError("audit unavailable")):
+            response = self.api.post("/api/team/role-permissions/", {
+                "business_role": self.role.pk, "resource": "clients", "action": "update", "scope": "business", "is_allowed": True,
+            }, format="json")
+        self.assertEqual(response.status_code, 500)
+        self.assertFalse(self.role.permissions.filter(resource="clients", action="update").exists())
