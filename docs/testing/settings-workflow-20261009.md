@@ -78,3 +78,13 @@ Final `.venv/Scripts/python.exe output/settings-workflow/verify_frontend.py` PAS
 68.7 kB, largest locale 436.3 kB before gzip; all configured budgets passed.
 Changed/new files reviewed for secrets/unrelated data; docs registration, links,
 encoding and diff hygiene passed. Publication is recorded in the checkpoint.
+
+## Publication
+
+Implementation `38be3be604a545ef486b0b2bf2af0c912f0918ee`, same canonical root and
+branch, normal-pushed to origin/main with matching remote readback. Committed static
+gate on `3026debb3b2b9078fc2764dc8f2042a55ee0e90b` PASS, including isolated Django
+system/migration-drift checks. [CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/37947826093)
+frontend passed; backend remained in progress at final inspection around 15:00 UTC.
+This is a pending external CI result, not a CI PASS. Local scoped gates and code
+publication are complete. No deployment or live delivery claimed.

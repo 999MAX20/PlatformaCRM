@@ -58,11 +58,19 @@ desktop security-copy recheck timed out in web-server setup before any test
 The failed setup remains evidence; no product failure was reproduced by that attempt.
 Mobile Company/custom-field screenshots visually reviewed; viewport overlays on full-page
 screenshots are fixed navigation/save controls, not duplicate page blocks.
-Origin/main readback remains the starting base; preceding implementation/receipt CI
+Pre-publication origin/main readback matched the starting base; preceding implementation/receipt CI
 37936423372 and 37936544059 are now confirmed success via GitHub API.
 All local acceptance passed; reviewed task-owned source/tests/docs and new files.
-No unrelated WIP, credential/config changes, migrations or deployment. Next: commit,
-static gate on the actual base, normal push, remote readback and actual CI inspection.
+No unrelated WIP, credential/config changes, migrations or deployment.
+Implementation `38be3be604a545ef486b0b2bf2af0c912f0918ee` committed and normal-pushed
+to origin/main; remote SHA matches. Static gate on exact base `3026debb3b2b9078fc2764dc8f2042a55ee0e90b`
+PASS, including committed-range hygiene, isolated migration drift and Django system check.
+[CI 37947826093](https://github.com/999MAX20/PlatformaCRM/actions/runs/37947826093):
+frontend success; backend checks/tests still in progress at final inspection around
+15:00 UTC. This is not a CI PASS. All required local scoped checks and implementation
+publication are complete; external CI result remains pending. This receipt records
+that boundary without claiming release/deployment readiness. No additional product
+scope is authorized; custom messaging scenarios remain deferred by owner.
 Details: [evidence](../settings-workflow-20261009.md).
 
 ## SETTINGS-REDESIGN-20261009 — full Settings interface
