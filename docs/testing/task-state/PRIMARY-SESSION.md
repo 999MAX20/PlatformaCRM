@@ -43,7 +43,20 @@ Exact commands, logs, boundaries and prior failed attempts are in
 No full release suite/live provider/PostgreSQL contention/deployment checks; scoped
 SQLite/browser evidence does not imply production readiness. Ordinary DB untouched.
 All helpers and screenshots remain ignored under output/settings-redesign.
-Next: reviewed explicit-path commit, normal push to origin main, remote SHA and actual CI.
+Publication 09.10: implementation `9ea28fe6ff2d8060ea7c09ce7d1d3754fb06f798`
+normal-pushed `5434296a..9ea28fe` to origin main; ls-remote matched exactly.
+Canonical root/branch/registered writer unchanged. Reviewed all 39 intended files,
+including new files; no unrelated work or secret-pattern findings. Working/index/range
+hygiene PASS. `.venv/Scripts/python.exe scripts/codex_verify.py --mode static
+--base-ref 5434296a7826933617b8a8fde940588b58079490` PASS on committed implementation.
+Docs registry/local-link check PASS: 592 links, 15 anchors, no errors; archives and
+owner registry unchanged. Git status clean after refreshing identical file metadata.
+Only push CI is configured in repository workflows; no deployment performed.
+[Implementation CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/37936423372)
+was in_progress at publication readback; this is not a CI PASS claim.
+Scope implemented, locally verified, committed and synchronized. No next product
+phase is authorized; CI outcome remains separate from this local acceptance.
+
 
 ## DOCS-ROADMAP-20261009 — production route and domain passports
 
