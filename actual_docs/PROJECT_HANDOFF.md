@@ -1,10 +1,11 @@
 # PlatformaCRM — владелец и передача
 
-13.10.2026: по прямому решению владельца единственный временный писатель
-TASKS-REDESIGN-20261013 — PlatformaCRM UI `01a0f32f-7d02-7263-a53d-496c8f9787f5`.
-Primary ниже сохраняется и был проверен idle; остальные работы не выполняются.
-Объём и завершение — в [checkpoint](../docs/testing/task-state/PRIMARY-SESSION.md).
-Это scoped назначение, не новая передача/архивация и не разрешение следующего этапа.
+13.10.2026: временный scope TASKS-REDESIGN-20261013 исполнителя PlatformaCRM UI
+`01a0f32f-7d02-7263-a53d-496c8f9787f5` реализован, локально проверен и опубликован
+(`4abc60a`, main); scoped writer освобождён. CI frontend success, полный backend
+ещё выполняется на момент записи. Primary ниже сохранён; передачи/архивации нет,
+следующий этап не назначен. Объём и evidence — в
+[checkpoint](../docs/testing/task-state/PRIMARY-SESSION.md).
 
 12.10.2026: generation 5, primary «Платформа CRM продолжение»
 `01a130d8-8f15-7d23-bffc-5e61c21a98e2`, transition idle.

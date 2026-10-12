@@ -131,8 +131,25 @@ dependent backend result, docs/diff review and normal publication with CI readba
   worker/provider/deployment checks not run: no release/live acceptance authorized.
   Two unrelated baseline action-color failures above remain visible and unmodified.
 
-All required local behavior gates passed; intended diff/untracked review and normal
-publication are next. Primary/R01 remain paused. No new task or handoff authorized.
+Publication receipt: implementation `4abc60aab9e4b3b572ff93a64d22d3d54909abab`
+normal-pushed to origin main from codex/ui-testing-toolkit; `ls-remote` equals HEAD.
+Fetched target before publication was e30f990; outgoing range contained only this
+reviewed task commit. Local origin/main tracking ref is stale because the configured
+fetch refspec excludes main: use FETCH_HEAD/ls-remote, not that cached reference.
+All 50 intended tracked/new files reviewed, UTF-8/local Markdown targets and diff
+hygiene PASS; no credentials, local DB, backup, generated screenshots or logs staged.
+`scripts/codex_verify.py --mode static --base-ref e30f990f401ff93a0baf7c59e7b78cb93ac186fc`
+PASS on the committed implementation (range hygiene/system/drift included).
+
+[Implementation CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/38302357789)
+is push-triggered on this exact SHA: frontend success, full backend still running at
+20:16 UTC readback. This is not an overall CI PASS. Workflow contains checks/tests/
+audits, no deployment. Required scoped local gates passed; full local project gate
+was not selected. Publication receipt/ownership metadata are a separate docs-only
+follow-up, reusing unchanged application evidence; its own CI is reported separately.
+Scoped writer released without changing primary/generation or assigning a next phase.
+R01 remains deferred. Next operational check is the outstanding CI result; failed CI
+must be classified and any task regression corrected before overall CI-green claims.
 
 ## R01-DEFER-20261013 — owner defers acceptance until UI completion
 
