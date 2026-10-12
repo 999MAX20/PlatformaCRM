@@ -1,7 +1,11 @@
-﻿import { useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarClock, CheckCircle2, ClipboardList, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { branchesApi } from "../../../api/branches";
+import { useAuth } from "../../../features/auth/AuthProvider";
+import { useEntityData } from "../../../hooks/useEntityData";
+import { canAccessAppointmentAction } from "../../../features/calendar/appointmentAccess";
 import { appointmentsApi } from "../../../api/appointments";
 import { formatDateTime } from "../../../lib/format";
 import { useI18n } from "../../../lib/i18n";
@@ -26,6 +30,10 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
   const showNotification = useNotification();
   const queryClient = useQueryClient();
   const appointment = data.appointment;
+  const { user } = useAuth();
+  const { resources } = useEntityData({ resources: true });
+  const branches = useQuery({ queryKey: ["branches", appointment?.business], queryFn: () => branchesApi.listAll({ business: appointment!.business }), enabled: !!appointment });
+  const canUpdate = !!appointment && canAccessAppointmentAction({ appointment, user, businessId: appointment.business, resources: resources.data || [], branches: branches.data });
   const client = data.client;
   const lead = data.lead;
   const [notes, setNotes] = useState(appointment?.notes || "");
@@ -90,11 +98,12 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
               <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-platforma-muted">{sourceLabel(appointment.source, t)}</span>
             </div>
             <h3 className="truncate text-xl font-semibold text-platforma-ink">{clientName}</h3>
+            {appointment.branch_name && <p className="mt-1 text-sm text-platforma-subtle">{appointment.branch_name} · {appointment.branch_address}</p>}
             <p className="mt-1 text-sm font-semibold text-platforma-muted">
               {serviceMeta} · {formatDateTime(appointment.start_at)} - {formatDateTime(appointment.end_at)}
             </p>
           </div>
-          <div className="flex shrink-0 flex-wrap gap-2">
+          {canUpdate && <div className="flex shrink-0 flex-wrap gap-2">
             {appointment.status !== "confirmed" && !isTerminal ? (
               <Button size="sm" variant="secondary" isLoading={lifecycleMutation.isPending} onClick={() => lifecycleMutation.mutate({ action: "confirmed" })}>
                 {t("appointment.actionConfirm")}
@@ -115,7 +124,7 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
                 {t("appointment.actionCancel")}
               </Button>
             ) : null}
-          </div>
+          </div>}
         </div>
         {statusReasonAction ? (
           <div className="mt-4 rounded-lg border border-platforma-border bg-surface-muted p-3">
@@ -172,7 +181,7 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
             <h3 className="font-semibold text-platforma-ink">{t("appointment.notes")}</h3>
             <p className="mt-1 text-sm text-platforma-muted">{t("crmCard.quickEditText")}</p>
           </div>
-          <Button type="button" variant="secondary" isLoading={notesMutation.isPending} onClick={() => notesMutation.mutate()}>
+          <Button type="button" variant="secondary" disabled={!canUpdate} isLoading={notesMutation.isPending} onClick={() => notesMutation.mutate()}>
             {t("clients.save")}
           </Button>
         </div>

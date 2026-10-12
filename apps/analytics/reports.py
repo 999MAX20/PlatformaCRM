@@ -17,6 +17,7 @@ from apps.core.date_ranges import parse_bounded_date_range
 from apps.crm.models import Deal
 from apps.leads.models import Lead
 from apps.scheduling.models import Appointment
+from apps.scheduling.valuation import appointment_price_expression
 from apps.tasks.models import Task
 
 
@@ -94,7 +95,7 @@ def source_roi(leads, appointments):
         for item in appointments.values("lead__source").annotate(
             appointments=Count("id"),
             completed_appointments=Count("id", filter=Q(status=Appointment.Statuses.COMPLETED)),
-            revenue=Sum("service__price_from", filter=Q(status=Appointment.Statuses.COMPLETED)),
+            revenue=Sum(appointment_price_expression(), filter=Q(status=Appointment.Statuses.COMPLETED)),
         )
     }
     lead_sources = leads.values("source").annotate(leads=Count("id")).order_by("-leads", "source")
@@ -202,10 +203,10 @@ def manager_performance(leads, deals, tasks):
 
 def retention_ltv(business, appointments):
     completed = appointments.filter(status=Appointment.Statuses.COMPLETED)
-    completed_by_client = completed.values("client_id").annotate(count=Count("id"), revenue=Sum("service__price_from"))
+    completed_by_client = completed.values("client_id").annotate(count=Count("id"), revenue=Sum(appointment_price_expression()))
     repeat_clients = [row for row in completed_by_client if row["count"] > 1]
     total_clients = Client.objects.filter(business=business, is_archived=False).count()
-    total_revenue = completed.aggregate(total=Sum("service__price_from"))["total"] or Decimal("0")
+    total_revenue = completed.aggregate(total=Sum(appointment_price_expression()))["total"] or Decimal("0")
     return {
         "total_clients": total_clients,
         "repeat_clients": len(repeat_clients),

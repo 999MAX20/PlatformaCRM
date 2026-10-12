@@ -29,7 +29,7 @@ export function ResourceActionsMenu({
     },
   ];
 
-  if (canManage) {
+  if (canManage && !resource.retired_at) {
     items.push({
       key: resource.is_active ? "deactivate" : "activate",
       label: t(resource.is_active ? "resources.actionDeactivate" : "resources.actionActivate"),

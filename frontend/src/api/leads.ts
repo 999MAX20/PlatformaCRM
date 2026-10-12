@@ -45,7 +45,7 @@ export const leadsApi = {
     payload,
   }: {
     leadId: Id;
-    payload: { service: Id; resource?: Id | null; start_at: string };
+    payload: { service: Id; resource?: Id | null; branch?: Id | null; start_at: string };
   }) => {
     const { data } = await apiClient.post<Appointment>(`/api/leads/${leadId}/create-appointment/`, payload);
     return data;

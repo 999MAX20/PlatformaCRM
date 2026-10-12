@@ -4,15 +4,16 @@ import type { Appointment, AppointmentMessageSetting, AvailableSlot, Id, Note } 
 
 export type AppointmentCreatePayload = Omit<
   Partial<Appointment>,
-  "id" | "status" | "is_archived" | "archive_reason" | "archived_at" | "archived_by" | "created_at" | "updated_at"
+  "id" | "status" | "branch_name" | "branch_address" | "booked_price" | "booked_duration_minutes" | "is_archived" | "archive_reason" | "archived_at" | "archived_by" | "created_at" | "updated_at"
 >;
 
 export type AppointmentUpdatePayload = Omit<
   Partial<Appointment>,
-  "id" | "business" | "client" | "lead" | "service" | "resource" | "start_at" | "end_at" | "status" | "is_archived" | "archive_reason" | "archived_at" | "archived_by" | "created_at" | "updated_at"
+  "id" | "business" | "client" | "lead" | "service" | "resource" | "branch" | "branch_name" | "branch_address" | "booked_price" | "booked_duration_minutes" | "start_at" | "end_at" | "status" | "is_archived" | "archive_reason" | "archived_at" | "archived_by" | "created_at" | "updated_at"
 >;
 
 export type AppointmentReschedulePayload = {
+  branch?: Id;
   start_at: string;
   resource?: Id | null;
   reason?: string;
@@ -23,6 +24,7 @@ export type AppointmentStatusReasonPayload = {
 };
 
 export type AppointmentListParams = {
+  branch?: Id | "";
   business?: Id;
   start_from?: string;
   start_to?: string;
@@ -66,6 +68,7 @@ export const appointmentsApi = {
     return data;
   },
   availableSlots: async (params: {
+    branch_id?: Id | "";
     business_id: Id;
     service_id: Id;
     date: string;

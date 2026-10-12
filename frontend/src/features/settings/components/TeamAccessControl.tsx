@@ -7,6 +7,7 @@ import { Button } from "../../../components/ui/Button";
 import { ErrorState } from "../../../components/ui/StateViews";
 import { useI18n } from "../../../lib/i18n";
 import type { TeamMember } from "../../../types";
+import { TeamBranchAccess } from "./TeamBranchAccess";
 
 export function TeamAccessControl({ member, canManage }: { member: TeamMember; canManage: boolean }) {
   const { t } = useI18n();
@@ -35,6 +36,7 @@ export function TeamAccessControl({ member, canManage }: { member: TeamMember; c
     if (result.confirmed) mutation.mutate({ id: member.id, payload: { is_active: !member.is_active } });
   }
   return <div className="mt-4 space-y-3">
+    <TeamBranchAccess key={`${member.id}:${JSON.stringify(member.branch_access)}`} member={member} />
     <Button type="button" data-testid="team-access-toggle" variant={member.is_active ? "warning" : "secondary"}
       isLoading={mutation.isPending} onClick={() => void changeAccess()}>{label}</Button>
     {mutation.error && <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} />}

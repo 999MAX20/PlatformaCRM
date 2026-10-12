@@ -702,6 +702,7 @@ export type TeamDepartment = {
 };
 
 export type TeamMember = {
+  branch_access?: { all_branches: boolean; branch_ids: Id[] };
   id: Id;
   business: Id;
   user: User;
@@ -957,6 +958,10 @@ export type DealBoard = {
 };
 
 export type Resource = {
+  profession?: string;
+  public_description?: string;
+  contact_phone?: string;
+  retired_at?: string | null;
   id: Id;
   business: Id;
   name: string;
@@ -988,6 +993,11 @@ export type ScheduleException = Omit<WorkingHours, "weekday" | "resource"> & {
 };
 
 export type Appointment = {
+  branch?: Id | null;
+  branch_name?: string;
+  branch_address?: string;
+  booked_price?: string | null;
+  booked_duration_minutes?: number | null;
   id: Id;
   business: Id;
   client: Id;

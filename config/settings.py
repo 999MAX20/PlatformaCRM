@@ -113,6 +113,7 @@ INSTALLED_APPS = [
     "apps.billing",
     "apps.bots",
     "apps.businesses",
+    "apps.branches",
     "apps.clients",
     "apps.payments",
     "apps.crm",

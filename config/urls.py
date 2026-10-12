@@ -64,6 +64,7 @@ from apps.businesses.views import (
     team_permissions_catalog,
 )
 from apps.clients.views import ClientViewSet
+from apps.branches.views import BranchViewSet
 from apps.payments.views import PaymentViewSet
 from apps.conversations.inbox_views import InboxConversationViewSet
 from apps.conversations.views import ConversationViewSet, MessageViewSet, QuickReplyTemplateViewSet
@@ -117,6 +118,7 @@ from apps.tasks.views import TaskViewSet
 
 
 router = DefaultRouter()
+router.register("branches", BranchViewSet, basename="branch")
 router.register("businesses", BusinessViewSet, basename="business")
 router.register("business-members", BusinessMemberViewSet, basename="business-member")
 router.register("business-capabilities", BusinessCapabilityViewSet, basename="business-capability")

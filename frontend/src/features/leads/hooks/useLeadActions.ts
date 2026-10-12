@@ -258,7 +258,7 @@ export function useLeadActions({
       if (!selected?.id || !payload.service || !payload.start_at) throw new Error(t("leads.appointmentSelectionRequired"));
       return leadsApi.createAppointment({
         leadId: selected.id,
-        payload: { service: payload.service, resource: payload.resource || null, start_at: payload.start_at },
+        payload: { service: payload.service, resource: payload.resource || null, branch: payload.branch, start_at: payload.start_at },
       });
     },
     onSuccess: async () => {

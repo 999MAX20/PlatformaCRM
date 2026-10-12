@@ -27,6 +27,10 @@ class Resource(TimeStampedModel):
         related_name="scheduled_resources",
     )
     is_active = models.BooleanField(default=True)
+    profession = models.CharField(max_length=120, blank=True)
+    public_description = models.TextField(blank=True)
+    contact_phone = models.CharField(max_length=32, blank=True)
+    retired_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["name"]
@@ -91,6 +95,11 @@ class Appointment(TimeStampedModel):
         BOT = "bot", "Bot"
 
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="appointments")
+    branch = models.ForeignKey("branches.Branch", on_delete=models.PROTECT, null=True, blank=True, related_name="appointments")
+    branch_name = models.CharField(max_length=255, blank=True)
+    branch_address = models.TextField(blank=True)
+    booked_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    booked_duration_minutes = models.PositiveIntegerField(null=True, blank=True)
     client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="appointments")
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True, blank=True, related_name="appointments")
     service = models.ForeignKey(Service, on_delete=models.PROTECT, related_name="appointments")

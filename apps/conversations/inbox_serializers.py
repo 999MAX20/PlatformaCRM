@@ -207,6 +207,7 @@ class InboxCreateTaskSerializer(serializers.Serializer):
 
 
 class InboxCreateAppointmentSerializer(serializers.Serializer):
+    branch_id = serializers.IntegerField(required=False, allow_null=True)
     service_id = serializers.IntegerField(required=True)
     resource_id = serializers.IntegerField(required=False, allow_null=True)
     start_at = serializers.DateTimeField(required=True)

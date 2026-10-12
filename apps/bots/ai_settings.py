@@ -8,6 +8,9 @@ def validate_ai_settings(value):
     if not isinstance(value, dict):
         raise ValidationError("Agent settings must be an object.")
     value = dict(value)
+    if value.get("branch_ids") is not None and (not isinstance(value["branch_ids"], list)
+            or any(type(item) is not int or item <= 0 for item in value["branch_ids"])):
+        raise ValidationError({"branch_ids": "Select branch identifiers."})
     if "customer_safety" in value:
         from apps.bots.safety_policy import validate_safety_policy
         value["customer_safety"] = validate_safety_policy(value["customer_safety"])

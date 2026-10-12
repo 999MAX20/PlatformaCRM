@@ -34,7 +34,7 @@ export function MonthInspectorPanel({
   dayAppointments: Appointment[];
   dayTasks: Task[];
   openSlotsLabel: string;
-  openSlotsCount: number;
+  openSlotsCount: number | string;
   selectedAppointmentId: number | null;
   clientById: Map<number, Client>;
   serviceById: Map<number, Service>;

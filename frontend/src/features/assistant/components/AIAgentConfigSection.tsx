@@ -10,6 +10,7 @@ import type { AgentProfile } from "../../../types";
 import type { AgentFormState, BotDraftState } from "../aiAgentsTypes";
 import { FieldHint } from "./AIAgentsShared";
 import { ToggleSwitch } from "../../../components/ui/Switch";
+import { AgentBranchScope } from "./AgentBranchScope";
 
 type ProfileProps = {
   botDraft: BotDraftState;
@@ -29,6 +30,7 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
 
   return (
     <div className="divide-y divide-platforma-border">
+      {botDraft.settings_json.scenario !== "crm" && <AgentBranchScope draft={botDraft} setDraft={setBotDraft} disabled={!canManage} />}
       <section className="pb-5">
         <h3 className="mb-3 text-base font-semibold text-platforma-ink">{t("aiAgents.generalSettings")}</h3>
         <div className="grid items-start gap-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">

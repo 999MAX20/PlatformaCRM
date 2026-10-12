@@ -77,6 +77,7 @@ def create_appointment_from_lead(
     service,
     start_at,
     resource=None,
+    branch=None,
     actor=None,
     request=None,
     source=Appointment.Sources.MANUAL,
@@ -91,7 +92,12 @@ def create_appointment_from_lead(
     if timezone.is_naive(start_at):
         start_at = timezone.make_aware(start_at, _business_zone(lead.business))
 
-    end_at = validate_appointment_availability(lead.business, service, start_at, resource=resource)
+    from apps.branches.schedule import appointment_snapshot
+    from apps.branches.access import assert_branch_access
+    snapshot = appointment_snapshot(lead.business, service, resource, branch)
+    if snapshot["branch"] and actor:
+        assert_branch_access(actor, lead.business, snapshot["branch"], active=True)
+    end_at = validate_appointment_availability(lead.business, service, start_at, resource=resource, branch=snapshot["branch"])
 
     appointment = Appointment.objects.create(
         business=lead.business,
@@ -102,6 +108,7 @@ def create_appointment_from_lead(
         start_at=start_at,
         end_at=end_at,
         status=Appointment.Statuses.CREATED,
+        **snapshot,
         source=source,
     )
 
@@ -272,7 +279,7 @@ def add_appointment_note(*, appointment, actor, text, request=None):
 
 
 @transaction.atomic
-def reschedule_appointment(*, appointment, actor, start_at, resource=None, reason="", request=None):
+def reschedule_appointment(*, appointment, actor, start_at, resource=None, branch=None, reason="", request=None):
     Business.objects.select_for_update().get(pk=appointment.business_id)
     appointment = Appointment.objects.select_related("business", "client", "lead", "service", "resource").get(pk=appointment.pk)
     if actor is not None:
@@ -295,19 +302,29 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, reaso
     previous_end_at = appointment.end_at
     previous_resource_id = appointment.resource_id
 
+    from apps.branches.schedule import appointment_snapshot
+    from apps.branches.access import assert_branch_access
+    previous_branch_id = appointment.branch_id
+    snapshot = appointment_snapshot(appointment.business, appointment.service, resource, branch or appointment.branch, appointment=appointment)
+    if snapshot["branch"] and actor:
+        assert_branch_access(actor, appointment.business, snapshot["branch"], active=True)
+
     end_at = validate_appointment_availability(
         appointment.business,
         appointment.service,
         start_at,
         resource=resource,
         exclude_appointment=appointment,
+        branch=snapshot["branch"],
     )
 
     appointment.start_at = start_at
     appointment.end_at = end_at
     appointment.resource = resource
     appointment.status = previous_status
-    appointment.save(update_fields=["start_at", "end_at", "resource", "status", "updated_at"])
+    for key, value in snapshot.items():
+        setattr(appointment, key, value)
+    appointment.save(update_fields=["start_at", "end_at", "resource", "status", "updated_at", *snapshot])
 
     schedule_appointment_followups(appointment)
     create_activity_event(
@@ -328,6 +345,8 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, reaso
             "start_at": appointment.start_at.isoformat(),
             "end_at": appointment.end_at.isoformat(),
             "previous_resource_id": previous_resource_id,
+            "previous_branch_id": previous_branch_id,
+            "branch_id": appointment.branch_id,
             "resource_id": appointment.resource_id,
             "reason": reason,
         },
@@ -346,6 +365,8 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, reaso
                 "previous_start_at": previous_start_at.isoformat(),
                 "start_at": appointment.start_at.isoformat(),
                 "previous_resource_id": previous_resource_id,
+                "previous_branch_id": previous_branch_id,
+                "branch_id": appointment.branch_id,
                 "resource_id": appointment.resource_id,
                 "reason": reason,
             },
@@ -718,7 +739,7 @@ def get_appointment_message_setting(business, scenario):
 def render_appointment_message(appointment, template_text):
     local_start = timezone.localtime(appointment.start_at, _business_zone(appointment.business))
     local_end = timezone.localtime(appointment.end_at, _business_zone(appointment.business))
-    address = appointment.business.address or ""
+    address = appointment.branch_address if appointment.branch_id else (appointment.business.address or "")
     values = {
         "business_name": appointment.business.name,
         "client_name": appointment.client.full_name or appointment.client.phone or "клиент",

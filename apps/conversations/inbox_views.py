@@ -359,6 +359,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
                 appointment = create_appointment_from_conversation(
                     conversation=conversation,
                     service_id=serializer.validated_data["service_id"],
+                    branch_id=serializer.validated_data.get("branch_id"),
                     resource_id=serializer.validated_data.get("resource_id"),
                     start_at=serializer.validated_data["start_at"],
                     notes=serializer.validated_data.get("notes", ""),

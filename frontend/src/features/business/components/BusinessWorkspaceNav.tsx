@@ -4,6 +4,7 @@ import { cn } from "../../../lib/cn";
 import { useI18n } from "../../../lib/i18n";
 
 const businessRoutes = [
+  { to: "/app/business/branches", labelKey: "branches.title" },
   { to: "/app/business/services", labelKey: "nav.services" },
   { to: "/app/business/resources", labelKey: "nav.resources" },
   { to: "/app/business/working-hours", labelKey: "nav.workingHours" },

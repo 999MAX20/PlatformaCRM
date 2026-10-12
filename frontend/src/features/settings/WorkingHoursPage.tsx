@@ -1,7 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarClock, CalendarDays, Clock3, SlidersHorizontal, UsersRound } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { Navigate, useNavigate, useSearchParams } from "react-router";
+import { branchesApi } from "../../api/branches";
 
 import { getApiErrorMessage } from "../../api/client";
 import { workingHoursApi, type WorkingHoursPreset } from "../../api/workingHours";
@@ -50,6 +51,16 @@ function positiveInteger(value: string | null) {
 }
 
 export function WorkingHoursPage() {
+  const { business } = useActiveBusiness();
+  const [params] = useSearchParams();
+  const branches = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
+  if (branches.isLoading) return <LoadingState />;
+  if (branches.error) return <ErrorState error={branches.error} />;
+  if (branches.data?.length) return <Navigate replace to={`/app/business/branches?section=schedule&resource=${params.get("resource") || ""}`} />;
+  return <LegacyWorkingHoursPage />;
+}
+
+function LegacyWorkingHoursPage() {
   const { t } = useI18n();
   const showNotification = useNotification();
   const confirmAction = useActionConfirm();

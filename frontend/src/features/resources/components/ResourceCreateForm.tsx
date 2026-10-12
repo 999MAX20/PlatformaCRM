@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { branchesApi } from "../../../api/branches";
+import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 
 import { ResourceForm } from "../../../components/forms/ResourceForm";
 import { WeeklyWorkingHoursForm } from "../../../components/forms/WorkingHoursForm";
@@ -17,6 +20,10 @@ export function ResourceCreateForm({ businessId, initial, teamMembers, businessH
   const { t } = useI18n();
   const [draft, setDraft] = useState<Partial<Resource> | null>(null);
   const [scheduleStep, setScheduleStep] = useState(false);
+  const branches = useQuery({ queryKey: ["branches", businessId], queryFn: () => branchesApi.listAll({ business: businessId }) });
+  if (branches.isLoading) return <LoadingState />;
+  if (branches.error) return <ErrorState error={branches.error} />;
+  if (branches.data?.length) return <ResourceForm businessId={businessId} initial={initial} teamMembers={teamMembers} disabled={disabled} showContextHint={false} onSubmit={onSubmit} />;
   if (!scheduleStep || !draft) return (
     <ResourceForm businessId={businessId} initial={draft || initial} teamMembers={teamMembers}
       disabled={disabled} showContextHint={false} submitLabel={t("resources.setupSchedule")}

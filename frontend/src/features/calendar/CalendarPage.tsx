@@ -8,6 +8,9 @@ import {
   type AppointmentCreatePayload,
 } from "../../api/appointments";
 import { getApiErrorMessage } from "../../api/client";
+import { branchesApi } from "../../api/branches";
+import { Select } from "../../components/ui/Select";
+import { branchIntervals, branchWorking } from "./branchHours";
 import { scheduleExceptionsApi, workingHoursApi } from "../../api/workingHours";
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import { AppointmentForm } from "../../components/forms/AppointmentForm";
@@ -103,6 +106,10 @@ export function CalendarPage() {
     });
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const branchFilter = searchParams.get("branch") || "";
+  const branchesQuery = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
+  const hasBranches = !!branchesQuery.data?.length;
+  const branchCatalog = useQuery({ queryKey: ["branch-catalog", Number(branchFilter)], queryFn: () => branchesApi.catalog(Number(branchFilter)), enabled: !!branchFilter });
   const fallbackToday = todayInTimeZone("Asia/Almaty");
   const [date, setDate] = useState(() =>
     getQueryDate(searchParams.get("date"), fallbackToday),
@@ -112,6 +119,7 @@ export function CalendarPage() {
   );
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingPrefill, setBookingPrefill] = useState<{
+    branch?: number | null;
     client?: number | null;
     service?: number | null;
     resource?: number | null;
@@ -167,6 +175,7 @@ export function CalendarPage() {
       serviceFilter,
       resourceFilter,
       statusFilter,
+      branchFilter,
     ],
     queryFn: () =>
       appointmentsApi.list({
@@ -176,6 +185,7 @@ export function CalendarPage() {
         service: serviceFilter ? Number(serviceFilter) : "",
         resource: resourceFilter ? Number(resourceFilter) : "",
         status: statusFilter as Appointment["status"] | "",
+        branch: branchFilter ? Number(branchFilter) : "",
       }),
     enabled: Boolean(business?.id),
   });
@@ -190,6 +200,7 @@ export function CalendarPage() {
     queryKey: [
       "available-slots",
       "calendar-day",
+      branchFilter,
       business?.id,
       serviceFilter,
       resourceFilter,
@@ -199,15 +210,16 @@ export function CalendarPage() {
       appointmentsApi.availableSlots({
         business_id: business!.id,
         service_id: Number(serviceFilter),
+        branch_id: branchFilter ? Number(branchFilter) : "",
         resource_id: resourceFilter ? Number(resourceFilter) : "",
         date,
       }),
-    enabled: Boolean(business?.id && serviceFilter && resourceFilter && date),
+    enabled: Boolean(!branchesQuery.isLoading && (!hasBranches || branchFilter) && business?.id && serviceFilter && resourceFilter && date),
   });
   const dateExceptions = useQuery({
     queryKey: ["schedule-exceptions", business?.id, resourceFilter, date],
     queryFn: () => scheduleExceptionsApi.list({ business: business!.id, resource: resourceFilter, date }),
-    enabled: Boolean(business?.id && resourceFilter && date),
+    enabled: Boolean(!hasBranches && business?.id && resourceFilter && date),
   });
 
   useEffect(() => {
@@ -413,6 +425,7 @@ export function CalendarPage() {
   const workingHourItems = workingHours.data || [];
   const taskItems = (tasks.data || []) as Task[];
   const isCalendarDataLoading =
+    branchesQuery.isLoading || branchCatalog.isLoading ||
     appointments.isLoading ||
     clients.isLoading ||
     services.isLoading ||
@@ -421,6 +434,7 @@ export function CalendarPage() {
     workingHours.isLoading ||
     tasks.isLoading;
   const calendarDataError =
+    branchesQuery.error || branchCatalog.error ||
     appointments.error ||
     deepLinkedAppointment.error ||
     clients.error ||
@@ -529,13 +543,17 @@ export function CalendarPage() {
       (appointment) =>
         appointment.id === selectedAppointmentId && !appointment.is_archived,
     ) || null;
-  const hasWorkingHours = Boolean(workingHourItems.length);
+  const hasWorkingHours = hasBranches || Boolean(workingHourItems.length);
   const selectedResourceId = resourceFilter ? Number(resourceFilter) : null;
   const selectedDayHours = dateExceptions.data?.[0] ? { ...dateExceptions.data[0], weekday: getWeekday(date) } : getWorkingHoursFor(
     workingHourItems,
     getWeekday(date),
     selectedResourceId,
   );
+  const branchDayLabel = branchFilter ? branchIntervals(branchCatalog.data, date, selectedResourceId).map((item) => `${item.start}–${item.end}`).join(", ") || t("calendar.freeDay") : t("branches.choose");
+  const isWorkingAt = (day: string, hour: number, staff: number | null) => hasBranches
+    ? !branchFilter || branchWorking(branchCatalog.data, day, hour, staff)
+    : isWorkingHourSlot(workingHourItems, day, hour, staff);
   const confirmedCount = dayAppointments.filter(
     (appointment) => appointment.status === "confirmed",
   ).length;
@@ -546,7 +564,7 @@ export function CalendarPage() {
   const openSlotsCount =
     serviceFilter && resourceFilter && dayAvailableSlots.data
       ? dayAvailableSlots.data.length
-      : openSlotsFallback;
+      : hasBranches ? "—" : openSlotsFallback;
   const openSlotsLabel = serviceFilter && resourceFilter
     ? t("calendar.openSlots")
     : t("calendar.openSlotsEstimate");
@@ -612,6 +630,7 @@ export function CalendarPage() {
       !canAccessAppointmentAction({
         appointment,
         resources: resourceItems,
+        branches: branchesQuery.data,
         user,
         businessId: business?.id,
       })
@@ -632,6 +651,7 @@ export function CalendarPage() {
       canAccessAppointmentAction({
         appointment,
         resources: resourceItems,
+        branches: branchesQuery.data,
         user,
         businessId: business?.id,
       }) &&
@@ -643,6 +663,7 @@ export function CalendarPage() {
     return canAccessAppointmentAction({
       appointment,
       resources: resourceItems,
+      branches: branchesQuery.data,
       user,
       businessId: business?.id,
       action: "delete",
@@ -652,6 +673,7 @@ export function CalendarPage() {
   function openRepeatBooking(appointment: Appointment) {
     setBookingPrefill({
       date: dateInTimeZone(appointment.start_at, businessTimeZone),
+      branch: appointment.branch || undefined,
       client: appointment.client,
       service: appointment.service,
       resource: appointment.resource || undefined,
@@ -716,6 +738,7 @@ export function CalendarPage() {
 
   return (
     <>
+      {hasBranches && <div className="mb-3 max-w-md"><Select label={t("branches.branch")} value={branchFilter} onChange={(event) => setSearchParams((current) => { const next = new URLSearchParams(current); if (event.target.value) next.set("branch", event.target.value); else next.delete("branch"); return next; })} options={[{ value: "", label: t("branches.all") }, ...(branchesQuery.data || []).map((branch) => ({ value: branch.id, label: branch.name }))]} /></div>}
       <CalendarToolbar
         date={date}
         viewMode={viewMode}
@@ -760,7 +783,7 @@ export function CalendarPage() {
                 {formatPickerDate(date, locale)}
               </p>
               <p className="mt-1 text-sm font-bold text-platforma-muted">
-                {selectedDayHours && !selectedDayHours.is_day_off
+                {hasBranches ? branchDayLabel : selectedDayHours && !selectedDayHours.is_day_off
                   ? `${selectedDayHours.start_time.slice(0, 5)}-${selectedDayHours.end_time.slice(0, 5)}`
                   : t("calendar.freeDay")}
               </p>
@@ -796,7 +819,7 @@ export function CalendarPage() {
             {canManageWorkingHours ? (
               <Link
                 className="inline-flex min-h-10 items-center justify-center rounded-control border border-platforma-border bg-platforma-card px-3 py-2 text-xs font-bold text-platforma-text hover:bg-surface-hover"
-                to="/app/business/working-hours"
+                to={hasBranches ? `/app/business/branches?branch=${branchFilter}&section=schedule` : "/app/business/working-hours"}
               >
                 {t("appointment.openHours")}
               </Link>
@@ -899,7 +922,7 @@ export function CalendarPage() {
                           {t("calendar.daySchedule")}
                         </p>
                         <p className="text-xs font-bold text-platforma-muted">
-                          {formatWorkingHoursLabel(
+                          {hasBranches ? branchDayLabel : formatWorkingHoursLabel(
                             workingHourItems,
                             date,
                             dayScheduleResource.id,
@@ -932,8 +955,7 @@ export function CalendarPage() {
                   </div>
                   <div className="relative border-l border-platforma-border">
                     {timelineHours.slice(0, -1).map((hour) => {
-                      const isWorking = isWorkingHourSlot(
-                        workingHourItems,
+                      const isWorking = isWorkingAt(
                         date,
                         hour,
                         dayScheduleResource.id,
@@ -1133,8 +1155,7 @@ export function CalendarPage() {
                         )}
                       >
                         {timelineHours.slice(0, -1).map((hour) => {
-                          const isWorking = isWorkingHourSlot(
-                            workingHourItems,
+                          const isWorking = isWorkingAt(
                             key,
                             hour,
                             null,
@@ -1486,7 +1507,7 @@ export function CalendarPage() {
           services={serviceItems}
           resources={resourceItems}
           leads={leadItems}
-          prefill={bookingPrefill || { date }}
+          prefill={{ ...(bookingPrefill || { date }), branch: bookingPrefill?.branch || (branchFilter ? Number(branchFilter) : undefined) }}
           onSubmit={(payload) => mutation.mutateAsync(payload)}
           timeZone={businessTimeZone}
         />

@@ -76,7 +76,10 @@ class ResourcePagination(PageNumberPagination):
     max_page_size = 100
 
 
-class ResourceViewSet(TenantModelViewSet):
+from apps.branches.staff_views import ResourceLifecycleMixin
+
+
+class ResourceViewSet(ResourceLifecycleMixin, TenantModelViewSet):
     queryset = Resource.objects.select_related("business", "linked_user")
     serializer_class = ResourceSerializer
     pagination_class = ResourcePagination
@@ -88,6 +91,8 @@ class ResourceViewSet(TenantModelViewSet):
     @transaction.atomic
     def perform_update(self, serializer):
         Business.objects.select_for_update().get(pk=serializer.instance.business_id)
+        from apps.branches.staff_lifecycle import assert_staff_scope
+        assert_staff_scope(self.request.user, serializer.instance)
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
@@ -326,6 +331,9 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
             queryset = queryset.filter(business=business)
 
         service_id = self.request.query_params.get("service")
+        branch_id = self.request.query_params.get("branch")
+        if branch_id:
+            queryset = queryset.filter(branch_id=branch_id)
         resource_id = self.request.query_params.get("resource")
         status = self.request.query_params.get("status")
         if service_id:
@@ -359,12 +367,20 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
         business = serializer.validated_data["business"]
         with transaction.atomic():
             Business.objects.select_for_update().get(pk=business.pk)
+            from apps.branches.schedule import appointment_snapshot
+            from apps.branches.access import assert_branch_access
+            snapshot = appointment_snapshot(business, serializer.validated_data["service"],
+                serializer.validated_data.get("resource"), serializer.validated_data.get("branch"))
+            if snapshot["branch"]:
+                assert_branch_access(self.request.user, business, snapshot["branch"], active=True)
+            serializer.validated_data.update(snapshot)
             try:
                 serializer.validated_data["end_at"] = validate_appointment_availability(
                     business,
                     serializer.validated_data["service"],
                     serializer.validated_data["start_at"],
                     resource=serializer.validated_data.get("resource"),
+                    branch=serializer.validated_data.get("branch"),
                 )
             except ValueError as exc:
                 raise ScheduleConflict(errors={"start_at": "Choose another available time."}) from exc
@@ -467,6 +483,7 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
                 actor=request.user,
                 start_at=serializer.validated_data["start_at"],
                 resource=serializer.validated_data.get("resource", appointment.resource),
+                branch=serializer.validated_data.get("branch", appointment.branch),
                 reason=serializer.validated_data.get("reason", ""),
                 request=request,
             )
@@ -516,9 +533,25 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
         except ValueError as exc:
             raise ValidationError("date must be YYYY-MM-DD.") from exc
 
-        slots = get_available_slots(business, service, slot_date, resource=resource, exclude_appointment=exclude_appointment)
+        from apps.branches.models import Branch
+        from apps.branches.schedule import resolve_branch, booking_terms
+        from apps.branches.access import assert_branch_access
+        branch = None
+        branch_id = request.query_params.get("branch_id")
+        if branch_id:
+            branch = Branch.objects.filter(pk=branch_id, business=business).first()
+            if branch is None:
+                raise ValidationError({"branch_id": "Branch is not available."})
+        branch = resolve_branch(business, branch)
+        if branch is not None:
+            assert_branch_access(request.user, business, branch, active=True)
+        if exclude_appointment:
+            assert_can(request.user, business, Resources.APPOINTMENTS, Actions.UPDATE, obj=exclude_appointment)
+        assert_can(request.user, business, Resources.APPOINTMENTS, Actions.VIEW)
+        _, duration, _ = booking_terms(business, service, resource, branch, appointment=exclude_appointment)
+        slots = get_available_slots(business, service, slot_date, resource=resource, exclude_appointment=exclude_appointment, branch=branch)
         payload = [
-            {"start_at": slot, "end_at": slot + timedelta(minutes=service.duration_minutes)}
+            {"start_at": slot, "end_at": slot + timedelta(minutes=duration)}
             for slot in slots
         ]
         return Response(AvailableSlotSerializer(payload, many=True).data)

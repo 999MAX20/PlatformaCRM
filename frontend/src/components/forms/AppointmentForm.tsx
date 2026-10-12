@@ -9,6 +9,7 @@ import { appointmentsApi, type AppointmentCreatePayload } from "../../api/appoin
 import { scheduleExceptionsApi, workingHoursApi } from "../../api/workingHours";
 import { dateInTimeZone, hourInTimeZone, todayInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
+import { useBranchBooking } from "../../hooks/useBranchBooking";
 import type { Appointment, Client, Id, Lead, Resource, Service, WorkingHours } from "../../types";
 import { useActionFeedback } from "../actions/useActionFeedback";
 import { Button } from "../ui/Button";
@@ -93,6 +94,7 @@ export function AppointmentForm({
   leads: Lead[];
   initial?: Appointment;
   prefill?: {
+    branch?: Id | null;
     client?: Id | null;
     service?: Id | null;
     resource?: Id | null;
@@ -107,9 +109,13 @@ export function AppointmentForm({
 }) {
   const { t, language } = useI18n();
   const { getRecoverableMessage } = useActionFeedback();
+  const branch = useBranchBooking(businessId, initial?.branch || prefill?.branch);
   const selectableServices = services.filter(
-    (service) => (service.is_active && !service.is_archived) || service.id === initial?.service,
-  );
+    (service) => ((service.is_active && !service.is_archived) && (!branch.enabled || branch.catalog?.offers.some((offer) => offer.service === service.id))) || service.id === initial?.service,
+  ).map((service) => {
+    const offer = branch.catalog?.offers.find((item) => item.service === service.id);
+    return offer ? { ...service, duration_minutes: offer.duration_minutes, price_from: offer.price_from } : service;
+  });
   const form = useForm<Values>({
     resolver: zodResolver(createSchema(t)),
     defaultValues: {
@@ -133,7 +139,7 @@ export function AppointmentForm({
   const selectedService = selectableServices.find((service) => service.id === Number(serviceId));
   const hasClients = clients.length > 0;
   const hasServices = selectableServices.length > 0;
-  const activeResources = resources.filter((resource) => resource.is_active && resource.resource_type === "staff");
+  const activeResources = resources.filter((resource) => resource.is_active && !resource.retired_at && resource.resource_type === "staff" && (!branch.enabled || branch.catalog?.assignments.some((item) => item.resource === resource.id && item.service_ids.includes(Number(serviceId)))));
   const hasResources = activeResources.length > 0;
   const locale = language === "en" ? "en-US" : language === "kk" ? "kk-KZ" : "ru-RU";
   const selectedDate = new Date(`${date}T00:00:00`);
@@ -150,30 +156,37 @@ export function AppointmentForm({
   });
 
   const slots = useQuery({
-    queryKey: ["available-slots", businessId, serviceId, resourceId, date],
+    queryKey: ["available-slots", businessId, serviceId, resourceId, date, branch.branchId],
     queryFn: () =>
       appointmentsApi.availableSlots({
         business_id: businessId,
+        branch_id: branch.branchId ? Number(branch.branchId) : "",
         service_id: Number(serviceId),
         resource_id: resourceId ? Number(resourceId) : "",
         date,
       }),
-    enabled: Boolean(businessId && serviceId && resourceId && date && !initial),
+    enabled: Boolean(branch.ready && businessId && serviceId && resourceId && date && !initial),
   });
   const noSlots = !initial && !slots.isLoading && slots.data?.length === 0;
   const workingHours = useQuery({
     queryKey: ["working-hours"],
     queryFn: workingHoursApi.list,
-    enabled: Boolean(noSlots),
+    enabled: Boolean(noSlots && !branch.enabled),
   });
   const dateExceptions = useQuery({
     queryKey: ["schedule-exceptions", businessId, resourceId, date],
     queryFn: () => scheduleExceptionsApi.list({ business: businessId, resource: resourceId, date }),
-    enabled: Boolean(noSlots && resourceId && date),
+    enabled: Boolean(noSlots && !branch.enabled && resourceId && date),
   });
   const exception = dateExceptions.data?.[0];
   const selectedHours = noSlots ? (exception ? { ...exception, weekday: selectedWeekday } : getSelectedWorkingHours(workingHours.data || [], selectedWeekday, resourceId ? Number(resourceId) : null)) : null;
-  const noSlotsReasonKey = getNoSlotsReasonKey(selectedHours, selectedService?.duration_minutes || 30);
+  const noSlotsReasonKey = branch.enabled ? "branches.noSlots" : getNoSlotsReasonKey(selectedHours, selectedService?.duration_minutes || 30);
+
+  useEffect(() => {
+    if (initial || !branch.ready || !branch.enabled) return;
+    if (!branch.catalog?.offers.some((offer) => offer.service === Number(serviceId))) form.setValue("service", 0);
+    if (!branch.catalog?.assignments.some((item) => item.resource === Number(resourceId) && item.service_ids.includes(Number(serviceId)))) form.setValue("resource", 0);
+  }, [branch.catalog, branch.ready, branch.enabled, serviceId, resourceId, form, initial]);
 
   useEffect(() => {
     if (!initial) {
@@ -184,7 +197,7 @@ export function AppointmentForm({
       form.setValue("slot", "");
       setSubmitError(null);
     }
-  }, [date, serviceId, resourceId, initial, form]);
+  }, [date, serviceId, resourceId, branch.branchId, initial, form]);
 
   useEffect(() => {
     if (initial || prefill?.hour == null || form.getValues("slot") || !slots.data?.length) return;
@@ -198,6 +211,7 @@ export function AppointmentForm({
       className="grid gap-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-card sm:p-5"
       onSubmit={form.handleSubmit(async (values) => {
         setSubmitError(null);
+        if (!initial && !branch.ready) { setSubmitError(t("branches.choose")); return; }
         const startAt = initial?.start_at || values.slot;
         if (!initial && !startAt) {
           form.setError("slot", { message: t("appointment.selectSlotError") });
@@ -209,6 +223,7 @@ export function AppointmentForm({
         try {
           await onSubmit({
             business: businessId,
+            ...(!initial && branch.branchId ? { branch: Number(branch.branchId) } : {}),
             client: values.client,
             service: values.service,
             resource: values.resource || null,
@@ -223,6 +238,8 @@ export function AppointmentForm({
         }
       })}
     >
+      {branch.error ? <ErrorState error={branch.error} /> : null}
+      {branch.enabled && <Select label={t("branches.branch")} value={branch.branchId} disabled={!!initial} onChange={(event) => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map((item) => ({ value: item.id, label: `${item.name} · ${item.address}` }))]} />}
       {!hasClients ? (
         <SetupNotice
           title={t("appointment.needClientTitle")}
@@ -306,10 +323,10 @@ export function AppointmentForm({
                 </p>
               ) : null}
               <div className="mt-3 flex flex-wrap gap-2">
-                {!exception ? <Button type="button" variant="secondary" isLoading={quickHoursMutation.isPending} onClick={() => quickHoursMutation.mutate()}>
+                {!exception && !branch.enabled ? <Button type="button" variant="secondary" isLoading={quickHoursMutation.isPending} onClick={() => quickHoursMutation.mutate()}>
                   {t("appointment.applyQuickHours")}
                 </Button> : null}
-                <Link className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control px-4 py-2 font-semibold text-platforma-warning underline-offset-4 hover:underline" to={`/app/business/working-hours?view=resources&resource=${resourceId}&date=${date}`}>
+                <Link className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control px-4 py-2 font-semibold text-platforma-warning underline-offset-4 hover:underline" to={branch.enabled ? `/app/business/branches?branch=${branch.branchId}` : `/app/business/working-hours?view=resources&resource=${resourceId}&date=${date}`}>
                   {t("appointment.openHours")}
                 </Link>
               </div>
@@ -329,7 +346,7 @@ export function AppointmentForm({
         { value: "bot", label: "Bot" },
       ]} {...form.register("source")} />
       <Textarea label={t("appointment.notes")} {...form.register("notes")} />
-      <Button data-testid="appointment-submit" type="submit" isLoading={form.formState.isSubmitting} disabled={!initial && (!hasClients || !hasServices || slots.isLoading || slots.data?.length === 0)}>
+      <Button data-testid="appointment-submit" type="submit" isLoading={form.formState.isSubmitting} disabled={!initial && (!branch.ready || !hasClients || !hasServices || slots.isLoading || slots.data?.length === 0)}>
         {initial ? t("appointment.save") : t("appointment.create")}
       </Button>
     </form>

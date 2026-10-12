@@ -15,6 +15,9 @@ const createSchema = (t: (key: string) => string) =>
     resource_type: z.string(),
     linked_user: z.string(),
     is_active: z.boolean(),
+    profession: z.string(),
+    public_description: z.string(),
+    contact_phone: z.string(),
   });
 
 type Values = z.infer<ReturnType<typeof createSchema>>;
@@ -58,6 +61,9 @@ export function ResourceForm({
       resource_type: initial?.resource_type || "staff",
       linked_user: initial?.linked_user ? String(initial.linked_user) : "",
       is_active: initial?.is_active ?? true,
+      profession: initial?.profession || "",
+      public_description: initial?.public_description || "",
+      contact_phone: initial?.contact_phone || "",
     },
   });
   useEffect(() => {
@@ -75,6 +81,9 @@ export function ResourceForm({
           resource_type: values.resource_type as Resource["resource_type"],
           linked_user: values.linked_user ? Number(values.linked_user) : null,
           is_active: values.is_active,
+          profession: values.profession,
+          public_description: values.public_description,
+          contact_phone: values.contact_phone,
         });
         form.reset(values);
       })}
@@ -88,6 +97,9 @@ export function ResourceForm({
         </div>
       ) : null}
       <Input disabled={disabled} label={t("resources.name")} placeholder={t("resources.namePlaceholder")} error={form.formState.errors.name?.message} {...form.register("name")} />
+      <Input disabled={disabled} label={t("branches.profession")} {...form.register("profession")} />
+      <Input disabled={disabled} label={t("branches.publicDescription")} {...form.register("public_description")} />
+      <Input disabled={disabled} label={t("branches.privatePhone")} type="tel" {...form.register("contact_phone")} />
       <Controller
         control={form.control}
         name="resource_type"

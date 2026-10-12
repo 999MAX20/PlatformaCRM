@@ -173,6 +173,7 @@ const ServicesPage = lazy(() =>
     default: module.ServicesPage,
   })),
 );
+const BranchesPage = lazy(() => import("../features/business/BranchesPage").then((module) => ({ default: module.BranchesPage })));
 const AnalyticsPage = lazy(() =>
   import("../features/analytics/AnalyticsPage").then((module) => ({
     default: module.AnalyticsPage,
@@ -565,6 +566,11 @@ const merchantChildren = [
         <ServicesPage />
       </PageLoader>
     ),
+  },
+  {
+    path: "business/branches",
+    resource: "settings",
+    element: <PageLoader><BranchesPage /></PageLoader>,
   },
   {
     path: "business/resources",

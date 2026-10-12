@@ -417,7 +417,7 @@ def mark_lead_appointment_created(
     )
 
 
-def create_appointment_from_lead_contract(*, lead: Lead, actor, service, start_at, resource=None, request=None):
+def create_appointment_from_lead_contract(*, lead: Lead, actor, service, start_at, resource=None, branch=None, request=None):
     if service.business_id != lead.business_id:
         raise ValidationError({"service": "Service must belong to lead business."})
     if resource and resource.business_id != lead.business_id:
@@ -437,6 +437,7 @@ def create_appointment_from_lead_contract(*, lead: Lead, actor, service, start_a
             start_at,
             resource=resource,
             actor=actor,
+            branch=branch,
             request=request,
             lead_activity_source="lead_api",
         )

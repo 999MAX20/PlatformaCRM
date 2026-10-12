@@ -15,7 +15,7 @@ SLOT_STEP_MINUTES = 30
 
 def require_booking_specialist(business, resource):
     if resource is None or not Resource.objects.filter(
-        pk=resource.pk, business=business, is_active=True, resource_type=Resource.ResourceTypes.STAFF,
+        pk=resource.pk, business=business, is_active=True, retired_at__isnull=True, resource_type=Resource.ResourceTypes.STAFF,
     ).exists():
         raise ValidationError({"resource": "Select an active specialist from this business."})
 
@@ -99,7 +99,7 @@ def apply_working_hours_preset(business, preset_key, resource=None):
     return updated
 
 
-def get_available_slots(business, service, date, resource=None, after_time=None, exclude_appointment=None):
+def get_available_slots(business, service, date, resource=None, after_time=None, exclude_appointment=None, branch=None):
     if service.business_id != business.id:
         raise ValueError("Service must belong to the selected business.")
     if resource and resource.business_id != business.id:
@@ -108,7 +108,16 @@ def get_available_slots(business, service, date, resource=None, after_time=None,
         return []
     require_booking_specialist(business, resource)
 
+    from apps.branches.schedule import resolve_branch, branch_available_slots
+    branch = resolve_branch(business, branch)
+    if branch is not None:
+        return branch_available_slots(business, service, date, resource=resource, branch=branch,
+                                      after_time=after_time, exclude_appointment=exclude_appointment)
+
     weekday = date.weekday()
+    from apps.branches.schedule import resource_absent
+    if resource_absent(resource, date):
+        return []
     working_hours = _working_hours_for(business, weekday, resource=resource, date=date)
     if not working_hours or working_hours.is_day_off:
         return []
@@ -150,18 +159,27 @@ def get_available_slots(business, service, date, resource=None, after_time=None,
     return slots
 
 
-def validate_appointment_availability(business, service, start_at, resource=None, exclude_appointment=None):
+def validate_appointment_availability(business, service, start_at, resource=None, exclude_appointment=None, branch=None):
     if service.business_id != business.id:
         raise ValueError("Service must belong to the selected business.")
     if resource and resource.business_id != business.id:
         raise ValueError("Resource must belong to the selected business.")
     require_booking_specialist(business, resource)
 
+    from apps.branches.schedule import resolve_branch, validate_branch_slot
+    branch = resolve_branch(business, branch)
+    if branch is not None:
+        return validate_branch_slot(business, service, start_at, resource=resource, branch=branch,
+                                    exclude_appointment=exclude_appointment)
+
     tz = business_zone(business)
     if timezone.is_naive(start_at):
         start_at = timezone.make_aware(start_at, tz)
 
     local_start = start_at.astimezone(tz)
+    from apps.branches.schedule import resource_absent
+    if resource_absent(resource, local_start.date()):
+        raise ScheduleConflict(errors={"start_at": "The specialist is unavailable on this date."})
     duration = timedelta(minutes=service.duration_minutes)
     end_at = start_at + duration
 

@@ -60,6 +60,7 @@ export function CalendarAppointmentPreview({
         <StatusBadge status={appointment.status} />
       </div>
       {!compact ? <p className="mt-2 truncate text-xs font-semibold text-platforma-muted">{resource?.name || t("calendar.noResource")} - {appointment.source}</p> : null}
+      {appointment.branch_name && <p className="mt-1 truncate text-xs text-platforma-subtle">{appointment.branch_name} · {appointment.branch_address}</p>}
     </button>
   );
 }

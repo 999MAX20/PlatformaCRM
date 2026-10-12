@@ -1,5 +1,126 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-MB01-IMPLEMENT-20261012 — multi-branch implementation before R01
+
+Local acceptance 12.10 18:48 UTC: MB1–MB5 implemented and verified; same owner,
+canonical root and branch. Source freeze after branch snapshots revalidated under
+Business lock (including approved staff-AI writes), branch lifecycle UI grants and
+repeat-booking branch preservation. Publication and working-DB activation are separate.
+
+Completion checks (installed .venv/Node, no reinstall, disposable DB and ports):
+- `.venv/Scripts/python.exe output/multibranch/run.py test apps.branches apps.scheduling --verbosity 1`:
+  110 discovered, 109 PASS + one PostgreSQL-only skip (`check-1791830469466096300.log`).
+- `.venv/Scripts/python.exe output/multibranch/postgres.py apps.branches.tests_concurrency apps.branches.tests_scheduling`:
+  11 PASS (`postgres-1791830438569383300.log`), isolated PostgreSQL 17 cluster initialized
+  in a temporary directory, stopped and removed. Two prevalidated concurrent creates:
+  exactly one 201, one 409, one visit. Fresh price/duration/address and migration schema
+  exercised; existing PostgreSQL service/database untouched.
+- `.venv/Scripts/python.exe output/multibranch/run.py test apps.ai_core.tests_crm_tools --verbosity 1`:
+  19 PASS (`check-1791830659016412000.log`) after final staff-AI write revalidation.
+- Earlier affected/dependent 280 run: 264 PASS, 16 FAIL (`check-1791828932304108100.log`).
+  Unsaved Resource reverse relation caused 15 failures; one branch test targeted a
+  protected serializer field. Fixed, 108-test retry PASS (`check-1791829442055927800.log`),
+  superseded in affected branches/scheduling by final 110 above. Unchanged dependent
+  lead/Inbox/membership/customer-AI/analytics results retained, not reported as a new
+  all-project PASS. No known unresolved required failure.
+- `.venv/Scripts/python.exe output/multibranch/frontend.py browser --project=desktop-chromium --project=mobile-chromium`:
+  initial completed 10 PASS (`browser-1791830162025730300.log`). Final repeat-booking
+  addition: 8 PASS, 2 keyboard-test expectation failures (`browser-1791830532848057600.log`).
+  Native time-input segments retain Tab focus; corrected test exercises real button
+  Tab/Enter/add/remove. Targeted same command with `-g configure`: 2 PASS
+  (`browser-1791830818405450300.log`). Coverage: branch setup, failed-save recovery,
+  grants and agent scope persistence, RU/KK/EN booking/reschedule/absence/retirement,
+  historical links and repeat branch. Desktop/mobile screenshots inspected.
+- `.venv/Scripts/python.exe output/multibranch/frontend.py build`: i18n/TypeScript/app+
+  widget/bundle PASS (`build-1791830670238995800.log`). Initial compile errors corrected;
+  no frontend runtime changes after this passing build.
+- `run.py makemigrations --check --dry-run`: PASS, no drift
+  (`check-1791830080962754900.log`); Django system checks passed in final backend runs.
+- `.venv/Scripts/python.exe output/settings-workflow/check_docs.py`: changed/new-file
+  encoding, existing registry and 168 links/anchors PASS before final receipt update.
+  Task manifest reviews 94 source/docs/test paths; credential-pattern scan zero findings.
+  Full release/E2E certification, real model calls, external sends and deployment not run.
+
+Migration boundary: branches 0001/0002 and scheduling 0009 are additive schema changes;
+first branch adoption is explicit application behavior, not automatic migration seeding.
+Working target read-only verified as canonical `db.sqlite3`. No working migration,
+seed/reset, branch creation or data rewrite performed. Activation requires the separate
+explicit target/scope authorization in AGENTS.md; proposed operation is online SQLite
+backup, these schema migrations, system/read-only smoke, preserving existing data.
+Outgoing baseline includes prior approved recovery receipt `383bf9a` above origin/main
+`198e6a4`; no other writer WIP or unexpected HEAD change. Only CI is configured on push,
+no repository push-deployment workflow. Review/stage explicit manifest paths; normal
+push to main and remote/actual-CI readback remain next. R01 remains the next roadmap
+phase after this bounded implementation/activation result.
+
+Owner authorizes documentation followed by gradual implementation of CRM-MB01,
+then R01. Analysis of models/API/UI/AI/tests on clean `383bf9aea8ca2de04efdf7b33440c5448cfd332a`
+completed in this primary. Canonical C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, generation 5 primary 01a130d8-8f15-7d23-bffc-5e61c21a98e2.
+No starting WIP; one writer, no worktrees/delegation. Existing dev 8000/5173 is
+not a test fixture; no working DB migration, seed, external send or paid AI call.
+
+Mode implementation; gap domain/UI/AI. Reuse Business membership/permissions,
+Resource, Service, scheduling services/availability/exceptions, calendar/forms,
+Business workspace, contextual team settings, Inbox scheduling/booking pipeline.
+Approved: common clients/history, branch-scoped work; multi-interval cross-branch
+specialist day with configured travel; branch-specific service price/duration;
+single Business timezone; staff retirement/archive preserving historical links.
+No new billing, clinical records, equipment capacity or autonomous existing-record
+AI mutations. Five branches is acceptance example, not a cap.
+
+Plan: MB1 branch/access/compatibility; MB2 service offers/assignments/intervals/travel;
+MB3 absence/retirement/manual review; MB4 reachable Business/calendar/team UI;
+MB5 branch-aware AI and integrated five-branch acceptance. Detailed checklist in
+current roadmap; contracts in CRM/access/AI are authoritative, this is evidence.
+
+Risks: shared permissions/availability and all booking callers, lifecycle/history,
+stale AI offers, migration compatibility, monetary price snapshots, race conditions.
+Permission impact: intersect existing permissions with allowed branches for writes;
+common history must retain existing sensitive-field/record restrictions. Audit/activity
+for changes; branch/address in existing appointment events/messages, no new sends.
+AI: scoped public branch/service/staff sources, explicit customer selection, exact
+slot revalidation/replay. Intentional schema/data migrations tested only in isolation.
+
+Verification plan: focused isolated backend tests after each coherent domain/API
+slice (happy/invalid, permission/tenant, rollback, interval/travel/absence, concurrency,
+archived history and migration compatibility); then affected/dependent scheduling,
+membership, Inbox booking/AI/message tests plus system/drift. Targeted reachable
+browser/API scenarios desktop/mobile and RU/KK/EN, build/types/i18n/bundle once at
+completion. No full release gate unless demonstrated shared risk requires it;
+no installs with unchanged dependency inputs. Docs links/registry/diff/secret review;
+explicit task-only commit, normal push origin main, remote SHA and actual CI.
+
+Current: owner decisions documented; MB1 branch/access API focused 4 tests PASS
+(`output/multibranch/check-1791826938767291800.log`). Initial run exposed test expectations around the
+project's normalized 500 handler and concealed settings target (404 for specialist);
+rollback/state assertions retained, branch read scope explicitly shared. Second run
+left only the 403-vs-404 expectation; test now independently proves public branch
+GET, denied PATCH and unchanged data. MB2 models/configuration/multi-interval
+availability and appointment snapshots implemented; initial combined run 23/24
+PASS, remaining test failed in fixture creation (duplicate blank email), fixed
+unique fixture email and isolated targeted retry underway. No completed MB checkbox
+or full user-facing PASS claimed; UI/AI/compatibility closure remains.
+
+Progress 12.10: MB2 targeted fixture retry PASS (`check-1791827398300436800.log`).
+First-branch compatibility 2 PASS (`check-1791827688159136700.log`). MB3 initial
+17/18 passed (`check-1791827624367968700.log`): retirement correctly blocked on
+the follow-up task created by visit cancellation. Test now proves that blocker,
+completes the task through its API and then retires; staff/access 9 PASS
+(`check-1791827929839444700.log`). Added explicit future-network grant protection.
+Lead/Inbox booking and service-value snapshot paths: 8 PASS
+(`check-1791828033488779700.log`). Branch-aware customer AI and existing automatic
+booking: 13 PASS (`check-1791828215967667900.log`), including five locations,
+remembered choice, address/terms, absence, stale offers and replay. No provider calls.
+Frontend implemented WIP: branches workspace, offers/qualifications, multi-interval
+week/date schedules, travel, branch booking/reschedule/calendar, staff absence and
+retirement review, team grants and agent branch settings. First type check exposed
+one number/string slot-counter type mismatch, fixed; final build/browser still pending.
+New specialists require explicit branch/service assignment; first-location adoption
+alone preserves existing legacy service eligibility. Shared catalog writes now
+respect branch scope. Broader affected/dependent isolated regression running.
+All changes task-owned, no staging/commit/push yet; same root/branch/HEAD.
+
 ## RECOVERY-20261012 — owner-authorized replacement of an unresponsive primary
 
 Owner explicitly asked PlatformaCRM UI (`01a0f32f-7d02-7263-a53d-496c8f9787f5`)

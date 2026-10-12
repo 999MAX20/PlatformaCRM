@@ -168,6 +168,8 @@ class LeadListSerializer(serializers.ModelSerializer):
 
 
 class CreateAppointmentFromLeadSerializer(serializers.Serializer):
+    from apps.branches.models import Branch
+    branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), required=False, allow_null=True)
     service = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all())
     resource = serializers.PrimaryKeyRelatedField(queryset=Resource.objects.all(), required=False, allow_null=True)
     start_at = serializers.DateTimeField()

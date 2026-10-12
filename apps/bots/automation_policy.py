@@ -17,6 +17,8 @@ CREATE_RESOURCES = {
 
 
 def authorize_configuration(bot, settings, tools, actor):
+    from apps.branches.bot_context import validate_agent_branches
+    validate_agent_branches(bot.business, settings, actor)
     value = dict(settings)
     value.pop("_automatic_actor_id", None)
     pipeline = value.get("auto_crm_pipeline") or {}

@@ -313,6 +313,11 @@ def can(user, business: Business | None, resource: str, action: str, obj=None) -
     if is_platform_admin(user):
         return PermissionResult(True, RolePermission.Scopes.BUSINESS)
 
+    if obj is not None and action != Actions.VIEW:
+        from apps.branches.access import branch_write_allowed
+        if not branch_write_allowed(user, business, obj):
+            return PermissionResult(False, reason="This branch is outside your permitted scope.")
+
     if user_is_business_owner(user, business):
         scope = role_allows(BusinessMember.Roles.OWNER, resource, action)
         if not scope or scope == RolePermission.Scopes.NONE:
@@ -398,11 +403,11 @@ def scope_queryset(queryset, user, business: Business | None, resource: str, act
 
 
 def _is_business_shared_configuration_queryset(queryset):
-    return queryset.model.__name__ in {"Pipeline", "PipelineStage", "StageTransition"}
+    return queryset.model.__name__ in {"Pipeline", "PipelineStage", "StageTransition", "Branch"}
 
 
 def _object_matches_scope(obj, user, business: Business | None, scope: str, action: str) -> bool:
-    if obj.__class__.__name__ in {"Pipeline", "PipelineStage", "StageTransition"}:
+    if obj.__class__.__name__ in {"Pipeline", "PipelineStage", "StageTransition", "Branch"}:
         return True
 
     object_business_id = _object_business_id(obj)

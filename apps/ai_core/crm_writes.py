@@ -32,8 +32,14 @@ def save_details(serializer, *, entity, actor, request):
         from apps.scheduling.services import validate_appointment_availability
         data = serializer.validated_data
         Business.objects.select_for_update().get(pk=data["business"].pk)
+        from apps.branches.schedule import appointment_snapshot
+        from apps.branches.access import assert_branch_access
+        snapshot = appointment_snapshot(data["business"], data["service"], data.get("resource"), data.get("branch"))
+        if snapshot["branch"]:
+            assert_branch_access(actor, data["business"], snapshot["branch"], active=True)
+        data.update(snapshot)
         try:
-            data["end_at"] = validate_appointment_availability(data["business"], data["service"], data["start_at"], resource=data.get("resource"))
+            data["end_at"] = validate_appointment_availability(data["business"], data["service"], data["start_at"], resource=data.get("resource"), branch=data.get("branch"))
         except ValueError as exc:
             raise ValidationError("The appointment slot is no longer available.") from exc
     target = serializer.save()

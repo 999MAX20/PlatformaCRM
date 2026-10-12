@@ -5,6 +5,9 @@ from apps.scheduling.models import Appointment, AppointmentMessageSetting, Resou
 from apps.scheduling.services import validate_appointment_availability
 from apps.scheduling.resource_services import create_resource, validate_week, validate_staff_account
 from apps.scheduling.schedule_serializers import WeeklyDaySerializer
+from apps.branches.models import Branch
+from apps.branches.schedule import appointment_snapshot, resolve_branch
+from apps.branches.access import assert_branch_access
 
 
 class ResourceSerializer(serializers.ModelSerializer):
@@ -26,18 +29,28 @@ class ResourceSerializer(serializers.ModelSerializer):
             "linked_user_name",
             "linked_user_email",
             "is_active",
+            "profession", "public_description", "contact_phone", "retired_at",
             "appointment_count",
             "has_individual_schedule",
             "weekly_schedule",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["created_at", "updated_at"]
+        read_only_fields = ["created_at", "updated_at", "retired_at"]
 
     def get_linked_user_name(self, obj):
         if obj.linked_user is None:
             return ""
         return obj.linked_user.full_name or obj.linked_user.email
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get("request")
+        if request:
+            from apps.businesses.access import Actions, Resources, can
+            if not can(request.user, instance.business, Resources.SETTINGS, Actions.VIEW).allowed:
+                data["contact_phone"] = ""
+        return data
 
     def get_appointment_count(self, obj):
         annotated_count = getattr(obj, "appointment_count", None)
@@ -52,6 +65,10 @@ class ResourceSerializer(serializers.ModelSerializer):
         return obj.working_hours.exists()
 
     def validate(self, attrs):
+        if self.instance and self.instance.retired_at:
+            raise serializers.ValidationError({"resource": "The specialist has retired; historical records are preserved."})
+        if self.instance and attrs.get("resource_type", self.instance.resource_type) != self.instance.resource_type and self.instance.branch_assignments.exists():
+            raise serializers.ValidationError({"resource_type": "A specialist assigned to branches cannot change resource type."})
         if "weekly_schedule" in attrs:
             if self.instance is not None:
                 raise serializers.ValidationError({"weekly_schedule": "Use the working-hours editor to change an existing schedule."})
@@ -124,13 +141,13 @@ class AppointmentSerializer(serializers.ModelSerializer):
     client_name = serializers.CharField(source="client.full_name", read_only=True)
     client_phone = serializers.CharField(source="client.phone", read_only=True)
     service_name = serializers.CharField(source="service.name", read_only=True)
-    service_duration_minutes = serializers.IntegerField(source="service.duration_minutes", read_only=True)
+    service_duration_minutes = serializers.SerializerMethodField()
     resource_name = serializers.CharField(source="resource.name", read_only=True, allow_null=True)
     resource_type = serializers.CharField(source="resource.resource_type", read_only=True, allow_null=True)
     lead_title = serializers.SerializerMethodField()
 
     lifecycle_update_fields = {"status"}
-    schedule_update_fields = {"client", "lead", "service", "resource", "start_at", "end_at"}
+    schedule_update_fields = {"client", "lead", "service", "resource", "start_at", "end_at", "branch"}
     archive_update_fields = {"is_archived", "archive_reason", "archived_at", "archived_by"}
 
     class Meta:
@@ -146,6 +163,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
             "service",
             "service_name",
             "service_duration_minutes",
+            "branch", "branch_name", "branch_address", "booked_price", "booked_duration_minutes",
             "resource",
             "resource_name",
             "resource_type",
@@ -161,8 +179,11 @@ class AppointmentSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["created_at", "updated_at"]
+        read_only_fields = ["created_at", "updated_at", "branch_name", "branch_address", "booked_price", "booked_duration_minutes"]
         extra_kwargs = {"end_at": {"required": False}}
+
+    def get_service_duration_minutes(self, obj):
+        return obj.booked_duration_minutes or obj.service.duration_minutes
 
     def get_lead_title(self, obj):
         if not obj.lead_id:
@@ -219,6 +240,9 @@ class AppointmentSerializer(serializers.ModelSerializer):
         # Historical/disabled specialists do not prevent editing notes. Schedule
         # changes have a separate service and always revalidate the new specialist.
         if self.instance is None and start_at and service and business:
+            branch = resolve_branch(business, attrs.get("branch"))
+            if branch is not None and self.context.get("request"):
+                assert_branch_access(self.context["request"].user, business, branch, active=True)
             try:
                 calculated_end = validate_appointment_availability(
                     business,
@@ -226,16 +250,19 @@ class AppointmentSerializer(serializers.ModelSerializer):
                     start_at,
                     resource=resource,
                     exclude_appointment=self.instance,
+                    branch=branch,
                 )
             except ValueError as exc:
                 raise serializers.ValidationError("The appointment time is not available.") from exc
             attrs["end_at"] = calculated_end
+            attrs.update(appointment_snapshot(business, service, resource, branch))
         return attrs
 
 
 class AppointmentRescheduleSerializer(serializers.Serializer):
     start_at = serializers.DateTimeField()
     resource = serializers.PrimaryKeyRelatedField(queryset=Resource.objects.all(), required=False, allow_null=True)
+    branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), required=False)
     reason = serializers.CharField(required=False, allow_blank=True, max_length=500)
 
     def validate(self, attrs):
@@ -243,6 +270,8 @@ class AppointmentRescheduleSerializer(serializers.Serializer):
         resource = attrs.get("resource", appointment.resource)
         if resource and resource.business_id != appointment.business_id:
             raise serializers.ValidationError("Resource must belong to the selected business.")
+        if attrs.get("branch") and attrs["branch"].business_id != appointment.business_id:
+            raise serializers.ValidationError({"branch": "Select a branch of this business."})
         return attrs
 
 

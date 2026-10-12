@@ -11,6 +11,7 @@ import {
 } from "../../api/appointments";
 import { getApiErrorMessage } from "../../api/client";
 import { crmCardsApi } from "../../api/crmCards";
+import { branchesApi } from "../../api/branches";
 import { useActionConfirm } from "../../components/actions/ActionConfirmProvider";
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import {
@@ -59,6 +60,7 @@ export function AppointmentWorkspacePage() {
   const { business } = useActiveBusiness();
   const { user } = useAuth();
   const { resources } = useEntityData({ resources: true });
+  const branches = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
   const { id: routeId } = useParams();
   const appointmentId = asNumericId(routeId);
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
@@ -78,6 +80,7 @@ export function AppointmentWorkspacePage() {
   const canUpdateAppointment = appointment
     ? canAccessAppointmentAction({
         appointment,
+        branches: branches.data,
         resources: resources.data || [],
         user,
         businessId: business?.id,
@@ -260,6 +263,7 @@ export function AppointmentWorkspacePage() {
                 <StatusBadge status={appointment.source} />
               </div>
               <div className="mt-3 space-y-2 text-sm font-semibold text-platforma-subtle">
+                {appointment.branch_name && <MetaRow label={t("branches.branch")} value={`${appointment.branch_name} · ${appointment.branch_address}`} />}
                 <MetaRow
                   label={t("tasks.dueAt")}
                   value={formatDateTime(appointment.start_at)}

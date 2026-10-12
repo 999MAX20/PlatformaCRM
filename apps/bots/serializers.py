@@ -22,6 +22,15 @@ class BotSerializer(serializers.ModelSerializer):
     readiness = serializers.SerializerMethodField()
     scenario = serializers.ChoiceField(choices=Bot.Scenarios.choices, required=False)
 
+    def validate(self, attrs):
+        request = self.context.get("request")
+        if request and ("settings_json" in attrs or self.instance is None):
+            from apps.branches.bot_context import validate_agent_branches
+            business = attrs.get("business") or getattr(self.instance, "business", None)
+            if business:
+                validate_agent_branches(business, attrs.get("settings_json", {}), request.user)
+        return attrs
+
     def validate_settings_json(self, value):
         from apps.bots.ai_settings import validate_ai_settings
         value = validate_ai_settings(value)

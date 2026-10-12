@@ -333,6 +333,7 @@ class LeadViewSet(TenantModelViewSet):
                 service=serializer.validated_data["service"],
                 start_at=serializer.validated_data["start_at"],
                 resource=serializer.validated_data.get("resource"),
+                branch=serializer.validated_data.get("branch"),
                 request=request,
             )
             run_automations_for_event(

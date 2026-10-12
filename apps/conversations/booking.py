@@ -36,8 +36,6 @@ class BookingResult:
 
 def store_offered_slots(*, conversation: BotConversation, scheduling_context: dict[str, Any], ai_log_id: int | None = None, runtime_fingerprint: str = "", offer_message_id: int | None = None) -> None:
     slots = scheduling_context.get("next_available_slots") or []
-    if not slots:
-        return
     metadata = dict(conversation.metadata_json or {})
     booking_meta = dict(metadata.get(BOOKING_META_KEY) or {})
     booking_meta.update(
@@ -56,6 +54,10 @@ def store_offered_slots(*, conversation: BotConversation, scheduling_context: di
 
 def maybe_create_appointment_from_reply(*, conversation: BotConversation, message: BotMessage) -> BookingResult:
     assert_resource_enabled(conversation.business, Resources.APPOINTMENTS)
+    from apps.branches.models import Branch
+    if Branch.objects.filter(business=conversation.business).exists():
+        from apps.branches.bot_context import remember_branch_reply
+        remember_branch_reply(conversation, message)
     slot = _select_offered_slot(conversation=conversation, text=message.text)
     if not slot:
         return BookingResult(status="skipped", reason="No offered slot matched the client reply.")
@@ -69,7 +71,7 @@ def maybe_create_appointment_from_reply(*, conversation: BotConversation, messag
 
 
 @transaction.atomic
-def create_appointment_from_conversation(*, conversation: BotConversation, service_id: int, start_at, actor=None, resource_id: int | None = None, notes: str = "", update_lead_status: bool = True) -> Appointment:
+def create_appointment_from_conversation(*, conversation: BotConversation, service_id: int, start_at, actor=None, resource_id: int | None = None, branch_id: int | None = None, notes: str = "", update_lead_status: bool = True) -> Appointment:
     assert_resource_enabled(conversation.business, Resources.APPOINTMENTS)
     Business.objects.select_for_update().get(pk=conversation.business_id)
     if not conversation.client_id:
@@ -85,7 +87,16 @@ def create_appointment_from_conversation(*, conversation: BotConversation, servi
         if resource is None:
             raise ValueError("Resource was not found in this business.")
 
-    end_at = validate_appointment_availability(conversation.business, service, start_at, resource=resource)
+    from apps.branches.models import Branch
+    from apps.branches.schedule import appointment_snapshot
+    from apps.branches.access import assert_branch_access
+    branch = Branch.objects.filter(business=conversation.business, pk=branch_id).first() if branch_id else None
+    if branch_id and branch is None:
+        raise ValueError("Branch was not found in this business.")
+    snapshot = appointment_snapshot(conversation.business, service, resource, branch)
+    if snapshot["branch"]:
+        assert_branch_access(actor, conversation.business, snapshot["branch"], active=True)
+    end_at = validate_appointment_availability(conversation.business, service, start_at, resource=resource, branch=snapshot["branch"])
     if conversation.lead_id:
         if conversation.lead.business_id != conversation.business_id:
             raise ValueError("Lead must belong to the conversation business.")
@@ -101,6 +112,7 @@ def create_appointment_from_conversation(*, conversation: BotConversation, servi
         end_at=end_at,
         status=Appointment.Statuses.CREATED,
         source=_appointment_source(conversation.channel),
+        **snapshot,
         notes=notes or f"Created from inbox conversation #{conversation.id}",
     )
     write_actor_audit_log(
@@ -156,7 +168,9 @@ def format_booking_offer(conversation, slots):
     lines = [title]
     for index, slot in enumerate(slots, 1):
         local = datetime.fromisoformat(slot["start_at"]).astimezone(zone)
-        lines.append(f"{index}. {slot['service_name']} · {slot['resource_name']} · {local:%d.%m.%Y %H:%M}")
+        location = f" · {slot['branch_name']} · {slot['branch_address']}" if slot.get("branch_id") else ""
+        terms = f" · {slot['price_from']} {conversation.business.currency}" if slot.get("price_from") is not None else ""
+        lines.append(f"{index}. {slot['service_name']} · {slot['resource_name']} · {local:%d.%m.%Y %H:%M}{location}{terms}")
     return "\n".join(lines)
 
 
@@ -180,13 +194,31 @@ def _commit_selected_slot(*, conversation, message, slot):
         start = datetime.fromisoformat(slot["start_at"])
         if timezone.is_naive(start) or start <= timezone.now() or not slot.get("resource_id") or not slot.get("service_id"):
             raise ValueError("The selected slot is no longer valid.")
-        old_id = (meta.get("booked_slots") or {}).get(f"{slot['service_id']}:{slot['resource_id']}:{slot['start_at']}")
+        slot_key = _slot_key(slot)
+        old_id = (meta.get("booked_slots") or {}).get(slot_key)
         if old_id:
             appointment = Appointment.objects.filter(pk=old_id, business=conversation.business, client=conversation.client).first()
             if appointment:
                 return BookingResult(status="booked", reason="Previously created appointment.", appointment=appointment)
+        from apps.branches.models import Branch
+        if Branch.objects.filter(business=conversation.business).exists():
+            from apps.branches.bot_context import public_branches, selected_branch
+            from apps.branches.schedule import booking_terms
+            branches = list(public_branches(conversation))
+            choice = selected_branch(conversation, branches, [])
+            branch = next((item for item in branches if item.pk == slot.get("branch_id")), None)
+            if branch is None or choice not in ("any", branch.pk):
+                raise ValueError("Review the selected branch before booking.")
+            service = Service.objects.filter(pk=slot["service_id"], business=conversation.business, is_active=True, is_archived=False).first()
+            resource = Resource.objects.filter(pk=slot["resource_id"], business=conversation.business, is_active=True, retired_at__isnull=True).first()
+            if service is None or resource is None:
+                raise ValueError("The service or specialist is no longer available.")
+            _, duration, price = booking_terms(conversation.business, service, resource, branch)
+            if duration != slot.get("duration_minutes") or (str(price) if price is not None else None) != slot.get("price_from"):
+                raise ValueError("The branch's appointment terms changed. Review a fresh offer.")
         appointment = create_appointment_from_conversation(
             conversation=conversation, service_id=slot["service_id"], resource_id=slot["resource_id"], start_at=start,
+            branch_id=slot.get("branch_id"),
             actor=actor, update_lead_status=False, notes=f"Customer selected option in Inbox message #{message.id}",
         )
     except (ValueError, APIException) as exc:
@@ -194,16 +226,22 @@ def _commit_selected_slot(*, conversation, message, slot):
         return BookingResult(status="requires_staff", reason="The selected slot needs staff review.")
     meta = dict(meta)
     booked = dict(meta.get("booked_slots") or {})
-    booked[f"{slot['service_id']}:{slot['resource_id']}:{slot['start_at']}"] = appointment.id
+    booked[_slot_key(slot)] = appointment.id
     meta["booked_slots"] = booked
     metadata = dict(conversation.metadata_json or {}); metadata[BOOKING_META_KEY] = meta
     conversation.metadata_json = metadata
     _save_booking_meta(conversation, status="booked", slot=slot, appointment=appointment)
     local = timezone.localtime(appointment.start_at, business_zone(conversation.business))
     label = {"ru": "Запись создана", "kk": "Жазылу жасалды", "en": "Appointment booked"}.get(conversation.bot.default_language, "Appointment booked")
-    confirmation = send_outbound_message(conversation, f"{label}: {slot['service_name']} · {slot['resource_name']} · {local:%d.%m.%Y %H:%M}.", user=None,
+    location = f" · {appointment.branch_name} · {appointment.branch_address}" if appointment.branch_id else ""
+    confirmation = send_outbound_message(conversation, f"{label}: {slot['service_name']} · {slot['resource_name']} · {local:%d.%m.%Y %H:%M}{location}.", user=None,
         sender_type=BotMessage.SenderTypes.SYSTEM, idempotency_key=f"automatic-booking:{appointment.id}")
     return BookingResult(status="booked", appointment=appointment, confirmation_message=confirmation)
+
+
+def _slot_key(slot):
+    prefix = f"{slot['branch_id']}:" if slot.get("branch_id") else ""
+    return f"{prefix}{slot['service_id']}:{slot['resource_id']}:{slot['start_at']}"
 
 
 def _select_offered_slot(*, conversation: BotConversation, text: str) -> dict[str, Any] | None:

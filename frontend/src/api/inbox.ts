@@ -268,18 +268,21 @@ export const inboxApi = {
     conversationId,
     serviceId,
     resourceId,
+    branchId,
     startAt,
     notes,
   }: {
     conversationId: Id;
     serviceId: Id;
     resourceId?: Id | null;
+    branchId?: Id | null;
     startAt: string;
     notes?: string;
   }) => {
     const { data } = await apiClient.post<Appointment>(`/api/inbox/conversations/${conversationId}/create-appointment/`, {
       service_id: serviceId,
       resource_id: resourceId ?? null,
+      branch_id: branchId ?? null,
       start_at: startAt,
       notes,
     });

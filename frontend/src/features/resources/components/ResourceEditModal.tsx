@@ -9,6 +9,10 @@ import { StatusNotice } from "../../../components/ui/StatusNotice";
 import { useI18n } from "../../../lib/i18n";
 import type { Id, Resource, TeamMember, WorkingHours } from "../../../types";
 import { ResourceStatusBadge } from "./ResourceStatusBadge";
+import { SpecialistLifecycle } from "./SpecialistLifecycle";
+import { useQuery } from "@tanstack/react-query";
+import { branchesApi } from "../../../api/branches";
+import { Link } from "react-router";
 
 const FORM_ID = "resource-edit-form";
 const weekdayKeys = [
@@ -55,6 +59,7 @@ export function ResourceEditModal({
   onOpenSchedule: () => void;
 }) {
   const { t } = useI18n();
+  const branches = useQuery({ queryKey: ["branches", businessId], queryFn: () => branchesApi.listAll({ business: businessId }), enabled: !!resource });
   const [resetVersion, setResetVersion] = useState(0);
   const [isDirty, setIsDirty] = useState(false);
 
@@ -104,7 +109,7 @@ export function ResourceEditModal({
             businessId={businessId}
             initial={resource}
             teamMembers={teamMembers}
-            disabled={!canManage}
+            disabled={!canManage || !!resource.retired_at}
             showContextHint={false}
             showSubmit={false}
             onDirtyChange={handleDirtyChange}
@@ -113,6 +118,7 @@ export function ResourceEditModal({
         </div>
 
         <div className="space-y-4">
+          {resource.resource_type === "staff" && <SpecialistLifecycle resource={resource} canManage={canManage} />}
           <section className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
             <div className="flex items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-brand-50 text-brand-700">
@@ -134,7 +140,7 @@ export function ResourceEditModal({
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-semibold text-platforma-ink">{t("resources.scheduleTitle")}</h3>
-                {scheduleLoading ? (
+                {branches.data?.length ? <Link className="mt-3 inline-flex text-sm font-semibold text-brand-700 underline" to={`/app/business/branches?section=schedule&resource=${resource.id}`}>{t("branches.schedule")}</Link> : scheduleLoading ? (
                   <div className="mt-3 space-y-2" aria-busy="true">
                     <SkeletonBlock className="h-8" />
                     <SkeletonBlock className="h-8" />
@@ -163,6 +169,7 @@ export function ResourceEditModal({
                 <button
                   type="button"
                   onClick={onOpenSchedule}
+                  hidden={!!branches.data?.length}
                   className="platforma-focus-ring mt-3 inline-flex rounded-control text-sm font-semibold text-brand-700 hover:text-brand-800"
                 >
                   {t("resources.openSchedule")}
@@ -174,7 +181,7 @@ export function ResourceEditModal({
       </div>
 
       <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-platforma-border bg-surface-card px-4 py-3 sm:px-5">
-        {canManage ? (
+        {canManage && !resource.retired_at ? (
           <>
             <Button type="button" variant="secondary" disabled={!isDirty || isSaving} onClick={resetForm}>{t("common.cancel")}</Button>
             <Button type="submit" form={FORM_ID} disabled={!isDirty} isLoading={isSaving}>{t("resources.save")}</Button>

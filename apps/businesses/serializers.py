@@ -232,6 +232,7 @@ class TeamMemberManagementSerializer(serializers.ModelSerializer):
     user_id = serializers.PrimaryKeyRelatedField(source="user", queryset=User.objects.all(), write_only=True, required=False)
     business_role_name = serializers.CharField(source="business_role.name", read_only=True)
     teams = serializers.SerializerMethodField()
+    branch_access = serializers.SerializerMethodField()
 
     class Meta:
         model = BusinessMember
@@ -244,6 +245,7 @@ class TeamMemberManagementSerializer(serializers.ModelSerializer):
             "business_role",
             "business_role_name",
             "teams",
+            "branch_access",
             "is_active",
             "availability_status",
             "unavailable_until",
@@ -252,6 +254,12 @@ class TeamMemberManagementSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["created_at", "updated_at"]
+
+    def get_branch_access(self, obj):
+        from apps.branches.models import BranchAccess
+        grant = BranchAccess.objects.filter(member=obj).first()
+        return {"all_branches": obj.user_id == obj.business.owner_id or bool(grant and grant.all_branches),
+                "branch_ids": list(grant.branches.values_list("pk", flat=True)) if grant else []}
 
     def get_teams(self, obj):
         return [

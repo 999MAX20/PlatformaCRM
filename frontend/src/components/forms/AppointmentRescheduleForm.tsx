@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { appointmentsApi, type AppointmentReschedulePayload } from "../../api/appointments";
 import { dateInTimeZone, todayInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
+import { useBranchBooking } from "../../hooks/useBranchBooking";
 import type { Appointment, Id, Resource } from "../../types";
 import { useActionFeedback } from "../actions/useActionFeedback";
 import { Button } from "../ui/Button";
@@ -31,25 +32,31 @@ export function AppointmentRescheduleForm({
 }) {
   const { t, language } = useI18n();
   const { getRecoverableMessage } = useActionFeedback();
+  const branch = useBranchBooking(businessId, appointment.branch);
   const locale = language === "en" ? "en-US" : language === "kk" ? "kk-KZ" : "ru-RU";
   const [date, setDate] = useState(dateInTimeZone(appointment.start_at, timeZone) || todayInTimeZone(timeZone));
   const [resource, setResource] = useState(appointment.resource ? String(appointment.resource) : "");
   const [slot, setSlot] = useState("");
   const [reason, setReason] = useState("");
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const activeResources = resources.filter((item) => item.is_active && item.resource_type === "staff");
+  const activeResources = resources.filter((item) => item.is_active && !item.retired_at && item.resource_type === "staff" && (!branch.enabled || branch.catalog?.assignments.some((assignment) => assignment.resource === item.id && assignment.service_ids.includes(appointment.service))));
+  useEffect(() => { setSlot(""); }, [branch.branchId]);
+  useEffect(() => {
+    if (branch.ready && branch.enabled && !branch.catalog?.assignments.some((item) => item.resource === Number(resource) && item.service_ids.includes(appointment.service))) setResource("");
+  }, [branch.ready, branch.enabled, branch.catalog, resource, appointment.service]);
 
   const slots = useQuery({
-    queryKey: ["available-slots", businessId, appointment.service, resource, date, "reschedule", appointment.id],
+    queryKey: ["available-slots", businessId, appointment.service, resource, date, "reschedule", appointment.id, branch.branchId],
     queryFn: () =>
       appointmentsApi.availableSlots({
         business_id: businessId,
+        branch_id: branch.branchId ? Number(branch.branchId) : "",
         service_id: appointment.service,
         resource_id: resource ? Number(resource) : "",
         date,
         exclude_appointment_id: appointment.id,
       }),
-    enabled: Boolean(businessId && appointment.service && resource && date),
+    enabled: Boolean(branch.ready && businessId && appointment.service && resource && date),
   });
 
   const slotOptions = useMemo(
@@ -67,7 +74,7 @@ export function AppointmentRescheduleForm({
       className="space-y-4"
       onSubmit={async (event) => {
         event.preventDefault();
-        if (!resource || !slot) {
+        if (!branch.ready || !resource || !slot) {
           setSubmitError(t("appointment.selectSlotError"));
           return;
         }
@@ -75,6 +82,7 @@ export function AppointmentRescheduleForm({
         try {
           await onSubmit({
             start_at: slot,
+            ...(branch.branchId ? { branch: Number(branch.branchId) } : {}),
             resource: resource ? Number(resource) : null,
             reason: reason.trim(),
           });
@@ -83,6 +91,8 @@ export function AppointmentRescheduleForm({
         }
       }}
     >
+      {branch.error && <ErrorState error={branch.error} />}
+      {branch.enabled && <Select label={t("branches.branch")} value={branch.branchId} onChange={(event) => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map((item) => ({ value: item.id, label: `${item.name} · ${item.address}` }))]} />}
       <div className="rounded-card border border-platforma-border bg-surface-muted p-3 text-sm font-semibold text-platforma-subtle">
         {t("appointments.currentTime")}: {new Date(appointment.start_at).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short", timeZone })}
       </div>
@@ -128,7 +138,7 @@ export function AppointmentRescheduleForm({
         <Button type="button" variant="secondary" onClick={onCancel}>
           {t("common.cancel")}
         </Button>
-        <Button data-testid="appointment-reschedule-submit" type="submit" isLoading={isSubmitting}>
+        <Button data-testid="appointment-reschedule-submit" type="submit" isLoading={isSubmitting} disabled={!branch.ready || !slot || !resource}>
           {t("appointments.reschedule")}
         </Button>
       </div>

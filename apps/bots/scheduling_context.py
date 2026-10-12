@@ -10,6 +10,11 @@ from apps.services.models import Service
 
 
 def build_bot_scheduling_context(conversation, *, qualification=None, days=5, slots_per_resource=3, message_context=None, booking_only=False):
+    from apps.branches.models import Branch
+    if Branch.objects.filter(business=conversation.business).exists():
+        from apps.branches.bot_context import build_branch_context
+        return build_branch_context(conversation, qualification=qualification, days=days,
+            slots_per_resource=slots_per_resource, message_context=message_context, booking_only=booking_only)
     business = conversation.business
     messages = (
         [message["text"] for message in reversed(message_context) if message["direction"] == "inbound"][:8]

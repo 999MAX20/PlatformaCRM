@@ -150,6 +150,7 @@ export function ResourcesPage() {
       } else {
         setCreateOpen(false);
         setCreateDraft(undefined);
+        updateSearchParams({ resource: _resource.id });
         showNotification({ message: t("resources.noticeCreated"), tone: "success" });
       }
     },

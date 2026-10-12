@@ -3,6 +3,7 @@ from zoneinfo import ZoneInfo
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
 from django.utils import timezone
+from apps.scheduling.valuation import appointment_price_expression
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -86,7 +87,7 @@ def owner_dashboard(request):
         .order_by("-count", "source")
     )
     completed_appointments = appointments.filter(status=Appointment.Statuses.COMPLETED)
-    service_value_estimate = completed_appointments.aggregate(total=Sum("service__price_from"))["total"] or 0
+    service_value_estimate = completed_appointments.aggregate(total=Sum(appointment_price_expression()))["total"] or 0
     sales_events = BusinessEvent.objects.filter(business=business, event_type__in=SALES_REVENUE_EVENT_TYPES)
     now = timezone.now()
     open_tasks = tasks.exclude(status__in=[Task.Statuses.DONE, Task.Statuses.CANCELLED])
