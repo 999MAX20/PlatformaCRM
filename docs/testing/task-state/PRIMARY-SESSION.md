@@ -1,5 +1,33 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## DOCS-MULTIBRANCH-20261012 — один бизнес, несколько филиалов
+
+Запрос владельца: зафиксировать реализацию сотрудников и графиков для одного бизнеса
+с несколькими филиалами; пример — одна CRM на пять филиалов. Mode docs-only,
+gap requirement/roadmap: записать целевой функционал, не реализовывать его в этом цикле.
+Generation 4 primary, canonical root C:/Users/user/Desktop/PlatformaCRM, текущая ветка
+codex/ui-testing-toolkit, чистая основа 16670de7c542401cf8ca0b333ab3dd8624fbba65.
+Переиспользуем текущие product/CRM/roadmap/acceptance и паспорт scheduling; новый backlog
+не создаётся. BusinessMember, Resource, WorkingHours сейчас привязаны к Business;
+в просмотренных моделях businesses/scheduling отдельного филиала нет.
+Риск документации: выдать план за runtime или неявно утвердить новую матрицу доступа.
+DoD: единый ID CRM-MB01, сценарий пяти филиалов, сотрудники/графики/календарь,
+критерии будущей приёмки и явные нерешённые политики. Проверки: согласованность,
+локальные ссылки/anchors, working/index/реальный committed-range diff hygiene.
+Без изменений кода, БД, миграций, разрешений, уведомлений, BusinessEvent или AI;
+app build/backend/browser suites не нужны. После проверки — commit и normal push main.
+
+Результат: CRM-MB01 добавлен в product/CRM/acceptance/roadmap; паспорт scheduling
+отличает существующее поведение от будущего режима. Пять филиалов — проверочный
+сценарий, не лимит. Решения по доступу, сменам, timezone, переездам и миграции данных
+не выдуманы; они перечислены перед зависимой разработкой. Код/dev-процессы не менялись.
+Проверка `output/settings-workflow/check_docs.py`: PASS, 129 локальных ссылок/anchors,
+encoding/registry; ручная проверка согласованности и всего diff — PASS.
+`git diff --check` PASS; index/committed-range hygiene проверяются при публикации.
+Приложение/БД/браузерные suites пропущены как неприменимые к docs-only scope.
+Следующий продуктовый шаг — отдельное назначение CRM-MB01 с решениями из acceptance;
+это поручение закрывает только фиксацию требования.
+
 ## SETTINGS-WORKFLOW-20261009 — owner review and reachable flows
 
 Owner follow-up explicitly requests a simpler Settings UI plus end-to-end verification.
