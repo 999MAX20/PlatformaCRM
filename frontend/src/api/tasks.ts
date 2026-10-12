@@ -4,6 +4,7 @@ import type { PaginatedResponse } from "./client";
 import type { Id, Task, TaskComment } from "../types";
 
 export type TaskListParams = {
+  business?: Id;
   tab?: "my" | "today" | "overdue" | string;
   status?: Task["status"] | "active" | string;
   bucket?: string;
@@ -25,6 +26,10 @@ export type TaskListParams = {
 };
 
 export type TaskSummary = {
+  active: number;
+  done: number;
+  cancelled: number;
+  waiting: number;
   overdue: number;
   today: number;
   later: number;
@@ -134,6 +139,25 @@ export type TaskDetailsUpdatePayload = Omit<TaskUpdatePayload, "assignee"> & {
 
 export const tasksApi = {
   ...createCrudApi<Task, TaskCreatePayload, TaskUpdatePayload>("/api/tasks/"),
+  createWithKey: async (payload: TaskCreatePayload, key: string) => {
+    const { data } = await apiClient.post<Task>("/api/tasks/", payload, { headers: { "Idempotency-Key": key } });
+    return data;
+  },
+  getForBusiness: async (id: Id, business: Id) => {
+    const { data } = await apiClient.get<Task>(`/api/tasks/${id}/`, { params: { business } });
+    return data;
+  },
+  assignees: async (business: Id, intent = "update") => {
+    const { data } = await apiClient.get<{ id: Id; name: string }[]>("/api/tasks/assignees/", { params: { business, intent } });
+    return data;
+  },
+  command: async ({ task, action, payload = {}, key }: { task: Task; action: string; payload?: Record<string, unknown>; key: string }) => {
+    const { data } = await apiClient.request<Task>({
+      url: `/api/tasks/${task.id}/${action}/`, method: action === "update-details" ? "PATCH" : "POST", data: payload,
+      headers: { "X-Task-Version": task.updated_at, "Idempotency-Key": key },
+    });
+    return data;
+  },
   listPage: async (params?: TaskListParams) => {
     const { data } = await apiClient.get<PaginatedResponse<Task>>("/api/tasks/", { params });
     return data;

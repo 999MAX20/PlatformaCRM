@@ -16,9 +16,10 @@ from apps.core.models import AuditLog
 from apps.notifications.models import Notification
 from apps.notifications.routing import MANAGER_ROLES, filter_notification_recipients, resolve_notification_recipients
 from apps.tasks.models import Task
+from apps.tasks.mutations import locked_task_change
 
 
-OPEN_STATUSES = {Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS}
+OPEN_STATUSES = {Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING}
 TASK_ASSIGNEE_NOTIFICATION_ROLES = {
     BusinessMember.Roles.OWNER,
     BusinessMember.Roles.ADMIN,
@@ -57,6 +58,7 @@ def assert_task_status(task: Task, allowed_statuses: set[str], action: str) -> N
         )
 
 
+@locked_task_change
 def complete_task(*, task: Task, actor, request=None) -> Task:
     assert_task_status(task, OPEN_STATUSES, "complete")
     task.status = Task.Statuses.DONE
@@ -69,6 +71,7 @@ def complete_task(*, task: Task, actor, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def start_task(*, task: Task, actor, request=None) -> Task:
     assert_task_status(task, {Task.Statuses.OPEN}, "start")
     task.status = Task.Statuses.IN_PROGRESS
@@ -78,8 +81,12 @@ def start_task(*, task: Task, actor, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def cancel_task(*, task: Task, actor, reason: str, request=None) -> Task:
     assert_task_status(task, OPEN_STATUSES, "cancel")
+    reason = (reason or "").strip()
+    if len(reason) < 3:
+        raise ValidationError({"reason": "Give a cancellation reason (at least 3 characters)."})
     previous_status = task.status
     task.status = Task.Statuses.CANCELLED
     task.cancelled_at = timezone.now()
@@ -103,6 +110,7 @@ def cancel_task(*, task: Task, actor, reason: str, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def reopen_task(*, task: Task, actor, request=None) -> Task:
     assert_task_status(task, {Task.Statuses.DONE, Task.Statuses.CANCELLED}, "reopen")
     task.status = Task.Statuses.OPEN
@@ -111,12 +119,15 @@ def reopen_task(*, task: Task, actor, request=None) -> Task:
     task.cancelled_at = None
     task.cancelled_by = None
     task.cancel_reason = ""
-    task.save(update_fields=["status", "completed_at", "completed_by", "cancelled_at", "cancelled_by", "cancel_reason", "updated_at"])
+    task.waiting_reason = ""
+    task.waiting_until = None
+    task.save(update_fields=["status", "completed_at", "completed_by", "cancelled_at", "cancelled_by", "cancel_reason", "waiting_reason", "waiting_until", "updated_at"])
     write_task_activity(request, ActivityEvents.TASK_REOPENED, task, text=f"Задача переоткрыта: {task.title}")
     create_task_notification(task, f"Задача возвращена в работу: {task.title}")
     return task
 
 
+@locked_task_change
 def undo_cancel_task(*, task: Task, actor, request=None) -> Task:
     if task.status != Task.Statuses.CANCELLED:
         raise InvalidTransition(
@@ -135,7 +146,7 @@ def undo_cancel_task(*, task: Task, actor, request=None) -> Task:
         .first()
     )
     previous_status = (previous_cancel_log.metadata or {}).get("from") if previous_cancel_log else Task.Statuses.OPEN
-    if previous_status not in {Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.DONE}:
+    if previous_status not in {Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING, Task.Statuses.DONE}:
         previous_status = Task.Statuses.OPEN
 
     task.status = previous_status
@@ -160,8 +171,11 @@ def undo_cancel_task(*, task: Task, actor, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def snooze_task(*, task: Task, snoozed_until, request=None) -> Task:
     assert_task_status(task, OPEN_STATUSES, "snooze")
+    if snoozed_until <= timezone.now():
+        raise ValidationError({"snoozed_until": "Choose a future date."})
     task.snoozed_until = snoozed_until
     task.save(update_fields=["snoozed_until", "updated_at"])
     write_task_activity(request, ActivityEvents.TASK_SNOOZED, task, text=f"Задача отложена: {task.title}")
@@ -169,6 +183,7 @@ def snooze_task(*, task: Task, snoozed_until, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def assign_task(*, task: Task, actor, user_id=None, request=None) -> Task:
     assert_task_status(task, OPEN_STATUSES, "assign")
     if not user_id:
@@ -221,6 +236,7 @@ def assign_task(*, task: Task, actor, user_id=None, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def assign_task_to_me(*, task: Task, actor, request=None) -> Task:
     assert_task_status(task, OPEN_STATUSES, "assign")
     if not task.business.members.filter(user=actor, is_active=True).exists():
@@ -234,8 +250,7 @@ def assign_task_to_me(*, task: Task, actor, request=None) -> Task:
     previous_status = task.status
     previous_assignee_id = task.assignee_id
     task.assignee = actor
-    task.status = Task.Statuses.IN_PROGRESS if task.status == Task.Statuses.OPEN else task.status
-    task.save(update_fields=["assignee", "status", "updated_at"])
+    task.save(update_fields=["assignee", "updated_at"])
     write_task_activity(request, ActivityEvents.TASK_ASSIGNED_TO_ME, task, text=f"Задача взята на себя: {task.title}")
     create_task_notification(task, f"Задача взята на себя: {task.title}")
     write_task_audit(
@@ -254,6 +269,7 @@ def assign_task_to_me(*, task: Task, actor, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def set_task_due_today(*, task: Task, request=None) -> Task:
     assert_task_status(task, OPEN_STATUSES, "schedule")
     task.due_at = business_local_datetime(task.business, days=0, hour=18)
@@ -264,6 +280,7 @@ def set_task_due_today(*, task: Task, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def set_task_due_tomorrow(*, task: Task, request=None) -> Task:
     assert_task_status(task, OPEN_STATUSES, "schedule")
     task.due_at = business_local_datetime(task.business, days=1, hour=10)
@@ -274,6 +291,7 @@ def set_task_due_tomorrow(*, task: Task, request=None) -> Task:
     return task
 
 
+@locked_task_change
 def add_task_watcher(*, task: Task, actor, user_id=None, request=None) -> Task:
     assert_task_status(task, OPEN_STATUSES, "watch")
     watcher = resolve_active_business_user(task=task, user_id=user_id or actor.id, field_name="user_id", role_name="Watcher")
@@ -286,6 +304,8 @@ def resolve_active_business_user(*, task: Task, user_id, field_name: str, role_n
     user = get_user_model().objects.filter(id=user_id).first()
     if user is None:
         raise ValidationError({field_name: "User was not found."})
+    if not user.is_active:
+        raise ValidationError({field_name: "Select an active CRM account."})
     if not task.business.members.filter(user=user, is_active=True).exists():
         raise ValidationError({field_name: f"{role_name} must be an active business member."})
     return user
@@ -530,3 +550,70 @@ def business_local_datetime(business, *, days: int, hour: int, minute: int = 0):
     if target <= now:
         target = now + timezone.timedelta(hours=1)
     return target
+
+
+@locked_task_change
+def wait_task(*, task: Task, actor, reason, waiting_until=None, request=None):
+    assert_task_status(task, {Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS}, "wait")
+    reason = (reason or "").strip()
+    if len(reason) < 3:
+        raise ValidationError({"reason": "Explain what the task is waiting for."})
+    if waiting_until is not None and waiting_until <= timezone.now():
+        raise ValidationError({"waiting_until": "Choose a future date."})
+    task.status = Task.Statuses.WAITING
+    task.waiting_reason = reason
+    task.waiting_until = waiting_until
+    task.save(update_fields=["status", "waiting_reason", "waiting_until", "updated_at"])
+    write_task_activity(request, ActivityEvents.TASK_UPDATED, task, actor=actor,
+                        text=f"Задача ожидает: {task.title}. {reason}",
+                        metadata={"kind": "lifecycle", "lifecycle_action": "task_waiting", "reason": reason,
+                                  "waiting_until": waiting_until.isoformat() if waiting_until else None})
+    create_task_notification(task, f"Задача ожидает: {task.title}")
+    return task
+
+
+@locked_task_change
+def resume_task(*, task: Task, actor, request=None):
+    assert_task_status(task, {Task.Statuses.WAITING}, "resume")
+    task.status = Task.Statuses.IN_PROGRESS
+    task.waiting_reason = ""
+    task.waiting_until = None
+    task.save(update_fields=["status", "waiting_reason", "waiting_until", "updated_at"])
+    write_task_activity(request, ActivityEvents.TASK_STARTED, task, actor=actor,
+                        text=f"Работа над задачей продолжена: {task.title}")
+    create_task_notification(task, f"Работа над задачей продолжена: {task.title}")
+    return task
+
+
+@locked_task_change
+def update_task_details(*, task: Task, actor, values, request=None):
+    from apps.tasks.policy import validate_assignment, validate_task_links
+
+    assert_task_status(task, OPEN_STATUSES, "edit")
+    validate_task_links(business=task.business, actor=actor, attrs=values, task=task)
+    changes = {}
+    previous_assignee = task.assignee
+    for field, value in values.items():
+        before = getattr(task, field)
+        old = getattr(before, "pk", before)
+        new = getattr(value, "pk", value)
+        if old != new:
+            changes[field] = {"from": old.isoformat() if hasattr(old, "isoformat") else old,
+                              "to": new.isoformat() if hasattr(new, "isoformat") else new}
+    if not changes:
+        return task
+    if "assignee" in changes:
+        validate_assignment(business=task.business, actor=actor, assignee=values["assignee"])
+    for field, value in values.items():
+        setattr(task, field, value)
+    task.save(update_fields=[*values, "updated_at"])
+    write_task_activity(request, ActivityEvents.TASK_UPDATED, task, actor=actor,
+                        text=f"Задача обновлена: {task.title}",
+                        metadata={"kind": "task_details_update", "fields": changes})
+    write_task_audit(request, task, {"kind": "task_details_update", "fields": changes}, actor=actor)
+    if "assignee" in changes:
+        create_task_notification(task, f"Задача назначена: {task.title}")
+        create_assignment_notifications(business=task.business, previous_user=previous_assignee,
+                                        new_user=task.assignee, text=f"Task assigned: {task.title}",
+                                        action_url=f"/app/tasks?task={task.id}", include_new=False)
+    return task

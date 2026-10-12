@@ -97,6 +97,7 @@ SPECIALIST_PERMISSIONS = {
         Actions.UPDATE: RolePermission.Scopes.OWN,
     },
     Resources.TASKS: {
+        Actions.CREATE: RolePermission.Scopes.OWN,
         Actions.VIEW: RolePermission.Scopes.OWN,
         Actions.UPDATE: RolePermission.Scopes.OWN,
     },
@@ -115,6 +116,10 @@ SPECIALIST_PERMISSIONS = {
 # silently changing access for already assigned teams.
 LEGACY_SPECIALIST_PERMISSIONS = {
     **SPECIALIST_PERMISSIONS,
+    Resources.TASKS: {
+        Actions.VIEW: RolePermission.Scopes.OWN,
+        Actions.UPDATE: RolePermission.Scopes.OWN,
+    },
     Resources.APPOINTMENTS: {
         Actions.VIEW: RolePermission.Scopes.BUSINESS,
         Actions.UPDATE: RolePermission.Scopes.OWN,
@@ -148,7 +153,7 @@ ROLE_PRESETS = {
         Resources.LEADS: {Actions.VIEW: RolePermission.Scopes.BUSINESS, Actions.CREATE: RolePermission.Scopes.BUSINESS, Actions.UPDATE: RolePermission.Scopes.OWN},
         Resources.APPOINTMENTS: {Actions.VIEW: RolePermission.Scopes.BUSINESS, Actions.CREATE: RolePermission.Scopes.BUSINESS, Actions.UPDATE: RolePermission.Scopes.BUSINESS},
         Resources.CONVERSATIONS: {Actions.VIEW: RolePermission.Scopes.BUSINESS, Actions.CREATE: RolePermission.Scopes.BUSINESS, Actions.UPDATE: RolePermission.Scopes.OWN},
-        Resources.TASKS: {Actions.VIEW: RolePermission.Scopes.OWN, Actions.UPDATE: RolePermission.Scopes.OWN},
+        Resources.TASKS: {Actions.CREATE: RolePermission.Scopes.OWN, Actions.VIEW: RolePermission.Scopes.OWN, Actions.UPDATE: RolePermission.Scopes.OWN},
         Resources.NOTIFICATIONS: {Actions.VIEW: RolePermission.Scopes.OWN, Actions.UPDATE: RolePermission.Scopes.OWN},
         Resources.AI_ASSISTANT: {Actions.VIEW: RolePermission.Scopes.OWN, Actions.SUGGEST: RolePermission.Scopes.OWN},
         Resources.AI_PIPELINE: {Actions.VIEW: RolePermission.Scopes.OWN, Actions.SUGGEST: RolePermission.Scopes.OWN},
@@ -414,6 +419,16 @@ def _object_matches_scope(obj, user, business: Business | None, scope: str, acti
     if object_business_id is not None and business is not None and object_business_id != business.id:
         return False
 
+    if obj.__class__.__name__ == "Task":
+        user_ids = {user.id} if scope == RolePermission.Scopes.OWN else set(_team_user_ids_for(user, business))
+        if action == Actions.VIEW:
+            return (obj.assignee_id in user_ids or obj.created_by_id in user_ids
+                    or (bool(obj.pk) and obj.watchers.filter(id__in=user_ids).exists()))
+        if action == Actions.CREATE:
+            return obj.assignee_id in user_ids
+        # Authorship/watchers do not grant mutation rights after reassignment.
+        return obj.assignee_id in user_ids or (obj.assignee_id is None and (obj.created_by_id in user_ids or obj.created_by_id is None))
+
     model_fields = {field.name for field in obj._meta.get_fields()}
     object_user_ids = {
         getattr(obj, f"{field}_id", None)
@@ -526,6 +541,8 @@ def _filter_queryset_by_users(
     business: Business | None,
     include_business_wide_notifications: bool,
 ):
+    if queryset.model.__name__ == "Task":
+        return queryset.filter(Q(assignee_id__in=user_ids) | Q(created_by_id__in=user_ids) | Q(watchers__id__in=user_ids)).distinct()
     model_fields = {field.name for field in queryset.model._meta.get_fields()}
     query = Q()
     for field in OWNERSHIP_FIELDS:

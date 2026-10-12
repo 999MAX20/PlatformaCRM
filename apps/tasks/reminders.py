@@ -36,4 +36,19 @@ def enqueue_due_task_reminders(*, limit=100, now=None):
             enqueued += len(create_routed_task_notifications(
                 task=task, text=f"Напоминание: {task.title}", priority=task.priority,
             ))
+    # Waiting never changes the deadline or resumes work automatically. Its
+    # optional return date only produces a durable reminder for the assignee.
+    waiting = Task.objects.filter(status=Task.Statuses.WAITING, is_archived=False, waiting_until__lte=now)
+    waiting = waiting.filter(Q(snoozed_until__isnull=True) | Q(snoozed_until__lte=now)).exclude(
+        business_id__in=BusinessCapability.objects.filter(module_key="tasks", is_enabled=False).values("business_id"))
+    waiting = waiting.filter(~Exists(TaskReminderDelivery.objects.filter(
+        task_id=OuterRef("pk"), reminder_at=OuterRef("waiting_until"))))
+    for task_id in list(waiting.order_by("waiting_until", "pk").values_list("pk", flat=True)[:limit]):
+        with transaction.atomic():
+            task = waiting.select_for_update().filter(pk=task_id).first()
+            if task is None:
+                continue
+            _, claimed = TaskReminderDelivery.objects.get_or_create(task=task, reminder_at=task.waiting_until)
+            if claimed:
+                enqueued += len(create_routed_task_notifications(task=task, text=f"Вернуться к задаче: {task.title}", priority=task.priority))
     return enqueued

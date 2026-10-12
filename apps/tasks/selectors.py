@@ -1,3 +1,6 @@
+from datetime import datetime, time, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 from django.db.models import Count, Min, Q
 from django.utils import timezone
 
@@ -5,14 +8,14 @@ from apps.businesses.models import BusinessMember
 from apps.tasks.models import Task
 
 
-ACTIVE_TASK_STATUSES = [Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS]
+ACTIVE_TASK_STATUSES = [Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING]
 
 
 def task_workload_payload(*, business, queryset, now=None):
     now = now or timezone.now()
-    today = timezone.localdate()
+    _, tomorrow = task_day_bounds(business, now=now)
     active_queryset = queryset.filter(status__in=ACTIVE_TASK_STATUSES, is_archived=False)
-    overdue_filter = Q(due_at__lt=now) & (Q(snoozed_until__isnull=True) | Q(snoozed_until__lte=now))
+    overdue_filter = Q(due_at__lt=now)
     rows = {
         row["assignee_id"]: row
         for row in active_queryset.values("assignee_id", "assignee__full_name", "assignee__email").annotate(
@@ -20,7 +23,7 @@ def task_workload_payload(*, business, queryset, now=None):
             open=Count("id", filter=Q(status=Task.Statuses.OPEN)),
             in_progress=Count("id", filter=Q(status=Task.Statuses.IN_PROGRESS)),
             overdue=Count("id", filter=overdue_filter),
-            due_today=Count("id", filter=Q(due_at__date=today)),
+            due_today=Count("id", filter=Q(due_at__gte=now, due_at__lt=tomorrow)),
             no_due=Count("id", filter=Q(due_at__isnull=True)),
             high_priority=Count("id", filter=Q(priority__in=[Task.Priorities.HIGH, Task.Priorities.URGENT])),
             urgent=Count("id", filter=Q(priority=Task.Priorities.URGENT)),
@@ -29,7 +32,7 @@ def task_workload_payload(*, business, queryset, now=None):
     }
 
     items = []
-    members = BusinessMember.objects.filter(business=business, is_active=True).select_related("user").order_by("user__full_name", "user__email")
+    members = BusinessMember.objects.filter(business=business, is_active=True, user_id__in=[key for key in rows if key]).select_related("user").order_by("user__full_name", "user__email")
     for member in members:
         row = rows.pop(member.user_id, None)
         items.append(_workload_item(row=row, member=member, user_id=member.user_id))
@@ -39,7 +42,7 @@ def task_workload_payload(*, business, queryset, now=None):
 
     items.sort(key=lambda item: (-item["load_score"], -item["overdue"], -item["total"], item["name"] or "zz"))
     totals = {
-        "assignees": len(items),
+        "assignees": sum(item["user_id"] is not None for item in items),
         "active_tasks": sum(item["total"] for item in items),
         "open": sum(item["open"] for item in items),
         "in_progress": sum(item["in_progress"] for item in items),
@@ -112,3 +115,13 @@ def _capacity_status(*, total, overdue, load_score):
     if overdue >= 1 or load_score >= 7:
         return "busy"
     return "balanced"
+
+
+def task_day_bounds(business, *, now=None):
+    now = now or timezone.now()
+    try:
+        zone = ZoneInfo(getattr(business, "timezone", "") or "Asia/Almaty")
+    except ZoneInfoNotFoundError:
+        zone = ZoneInfo("Asia/Almaty")
+    day = timezone.localtime(now, zone).date()
+    return datetime.combine(day, time.min, zone), datetime.combine(day + timedelta(days=1), time.min, zone)

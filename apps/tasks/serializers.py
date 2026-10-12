@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.tasks.models import Task, TaskComment
+from apps.tasks.policy import LINK_RESOURCES, can_view_link, task_available_actions, validate_assignment, validate_task_links
 
 
 class TaskCommentSerializer(serializers.ModelSerializer):
@@ -15,6 +16,11 @@ class TaskCommentSerializer(serializers.ModelSerializer):
 
 class TaskSnoozeSerializer(serializers.Serializer):
     snoozed_until = serializers.DateTimeField()
+
+
+class TaskWaitSerializer(serializers.Serializer):
+    reason = serializers.CharField(trim_whitespace=True, min_length=3, max_length=2000)
+    waiting_until = serializers.DateTimeField(required=False, allow_null=True)
 
 
 class TaskCancelSerializer(serializers.Serializer):
@@ -33,6 +39,7 @@ class TaskDetailsUpdateSerializer(serializers.ModelSerializer):
             "appointment",
             "conversation",
             "parent_task",
+            "specialist",
             "assignee",
             "priority",
             "due_at",
@@ -51,10 +58,19 @@ class TaskDetailsUpdateSerializer(serializers.ModelSerializer):
         assignee = attrs.get("assignee")
         if assignee and business and not business.members.filter(user=assignee, is_active=True).exists():
             raise serializers.ValidationError({"assignee": "Assignee must be an active business member."})
+        request = self.context.get("request")
+        if request and business:
+            if self.instance is None and "assignee" not in attrs:
+                attrs["assignee"] = request.user
+            if "assignee" in attrs and (self.instance is None or attrs["assignee"] != self.instance.assignee):
+                validate_assignment(business=business, actor=request.user, assignee=attrs["assignee"], creating=self.instance is None)
+            validate_task_links(business=business, actor=request.user, attrs=attrs, task=self.instance)
         return attrs
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    available_actions = serializers.SerializerMethodField()
+    relations = serializers.SerializerMethodField()
     comments_count = serializers.IntegerField(read_only=True)
     watchers_count = serializers.IntegerField(read_only=True)
     client_name = serializers.CharField(source="client.full_name", read_only=True)
@@ -78,6 +94,8 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = [
             "id",
+            "available_actions",
+            "relations",
             "business",
             "title",
             "description",
@@ -95,6 +113,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "conversation_channel",
             "conversation_external_user_id",
             "parent_task",
+            "specialist",
             "assignee",
             "assignee_name",
             "assignee_email",
@@ -105,6 +124,8 @@ class TaskSerializer(serializers.ModelSerializer):
             "due_at",
             "reminder_at",
             "snoozed_until",
+            "waiting_reason",
+            "waiting_until",
             "priority",
             "status",
             "completed_at",
@@ -122,6 +143,8 @@ class TaskSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = [
+            "waiting_reason",
+            "waiting_until",
             "archived_at",
             "archived_by",
             "created_by",
@@ -205,4 +228,50 @@ class TaskSerializer(serializers.ModelSerializer):
         assignee = attrs.get("assignee") if "assignee" in attrs else getattr(self.instance, "assignee", None)
         if assignee and business and not business.members.filter(user=assignee, is_active=True).exists():
             raise serializers.ValidationError("Assignee must be an active business member.")
+        request = self.context.get("request")
+        if request and business:
+            if self.instance is None and "assignee" not in attrs:
+                attrs["assignee"] = request.user
+            if "assignee" in attrs and (self.instance is None or attrs["assignee"] != self.instance.assignee):
+                validate_assignment(business=business, actor=request.user, assignee=attrs["assignee"], creating=self.instance is None)
+            validate_task_links(business=business, actor=request.user, attrs=attrs, task=self.instance)
         return attrs
+
+
+    def get_available_actions(self, obj):
+        return task_available_actions(obj, getattr(self.context.get("request"), "user", None))
+
+    def get_relations(self, obj):
+        actor = getattr(self.context.get("request"), "user", None)
+        if actor is None:
+            return []
+        routes = {"client": "clients", "lead": "leads", "deal": "deals", "appointment": "calendar",
+                  "conversation": "conversations", "parent_task": "tasks", "specialist": "business/resources"}
+        result = []
+        for field in LINK_RESOURCES:
+            target = getattr(obj, field, None)
+            if not can_view_link(actor, obj.business, field, target):
+                continue
+            title = (getattr(target, "full_name", None) or getattr(target, "title", None)
+                     or getattr(target, "name", None) or f"#{target.pk}")
+            if field == "appointment":
+                title = getattr(target.service, "name", "") or f"#{target.pk}"
+            if field == "conversation":
+                title = self.get_conversation_label(obj) or f"#{target.pk}"
+            result.append({"type": field, "id": target.pk, "title": title,
+                           "href": f"/app/business/resources?resource={target.pk}" if field == "specialist" else f"/app/{routes[field]}/{target.pk}",
+                           "at": target.start_at.isoformat() if field == "appointment" else None})
+        return result
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        actor = getattr(self.context.get("request"), "user", None)
+        if actor is not None:
+            for field in LINK_RESOURCES:
+                obj = getattr(instance, field, None)
+                if obj is not None and not can_view_link(actor, instance.business, field, obj):
+                    data[field] = None
+                    for key in list(data):
+                        if key.startswith(field + "_"):
+                            data[key] = ""
+        return data

@@ -40,8 +40,8 @@ test("daily workspaces preserve recoverable and role-valid actions", async () =>
     source("features/conversations/components/ConversationListPane.tsx"),
   ]);
 
-  assert.match(tasks, /primaryAction:\s*canCreateTask/);
-  assert.match(tasks, /includeTeamData:\s*canViewTeam/);
+  assert.match(tasks, /primaryAction:\s*canCreate/);
+  assert.match(tasks, /enabled: view === "team" && canTeam/);
   assert.match(calendar, /data-testid="calendar-error-state"/);
   assert.match(calendar, /primaryAction:\s*canCreateAppointment/);
   assert.match(calendar, /canAccessAppointmentAction/);

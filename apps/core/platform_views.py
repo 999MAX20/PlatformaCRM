@@ -33,7 +33,7 @@ def _merchant_counts(business):
     open_tasks = Task.objects.filter(
         business=business,
         is_archived=False,
-        status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS],
+        status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING],
     ).count()
     unread_conversations = BotConversation.objects.filter(
         business=business,

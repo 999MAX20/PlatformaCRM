@@ -27,6 +27,7 @@ const statusTones: Record<string, StatusTone> = {
   needs_attention: "warning",
   no_show: "warning",
   paused: "warning",
+  waiting: "warning",
   pending: "info",
   queued: "info",
 

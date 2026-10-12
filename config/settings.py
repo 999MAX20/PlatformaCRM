@@ -60,6 +60,9 @@ CONNECTOR_CREDENTIAL_ALLOW_LEGACY_DECRYPT = env.bool(
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", default=["*"])
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ALLOW_CREDENTIALS = env("CORS_ALLOW_CREDENTIALS")
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = (*default_headers, "idempotency-key", "x-task-version")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS", default=[])
 
 

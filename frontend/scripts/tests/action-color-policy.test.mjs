@@ -109,7 +109,7 @@ test("representative reversible caution actions use warning", () => {
   const expectations = [
     ["src/features/services/ServicesPage.tsx", /tone: "warning"/],
     ["src/features/resources/ResourcesPage.tsx", /tone: "warning"/],
-    ["src/features/tasks/TaskWorkspacePage.tsx", /variant="warning"/],
+    ["src/features/tasks/components/TaskInspector.tsx", /dialog === "cancel" \? "warning"/],
     ["src/features/calendar/AppointmentWorkspacePage.tsx", /\? "warning"/],
     ["src/features/conversations/components/ConversationThreadPane.tsx", /selected\.bot_enabled \? "warning"/],
     ["src/features/integrations/components/ConnectorCard.tsx", /variant="warning"[\s\S]{0,200}disconnect/],

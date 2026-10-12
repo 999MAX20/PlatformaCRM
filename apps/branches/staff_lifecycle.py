@@ -44,7 +44,7 @@ def pending_work(resource):
         from apps.crm.models import Deal
         from apps.bots.models import BotConversation
         counts.update(
-            tasks=Task.objects.filter(business=resource.business, assignee_id=resource.linked_user_id, is_archived=False, status__in=["open", "in_progress"]).count(),
+            tasks=Task.objects.filter(business=resource.business, assignee_id=resource.linked_user_id, is_archived=False, status__in=["open", "in_progress", "waiting"]).count(),
             leads=Lead.objects.filter(business=resource.business, responsible_user_id=resource.linked_user_id, is_archived=False).exclude(status__in=["closed", "lost"]).count(),
             deals=Deal.objects.filter(business=resource.business, owner_id=resource.linked_user_id, is_archived=False, status="open").count(),
             conversations=BotConversation.objects.filter(business=resource.business, assigned_to_id=resource.linked_user_id, is_archived=False, status="open").count(),

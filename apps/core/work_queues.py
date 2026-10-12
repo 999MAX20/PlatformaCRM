@@ -13,7 +13,7 @@ from apps.tasks.models import Task
 from apps.core.operational_dashboard import operational_summary, attention_preview
 
 
-OPEN_TASK_STATUSES = [Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS]
+OPEN_TASK_STATUSES = [Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING]
 OPEN_LEAD_STATUSES = [Lead.Statuses.NEW, Lead.Statuses.CONTACTED, Lead.Statuses.IN_PROGRESS]
 UNREAD_RESPONSE_SLA_MINUTES = 30
 HANDOFF_RESPONSE_SLA_MINUTES = 15

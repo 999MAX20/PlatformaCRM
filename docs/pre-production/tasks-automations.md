@@ -6,11 +6,20 @@
 
 ## Текущие действия
 
-Task поддерживает start/done/cancel/reopen/undo-cancel, assign/self-assign,
+Task поддерживает start/wait/resume/done/cancel/reopen/undo-cancel, assign/self-assign,
 watchers, due date, snooze и связи с CRM. Отмена требует причину; undo использует
 сохранённый предыдущий статус. Действие задачи не меняет lifecycle её визита/сделки.
 Назначение требует активного участника Business; actions проверяют scope и права.
 Activity/audit позволяют отличить изменение от простого чтения списка.
+
+Обновление TASKS-REDESIGN-20261013: список и выбираемый правый инспектор/полная
+карточка, мобильный экран, фильтры «Мои/Все/Созданные/Наблюдаемые», группы срока,
+командные количества, явное редактирование и сохранение черновика после ошибок.
+Ожидание хранит причину и необязательную дату напоминания; срок не переносится.
+Версия/ключ команды защищают от устаревшей записи и повтора эффекта. Ответственный
+проверяется единообразно; специалист без входа остаётся контекстом. Operator и
+specialist создают себе, custom/legacy права сохранены. Evidence и публикация —
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md#tasks-redesign-20261013--approved-task-workspace-and-domain-behavior).
 
 AutomationRule/Condition/Action/Run используют Business и capabilities.
 Условия ограничены allowlist; неизвестное legacy-условие не должно запускать действие.

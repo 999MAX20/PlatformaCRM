@@ -151,7 +151,7 @@ def build_inbox_context(conversation, *, actor, now=None):
         }
     task = readable_queryset(
         Task.objects.filter(conversation=conversation, is_archived=False,
-                            status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS]),
+                            status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING]),
         actor=actor, business=business, resource=Resources.TASKS,
     ).order_by(F("due_at").asc(nulls_last=True), "id").first()
     update = _allowed(actor, business, Resources.CONVERSATIONS, Actions.UPDATE, conversation)

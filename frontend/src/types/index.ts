@@ -1352,7 +1352,12 @@ export type Task = {
   reminder_at: string | null;
   snoozed_until: string | null;
   priority: "low" | "normal" | "high" | "urgent";
-  status: "open" | "in_progress" | "done" | "cancelled";
+  status: "open" | "in_progress" | "waiting" | "done" | "cancelled";
+  waiting_reason?: string;
+  waiting_until?: string | null;
+  specialist?: Id | null;
+  available_actions?: string[];
+  relations?: { type: string; id: Id; title: string; href: string; at?: string | null }[];
   completed_at: string | null;
   completed_by: Id | null;
   cancelled_at?: string | null;

@@ -36,7 +36,7 @@ RESOURCE_CONFIG = {
     RoutingPolicy.Resources.TASKS: {
         "model": Task,
         "assignee_field": "assignee",
-        "active_filter": Q(is_archived=False, status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS]),
+        "active_filter": Q(is_archived=False, status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING]),
         "event_type": ActivityEvents.TASK_ASSIGNED,
         "action_url": lambda item: f"/app/tasks?task={item.id}",
     },

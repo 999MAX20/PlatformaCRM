@@ -517,7 +517,7 @@ class TasksAndNotificationsPolishTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["business"], self.business.id)
         self.assertEqual(response.data["totals"]["active_tasks"], 4)
-        self.assertEqual(response.data["totals"]["overdue"], 1)
+        self.assertEqual(response.data["totals"]["overdue"], 2)
         self.assertEqual(response.data["totals"]["high_priority"], 1)
         self.assertEqual(response.data["totals"]["unassigned"], 1)
         items_by_user = {item["user_id"]: item for item in response.data["items"] if item["user_id"]}
@@ -525,7 +525,7 @@ class TasksAndNotificationsPolishTests(TestCase):
         manager_item = items_by_user[manager.id]
         unassigned_item = next(item for item in response.data["items"] if item["type"] == "unassigned")
         self.assertEqual(owner_item["total"], 2)
-        self.assertEqual(owner_item["overdue"], 1)
+        self.assertEqual(owner_item["overdue"], 2)
         self.assertEqual(owner_item["capacity_status"], "busy")
         self.assertEqual(manager_item["total"], 1)
         self.assertEqual(manager_item["in_progress"], 1)
@@ -894,7 +894,7 @@ class TasksAndNotificationsPolishTests(TestCase):
         self.assertEqual(done_task.title, "Done details")
         self.assertEqual(cancelled_task.title, "Cancelled details")
 
-    def test_overdue_tab_uses_work_queue_overdue_definition(self):
+    def test_overdue_tab_keeps_snoozed_deadlines_visible(self):
         due_at = timezone.now() - timezone.timedelta(hours=1)
         visible = Task.objects.create(business=self.business, title="Visible overdue", client=self.client, due_at=due_at)
         Task.objects.create(
@@ -916,8 +916,8 @@ class TasksAndNotificationsPolishTests(TestCase):
         response = self.api.get("/api/tasks/", {"tab": "overdue"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["count"], 1)
-        self.assertEqual(response.data["results"][0]["id"], visible.id)
+        self.assertEqual(response.data["count"], 2)
+        self.assertEqual({item["title"] for item in response.data["results"]}, {visible.title, "Snoozed overdue"})
 
     def test_generic_patch_cannot_bypass_task_lifecycle_actions(self):
         task = Task.objects.create(business=self.business, title="Status bypass task", client=self.client)
@@ -1035,7 +1035,7 @@ class TasksAndNotificationsPolishTests(TestCase):
     def test_task_comments_watchers_assign_and_snooze(self):
         task = Task.objects.create(business=self.business, title="Team follow up", client=self.client)
         self.api.force_authenticate(self.owner)
-        snoozed_until = "2026-05-14T10:00:00+06:00"
+        snoozed_until = (timezone.now() + timezone.timedelta(days=1)).isoformat()
 
         comment_response = self.api.post(f"/api/tasks/{task.id}/add-comment/", {"text": "Call after lunch"}, format="json")
         watcher_response = self.api.post(f"/api/tasks/{task.id}/add-watcher/", format="json")
@@ -1133,7 +1133,7 @@ class TasksAndNotificationsPolishTests(TestCase):
 
         self.assertEqual(assign_response.status_code, 200)
         self.assertEqual(assign_response.data["assignee"], self.owner.id)
-        self.assertEqual(assign_response.data["status"], Task.Statuses.IN_PROGRESS)
+        self.assertEqual(assign_response.data["status"], Task.Statuses.OPEN)
         self.assertEqual(due_today_response.status_code, 200)
         self.assertIsNotNone(due_today_response.data["due_at"])
         self.assertIsNotNone(due_today_response.data["reminder_at"])

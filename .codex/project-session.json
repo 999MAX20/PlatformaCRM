@@ -34,5 +34,12 @@
     "01a0fc25-6286-77a2-94be-cabb2b179381",
     "01a11776-e13a-76c2-9fc0-75d38228f649"
   ],
-  "lastAuthorization": "Owner explicit request 2026-10-12: PlatformaCRM UI reconstructs the unresponsive primary, archives it, creates one local successor named Платформа CRM продолжение in the same canonical project, verifies comprehension and transfers ownership; no product phase. Exceptional recovery, source archived/interrupted before metadata writes."
+  "lastAuthorization": "Owner explicit request 2026-10-12: PlatformaCRM UI reconstructs the unresponsive primary, archives it, creates one local successor named Платформа CRM продолжение in the same canonical project, verifies comprehension and transfers ownership; no product phase. Exceptional recovery, source archived/interrupted before metadata writes.",
+  "activeTaskWriter": {
+    "threadId": "01a0f32f-7d02-7263-a53d-496c8f9787f5",
+    "taskId": "TASKS-REDESIGN-20261013",
+    "scope": "Approved task lifecycle/access/API and list/inspector redesign only",
+    "authorization": "Owner explicitly approved all proposals and implementation, then confirmed this chat as task writer on 2026-10-13. Primary remains unchanged and idle; no concurrent writers.",
+    "base": "e30f990f401ff93a0baf7c59e7b78cb93ac186fc"
+  }
 }

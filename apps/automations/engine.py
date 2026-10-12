@@ -380,7 +380,7 @@ def run_task_overdue_automations(*, business=None, now=None, limit=100):
     now = now or timezone.now()
     queryset = Task.objects.select_related("business", "client", "lead", "deal", "appointment", "conversation", "assignee").filter(
         is_archived=False,
-        status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS],
+        status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING],
     )
     if business is not None:
         queryset = queryset.filter(business=business)

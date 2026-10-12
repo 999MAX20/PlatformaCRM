@@ -18,6 +18,7 @@ class Task(TimeStampedModel):
     class Statuses(models.TextChoices):
         OPEN = "open", "Open"
         IN_PROGRESS = "in_progress", "In progress"
+        WAITING = "waiting", "Waiting"
         DONE = "done", "Done"
         CANCELLED = "cancelled", "Cancelled"
 
@@ -36,6 +37,9 @@ class Task(TimeStampedModel):
     due_at = models.DateTimeField(null=True, blank=True)
     reminder_at = models.DateTimeField(null=True, blank=True)
     snoozed_until = models.DateTimeField(null=True, blank=True)
+    waiting_reason = models.TextField(blank=True)
+    waiting_until = models.DateTimeField(null=True, blank=True)
+    specialist = models.ForeignKey("scheduling.Resource", on_delete=models.SET_NULL, null=True, blank=True, related_name="context_tasks")
     priority = models.CharField(max_length=32, choices=Priorities.choices, default=Priorities.NORMAL)
     status = models.CharField(max_length=32, choices=Statuses.choices, default=Statuses.OPEN)
     recurrence_rule = models.CharField(max_length=255, blank=True)

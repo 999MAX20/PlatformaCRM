@@ -17,7 +17,11 @@ from apps.core.models import AuditLog
 from apps.core.viewsets import TenantModelViewSet
 from apps.core.work_queues import overdue_tasks_queryset
 from apps.tasks.models import Task, TaskComment
-from apps.tasks.selectors import task_workload_payload
+from apps.tasks.mutations import task_command
+from apps.tasks.serializers import TaskWaitSerializer
+from apps.tasks.policy import validate_assignment
+from rest_framework.exceptions import PermissionDenied, APIException
+from apps.tasks.selectors import task_workload_payload, task_day_bounds
 from apps.tasks.serializers import TaskCancelSerializer, TaskCommentSerializer, TaskDetailsUpdateSerializer, TaskSerializer, TaskSnoozeSerializer
 from apps.tasks.services import (
     add_task_watcher,
@@ -27,10 +31,13 @@ from apps.tasks.services import (
     complete_task,
     create_task_notification,
     reopen_task,
+    wait_task,
+    resume_task,
     set_task_due_today,
     set_task_due_tomorrow,
     snooze_task,
     start_task,
+    update_task_details,
     undo_cancel_task,
 )
 from apps.tasks.templates import task_templates_payload
@@ -50,6 +57,10 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
         "parent_task",
         "assignee",
         "created_by",
+        "specialist",
+        "business",
+        "appointment__branch",
+        "appointment__resource",
         "completed_by",
     ).prefetch_related("watchers")
     serializer_class = TaskSerializer
@@ -75,6 +86,11 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
                 output_field=IntegerField(),
             ),
         )
+        business_id = self.request.query_params.get("business")
+        if business_id:
+            if not str(business_id).isdigit():
+                raise ValidationError({"business": "Invalid business."})
+            queryset = queryset.filter(business_id=business_id)
         client_ids = self.parse_query_id_list("client_ids")
         if client_ids:
             queryset = queryset.filter(Q(client_id__in=client_ids) | Q(conversation__client_id__in=client_ids)).distinct()
@@ -122,16 +138,16 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
                 | Q(assignee__email__icontains=search)
             )
         if due_filter:
-            today = timezone.localdate()
+            _, tomorrow = self._day_bounds()
             now = timezone.now()
             if due_filter == "past":
                 queryset = queryset.filter(due_at__lt=now).exclude(status__in=[Task.Statuses.DONE, Task.Statuses.CANCELLED])
             elif due_filter == "today":
-                queryset = queryset.filter(due_at__date=today)
+                queryset = queryset.filter(due_at__gte=timezone.now(), due_at__lt=tomorrow)
             elif due_filter == "none":
                 queryset = queryset.filter(due_at__isnull=True)
             elif due_filter == "future":
-                queryset = queryset.filter(due_at__date__gt=today)
+                queryset = queryset.filter(due_at__gte=tomorrow)
             else:
                 raise ValidationError({"due": "Invalid due filter."})
         if relation_filter:
@@ -157,27 +173,56 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
                 raise ValidationError({"due_to": "Invalid datetime."})
             queryset = queryset.filter(due_at__lte=parsed_due_to)
         if tab == "my":
-            queryset = queryset.filter(Q(created_by=self.request.user) | Q(assignee=self.request.user) | Q(watchers=self.request.user)).distinct()
+            queryset = queryset.filter(assignee=self.request.user)
+        elif tab == "created":
+            queryset = queryset.filter(created_by=self.request.user)
+        elif tab == "watching":
+            queryset = queryset.filter(watchers=self.request.user).distinct()
         elif tab == "today":
-            today = timezone.localdate()
-            queryset = queryset.filter(due_at__date=today).exclude(status__in=[Task.Statuses.DONE, Task.Statuses.CANCELLED])
+            _, tomorrow = self._day_bounds()
+            queryset = queryset.filter(due_at__gte=timezone.now(), due_at__lt=tomorrow).exclude(status__in=[Task.Statuses.DONE, Task.Statuses.CANCELLED])
         elif tab == "overdue":
-            queryset = overdue_tasks_queryset(queryset=queryset)
+            queryset = self._active_queryset(queryset).filter(due_at__lt=timezone.now())
         if apply_bucket and bucket:
             queryset = self._apply_bucket_filter(queryset, bucket)
         return queryset
+
+    def _day_bounds(self):
+        business_id = self.request.query_params.get("business")
+        business = Business.objects.filter(pk=business_id).first() if str(business_id).isdigit() else None
+        return task_day_bounds(business)
+
+    @action(detail=False, methods=["get"])
+    def assignees(self, request):
+        business_id = request.query_params.get("business", "")
+        if not business_id.isdigit():
+            raise ValidationError({"business": "Select a business."})
+        business = Business.objects.filter(pk=business_id).first()
+        if business is None:
+            raise ValidationError({"business": "Business not found."})
+        assert_can(request.user, business, Resources.TASKS, Actions.VIEW)
+        creating = request.query_params.get("intent") == "create"
+        assert_can(request.user, business, Resources.TASKS, Actions.CREATE if creating else Actions.UPDATE)
+        items = []
+        for member in business.members.filter(is_active=True, user__is_active=True).select_related("user").order_by("user__full_name", "pk"):
+            try:
+                validate_assignment(business=business, actor=request.user, assignee=member.user, creating=creating)
+            except APIException:
+                continue
+            items.append({"id": member.user_id, "name": member.user.full_name or member.user.email})
+        return Response(items)
 
     def _active_queryset(self, queryset):
         return queryset.exclude(status__in=[Task.Statuses.DONE, Task.Statuses.CANCELLED])
 
     def _apply_bucket_filter(self, queryset, bucket):
         now = timezone.now()
-        today = timezone.localdate()
+        _, tomorrow = self._day_bounds()
         active_queryset = self._active_queryset(queryset)
         bucket_filters = {
             "overdue": lambda qs: active_queryset.filter(due_at__lt=now),
-            "today": lambda qs: active_queryset.filter(due_at__date=today),
-            "later": lambda qs: active_queryset.filter(due_at__date__gt=today),
+            "today": lambda qs: active_queryset.filter(due_at__gte=timezone.now(), due_at__lt=tomorrow),
+            "later": lambda qs: active_queryset.filter(due_at__gte=tomorrow),
             "noDue": lambda qs: active_queryset.filter(due_at__isnull=True),
             "unassigned": lambda qs: active_queryset.filter(assignee__isnull=True),
             "inProgress": lambda qs: queryset.filter(status=Task.Statuses.IN_PROGRESS),
@@ -192,12 +237,16 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
     def summary(self, request):
         queryset = self._build_queryset(apply_bucket=False)
         now = timezone.now()
-        today = timezone.localdate()
+        _, tomorrow = self._day_bounds()
         active = ~Q(status__in=[Task.Statuses.DONE, Task.Statuses.CANCELLED])
         summary = queryset.aggregate(
+            active=Count("id", filter=active, distinct=True),
+            done=Count("id", filter=Q(status=Task.Statuses.DONE), distinct=True),
+            cancelled=Count("id", filter=Q(status=Task.Statuses.CANCELLED), distinct=True),
+            waiting=Count("id", filter=Q(status=Task.Statuses.WAITING), distinct=True),
             overdue=Count("id", filter=active & Q(due_at__lt=now), distinct=True),
-            today=Count("id", filter=active & Q(due_at__date=today), distinct=True),
-            later=Count("id", filter=active & Q(due_at__date__gt=today), distinct=True),
+            today=Count("id", filter=active & Q(due_at__gte=timezone.now(), due_at__lt=tomorrow), distinct=True),
+            later=Count("id", filter=active & Q(due_at__gte=tomorrow), distinct=True),
             noDue=Count("id", filter=active & Q(due_at__isnull=True), distinct=True),
             unassigned=Count("id", filter=active & Q(assignee__isnull=True), distinct=True),
             inProgress=Count("id", filter=Q(status=Task.Statuses.IN_PROGRESS), distinct=True),
@@ -230,13 +279,9 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
         if business is None:
             raise ValidationError({"business": "Business was not found."})
         assert_can(request.user, business, Resources.TASKS, Actions.VIEW)
-        queryset = scope_queryset(
-            Task.objects.filter(business=business).select_related("assignee", "client", "lead", "deal", "appointment", "conversation"),
-            request.user,
-            business,
-            Resources.TASKS,
-            Actions.VIEW,
-        )
+        visible_ids = self._build_queryset(apply_bucket=True).filter(business=business).values("pk")
+        # Do not carry list-level GROUP BY annotations into per-assignee totals.
+        queryset = Task.objects.filter(pk__in=visible_ids, business=business)
         return Response(task_workload_payload(business=business, queryset=queryset))
 
     def _apply_ordering(self, queryset):
@@ -265,99 +310,84 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
                 f"New task: {serializer.instance.title}",
             )
 
+    @task_command
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        serializer.instance = update_task_details(task=serializer.instance, actor=self.request.user,
+                                                  values=serializer.validated_data, request=self.request)
+
     @action(detail=True, methods=["patch"], url_path="update-details")
+    @task_command
     def update_details(self, request, pk=None):
         task = self.get_object()
-        assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
-        if task.status not in {Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS}:
-            raise ValidationError({"status": f"Cannot update task details with status '{task.status}'."})
-        serializer = TaskDetailsUpdateSerializer(task, data=request.data, partial=True)
+        serializer = TaskDetailsUpdateSerializer(task, data=request.data, partial=True, context=self.get_serializer_context())
         serializer.is_valid(raise_exception=True)
-        with transaction.atomic():
-            changed_fields = self._task_details_changes(task, serializer.validated_data)
-            task = serializer.save()
-            if changed_fields:
-                write_audit_log(
-                    request,
-                    AuditLog.Actions.UPDATE,
-                    task,
-                    metadata={
-                        "kind": "task_details_update",
-                        "fields": changed_fields,
-                    },
-                )
-                write_activity_event(
-                    request,
-                    ActivityEvents.TASK_UPDATED,
-                    task,
-                    text=f"Задача обновлена: {task.title}",
-                    metadata={
-                        "kind": "task_details_update",
-                        "fields": changed_fields,
-                    },
-                )
-        return Response(TaskSerializer(task).data)
-
-    def _task_details_changes(self, task, validated_data):
-        related_fields = {"client", "lead", "deal", "appointment", "conversation", "parent_task", "assignee"}
-        changes = {}
-        for field, value in validated_data.items():
-            if field in related_fields:
-                previous_value = getattr(task, f"{field}_id")
-                next_value = getattr(value, "id", None)
-            else:
-                previous_value = getattr(task, field)
-                next_value = value
-            if previous_value != next_value:
-                changes[field] = {
-                    "from": self._audit_value(previous_value),
-                    "to": self._audit_value(next_value),
-                }
-        return changes
-
-    def _audit_value(self, value):
-        if hasattr(value, "isoformat"):
-            return value.isoformat()
-        return value
+        if task.status not in {Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING}:
+            raise ValidationError({"status": "Reopen the task before editing details."})
+        task = update_task_details(task=task, actor=request.user, request=request, values=serializer.validated_data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"])
+    @task_command
     def complete(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = complete_task(task=task, actor=request.user, request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"], url_path="start")
+    @task_command
     def start(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = start_task(task=task, actor=request.user, request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"])
+    @task_command
     def cancel(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         serializer = TaskCancelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         task = cancel_task(task=task, actor=request.user, reason=serializer.validated_data["reason"], request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"], url_path="undo-cancel")
+    @task_command
     def undo_cancel(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = undo_cancel_task(task=task, actor=request.user, request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"])
+    @task_command
     def reopen(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = reopen_task(task=task, actor=request.user, request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"])
+    @task_command
+    def wait(self, request, pk=None):
+        task = self.get_object()
+        serializer = TaskWaitSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        task = wait_task(task=task, actor=request.user, request=request, **serializer.validated_data)
+        return Response(self.get_serializer(task).data)
+
+    @action(detail=True, methods=["post"])
+    @task_command
+    def resume(self, request, pk=None):
+        task = resume_task(task=self.get_object(), actor=request.user, request=request)
+        return Response(self.get_serializer(task).data)
+
+    @action(detail=True, methods=["post"])
+    @task_command
     def snooze(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
@@ -367,45 +397,51 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
         serializer = TaskSnoozeSerializer(data={"snoozed_until": snoozed_until})
         serializer.is_valid(raise_exception=True)
         task = snooze_task(task=task, snoozed_until=serializer.validated_data["snoozed_until"], request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"])
+    @task_command
     def assign(self, request, pk=None):
         task = self.get_unassigned_action_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = assign_task(task=task, actor=request.user, user_id=request.data.get("user_id"), request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
 
     @action(detail=True, methods=["post"], url_path="assign-to-me")
+    @task_command
     def assign_to_me(self, request, pk=None):
         task = self.get_unassigned_action_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = assign_task_to_me(task=task, actor=request.user, request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"], url_path="due-today")
+    @task_command
     def due_today(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = set_task_due_today(task=task, request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"], url_path="due-tomorrow")
+    @task_command
     def due_tomorrow(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = set_task_due_tomorrow(task=task, request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"], url_path="add-watcher")
+    @task_command
     def add_watcher(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
         task = add_task_watcher(task=task, actor=request.user, user_id=request.data.get("user_id"), request=request)
-        return Response(TaskSerializer(task).data)
+        return Response(self.get_serializer(task).data)
 
     @action(detail=True, methods=["post"], url_path="add-comment")
+    @task_command
     def add_comment(self, request, pk=None):
         task = self.get_object()
         assert_can(request.user, task.business, Resources.TASKS, Actions.UPDATE, obj=task)
@@ -423,6 +459,7 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
         return Response(TaskCommentSerializer(comments, many=True).data)
 
     @action(detail=True, methods=["delete"], url_path=r"comments/(?P<comment_id>[^/.]+)")
+    @transaction.atomic
     def delete_comment(self, request, pk=None, comment_id=None):
         task = self.get_object()
         comment = task.comments.select_related("author").filter(id=comment_id).first()

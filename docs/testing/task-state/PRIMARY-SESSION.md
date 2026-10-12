@@ -1,5 +1,139 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## TASKS-REDESIGN-20261013 — approved task workspace and domain behavior
+
+Owner approved both generated references and all task proposals, explicitly requested
+implementation, and confirmed this chat as the scoped sole writer. Primary remains
+01a130d8-8f15-7d23-bffc-5e61c21a98e2 / generation 5, idle verified natively.
+Scoped writer 01a0f32f-7d02-7263-a53d-496c8f9787f5 only; no delegation/parallel writes.
+Canonical C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+clean starting HEAD/base e30f990f401ff93a0baf7c59e7b78cb93ac186fc.
+
+Mode implementation; gaps domain/API/UX. Result: usable task list with personal/all
+scope, deadline groups, clear counts and optional team view; right inspector opened
+only by selection, full-screen mobile and direct task route, links/comments/history,
+editable details with draft recovery and explicit actions.
+Reuse Task models/services, permission scopes, assignments, notification routing,
+activity/audit, idempotency commands, shared UI tokens/primitives and API layer.
+Approved delta: waiting state with reason/optional return date, resume; existing
+open/in-progress/done/cancelled remain. Overdue is computed, snooze differs from due.
+Operator/specialist can create for self; assignment/lifecycle enforce scope and active
+available CRM account. Non-login specialists are context, never sole accountable
+assignee. Task relations remain optional and individually permission-checked; task
+completion never changes linked CRM lifecycle. My=assignee; created/watched separate.
+Unified assignment validation, available actions, atomic effects, replay/conflict
+handling, consistent business-timezone buckets and summary. Preserve historical
+work and custom role overrides; no new permission framework.
+
+Permission impact: scoped task creation and action checks. Notification/activity/audit:
+retain routing/preferences and trace lifecycle/assignment; no external sends or new
+channels. AI/automation callers must stay compatible with task transitions, no new AI
+features. Intentional task schema migration, isolated tests only; working DB migration
+requires separate target approval. No seed/reset or changes to other product pages.
+
+Verification plan: focused isolated backend after each coherent slice, lifecycle,
+invalid input, role/tenant/entity-access, assignment availability, atomic rollback,
+idempotency and concurrent/stale updates; then affected tasks/core permissions,
+notifications and relevant AI/automation consumers plus system/drift/migration checks.
+Targeted reachable browser flows desktop/mobile RU/KK/EN, draft/error/empty/forbidden
+and keyboard states; build/types/i18n/bundle once at completion using existing env.
+No full-project gate absent demonstrated shared risk. Docs/index/actual range hygiene,
+explicit task-owned commit and normal push main with remote SHA/actual CI readback.
+No working DB activation, live provider, release or deployment acceptance implied.
+
+In progress, 13.10 local / 12.10 UTC: domain/API and list/inspector/editor implemented
+in the dirty task-owned tree; no publication or working-DB migration yet. Additive
+tasks 0011 introduces waiting metadata and optional specialist context. Existing
+idempotency receipts and transaction locks are reused; browser command headers are
+explicitly allowed by CORS. Custom create permission is checked separately from update.
+
+Focused evidence (canonical installed environment, disposable DB/ports):
+- `output/multibranch/run.py test apps.tasks --verbosity 1`: 66 PASS, log
+  `check-1791833286031169600.log`, before subsequent custom-create/snooze/CORS checks.
+- Latest focused workspace tests: 17 PASS (`check-1791834210820842400.log`).
+- `output/multibranch/postgres.py apps.tasks.tests_concurrency`: 15 PASS including
+  14 accidentally discovered imported fixtures; concurrent edit itself proved one
+  200/one 409 and winner persistence (`postgres-1791833461535984200.log`). Import now
+  uses module qualification so the fixture class is no longer rediscovered.
+- Frontend TypeScript PASS at initial integration; current final build pending.
+  i18n references PASS, 5680 keys at that snapshot.
+- Browser attempts preserved: first identified missing action/send translations;
+  second textarea exact-label selector was inconsistent after draft rerender (DOM
+  and screenshot proved draft intact); corrected to accessible textbox query.
+  Third exposed a navigation request dropped while comment refresh was pending;
+  guard now queues navigation until the mutation settles. Current desktop/mobile
+  RU/KK/EN flow is running. No browser completion PASS claimed yet.
+- Migration preservation test initially used historical account state against newer
+  unrelated account columns; fixture corrected to current User/Business before
+  migrating only tasks. Rerun pending, no migration defect inferred.
+- Daily workspace policy checks PASS. Additional action-color suite has two unchanged
+  baseline failures in CRMAgentRuntime and BillingSection. The original HEAD test
+  against HEAD sources reproduces the same two failures (4 PASS/2 FAIL), recorded in
+  `output/tasks-redesign/baseline-action-colors.log`; neither product file changed.
+  Do not report this broader suite as green or silently alter those pages.
+
+Next: finish dependent backend and migration checks, browser recovery/permissions/
+links/filter coverage and mobile keyboard/visual review, then build/system/drift and
+reviewed publication. References approved in owner conversation; fictional mockup
+content must not enter working/production fixtures. Remaining primary roadmap paused.
+
+19:56 UTC update: owner separately approved local `db.sqlite3` migration with backup.
+`output/tasks-redesign/activate.py` backed up the canonical SQLite DB to ignored
+`output/tasks-redesign/activation-20261012T195459Z/db-before.sqlite3`, asserted the
+plan contained only tasks 0011, applied it successfully, and proved hashes of every
+pre-existing table/column payload unchanged except one django_migrations receipt
+(166 → 167). SQLite integrity/foreign keys and `manage.py check` PASS; no seeds.
+Migration preservation regression PASS (`check-1791834577165714200.log`).
+
+Dependent backend run found two task regressions among 224 tests: legacy staff/doctor
+accidentally inherited new specialist CREATE; AI service request context has no HTTP
+headers. Restored explicit legacy task preset and optional version-header lookup.
+Both regressions plus workspace scenarios: 19 PASS (`check-1791834818160731500.log`).
+Affected completion run is in progress on those fixes; its result is not yet PASS.
+
+Browser lifecycle/draft recovery: desktop RU/KK/EN 3 PASS in
+`browser-1791834516699603400.log`; mobile initially exposed shell-header overlap.
+Inspector now uses the established drawer layer, mobile body scroll lock/keyboard
+containment and drawer-level action menu. Mobile RU/KK/EN rerun 3 PASS (latest browser
+log in output/tasks-redesign). Deadline conversion/grouping and daily workspace
+policy: 8 Node tests PASS. Remaining: additional filter/link/conflict/permission UI
+coverage, visual review, final build/types/i18n/bundle, isolated system/drift and
+dependent backend result, docs/diff review and normal publication with CI readback.
+
+
+20:08 UTC completion evidence, same task-owned snapshot based on e30f990:
+- `.venv/Scripts/python.exe output/multibranch/run.py test apps.tasks apps.businesses.tests_access apps.businesses.tests_role_visibility apps.core.tests_b2_roles_queues apps.core.tests_crm_projection_access apps.conversations.tests_inbox_tasks apps.conversations.tests_inbox_context apps.ai_core.tests_crm_tools apps.automations.tests --verbosity 1`:
+  225 discovered, 224 PASS/1 SQLite lock skip, log `check-1791834950572068900.log`.
+  The skipped competing-writer case previously passed on isolated PostgreSQL.
+- Same isolated wrapper with `test apps.branches.tests_staff apps.businesses.tests_member_deactivation --verbosity 1`:
+  9 PASS, `check-1791835551922150800.log`; waiting remains pending staff work.
+- Same wrapper `check` and `makemigrations --check --dry-run`: PASS/no drift,
+  logs `check-1791835313421907900.log`, `check-1791835294344829200.log`.
+- `.venv/Scripts/python.exe output/tasks-redesign/frontend.py browser --project=desktop-chromium --project=mobile-chromium`:
+  lifecycle/draft RU/KK/EN plus list network recovery/view-only response 8 PASS;
+  two new relation-flow tests failed on exact selector `Client` (actual accessible
+  name includes selected value), `browser-1791835268323557000.log`. Corrected the
+  selector and concurrent fixture to PATCH. No weakened behavior assertion.
+- Same browser command with `--grep 'terminal actions|recovery en'`: 4 PASS,
+  `browser-1791835491172234700.log`. Proves filtered empty state, created/watching,
+  team-to-assignee list, client picker/link navigation, real 409 version conflict,
+  retained draft and preserved concurrent description, complete/reopen/cancel/history.
+  View-only UI used an explicit available_actions response stub; actual role denial
+  and tenant/link masking are covered by backend, not attributed to that stub.
+- Final desktop/mobile screenshots visually inspected, including KK mobile; task
+  inspector uses drawer stacking/keyboard containment. Final English flow rerun
+  includes later draft-guard corrections. No horizontal viewport overflow.
+- `node --test frontend/scripts/tests/task-workspace.test.mjs frontend/scripts/tests/daily-workspaces-policy.test.mjs`: 8 PASS.
+- `.venv/Scripts/python.exe output/tasks-redesign/frontend.py build`: PASS i18n,
+  TypeScript, app/widget build and bundle budgets; `build-1791835502445554600.log`.
+  Existing environment/lock reused, no local dependency reinstall.
+- Scope contracts/passport/roadmap updated. Local full-project/E2E, target live
+  worker/provider/deployment checks not run: no release/live acceptance authorized.
+  Two unrelated baseline action-color failures above remain visible and unmodified.
+
+All required local behavior gates passed; intended diff/untracked review and normal
+publication are next. Primary/R01 remain paused. No new task or handoff authorized.
+
 ## R01-DEFER-20261013 — owner defers acceptance until UI completion
 
 Owner explicitly postpones R01 while Tasks, Connections, Analytics and History UI

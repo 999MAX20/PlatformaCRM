@@ -60,7 +60,7 @@ def build_crm_context(business, user=None):
             "clients_count": clients_count,
             "new_leads_count": new_leads_count,
             "open_appointments_count": open_appointments_count,
-            "overdue_tasks_count": tasks_queryset.filter(due_at__lt=now, status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS]).count(),
+            "overdue_tasks_count": tasks_queryset.filter(due_at__lt=now, status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING]).count(),
         },
         "latest_leads": [
             {
