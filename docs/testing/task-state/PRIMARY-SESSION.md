@@ -1,5 +1,75 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## RECOVERY-20261012 — owner-authorized replacement of an unresponsive primary
+
+Owner explicitly asked PlatformaCRM UI (`01a0f32f-7d02-7263-a53d-496c8f9787f5`)
+to reconstruct context, archive unresponsive PlatformaCRM
+`01a11776-e13a-76c2-9fc0-75d38228f649`, create one local successor named
+«Платформа CRM продолжение», verify comprehension and transfer primary ownership.
+This is the exceptional recovery in SESSION_ROLLOVER, not an ordinary source-led
+handoff and not a new product phase. The coordinator owns only recovery metadata.
+Source's attempts remained inProgress with no available response/tool activity;
+cause unknown. Native archive returned archived=true; subsequent readback found
+source in archived tasks, notLoaded, last turn interrupted. Source was archived
+before metadata writes to remove the competing-writer risk; history was retained.
+
+Canonical root C:/Users/user/Desktop/PlatformaCRM; saved project
+local-3368c3df041be97f9549005fc6749ad2 still names Desktop/Zani, verified Junction
+to the same canonical root. Branch codex/ui-testing-toolkit. Clean starting HEAD
+`198e6a44ff092ad9644e3c7a53d3421e3d6872ea` matches remote main. Generation 4 -> 5
+initially awaited one successor's comprehension. No existing transition/successor found.
+Created exactly one local successor `01a130d8-8f15-7d23-bffc-5e61c21a98e2`
+(«Платформа CRM продолжение»); read-only comprehension verified below.
+No product, DB, server, hook-definition, dependency or archived-document changes.
+
+Recovered completed scope: docs consolidation/roadmap/passports; Inbox local AI,
+manual operator/inspector/relink work; Settings functional, redesign and workflow
+changes. Latest Settings workflow: Company single form, financial source in
+Integrations, role editor from employee/invitation, personal preferences in Account,
+custom fields in full CRM cards, empty quick replies CTA and cleared Billing body.
+CRM-MB01 only records the requirement for one Business with several branches
+(five is an acceptance example, not a limit); no branch implementation was started.
+Access, shifts, timezone, travel and migration policies remain unresolved.
+Custom messaging scenarios, external integrations/billing and CRM AI development
+retain their recorded deferrals. Local evidence is not production/live-channel admission.
+
+Readback 12.10: CI 38236200299 success on 198e6a4; Settings implementation
+CI 37947826093 success on 38be3be and receipt CI 37948418402 success on 16670de.
+These supersede earlier pending observations, without rewriting historical receipts.
+Source docs evidence records 129 links/anchors, registry/encoding and diff PASS;
+actual committed-range `git diff --check 16670de...198e6a4` passed during recovery.
+No pending source code edits or observed verification/write subprocesses.
+User-requested dev is already running from the canonical checkout: Django 8000,
+Vite 5173 (managed sessions of PlatformaCRM UI); do not duplicate or stop them.
+
+Plan/DoD: create exactly one local successor; verify product, latest task, Git,
+ownership, evidence and open decisions; register one generation change and retired
+source; verify native archive; publish reviewed recovery metadata and notify successor.
+Checks are docs/JSON/links/diff and native task/readback consistency. No application
+test/install/build is required for this recovery. Old unresolved acceptance remains
+unresolved. Next product action requires the owner's separate request in successor.
+
+Release 12.10: successor `01a130d8-8f15-7d23-bffc-5e61c21a98e2` completed
+read-only turn `01a130d8-9248-7481-92d2-17357cfa4ddf`. Coordinator checked the full
+answer: correct V1/invariants, latest Settings workflow, docs-only CRM-MB01 and
+unresolved branch policies, exact root/branch/HEAD and four coordinator-owned
+metadata paths, no writes, no new phase, next step wait for release/owner request.
+Native source archive readback and interrupted last turn were verified before writes;
+no product-writing process was observed and Git remained unchanged except metadata.
+Transition key `recovery-20261012-generation4-to5`: incremented once to generation 5,
+new primary registered, source retired, transition idle, pending successor/handoff cleared.
+This coordinator is not appointed primary; exceptional authority ends with publication.
+
+Checks: `.venv/Scripts/python.exe output/settings-workflow/check_docs.py` PASS
+(44 local links/anchors in the final recovery metadata),
+JSON identity/generation/source-retirement assertions PASS, `git diff --check` PASS.
+Stage only registry/STATUS/project handoff/this checkpoint; index and actual committed
+range hygiene required before normal push. No app checks: metadata-only, source CI
+already read back success. New push-triggered CI is inspected separately; pending
+is not PASS and does not replace the verified source evidence. Publication SHA,
+remote readback and actual new CI status are reported in the coordinator's final
+receipt. After release notification successor waits for the owner's new task.
+
 ## DOCS-MULTIBRANCH-20261012 — один бизнес, несколько филиалов
 
 Запрос владельца: зафиксировать реализацию сотрудников и графиков для одного бизнеса
