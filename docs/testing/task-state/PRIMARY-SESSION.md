@@ -2,6 +2,22 @@
 
 ## CRM-MB01-IMPLEMENT-20261012 — multi-branch implementation before R01
 
+Publication/activation receipt 12.10 18:54 UTC: implementation `b48a82255d7d43b5ae48e340dc38373914835a51`
+normal-pushed to origin/main; remote SHA readback matches. Branch retained as
+`codex/ui-testing-toolkit`. CI run [38293650008](https://github.com/999MAX20/PlatformaCRM/actions/runs/38293650008)
+currently has frontend success and backend running; no final CI PASS claimed yet.
+Owner explicitly authorized backup and the three local schema migrations. Verified
+online SQLite backup: `output/multibranch/activation-20261012T185321Z/db-before.sqlite3`.
+`manage.py migrate scheduling 0009 --plan` showed only branches 0001/0002 and scheduling
+0009; `manage.py migrate scheduling 0009 --noinput` applied all three successfully.
+Database integrity and existing business-table row counts PASS; no Branch rows seeded.
+Initial all-table-count assertion detected expected Django metadata additions, not
+business-data changes: 3 migration receipts, 7 content types and 28 permissions.
+Read-only follow-up proved every prior content-type/permission row preserved, exact
+metadata deltas and zero other count changes (`result.json` in the same ignored folder).
+`manage.py check` PASS. Backup remains local/ignored and is not published.
+
+
 Local acceptance 12.10 18:48 UTC: MB1–MB5 implemented and verified; same owner,
 canonical root and branch. Source freeze after branch snapshots revalidated under
 Business lock (including approved staff-AI writes), branch lifecycle UI grants and
@@ -43,14 +59,12 @@ Completion checks (installed .venv/Node, no reinstall, disposable DB and ports):
 
 Migration boundary: branches 0001/0002 and scheduling 0009 are additive schema changes;
 first branch adoption is explicit application behavior, not automatic migration seeding.
-Working target read-only verified as canonical `db.sqlite3`. No working migration,
-seed/reset, branch creation or data rewrite performed. Activation requires the separate
-explicit target/scope authorization in AGENTS.md; proposed operation is online SQLite
-backup, these schema migrations, system/read-only smoke, preserving existing data.
+Working target read-only verified as canonical `db.sqlite3`. At source freeze no working migration had been performed; the separately authorized
+activation and backup are recorded above. No seed/reset or branch creation performed.
 Outgoing baseline includes prior approved recovery receipt `383bf9a` above origin/main
 `198e6a4`; no other writer WIP or unexpected HEAD change. Only CI is configured on push,
 no repository push-deployment workflow. Review/stage explicit manifest paths; normal
-push to main and remote/actual-CI readback remain next. R01 remains the next roadmap
+push to main and remote readback completed in the receipt above; actual CI is tracked separately. R01 remains the next roadmap
 phase after this bounded implementation/activation result.
 
 Owner authorizes documentation followed by gradual implementation of CRM-MB01,
