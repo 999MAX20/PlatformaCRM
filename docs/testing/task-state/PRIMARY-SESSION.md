@@ -1,5 +1,18 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## R01-DEFER-20261013 — owner defers acceptance until UI completion
+
+Owner explicitly postpones R01 while Tasks, Connections, Analytics and History UI
+are unfinished. Settings completeness must be reconciled with existing scoped evidence
+before overall acceptance; this is not a finding that previous implementations failed.
+Resume acceptance after owner reports readiness. No product implementation or acceptance
+suite authorized by this decision. Existing MB/settings evidence remains bounded.
+Docs-only contract: record scope change in STATUS/roadmap/checkpoint; same primary,
+canonical root and branch, clean starting HEAD `aff9d6f79fa64db6e6ca632d00f08c38dc9074f8`.
+Risk: status consistency only. Checks: working/index/committed diff hygiene, local links,
+registry/encoding and intended three-file review; no application build/database/browser
+checks needed. Publish under standing authorization; no runtime/permission/AI changes.
+
 ## CRM-MB01-IMPLEMENT-20261012 — multi-branch implementation before R01
 
 Publication/activation receipt 12.10 18:54 UTC: implementation `b48a82255d7d43b5ae48e340dc38373914835a51`
