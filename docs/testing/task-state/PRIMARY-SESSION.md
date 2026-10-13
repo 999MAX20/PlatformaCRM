@@ -77,7 +77,17 @@ Evidence logs/screenshots and starting unrelated-WIP snapshot remain under ignor
 `output/crm-toolbars-20261013`. Relevant application inputs unchanged after PASS.
 No working DB migrations, installs, external provider calls or deployment acceptance.
 Full-project/local full-E2E omitted per proportional scope; push CI read separately.
-Next: task-owned diff/index/range hygiene and normal publication receipt.
+Publication: `b98381e525cf02f20e20b0ebde4de193689a38c6` on retained branch
+`codex/ui-testing-toolkit`, normal push `HEAD:main`, remote SHA matches. Outgoing
+range from33795e2 reviewed,44 explicit owned paths; unrelated ONEC blocks remain
+unstaged. `.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+33795e273f0c782a143269ced190e49022472921` PASS (working/index/committed diff hygiene,
+isolated system/drift); changed local links/anchors3 PASS, new files/secret review
+PASS (synthetic example.test fixtures only). GitHub REST confirms
+[CI38442456642](https://github.com/999MAX20/PlatformaCRM/actions/runs/38442456642)
+in_progress at receipt; not a green/full-release claim. Connector initially returned
+an empty workflow list, so the actual status was read directly from GitHub REST.
+Phase1 complete and published; next unfinished scope is separate calendar redesign.
 
 ## DIRECT-TASK-AUTHORIZATION-20261013 — owner-directed peer tasks
 
