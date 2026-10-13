@@ -1,5 +1,63 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## TWO-CHAT-COORDINATION-20261014 — owner-authorized CRM workflow
+
+Owner instruction relayed by PlatformaMarket UI: adopt coordinated work by the two
+existing CRM chats, keep one repository-wide writer and one strictly read-only
+preparer. Mode policy/docs; no Market product requirements or commands imported.
+Canonical root/branch/base match CALENDAR-SETTINGS-R01 below. No code, environment,
+permission, migration, notification, BusinessEvent or AI contract changes.
+Plan/check boundary: reconcile AGENTS, rollover, handoff and existing roadmap;
+review links/consistency and working/index/actual-range diff hygiene, no app tests.
+Primary remains coordinator/writer and continues Calendar. Existing UI chat
+01a1369b-a07d-7701-8832-cbabe7824db5 confirmed read-only Settings preparation on
+a8cc789e, no unfinished own writes/servers/index. Its deliverable is existing
+coverage, concrete gap/minimal plan, risk-based checks, journal draft and decisions.
+It must await explicit writer transfer; preparation cannot close Settings.
+The 13.10 no-peer-report procedure is superseded; direct owner scope and
+proportional checks retained. Registry/generation unchanged, no chats created
+or archived. Single roadmap updated to actual Analytics closure and authorized
+Calendar → Settings → R01 order; no automatic R02–R07 or History redesign.
+Preserve unrelated ONEC WIP in STATUS/this checkpoint unstaged and unpublished.
+Next: verify/publish docs, then continue Calendar while UI prepares Settings.
+
+## CALENDAR-SETTINGS-R01-20261014 — owner-authorized sequential work
+
+Owner14.10 explicitly authorized three phases after Analytics: calendar redesign,
+Settings coverage reconciliation, then resume CRM-R01 without another routine
+approval. Owner now confirmed Analytics completion and requested execution.
+PlatformaCRM UI thread01a1369b-a07d-7701-8832-cbabe7824db5 readback: idle/completed;
+Analytics implementation2474024 + receipta8cc789 published. Scoped evidence retained,
+CI status separate. Current primary unchanged, canonical C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, task basea8cc789e61d3e2d7ceca7cec66c016b8516ad397.
+Starting WIP: unrelated ONEC STATUS7/checkpoint68 lines only; snapshot in ignored
+output/calendar-settings-r01-20261014. Preserve unstaged and never publish it.
+No other active writer identified. Heartbeat settings-r01 retains this same scope.
+
+Phase1 CALENDAR-REDESIGN: implementation, gap UX/functional completeness. Approved
+13.10 scenario: month/week toggle, no separate Day screen, compact summaries visible
+without opening, delayed hover/keyboard day preview, click opens full side inspector
+with all visits/tasks ordered by time; appointment details return to same day.
+Mobile click opens full-screen panel; important data never depends on hover.
+Reuse CalendarPage/CalendarPicker, API CRUD listAll, shared Drawer/PopoverSurface,
+appointment forms/domain actions, permissions, branch catalogue and existing i18n.
+Inspect calendar pagination/role/date handling; fix proven omissions in this flow.
+No booking policy/permission framework change, no AI/notification/BusinessEvent
+expansion, no working-DB migration or external calls. History redesign not included.
+Verification plan: focused date/view/grouping tests and critical real-API calendar
+flows: month/week boundary, complete paginated data, hover edge/keyboard, day/detail
+back/focus, tasks links, branch/service/staff/status filters, booking/reschedule and
+permission denial, loading/error/empty. RU/KK/EN desktop/mobile; one final build,
+static on actual committed range. Backend tests before dependent code only if
+server contract changes. No full-project gate for calendar presentation.
+Phase2: reconcile existing Settings contracts/control matrix/evidence with code;
+reuse unchanged PASS, test unresolved/changed controls, fix in-scope regressions.
+Phase3: R01 bounded daily-cycle acceptance under current contracts/remaining IDs;
+record exact unresolved dependencies, including History only if actually necessary.
+Do not automatically launch R02–R07, live channels, deployment or paid AI calls.
+Each phase gets its own evidence/publication; continue all three as authorized.
+Next: implement calendar board and shared day inspector, then targeted verification.
+
 ## ANALYTICS-REDESIGN-20261014 — period-based compact analytics
 
 Owner directly requested Computer Use audit, generated reference first, then full

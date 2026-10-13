@@ -28,26 +28,30 @@ never switch a dirty/shared checkout or overwrite it to match a remembered revis
 Unexpected writer, branch/HEAD drift or affected-path changes pause writes until reconciled.
 See [consolidation evidence](archive_docs/2026-10-07/docs/testing/task-state/CONSOLIDATION-2026-09-21.md).
 
-### Direct task authorization — owner decision 2026-10-13
+### Two-chat coordination — owner decision 2026-10-14
 
-A direct owner implementation request authorizes the receiving non-retired chat
-to execute that bounded task, including PlatformaCRM UI. The registered primary
-is a continuity/rollover anchor, not a supervisor or an exclusive implementation
-license. No routine permission request, writer grant/release, polling, start notice
-or completion report to another chat is required. Report to the owner in this chat.
-The owner schedules code-changing tasks sequentially. Preserve one actual writer,
-inspect local Git/affected paths and preserve others' work; a dirty tree or another
-open/active chat alone does not prove a competing writer. On concrete conflicting
-writes or unexplained affected-path/HEAD drift, pause affected writes and ask the
-owner to reconcile; do not introduce a standing cross-chat approval loop.
-Parallel read-only analysis/discussion and references outside shared project files
-are allowed. Analysis requests do not authorize implementation or shared-doc writes.
-Keep scoped checkpoints and verification evidence locally without messaging peers.
-Explicit user-directed task transfer still requires scope/evidence/remaining-work
-handoff and stopping the previous executor; it does not automatically rotate the
-primary, create/archive chats or change the registry. Managed primary replacement
-continues under SESSION_ROLLOVER. Retired and pending-transition guards remain.
-This decision supersedes historical scoped-writer grant/release instructions.
+The existing primary coordinates the existing PlatformaCRM UI chat against the
+single docs/current/roadmap.md: select an owner-authorized ready package, state
+scope/DoD and assign roles. Routine technical steps need no renewed owner approval.
+Exactly one repository-wide writer changes code or docs, runs checks/servers and
+performs authorized publication. The other chat prepares the next package strictly
+read-only against an identified snapshot: no file writes, tests, servers, data or
+process changes. It sends the coordinator existing coverage, the precise gap,
+minimal files/contract/backend/UI plan, risks/checks, a short journal draft and
+actual unresolved decisions with recommendations. Preparation is not implementation
+authorization. Keep independent preparation moving when one scenario is blocked.
+Writer transfer is explicit: the previous executor completes or checkpoints work
+and stops writing; the receiver confirms scope, Git/dirty ownership, checkpoint
+and evidence before writing. Preserve others' WIP. A dirty tree or open chat alone
+is not a conflict; unexplained affected-path/HEAD drift pauses affected writes.
+Record package completion only after its actual DoD, distinguishing implementation,
+local checks, publication, CI and live evidence. Reuse existing thematic evidence
+and checkpoint; do not create a competing backlog. Business decisions and external
+access still require the applicable owner decision; do not invent policy.
+Roles may swap without rotating primary, changing registry or archiving chats.
+Managed primary replacement remains under SESSION_ROLLOVER. Retired/transition
+guards remain. This coordinated scheme supersedes the 2026-10-13 no-peer-report
+procedure; direct owner scope and proportional verification remain in force.
 
 Run servers from the canonical folder. Before trusting localhost, verify backend,
 frontend and worker source roots and build/profile. Do not stop others' processes.
