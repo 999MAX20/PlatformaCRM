@@ -3,8 +3,9 @@
 13.10.2026. INBOX-COMPACT-20261013: утверждённая компактная компоновка Conversations
 реализована. Scoped desktop/mobile RU/KK/EN проверки (14 сценариев) и build/types/
 i18n/bundle PASS. История занимает больше места; AI-preview, действия и черновики
-сохранены. Zoom200% не подтверждён; узкие viewport проверены отдельно. Публикация/CI
-фиксируются в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md). R01 отложен.
+сохранены. Опубликовано в main (`0ca57fb`), GitHub CI выполняется на момент записи.
+Zoom200% не подтверждён; узкие viewport проверены отдельно. Evidence и ограничения —
+в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md). R01 отложен.
 
 13.10.2026. TASKS-REDESIGN-20261013: список/инспектор, ожидание, права, связи и
 защита черновиков реализованы и опубликованы в main (`4abc60a`). Локальные backend,

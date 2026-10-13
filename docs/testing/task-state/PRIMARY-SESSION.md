@@ -50,6 +50,16 @@ Implementation and scoped verification complete, 13.10.2026:
   registered docs/links and working/index/committed-range hygiene required before
   normal publication. Publication and actual CI receipt follow below.
 
+Publication receipt: implementation commit `0ca57fb3531ecc1eee12e2b9ca375bac2a3b4a8f`
+normal-pushed to origin main; remote SHA read back exact. FETCH_HEAD was starting
+base7df422d (origin/main tracking ref is stale because main is absent from fetch
+refspec; ls-remote and FETCH_HEAD are authoritative for this publication).
+Working/index and real7df422d..0ca57fb diff hygiene PASS;62 local docs links/anchors,
+registration and changed/new encoding PASS. Git clean after implementation push.
+[Implementation CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/38372395639)
+observed in_progress, no green/full-project claim. No further product scope started;
+next step is owner review of this UI; R01 still deferred.
+
 ## TASKS-REDESIGN-20261013 — approved task workspace and domain behavior
 
 Owner approved both generated references and all task proposals, explicitly requested
