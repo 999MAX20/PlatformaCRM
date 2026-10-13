@@ -255,13 +255,13 @@ export const inboxApi = {
     const { data } = await apiClient.post<InboxQualificationResult>(`/api/inbox/conversations/${conversationId}/qualify/`);
     return data;
   },
-  createTask: async ({ conversationId, title, description, priority, due_at }: { conversationId: Id; title?: string; description?: string; priority?: Task["priority"]; due_at?: string | null }) => {
+  createTask: async ({ conversationId, title, description, priority, due_at, idempotencyKey }: { conversationId: Id; title?: string; description?: string; priority?: Task["priority"]; due_at?: string | null; idempotencyKey?: string }) => {
     const { data } = await apiClient.post<Task>(`/api/inbox/conversations/${conversationId}/create-task/`, {
       title,
       description,
       priority: priority || "normal",
       due_at,
-    });
+    }, idempotencyConfig(idempotencyKey));
     return data;
   },
   createAppointment: async ({

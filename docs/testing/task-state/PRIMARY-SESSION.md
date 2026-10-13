@@ -1,5 +1,125 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-R01-20261014 — bounded daily-cycle acceptance
+
+Mode verification with minimal proven regression fixes; gap evidence/code.
+Owner-authorized Phase3 follows Calendar and Settings scoped completion.
+UI explicitly returned sole writer; primary verified canonical root, branch
+codex/ui-testing-toolkit, base3d291720b091f77f147bc78d2a908a4a1626972e and remote.
+Starting dirty is only unrelated ONEC STATUS7/checkpoint68, preserved under
+output/r01-20261014; index empty. UI prepares current controls strictly read-only.
+Result: administrator follows client/Inbox/lead/deal/task/visit and applicable
+manual-payment/history cycle with persisted semantic receipts and independent
+lifecycles. Reuse existing module, access and archive-dependency coverage.
+First reproduce Inbox task Business-timezone and lost-response retry risks;
+reuse taskDateISO, API idempotencyConfig and existing backend command wrapper.
+No new lifecycle/permission/AI policy, backend rewrite, migration, live send,
+working-DB operation, History redesign, R02+ or release-candidate certification.
+Risk: wrong deadline/duplicate next step; focused isolated real-API browser
+reproduction then regression (stored UTC, one task after retry, deliberate next
+creation distinct, validation/draft recovery); existing inbox task domain suite.
+Completion: selected linked daily cycle with independent API/activity receipts,
+roles/tenant/dependencies/archive/restore and conflict/recovery from applicable
+focused checks; RU/KK/EN, mobile and keyboard affected flow; one final isolated
+build/types/i18n, current control registry/outcomes, diff/static actual range.
+Reconcile baseline registry AI redirect/branches and Calendar view metadata.
+FB009 real screen-reader remains open pending user-assisted evidence; automated
+semantics are not equivalent. D04 overlapping built-in/user automation is excluded
+pending policy, not silently accepted. Report named controls and gaps without a
+global FC003/FC008 or production claim. Notification/BusinessEvent effects must
+remain single for replayed commands; no new effects intended.
+Delivery: reviewed owned commit and normal push origin/main with actual CI;
+retain unrelated ONEC blocks and record failed attempts/skips explicitly.
+
+R01 initial reproduction: isolated browser1791925280350159600 (UTC browser,
+Business Asia/Almaty) failed both intended assertions: 10:30 stored/displayed15:30
+Business time; successful create with lost response followed by retry returned
+task4 instead of committed task3. No working database or external provider used.
+Minimal frontend fix reuses taskDateISO in mutationFn (validation errors enter
+existing recovery), adds existing Idempotency-Key config to inboxApi.createTask,
+keeps key for the same actor/Business/conversation/payload and resets for a new
+creation or context. Backend command implementation unchanged. Initial regression
+browser1791925388427971600:2 PASS including intentional next create being distinct.
+Broadened changed-flow locale/mobile/keyboard and single-activity checks pending.
+Registry baseline metadata reconciled: AI legacy redirect outcome, existing branch
+configuration route, month/week day inspector, actual History activity endpoints
+and current journey test pointers. check:certification and two registry Node tests
+PASS; pointers/historical PASS fields are not new execution receipts.
+Daily-chain first fixture attempt browser1791925646573668100 failed before any
+operational action: preset named administrator instead of actual enum admin.
+Corrected fixture only; rerun pending. Preserve failures, no product role changes.
+Second daily fixture attempt1791925737224260100 used obsolete /automations URL;
+corrected to existing /automation-rules, before operational actions. Third attempt
+1791925815672395300 reproduced a real shared Header issue for administrator:
+reading the only unread conversation changed count1→0, effect cleanup cancelled
+the toast's auto-dismiss timer but left it open indefinitely above About client.
+Minimal fix separates unread activation/zero dismissal from timer lifecycle;
+no notification data/delivery changes. Same real-role chain now explicitly checks
+zero count and hidden notice before using the formerly covered button. Owner
+changed-flow locale tests and administrator navigation are representative callers.
+Focused isolated domain check/migration drift +47 tests PASS (domain.log):
+apps.conversations.tests_inbox_tasks, apps.clients.tests_archive_dependencies,
+apps.payments.tests. Includes task replay/single audit/activity/notification,
+permissions/tenant, archive dependencies/rollback/restore and payment/refund limits.
+No backend product edits; this is selected R01 domain evidence, not a full gate.
+GitHub readback: Calendar2f9035b/receipt17fb7c1 and Settings receipt3d29172 CI success;
+Settings implementationc40aff4 run38467033037 still in progress at this readback.
+
+R01 daily-cycle evidence: desktop browser1791926492812083000 and mobile
+browser1791926613690940100 PASS, each one real administrator linked journey.
+Controls: take Inbox, client edit and retained unsent reply, contacted lead,
+linked deal/task/branch visit, win without cascading task/visit/lead closure,
+task completion, visit confirmation/completion, reject zero payment then persist
+1250.50 manual receipt, reject archive409 with unfinished dependencies, History
+search/detail/visit link and single completion event with actor/time; separate
+UI-created client archive and Undo. Synthetic fixtures only, no external reply.
+Additional fixture corrections: branch choice includes its address; payment
+readback requires Business and nested link; History search waits for actual
+debounced response before opening row. These failed attempts did not justify
+product changes. Logs and semantic receipt attachments are in ignored
+output/crm-toolbars-20261013/browser-<stamp>.
+
+RU/KK/EN Inbox six cases per viewport passed before final focus fix:
+desktop1791926765240490500/mobile1791926800705361100. Screenshot review replaced
+incorrect page-title/page-subheading field labels with existing task name and
+description translations; final creation checks use those labels. Manual Chrome
+CU on isolated57528/57529 reproduced Escape losing focus; add an optional stable
+ActionMenu focus-return marker, used only by Inbox, and task Dialog return ID.
+Manual retest PASS: keyboard menu/open, fields, priority, Escape focus return,
+reopen and keyboard create; saved task visible with client/lead/conversation
+links. Owned tab closed and isolated runtime stopped, ports no longer listening.
+No audible screen-reader result; pending user-assisted FB009 remains explicit.
+
+Final selected commands (canonical root, disposable SQLite/eager/locmem;
+no working DB, live provider, install or full-project E2E):
+- `.venv/Scripts/python.exe output/r01-20261014/domain.py`: check, migration drift
+  and 47 focused domain tests PASS, unchanged backend inputs reused.
+- `.venv/Scripts/python.exe output/crm-toolbars-20261013/browser.py
+  desktop-chromium r01-daily-cycle.spec.ts` and `mobile-chromium` equivalent:
+  one PASS each at the stamps above, unchanged operational behavior reused.
+- `node --test scripts/tests/functional-certification-registry.test.mjs
+  scripts/tests/merchant-journey-certification.test.mjs
+  scripts/tests/failure-certification-registry.test.mjs`: 3 PASS.
+- `npm run check:certification`: PASS, 45 entries/85 router declarations.
+  Source-backed pointer repairs are not a fresh full-matrix certification.
+Final focus regression: desktop1791927015353280300 and mobile1791927087285237900,
+6 PASS each (RU/KK/EN deadline, retry and Escape focus return).
+Final isolated build/types/i18n + bundle/env policy PASS via
+`.venv/Scripts/python.exe output/r01-20261014/build.py` after the focus fix.
+The existing reopened-conversation consumer test1791927130843745800 reached the
+new task inspector but failed its obsolete pre-redesign `/tasks/:id` URL check.
+Fixture now asserts `/tasks?task=<actual response ID>` and retains description
+and readable-status assertions; no Task product change. Rerun recorded below.
+Rerun1791927246365375800 PASS (1): `browser.py desktop-chromium
+inbox-inspector.spec.ts --grep "task from a reopened"`.
+Committed-range gate and publication readbacks are recorded below when complete.
+One mistyped browser project
+chromium-desktop was rejected before tests; corrected to desktop-chromium.
+R01 remains open solely within the named outstanding acceptance boundary;
+global FC003/FC008, clinical day, live delivery, D04 policy and R02+ are not closed.
+GitHub readback now confirms Settingsc40aff4 CI38467033037 success, together with
+the already successful Calendar and Settings receipt runs.
+
 ## SETTINGS-ASSIGNMENT-20261014 — Phase2 execution
 
 Primary explicitly transferred the sole writer to PlatformaCRM UI after Calendar

@@ -25,7 +25,7 @@ export function InboxMemoryControl({ conversation, items }: { conversation: Inbo
   } });
   if (!menuItems.length) return null;
   return <div className="[&>button]:h-11 [&>button]:w-11 lg:[&>button]:h-10 lg:[&>button]:w-10">
-    <ActionMenu label={t("conversations.dialogActions")} items={menuItems} />
+    <ActionMenu label={t("conversations.dialogActions")} items={menuItems} focusReturnId="inbox-dialog-actions" />
     {reset.error && <ErrorState error={reset.error} />}
     {reset.isSuccess && <p role="status" className="text-xs text-platforma-subtle">{t("agentChat.memoryCleared")}</p>}
   </div>;

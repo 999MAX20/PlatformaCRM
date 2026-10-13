@@ -1,3 +1,4 @@
+// Evidence pointers and historical status; this registry is not a fresh execution receipt.
 export const pilotMerchantJourneys = [
   {
     id: "J01-inbox-lead-next-action",
@@ -7,8 +8,8 @@ export const pilotMerchantJourneys = [
     persistenceEntities: ["BotConversation", "Lead", "Task", "ActivityEvent"],
     browserEvidence: [
       {
-        file: "frontend/e2e/entity-workspaces.spec.ts",
-        marker: "entity workspaces persist deal, visit and task outcomes with activity history",
+        file: "frontend/e2e/inbox-inspector.spec.ts",
+        marker: "task from a reopened conversation keeps the customer request and readable status",
       },
     ],
     backendEvidence: [
@@ -71,12 +72,12 @@ export const pilotMerchantJourneys = [
     persistenceEntities: ["Client", "Appointment", "Task", "ActivityEvent", "AuditLog"],
     browserEvidence: [
       {
-        file: "frontend/e2e/smoke.spec.ts",
-        marker: "calendar deep link selects appointment and lifecycle action works",
+        file: "frontend/e2e/calendar-workspace.spec.ts",
+        marker: "month/week, complete pages, day/detail return and visit actions",
       },
       {
-        file: "frontend/e2e/smoke.spec.ts",
-        marker: "business owner can reschedule appointment from calendar UI",
+        file: "frontend/e2e/multibranch.spec.ts",
+        marker: "booking uses branch terms and staff absence/retirement preserves visits",
       },
     ],
     backendEvidence: [
@@ -95,8 +96,8 @@ export const pilotMerchantJourneys = [
     persistenceEntities: ["BotConversation", "Task", "ActivityEvent", "AuditLog"],
     browserEvidence: [
       {
-        file: "frontend/e2e/entity-workspaces.spec.ts",
-        marker: "entity workspaces persist deal, visit and task outcomes with activity history",
+        file: "frontend/e2e/r01-inbox-task.spec.ts",
+        marker: "R01 Inbox lost response retry creates one task and a new intent stays distinct",
       },
     ],
     backendEvidence: [

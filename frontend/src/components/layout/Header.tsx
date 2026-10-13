@@ -165,11 +165,18 @@ export function Header({
   useEffect(() => {
     const previous = previousUnreadMessagesRef.current;
     previousUnreadMessagesRef.current = unreadChatMessages;
-    if (!receivesChatToasts || previous === null || unreadChatMessages <= previous) return;
-    setChatToastOpen(true);
+    if (!receivesChatToasts || unreadChatMessages === 0) {
+      setChatToastOpen(false);
+      return;
+    }
+    if (previous !== null && unreadChatMessages > previous) setChatToastOpen(true);
+  }, [receivesChatToasts, unreadChatMessages]);
+
+  useEffect(() => {
+    if (!chatToastOpen) return;
     const timer = window.setTimeout(() => setChatToastOpen(false), 6500);
     return () => window.clearTimeout(timer);
-  }, [receivesChatToasts, unreadChatMessages]);
+  }, [chatToastOpen, unreadChatMessages]);
 
   useEffect(() => {
     lastScrollYRef.current = window.scrollY;

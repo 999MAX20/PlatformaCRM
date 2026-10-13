@@ -81,6 +81,7 @@ import {
   getConversationTimestamp,
 } from "./conversationUtils";
 import { useConversationFilters } from "./hooks/useConversationFilters";
+import { taskDateISO } from "../tasks/workspaceUtils";
 
 function asNumericId(value: string | undefined): number | null {
   const id = Number(value);
@@ -155,6 +156,7 @@ export function ConversationsPage() {
   >(null);
   const [crmLinkSearch, setCrmLinkSearch] = useState("");
   const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const taskIdempotencyRef = useRef<{ signature: string; key: string } | null>(null);
   const [taskDraft, setTaskDraft] = useState({
     title: "",
     description: "",
@@ -313,6 +315,7 @@ export function ConversationsPage() {
     setAutomationOpen(false);
     setPipelineReview(null);
     setTaskModalOpen(false);
+    taskIdempotencyRef.current = null;
     setQuickRepliesOpen(false);
   }, [user?.id, selected?.business, selected?.id]);
 
@@ -1014,8 +1017,10 @@ export function ConversationsPage() {
   });
 
   const createTaskMutation = useMutation({
-    mutationFn: inboxApi.createTask,
+    mutationFn: ({ timezone, ...payload }: Parameters<typeof inboxApi.createTask>[0] & { timezone: string }) =>
+      inboxApi.createTask({ ...payload, due_at: taskDateISO(payload.due_at || "", timezone) }),
     onSuccess: async () => {
+      taskIdempotencyRef.current = null;
       setNotice(t("conversations.taskCreatedShort"), "success");
       setTaskModalOpen(false);
       await Promise.all([queryClient.invalidateQueries({ queryKey: ["tasks"] }), invalidateInbox()]);
@@ -1174,6 +1179,7 @@ export function ConversationsPage() {
 
   function createLinkedTask() {
     if (!selected) return;
+    taskIdempotencyRef.current = null;
     setTaskDraft({
       title: t("conversations.followUpTaskTitle", {
         title: conversationTitle(selected, t),
@@ -1191,16 +1197,21 @@ export function ConversationsPage() {
   }
 
   function submitTaskFromInspector() {
-    if (!selected) return;
-    createTaskMutation.mutate({
+    if (!selected || createTaskMutation.isPending) return;
+    const payload = {
       conversationId: selected.id,
       title: taskDraft.title,
       description: taskDraft.description,
       priority: taskDraft.priority,
-      due_at: taskDraft.due_at
-        ? new Date(taskDraft.due_at).toISOString()
-        : null,
-    });
+      due_at: taskDraft.due_at,
+      timezone: context.data?.timezone || business?.timezone || "UTC",
+    };
+    const signature = JSON.stringify([user?.id, selected.business, payload]);
+    const previous = taskIdempotencyRef.current;
+    const idempotencyKey = previous?.signature === signature
+      ? previous.key : createIdempotencyKey(`inbox:task:${selected.id}`);
+    taskIdempotencyRef.current = { signature, key: idempotencyKey };
+    createTaskMutation.mutate({ ...payload, idempotencyKey });
   }
 
   function openCrmLinkModal(target: "client" | "lead" | "deal") {
@@ -1630,13 +1641,14 @@ export function ConversationsPage() {
 
       <Dialog
         title={t("conversations.createTaskTitle")}
+        focusReturnId="inbox-dialog-actions"
         open={taskModalOpen}
         onClose={() => setTaskModalOpen(false)}
         size="md"
         bodyClassName="space-y-4 bg-platforma-card"
       >
         <Input
-          label={t("tasks.title")}
+          label={t("taskWorkspace.name")}
           value={taskDraft.title}
           onChange={(event) =>
             setTaskDraft((current) => ({
@@ -1648,7 +1660,7 @@ export function ConversationsPage() {
           autoFocus
         />
         <Textarea
-          label={t("tasks.description")}
+          label={t("taskWorkspace.description")}
           value={taskDraft.description}
           onChange={(event) =>
             setTaskDraft((current) => ({

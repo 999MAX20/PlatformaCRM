@@ -114,7 +114,7 @@ export const fb010CriticalJourneys = [
     routeIds: ["INBOX-CONVERSATIONS", "CRM-LEADS-LIST", "EXEC-TASKS-LIST"],
     apiModules: ["inbox", "leads", "tasks"],
     roles: ["owner", "administrator", "manager", "operator"],
-    browserEvidence: [...sharedBrowserEvidence, "e2e/entity-workspaces.spec.ts"],
+    browserEvidence: [...sharedBrowserEvidence, "e2e/inbox-inspector.spec.ts", "e2e/r01-inbox-task.spec.ts"],
     backendEvidence: [...sharedBackendEvidence, "apps/conversations/tests_inbox_tasks.py", "apps/leads/tests_crm_light.py"],
   }),
   journey({
@@ -138,7 +138,7 @@ export const fb010CriticalJourneys = [
     routeIds: ["CRM-CLIENTS-LIST", "EXEC-CALENDAR", "EXEC-APPOINTMENT-WORKSPACE"],
     apiModules: ["clients", "appointments"],
     roles: fb010MerchantRoles,
-    browserEvidence: [...sharedBrowserEvidence, "e2e/entity-workspaces.spec.ts"],
+    browserEvidence: [...sharedBrowserEvidence, "e2e/calendar-workspace.spec.ts", "e2e/multibranch.spec.ts"],
     backendEvidence: [...sharedBackendEvidence, "apps/clients/tests.py", "apps/scheduling/tests.py"],
   }),
   journey({
@@ -146,7 +146,7 @@ export const fb010CriticalJourneys = [
     routeIds: ["INBOX-CONVERSATION-DETAIL", "EXEC-TASKS-LIST"],
     apiModules: ["inbox", "tasks", "crmCards"],
     roles: ["owner", "administrator", "manager", "operator"],
-    browserEvidence: [...sharedBrowserEvidence, "e2e/entity-workspaces.spec.ts"],
+    browserEvidence: [...sharedBrowserEvidence, "e2e/inbox-inspector.spec.ts", "e2e/r01-inbox-task.spec.ts"],
     backendEvidence: [...sharedBackendEvidence, "apps/conversations/tests_inbox_tasks.py", "apps/tasks/tests.py"],
   }),
   journey({

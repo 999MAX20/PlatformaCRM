@@ -170,13 +170,15 @@ test("task from a reopened conversation keeps the customer request and readable 
   await page.getByRole("button", { name: ru["conversations.dialogActions"], exact: true }).click();
   await page.getByRole("menuitem", { name: ru["conversations.createTask"], exact: true }).click();
   const dialog = page.getByRole("dialog", { name: ru["conversations.createTaskTitle"], exact: true });
-  await expect(dialog.getByRole("textbox", { name: ru["tasks.description"], exact: true })).toHaveValue(customer!.text);
+  await expect(dialog.getByRole("textbox", { name: ru["taskWorkspace.description"], exact: true })).toHaveValue(customer!.text);
   const created = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/inbox/conversations/${conversation.id}/create-task/`));
   await dialog.getByRole("button", { name: ru["conversations.createTask"], exact: true }).click();
-  expect((await created).ok()).toBeTruthy();
+  const taskResponse = await created;
+  expect(taskResponse.ok()).toBeTruthy();
+  const taskId = (await taskResponse.json()).id;
   const panel = await openContext(page);
   await panel.locator('a[href*="/app/tasks?"]').click();
-  await expect(page).toHaveURL(/\/app\/tasks\/\d+$/);
+  await expect(page).toHaveURL(new RegExp(`/app/tasks\\?task=${taskId}$`));
   await expect(page.getByText(/tasks\.(statusLabel|priorityLabel)\./)).toHaveCount(0);
   await expect(page.getByText(customer!.text, { exact: true })).toBeVisible();
 });

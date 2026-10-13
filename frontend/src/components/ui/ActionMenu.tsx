@@ -30,11 +30,13 @@ export function ActionMenu({
   items,
   disabled = false,
   overlay,
+  focusReturnId,
 }: {
   label: string;
   items: ActionMenuItem[];
   disabled?: boolean;
   overlay?: "drawer" | "modal";
+  focusReturnId?: string;
 }) {
   const menuId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -128,6 +130,7 @@ export function ActionMenu({
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
         data-testid="row-actions-trigger"
+        data-focus-return-id={focusReturnId}
         disabled={disabled}
         onClick={(event) => {
           event.stopPropagation();

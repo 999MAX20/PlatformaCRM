@@ -35,6 +35,7 @@ define("return_home", "The not-found recovery link reaches the correct public, m
 define("return_to_list", "The entity's list opens with applicable navigation context; no entity mutation is emitted.");
 define("open_lead open_deal open_client open_task open_appointment open_conversation open_crm_record open_related_record", "The selected entity ID opens its authorized workspace; displayed fields match API state; foreign or inaccessible IDs remain denied.");
 define("open_bot open_agent", "The selected saved configuration opens by its actual ID and business; missing/forbidden records show recovery without fabricated configuration.");
+define("redirect_to_agents", "Legacy assistant routes resolve to the authorized AI agents workspace without running an agent or changing business data.");
 define("open_merchant", "The selected merchant opens in the platform workspace only with platform authorization; merchant sessions cannot access it.");
 define("open_daily_action open_priority_queue", "The chosen operational item opens its real record or filtered queue; completed/resolved items disappear after refetch.");
 define("global_search", "The complete debounced query returns only permitted tenant records; input focus is retained and a result opens its actual entity.");
@@ -57,7 +58,7 @@ define("mark_won", "The win transition persists the terminal stage/status and ti
 define("lost mark_lost", "Loss requires the approved reason, persists the terminal state and history, and rejects invalid or unauthorized transitions.");
 define("close", "The selected lead/dialog follows its established close transition and required inputs; persisted status/history agree with the visible result.");
 define("reopen", "A terminal lead/deal returns through its supported domain transition; terminal metadata and history remain consistent after reload.");
-define("create_task", "The task persists intended business, related record, eligible assignee, due/reminder times and appears in the reachable task workspace.");
+define("create_task", "The task persists intended business, related record, eligible assignee, due/reminder times and appears in the reachable task workspace. Inbox deadlines use business wall time; retrying the same creation after a lost response preserves one task and one set of side effects.");
 define("start_task", "An eligible open task becomes in-progress through the domain action and retains its identity, relationships and activity.");
 define("complete_task", "Task completion persists status/completed timestamp once, updates operational queues and records activity without duplicate completion effects.");
 define("cancel_task", "Cancellation requires its reason, persists cancellation metadata and removes the task from active work without deleting history.");
@@ -83,7 +84,13 @@ define("confirm", "The eligible appointment becomes confirmed through the domain
 define("complete", "The eligible visit becomes completed with consistent timestamps and one activity, without duplicate completion effects.");
 define("cancel", "Appointment cancellation follows the current reason/notification rules, releases occupancy and retains the booking/history.");
 define("no_show", "The eligible appointment becomes no-show with a traceable lifecycle result; invalid transitions leave it unchanged.");
-define("change_view", "Calendar day/week/list changes retain date and resource filters and display the same persisted bookings without writes.");
+define("change_view", "Calendar month/week changes retain date and filters; selecting a day opens its complete visit/task inspector and returning from visit details restores that day without writes.");
+define("create_branch edit_branch", "Authorized branch details persist in the same business; editing retains branch identity and existing linked records.");
+define("set_branch_state", "Branch pause, activation and confirmed archive persist through the established state action; dependencies reject invalid archive without altering visits or history.");
+define("configure_branch_offers", "Branch-specific service price, duration and availability persist and govern booking choices without changing another branch's offer.");
+define("configure_branch_assignments", "Eligible same-business specialists and their allowed services persist for the selected branch; invalid removals preserve affected future visits.");
+define("configure_branch_schedule", "Weekly intervals and date exceptions persist for the selected branch/specialist; invalid hours and cross-branch conflicts are rejected without partial changes.");
+define("configure_branch_travel", "Validated travel minutes persist between the intended branches and constrain later specialist availability; missing travel is not treated as zero.");
 define("configure_week save_schedule", "All seven days, hours and target specialist/business are validated and persisted; reload shows the effective schedule and existing overlap rules remain.");
 define("copy_day", "Copy applies the chosen day's hours to the intended draft days; persistence occurs only on explicit save.");
 define("reset", "Reset restores the current form's saved/default draft as specified by that form, without an unintended API mutation.");
