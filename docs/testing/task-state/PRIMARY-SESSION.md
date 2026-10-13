@@ -1,5 +1,29 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## DIRECT-TASK-AUTHORIZATION-20261013 — owner-directed peer tasks
+
+Owner approved removing routine peer permission/reporting between CRM and CRM UI.
+Policy-only scope: AGENTS, continuity instructions/hook and focused hook tests;
+no product code, ownership transfer, phase, DB, dependency or process changes.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+clean starting HEAD 7d4fc192a0302ac4515eaf9598783a882f9a8866.
+Behavior: direct owner implementation request permits the receiving non-retired
+chat's bounded work, without primary polling/grant/release/completion messages.
+Analysis remains read-only; preserve one actual writer and reconcile concrete
+conflicting writes with the owner. Explicit task transfer retains context exchange;
+managed primary rollover/retired/freeze protections remain, registry unchanged.
+Risk: stale non-primary restriction or accidental bypass of transition guards.
+Checks planned: focused node hook/CLI tests, syntax, docs links/consistency and
+working/index/actual committed-range diff hygiene. No app builds or database/E2E
+suites for this policy adapter. Hook trust remains REQUIRES_REVIEW_AND_TRUST;
+unit tests do not prove app runtime activation. No peer tasks launched for receipts.
+
+Verification: `node --test .codex/continuity-hook.test.cjs` — 31 PASS;
+`node --check .codex/continuity-hook.cjs` and `git diff --check` — PASS.
+Reviewed policy scenarios: both chats' direct requests, read-only limits, compact,
+retired sources, pending transitions, validated finalization and unchanged metadata.
+Publication limited to the eight reviewed policy/evidence/test files; no product WIP.
+
 ## INTEGRATIONS-SIMPLIFY-20261013 — two provider cards
 
 Owner follow-up13.10: previous30b8f55 cards are too large. Approved delta: compact

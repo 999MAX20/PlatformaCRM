@@ -4,6 +4,24 @@
 Canonical checkout: `C:\Users\user\Desktop\PlatformaCRM`.
 Saved project ID: `local-3368c3df041be97f9549005fc6749ad2`.
 
+## Прямые задачи и явная передача — решение 2026-10-13
+
+Прямое поручение владельца на реализацию достаточно для работы любого
+неархивированного/non-retired чата, включая PlatformaCRM UI: см. AGENTS.md.
+Primary — опорный чат для continuity/ротации, не согласующий руководитель.
+Рутинные запросы разрешения, polling, выдача/освобождение scoped writer и отчёты
+соседнему чату отменены. Отчёт — владельцу в текущем чате; evidence — в checkpoint.
+Один фактический писатель сохраняется; анализ и референсы вне общих файлов могут
+идти параллельно. Конкретный конфликт записей решается с владельцем, а не постоянным
+согласованием между чатами. Старые receipts выдачи writer — история, не инструкция.
+
+Если владелец явно передаёт задачу между существующими чатами, исходный исполнитель
+останавливает её изменения и передаёт scope, Git/dirty ownership, проверки, остаток
+и следующий шаг. Получатель сверяет контекст и продолжает разрешённый scope.
+Такая передача не создаёт/архивирует чаты и не меняет primary/registry автоматически.
+Ниже описана именно управляемая замена primary новым чатом, а не обычная работа
+PlatformaCRM UI. Её DoD/retired/freeze/recovery правила остаются в силе.
+
 ## Команда владельца — 2026-09-25
 
 **«Передай работу новому чату»** запускает этот протокол у зарегистрированного
@@ -241,8 +259,11 @@ automation_update, сохраняя status/расписание/уведомле
 
 `.codex/hooks.json` подключает `.codex/continuity-hook.cjs` для SessionStart и
 UserPromptSubmit. Compact напоминает restore/recheck/continue; primary не получает
-`continue:false`. Guard retired SessionStart сохраняет остановку, non-primary —
-read-only, незавершённый transition — freeze. Лишь совпадающий проверенный transition
+`continue:false`. Guard retired SessionStart сохраняет остановку, незавершённый
+transition — freeze для всех чатов. В idle действует DIRECT_TASK_AUTHORIZATION:
+не-primary может выполнять прямое поручение владельца без peer approval, но
+сам hook не выдаёт задач и не разрешает запись по запросу только на анализ.
+Лишь совпадающий проверенный transition
 даёт successor/Оркестратору `HANDOFF_FINALIZATION_ONLY` с обязательной внешней
 проверкой evidence/archive readback. Hook не читает transcript, не вызывает сеть,
 не пишет файлы/Git и не выполняет archive/create/release сам.

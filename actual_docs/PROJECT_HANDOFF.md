@@ -1,5 +1,11 @@
 # PlatformaCRM — владелец и передача
 
+13.10.2026: решение владельца о прямом исполнении задач действует по AGENTS.md.
+Primary ниже — continuity/rollover anchor, не единственный допустимый исполнитель.
+PlatformaCRM UI выполняет прямые поручения без выдачи/release writer, обязательного
+опроса или отчёта primary. Явная передача задач сохраняется; реестр и generation
+не менялись. Нижние записи о scoped writer — исторические receipts.
+
 13.10.2026: временный scope TASKS-REDESIGN-20261013 исполнителя PlatformaCRM UI
 `01a0f32f-7d02-7263-a53d-496c8f9787f5` реализован, локально проверен и опубликован
 (`4abc60a`, main); scoped writer освобождён. CI frontend success, полный backend

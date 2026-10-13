@@ -28,6 +28,27 @@ never switch a dirty/shared checkout or overwrite it to match a remembered revis
 Unexpected writer, branch/HEAD drift or affected-path changes pause writes until reconciled.
 See [consolidation evidence](archive_docs/2026-10-07/docs/testing/task-state/CONSOLIDATION-2026-09-21.md).
 
+### Direct task authorization — owner decision 2026-10-13
+
+A direct owner implementation request authorizes the receiving non-retired chat
+to execute that bounded task, including PlatformaCRM UI. The registered primary
+is a continuity/rollover anchor, not a supervisor or an exclusive implementation
+license. No routine permission request, writer grant/release, polling, start notice
+or completion report to another chat is required. Report to the owner in this chat.
+The owner schedules code-changing tasks sequentially. Preserve one actual writer,
+inspect local Git/affected paths and preserve others' work; a dirty tree or another
+open/active chat alone does not prove a competing writer. On concrete conflicting
+writes or unexplained affected-path/HEAD drift, pause affected writes and ask the
+owner to reconcile; do not introduce a standing cross-chat approval loop.
+Parallel read-only analysis/discussion and references outside shared project files
+are allowed. Analysis requests do not authorize implementation or shared-doc writes.
+Keep scoped checkpoints and verification evidence locally without messaging peers.
+Explicit user-directed task transfer still requires scope/evidence/remaining-work
+handoff and stopping the previous executor; it does not automatically rotate the
+primary, create/archive chats or change the registry. Managed primary replacement
+continues under SESSION_ROLLOVER. Retired and pending-transition guards remain.
+This decision supersedes historical scoped-writer grant/release instructions.
+
 Run servers from the canonical folder. Before trusting localhost, verify backend,
 frontend and worker source roots and build/profile. Do not stop others' processes.
 Disposable test databases/build outputs are allowed, not alternate source trees.
@@ -269,7 +290,8 @@ The command does not waive completion/ownership checks or authorize a product ph
 
 For an unavailable old chat, perform read-only reconstruction under the
 [recovery protocol](docs/testing/SESSION_ROLLOVER.md). Unknown/non-primary/retired
-chats cannot appoint themselves owner. An exceptional recovery needs an explicit
+chats cannot appoint themselves registered primary. This does not restrict direct
+task authorization under the 2026-10-13 decision above. An exceptional recovery needs an explicit
 owner decision and verified absence of conflicting writers; no registry/hooks are
 changed merely by reading STATUS.md. Ordinary handoff retains full DoD, required
 checks/publication/actual CI, finished operations and verified successor comprehension.

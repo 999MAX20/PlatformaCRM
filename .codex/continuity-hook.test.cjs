@@ -40,9 +40,33 @@ test('compaction restores and continues primary even with stale automatic-handof
     assert.equal(x.decision,undefined);
   }
 });
-test('successor/read-only tasks never recursively create successors', () => {
+test('non-primary compact restores direct task scope without peer approval or rotation', () => {
   const s=context(buildResponse(event({source:'compact',session_id:'reader-1'}),registry));
-  assert.match(s,/not the registered primary/); assert.doesNotMatch(s,/AUTOMATIC_PROJECT_HANDOFF_REQUIRED/);
+  assert.match(s,/DIRECT_TASK_AUTHORIZATION/);
+  assert.match(s,/COMPACTION_RESTORE_CONTINUE/);
+  assert.match(s,/analysis\/read-only requests do not authorize writes/);
+  assert.match(s,/No routine peer permission/);
+  assert.doesNotMatch(s,/not the registered primary|Only the recorded primary owns implementation|AUTOMATIC_PROJECT_HANDOFF_REQUIRED/);
+});
+
+test('both chats receive the same bounded direct-task policy on startup and prompts', () => {
+  for (const session_id of ['primary-1', 'ui-1']) {
+    for (const hook_event_name of ['SessionStart', 'UserPromptSubmit']) {
+      const x=buildResponse(event({session_id,hook_event_name}),registry);
+      assert.match(context(x),/DIRECT_TASK_AUTHORIZATION/);
+      assert.match(context(x),/one actual writer/);
+      assert.match(context(x),/Only an explicit task transfer requires peer handoff/);
+      assert.equal(x.continue,undefined);
+    }
+  }
+});
+
+test('non-primary cannot bypass pending transition with direct-task policy', () => {
+  for (const transition of ['bootstrap','preparing','awaiting_archive']) {
+    const x=buildResponse(event({session_id:'ui-1'}),{...registry,transition});
+    assert.match(context(x),/HANDOFF_TRANSITION_IN_PROGRESS/);
+    assert.doesNotMatch(context(x),/DIRECT_TASK_AUTHORIZATION/);
+  }
 });
 test('retired source cannot resume through SessionStart', () => {
   const x=buildResponse(event({session_id:'old-1'}),registry); assert.equal(x.continue,false);
@@ -125,7 +149,7 @@ test('matching proof cannot bypass a different transition or successor identity'
 
 test('unknown readers and retired source cannot take over a finalizable handoff', () => {
   const stranger=buildResponse(event({session_id:'unknown-1'}),pendingRelease);
-  assert.match(context(stranger),/not the registered primary/);
+  assert.match(context(stranger),/HANDOFF_TRANSITION_IN_PROGRESS/);
   assert.doesNotMatch(context(stranger),/HANDOFF_FINALIZATION_ONLY/);
   const source=buildResponse(event({session_id:'source-1'}),pendingRelease);
   assert.match(context(source),/RETIRED OWNER/);

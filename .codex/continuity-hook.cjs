@@ -65,27 +65,30 @@ function buildResponse(event, registry) {
       'Do not depend on the archived source resuming, create another task, archive a different task, increment generation again or infer a new work scope. ' +
       'Missing evidence or archive confirmation keeps the existing transition frozen. After release, wait for separately authorized work.');
   }
-  if (id !== registry.primaryThreadId) {
-    return result(eventName, intro + 'You are not the registered primary owner. Read-only comprehension/audit only unless the current user explicitly changes ownership. Do not rotate this task, create another primary, start product work or archive another task.');
-  }
   if (registry.transition !== 'idle' || registry.successorThreadId) {
     return result(eventName, intro + 'HANDOFF_TRANSITION_IN_PROGRESS. No product writes and no new independent rollover. Read the existing transition and checkpoint; recover only that same handoff. If a successor is already recorded, reuse and inspect it, never create a duplicate. During initial bootstrap the orchestrator retains control; perform only the requested read-only comprehension.');
   }
+  const taskPolicy =
+    'DIRECT_TASK_AUTHORIZATION. A direct owner implementation request authorizes this non-retired chat for that bounded task; analysis/read-only requests do not authorize writes. ' +
+    'Primary is a continuity anchor, not an exclusive implementation license. No routine peer permission, polling, writer grant/release or completion messages. Report to the owner in this chat. ' +
+    'Keep one actual writer: inspect local Git and affected paths, preserve unrelated work, and pause conflicting writes for the owner only on concrete conflict or unexplained drift. ' +
+    'Parallel read-only analysis and references outside shared project files are allowed. Maintain scoped local evidence. ' +
+    'Only an explicit task transfer requires peer handoff; it does not by itself authorize primary rotation, registry changes, chat creation or archival. ';
   if (eventName === 'SessionStart' && event.source === 'compact') {
-    return result(eventName, intro +
+    return result(eventName, intro + taskPolicy +
       'COMPACTION_RESTORE_CONTINUE. Restore the checkpoint, verify Git and evidence, then continue the same task within its existing authorization. ' +
       'Compaction and a nearly full context window never request creation, transfer or archival of tasks. Do not disable engine compaction. ' +
-      'Defer any handoff until the entire agreed DoD, checks/review, required publication and actual CI are complete, operations have finished, and successor comprehension is verified. ' +
+      'Defer managed primary rollover until the entire agreed DoD, checks/review, required publication and actual CI are complete, operations have finished, and successor comprehension is verified. ' +
       'FAILED/BLOCKED/PENDING/unknown are unfinished: preserve the checkpoint and attempt limits, report the blocker, and never rotate to bypass it or split the agreed scope retroactively. ' +
       'This read-only hook neither verifies completion nor authorizes a handoff; do not bypass trust or replay completed work.');
   }
-  return result(eventName, intro +
+  return result(eventName, intro + taskPolicy +
     'Maintain the existing task checkpoint after meaningful milestones and before handoff; do not wait for a full context window. ' +
     'On compaction or a nearly full context window, restore and continue in this task; never create, transfer or archive tasks for that reason. ' +
-    'Handoff is deferred until the entire agreed DoD, checks/review, required publication/actual CI and operations are complete, followed by verified comprehension. ' +
+    'Managed primary rollover is deferred until the entire agreed DoD, checks/review, required publication/actual CI and operations are complete, followed by verified comprehension. ' +
     'FAILED/BLOCKED/PENDING/unknown never count as completion. Do not split the agreed scope to bypass this gate. ' +
     'One writer, unchanged task scope and acceptance criteria; no auto-next-phase. Preserve valid checks and failed-attempt counts. ' +
-    'Only the recorded primary owns implementation; latest explicit stop/read-only instructions override automatic continuation.');
+    'Latest explicit stop/read-only instructions override automatic continuation.');
 }
 if (require.main === module) {
   try {

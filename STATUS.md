@@ -1,5 +1,11 @@
 # PlatformaCRM — текущий статус
 
+13.10.2026. DIRECT-TASK-AUTHORIZATION: владелец отменил рутинное согласование и
+отчёты между PlatformaCRM и PlatformaCRM UI. Прямое поручение разрешает исполнение
+в получившем его non-retired чате; один фактический писатель, проверки Git/evidence
+и явная передача сохраняются. Primary/registry не меняются, продуктовые этапы
+не запускаются. Правила и read-only hook согласованы; runtime trust не заявлен.
+
 13.10.2026. INTEGRATIONS-SIMPLIFY, уточнение владельца: карточки сделать компактными
 и центрированными, подробности перенести в открываемую настройку. UI writer вновь
 согласован primary; frontend-дельта готова, desktop/mobile RU/KK/EN и build PASS.
