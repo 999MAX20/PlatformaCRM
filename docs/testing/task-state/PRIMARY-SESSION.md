@@ -75,8 +75,17 @@ Working/index diff hygiene PASS; all intended source and untracked test reviewed
 No dependency reinstall, migration, real provider call or ordinary DB writes.
 Full-project E2E/backend intentionally not run: bounded frontend/API pagination
 change; affected24 backend tests and14 real-API UI scenarios cover this delta.
-Static committed-range/system/drift gate pending candidate commit, then normal
-push to agreed main. Existing ONEC pilot notes remain unstaged and unpublished.
+Static `.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref 129f1a30e41b0d57c05f48d9e11afed15b0d223e`
+PASS on candidate45f4899: working/index/real-range hygiene, isolated migration drift
+(no changes) and Django check (0 issues). No full-project certification claimed.
+Committed45f48998eb1aef15a7a0cd30505172e388f2191b and normal-pushed HEAD:main;
+fetched target was ancestor, remote SHA readback matched. GitHub CI38449140800
+observed in_progress (not green) after push. Workflow inspection found CI only,
+no deployment workflow. Existing ONEC pilot blocks compared byte-for-text with
+starting snapshot and preserved unstaged/unpublished. Registry unchanged.
+Authorized refinement complete; calendar remains a separate unstarted phase.
+This receipt changes documentation only; app checks remain valid for unchanged
+source. Receipt publication uses normal push with exact remote readback.
 
 ## CRM-TOOLBARS-20261013 — approved unified filters and date controls
 
