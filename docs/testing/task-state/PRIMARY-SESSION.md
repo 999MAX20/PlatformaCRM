@@ -130,7 +130,27 @@ checks above stand separately. Test tab closed and helper received stop.
 Commands: .venv/Scripts/python.exe output/crm-toolbars-20261013/browser.py
 <desktop-chromium|mobile-chromium> <spec> --grep <named scenario>; exact invocations
 and bounded logs retained in output. No production/working database or live provider.
-Next: static/publication, then explicit Settings writer assignment and bounded R01.
+Calendar published2f9035bc7ffd6d279c7f7a5193868f01f4ecc85f to origin/main;
+normal fast-forward from c2e25ff and ls-remote SHA match. Exact completion gate:
+.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+c2e25ff6e3fb2c1159ab7a1518eca24f12432091 PASS (all three diff boundaries,
+migration drift none, Django check0). Governance CI38459212114 success;
+Calendar CI38464742290 queued at readback, not claimed green. Only CI workflow
+exists; no deployment initiated. Own PTY92230 exited0; backend3148/frontend18924
+absent; other writers' processes untouched. Remaining dirty blocks are exactly
+unrelated ONEC STATUS7/checkpoint68, retained byte-for-byte and unpublished.
+Explicit scoped writer transfer after this receipt publication: PlatformaCRM UI
+01a1369b-a07d-7701-8832-cbabe7824db5 executes Phase2 Settings coverage and minimal
+explicit-role-assignment repair above, passport/control-matrix reconciliation,
+focused real-access/denial/recovery checks and one build, evidence/commit/push/CI.
+UI must preserve Calendar changes and unrelated ONEC blocks. No backend permission
+fallback rewrite, migration, automatic assignment, removed financial UI restoration,
+live integrations or R02+ work. UI tracks Calendar CI; a failure is assessed against
+its exact snapshot before any in-scope repair or coordinated return of writer.
+Primary stops repository writes after receipt and prepares bounded R01 read-only.
+UI returns writer explicitly with Git/dirty ownership, checks, processes, publication
+and actual CI after Settings; no registry/generation/new task/archive changes.
+Next: execute authorized Settings packet, then primary resumes bounded R01.
 
 ## ANALYTICS-REDESIGN-20261014 — period-based compact analytics
 

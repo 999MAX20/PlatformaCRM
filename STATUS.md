@@ -1,16 +1,16 @@
 # PlatformaCRM — текущий статус
 
 14.10.2026. TWO-CHAT-COORDINATION: принят единый roadmap и один writer на репозиторий.
-Основной чат продолжает календарь; PlatformaCRM UI подтвердил строго read-only
-подготовку Settings. Передача записи явная, registry/primary не менялись.
-Далее по поручению владельца: Settings → R01. Evidence — в checkpoint.
+Календарь опубликован; основной чат передаёт PlatformaCRM UI запись для Settings
+и переходит к read-only подготовке R01. Registry/primary не менялись.
+Scope передачи и проверки — в checkpoint.
 
 14.10.2026. CALENDAR-SETTINGS-R01: после завершённой Аналитики владелец поручил
 последовательно переработать календарь, сверить полноту Settings и возобновить R01.
 Календарь реализован: месяц/неделя, сводка и полноразмерный инспектор дня/визита.
 Проверки 51/51, RU/KK/EN desktop/mobile, роли, записи/переноса, полной карточки,
-общего выбора дат, CU и сборка PASS; публикация завершается.
-Settings/R01 подготовлены вторым чатом read-only.
+общего выбора дат, CU, сборка и static PASS. Опубликовано `2f9035b`,
+GitHub CI38464742290 queued на момент записи. Далее Settings → R01.
 Scope, ограничения и проверки — в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md).
 
 14.10.2026. ANALYTICS-REDESIGN: компактная аналитика с пятью вкладками,
