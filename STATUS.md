@@ -1,5 +1,13 @@
 # PlatformaCRM — текущий статус
 
+13.10.2026. INTEGRATIONS-SIMPLIFY-20261013: владелец поручил оставить на странице
+Подключений только переработанные карточки МойСклад и 1C; убрать повторный заголовок,
+подзаголовок, метрики, поиск/фильтры и финансовую форму. Primary подтвердил временного
+единственного scoped writer PlatformaCRM UI; registry не меняется. Реализация,
+desktop/mobile RU/KK/EN открытие форм/клавиатура и изолированная сборка PASS.
+Публикация подготавливается. Backend/внешние подключения вне scope.
+Контракт — [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md).
+
 13.10.2026. INBOX-COMPACT-20261013: утверждённая компактная компоновка Conversations
 реализована. Scoped desktop/mobile RU/KK/EN проверки (14 сценариев) и build/types/
 i18n/bundle PASS. История занимает больше места; AI-preview, действия и черновики

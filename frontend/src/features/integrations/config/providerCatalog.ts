@@ -111,8 +111,8 @@ export const providerCatalog: Array<{
   },
 ];
 
-export const integrationProviderCatalog = providerCatalog.filter(
-  (item) => item.group !== "messages" && item.group !== "marketplace",
+export const integrationProviderCatalog = ["moysklad", "1c"].flatMap(
+  (provider) => providerCatalog.filter((item) => item.provider === provider),
 );
 
 export const groupLabels: Record<ProviderGroup, { titleKey: string; textKey: string }> = {

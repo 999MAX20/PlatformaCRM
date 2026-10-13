@@ -1,5 +1,54 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INTEGRATIONS-SIMPLIFY-20261013 — two provider cards
+
+Owner explicitly approved removing the duplicate page title, subtitle, metrics,
+search/filters, financial-source form and all providers except МойСклад and 1C.
+Mode frontend implementation; gap visual hierarchy/catalog scope. Reuse existing
+ProviderCard setup flows, APIs, shared Button/Badge/Modal and semantic tokens.
+Generation5 primary confirmed no competing writers and granted temporary sole
+scoped writer to PlatformaCRM UI `01a0f32f-7d02-7263-a53d-496c8f9787f5`;
+primary/registry unchanged. Canonical C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, clean starting base `8fda4ccd2550f99edd4fe9f36f767f5dbb7f2cc8`.
+Result: exactly two redesigned cards, existing setup actions and real status/error
+states, responsive desktop/mobile. Remove only the financial form's page entry;
+stored settings and backend remain. No provider launch, external calls, backend,
+permission, schema, notification, BusinessEvent or AI behavior changes. Prior audit
+findings remain separate; this scope does not certify external integrations.
+Risk: lost entry points, wrapping/locales, keyboard/modal focus and error visibility.
+Checks: affected page and setup opening/closing in desktop/mobile RU/KK/EN, keyboard,
+loading/error/read-only states; one isolated frontend build/types/i18n/bundle.
+No new CSS-mirroring E2E, backend/full-project/live-provider suites or migrations.
+Review docs/links and working/index/actual committed-range hygiene; explicit reviewed
+commit, normal push main, remote readback and actual CI. Release scoped writer at close.
+
+Implementation and evidence, 13.10.2026:
+- Page now contains only МойСклад/1C in responsive cards. Existing setup flows,
+  loading/no-business/error rendering and manage guards retained. Provider catalog
+  outside this page, stored financial settings, imports/backend unchanged.
+- User requested an image reference during implementation: built-in imagegen
+  generated a preview from the current screenshot. This is an illustrative reference,
+  not a runtime screenshot or a new token source. Final code uses exact shared tokens.
+- Existing settings-workflow test updated because its financial form was explicitly
+  removed. `.venv/Scripts/python.exe output/inbox-density-20261008/verify_ui.py
+  desktop-chromium settings-workflow.spec.ts --grep "Integrations retains"
+  --project=mobile-chromium` — 2 PASS (each runs RU/KK/EN), log/screenshots
+  `output/inbox-density-20261008/browser-1791883568915205400` (log has `.log` suffix).
+  Proves two provider entries, removal of financial/search controls, both dialogs,
+  Enter/Escape/focus return and unchanged financial/profile API values. Disposable
+  DB/ports, disabled providers; no setup submission or ordinary working DB writes.
+- Screenshots inspected: desktop RU, mobile KK/EN; live desktop at1536px also
+  inspected. Other locale snapshots captured. Existing loading/error/permission
+  branches reviewed statically; fault injection/role matrix not rerun for layout.
+- `.venv/Scripts/python.exe output/multibranch/frontend.py build` — PASS types,
+  i18n, Vite app/widget and bundle budget, final log
+  `output/multibranch/build-1791883640443561700.log`. Earlier build also passed;
+  final rerun followed a fix aligning the request button's accessible/visible label.
+- No backend/migration/full-project/live-provider gate: no corresponding behavior
+  changed. Prior integration audit issues (business scoping, generic 1C credentials,
+  request/health semantics and live readiness) are not claimed fixed by this layout.
+- Eight intentional changed paths, no new tracked artifact. Publication receipt below.
+
 ## INBOX-COMPACT-20261013 — approved full-height conversation workspace
 
 Owner approved the generated compact reference and detailed implementation analysis.

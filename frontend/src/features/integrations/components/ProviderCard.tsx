@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { RefreshCw, Send, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, RefreshCw, Send, ShieldCheck } from "lucide-react";
 
 import { businessConnectorsApi, connectorSyncRunsApi, type BusinessConnectorPayload } from "../../../api/connectors";
 import { getApiErrorMessage } from "../../../api/client";
@@ -60,7 +60,7 @@ function readableStatus(status: string | undefined, t: Translate, fallback = t("
 
 function statusVariant(status?: string): BadgeVariant {
   if (["connected", "active", "received", "processed", "succeeded"].includes(status || "")) return "success";
-  if (["pending_request", "provider_configuring", "request"].includes(status || "")) return "ai";
+  if (["pending_request", "provider_configuring", "request"].includes(status || "")) return "info";
   if (["setup_required", "needs_attention", "syncing"].includes(status || "")) return "warning";
   if (["failed", "error", "expired_credentials"].includes(status || "")) return "danger";
   return "neutral";
@@ -218,41 +218,37 @@ export function ProviderCard({
   const handlePrimaryAction = () => {
     setConnectOpen(true);
   };
+  const primaryActionLabel = isConnected
+    ? t("integrations.card.configure")
+    : isRequestProvider && !connector
+      ? t("integrations.card.requestConnection")
+      : t("integrations.card.connect");
 
   const renderPrimaryButton = () => (
     <Button
       type="button"
-      className="h-8 min-w-[96px] rounded-lg px-3 text-xs"
-      aria-label={t(isConnected ? "integrations.card.configureContext" : "integrations.card.connectContext", { title })}
+      className="min-h-11 w-full sm:w-auto"
+      variant={isRequestProvider && !connector ? "secondary" : "primary"}
+      aria-label={`${primaryActionLabel} ${title}`}
       disabled={!canManage || isUnavailable}
       onClick={handlePrimaryAction}
     >
-      {isConnected ? t("integrations.card.configure") : t("integrations.card.connect")}
+      {primaryActionLabel}
+      <ArrowUpRight size={16} aria-hidden="true" className="shrink-0" />
     </Button>
   );
 
   const frontContent = (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-start gap-2.5">
-          <LogoMark logo={provider.logo} label={title} compact />
-          <div className="min-w-0">
-            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-              <h3 className="min-w-0 break-words text-[15px] font-bold leading-5 text-platforma-text">
-                {title}
-              </h3>
-              <Badge variant={statusVariant(status)} size="sm" className="shrink-0">
-                {readableStatus(status, t, t("integrations.status.notConnectedShort"))}
-              </Badge>
-            </div>
-            <p className="mt-1 line-clamp-2 text-xs font-semibold leading-4 text-platforma-subtle">
-              {primaryUse}
-            </p>
-          </div>
-        </div>
-        <div className="flex max-w-[62%] shrink-0 items-center justify-end gap-2">
-          {renderPrimaryButton()}
-        </div>
+      <div className="flex items-start justify-between gap-4">
+        <LogoMark logo={provider.logo} label={title} />
+        <Badge variant={statusVariant(status)} className="text-right leading-4">
+          {readableStatus(status, t, t("integrations.status.notConnectedShort"))}
+        </Badge>
+      </div>
+      <div className="mt-4 min-w-0">
+        <h2 className="break-words text-base font-bold leading-6 text-platforma-text">{title}</h2>
+        <p className="mt-1 text-sm font-medium leading-[22px] text-platforma-subtle">{primaryUse}</p>
       </div>
 
       {connector?.last_error ? (
@@ -281,7 +277,7 @@ export function ProviderCard({
                 <Button
                   type="button"
                   variant="ghost"
-                  className="h-7 px-2 text-xs"
+                  className="min-h-11 px-3 text-sm"
                   disabled={!canManage}
                   isLoading={retrySyncRun.isPending}
                   onClick={() => retrySyncRun.mutate(latestRun.id)}
@@ -307,14 +303,16 @@ export function ProviderCard({
       ) : null}
 
       {error ? <div className="mt-2"><ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /></div> : null}
+      <div className="mt-auto pt-5">
+        {renderPrimaryButton()}
+      </div>
     </>
   );
 
   return (
     <article
       className={cn(
-        "rounded-card border border-platforma-border bg-surface-card p-3 shadow-card transition hover:border-brand-100 hover:bg-surface-hover",
-        "min-h-[82px]",
+        "flex h-full min-w-0 flex-col rounded-card border border-platforma-border bg-surface-card p-5 shadow-xs",
       )}
     >
       {frontContent}

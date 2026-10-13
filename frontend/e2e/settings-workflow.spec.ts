@@ -36,27 +36,29 @@ test("employee opens assigned role, edits its existing permissions and returns t
   expect((await session.list<BusinessRole>("team/roles")).map(item => item.id)).toEqual(roles.map(item => item.id));
 });
 
-test("financial source is configured in Integrations with error recovery and profile preservation", async ({ page }) => {
+test("Integrations retains provider setup and stored financial preferences after page simplification", async ({ page }, info) => {
   const session = await crmSession(page);
   const before = await session.read(`businesses/${session.business}`);
-  const connector = await session.create<{ id: number; name: string }>("business-connectors", { provider: "1c", capability: "finance", auth_type: "none", name: `Finance ${Date.now()}` });
-  await page.goto("/app/integrations");
-  const panel = page.locator("#financial-source");
-  await panel.getByRole("combobox", { name: new RegExp("^" + ru["aiHistory.sourceSetting"]), exact: false }).click();
-  await page.getByRole("option", { name: ru["aiHistory.external"], exact: true }).click();
-  await panel.getByRole("combobox", { name: new RegExp("^" + ru["aiHistory.integration"]), exact: false }).click();
-  await page.getByRole("option", { name: connector.name, exact: true }).click();
-  await page.route(`**/api/businesses/${session.business}/`, route => route.request().method() === "PATCH" ? route.fulfill({ status: 503, json: { detail: "Try again" } }) : route.continue(), { times: 1 });
-  await panel.getByRole("button", { name: ru["common.save"], exact: true }).click();
-  await expect(panel.getByRole("alert")).toBeVisible();
-  expect((await session.read(`businesses/${session.business}`)).financial_source_mode).toBe(before.financial_source_mode);
-  await panel.getByRole("button", { name: ru["common.save"], exact: true }).click();
-  await expect.poll(async () => (await session.read(`businesses/${session.business}`)).financial_connector).toBe(connector.id);
+  for (const language of ["ru", "kk", "en"]) {
+    await page.evaluate(value => localStorage.setItem("ai_smb_language", value), language);
+    await page.goto("/app/integrations");
+    const cards = page.locator("article");
+    await expect(cards).toHaveCount(2);
+    await expect(page.locator("#financial-source")).toHaveCount(0);
+    await expect(page.locator("main input")).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath(`integrations-${language}.png`), fullPage: true });
+    for (const card of await cards.all()) {
+      const action = card.getByRole("button").last();
+      await action.focus();
+      await page.keyboard.press("Enter");
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toBeHidden();
+      await expect(action).toBeFocused();
+    }
+  }
   const after = await session.read(`businesses/${session.business}`);
-  expect(after.financial_source_mode).toBe("external");
-  for (const key of ["name", "slug", "currency", "timezone", "legal_name", "invoice_email", "settings_json"]) expect(after[key]).toEqual(before[key]);
-  await page.reload();
-  await expect(panel.getByRole("combobox", { name: new RegExp("^" + ru["aiHistory.integration"]), exact: false })).toContainText(connector.name);
+  for (const key of ["financial_source_mode", "financial_connector", "name", "slug", "currency", "timezone", "legal_name", "invoice_email", "settings_json"]) expect(after[key]).toEqual(before[key]);
 });
 
 test("Account notification defaults and updates are isolated by user and business", async ({ page }) => {
