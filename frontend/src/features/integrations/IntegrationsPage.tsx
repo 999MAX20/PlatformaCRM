@@ -36,9 +36,9 @@ export function IntegrationsPage() {
   const pageError = capabilities.error || connectors.error;
 
   return (
-    <div className="space-y-4 p-4 sm:p-5">
+    <div className="mx-auto flex min-h-[calc(100dvh-12rem)] w-full max-w-2xl flex-col justify-center gap-4 py-4 lg:min-h-[calc(100dvh-6rem)]">
       {pageError ? <ErrorState error={pageError} message={getApiErrorMessage(pageError)} /> : null}
-      <div className="grid items-stretch gap-4 md:grid-cols-2">
+      <div className="grid items-stretch gap-3 sm:grid-cols-2">
         {integrationProviderCatalog.map((provider) => (
           <ProviderCard
             key={provider.provider}

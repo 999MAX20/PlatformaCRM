@@ -2,6 +2,30 @@
 
 ## INTEGRATIONS-SIMPLIFY-20261013 — two provider cards
 
+Owner follow-up13.10: previous30b8f55 cards are too large. Approved delta: compact
+centered pair, logo/name/status/action only; detailed descriptions/history/errors
+inside the existing setup dialog. Primary confirmed sole UI writer again from clean
+base5787fe76491ff7107c85ff92b349dc4835afc820, same root/branch, registry unchanged.
+Risk: responsive centering, relocated details and keyboard focus. Reuse existing
+tokens/setup/API; no backend changes. Verify desktop/mobile RU/KK/EN via existing
+focused settings-workflow case, visual inspection and one isolated build; docs/diff
+hygiene and normal publication. No new CSS tests, provider calls or full suites.
+
+Compact follow-up verification:
+- `.venv/Scripts/python.exe output/multibranch/frontend.py build` PASS, log
+  `output/multibranch/build-1791905713712056300.log` (types/i18n/app/widget/budgets).
+- Same focused `verify_ui.py desktop-chromium settings-workflow.spec.ts --grep
+  "Integrations retains" --project=mobile-chromium` command: first attempt timed out
+  starting webServer at120s while build ran, before any tests. Preserved log
+  `browser-1791905724331161200.log`. Sequential retry after build: 2 PASS, each with
+  RU/KK/EN, log/screens `output/inbox-density-20261008/browser-1791905906477230900`.
+  No test assertions/timeouts weakened. Existing dialogs/focus/preferences proved.
+- Live desktop and isolated desktop EN/mobile KK screenshots inspected: pair672px,
+  compact approximately138px-tall cards, centered; mobile stacked, text uncut.
+  Live МойСклад opening/Escape/focus return checked without setup submission.
+- Six task-owned files. Backend/data/provider calls unchanged; full/backend/migration
+  suites skipped for visual delta. Publication/actual CI receipt follows.
+
 Owner explicitly approved removing the duplicate page title, subtitle, metrics,
 search/filters, financial-source form and all providers except МойСклад and 1C.
 Mode frontend implementation; gap visual hierarchy/catalog scope. Reuse existing

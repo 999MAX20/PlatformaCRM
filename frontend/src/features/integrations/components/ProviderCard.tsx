@@ -220,14 +220,12 @@ export function ProviderCard({
   };
   const primaryActionLabel = isConnected
     ? t("integrations.card.configure")
-    : isRequestProvider && !connector
-      ? t("integrations.card.requestConnection")
-      : t("integrations.card.connect");
+    : t("integrations.card.connect");
 
   const renderPrimaryButton = () => (
     <Button
       type="button"
-      className="min-h-11 w-full sm:w-auto"
+      className="min-h-11 w-full"
       variant={isRequestProvider && !connector ? "secondary" : "primary"}
       aria-label={`${primaryActionLabel} ${title}`}
       disabled={!canManage || isUnavailable}
@@ -240,17 +238,21 @@ export function ProviderCard({
 
   const frontContent = (
     <>
-      <div className="flex items-start justify-between gap-4">
-        <LogoMark logo={provider.logo} label={title} />
-        <Badge variant={statusVariant(status)} className="text-right leading-4">
-          {readableStatus(status, t, t("integrations.status.notConnectedShort"))}
-        </Badge>
+      <div className="flex items-center gap-3">
+        <LogoMark logo={provider.logo} label={title} compact />
+        <div className="min-w-0">
+          <h2 className="break-words text-sm font-bold leading-5 text-platforma-text">{title}</h2>
+          <Badge variant={statusVariant(status)} className="mt-1 leading-4">
+            {readableStatus(status, t, t("integrations.status.notConnectedShort"))}
+          </Badge>
+        </div>
       </div>
-      <div className="mt-4 min-w-0">
-        <h2 className="break-words text-base font-bold leading-6 text-platforma-text">{title}</h2>
-        <p className="mt-1 text-sm font-medium leading-[22px] text-platforma-subtle">{primaryUse}</p>
-      </div>
+      <div className="mt-3">{renderPrimaryButton()}</div>
+    </>
+  );
 
+  const connectionDetails = (
+    <>
       {connector?.last_error ? (
         <StatusNotice
           className="mt-2"
@@ -303,22 +305,20 @@ export function ProviderCard({
       ) : null}
 
       {error ? <div className="mt-2"><ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /></div> : null}
-      <div className="mt-auto pt-5">
-        {renderPrimaryButton()}
-      </div>
     </>
   );
 
   return (
     <article
       className={cn(
-        "flex h-full min-w-0 flex-col rounded-card border border-platforma-border bg-surface-card p-5 shadow-xs",
+        "min-w-0 rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs",
       )}
     >
       {frontContent}
 
       <Modal title={t("integrations.card.connectionTitle", { title })} open={connectOpen} onClose={() => setConnectOpen(false)}>
         <div className="space-y-4">
+          {connectionDetails}
           {provider.provider === "excel_csv" ? (
             <ImportPanel businessId={businessId} />
           ) : provider.provider === "kaspi" ? (
