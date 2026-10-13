@@ -120,6 +120,23 @@ global FC003/FC008, clinical day, live delivery, D04 policy and R02+ are not clo
 GitHub readback now confirms Settingsc40aff4 CI38467033037 success, together with
 the already successful Calendar and Settings receipt runs.
 
+R01 implementation f11fb05f2bc86056c1678a69624de53d23f18029 committed on
+codex/ui-testing-toolkit in the canonical folder, normal-pushed origin HEAD:main;
+remote main readback exactly matches. Reviewed outgoing range contains only
+15 owned files, no private/live data. Unrelated ONEC STATUS7/checkpoint68 remains
+unstaged byte-content preserved. Local origin/main tracking ref is stale because
+the configured fetch refspec excludes main; fetched FETCH_HEAD and ls-remote
+were used to prove ancestry and publication, without changing Git configuration.
+Actual-range `.venv/Scripts/python.exe scripts/codex_verify.py --mode static
+--base-ref 3d291720b091f77f147bc78d2a908a4a1626972e` PASS after commit (diff
+hygiene working/index/range, isolated migration drift/system check).
+CI38471830909 is in_progress at publication readback, not PASS. Existing heartbeat
+continues only actual CI/receipt monitoring and the pending user-assisted FB009;
+unchanged wait stays quiet, no repeated suites/new scope or repeated question.
+No own servers or browser sessions remain; all focused check processes completed.
+Next: actual CI receipt, then user-assisted audible screen-reader evidence.
+Technical scoped publication does not close the outstanding R01 acceptance.
+
 ## SETTINGS-ASSIGNMENT-20261014 — Phase2 execution
 
 Primary explicitly transferred the sole writer to PlatformaCRM UI after Calendar
