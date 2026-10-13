@@ -33,6 +33,7 @@ import {
   TruncatedText,
 } from "../utils/leadFormat";
 import { SourceBadge } from "./common/SourceBadge";
+import { Select } from "../../../components/ui/Select";
 
 function ManagerAvatar({ name }: { name?: string }) {
   if (!name)
@@ -83,7 +84,7 @@ function LeadTableRow({
   const isHot = lead.status === "new" && !lead.responsible_user;
   const activeColumns = columnOrder.filter((column) => visibleColumns[column]);
   const needsWideTable = activeColumns.length > 5;
-  const gridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeColumns.map((column) => leadColumnWidths[column]).join(" ")} 56px`;
+  const gridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeColumns.map((column) => leadColumnWidths[column]).join(" ")} 72px minmax(0,1fr)`;
   const cells: Record<LeadColumnKey, React.ReactNode> = {
     lead: (
       <button
@@ -152,23 +153,17 @@ function LeadTableRow({
         onClick={(event) => event.stopPropagation()}
       >
         <ManagerAvatar name={responsibleName} />
-        {canAssign ? <select
-          className="w-0 min-w-0 flex-1 truncate rounded-lg border border-transparent bg-transparent text-xs font-bold text-platforma-muted outline-hidden hover:border-platforma-border hover:bg-surface-card"
+        {canAssign ? <span className="min-w-0 flex-1"><Select
+          portal
+          density="compact"
+          className="min-h-9 border-transparent bg-transparent px-2 py-1 text-xs shadow-none"
           value={lead.responsible_user ? String(lead.responsible_user) : ""}
           onChange={(event) =>
-            onAssign(
-              event.target.value ? Number(event.target.value) : undefined,
-            )
+            event.target.value && onAssign(Number(event.target.value))
           }
           aria-label={t("leads.responsible")}
-        >
-          <option value="">{t("leads.withoutManager")}</option>
-          {teamList.map((member) => (
-            <option key={member.user.id} value={member.user.id}>
-              {member.user.full_name || member.user.email}
-            </option>
-          ))}
-        </select> : <span className="min-w-0 truncate text-sm text-platforma-subtle" title={responsibleName}>{responsibleName || t("leads.withoutManager")}</span>}
+          options={[...(!lead.responsible_user ? [{ value: "", label: t("leads.withoutManager") }] : []), ...teamList.map(member => ({ value: member.user.id, label: member.user.full_name || member.user.email }))]}
+        /></span> : <span className="min-w-0 truncate text-sm text-platforma-subtle" title={responsibleName}>{responsibleName || t("leads.withoutManager")}</span>}
       </span>
     ),
     activity: (
@@ -236,7 +231,7 @@ function LeadTableRow({
         </span>
       ))}
       <span
-        className="flex items-center justify-end gap-2"
+        className="flex items-center justify-center gap-2"
         onClick={(event) => event.stopPropagation()}
       >
         {[
@@ -256,6 +251,7 @@ function LeadTableRow({
               className="grid h-8 w-8 place-items-center rounded-control border border-platforma-border bg-surface-card text-platforma-muted shadow-xs transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
               aria-label={item.label}
               title={item.label}
+              aria-haspopup="menu"
               onClick={(event) => {
                 event.stopPropagation();
                 item.onClick(event);
@@ -305,7 +301,7 @@ export function VirtualizedLeadTableRows({
 }) {
   const activeColumns = columnOrder.filter((column) => visibleColumns[column]);
   const needsWideTable = activeColumns.length > 5;
-  const gridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeColumns.map((column) => leadColumnWidths[column]).join(" ")} 56px`;
+  const gridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeColumns.map((column) => leadColumnWidths[column]).join(" ")} 72px minmax(0,1fr)`;
 
   return (
     <div className="hidden lg:block">

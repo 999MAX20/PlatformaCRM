@@ -14,16 +14,18 @@ export function useLeadRealtime({
   businessReady,
   isOnline,
   leadsQuery,
+  queryScope,
   t,
   onNotice,
 }: {
   businessReady: boolean;
   isOnline: boolean;
   leadsQuery: UseQueryResult<PaginatedLeads>;
+  queryScope: string;
   t: Translate;
   onNotice: (message: string | null, tone?: "success" | "info" | "warning" | "danger") => void;
 }) {
-  const knownLeadIdsRef = useRef<Set<Id> | null>(null);
+  const knownLeadIdsRef = useRef<{ scope: string; ids: Set<Id> } | null>(null);
 
   useEffect(() => {
     if (!businessReady || !isOnline) return;
@@ -36,16 +38,16 @@ export function useLeadRealtime({
   }, [businessReady, isOnline, leadsQuery]);
 
   useEffect(() => {
-    if (!leadsQuery.data?.results) return;
+    if (!leadsQuery.data?.results || leadsQuery.isPlaceholderData) return;
     const currentIds = new Set(leadsQuery.data.results.map((lead) => lead.id));
     const knownIds = knownLeadIdsRef.current;
-    if (knownIds) {
-      const added = leadsQuery.data.results.filter((lead) => !knownIds.has(lead.id));
+    if (knownIds?.scope === queryScope) {
+      const added = leadsQuery.data.results.filter((lead) => !knownIds.ids.has(lead.id));
       if (added.length) {
         onNotice(t("leads.realtimeNewLeads", { count: added.length }));
         trackFrontendEvent("leads_realtime_added", { count: added.length });
       }
     }
-    knownLeadIdsRef.current = currentIds;
-  }, [leadsQuery.data, onNotice, t]);
+    knownLeadIdsRef.current = { scope: queryScope, ids: currentIds };
+  }, [leadsQuery.data, leadsQuery.isPlaceholderData, queryScope, onNotice, t]);
 }

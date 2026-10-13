@@ -1,6 +1,7 @@
 import { Archive, MessageCircle } from "lucide-react";
 
 import { Button } from "../../../components/ui/Button";
+import { Select } from "../../../components/ui/Select";
 import type { Id } from "../../../types";
 
 type TeamMemberOption = {
@@ -40,28 +41,20 @@ export function LeadsBulkBar({
     <div className="fixed inset-x-0 bottom-5 z-40 flex justify-center px-4">
       <div className="flex max-w-full flex-wrap items-center gap-2 rounded-card bg-platforma-ink px-4 py-3 text-white shadow-panel">
         <span className="mr-2 text-sm font-bold">{labels.selected}</span>
-        <select
-          className="h-9 rounded-lg border border-white/10 bg-white/10 px-3 text-sm font-bold text-white outline-hidden"
-          defaultValue=""
+        <Select
+          portal
+          density="compact"
+          placement="top"
+          className="h-9 min-h-9 w-52 py-1"
+          aria-label={labels.assign}
+          value=""
           onChange={(event) =>
             onAssign(
               event.target.value ? Number(event.target.value) : undefined,
             )
           }
-        >
-          <option className="text-platforma-text" value="">
-            {labels.assign}
-          </option>
-          {teamMembers.map((member) => (
-            <option
-              className="text-platforma-text"
-              key={member.user.id}
-              value={member.user.id}
-            >
-              {member.user.full_name || member.user.email}
-            </option>
-          ))}
-        </select>
+          options={[{ value: "", label: labels.assign }, ...teamMembers.map(member => ({ value: member.user.id, label: member.user.full_name || member.user.email }))]}
+        />
         <Button
           size="sm"
           variant="secondary"

@@ -277,7 +277,8 @@ export function LeadsPage() {
           onWhatsAppLead={whatsAppLead}
           onOpenContextMenu={(event, lead) => {
             event.preventDefault();
-            setContextMenu({ x: event.clientX, y: event.clientY, lead });
+            const trigger = event.currentTarget instanceof HTMLButtonElement ? event.currentTarget.getBoundingClientRect() : null;
+            setContextMenu({ x: trigger?.left ?? event.clientX, y: trigger ? trigger.bottom + 6 : event.clientY, lead });
           }}
           onArchiveLead={(lead) => void requestArchiveLeads([lead])}
           onTakeLead={(lead) => actionMutation.mutate({ action: "take", lead })}

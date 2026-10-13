@@ -1,5 +1,6 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from apps.activities.taxonomy import ActivityEvents
 from apps.businesses.access import Actions, assert_can
@@ -13,9 +14,16 @@ from apps.core.models import AuditLog
 from apps.core.viewsets import TenantModelViewSet
 
 
+class ClientPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class ClientViewSet(TenantModelViewSet):
     queryset = Client.objects.select_related("business")
     serializer_class = ClientSerializer
+    pagination_class = ClientPagination
     action_permission_map = {
         **TenantModelViewSet.action_permission_map,
         "archive": Actions.DELETE,

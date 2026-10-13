@@ -103,3 +103,23 @@ class ClientWorkspaceFilterTests(TestCase):
         self.assertEqual(len(second_page.data["results"]), 1)
         self.assertEqual(second_page.data["summary"]["total"], page_size + 1)
         self.assertEqual(second_page.data["summary"]["no_reply"], 1)
+
+    def test_requested_page_size_controls_rows_and_preserves_context_counts(self):
+        Client.objects.bulk_create([
+            Client(business=self.business, full_name=f"Waiting {index}", source="website")
+            for index in range(24)
+        ])
+        first = self.get(q="Waiting", page_size=10)
+        second = self.get(q="Waiting", page_size=10, page=2)
+        last = self.get(q="Waiting", page_size=10, page=3)
+        self.assertEqual([len(response.data["results"]) for response in (first, second, last)], [10, 10, 5])
+        identifiers = [row["id"] for response in (first, second, last) for row in response.data["results"]]
+        self.assertEqual(len(set(identifiers)), 25)
+        for response in (first, second, last):
+            self.assertEqual(response.data["count"], 25)
+            self.assertEqual(response.data["summary"]["total"], 25)
+        self.assertIsNone(last.data["next"])
+        self.assertIsNotNone(second.data["previous"])
+        self.assertEqual(len(self.get(q="Waiting", page_size=20).data["results"]), 20)
+        self.assertEqual(len(self.get(q="Waiting", page_size=30).data["results"]), 25)
+        self.assertEqual(self.get(q="Waiting", page_size=10, page=4).status_code, 404)

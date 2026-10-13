@@ -322,7 +322,7 @@ export function DealsPage() {
                   t={t}
                 />
               </CrmDataTable>
-              {viewMode === "table" ? <CrmPagination numbered shown={rows.length} total={deals.data?.count || 0} page={page} pageSize={pageSize} onPageChange={setPage} onPageSizeChange={setPageSize}
+              {viewMode === "table" ? <CrmPagination compact shown={rows.length} total={deals.data?.count || 0} page={page} pageSize={pageSize} onPageChange={setPage} onPageSizeChange={setPageSize}
                 rangeLabel={t("leads.tableShowingRange", { start: rows.length ? (page - 1) * pageSize + 1 : 0, end: (page - 1) * pageSize + rows.length, total: deals.data?.count || 0 })}
                 previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")} pageSizeAriaLabel={t("leads.pageSize")} pageSizeLabel={(size) => String(size)} /> : null}
           </CrmTableSurface>

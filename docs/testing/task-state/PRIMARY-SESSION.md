@@ -1,5 +1,83 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-TOOLBARS refinement — owner feedback 2026-10-13
+
+Reopens only reproduced UX defects and approved requirement changes after b98381e:
+owner screenshot shows lead row action menu outside viewport; checkbox/header and
+entity alignment differ, actions drift to far edge, manager picker is native.
+Owner rejects duplicated All controls/status-as-filter-button, narrow search and
+tall/unclear pagination; explicitly requires identical shared controls across pages.
+Mode implementation; gap UX/behavior. Current primary, canonical root,
+codex/ui-testing-toolkit, base129f1a30e41b0d57c05f48d9e11afed15b0d223e.
+Starting unrelated ONEC notes (STATUS7/checkpoint68 lines) preserved in ignored
+output/crm-toolbar-refinement-20261013; no other writer/source delta.
+Reuse CrmFilterControls, design-system Select/PopoverSurface, shared pagination;
+scope: clients/leads/deals toolbar, lead table/menu/assignment and compact pagination.
+Search comparable to global header; one filter entry, status informational only;
+scope explicit by entity, quick conditions toggle without a second All control.
+Compact footer: total, per-page selection, navigation/range only when multiple pages.
+Inspect actual client page-size contract, fix a proven mismatch if necessary.
+No calendar redesign, lifecycle/permission change, notification, BusinessEvent,
+AI provider call, working DB migration or external effect. Registry unchanged.
+Risk/check plan: focused menu viewport/keyboard/focus, manager selection, row/header
+alignment, first/last/single page and page-size flows; shared Select change opt-in
+for clipped table popovers, existing date picker representative regression retained.
+Isolated backend pagination regression before dependent frontend if API fix needed.
+Completion: affected RU/KK/EN desktop/mobile real-API browser flows, one build/types/
+i18n/bundle, changed contracts/links/diff review, owned commit/normal push/actual CI.
+
+Iteration: client API used default fixed50 despite UI sending page_size. Added
+standard bounded ClientPagination (default50/max100) and page-size/last-page/count
+regression. Isolated helper `output/crm-toolbars-20261013/backend.py` with
+`apps.clients.tests_workspace_filters apps.clients.tests apps.core.tests_workspace_related_filters apps.core.tests_crm_workspace_filters`:
+24 PASS, log `backend-1791914734498129900.log`. No lifecycle/auth changes.
+Frontend source: unified full-width search, explicit entity scope, toggled quick
+conditions, informational status and one filter button; compact footer opt-in on
+three pages; bounded portal lead context menu; shared Select opt-in portal/density
+for row/bulk assignment/scope/pagination. Header/row checkbox and text alignment
+matched, column widths bounded to keep actions near data. First new test
+incorrectly counted Columns as a filter dialog;
+locator corrected to filter label, product assertions retained.
+The next desktop attempt reproduced a product defect: moving to page2 caused the
+realtime hook to announce newly visible existing rows as new leads. Its hovered
+toast intercepted the page-size control. Baseline now keys by actor/business/list
+query and skips placeholder data, so page/filter changes do not announce arrivals.
+Keyboard handlers now respect handled events and interactive controls. Assignment
+API omits user_id to mean current actor, not unassign: the picker no longer offers
+a false unassign choice for assigned leads; unassigned state remains displayable
+and selecting an actual member follows the existing assignment API.
+
+Desktop RU refinement PASS (browser-1791915854308086400.log): shared toolbar,
+480px search, actual client/lead page10/20 and last page, single-page footer,
+manager assignment API readback, keyboard focus/Escape, right-edge menu clamp.
+Screenshots inspected at1280/1920. One earlier assignment test assumed unassigned
+creation; existing API assigns creator, so fixture now assigns another active
+member before testing reassignment. No policy change. Multi-spec helper initially
+hit Windows cmd pipe parsing; ignored runner now invokes node CLI directly.
+Desktop remaining6 PASS (`browser-1791916046469429000.log`): KK/EN refinement,
+RU/KK/EN existing filters/date keyboard/saved views, combinations/empty/error recovery.
+Total desktop7 PASS; mobile7 PASS (`browser-1791916527879495800.log`, 5.8m).
+All14 browser scenarios PASS against the same source snapshot.
+Exact browser command prefix: `.venv/Scripts/python.exe output/crm-toolbars-20261013/browser.py`;
+RU desktop args `desktop-chromium crm-toolbar-refinement.spec.ts --config=../output/crm-toolbars-20261013/playwright.config.ts --grep=\(ru\)`;
+remaining desktop args `desktop-chromium 'crm-(unified-filters|toolbar-refinement).spec.ts' --config=../output/crm-toolbars-20261013/playwright.config.ts '--grep-invert=consistent.*\(ru\)'`;
+mobile args `mobile-chromium 'crm-(unified-filters|toolbar-refinement).spec.ts' --config=../output/crm-toolbars-20261013/playwright.config.ts`.
+Config retains prior isolated canonical-source environment, 240s startup allowance
+for this host; fixtures/DB/ports disposable, real API, providers and emails disabled.
+Mobile RU screenshots inspected: full-width search, consistent filter controls,
+compact accessible footer above bottom navigation, no clipped toolbar.
+
+Completion build `.venv/Scripts/python.exe output/multibranch/frontend.py build`
+PASS: production app/widget, TypeScript, i18n, bundle budgets. Log
+`output/multibranch/build-1791916899790325000.log`. Source hash manifest confirms
+all24 owned source/test/contract paths unchanged across final browser/build runs.
+Working/index diff hygiene PASS; all intended source and untracked test reviewed.
+No dependency reinstall, migration, real provider call or ordinary DB writes.
+Full-project E2E/backend intentionally not run: bounded frontend/API pagination
+change; affected24 backend tests and14 real-API UI scenarios cover this delta.
+Static committed-range/system/drift gate pending candidate commit, then normal
+push to agreed main. Existing ONEC pilot notes remain unstaged and unpublished.
+
 ## CRM-TOOLBARS-20261013 — approved unified filters and date controls
 
 Owner approved all12 recommendations and explicitly requested implementation.

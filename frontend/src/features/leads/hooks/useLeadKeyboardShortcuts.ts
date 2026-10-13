@@ -4,7 +4,7 @@ import type { Lead } from "../../../types";
 
 function isEditableTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) return false;
-  return Boolean(target.closest("input, textarea, select, [contenteditable='true']"));
+  return Boolean(target.closest("input, textarea, select, button, [role='combobox'], [role='menu'], [contenteditable='true']"));
 }
 
 export function useLeadKeyboardShortcuts({
@@ -28,6 +28,7 @@ export function useLeadKeyboardShortcuts({
 }) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
+      if (event.defaultPrevented) return;
       const editable = isEditableTarget(event.target);
       if (editable && event.key !== "Escape") return;
       if (event.metaKey || event.ctrlKey || event.altKey) return;

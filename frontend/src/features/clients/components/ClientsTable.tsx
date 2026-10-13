@@ -231,7 +231,7 @@ export function ClientsTable({
       ) : null}
 
       <CrmPagination
-        numbered
+        compact
         pageSizeAriaLabel={t("leads.pageSize")}
         shown={rows.length}
         total={totalClients}

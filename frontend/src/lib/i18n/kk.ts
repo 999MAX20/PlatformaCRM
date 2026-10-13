@@ -4,6 +4,15 @@ import {
 export const kk: Record<string, string> = {
 
   ...ru,
+  "crmFilters.scope.leads.all": "Барлық өтінімдер",
+  "crmFilters.scope.leads.mine": "Менің өтінімдерім",
+  "crmFilters.scope.deals.all": "Барлық мәмілелер",
+  "crmFilters.scope.deals.mine": "Менің мәмілелерім",
+  "pagination.total": "Барлығы: {total}",
+  "pagination.visibleRange": "{total} ішінен {from}–{to}",
+  "pagination.perPage": "Бетте:",
+  "pagination.navigation": "Беттер",
+  "pagination.currentPage": "{pages} ішінен {page}",
   "crmFilters.sortActivity": "Белсенділік бойынша",
   "crmFilters.filters": "Сүзгілер",
   "crmFilters.scope": "Жұмыс ауқымы",

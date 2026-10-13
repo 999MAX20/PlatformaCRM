@@ -12,7 +12,7 @@ export function LeadsPagination({ page, pageSize, total, shown, label, pageSizeL
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
 }) {
-  return <CrmPagination numbered page={page} pageSize={pageSize} total={total} shown={shown} rangeLabel={label}
+  return <CrmPagination compact page={page} pageSize={pageSize} total={total} shown={shown} rangeLabel={label}
     pageSizeAriaLabel={pageSizeLabel} pageSizeLabel={(size) => `${pageSizeLabel} ${size}`} previousLabel={previousLabel} nextLabel={nextLabel}
     onPageChange={onPageChange} onPageSizeChange={onPageSizeChange} />;
 }

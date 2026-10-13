@@ -4,6 +4,15 @@ import {
 export const en: Record<string, string> = {
 
   ...ru,
+  "crmFilters.scope.leads.all": "All leads",
+  "crmFilters.scope.leads.mine": "My leads",
+  "crmFilters.scope.deals.all": "All deals",
+  "crmFilters.scope.deals.mine": "My deals",
+  "pagination.total": "Total: {total}",
+  "pagination.visibleRange": "{from}–{to} of {total}",
+  "pagination.perPage": "Per page:",
+  "pagination.navigation": "Pages",
+  "pagination.currentPage": "{page} of {pages}",
   "crmFilters.sortActivity": "By activity",
   "crmFilters.filters": "Filters",
   "crmFilters.scope": "Work scope",

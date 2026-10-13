@@ -102,14 +102,14 @@ export const leadColumnOrder: LeadColumnKey[] = [
 ];
 
 export const leadColumnWidths: Record<LeadColumnKey, string> = {
-  lead: "minmax(220px,1.35fr)",
-  phone: "minmax(130px,0.8fr)",
-  source: "minmax(110px,0.7fr)",
-  status: "minmax(112px,0.7fr)",
-  priority: "minmax(96px,0.55fr)",
-  manager: "minmax(200px,1.15fr)",
-  activity: "minmax(118px,0.65fr)",
-  next: "minmax(220px,1.45fr)",
+  lead: "minmax(260px,320px)",
+  phone: "144px",
+  source: "136px",
+  status: "128px",
+  priority: "112px",
+  manager: "240px",
+  activity: "136px",
+  next: "minmax(240px,300px)",
 };
 
 export const defaultVisibleColumns: Record<LeadColumnKey, boolean> = {

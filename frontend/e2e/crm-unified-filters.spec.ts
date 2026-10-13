@@ -42,7 +42,7 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       await expect(page).toHaveURL(new RegExp("search=Toolbar"));
       await expect.poll(async () => {
         const text = await toolbar.getByRole("group", { name: copy["crmFilters.quickFilters"], exact: true }).innerText();
-        return /\b1\b/.test(text);
+        return (kind === "clients" ? /\b0\b/ : /\b1\b/).test(text);
       }).toBe(true);
       const applied = page.url();
       const trigger = toolbar.locator(`[data-focus-return-id="${kind}-filters"]`);
@@ -92,15 +92,16 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       expect(await toolbar.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
 
       if (kind !== "clients") {
-        const scope = toolbar.getByRole("group", { name: copy["crmFilters.scope"], exact: true });
-        await scope.getByRole("button", { name: copy["crmFilters.scope.mine"], exact: true }).click();
+        const scope = toolbar.getByRole("combobox", { name: copy["crmFilters.scope"], exact: true });
+        await scope.click();
+        await page.getByRole("option", { name: copy[`crmFilters.scope.${kind}.mine`], exact: true }).click();
         await expect(page).toHaveURL(/scope=mine/);
         await quick(page, toolbar, copy[kind === "leads" ? "crmFilters.quick.attention" : "crmFilters.quick.no_tasks"], copy);
         await expect(page).toHaveURL(new RegExp(`quick=${kind === "leads" ? "attention" : "no_tasks"}`));
-        await expect(scope.getByRole("button", { name: copy["crmFilters.scope.mine"], exact: true })).toHaveAttribute("aria-pressed", "true");
+        await expect(scope).toContainText(copy[`crmFilters.scope.${kind}.mine`]);
         await page.goBack();
         await expect(page).not.toHaveURL(/quick=/);
-        await expect(scope.getByRole("button", { name: copy["crmFilters.scope.mine"], exact: true })).toHaveAttribute("aria-pressed", "true");
+        await expect(scope).toContainText(copy[`crmFilters.scope.${kind}.mine`]);
       }
       await trigger.click();
       dialog = page.getByRole("dialog", { name: copy["crmFilters.filters"], exact: true });

@@ -121,7 +121,7 @@ export function LeadsWorkspaceTable({
   const activeTableColumns = columnOrder.filter(
     (column) => visibleColumns[column],
   );
-  const tableGridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeTableColumns.map((column) => leadColumnWidths[column]).join(" ")} 56px`;
+  const tableGridTemplateColumns = `${CRM_TABLE_CHECKBOX_COLUMN} ${activeTableColumns.map((column) => leadColumnWidths[column]).join(" ")} 72px minmax(0,1fr)`;
   const tableGridMinWidth =
     activeTableColumns.length > 5
       ? CRM_TABLE_WIDE_MIN_WIDTH
@@ -182,13 +182,14 @@ export function LeadsWorkspaceTable({
         <div className="min-h-0 flex-1 overflow-auto">
         {rows.length > 0 ? <div className="sticky top-0 z-10 hidden bg-surface-card lg:block">
           <div
-            className={CRM_TABLE_HEADER_GRID_CLASS}
+            className={cn(CRM_TABLE_HEADER_GRID_CLASS, "items-center py-1")}
+            data-testid="leads-table-header"
             style={{
               gridTemplateColumns: tableGridTemplateColumns,
               minWidth: tableGridMinWidth,
             }}
           >
-            <label className="flex h-5 w-5 items-center justify-center">
+            <label className="flex h-8 w-8 items-center justify-center">
               <input
                 className="peer sr-only"
                 type="checkbox"
@@ -208,9 +209,9 @@ export function LeadsWorkspaceTable({
               </span>
             </label>
             {activeTableColumns.map((column) => (
-              <span key={column}>{t(`leads.column.${column}`)}</span>
+              <span key={column} className={column === "lead" ? "pl-12" : undefined}>{t(`leads.column.${column}`)}</span>
             ))}
-            <span>{t("leads.actions")}</span>
+            <span className="text-center">{t("leads.actions")}</span>
           </div>
         </div> : null}
         <div className="min-h-0">

@@ -1,4 +1,13 @@
 export const ru: Record<string, string> = {
+  "crmFilters.scope.leads.all": "Все заявки",
+  "crmFilters.scope.leads.mine": "Мои заявки",
+  "crmFilters.scope.deals.all": "Все сделки",
+  "crmFilters.scope.deals.mine": "Мои сделки",
+  "pagination.total": "Всего: {total}",
+  "pagination.visibleRange": "{from}–{to} из {total}",
+  "pagination.perPage": "На странице:",
+  "pagination.navigation": "Страницы",
+  "pagination.currentPage": "{page} из {pages}",
   "crmFilters.sortActivity": "По активности",
   "crmFilters.filters": "Фильтры",
   "crmFilters.scope": "Область работы",

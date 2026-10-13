@@ -91,6 +91,7 @@ export function useLeadsWorkspaceData({
     businessReady: Boolean(business),
     isOnline,
     leadsQuery: leads,
+    queryScope: JSON.stringify([business?.id, user?.id, leadListParams]),
     t,
     onNotice: setNotice,
   });

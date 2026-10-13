@@ -1,5 +1,6 @@
 import { ChevronDown, Check } from "lucide-react";
-import { SelectHTMLAttributes, forwardRef, useEffect, useId, useMemo, useRef, useState } from "react";
+import { SelectHTMLAttributes, forwardRef, useEffect, useLayoutEffect, useId, useMemo, useRef, useState, type ReactNode, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
@@ -12,10 +13,13 @@ type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   placement?: "bottom" | "top";
   /** Expand to the nearest positioned filter group instead of the trigger width. */
   expandedMenu?: boolean;
+  /** Use for table cells/scroll containers whose overflow would clip the listbox. */
+  portal?: boolean;
+  density?: "default" | "compact";
 };
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, options, placement = "bottom", expandedMenu = false, className, value, defaultValue, onChange, onBlur, disabled, required, name, "aria-label": ariaLabel, "aria-describedby": describedBy, ...props }, ref) => {
+  ({ label, error, options, placement = "bottom", expandedMenu = false, portal = false, density = "default", className, value, defaultValue, onChange, onBlur, disabled, required, name, "aria-label": ariaLabel, "aria-describedby": describedBy, ...props }, ref) => {
     const { t } = useI18n();
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -28,6 +32,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const [internalValue, setInternalValue] = useState(String(initialValue));
     const [open, setOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [menuStyle, setMenuStyle] = useState<CSSProperties>({ visibility: "hidden" });
     const currentValue = value !== undefined ? String(value) : internalValue;
     const selectedIndex = options.findIndex(
       (option) => String(option.value) === currentValue,
@@ -42,7 +47,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     }, [value]);
 
     useEffect(() => {
-      if (!expandedMenu || !open) return;
+      if ((!expandedMenu && !portal) || !open) return;
       const menu = listboxRef.current;
       const option = menu?.children[activeIndex] as HTMLElement | undefined;
       if (!menu || !option) return;
@@ -50,11 +55,40 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       const item = option.getBoundingClientRect();
       if (item.top < bounds.top) menu.scrollTop -= bounds.top - item.top;
       if (item.bottom > bounds.bottom) menu.scrollTop += item.bottom - bounds.bottom;
-    }, [activeIndex, expandedMenu, open]);
+    }, [activeIndex, expandedMenu, portal, open]);
+
+    useLayoutEffect(() => {
+      if (!portal || !open) return;
+      const place = () => {
+        const trigger = triggerRef.current;
+        const menu = listboxRef.current;
+        if (!trigger || !menu) return;
+        const rect = trigger.getBoundingClientRect();
+        const width = Math.min(Math.max(rect.width, 200), window.innerWidth - 16);
+        const height = Math.min(menu.scrollHeight, 288);
+        const above = Math.max(0, rect.top - 14);
+        const below = Math.max(0, window.innerHeight - rect.bottom - 14);
+        const upward = placement === "top" ? above >= height || above > below : below < height && above > below;
+        const maxHeight = Math.max(32, Math.min(288, upward ? above : below));
+        setMenuStyle({
+          width, maxHeight,
+          left: Math.max(8, Math.min(rect.left, window.innerWidth - width - 8)),
+          top: upward ? Math.max(8, rect.top - Math.min(height, maxHeight) - 6) : Math.min(rect.bottom + 6, window.innerHeight - maxHeight - 8),
+          zIndex: "var(--platforma-z-popover)",
+        });
+      };
+      place();
+      window.addEventListener("resize", place);
+      window.addEventListener("scroll", place, true);
+      return () => {
+        window.removeEventListener("resize", place);
+        window.removeEventListener("scroll", place, true);
+      };
+    }, [open, portal, placement, options.length]);
 
     useEffect(() => {
       function handleClick(event: MouseEvent) {
-        if (!wrapperRef.current?.contains(event.target as Node)) setOpen(false);
+        if (!wrapperRef.current?.contains(event.target as Node) && !listboxRef.current?.contains(event.target as Node)) setOpen(false);
       }
       document.addEventListener("mousedown", handleClick);
       return () => document.removeEventListener("mousedown", handleClick);
@@ -91,6 +125,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       );
     }
 
+    const renderMenu = (content: ReactNode) => portal ? createPortal(content, document.body) : content;
     return (
       <div ref={wrapperRef} className={expandedMenu ? "block" : "relative block"}>
         {label ? <span id={labelId} className="mb-2 block text-sm font-semibold text-platforma-subtle">{label}</span> : null}
@@ -119,7 +154,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           role="combobox"
           disabled={disabled}
           className={cn(
-            "platforma-focus-ring flex min-h-11 w-full items-center justify-between gap-3 rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-xs transition hover:border-brand-500 hover:bg-surface-hover disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content disabled:opacity-100",
+            "platforma-focus-ring flex w-full items-center justify-between gap-3 rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-left text-sm font-semibold text-platforma-text shadow-xs transition hover:border-brand-500 hover:bg-surface-hover disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled-surface disabled:text-disabled-content disabled:opacity-100",
+            density === "compact" ? "min-h-9" : "min-h-11",
             error && "border-platforma-danger hover:border-platforma-danger focus-visible:border-platforma-danger focus-visible:ring-platforma-danger/[0.18]",
             className,
           )}
@@ -190,15 +226,16 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <span id={valueId} className="min-w-0 truncate">{selectedOption?.label || t("common.select")}</span>
           <ChevronDown aria-hidden="true" size={17} className={cn("shrink-0 text-platforma-faint transition", open && "rotate-180 text-brand-700")} />
         </button>
-        {open ? (
+        {open ? renderMenu(
           <PopoverSurface
             ref={listboxRef}
             id={listboxId}
             role="listbox"
+            aria-label={ariaLabel || label}
+            style={portal ? menuStyle : undefined}
             className={cn(
-              "absolute z-50 overflow-y-auto p-1",
-              expandedMenu ? "no-scrollbar left-3 right-3" : "left-0 right-0",
-              placement === "top" ? "bottom-full mb-2 max-h-64" : "top-full mt-2 max-h-72",
+              "z-50 overflow-y-auto p-1",
+              portal ? "fixed" : cn("absolute", expandedMenu ? "no-scrollbar left-3 right-3" : "left-0 right-0", placement === "top" ? "bottom-full mb-2 max-h-64" : "top-full mt-2 max-h-72"),
             )}
           >
             {options.map((option, optionIndex) => {
