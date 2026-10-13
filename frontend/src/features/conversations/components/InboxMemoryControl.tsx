@@ -24,7 +24,7 @@ export function InboxMemoryControl({ conversation, items }: { conversation: Inbo
     if (result.confirmed) reset.mutate();
   } });
   if (!menuItems.length) return null;
-  return <div>
+  return <div className="[&>button]:h-11 [&>button]:w-11 lg:[&>button]:h-10 lg:[&>button]:w-10">
     <ActionMenu label={t("conversations.dialogActions")} items={menuItems} />
     {reset.error && <ErrorState error={reset.error} />}
     {reset.isSuccess && <p role="status" className="text-xs text-platforma-subtle">{t("agentChat.memoryCleared")}</p>}

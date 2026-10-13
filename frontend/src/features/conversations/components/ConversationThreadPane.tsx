@@ -2,31 +2,26 @@ import type { ReactNode, Ref } from "react";
 import { useI18n } from "../../../lib/i18n";
 import { useActiveBusiness } from "../../../hooks/useBusiness";
 import { dateInTimeZone } from "../../../lib/format";
-import {
-  CheckCheck,
-  MessageSquare,
-  PauseCircle,
-  PlayCircle,
-  UserCheck,
-} from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 import type { InboxConversation, InboxMessage } from "../../../api/inbox";
 import { WorkQueueDetailPane } from "../../../components/layout/WorkQueueLayout";
 import { Button } from "../../../components/ui/Button";
 import { EmptyState, LoadingState } from "../../../components/ui/StateViews";
 import type { Translate } from "../conversationTypes";
-import { channelLabel, conversationTitle } from "../conversationUtils";
+import type { ActionMenuItem } from "../../../components/ui/ActionMenu";
+import { ConversationThreadHeader } from "./ConversationThreadHeader";
 import { ConversationComposer } from "./ConversationComposer";
-import { Pill, Tooltip } from "./ConversationPrimitives";
 import { MessageBubble } from "./MessageBubble";
 
 type ConversationThreadPaneProps = {
   selected: InboxConversation | null;
   connectChannelAction?: ReactNode;
   mobileThreadOpen: boolean;
-  mobileActions?: ReactNode;
+  threadMenu: ActionMenuItem[];
   headerActions?: ReactNode;
   aiActions?: ReactNode;
+  aiPreview?: ReactNode;
   canUpdate: boolean;
   renderDelivery: (message: InboxMessage) => ReactNode;
   onMobileClose: () => void;
@@ -60,9 +55,10 @@ export function ConversationThreadPane({
   selected,
   connectChannelAction,
   mobileThreadOpen,
-  mobileActions,
+  threadMenu,
   headerActions,
   aiActions,
+  aiPreview,
   canUpdate,
   renderDelivery,
   onMobileClose,
@@ -103,8 +99,6 @@ export function ConversationThreadPane({
     <WorkQueueDetailPane
       className="min-w-0"
       mobileDetailOpen={mobileThreadOpen}
-      closeLabel={t("common.close")}
-      onMobileClose={onMobileClose}
     >
       {!selected ? (
         <div className="grid flex-1 place-items-center p-8">
@@ -119,126 +113,16 @@ export function ConversationThreadPane({
         </div>
       ) : (
         <>
-          {mobileActions ? <div className="flex flex-wrap gap-2 border-b border-platforma-border p-3 xl:hidden">{mobileActions}</div> : null}
-          <div data-testid="inbox-thread-header" className="shrink-0 border-b border-platforma-border bg-platforma-card px-3 py-2">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h2 title={conversationTitle(selected, t)} className="truncate text-base font-bold text-platforma-text">
-                    {conversationTitle(selected, t)}
-                  </h2>
-                </div>
-                <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                  <Pill className="bg-brand-50 text-brand-700 ring-brand-100">
-                    {channelLabel(selected.channel, t)}
-                  </Pill>
-                  {selected.bot_enabled ? (
-                    <Pill className="bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/20">
-                      {t("conversations.botActive")}
-                    </Pill>
-                  ) : (
-                    <Pill className="bg-surface-muted text-platforma-muted ring-platforma-border">
-                      {t("conversations.botPaused")}
-                    </Pill>
-                  )}
-                  {selected.handoff_required ? (
-                    <Pill className="bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/20">
-                      {t("conversations.needsOperator")}
-                    </Pill>
-                  ) : null}
-                  {selected.assigned_to_email ? <span title={selected.assigned_to_email} className="min-w-0 truncate text-xs text-platforma-muted">{selected.assigned_to_email}</span> : null}
-                </div>
-              </div>
-              <div className="flex shrink-0 items-center gap-1">{headerActions}</div>
-            </div>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <Tooltip label={t("conversations.assignTooltip")}>
-                  <Button
-                    data-conversation-action-id="assign"
-                    size="sm"
-                    className="min-h-11 px-2.5 text-xs lg:min-h-9"
-                    variant="secondary"
-                    disabled={!canUpdate}
-                    onClick={onAssign}
-                    isLoading={assignPending}
-                    aria-label={t("conversations.takeDialog")}
-                  >
-                    <UserCheck size={16} /> {t("conversations.takeDialog")}
-                  </Button>
-                </Tooltip>
-                <Tooltip
-                  label={
-                    selected.bot_enabled
-                      ? t("conversations.pauseBotTooltip")
-                      : t("conversations.enableBotTooltip")
-                  }
-                >
-                  <Button
-                    data-conversation-action-id="toggle-bot"
-                    size="sm"
-                    className="min-h-11 px-2.5 text-xs lg:min-h-9"
-                    variant={selected.bot_enabled ? "warning" : "secondary"}
-                    disabled={!canToggleBot || selected.status !== "open" || (!selected.bot_enabled && selected.ai_safety?.calls_remaining === 0)}
-                    onClick={onToggleBot}
-                    isLoading={toggleBotPending}
-                    aria-label={
-                      selected.bot_enabled
-                        ? t("conversations.pauseBot")
-                        : t("conversations.enableBot")
-                    }
-                  >
-                    {selected.bot_enabled ? (
-                      <PauseCircle size={16} />
-                    ) : (
-                      <PlayCircle size={16} />
-                    )}
-                    {selected.bot_enabled
-                      ? t("conversations.pauseBot")
-                      : t("conversations.enableBot")}
-                  </Button>
-                </Tooltip>
-                {selected.status === "closed" ? (
-                  <Tooltip label={t("conversations.reopenTooltip")}>
-                    <Button
-                      data-conversation-action-id="reopen"
-                      size="sm"
-                      className="min-h-11 px-2.5 text-xs lg:min-h-9"
-                      variant="secondary"
-                      onClick={onReopenConversation}
-                      disabled={!canUpdate}
-                      isLoading={reopenPending}
-                      aria-label={t("conversations.openDialog")}
-                    >
-                      <PlayCircle size={16} /> {t("common.open")}
-                    </Button>
-                  </Tooltip>
-                ) : (
-                  <Tooltip label={t("conversations.closeTooltip")}>
-                    <Button
-                      data-conversation-action-id="close"
-                      size="sm"
-                      className="min-h-11 px-2.5 text-xs lg:min-h-9"
-                      variant="secondary"
-                      onClick={onCloseConversation}
-                      disabled={!canUpdate}
-                      isLoading={closePending}
-                      aria-label={t("conversations.closeDialog")}
-                    >
-                      <CheckCheck size={16} /> {t("common.close")}
-                    </Button>
-                  </Tooltip>
-                )}
-              </div>
-            {selected.ai_safety && (availableLabel || selected.handoff_required || (!selected.bot_enabled && selected.ai_safety.reason)) && <div className="mt-2 space-y-1 text-xs text-platforma-subtle">
+          <ConversationThreadHeader selected={selected} headerActions={headerActions} threadMenu={threadMenu} canUpdate={canUpdate} canToggleBot={canToggleBot} onMobileClose={onMobileClose} onAssign={onAssign} assignPending={assignPending} onToggleBot={onToggleBot} toggleBotPending={toggleBotPending} onCloseConversation={onCloseConversation} closePending={closePending} onReopenConversation={onReopenConversation} reopenPending={reopenPending} t={t} />
+            {selected.ai_safety && (availableLabel || selected.handoff_required || (!selected.bot_enabled && selected.ai_safety.reason)) && <div className="shrink-0 space-y-1 border-b border-platforma-border bg-platforma-card px-4 py-2 text-xs text-platforma-subtle">
               {availableLabel && <p>{t("customerSafety.availableAt", { time: availableLabel })}</p>}
               {selected.handoff_required && selected.handoff_reason && <p role="status">{selected.handoff_reason}</p>}
               {!selected.bot_enabled && selected.ai_safety.reason && <p>{t("customerSafety.resumeHint")}</p>}
             </div>}
-          </div>
 
           <div
             ref={messageScrollRef}
-            className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-surface-warm p-4"
+            className="min-h-0 flex-1 space-y-3 overflow-x-hidden overflow-y-auto overscroll-contain bg-surface-warm p-4"
           >
             {messagesLoading ? (
               <LoadingState />
@@ -285,6 +169,7 @@ export function ConversationThreadPane({
             sendPending={sendPending}
             canReply={canUpdate}
             aiActions={aiActions}
+            aiPreview={aiPreview}
             onDraftChange={onDraftChange}
             onResizeComposer={onResizeComposer}
             onOpenQuickReplies={onOpenQuickReplies}

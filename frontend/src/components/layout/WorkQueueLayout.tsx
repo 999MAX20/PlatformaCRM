@@ -8,6 +8,7 @@ type WorkQueueLayoutProps = {
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
+  edgeToEdge?: boolean;
 };
 
 type WorkQueuePaneProps = {
@@ -21,12 +22,13 @@ type WorkQueueDetailPaneProps = WorkQueuePaneProps & {
   onMobileClose?: () => void;
 };
 
-export function WorkQueueLayout({ children, className, style }: WorkQueueLayoutProps) {
+export function WorkQueueLayout({ children, className, style, edgeToEdge = false }: WorkQueueLayoutProps) {
   return (
     <section
       style={style}
       className={cn(
-        "grid min-h-[calc(100dvh-176px)] overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-card lg:h-[calc(100vh-132px)] lg:min-h-[720px]",
+        "grid overflow-hidden bg-surface-card",
+        edgeToEdge ? "h-full min-h-0" : "min-h-[calc(100dvh-176px)] rounded-card border border-platforma-border shadow-card lg:h-[calc(100vh-132px)] lg:min-h-[720px]",
         className,
       )}
     >

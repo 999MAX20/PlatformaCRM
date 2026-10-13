@@ -12,6 +12,7 @@ import {
   Link2,
   Sparkles,
   UserRound,
+  X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -66,7 +67,7 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { InboxCustomerContext } from "./components/InboxCustomerContext";
 import { appendReplyDraft, useInboxDraft } from "./hooks/useInboxDraft";
 import { ConversationThreadPane } from "./components/ConversationThreadPane";
-import { InboxMemoryControl } from "./components/InboxMemoryControl";
+import { Tooltip } from "./components/ConversationPrimitives";
 import { MessageDeliveryDetails } from "./components/MessageDeliveryDetails";
 import { PipelineConfirmationDialog, type PipelineReview } from "./components/PipelineConfirmationDialog";
 import {
@@ -135,10 +136,11 @@ export function ConversationsPage() {
   const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
   const [addLinkOpen, setAddLinkOpen] = useState(false);
   const [automationOpen, setAutomationOpen] = useState(false);
-  const desktopInspector = useMediaQuery("(min-width: 1280px)");
+  const desktopInspector = useMediaQuery("(min-width: 1440px)");
   const desktopThread = useMediaQuery("(min-width: 1024px)");
   const readSelectionRef = useRef<string | null>(null);
   const contextTriggerRef = useRef<HTMLButtonElement>(null);
+  const aiTriggerRef = useRef<HTMLButtonElement>(null);
   const retryKeys = useRef(new Map<number, string>());
   const [suggestedReply, setSuggestedReply] = useState("");
 
@@ -180,11 +182,12 @@ export function ConversationsPage() {
   function resizeComposer() {
     const composer = composerRef.current;
     if (!composer) return;
-    const maxHeight = window.matchMedia("(max-width: 640px)").matches
-      ? 120
-      : 160;
+    const maxHeight = Math.min(
+      window.matchMedia("(max-width: 640px)").matches ? 110 : 132,
+      Math.max(44, (window.visualViewport?.height ?? window.innerHeight) * 0.25),
+    );
     composer.style.height = "auto";
-    composer.style.height = `${Math.min(composer.scrollHeight, maxHeight)}px`;
+    composer.style.height = `${Math.max(44, Math.min(composer.scrollHeight, maxHeight))}px`;
     composer.style.overflowY =
       composer.scrollHeight > maxHeight ? "auto" : "hidden";
   }
@@ -1287,6 +1290,16 @@ export function ConversationsPage() {
     resizeComposer();
   }, [draft]);
 
+  useEffect(() => {
+    const onResize = () => resizeComposer();
+    window.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
+    };
+  }, []);
+
   if (legacySelectedId) {
     return (
       <Navigate
@@ -1341,15 +1354,15 @@ export function ConversationsPage() {
   return (
     <div
       data-testid="inbox-workspace-ready"
-      className="h-[calc(100dvh-var(--app-header-height)-2rem-var(--inbox-mobile-nav))] overflow-hidden"
+      className="h-[calc(100dvh-var(--app-header-height)-var(--inbox-mobile-nav))] overflow-hidden"
     >
       <WorkQueueLayout
-        style={{ height: "100%", minHeight: 0 }}
+        edgeToEdge
         className={cn(
-          "overflow-hidden border border-platforma-border shadow-soft lg:grid-cols-[288px_minmax(0,1fr)]",
+          "lg:grid-cols-[288px_minmax(0,1fr)]",
           inspectorOpen
-            ? selected ? "xl:grid-cols-[288px_minmax(0,1fr)_320px]" : "xl:grid-cols-[288px_minmax(0,1fr)_284px]"
-            : "xl:grid-cols-[288px_minmax(0,1fr)]",
+            ? "min-[90rem]:grid-cols-[288px_minmax(0,1fr)_320px]"
+            : "min-[90rem]:grid-cols-[288px_minmax(0,1fr)]",
         )}
       >
         <ConversationListPane
@@ -1400,18 +1413,23 @@ export function ConversationsPage() {
         <ConversationThreadPane
           connectChannelAction={connectChannelAction}
           canUpdate={canUpdate}
-          headerActions={<>
-            <Button ref={contextTriggerRef} variant="ghost" size="sm" onClick={() => desktopInspector ? setInspectorOpen(state => !state) : setMobileInspectorOpen(true)} aria-expanded={desktopInspector ? inspectorOpen : mobileInspectorOpen}>
-              <UserRound size={16} />{t("conversations.aboutClient")}
-            </Button>
-            {selected ? <InboxMemoryControl key={selected.id} conversation={selected} items={threadMenu} /> : null}
-          </>}
-          aiActions={<>
-              {canSuggestAi ? <Button variant="ghost" size="sm" onClick={() => selected && suggestMutation.mutate(selected.id)} disabled={!canUpdate || selected?.status !== "open"} isLoading={suggestMutation.isPending}><Sparkles size={16} />{t("conversations.prepareReply")}</Button> : null}
-              {suggestedReply ? <Button variant="secondary" size="sm" disabled={!canUpdate || selected?.status !== "open"} onClick={() => { insertQuickReply(suggestedReply); setSuggestedReply(""); }}>{t("conversations.useSuggestedReply")}</Button> : null}
-            {suggestMutation.isError && suggestMutation.variables === selected?.id ? <p role="alert" className="w-full text-xs text-platforma-danger">{getApiErrorMessage(suggestMutation.error)}</p> : null}
-            {suggestedReply ? <p className="max-h-32 w-full overflow-y-auto whitespace-pre-wrap text-sm text-platforma-text">{suggestedReply}</p> : null}
-          </>}
+          threadMenu={threadMenu}
+          headerActions={<Button ref={contextTriggerRef} variant="ghost" size="icon" className="h-11 w-11 shrink-0 lg:h-10 lg:w-10" title={t("conversations.aboutClient")} aria-label={t("conversations.aboutClient")} onClick={() => desktopInspector ? setInspectorOpen(state => !state) : setMobileInspectorOpen(true)} aria-expanded={desktopInspector ? inspectorOpen : mobileInspectorOpen}>
+            <UserRound size={18} />
+          </Button>}
+          aiActions={canSuggestAi ? <Tooltip label={t("conversations.prepareReply")} side="top"><Button ref={aiTriggerRef} variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label={t("conversations.prepareReply")} aria-busy={suggestMutation.isPending} onClick={() => selected && suggestMutation.mutate(selected.id)} disabled={!canUpdate || selected?.status !== "open" || suggestMutation.isPending}>
+            <Sparkles size={18} className={suggestMutation.isPending ? "animate-pulse" : undefined} />
+          </Button></Tooltip> : null}
+          aiPreview={suggestedReply || (suggestMutation.isError && suggestMutation.variables === selected?.id) ? <div data-testid="inbox-ai-preview" className="mb-3 rounded-card border border-platforma-border bg-surface-muted p-3">
+            {suggestMutation.isError && suggestMutation.variables === selected?.id ? <p role="alert" className="text-xs text-platforma-danger">{getApiErrorMessage(suggestMutation.error)}</p> : null}
+            {suggestedReply ? <>
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <Button variant="secondary" size="sm" disabled={!canUpdate || selected?.status !== "open"} onClick={() => { insertQuickReply(suggestedReply); setSuggestedReply(""); }}>{t("conversations.useSuggestedReply")}</Button>
+                <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={t("common.close")} onClick={() => { setSuggestedReply(""); aiTriggerRef.current?.focus(); }}><X size={16} /></Button>
+              </div>
+              <p className="max-h-[min(132px,20dvh)] overflow-y-auto whitespace-pre-wrap break-words text-sm leading-[22px] text-platforma-text">{suggestedReply}</p>
+            </> : null}
+          </div> : null}
           renderDelivery={message => <MessageDeliveryDetails message={message} canRetry={canUpdate} retryPending={retryMessageMutation.isPending && retryMessageMutation.variables?.messageId === message.id} onRetry={() => {
             if (!selected || retryMessageMutation.isPending) return;
             let key = retryKeys.current.get(message.id);
@@ -1466,7 +1484,7 @@ export function ConversationsPage() {
           t={t}
         />
 
-        <aside className={cn("hidden min-h-0 flex-col border-l border-platforma-border xl:flex", !inspectorOpen && "xl:hidden")}>
+        <aside className={cn("hidden min-h-0 flex-col border-l border-platforma-border min-[90rem]:flex", !inspectorOpen && "min-[90rem]:hidden")}>
           {selected ? customerContext : <div className="grid flex-1 place-items-center bg-surface-muted p-3 text-center text-sm font-bold text-platforma-muted">{t("conversations.selectContext")}</div>}
         </aside>
       </WorkQueueLayout>
@@ -1499,6 +1517,7 @@ export function ConversationsPage() {
       <Dialog
         title={t("conversations.quickRepliesTitle")}
         open={quickRepliesOpen}
+        focusReturnId="inbox-quick-replies"
         onClose={() => setQuickRepliesOpen(false)}
         size="md"
         bodyClassName="bg-platforma-card p-0"

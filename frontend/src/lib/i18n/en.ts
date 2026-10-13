@@ -3038,7 +3038,7 @@ export const en: Record<string, string> = {
   "conversations.aiMockDraftReady":
     "AI prepared a test draft and inserted it into the reply field.",
   "conversations.aiDraftReady":
-    "AI prepared a draft and inserted it into the reply field.",
+    "AI prepared a reply draft.",
   "conversations.aiReplyForbidden": "Your role cannot generate AI replies.",
   "conversations.aiPipelinePreviewForbidden":
     "Your role cannot preview CRM pipeline suggestions.",

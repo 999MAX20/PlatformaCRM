@@ -38,16 +38,12 @@ export function MessageBubble({ message, t, language, timeZone }: { message: Inb
     >
       <div
         className={cn(
-          "max-w-[78%] rounded-card border border-platforma-border bg-platforma-card px-4 py-3 text-sm leading-6 text-platforma-text shadow-xs",
+          "max-w-[min(85%,720px)] rounded-card border border-platforma-border bg-platforma-card px-3 py-2 text-sm font-medium leading-[22px] text-platforma-text shadow-xs",
           inbound ? "rounded-tl-md" : "rounded-tr-md",
         )}
         data-testid="conversation-message-bubble"
       >
-        <div className="mb-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-platforma-text">
-          {ai ? <Sparkles size={13} /> : null}
-          {author}
-        </div>
-        <p className="whitespace-pre-wrap">
+        <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">
           {message.text || t("conversations.emptyMessage")}
         </p>
         {message.attachments?.length ? (
@@ -71,8 +67,9 @@ export function MessageBubble({ message, t, language, timeZone }: { message: Inb
             ))}
           </div>
         ) : null}
-        <div className="mt-2 flex items-center justify-end text-[11px] font-bold text-platforma-muted">
-          {time ? <span>{time}</span> : null}
+        <div className="mt-1 flex flex-wrap items-center justify-end gap-2 text-xs leading-4 text-platforma-subtle">
+          <span className="inline-flex items-center gap-1">{ai ? <Sparkles size={12} /> : null}{author}</span>
+          {time ? <span className="tabular-nums">{time}</span> : null}
         </div>
       </div>
     </div>

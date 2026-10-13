@@ -121,7 +121,7 @@ export function AppLayout() {
             <main
               data-workspace-content
               key={workspaceAnimationKey}
-              className={`animate-fade-in mx-auto w-full flex-1 ${isInboxWorkspace ? "[--inbox-mobile-nav:calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] lg:[--inbox-mobile-nav:0px] px-4 pb-[calc(1rem+var(--inbox-mobile-nav))] pt-[calc(var(--app-header-height)+1rem)] max-w-none" : `${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}`}
+              className={`animate-fade-in mx-auto w-full flex-1 ${isInboxWorkspace ? "[--inbox-mobile-nav:calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] lg:[--inbox-mobile-nav:0px] min-h-0 overflow-hidden pb-[var(--inbox-mobile-nav)] pt-[var(--app-header-height)] max-w-none" : `${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}`}
             >
               <MeasuredWorkspaceOutlet />
             </main>

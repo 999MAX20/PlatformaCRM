@@ -3049,7 +3049,7 @@ export const ru: Record<string, string> = {
   "conversations.aiMockDraftReady":
     "AI подготовил тестовый черновик и вставил его в поле ответа.",
   "conversations.aiDraftReady":
-    "AI подготовил черновик и вставил его в поле ответа.",
+    "AI подготовил черновик ответа.",
   "conversations.aiReplyForbidden":
     "Ваша роль не может генерировать AI-ответы.",
   "conversations.aiPipelinePreviewForbidden":

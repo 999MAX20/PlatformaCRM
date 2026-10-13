@@ -1,5 +1,55 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## INBOX-COMPACT-20261013 — approved full-height conversation workspace
+
+Owner approved the generated compact reference and detailed implementation analysis.
+Mode frontend implementation; gap layout/interaction. Same registered primary generation5,
+canonical C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit, clean
+base 7df422d4ccdbc3683186ed7d233aeecb2def45a2. Prior Tasks scoped writer released.
+Observable result: edge-to-edge Inbox, 288px list / flexible chat / 320px inspector;
+72px normal thread header, 80px normal composer, message typography14/22; inline
+AI/templates tools, preserved explicit AI preview/insertion and existing actions.
+Inspector docks at1440px; narrower widths use drawer, phones retain list/thread flow.
+Reuse AppLayout/WorkQueueLayout, shared Button/Tooltip/ActionMenu/Drawer, API hooks,
+i18n and draft/retry permissions. No backend, schema, permission, notification,
+BusinessEvent or AI provider-policy changes; no external sends/working-data changes.
+Risk: responsive overflow, focus restoration, relocated actions and AI preview,
+composer growth, scroll anchoring and retained drafts. Plan: layout then header,
+composer/messages; targeted isolated Inbox interaction/locale desktop/mobile tests,
+visual geometry on laptop/desktop/mobile and keyboard/zoom, one isolated build/types/
+i18n/bundle. Preserve errors/forbidden/safety/retry/attachments; no CSS-mirroring E2E.
+Docs/link and working/index/actual range hygiene; explicit reviewed commit and normal
+push main with remote/actual-CI readback. R01 remains deferred; no full-project gate.
+
+Implementation and scoped verification complete, 13.10.2026:
+- Full-height shell, responsive header/menu, inline tools, bounded composer and
+  compact bubbles implemented; AI draft copy now accurately describes preview.
+- Existing isolated interactions: `.venv/Scripts/python.exe
+  output/inbox-density-20261008/verify_ui.py desktop-chromium inbox-inspector.spec.ts
+  --grep "thread menu|AI inserts|switching conversations|context errors"` — 4 PASS;
+  same command with mobile-chromium — 4 PASS. Logs
+  browser-1791880417218603900 and browser-1791880837673834900 in that output folder.
+- New targeted flow: same helper with `desktop-chromium inbox-compact.spec.ts
+  --project=mobile-chromium` — 6 PASS, RU/KK/EN desktop/mobile. Final log/screenshots
+  browser-1791881055877515400. AI error/retry/explicit insertion/no send, keyboard
+  focus, draft retention, inspector reflow and assignment/close/reopen covered.
+- Initial runs found template focus restoration and breakpoint ordering defects;
+  both fixed. Later EN resize assertion raced React media state; explicit waiting
+  fixed the test. Earlier failures retained in output logs, final six cases green.
+- `.venv/Scripts/python.exe output/multibranch/frontend.py build` — PASS types,
+  i18n, Vite app/widget and bundle budgets; log build-1791881239095610700.log.
+- Visual inspection: desktop/mobile plus laptop/tablet reflow, including long
+  messages and warnings. Live read-only Inbox at1536x695: header72px, composer78.8px,
+  history487.4px versus prior374px (~30% gain), no horizontal overflow. Browser
+  zoom shortcut had no effect (DPR remained1.25); actual200% zoom is unverified.
+  Responsive768px evidence is not claimed as browser-zoom certification.
+- Disposable fixtures/DB/ports and disabled providers only; normal working DB
+  not migrated/seeded, no external sends. Backend/full-suite/live-provider gates
+  omitted: no backend contracts changed; R01 and deployment remain outside scope.
+- All17 changed/new paths task-owned; explicit diff/new-file review, encoding,
+  registered docs/links and working/index/committed-range hygiene required before
+  normal publication. Publication and actual CI receipt follow below.
+
 ## TASKS-REDESIGN-20261013 — approved task workspace and domain behavior
 
 Owner approved both generated references and all task proposals, explicitly requested

@@ -3051,7 +3051,7 @@ export const kk: Record<string, string> = {
   "conversations.systemReopened": "Диалог жұмысқа қайтарылды.",
   "conversations.aiMockDraftReady":
     "AI тест черновик дайындап, жауап өрісіне қойды.",
-  "conversations.aiDraftReady": "AI черновик дайындап, жауап өрісіне қойды.",
+  "conversations.aiDraftReady": "AI жауап нобайын дайындады.",
   "conversations.aiReplyForbidden": "Бұл рөл AI-жауаптарын жасай алмайды.",
   "conversations.aiPipelinePreviewForbidden":
     "Бұл рөл CRM байланыстары бойынша AI ұсыныстарын қарай алмайды.",
