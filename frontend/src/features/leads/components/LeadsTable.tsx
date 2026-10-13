@@ -142,7 +142,7 @@ function LeadTableRow({
           )}
         />
         <span className="text-xs font-bold text-platforma-muted">
-          {isHot ? t("leads.priorityHot") : t("leads.priorityNormal")}
+          {isHot ? t("crmFilters.unassigned") : t("leads.priorityNormal")}
         </span>
       </span>
     ),
@@ -184,6 +184,9 @@ function LeadTableRow({
         <span className="block truncate text-xs text-platforma-muted">
           {lead.next_task_due_at ? formatDateTime(lead.next_task_due_at) : null}
         </span>
+        <span className="block text-xs text-platforma-warning">
+          {lead.attention_reasons?.map(reason => t(`crmFilters.reason.${reason}`)).join(" · ")}
+        </span>
       </span>
     ),
   };
@@ -194,7 +197,7 @@ function LeadTableRow({
         CRM_TABLE_ROW_GRID_CLASS,
         selected && "bg-brand-50/70 shadow-[inset_3px_0_0_var(--platforma-brand)]",
         bulkSelected && "bg-surface-muted",
-        aiInsight.stale && !selected && "bg-platforma-warningSoft/[0.45]",
+        Boolean(lead.attention_reasons?.length) && !selected && "bg-platforma-warningSoft/[0.45]",
       )}
       style={{
         gridTemplateColumns,

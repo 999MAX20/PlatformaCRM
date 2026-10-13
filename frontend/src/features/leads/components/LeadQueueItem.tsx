@@ -114,6 +114,7 @@ export function LeadQueueItem({
               {nextAction(lead, t)}
             </span>
           </div>
+          {lead.attention_reasons?.length ? <p className="mt-1 text-xs text-platforma-warning">{lead.attention_reasons.map(reason => t(`crmFilters.reason.${reason}`)).join(" · ")}</p> : null}
           <p className="mt-2 text-[11px] font-bold text-platforma-subtle lg:hidden">
             {t("leads.mobileSwipeHint")}
           </p>

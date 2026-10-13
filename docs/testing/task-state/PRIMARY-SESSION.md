@@ -1,5 +1,84 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-TOOLBARS-20261013 — approved unified filters and date controls
+
+Owner approved all12 recommendations and explicitly requested implementation.
+Phase1: clients/leads/deals compact shared toolbar, precise server-side filters,
+shared date/range picker in project design system. Calendar week/month/hover/day
+inspector redesign is phase2 and is not started by phase1 completion.
+Mode implementation; gap behavior/UX. Executor current primary via direct owner
+request; canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+base33795e273f0c782a143269ced190e49022472921. Starting unrelated ONEC pilot notes in
+STATUS/this checkpoint preserved; snapshot output/crm-toolbars-20261013. No peer
+approval loop/registry change. One actual writer, affected-path drift checked.
+
+Approved behavior: clients All/WaitingReply, no Mine/New shortcuts or new ownership;
+waiting=open scoped conversation with unanswered last inbound, successful human/AI
+outbound only clears it, reading/draft/failure does not; handoff separate. Leads
+All/Mine orthogonal to All/New/InProgress/Attention; no Hot, unassigned named honestly;
+attention=open with missing owner, missing next action or overdue action, reason in
+row. Deals All/Mine orthogonal to All/Attention/NoNextAction, existing lifecycle.
+Defaults nonarchived clients, unfinished leads, open deals with visible restriction.
+Advanced filters: clients source/tags(any/all)/segment/created/handoff/archive;
+leads status/owner-or-unassigned/source/created/attention reason/archive; deals
+status/stage/owner-or-unassigned/source/amount/created/expected-close/attention reason/
+archive. Multi values OR within field, AND across fields; reject invalid ranges/IDs.
+Search/quick apply immediately; advanced draft Apply/Cancel/Reset. URL restoration,
+personal per-user/business saved views. Counts on same search/scope/advanced boundary,
+not loaded page; failed counts not0. Active chips only when needed, no search duplicate.
+Search240–280, wide one row, overflowMore preserving selection, two-row phone.
+Date control opens on whole field, month/year navigation, range highlight and business
+local day boundaries. Existing tokens/UI/API/selectors reused; no new permissions,
+clinical data, lifecycle writes, notification/BusinessEvent/AI provider effects,
+external calls or working DB migrations. No model migration anticipated.
+
+Verification plan: focused isolated backend after each coherent selector/API slice,
+valid/invalid combinations, own/team/tenant visibility, reply delivery semantics,
+archive, date/timezone boundaries, multi filters and counts across pagination.
+Completion: affected/dependent clients/leads/deals/read-scope suites + system/drift;
+focused reachable RU/KK/EN desktop/mobile tests for URL/back, draft apply/reset,
+presets, multiselect, keyboard/date/overflow/error/empty; one isolated frontend
+build/types/i18n/bundle. No full-project gate absent demonstrated shared risk.
+Review explicit task-owned diff, preserve other WIP, docs links/hygiene, conventional
+commit and normal push origin main with remote SHA and actual CI readback.
+
+Result: server selectors/API and shared React controls are wired for all three
+workspaces. URL/draft/reset/personal browser views/date grid/contextual counts are
+implemented; lead rows show grounded attention reasons. Phase1 scoped checks PASS.
+
+Verification (canonical source; disposable DB/ports, existing locked dependencies):
+- `.venv/Scripts/python.exe output/crm-toolbars-20261013/backend.py apps.clients apps.leads apps.crm apps.core.tests_b2_roles_queues apps.core.tests_mixed_membership_scope apps.core.tests_workspace_related_filters apps.core.tests_work_queues`: 126 PASS, `backend-1791911852879416700.log`.
+- Same isolated helper with `apps.core.tests_crm_workspace_filters`: 3 PASS,
+  `backend-1791912264773398700.log`; team/own/denied/disabled/anonymous boundaries.
+- `.venv/Scripts/python.exe output/crm-toolbars-20261013/backend-final.py`: focused
+  clients/leads/deals workspace + read-scope modules, 13 PASS; `manage.py check`
+  and `manage.py makemigrations --check --dry-run` PASS, no drift;
+  `backend-final-1791912600380125200.log`.
+- Additional count/pagination methods: `apps.clients.tests_workspace_filters.ClientWorkspaceFilterTests.test_counts_ignore_quick_and_pagination_but_keep_search_and_source`, `apps.leads.tests_workspace_filters.LeadWorkspaceFilterTests.test_counts_cover_all_pages_and_ignore_only_quick_filter`, `apps.crm.tests_workspace_filters.DealWorkspaceFilterTests.test_summary_and_board_counts_cover_full_matching_scope` via `backend.py`.
+  Leads/deals PASS in `backend-1791913761673988000.log`; clients fixture initially
+  assumed configurable page_size=1, but actual default pagination is fixed50.
+  Corrected test uses51 matching records and both pages; focused rerun PASS in
+  `backend-1791913904685275400.log`. No pagination implementation change.
+  Combined affected coverage:132 distinct tests, including16 new regressions.
+- `.venv/Scripts/python.exe output/crm-toolbars-20261013/browser.py <project> crm-unified-filters.spec.ts --config=../output/crm-toolbars-20261013/playwright.config.ts`:
+  `mobile-chromium` 4 PASS (`browser-1791913196031539000.log`),
+  `desktop-chromium` 4 PASS (`browser-1791913470264043600.log`). RU/KK/EN across
+  all three pages, URL/back/reload, draft cancel/apply/reset, saved views,
+  multiselect, own+quick, status conflict, invalid date/amount, error recovery,
+  zero/unknown counts, month/year/keyboard, highlighted five-day range; screenshots
+  inspected at both viewports. Initial mobile overflow fixed by clipping the
+  hidden width probe; subsequent startup timeout was before assertions. With
+  host memory pressure (~64MB free of8GB), ignored isolated config allows240s
+  startup; assertions retained, other processes untouched. Final reruns PASS.
+- `.venv/Scripts/python.exe output/multibranch/frontend.py build`: i18n, TypeScript,
+  Vite app/widget and bundle budgets PASS; `output/multibranch/build-1791913851855203100.log`.
+
+Evidence logs/screenshots and starting unrelated-WIP snapshot remain under ignored
+`output/crm-toolbars-20261013`. Relevant application inputs unchanged after PASS.
+No working DB migrations, installs, external provider calls or deployment acceptance.
+Full-project/local full-E2E omitted per proportional scope; push CI read separately.
+Next: task-owned diff/index/range hygiene and normal publication receipt.
+
 ## DIRECT-TASK-AUTHORIZATION-20261013 — owner-directed peer tasks
 
 Owner approved removing routine peer permission/reporting between CRM and CRM UI.

@@ -45,6 +45,7 @@ export function ClientsPage() {
   );
   const {
     ordering,
+    hasFilters: hasClientFilters,
     setOrdering,
     clearAllFilters,
     clearCreateParam,
@@ -292,12 +293,7 @@ export function ClientsPage() {
   if (!business) return <ErrorState message={t("clients.noBusiness")} />;
   if (pageLoading) return <LoadingState scope="page" />;
 
-  const hasClientFilters =
-    Boolean(search.trim()) ||
-    Boolean(source) ||
-    Boolean(selectedTag) ||
-    Boolean(selectedSegment) ||
-    quickFilter !== "all";
+
 
   return (
     <>
@@ -320,25 +316,13 @@ export function ClientsPage() {
               className="h-full"
               filters={
                 <ClientsFilters
-                  quickFilter={quickFilter}
-                  onQuickFilterChange={setQuickFilter}
-                  search={search}
-                  onSearchChange={setSearch}
-                  source={source}
-                  onSourceChange={setSource}
-                  selectedTag={selectedTag}
-                  onSelectedTagChange={setSelectedTag}
-                  selectedSegment={selectedSegment}
-                  onSelectedSegmentChange={setSelectedSegment}
                   tagOptions={tagOptions}
                   segmentOptions={segmentOptions}
                   sourceOptions={sourceOptions}
-                  kpi={kpi}
+                  counts={filteredClients.isError || filteredClients.isPlaceholderData ? undefined : filteredClients.data?.summary}
                   visibleColumns={visibleClientColumns}
                   onToggleColumn={toggleClientColumn}
                   onOpenSegment={() => setSegmentOpen(true)}
-                  onClearSearch={clearSearchFilter}
-                  onClearAll={clearAllFilters}
                   t={t}
                 />
               }

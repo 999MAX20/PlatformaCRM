@@ -8,7 +8,7 @@ export type LeadListParams = {
   page_size?: number;
   search?: string;
   status?: Lead["status"] | Lead["status"][];
-  statuses?: Lead["status"] | Lead["status"][];
+  statuses?: string | Lead["status"][];
   source?: string;
   responsible_user?: Id;
   unassigned?: boolean;
@@ -36,8 +36,8 @@ export const leadsApi = {
     const { data } = await apiClient.get<PaginatedResponse<Lead>>("/api/leads/", { params });
     return data;
   },
-  summary: async () => {
-    const { data } = await apiClient.get<LeadSummary>("/api/leads/summary/");
+  summary: async (params?: LeadListParams) => {
+    const { data } = await apiClient.get<LeadSummary>("/api/leads/summary/", { params });
     return data;
   },
   createAppointment: async ({

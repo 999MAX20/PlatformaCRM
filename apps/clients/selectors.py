@@ -7,6 +7,7 @@ from apps.activities.segments import evaluate_segment_queryset
 from apps.bots.models import BotConversation
 from apps.businesses.access import Resources
 from apps.clients.identity import normalize_email, normalize_phone
+from apps.clients.workspace import client_workspace_filters, waiting_conversations
 from apps.crm.models import Deal
 from apps.core.crm_read_scope import readable_across_businesses
 from apps.core.permissions import accessible_businesses
@@ -28,7 +29,12 @@ def client_queryset_for_request(queryset, request, *, client_ids=None, apply_qui
             ("conversations", BotConversation, Resources.CONVERSATIONS),
         )
     }
-    queryset = annotate_client_list_queryset(queryset, related_querysets=related)
+    workspace = request.query_params.get("workspace") == "true"
+    queryset = annotate_client_list_queryset(queryset, related_querysets=related, waiting_only=workspace)
+    if workspace and request.query_params.get("handoff") == "true":
+        queryset = queryset.filter(Exists(related["conversations"].filter(
+            client_id=OuterRef("pk"), is_archived=False, status="open", handoff_required=True,
+        )))
     if apply_quick_filter:
         queryset = apply_client_quick_filter(queryset, request)
     ordering = request.query_params.get("ordering", "")
@@ -54,9 +60,12 @@ def filter_client_queryset(queryset, request, *, client_ids=None):
         queryset = queryset.filter(search_query)
     if client_ids:
         queryset = queryset.filter(id__in=client_ids)
-    if source:
+    workspace = request.query_params.get("workspace") == "true"
+    if workspace:
+        queryset = client_workspace_filters(queryset, request.query_params)
+    if source and not workspace:
         queryset = queryset.filter(source=source)
-    if tag_id:
+    if tag_id and not workspace:
         tagged_client_ids = TaggedObject.objects.filter(
             business_id__in=queryset.values_list("business_id", flat=True),
             entity_type="client",
@@ -77,7 +86,7 @@ def filter_client_queryset(queryset, request, *, client_ids=None):
     return queryset
 
 
-def annotate_client_list_queryset(queryset, *, related_querysets=None):
+def annotate_client_list_queryset(queryset, *, related_querysets=None, waiting_only=False):
     related = related_querysets or {
         "leads": Lead.objects.all(), "deals": Deal.objects.all(),
         "tasks": Task.objects.all(), "conversations": BotConversation.objects.all(),
@@ -120,6 +129,8 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
         client_id=OuterRef("id"),
         is_archived=False,
     ).filter(Q(unread_count__gt=0) | Q(handoff_required=True))
+    if waiting_only:
+        has_no_reply_conversation = waiting_conversations(related["conversations"]).filter(client_id=OuterRef("id"))
     has_new_lead = related["leads"].filter(
         client_id=OuterRef("id"),
         is_archived=False,
@@ -175,7 +186,7 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None):
         has_no_reply_conversation=Exists(has_no_reply_conversation),
         has_new_lead=Exists(has_new_lead),
         has_no_reply=Case(
-            When(Q(has_no_reply_conversation=True) | Q(has_new_lead=True), then=Value(True)),
+            When(Q(has_no_reply_conversation=True) if waiting_only else Q(has_no_reply_conversation=True) | Q(has_new_lead=True), then=Value(True)),
             default=Value(False),
             output_field=BooleanField(),
         ),

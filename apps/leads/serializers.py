@@ -85,6 +85,11 @@ class LeadSerializer(serializers.ModelSerializer):
 
 
 class LeadListSerializer(serializers.ModelSerializer):
+    attention_reasons = serializers.SerializerMethodField()
+
+    def get_attention_reasons(self, obj):
+        return [key for key in ("unassigned", "no_action", "overdue_action") if getattr(obj, f"attention_{key}", False)]
+
     next_task_id = serializers.IntegerField(read_only=True, allow_null=True)
     next_task_title = serializers.CharField(read_only=True, allow_null=True)
     next_task_due_at = serializers.DateTimeField(read_only=True, allow_null=True)
@@ -115,6 +120,8 @@ class LeadListSerializer(serializers.ModelSerializer):
             "responsible_user",
             "responsible_name",
             "responsible_email",
+            "attention_reasons",
+            "is_archived",
             "next_task_id",
             "next_task_title",
             "next_task_due_at",

@@ -20,6 +20,13 @@ SETTINGS-FUNCTIONAL-20261008. Назначение этого документа
 [checkpoint](../testing/task-state/PRIMARY-SESSION.md#tasks-redesign-20261013--approved-task-workspace-and-domain-behavior).
 Это не возобновляет отложенный R01 и не назначает следующую страницу.
 
+13.10: CRM-TOOLBARS-20261013 — согласованный первый этап панелей клиентов,
+заявок и сделок с общим выбором дат. Реализация и scoped-проверки завершены;
+результаты и публикация фиксируются в
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md#crm-toolbars-20261013--approved-unified-filters-and-date-controls).
+Месяц/неделя, hover-сводка и инспектор дня на странице календаря — следующий
+отдельный этап; текущая работа не закрывает R01 и не запускает этот этап.
+
 ## Как читать статусы
 
 - **SCOPED PASS** — названный результат проверен на указанной версии и среде.

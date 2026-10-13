@@ -1,3 +1,4 @@
+import { useCrmFilters } from "../../../components/crm/useCrmFilters";
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -5,10 +6,7 @@ import {
   LEAD_COLUMNS_KEY,
   LEAD_COLUMN_ORDER_KEY,
   leadColumnOrder,
-  leadFilters,
-  LEAD_PRESETS_KEY,
   LEADS_PAGE_SIZE,
-  type FilterPreset,
   type LeadColumnKey,
   type LeadFilter,
   type Translate,
@@ -24,18 +22,15 @@ export function useLeadsTableState({
   t: Translate;
   onNotice: (message: string | null, tone?: "success" | "info" | "warning" | "danger") => void;
 }) {
-  const [filter, setFilter] = useState<LeadFilter>(() => {
-    const param = searchParams.get("filter") as LeadFilter | null;
-    return param && leadFilters.includes(param) ? param : "all";
-  });
-  const [source, setSource] = useState(searchParams.get("source") || "");
-  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const { state, update } = useCrmFilters("leads");
+  const filter = state.quick as LeadFilter;
+  const { source, search } = state;
+  const setFilter = (quick: LeadFilter) => update({ quick });
+  const setSource = (source: string) => update({ source });
+  const setSearch = (search: string) => update({ search }, true);
   const [sortByAi, setSortByAi] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(LEADS_PAGE_SIZE);
-  const [filterPresets, setFilterPresets] = useState<FilterPreset[]>(() => loadJson<FilterPreset[]>(LEAD_PRESETS_KEY, []));
-  const [presetName, setPresetName] = useState("");
-  const [savedFiltersOpen, setSavedFiltersOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState<Record<LeadColumnKey, boolean>>(() => {
     const saved = loadJson<Partial<Record<LeadColumnKey, boolean>>>(LEAD_COLUMNS_KEY, {});
@@ -49,11 +44,8 @@ export function useLeadsTableState({
 
   useEffect(() => {
     setPage(1);
-  }, [filter, search, source]);
+  }, [JSON.stringify(state)]);
 
-  useEffect(() => {
-    saveJson(LEAD_PRESETS_KEY, filterPresets);
-  }, [filterPresets]);
 
   useEffect(() => {
     saveJson(LEAD_COLUMNS_KEY, visibleColumns);
@@ -63,30 +55,11 @@ export function useLeadsTableState({
     saveJson(LEAD_COLUMN_ORDER_KEY, columnOrder);
   }, [columnOrder]);
 
-  const savePreset = useCallback(() => {
-    const name = presetName.trim() || t("leads.defaultPresetName");
-    setFilterPresets((value) => [{ id: String(Date.now()), name, filter, source, search }, ...value].slice(0, 8));
-    setPresetName("");
-    onNotice(t("leads.filterSaved"));
-  }, [filter, onNotice, presetName, search, source, t]);
-
-  const applyPreset = useCallback((preset: FilterPreset) => {
-    setFilter(preset.filter);
-    setSource(preset.source);
-    setSearch(preset.search);
-  }, []);
-
   const shareView = useCallback(async () => {
-    const params = new URLSearchParams(searchParams);
-    params.set("filter", filter);
-    if (source) params.set("source", source);
-    else params.delete("source");
-    if (search) params.set("search", search);
-    else params.delete("search");
-    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    const url = `${window.location.origin}${window.location.pathname}?${searchParams.toString()}`;
     await navigator.clipboard?.writeText(url);
     onNotice(t("leads.viewCopied"));
-  }, [filter, onNotice, search, searchParams, source, t]);
+  }, [onNotice, searchParams, t]);
 
   return {
     filter,
@@ -101,18 +74,11 @@ export function useLeadsTableState({
     setPage,
     pageSize,
     setPageSize,
-    filterPresets,
-    presetName,
-    setPresetName,
-    savedFiltersOpen,
-    setSavedFiltersOpen,
     moreMenuOpen,
     setMoreMenuOpen,
     visibleColumns,
     setVisibleColumns,
     columnOrder,
-    savePreset,
-    applyPreset,
     shareView,
   };
 }

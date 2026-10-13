@@ -1,5 +1,10 @@
 # PlatformaCRM — текущий статус
 
+13.10.2026. CRM-TOOLBARS: реализован согласованный первый этап — единые панели
+клиентов/заявок/сделок, серверные фильтры и общий выбор дат. UI RU/KK/EN
+desktop/mobile и сборка PASS. Календарь — следующий отдельный этап.
+Scope и evidence — в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md).
+
 13.10.2026. DIRECT-TASK-AUTHORIZATION: владелец отменил рутинное согласование и
 отчёты между PlatformaCRM и PlatformaCRM UI. Прямое поручение разрешает исполнение
 в получившем его non-retired чате; один фактический писатель, проверки Git/evidence

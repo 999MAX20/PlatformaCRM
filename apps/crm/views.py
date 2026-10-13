@@ -16,6 +16,7 @@ from apps.core.work_queues import no_next_action_deals_queryset, sla_overdue_dea
 from apps.crm.models import Deal, Pipeline, PipelineStage, StageTransition
 from apps.crm.pipeline_templates import DEFAULT_STAGE_SPECS
 from apps.crm.selectors import build_deal_summary, stale_deals_queryset
+from apps.crm.workspace import deal_workspace_queryset
 from apps.crm.serializers import DealListSerializer, DealSerializer, PipelineSerializer, PipelineStageSerializer, StageTransitionSerializer
 from apps.crm.services import assign_deal_owner, mark_deal_lost, mark_deal_won, move_deal_stage, record_deal_value_change, reopen_deal
 from apps.tasks.models import Task
@@ -130,6 +131,8 @@ class DealViewSet(TenantModelViewSet):
             )
         )
         params = self.request.query_params
+        if params.get("workspace") == "true" and self.action in {"list", "board", "summary"}:
+            return deal_workspace_queryset(queryset, self.request)
         client_ids = self.parse_query_id_list("client_ids")
         if client_ids:
             queryset = queryset.filter(client_id__in=client_ids)

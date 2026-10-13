@@ -1,3 +1,4 @@
+import { useCrmFilters, crmFilterParams } from "../../../components/crm/useCrmFilters";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router";
@@ -48,15 +49,19 @@ export function useClientsWorkspace({
   );
   const [selectedClientId, setSelectedClientId] = useState<Id | null>(null);
   const [actionClient, setActionClient] = useState<Client | null>(null);
-  const [search, setSearch] = useState("");
+  const { state: filterState, update: updateFilter, reset: resetFilters, hasFilters } = useCrmFilters("clients");
+  const { search, source, tag: selectedTag, segment: selectedSegment } = filterState;
+  const quickFilter = filterState.quick as ClientQuickFilter;
+  const setSearch = (search: string) => updateFilter({ search }, true);
+  const setSource = (source: string) => updateFilter({ source });
+  const setSelectedTag = (tag: string) => updateFilter({ tag });
+  const setSelectedSegment = (segment: string) => updateFilter({ segment });
+  const setQuickFilter = (quick: ClientQuickFilter) => updateFilter({ quick });
   const debouncedSearch = useDebouncedValue(search, 350);
-  const [source, setSource] = useState("");
-  const [selectedTag, setSelectedTag] = useState("");
-  const [selectedSegment, setSelectedSegment] = useState("");
+  const filterParams = crmFilterParams("clients", { ...filterState, search: debouncedSearch });
   const [ordering, setOrdering] = useState("-created_at");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_CLIENTS_PAGE_SIZE);
-  const [quickFilter, setQuickFilter] = useState<ClientQuickFilter>("all");
   const [visibleClientColumns, setVisibleClientColumns] = useState<
     Set<ClientTableColumn>
   >(() => {
@@ -82,23 +87,15 @@ export function useClientsWorkspace({
       "clients",
       "filtered",
       businessId,
-      debouncedSearch,
-      source,
-      selectedTag,
-      selectedSegment,
-      quickFilter,
+      filterParams,
       ordering,
       page,
       pageSize,
     ],
     queryFn: () =>
       clientsApi.listFiltered({
-        q: debouncedSearch || undefined,
+        ...filterParams,
         ordering,
-        source: source || undefined,
-        tag: selectedTag || undefined,
-        segment: selectedSegment || undefined,
-        quick_filter: quickFilter === "all" ? undefined : quickFilter,
         page,
         page_size: pageSize,
       }),
@@ -153,20 +150,8 @@ export function useClientsWorkspace({
     setSearchParams(nextParams, { replace: true });
   }, [searchParams, setSearchParams]);
 
-  const clearSearchFilter = useCallback(() => {
-    setSearch("");
-    const nextParams = new URLSearchParams(searchParams);
-    nextParams.delete("search");
-    setSearchParams(nextParams, { replace: true });
-  }, [searchParams, setSearchParams]);
-
-  const clearAllFilters = useCallback(() => {
-    clearSearchFilter();
-    setQuickFilter("all");
-    setSource("");
-    setSelectedTag("");
-    setSelectedSegment("");
-  }, [clearSearchFilter]);
+  const clearSearchFilter = () => updateFilter({ search: "" });
+  const clearAllFilters = resetFilters;
 
   const openCreateClient = useCallback(() => {
     setEditing(undefined);
@@ -247,12 +232,11 @@ export function useClientsWorkspace({
       setEditing(undefined);
       setCreateOpen(true);
     }
-    setSearch(searchParams.get("search") || "");
   }, [searchParams]);
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, source, selectedTag, selectedSegment, quickFilter, ordering]);
+  }, [JSON.stringify(filterParams), ordering]);
 
   useEffect(() => {
     const safePage = Math.min(page, totalPages);
@@ -319,6 +303,7 @@ export function useClientsWorkspace({
 
   return {
     actionClient,
+    hasFilters,
     ordering,
     setOrdering,
     clearAllFilters,

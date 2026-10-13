@@ -792,6 +792,7 @@ export type Service = {
 };
 
 export type Lead = {
+  attention_reasons?: Array<"unassigned" | "no_action" | "overdue_action">;
   id: Id;
   business: Id;
   client: Id;

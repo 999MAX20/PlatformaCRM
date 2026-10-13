@@ -37,17 +37,11 @@ export function useLeadsWorkspaceDisplay({
   pageCount: number;
 }) {
   const filters = useMemo(() => [
-    { value: "all" as LeadFilter, label: t("leads.filterAll"), count: leadSummary?.total ?? totalLeadCount },
-    { value: "new" as LeadFilter, label: t("leads.filterNew"), count: leadSummary?.new ?? allLeads.filter((lead) => lead.status === "new").length },
-    { value: "in_progress" as LeadFilter, label: t("leads.statusInProgress"), count: leadSummary?.in_progress ?? allLeads.filter((lead) => ["contacted", "in_progress"].includes(lead.status)).length },
-    { value: "hot" as LeadFilter, label: t("leads.filterHot"), count: leadSummary?.hot ?? allLeads.filter((lead) => lead.status === "new" && !lead.responsible_user).length },
-    { value: "unanswered" as LeadFilter, label: t("leads.filterUnanswered"), count: leadSummary?.unanswered ?? allLeads.filter((lead) => !lead.responsible_user).length },
-    { value: "attention" as LeadFilter, label: t("leads.filterAttention"), count: leadSummary?.attention ?? allLeads.filter((lead) => {
-      const insight = aiInsights.get(lead.id);
-      return insight?.stale || (insight?.lossRisk || 0) >= 70;
-    }).length },
-    { value: "mine" as LeadFilter, label: t("leads.filterMine"), count: leadSummary?.mine ?? allLeads.filter((lead) => userId && lead.responsible_user === userId).length },
-  ], [aiInsights, allLeads, leadSummary, t, totalLeadCount, userId]);
+    { value: "all" as LeadFilter, label: t("leads.filterAll"), count: leadSummary?.total },
+    { value: "new" as LeadFilter, label: t("leads.filterNew"), count: leadSummary?.new },
+    { value: "in_progress" as LeadFilter, label: t("leads.statusInProgress"), count: leadSummary?.in_progress },
+    { value: "attention" as LeadFilter, label: t("leads.filterAttention"), count: leadSummary?.attention },
+  ], [leadSummary, t]);
 
   const pageStart = pageRows.length ? (safePage - 1) * pageSize + 1 : 0;
   const pageEnd = pageRows.length ? pageStart + pageRows.length - 1 : 0;

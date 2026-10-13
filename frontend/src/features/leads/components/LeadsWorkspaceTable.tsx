@@ -1,3 +1,4 @@
+import { useCrmFilters } from "../../../components/crm/useCrmFilters";
 import type React from "react";
 import { CheckCheck, Inbox } from "lucide-react";
 
@@ -14,7 +15,6 @@ import { cn } from "../../../lib/cn";
 import type { Client, Id, Lead, Service, TeamMember } from "../../../types";
 import {
   leadColumnWidths,
-  type FilterPreset,
   type LeadAiInsight,
   type LeadColumnKey,
   type LeadFilter,
@@ -29,17 +29,12 @@ import { LeadsToolbar } from "./LeadsToolbar";
 type LeadFilterTab = {
   value: LeadFilter;
   label: string;
-  count: number;
+  count?: number;
 };
 
 export function LeadsWorkspaceTable({
   filters,
-  filter,
-  search,
-  source,
-  savedFiltersOpen,
-  filterPresets,
-  presetName,
+  error,
   moreMenuOpen,
   columnOrder,
   visibleColumns,
@@ -60,13 +55,6 @@ export function LeadsWorkspaceTable({
   pageEnd,
   totalLeadCount,
   t,
-  onFilterChange,
-  onSearchChange,
-  onSourceChange,
-  onToggleSavedFilters,
-  onApplyPreset,
-  onPresetNameChange,
-  onSavePreset,
   onToggleMoreMenu,
   onToggleColumn,
   onToggleSortByAi,
@@ -88,12 +76,7 @@ export function LeadsWorkspaceTable({
   onPageSizeChange,
 }: {
   filters: LeadFilterTab[];
-  filter: LeadFilter;
-  search: string;
-  source: string;
-  savedFiltersOpen: boolean;
-  filterPresets: FilterPreset[];
-  presetName: string;
+  error?: React.ReactNode;
   moreMenuOpen: boolean;
   columnOrder: LeadColumnKey[];
   visibleColumns: Record<LeadColumnKey, boolean>;
@@ -114,13 +97,6 @@ export function LeadsWorkspaceTable({
   pageEnd: number;
   totalLeadCount: number;
   t: Translate;
-  onFilterChange: (filter: LeadFilter) => void;
-  onSearchChange: (value: string) => void;
-  onSourceChange: (value: string) => void;
-  onToggleSavedFilters: () => void;
-  onApplyPreset: (preset: FilterPreset) => void;
-  onPresetNameChange: (value: string) => void;
-  onSavePreset: () => void;
   onToggleMoreMenu: () => void;
   onToggleColumn: (column: LeadColumnKey) => void;
   onToggleSortByAi: () => void;
@@ -156,6 +132,7 @@ export function LeadsWorkspaceTable({
     "telegram",
     "instagram",
     "website",
+    "landing",
     "manual",
     "parser",
     "other",
@@ -163,8 +140,7 @@ export function LeadsWorkspaceTable({
   const allPageRowsSelected =
     pageRows.length > 0 &&
     pageRows.every((lead) => selectedLeadIds.includes(lead.id));
-  const hasFilters =
-    filter !== "all" || Boolean(search.trim()) || Boolean(source);
+  const { hasFilters, reset } = useCrmFilters("leads");
 
   return (
     <CrmTableSurface
@@ -172,42 +148,23 @@ export function LeadsWorkspaceTable({
       filters={
         <LeadsToolbar
           filters={filters}
-          filter={filter}
-          search={search}
-          source={source}
+          teamList={teamList}
           sourceOptions={sourceOptions.map((item) => ({
             value: item,
             label: item ? getSourceLabel(item, t) : t("leads.allSources"),
           }))}
-          savedFiltersOpen={savedFiltersOpen}
-          filterPresets={filterPresets}
-          presetName={presetName}
           moreMenuOpen={moreMenuOpen}
           columnOrder={columnOrder}
           visibleColumns={visibleColumns}
           labels={{
             search: t("leads.search"),
-            status: t("leads.filtersLabel"),
-            source: t("leads.source"),
-            filters: t("leads.filters"),
             columns: t("leads.columns"),
             exportCsv: t("leads.exportCsv"),
             exportExcel: t("leads.exportExcel"),
             import: t("leads.import"),
-            noSavedFilters: t("leads.noSavedFilters"),
-            filterPresetName: t("leads.filterPresetName"),
-            saveFilter: t("leads.saveFilter"),
-            sortByHeat: t("leads.sortByHeat"),
             shareView: t("leads.shareView"),
             column: (column) => t(`leads.column.${column}`),
           }}
-          onFilterChange={onFilterChange}
-          onSearchChange={onSearchChange}
-          onSourceChange={onSourceChange}
-          onToggleSavedFilters={onToggleSavedFilters}
-          onApplyPreset={onApplyPreset}
-          onPresetNameChange={onPresetNameChange}
-          onSavePreset={onSavePreset}
           onToggleMoreMenu={onToggleMoreMenu}
           onToggleColumn={onToggleColumn}
           onToggleSortByAi={onToggleSortByAi}
@@ -218,7 +175,7 @@ export function LeadsWorkspaceTable({
         />
       }
     >
-      <CrmDataTable
+      {error || <CrmDataTable
         className="flex min-h-0 flex-1 flex-col rounded-none border-0 bg-transparent shadow-none"
         contentClassName="flex min-h-0 flex-1 flex-col"
       >
@@ -277,11 +234,7 @@ export function LeadsWorkspaceTable({
                   {hasFilters ? (
                     <Button
                       variant="secondary"
-                      onClick={() => {
-                        onFilterChange("all");
-                        onSearchChange("");
-                        onSourceChange("");
-                      }}
+                      onClick={reset}
                     >
                       {t("tasks.resetFilters")}
                     </Button>
@@ -357,7 +310,7 @@ export function LeadsWorkspaceTable({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         /> : null}
-      </CrmDataTable>
+      </CrmDataTable>}
     </CrmTableSurface>
   );
 }

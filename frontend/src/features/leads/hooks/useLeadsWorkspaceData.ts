@@ -1,3 +1,4 @@
+import { useCrmFilters, crmFilterParams } from "../../../components/crm/useCrmFilters";
 import { useMemo } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
@@ -18,8 +19,6 @@ import { useLeadSelectionContext } from "./useLeadSelectionContext";
 import { useLeadsWorkspaceDisplay } from "./useLeadsWorkspaceDisplay";
 
 export function useLeadsWorkspaceData({
-  filter,
-  source,
   search,
   sortByAi,
   page,
@@ -41,6 +40,7 @@ export function useLeadsWorkspaceData({
   showWarning: (message: string) => void;
 }) {
   const { business } = useActiveBusiness();
+  const { state } = useCrmFilters("leads");
   const { user } = useAuth();
   const debouncedSearch = useDebouncedValue(search, 300);
   const { clients, services, resources, tasks, deals, appointments, botConversations } = useEntityData({
@@ -59,26 +59,10 @@ export function useLeadsWorkspaceData({
     enabled: hasPermission(user, business?.id, "team"),
     retry: false,
   });
-  const leadListParams = useMemo(() => {
-    const params: NonNullable<Parameters<typeof leadsApi.listPaginated>[0]> = {
-      page,
-      page_size: pageSize,
-      ordering: sortByAi ? "-updated_at" : "-created_at",
-    };
-    const trimmedSearch = debouncedSearch.trim();
-    if (trimmedSearch) params.search = trimmedSearch;
-    if (source) params.source = source;
-    if (filter === "new") params.status = "new";
-    if (filter === "in_progress") params.status = ["contacted", "in_progress"];
-    if (filter === "hot") {
-      params.status = "new";
-      params.unassigned = true;
-    }
-    if (filter === "unanswered") params.unassigned = true;
-    if (filter === "attention") params.attention = true;
-    if (filter === "mine") params.mine = true;
-    return params;
-  }, [debouncedSearch, filter, page, pageSize, sortByAi, source]);
+  const leadListParams = useMemo(() => ({
+    ...crmFilterParams("leads", { ...state, search: debouncedSearch.trim() }),
+    page, page_size: pageSize, ordering: sortByAi ? "-updated_at" : "-created_at",
+  }), [state, debouncedSearch, page, pageSize, sortByAi]);
 
   const leads = useQuery({
     queryKey: ["leads", "paginated", business?.id, leadListParams],
@@ -88,8 +72,8 @@ export function useLeadsWorkspaceData({
     placeholderData: keepPreviousData,
   });
   const leadSummary = useQuery({
-    queryKey: ["leads", "summary", business?.id],
-    queryFn: leadsApi.summary,
+    queryKey: ["leads", "summary", business?.id, leadListParams],
+    queryFn: () => leadsApi.summary(leadListParams),
     enabled: Boolean(business),
     retry: false,
   });
@@ -153,7 +137,7 @@ export function useLeadsWorkspaceData({
   });
   const display = useLeadsWorkspaceDisplay({
     t,
-    leadSummary: leadSummary.data,
+    leadSummary: leadSummary.isError ? undefined : leadSummary.data,
     totalLeadCount,
     allLeads,
     aiInsights,
@@ -172,8 +156,8 @@ export function useLeadsWorkspaceData({
     tasks,
     leads,
     retryWorkspace: () => { void Promise.all([clients.refetch(), services.refetch(), leads.refetch(), leadSummary.refetch()]); },
-    pageError: clients.error || services.error || leads.error,
-    pageErrorMessage: getApiErrorMessage(clients.error || services.error || leads.error),
+    pageError: clients.error || services.error || leads.error || leadSummary.error,
+    pageErrorMessage: getApiErrorMessage(clients.error || services.error || leads.error || leadSummary.error),
     isPageLoading: leads.isLoading || clients.isLoading || services.isLoading || tasks.isLoading,
     allLeads,
     rows,

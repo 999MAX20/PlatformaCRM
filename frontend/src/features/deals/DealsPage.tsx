@@ -90,31 +90,14 @@ export function DealsPage() {
         new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
     );
   }, [rows]);
-  const quickCounts = useMemo(
-    () => ({
-      all: summary.data?.total ?? 0,
-      mine: summary.data?.mine ?? 0,
-      hot:
-        summary.data?.hot ??
-        rows.filter((deal) => deal.riskPercent >= 60).length,
-      overdue:
-        summary.data?.overdue ?? rows.filter((deal) => deal.sla_overdue).length,
-      no_tasks:
-        summary.data?.no_tasks ??
-        rows.filter(
-          (deal) =>
-            deal.status === "open" && !deal.nextTask && !deal.next_action_at,
-        ).length,
-    }),
-    [
-      summary.data?.total,
-      rows,
-      summary.data?.hot,
-      summary.data?.mine,
-      summary.data?.no_tasks,
-      summary.data?.overdue,
-    ],
-  );
+  const quickCounts = useMemo(() => ({
+    all: summary.isError || summary.isPlaceholderData ? undefined : summary.data?.total,
+    mine: summary.isError || summary.isPlaceholderData ? undefined : summary.data?.mine,
+    hot: summary.isError || summary.isPlaceholderData ? undefined : summary.data?.hot,
+    overdue: summary.isError || summary.isPlaceholderData ? undefined : summary.data?.overdue,
+    no_tasks: summary.isError || summary.isPlaceholderData ? undefined : summary.data?.no_tasks,
+  }), [summary.data, summary.isError, summary.isPlaceholderData]);
+
   const selection = useDealSelection(sortedRows);
   const actions = useDealActions({
     businessId: business?.id,

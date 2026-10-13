@@ -1,3 +1,4 @@
+import { useCrmFilters, crmFilterParams } from "../../../components/crm/useCrmFilters";
 import { useMemo } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
@@ -15,6 +16,7 @@ import { selectDealPipeline } from "../utils/dealHelpers";
 
 export function useDeals(filters?: DealFiltersState, viewMode: "table" | "kanban" = "kanban", page = 1, pageSize = 20) {
   const { business } = useActiveBusiness();
+  const { state } = useCrmFilters("deals");
   const { user } = useAuth();
   const debouncedSearch = useDebouncedValue(filters?.search || "", 300);
   const entityData = useEntityData({
@@ -33,27 +35,10 @@ export function useDeals(filters?: DealFiltersState, viewMode: "table" | "kanban
   const pipelines = useMemo(() => (entityData.pipelines.data || []).filter((pipeline) => pipeline.business === business?.id), [entityData.pipelines.data, business?.id]);
   const stages = useMemo(() => (entityData.pipelineStages.data || []).filter((stage) => stage.business === business?.id), [entityData.pipelineStages.data, business?.id]);
   const activePipeline = selectDealPipeline(pipelines, filters?.pipelineId)?.id || 0;
-  const listParams = useMemo<DealListParams>(() => {
-    const params: DealListParams = {
-      pipeline: activePipeline || undefined,
-      page_size: pageSize,
-      page,
-      ordering: "-updated_at",
-    };
-    if (!filters) return params;
-    if (filters.stageFilter !== "all") params.stage = filters.stageFilter;
-    if (filters.statusFilter !== "all") params.status = filters.statusFilter;
-    if (filters.ownerFilter) params.owner = filters.ownerFilter;
-    if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
-    if (filters.quickFilter !== "all") params.quick = filters.quickFilter;
-    if (filters.quickFilter === "mine") params.mine = true;
-    if (filters.sourceFilter) params.source = filters.sourceFilter;
-    if (filters.minAmount) params.amount_min = filters.minAmount;
-    if (filters.maxAmount) params.amount_max = filters.maxAmount;
-    if (filters.dateFrom) params.created_from = filters.dateFrom;
-    if (filters.dateTo) params.created_to = filters.dateTo;
-    return params;
-  }, [activePipeline, debouncedSearch, filters, page, pageSize]);
+  const listParams = useMemo<DealListParams>(() => ({
+    ...crmFilterParams("deals", { ...state, search: debouncedSearch.trim() }),
+    pipeline: activePipeline || undefined, page_size: pageSize, page, ordering: "-updated_at",
+  }), [state, activePipeline, debouncedSearch, page, pageSize]);
 
   const deals = useQuery({
     queryKey: ["deals", "paginated", business?.id, listParams],

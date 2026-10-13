@@ -27,7 +27,6 @@ export function useDealMetrics(
   );
 
   const rows = useMemo<DealRow[]>(() => {
-    const searchValue = filters.search.trim().toLowerCase();
     const ownerMap = new Map(
       data.teamMembers.map((member) => [member.user.id, member]),
     );
@@ -135,45 +134,8 @@ export function useDealMetrics(
           ...risk,
         };
       })
-      .filter((deal) => {
-        const searchable = [
-          deal.title,
-          deal.source,
-          deal.clientEntity?.full_name,
-          deal.clientEntity?.phone,
-          deal.clientEntity?.email,
-        ]
-          .join(" ")
-          .toLowerCase();
-        const amount = Number(deal.amount || 0);
-        const created = new Date(deal.created_at).getTime();
-        return (
-          (filters.statusFilter === "all" ||
-            deal.status === filters.statusFilter) &&
-          (!filters.ownerFilter ||
-            String(deal.owner || "") === filters.ownerFilter) &&
-          (filters.stageFilter === "all" ||
-            String(deal.stage) === filters.stageFilter) &&
-          (!filters.sourceFilter || deal.source === filters.sourceFilter) &&
-          (!filters.minAmount || amount >= Number(filters.minAmount)) &&
-          (!filters.maxAmount || amount <= Number(filters.maxAmount)) &&
-          (!filters.dateFrom ||
-            created >= new Date(filters.dateFrom).getTime()) &&
-          (!filters.dateTo ||
-            created <= new Date(filters.dateTo).getTime() + 86_399_999) &&
-          (!searchValue || searchable.includes(searchValue)) &&
-          (filters.quickFilter === "all" ||
-            (filters.quickFilter === "mine" &&
-              Boolean(user?.id && deal.owner === user.id)) ||
-            (filters.quickFilter === "hot" && deal.riskPercent >= 60) ||
-            (filters.quickFilter === "overdue" && Boolean(deal.sla_overdue)) ||
-            (filters.quickFilter === "no_tasks" &&
-              deal.status === "open" &&
-              !deal.nextTask &&
-              !deal.next_action_at))
-        );
-      });
-  }, [activePipeline, data, filters, user?.id]);
+      ;
+  }, [activePipeline, data]);
 
   const model = useMemo<DealMetricsModel>(() => {
     const pipelineRows = data.deals

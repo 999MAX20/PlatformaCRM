@@ -91,24 +91,13 @@ export function LeadsPage() {
     setPage,
     pageSize,
     setPageSize,
-    filterPresets,
-    presetName,
-    setPresetName,
-    savedFiltersOpen,
-    setSavedFiltersOpen,
     moreMenuOpen,
     setMoreMenuOpen,
     visibleColumns,
     setVisibleColumns,
     columnOrder,
-    savePreset,
-    applyPreset,
     shareView,
   } = useLeadsTableState({ searchParams, t, onNotice: setNotice });
-  const toggleSavedFilters = useCallback(
-    () => setSavedFiltersOpen((value) => !value),
-    [setSavedFiltersOpen],
-  );
   const { pushHistory } = useLeadActionHistory({ t, onNotice: setNotice });
 
   useLeadsPageHeader({
@@ -232,7 +221,6 @@ export function LeadsPage() {
   if (createContext.error) return <ErrorState message={createContext.error} />;
   if (createContext.isLoading) return <PageSkeleton />;
   if (isPageLoading) return <PageSkeleton />;
-  if (pageError) return <ErrorState message={pageErrorMessage} action={<Button variant="secondary" onClick={retryWorkspace}>{t("common.retry")}</Button>} />;
 
   return (
     <CrmWorkspacePage
@@ -244,12 +232,7 @@ export function LeadsPage() {
     >
       <LeadsWorkspaceTable
           filters={filters}
-          filter={filter}
-          search={search}
-          source={source}
-          savedFiltersOpen={savedFiltersOpen}
-          filterPresets={filterPresets}
-          presetName={presetName}
+          error={pageError ? <ErrorState message={pageErrorMessage} action={<Button variant="secondary" onClick={retryWorkspace}>{t("common.retry")}</Button>} /> : undefined}
           moreMenuOpen={moreMenuOpen}
           columnOrder={columnOrder}
           visibleColumns={visibleColumns}
@@ -270,25 +253,6 @@ export function LeadsPage() {
           pageEnd={pageEnd}
           totalLeadCount={totalLeadCount}
           t={t}
-          onFilterChange={(nextFilter) => {
-            setFilter(nextFilter);
-            setPage(1);
-          }}
-          onSearchChange={(value) => {
-            setSearch(value);
-            setPage(1);
-          }}
-          onSourceChange={(value) => {
-            setSource(value);
-            setPage(1);
-          }}
-          onToggleSavedFilters={toggleSavedFilters}
-          onApplyPreset={(preset) => {
-            applyPreset(preset);
-            setSavedFiltersOpen(false);
-          }}
-          onPresetNameChange={setPresetName}
-          onSavePreset={savePreset}
           onToggleMoreMenu={() => setMoreMenuOpen((value) => !value)}
           onToggleColumn={(column) =>
             setVisibleColumns((value) => ({
