@@ -3,7 +3,7 @@
 14.10.2026. ANALYTICS-REDESIGN: компактная аналитика с пятью вкладками,
 единым периодом по датам событий, серверными агрегатами и CSV реализована.
 Backend71 и после исправления скачивания40, check/migration drift, сборка
-и scoped CU PASS. Проверено локально; commit/push завершаются. Evidence —
+и scoped CU PASS. Опубликовано в main (`2474024`); CI выполняется. Evidence —
 в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md). R01 остаётся отложенным.
 
 13.10.2026. CRM-TOOLBARS refinement: единые элементы трёх страниц, широкий поиск,
