@@ -1,11 +1,12 @@
 # PlatformaCRM — текущий статус
 
-14.10.2026. SETTINGS-ASSIGNMENT: PlatformaCRM UI — текущий writer Phase2.
+14.10.2026. SETTINGS-ASSIGNMENT: Phase2 завершена в scoped-границе.
 Исправлено явное назначение роли старому участнику без BusinessRole; сохранение
 обновляет список и права, предварительные права не выдаются за применённые.
 Изолированные проверки фактического доступа/retry/custom role, RU/KK/EN desktop/mobile,
-сборка и системные проверки PASS; публикация пакета следующим шагом.
-Основной чат готовит R01 read-only; общий реестр FC003 имеет два baseline-пробела.
+сборка и static PASS; `c40aff4` опубликован в main, SHA подтверждён.
+CI38467033037 queued, не объявлен PASS. После публикации receipt PlatformaCRM UI
+возвращает writer основному чату для R01; общий реестр FC003 имеет два baseline-пробела.
 
 14.10.2026. TWO-CHAT-COORDINATION: принят единый roadmap и один writer на репозиторий.
 Календарь опубликован; основной чат передаёт PlatformaCRM UI запись для Settings

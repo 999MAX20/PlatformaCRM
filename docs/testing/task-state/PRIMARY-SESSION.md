@@ -94,6 +94,25 @@ No listener remained on any of this task's six isolated backend/frontend port pa
 Calendar2f9035b CI38464742290 separately verified SUCCESS; receipt CI still running
 at this observation. Settings scoped implementation checks complete; publication below.
 
+Publication: implementation c40aff47c5a3255e216657fbb0b65ab71e064657, normal
+origin HEAD:main push and remote SHA readback match. Required committed-range
+`.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+17fb7c10f4d9d3935a97050cb128f370a11e2e9d` PASS before push. Reviewed entire owned
+index/range and new test; only unrelated ONEC STATUS7/checkpoint68 remain unstaged.
+Remote-tracking origin/main is stale because the configured fetch refspec excludes
+main; fetched FETCH_HEAD and ls-remote both proved current main17fb7c1 and the
+normal ancestor path. No refspec/branch changes or force push.
+Actual GitHub CI38467033037 for c40aff4 queued at receipt, not PASS. Calendar
+implementation CI38464742290 SUCCESS; Calendar receipt38464828917 in progress.
+Local checks are scoped; release/full FC003/FB009, live delivery and deployment
+are not claimed. Existing CI only is push-triggered; no deployment workflow.
+After publishing this docs-only receipt, UI stops all repository writes and
+explicitly hands writer back to primary01a130d8-8f15-7d23-bffc-5e61c21a98e2 for
+authorized Phase3 R01. Remaining: selected daily cycle, baseline route/outcome
+metadata, actual screen-reader FB009 and primary's bounded Inbox candidates.
+Primary must inspect actual CI separately and investigate any subsequent failure;
+no pending run is treated as green. No servers/listeners remain from this package.
+
 ## TWO-CHAT-COORDINATION-20261014 — owner-authorized CRM workflow
 
 Owner instruction relayed by PlatformaMarket UI: adopt coordinated work by the two
