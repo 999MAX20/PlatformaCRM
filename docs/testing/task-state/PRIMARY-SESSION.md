@@ -26,6 +26,12 @@ Compact follow-up verification:
 - Six task-owned files. Backend/data/provider calls unchanged; full/backend/migration
   suites skipped for visual delta. Publication/actual CI receipt follows.
 
+Compact publication: `aaa2d976a9e74a04eae632d172a22b3bc86f2915` normal-pushed
+main; remote exact SHA verified. Base5787fe7 matched fetched main. Six reviewed paths,
+63 local links, encoding and working/index/actual committed-range diff hygiene PASS.
+[CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/38424218319) in_progress
+on readback. Scoped writer released; primary/registry unchanged. No next phase.
+
 Owner explicitly approved removing the duplicate page title, subtitle, metrics,
 search/filters, financial-source form and all providers except МойСклад and 1C.
 Mode frontend implementation; gap visual hierarchy/catalog scope. Reuse existing
