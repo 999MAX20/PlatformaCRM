@@ -40,6 +40,7 @@ export function CalendarAppointmentPreview({
     <button
       key={appointment.id}
       type="button"
+      data-appointment-id={appointment.id}
       className={cn(
         compact
           ? "w-full bg-platforma-card px-4 py-3 text-left transition hover:bg-brand-50"
@@ -51,15 +52,15 @@ export function CalendarAppointmentPreview({
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-platforma-text">{client?.full_name || t("common.client")}</p>
+          <p className="truncate text-sm font-bold text-platforma-text">{client?.full_name || appointment.client_name || t("common.client")}</p>
           <p className="mt-1 flex items-center gap-1 truncate text-xs font-bold text-platforma-muted">
             <Clock size={13} />
-            <span className="truncate">{formatTime(appointment.start_at, locale, businessTimeZone)}-{formatTime(appointment.end_at, locale, businessTimeZone)} - {service?.name || t("common.service")}</span>
+            <span className="truncate">{formatTime(appointment.start_at, locale, businessTimeZone)}–{formatTime(appointment.end_at, locale, businessTimeZone)} · {service?.name || appointment.service_name || t("common.service")}</span>
           </p>
         </div>
         <StatusBadge status={appointment.status} />
       </div>
-      {!compact ? <p className="mt-2 truncate text-xs font-semibold text-platforma-muted">{resource?.name || t("calendar.noResource")} - {appointment.source}</p> : null}
+      {!compact ? <p className="mt-2 truncate text-xs font-semibold text-platforma-muted">{resource?.name || appointment.resource_name || t("calendar.noResource")} · {t(`appointment.source.${appointment.source}`)}</p> : null}
       {appointment.branch_name && <p className="mt-1 truncate text-xs text-platforma-subtle">{appointment.branch_name} · {appointment.branch_address}</p>}
     </button>
   );

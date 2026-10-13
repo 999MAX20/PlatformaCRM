@@ -23,8 +23,12 @@ async function noOverflow(page: Page) {
 test("calendar arrows follow view and period labels across month and year boundaries", async ({ page }, info) => {
   await crmSession(page);
   await page.goto("/app/calendar?date=2026-12-31&view=day");
-  await page.getByRole("button", { name: ru["calendar.nextDay"], exact: true }).click();
+  const day = page.getByTestId("calendar-day-inspector");
+  await expect(day).toBeVisible();
+  await expect(page.getByTestId("calendar-view-day")).toHaveCount(0);
+  await day.getByRole("button", { name: ru["calendar.nextDay"], exact: true }).click();
   await expect(page).toHaveURL(/date=2027-01-01/);
+  await day.getByRole("button", { name: ru["common.close"], exact: true }).click();
   await page.getByTestId("calendar-view-week").click();
   await expect(page.getByTestId("calendar-view-week")).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: ru["calendar.previousWeek"], exact: true }).click();

@@ -19,7 +19,12 @@ proportional checks retained. Registry/generation unchanged, no chats created
 or archived. Single roadmap updated to actual Analytics closure and authorized
 Calendar → Settings → R01 order; no automatic R02–R07 or History redesign.
 Preserve unrelated ONEC WIP in STATUS/this checkpoint unstaged and unpublished.
-Next: verify/publish docs, then continue Calendar while UI prepares Settings.
+Docs published c2e25ff6e3fb2c1159ab7a1518eca24f12432091 to main with normal push;
+remote SHA matched. Working/index/actual a8cc789e...c2e25ff diff hygiene and added
+relative links PASS. No build/DB/browser for policy-only change. Analytics2474024
+and receipta8cc789 actual CI success; governance CI38459212114 separately observed.
+Calendar writer remains primary; UI read-only preparation of Settings and R01
+received. No execution/ownership was transferred by those reports.
 
 ## CALENDAR-SETTINGS-R01-20261014 — owner-authorized sequential work
 
@@ -56,7 +61,76 @@ Phase3: R01 bounded daily-cycle acceptance under current contracts/remaining IDs
 record exact unresolved dependencies, including History only if actually necessary.
 Do not automatically launch R02–R07, live channels, deployment or paid AI calls.
 Each phase gets its own evidence/publication; continue all three as authorized.
-Next: implement calendar board and shared day inspector, then targeted verification.
+Implementation: compact month/week Board, full shared Drawer day/detail flow,
+real task links and complete pagination; actor/Business-scoped catalog queries,
+permission-gated optional clients/leads/tasks, actual availability count only.
+Date picker reuses shared range component in opt-in inline single-date mode;
+filters use a compact dialog and shared select. Booking/domain APIs unchanged.
+Appointments actions refresh tasks as well for persisted follow-up visibility.
+Read-only UI review identified keyboard boundary focus loss while Board unmounted;
+fixed by keeping Board mounted with busy state. Local iteration also fixed the
+one-frame focus delay between days and ambiguous KK dismiss/action labels.
+Focused node command: node --test scripts/tests/calendar-period.test.mjs
+scripts/tests/daily-workspaces-policy.test.mjs, 9 PASS. Initial scoped browser
+calendar arrows RU/KK/EN desktop PASS (browser-1791922026333799200.log).
+New browser test first incorrectly assumed page_size=2 support; server uses50.
+Replaced with real51 appointments/51 tasks; second page/full inspector proven.
+Next attempt exposed keyboard timing, fixed above; next used the hidden select
+test id, corrected to reachable combobox. RU full flow PASS in
+browser-1791922761921722900.log; KK then found equal dismiss/action label and
+was fixed using existing common.back. Final KK/EN/recovery/role and mobile results
+are recorded below. Logs retained in ignored
+output/crm-toolbars-20261013; no failure converted to a PASS or ordinary DB mutated.
+Settings initial preparation found the passport's obsolete financial-source
+location. Follow-up from Calendar role fixture found a concrete uncovered legacy
+case: member.business_role=null keeps built-in permissions while TeamSection opens
+the fallback preset editor/preview; changing RolePermission alone does not apply
+to this member. Read-only UI review confirmed the path and missing actual-access
+assertion in settings-workflow. Phase2 now includes its smallest explicit-assignment
+fix: enable existing Save for a missing/different assignment even at the same
+canonical role string; do not present draft RolePermission as applied or enable
+role editing until saved. Preserve assigned custom roles; no silent assignment,
+global backend fallback change or migration. Prove exact FK/effective_permissions,
+403 after explicit deny, failed save/retry and unaffected sibling legacy member.
+Historical Settings08–09 and MB grants evidence otherwise retained. Calendar's
+negative fixture now explicitly assigns the tested role before checking denial;
+desktop recovery/view-only2 PASS in browser-1791923178596923300.log. Mobile and
+full appointment custom-field consumer verification are recorded below.
+R01 preparation (read-only): select one daily chain with FC-003 per-control receipts,
+reuse unchanged module evidence; FB-009 requires actual assisted screen-reader
+evidence (native CUA disabled, Narrator binary exists but not executed). D-04
+built-in/user-rule follow-up overlap remains policy-dependent, not automatically
+included as an approved duplicate/override behavior. Other R02+ scopes unchanged.
+Calendar completion evidence: desktop KK/EN/recovery3 PASS in
+browser-1791922899655464000.log; mobile RU/KK/EN/recovery4 PASS in
+browser-1791922922734535500.log. Role fixture initially lacked explicit FK,
+corrected as above; final mobile recovery/view-only and real branch booking3 PASS
+in browser-1791923221482962500.log. Its full-card custom-field case failed because
+the legacy fixture omitted a branch; fixed only that fixture to use a branch offer,
+assignment and schedule, then enter the full card through the calendar inspector.
+Desktop branch booking + custom-field2 PASS browser-1791923470944480400.log;
+mobile custom-field1 PASS browser-1791923481677130400.log. Invalid project name
+in browser-1791923456710611200.log ran no tests; corrected to desktop-chromium.
+Isolated build/types/i18n/widget/bundle PASS build-1791923649658378000.log under
+output/multibranch; unchanged dependencies retained. No backend code/API changes,
+so no additional backend suite; real API writes above used disposable databases.
+Reviewed desktop/mobile week and detail screenshots; layouts and actions fit.
+Shared range-mode representative check hit webServer startup120s timeout under
+parallel load (browser-1791923582211479500.log), separate rerun recorded below.
+Manual helper initially failed on staged-file inventory of removed MonthInspector;
+reviewed/staged that deletion, validation then passed. Non-PTY helper stdin closed
+after setup and cleaned its own processes; restarted with PTY for CU inspection.
+Shared range-mode final PASS browser-1791923720073963200.log: advanced combinations,
+invalid/empty recovery, two-date selection, five-day highlight and applied URL.
+CU Chrome on own disposable57004/57005: month layout, full day inspector2visits/1task,
+service selection, nested Escape (list then dialog), filter and day focus return,
+bottom-edge delayed preview and scroll dismissal PASS. Ctrl+plus had no visible
+scale change through browser control: 200% zoom is unproven; responsive viewport
+checks above stand separately. Test tab closed and helper received stop.
+Commands: .venv/Scripts/python.exe output/crm-toolbars-20261013/browser.py
+<desktop-chromium|mobile-chromium> <spec> --grep <named scenario>; exact invocations
+and bounded logs retained in output. No production/working database or live provider.
+Next: static/publication, then explicit Settings writer assignment and bounded R01.
 
 ## ANALYTICS-REDESIGN-20261014 — period-based compact analytics
 

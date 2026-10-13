@@ -56,6 +56,7 @@ export function CalendarResourceFilters({
         emptyLabel={t("calendar.noFilterResults")}
       />
       <Select
+        aria-label={t("calendar.allStatuses")}
         value={statusFilter}
         onChange={(event) => onStatusChange(event.target.value)}
         options={[

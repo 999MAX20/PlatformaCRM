@@ -52,7 +52,7 @@ export function getQueryDate(value: string | null, fallback: string) {
 }
 
 export function getQueryView(value: string | null): CalendarViewMode {
-  return viewModes.includes(value as CalendarViewMode) ? value as CalendarViewMode : "day";
+  return viewModes.includes(value as CalendarViewMode) ? value as CalendarViewMode : "month";
 }
 
 export function normalizeTimeZone(value?: string | null) {

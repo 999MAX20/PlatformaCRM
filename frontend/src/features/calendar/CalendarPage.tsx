@@ -1,6 +1,6 @@
-import { MoreHorizontal, Plus } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { Plus } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -10,8 +10,8 @@ import {
 import { getApiErrorMessage } from "../../api/client";
 import { branchesApi } from "../../api/branches";
 import { Select } from "../../components/ui/Select";
-import { branchIntervals, branchWorking } from "./branchHours";
-import { scheduleExceptionsApi, workingHoursApi } from "../../api/workingHours";
+import { branchIntervals } from "./branchHours";
+import { scheduleExceptionsApi } from "../../api/workingHours";
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import { AppointmentForm } from "../../components/forms/AppointmentForm";
 import { AppointmentRescheduleForm } from "../../components/forms/AppointmentRescheduleForm";
@@ -20,57 +20,30 @@ import { useNotification } from "../../components/notifications/NotificationProv
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
-import { StatusBadge } from "../../components/ui/StatusBadge";
-import { EmptyState, ErrorState, LoadingState } from "../../components/ui/StateViews";
-import { cn } from "../../lib/cn";
+import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { dateInTimeZone, todayInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
 import { useActiveBusiness } from "../../hooks/useBusiness";
-import { useEntityData } from "../../hooks/useEntityData";
+import { useCalendarCatalog } from "./useCalendarCatalog";
+import { tasksApi } from "../../api/tasks";
+import { taskDateISO } from "../tasks/workspaceUtils";
 import { useClientCreateIntent } from "../../hooks/useClientCreateIntent";
 import type { Appointment, Client, Task } from "../../types";
+import { localeByLanguage } from "./calendarConstants";
+import type { CalendarViewMode } from "./calendarTypes";
 import {
-  dayEndHour,
-  dayStartHour,
-  hourHeight,
-  localeByLanguage,
-  timelineHours,
-} from "./calendarConstants";
-import type { CalendarResource, CalendarViewMode } from "./calendarTypes";
-import {
-  formatCalendarDateTime,
-  formatPickerDate,
-  formatTime,
-  formatTimeZoneLabel,
-  formatWorkingHoursLabel,
-  getAppointmentMetrics,
-  getCalendarRange,
-  getInitials,
-  getMonthDates,
-  getQueryDate,
-  getQueryView,
-  getTone,
-  getWeekDates,
-  getWeekday,
-  getWorkingHoursFor,
-  isDateValue,
-  isWorkingHourSlot,
-  normalizeTimeZone,
-  shiftCalendarPeriod,
-  toDateInputValue,
+  formatTimeZoneLabel, getCalendarRange, getQueryDate, getQueryView,
+  getWeekday, getWorkingHoursFor, isDateValue, normalizeTimeZone, shiftCalendarPeriod,
 } from "./calendarUtils";
 import { AppointmentDrawerPanel } from "./components/AppointmentDrawerPanel";
-import {
-  CalendarAppointmentPreview,
-  CalendarTaskPreview,
-} from "./components/CalendarAppointmentCards";
+import { CalendarBoard } from "./components/CalendarBoard";
+import { CalendarDayInspector } from "./components/CalendarDayInspector";
 import {
   ActiveCalendarFilters,
   type ActiveCalendarFilterChip,
 } from "./components/CalendarFilters";
 import { CalendarToolbar } from "./components/CalendarToolbar";
-import { MonthInspectorPanel } from "./components/MonthInspectorPanel";
 import { useAuth } from "../auth/AuthProvider";
 import { canAccessAppointmentAction } from "./appointmentAccess";
 
@@ -95,22 +68,16 @@ export function CalendarPage() {
     "update",
   );
   const canViewTasks = hasPermission(user, business?.id, "tasks", "view");
-  const { clients, services, resources, leads, workingHours, tasks } =
-    useEntityData({
-      clients: true,
-      services: true,
-      resources: true,
-      leads: true,
-      workingHours: true,
-      tasks: true,
-    });
+  const canViewClients = hasPermission(user, business?.id, "clients", "view");
+  const canViewLeads = hasPermission(user, business?.id, "leads", "view");
+  const { clients, services, resources, leads, workingHours } = useCalendarCatalog(business?.id, user?.id, canViewClients, canViewLeads);
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const branchFilter = searchParams.get("branch") || "";
   const branchesQuery = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
   const hasBranches = !!branchesQuery.data?.length;
   const branchCatalog = useQuery({ queryKey: ["branch-catalog", Number(branchFilter)], queryFn: () => branchesApi.catalog(Number(branchFilter)), enabled: !!branchFilter });
-  const fallbackToday = todayInTimeZone("Asia/Almaty");
+  const fallbackToday = todayInTimeZone(normalizeTimeZone(business?.timezone || "Asia/Almaty"));
   const [date, setDate] = useState(() =>
     getQueryDate(searchParams.get("date"), fallbackToday),
   );
@@ -147,7 +114,7 @@ export function CalendarPage() {
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<
     number | null
   >(null);
-  const [monthInspectorOpen, setMonthInspectorOpen] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(() => ["day", "list"].includes(searchParams.get("view") || ""));
   const [rescheduleTarget, setRescheduleTarget] = useState<Appointment | null>(
     null,
   );
@@ -165,11 +132,33 @@ export function CalendarPage() {
     [date, viewMode],
   );
 
+  const businessTimeZone = normalizeTimeZone(business?.timezone || "Asia/Almaty");
+  const tasks = useQuery({
+    queryKey: ["tasks", "calendar", business?.id, user?.id, calendarRange.start, calendarRange.end, businessTimeZone],
+    queryFn: () => tasksApi.listAll({
+      business: business!.id, status: "active",
+      due_from: taskDateISO(`${calendarRange.start}T00:00`, businessTimeZone),
+      due_to: new Date(Date.parse(taskDateISO(`${calendarRange.end}T00:00`, businessTimeZone)!) - 1).toISOString(),
+    }),
+    enabled: !!business?.id && canViewTasks,
+  });
+  const previousBusiness = useRef(business?.id);
+  useEffect(() => {
+    if (previousBusiness.current !== business?.id) {
+      setInspectorOpen(false); setSelectedAppointmentId(null); setBookingOpen(false);
+      setRescheduleTarget(null); setStatusReasonTarget(null); setArchiveTarget(null);
+      setServiceFilter(""); setResourceFilter(""); setStatusFilter(""); setSearch("");
+      setSearchParams(current => { const next = new URLSearchParams(current); for (const key of ["branch", "appointment", "service", "resource", "status", "search"]) next.delete(key); return next; }, { replace: true });
+    }
+    previousBusiness.current = business?.id;
+  }, [business?.id, setSearchParams]);
+
   const appointments = useQuery({
     queryKey: [
       "appointments",
       "calendar",
       business?.id,
+      user?.id,
       calendarRange.start,
       calendarRange.end,
       serviceFilter,
@@ -178,7 +167,7 @@ export function CalendarPage() {
       branchFilter,
     ],
     queryFn: () =>
-      appointmentsApi.list({
+      appointmentsApi.listAll({
         business: business!.id,
         start_from: calendarRange.start,
         start_to: calendarRange.end,
@@ -191,9 +180,9 @@ export function CalendarPage() {
   });
 
   const deepLinkedAppointment = useQuery({
-    queryKey: ["appointments", appointmentIdFromUrl],
+    queryKey: ["appointments", "detail", business?.id, user?.id, appointmentIdFromUrl],
     queryFn: () => appointmentsApi.get(appointmentIdFromUrl!),
-    enabled: Boolean(appointmentIdFromUrl),
+    enabled: Boolean(business?.id && appointmentIdFromUrl),
   });
 
   const dayAvailableSlots = useQuery({
@@ -270,16 +259,17 @@ export function CalendarPage() {
 
   useEffect(() => {
     const appointment = deepLinkedAppointment.data;
-    if (!appointment) return;
+    if (!appointment || appointment.business !== business?.id) return;
     setDate(
       dateInTimeZone(appointment.start_at, business?.timezone || "Asia/Almaty"),
     );
     setSelectedAppointmentId(appointment.id);
-    setViewMode("day");
-  }, [business?.timezone, deepLinkedAppointment.data]);
+    setInspectorOpen(true);
+  }, [business?.id, business?.timezone, deepLinkedAppointment.data]);
 
   function refreshAppointmentData(appointment?: Appointment) {
     queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    queryClient.invalidateQueries({ queryKey: ["tasks"] });
     queryClient.invalidateQueries({ queryKey: ["available-slots"] });
     queryClient.invalidateQueries({ queryKey: ["activity-events"] });
     queryClient.invalidateQueries({ queryKey: ["crm-card"] });
@@ -311,6 +301,7 @@ export function CalendarPage() {
           ),
         );
       setSelectedAppointmentId(appointment.id);
+      setInspectorOpen(true);
       setNotice(t("calendar.createdNotice"));
     },
     onError: (error) => notifyError(error),
@@ -354,6 +345,7 @@ export function CalendarPage() {
         ),
       );
       setSelectedAppointmentId(appointment.id);
+      setInspectorOpen(true);
       setRescheduleTarget(null);
       setNotice(t("appointments.rescheduledNotice"));
     },
@@ -375,28 +367,6 @@ export function CalendarPage() {
       setNotice(t("appointments.archive"));
     },
     onError: (error) => notifyError(error),
-  });
-
-  const quickHoursMutation = useMutation({
-    mutationFn: () =>
-      workingHoursApi.applyPreset({
-        business: business!.id,
-        preset: "daily_9_20",
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["working-hours"] });
-      queryClient.invalidateQueries({ queryKey: ["available-slots"] });
-      setNotice(t("calendar.quickHoursApplied"));
-    },
-    onError: (error) =>
-      notifyError(error, {
-        actionLabel: t("common.refresh"),
-        retry: () =>
-          Promise.all([
-            queryClient.invalidateQueries({ queryKey: ["working-hours"] }),
-            queryClient.invalidateQueries({ queryKey: ["available-slots"] }),
-          ]).then(() => undefined),
-      }),
   });
 
   useEffect(() => {
@@ -454,15 +424,7 @@ export function CalendarPage() {
               variant="secondary"
               size="sm"
               onClick={() => {
-                void Promise.all([
-                  appointments.refetch(),
-                  clients.refetch(),
-                  services.refetch(),
-                  resources.refetch(),
-                  leads.refetch(),
-                  workingHours.refetch(),
-                  tasks.refetch(),
-                ]);
+                void Promise.all([appointments, deepLinkedAppointment, branchesQuery, branchCatalog, clients, services, resources, leads, workingHours, tasks].filter(query => query.isError).map(query => query.refetch()));
               }}
             >
               {t("common.retry")}
@@ -473,19 +435,7 @@ export function CalendarPage() {
     );
   }
   const locale = localeByLanguage[language];
-  const businessTimeZone = normalizeTimeZone(
-    business.timezone || "Asia/Almaty",
-  );
   const todayValue = todayInTimeZone(businessTimeZone);
-  const weekDays = [
-    t("weekday.monShort"),
-    t("weekday.tueShort"),
-    t("weekday.wedShort"),
-    t("weekday.thuShort"),
-    t("weekday.friShort"),
-    t("weekday.satShort"),
-    t("weekday.sunShort"),
-  ];
   const clientById = new Map(clientItems.map((client) => [client.id, client]));
   const serviceById = new Map(
     serviceItems.map((service) => [service.id, service]),
@@ -507,9 +457,9 @@ export function CalendarPage() {
     if (statusFilter && item.status !== statusFilter) return false;
     if (!query) return true;
     return [
-      client?.full_name,
-      service?.name,
-      resource?.name,
+      client?.full_name || item.client_name,
+      service?.name || item.service_name,
+      resource?.name || item.resource_name,
       item.source,
       item.notes,
     ]
@@ -517,33 +467,22 @@ export function CalendarPage() {
       .some((value) => String(value).toLowerCase().includes(query));
   });
 
-  const weekDates = getWeekDates(date);
-  const monthDates = getMonthDates(date);
   const dayAppointments = appointmentList
     .filter((item) => dateInTimeZone(item.start_at, businessTimeZone) === date)
     .sort(
       (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
     );
-  const weekKeys = new Set(weekDates.map(toDateInputValue));
-  const weekAppointments = appointmentList
-    .filter((item) =>
-      weekKeys.has(dateInTimeZone(item.start_at, businessTimeZone)),
-    )
-    .sort(
-      (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
-    );
   const dayTasks = taskItems.filter(
     (task) =>
-      task.due_at &&
+      !task.is_archived && task.due_at &&
       dateInTimeZone(task.due_at, businessTimeZone) === date &&
       !["done", "cancelled"].includes(task.status),
-  );
+  ).sort((a, b) => Date.parse(a.due_at!) - Date.parse(b.due_at!));
   const selectedAppointment =
     appointmentItems.find(
       (appointment) =>
         appointment.id === selectedAppointmentId && !appointment.is_archived,
-    ) || null;
-  const hasWorkingHours = hasBranches || Boolean(workingHourItems.length);
+    ) || (deepLinkedAppointment.data?.id === selectedAppointmentId && deepLinkedAppointment.data.business === business.id && !deepLinkedAppointment.data.is_archived ? deepLinkedAppointment.data : null);
   const selectedResourceId = resourceFilter ? Number(resourceFilter) : null;
   const selectedDayHours = dateExceptions.data?.[0] ? { ...dateExceptions.data[0], weekday: getWeekday(date) } : getWorkingHoursFor(
     workingHourItems,
@@ -551,35 +490,10 @@ export function CalendarPage() {
     selectedResourceId,
   );
   const branchDayLabel = branchFilter ? branchIntervals(branchCatalog.data, date, selectedResourceId).map((item) => `${item.start}–${item.end}`).join(", ") || t("calendar.freeDay") : t("branches.choose");
-  const isWorkingAt = (day: string, hour: number, staff: number | null) => hasBranches
-    ? !branchFilter || branchWorking(branchCatalog.data, day, hour, staff)
-    : isWorkingHourSlot(workingHourItems, day, hour, staff);
-  const confirmedCount = dayAppointments.filter(
-    (appointment) => appointment.status === "confirmed",
-  ).length;
-  const openSlotsFallback = Math.max(
-    0,
-    timelineHours.length - dayAppointments.length,
-  );
-  const openSlotsCount =
-    serviceFilter && resourceFilter && dayAvailableSlots.data
-      ? dayAvailableSlots.data.length
-      : hasBranches ? "—" : openSlotsFallback;
-  const openSlotsLabel = serviceFilter && resourceFilter
-    ? t("calendar.openSlots")
-    : t("calendar.openSlotsEstimate");
+  const hoursLabel = hasBranches ? branchDayLabel : selectedDayHours && !selectedDayHours.is_day_off
+    ? `${selectedDayHours.start_time.slice(0, 5)}–${selectedDayHours.end_time.slice(0, 5)}` : t("calendar.freeDay");
+  const availableSlots = serviceFilter && resourceFilter && !dayAvailableSlots.isError ? dayAvailableSlots.data?.length : undefined;
   const timeZoneLabel = formatTimeZoneLabel(businessTimeZone);
-  const selectedResource = resourceFilter
-    ? resourceById.get(Number(resourceFilter))
-    : null;
-  const dayScheduleResource: CalendarResource = selectedResource
-    ? { id: selectedResource.id, name: selectedResource.name }
-    : {
-        id: null,
-        name: resourceItems.length
-          ? t("calendar.allResources")
-          : t("calendar.businessSchedule"),
-      };
 
   function shiftDate(days: number) {
     setDate(shiftCalendarPeriod(date, days, viewMode));
@@ -587,7 +501,7 @@ export function CalendarPage() {
 
   function selectAppointment(appointment: Appointment) {
     setSelectedAppointmentId(appointment.id);
-    setMonthInspectorOpen(false);
+    setInspectorOpen(true);
     setDate(dateInTimeZone(appointment.start_at, businessTimeZone));
   }
 
@@ -597,8 +511,20 @@ export function CalendarPage() {
 
   function selectMonthDay(nextDate: string) {
     setDate(nextDate);
+    clearDeepLink();
     setSelectedAppointmentId(null);
-    setMonthInspectorOpen(true);
+    setInspectorOpen(true);
+  }
+
+  function clearDeepLink() {
+    setSearchParams(current => { const next = new URLSearchParams(current); next.delete("appointment"); return next; }, { replace: true });
+  }
+
+  function closeInspector() {
+    setInspectorOpen(false);
+    setSelectedAppointmentId(null);
+    clearDeepLink();
+    requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(`[data-calendar-day="${date}"]`)?.focus());
   }
 
   function openBookingForDate(
@@ -738,13 +664,12 @@ export function CalendarPage() {
 
   return (
     <>
-      {hasBranches && <div className="mb-3 max-w-md"><Select label={t("branches.branch")} value={branchFilter} onChange={(event) => setSearchParams((current) => { const next = new URLSearchParams(current); if (event.target.value) next.set("branch", event.target.value); else next.delete("branch"); return next; })} options={[{ value: "", label: t("branches.all") }, ...(branchesQuery.data || []).map((branch) => ({ value: branch.id, label: branch.name }))]} /></div>}
+
       <CalendarToolbar
         date={date}
         viewMode={viewMode}
         locale={locale}
         todayValue={todayValue}
-        weekDays={weekDays}
         serviceFilter={serviceFilter}
         resourceFilter={resourceFilter}
         statusFilter={statusFilter}
@@ -759,707 +684,23 @@ export function CalendarPage() {
         onResourceChange={setResourceFilter}
         onStatusChange={setStatusFilter}
         t={t}
-      />
-
-      {isCalendarDataLoading ? (
-        <div className="mb-4">
-          <LoadingState />
-        </div>
-      ) : null}
-
-      <section
-        className="space-y-4"
-        data-testid={
-          isCalendarDataLoading ? undefined : "calendar-workspace-ready"
-        }
       >
-        <div className="overflow-hidden rounded-card border border-platforma-border bg-platforma-card shadow-xs lg:hidden">
-          <div className="p-4">
-            <div className="min-w-0">
-              <p className="text-xs font-bold uppercase text-platforma-muted">
-                {t("calendar.mobileAgenda")}
-              </p>
-              <p className="mt-1 truncate text-lg font-bold text-platforma-text">
-                {formatPickerDate(date, locale)}
-              </p>
-              <p className="mt-1 text-sm font-bold text-platforma-muted">
-                {hasBranches ? branchDayLabel : selectedDayHours && !selectedDayHours.is_day_off
-                  ? `${selectedDayHours.start_time.slice(0, 5)}-${selectedDayHours.end_time.slice(0, 5)}`
-                  : t("calendar.freeDay")}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 divide-x divide-platforma-border border-y border-platforma-border bg-surface-muted">
-            {[
-              [t("calendar.bookings"), dayAppointments.length],
-              [openSlotsLabel, openSlotsCount],
-              [t("calendar.tasksToday"), dayTasks.length],
-            ].map(([label, value]) => (
-              <div key={label} className="min-w-0 px-3 py-2">
-                <p className="text-lg font-bold text-platforma-text">{value}</p>
-                <p className="truncate text-[11px] font-bold uppercase text-platforma-muted">
-                  {label}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 border-b border-platforma-border p-3">
-            {canCreateAppointment ? (
-              <Button
-                type="button"
-                className="w-full"
-                onClick={() => openBookingForDate(date)}
-              >
-                <Plus size={16} />
-                {t("calendar.newBooking")}
-              </Button>
-            ) : null}
-            {canManageWorkingHours ? (
-              <Link
-                className="inline-flex min-h-10 items-center justify-center rounded-control border border-platforma-border bg-platforma-card px-3 py-2 text-xs font-bold text-platforma-text hover:bg-surface-hover"
-                to={hasBranches ? `/app/business/branches?branch=${branchFilter}&section=schedule` : "/app/business/working-hours"}
-              >
-                {t("appointment.openHours")}
-              </Link>
-            ) : canViewTasks ? (
-              <Link
-                className="inline-flex min-h-10 items-center justify-center rounded-control border border-platforma-border bg-platforma-card px-3 py-2 text-xs font-bold text-platforma-text hover:bg-surface-hover"
-                to="/app/tasks?tab=today"
-              >
-                {t("calendar.openTodayTasks")}
-              </Link>
-            ) : null}
-          </div>
-
-          <div className="divide-y divide-platforma-border">
-            {dayAppointments.map((appointment) => (
-              <CalendarAppointmentPreview
-                key={`appointment-${appointment.id}`}
-                appointment={appointment}
-                compact
-                selectedAppointmentId={selectedAppointmentId}
-                clientById={clientById}
-                serviceById={serviceById}
-                resourceById={resourceById}
-                locale={locale}
-                businessTimeZone={businessTimeZone}
-                onSelect={selectAppointment}
-                onOpenCard={openAppointmentWorkspace}
-                t={t}
-              />
-            ))}
-            {dayTasks.map((task) => (
-              <CalendarTaskPreview
-                key={`task-${task.id}`}
-                task={task}
-                locale={locale}
-                businessTimeZone={businessTimeZone}
-                t={t}
-              />
-            ))}
-            {!isCalendarDataLoading &&
-            !dayAppointments.length &&
-            !dayTasks.length ? (
-              <div className="p-4">
-                <EmptyState
-                  title={t("calendar.emptyDayTitle")}
-                  description={t("calendar.emptyDayText")}
-                  action={
-                    canCreateAppointment ? (
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => openBookingForDate(date)}
-                      >
-                        <Plus size={16} />
-                        {t("calendar.newBooking")}
-                      </Button>
-                    ) : canViewTasks ? (
-                      <Link
-                        className="text-sm font-bold text-brand-700"
-                        to="/app/tasks?tab=today"
-                      >
-                        {t("calendar.openTodayTasks")}
-                      </Link>
-                    ) : undefined
-                  }
-                />
-              </div>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="hidden min-w-0 overflow-visible rounded-card border border-platforma-border bg-platforma-card shadow-xs lg:block">
-          <ActiveCalendarFilters
-            chips={activeFilterChips}
-            onClearAll={clearAllFilters}
-            t={t}
-          />
-          {viewMode === "day" ? (
-            <div className="overflow-y-visible">
-              <div className="min-w-0">
-                <div
-                  className="sticky top-0 z-10 grid border-b border-platforma-border bg-platforma-card"
-                  style={{ gridTemplateColumns: "72px minmax(0, 1fr)" }}
-                >
-                  <div className="bg-surface-muted p-3 text-xs font-bold uppercase text-platforma-muted">
-                    {timeZoneLabel}
-                  </div>
-                  <div className="border-l border-platforma-border bg-platforma-card p-3">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={cn(
-                          "grid h-9 w-9 shrink-0 place-items-center rounded-control text-xs font-bold",
-                          getTone(0),
-                        )}
-                      >
-                        {getInitials(dayScheduleResource.name)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-platforma-text">
-                          {t("calendar.daySchedule")}
-                        </p>
-                        <p className="text-xs font-bold text-platforma-muted">
-                          {hasBranches ? branchDayLabel : formatWorkingHoursLabel(
-                            workingHourItems,
-                            date,
-                            dayScheduleResource.id,
-                            t("calendar.freeDay"),
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="relative grid"
-                  style={{
-                    gridTemplateColumns: "72px minmax(0, 1fr)",
-                    height: `${(dayEndHour - dayStartHour) * hourHeight}px`,
-                  }}
-                >
-                  <div className="relative border-r border-platforma-border bg-surface-muted">
-                    {timelineHours.slice(0, -1).map((hour) => (
-                      <div
-                        key={hour}
-                        className="absolute left-0 right-0 border-t border-platforma-border px-3 pt-2 text-xs font-bold text-platforma-muted"
-                        style={{
-                          top: `${(hour - dayStartHour) * hourHeight}px`,
-                        }}
-                      >
-                        {String(hour).padStart(2, "0")}:00
-                      </div>
-                    ))}
-                  </div>
-                  <div className="relative border-l border-platforma-border">
-                    {timelineHours.slice(0, -1).map((hour) => {
-                      const isWorking = isWorkingAt(
-                        date,
-                        hour,
-                        dayScheduleResource.id,
-                      );
-                      return (
-                        <button
-                          key={hour}
-                          type="button"
-                          disabled={!isWorking}
-                          className={cn(
-                            "absolute left-0 right-0 border-t border-platforma-border text-left transition",
-                            isWorking
-                              ? "hover:bg-brand-50"
-                              : "cursor-not-allowed bg-disabled-surface text-disabled-content",
-                          )}
-                          style={{
-                            top: `${(hour - dayStartHour) * hourHeight}px`,
-                            height: `${hourHeight}px`,
-                          }}
-                          onClick={() =>
-                            isWorking &&
-                            openBookingForDate(
-                              date,
-                              hour,
-                              dayScheduleResource.id,
-                            )
-                          }
-                          aria-label={t("calendar.createAtHour", {
-                            hour: String(hour).padStart(2, "0"),
-                          })}
-                        />
-                      );
-                    })}
-                    {dayAppointments.map((appointment, index) => {
-                      const client = clientById.get(appointment.client);
-                      const service = serviceById.get(appointment.service);
-                      const resource = appointment.resource
-                        ? resourceById.get(appointment.resource)
-                        : null;
-                      const metrics = getAppointmentMetrics(
-                        appointment,
-                        businessTimeZone,
-                      );
-                      return (
-                        <button
-                          key={appointment.id}
-                          type="button"
-                          className={cn(
-                            "group absolute left-2 right-2 overflow-visible rounded-control border-l-4 border-t border-r border-b px-3 py-2 text-left shadow-xs transition hover:z-30 hover:shadow-md",
-                            getTone(index),
-                            selectedAppointment?.id === appointment.id &&
-                              "border-[var(--platforma-brand-content)] bg-brand-50 shadow-md",
-                          )}
-                          style={{
-                            top: `${metrics.top + 6}px`,
-                            height: `${metrics.height - 8}px`,
-                          }}
-                          onClick={() => selectAppointment(appointment)}
-                          onDoubleClick={() =>
-                            openAppointmentWorkspace(appointment)
-                          }
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="text-xs font-bold leading-4">
-                              {formatTime(
-                                appointment.start_at,
-                                locale,
-                                businessTimeZone,
-                              )}
-                              -
-                              {formatTime(
-                                appointment.end_at,
-                                locale,
-                                businessTimeZone,
-                              )}
-                            </p>
-                            <MoreHorizontal size={14} className="shrink-0" />
-                          </div>
-                          <p className="mt-1 truncate text-sm font-bold leading-4">
-                            {client?.full_name || t("common.client")}
-                          </p>
-                          {metrics.height > 62 ? (
-                            <p className="mt-1 truncate text-xs font-bold opacity-75">
-                              {service?.name || t("common.service")}
-                              {resource ? ` · ${resource.name}` : ""}
-                            </p>
-                          ) : null}
-                          <div className="pointer-events-none absolute left-0 top-[calc(100%+6px)] z-50 hidden w-72 rounded-card border border-platforma-border bg-platforma-card p-3 text-platforma-text shadow-premium group-hover:block">
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <p className="truncate text-sm font-bold text-platforma-text">
-                                  {client?.full_name || t("common.client")}
-                                </p>
-                                <p className="mt-1 text-xs font-bold text-platforma-muted">
-                                  {formatTime(
-                                    appointment.start_at,
-                                    locale,
-                                    businessTimeZone,
-                                  )}
-                                  -
-                                  {formatTime(
-                                    appointment.end_at,
-                                    locale,
-                                    businessTimeZone,
-                                  )}
-                                </p>
-                              </div>
-                              <StatusBadge status={appointment.status} />
-                            </div>
-                            <div className="mt-3 space-y-1 text-xs font-bold text-platforma-muted">
-                              <p className="truncate">
-                                {service?.name || t("common.service")}
-                              </p>
-                              <p className="truncate">
-                                {resource?.name || t("appointment.noResource")}
-                              </p>
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          {viewMode === "week" ? (
-            <div className="overflow-x-auto overflow-y-visible">
-              <div className="min-w-[980px]">
-                <div
-                  className="sticky top-0 z-10 grid border-b border-platforma-border bg-platforma-card"
-                  style={{
-                    gridTemplateColumns: "72px repeat(7, minmax(128px, 1fr))",
-                  }}
-                >
-                  <div className="bg-surface-muted p-3 text-xs font-bold uppercase text-platforma-muted">
-                    {timeZoneLabel}
-                  </div>
-                  {weekDates.map((day) => {
-                    const key = toDateInputValue(day);
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        className={cn(
-                          "border-l border-platforma-border p-3 text-left",
-                          key === date ? "bg-brand-50" : "bg-platforma-card",
-                        )}
-                        onClick={() => setDate(key)}
-                      >
-                        <p className="text-xs font-bold uppercase text-platforma-muted">
-                          {weekDays[(day.getDay() + 6) % 7]}
-                        </p>
-                        <p className="mt-1 text-lg font-bold text-platforma-text">
-                          {day.getDate()}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
-                <div
-                  className="relative grid"
-                  style={{
-                    gridTemplateColumns: "72px repeat(7, minmax(128px, 1fr))",
-                    height: `${(dayEndHour - dayStartHour) * hourHeight}px`,
-                  }}
-                >
-                  <div className="relative border-r border-platforma-border bg-surface-muted">
-                    {timelineHours.slice(0, -1).map((hour) => (
-                      <div
-                        key={hour}
-                        className="absolute left-0 right-0 border-t border-platforma-border px-3 pt-2 text-xs font-bold text-platforma-muted"
-                        style={{
-                          top: `${(hour - dayStartHour) * hourHeight}px`,
-                        }}
-                      >
-                        {String(hour).padStart(2, "0")}:00
-                      </div>
-                    ))}
-                  </div>
-                  {weekDates.map((day) => {
-                    const key = toDateInputValue(day);
-                    const items = weekAppointments.filter(
-                      (appointment) =>
-                        dateInTimeZone(
-                          appointment.start_at,
-                          businessTimeZone,
-                        ) === key,
-                    );
-                    return (
-                      <div
-                        key={key}
-                        className={cn(
-                          "relative border-l border-platforma-border",
-                          key === date && "bg-brand-50",
-                        )}
-                      >
-                        {timelineHours.slice(0, -1).map((hour) => {
-                          const isWorking = isWorkingAt(
-                            key,
-                            hour,
-                            null,
-                          );
-                          return (
-                            <button
-                              key={hour}
-                              type="button"
-                              disabled={!isWorking}
-                              className={cn(
-                                "absolute left-0 right-0 border-t border-platforma-border transition",
-                                isWorking
-                                  ? "hover:bg-brand-50"
-                                  : "cursor-not-allowed bg-disabled-surface text-disabled-content",
-                              )}
-                              style={{
-                                top: `${(hour - dayStartHour) * hourHeight}px`,
-                                height: `${hourHeight}px`,
-                              }}
-                              onClick={() =>
-                                isWorking && openBookingForDate(key, hour)
-                              }
-                              aria-label={t("calendar.createAtHour", {
-                                hour: String(hour).padStart(2, "0"),
-                              })}
-                            />
-                          );
-                        })}
-                        {items.map((appointment, index) => {
-                          const client = clientById.get(appointment.client);
-                          const service = serviceById.get(appointment.service);
-                          const metrics = getAppointmentMetrics(
-                            appointment,
-                            businessTimeZone,
-                          );
-                          return (
-                            <button
-                              key={appointment.id}
-                              type="button"
-                              className={cn(
-                                "group absolute left-1 right-1 overflow-visible rounded-control border-l-4 border-t border-r border-b px-2 py-1 text-left text-xs shadow-xs hover:z-30 hover:shadow-md",
-                                getTone(index),
-                                selectedAppointment?.id === appointment.id &&
-                              "border-[var(--platforma-brand-content)] bg-brand-50 shadow-md",
-                              )}
-                              style={{
-                                top: `${metrics.top + 4}px`,
-                                height: `${Math.max(34, metrics.height - 8)}px`,
-                              }}
-                              onClick={() => selectAppointment(appointment)}
-                            >
-                              <p className="font-bold">
-                                {formatTime(
-                                  appointment.start_at,
-                                  locale,
-                                  businessTimeZone,
-                                )}
-                              </p>
-                              <p className="truncate font-bold">
-                                {client?.full_name || t("common.client")}
-                              </p>
-                              <div className="pointer-events-none absolute left-0 top-[calc(100%+6px)] z-50 hidden w-64 rounded-card border border-platforma-border bg-platforma-card p-3 text-platforma-text shadow-premium group-hover:block">
-                                <p className="truncate text-sm font-bold text-platforma-text">
-                                  {client?.full_name || t("common.client")}
-                                </p>
-                                <p className="mt-1 text-xs font-bold text-platforma-muted">
-                                  {formatTime(
-                                    appointment.start_at,
-                                    locale,
-                                    businessTimeZone,
-                                  )}
-                                  -
-                                  {formatTime(
-                                    appointment.end_at,
-                                    locale,
-                                    businessTimeZone,
-                                  )}
-                                </p>
-                                <p className="mt-2 truncate text-xs font-bold text-platforma-muted">
-                                  {service?.name || t("common.service")}
-                                </p>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          {viewMode === "month" ? (
-            <div className="overflow-hidden">
-              <div className="grid grid-cols-7 border-b border-platforma-border">
-                {weekDays.map((day) => (
-                  <div
-                    key={day}
-                    className="bg-surface-muted p-3 text-center text-xs font-bold uppercase text-platforma-muted"
-                  >
-                    {day}
-                  </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-7 bg-platforma-border">
-                {monthDates.map((day, index) => {
-                  const key = day ? toDateInputValue(day) : `empty-${index}`;
-                  const items = day
-                    ? appointmentList.filter(
-                        (appointment) =>
-                          dateInTimeZone(
-                            appointment.start_at,
-                            businessTimeZone,
-                          ) === key,
-                      )
-                    : [];
-                  const isSelectedDay = day && key === date;
-                  return (
-                    <div
-                      key={key}
-                      className={cn(
-                        "relative min-h-28 bg-platforma-card p-3 text-left transition",
-                        !day && "bg-surface-muted",
-                        isSelectedDay
-                          ? "bg-brand-50 ring-2 ring-inset ring-brand-500"
-                          : day && "hover:bg-brand-50",
-                      )}
-                    >
-                      {day ? (
-                        <button
-                          type="button"
-                          className="absolute inset-0 z-0 text-left"
-                          onClick={() => selectMonthDay(key)}
-                          onDoubleClick={() => {
-                            setDate(key);
-                            setMonthInspectorOpen(false);
-                            setViewMode("day");
-                          }}
-                          aria-label={formatPickerDate(key, locale)}
-                        />
-                      ) : null}
-                      {day ? (
-                        <div className="pointer-events-none relative z-10 flex items-center justify-between gap-2">
-                          <span className="text-sm font-bold text-platforma-text">
-                            {day.getDate()}
-                          </span>
-                          {isSelectedDay ? (
-                            <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase text-brand-700">
-                              {t("calendar.selectedDay")}
-                            </span>
-                          ) : null}
-                        </div>
-                      ) : null}
-                      <div className="relative z-20 mt-2 space-y-1">
-                        {items.slice(0, 3).map((appointment) => {
-                          const client = clientById.get(appointment.client);
-                          return (
-                            <button
-                              key={appointment.id}
-                              type="button"
-                              className="w-full truncate rounded-control border border-brand-100 bg-platforma-card px-2 py-1 text-left text-xs font-bold text-brand-700 shadow-xs transition hover:border-brand-500 hover:bg-brand-50"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                selectAppointment(appointment);
-                              }}
-                            >
-                              {formatTime(
-                                appointment.start_at,
-                                locale,
-                                businessTimeZone,
-                              )}{" "}
-                              {client?.full_name || t("common.client")}
-                            </button>
-                          );
-                        })}
-                        {items.length > 3 ? (
-                          <p className="text-xs font-bold text-platforma-muted">
-                            +{items.length - 3}
-                          </p>
-                        ) : null}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-
-          {viewMode === "list" ? (
-            <div className="divide-y divide-platforma-border">
-              {dayAppointments.map((appointment) => {
-                const client = clientById.get(appointment.client);
-                const service = serviceById.get(appointment.service);
-                const resource = appointment.resource
-                  ? resourceById.get(appointment.resource)
-                  : null;
-                return (
-                  <div
-                    key={appointment.id}
-                    className={cn(
-                      "grid gap-3 p-4 transition hover:bg-surface-hover lg:grid-cols-[170px_minmax(0,1.2fr)_minmax(0,1fr)_180px]",
-                      selectedAppointment?.id === appointment.id &&
-                        "bg-brand-50",
-                    )}
-                  >
-                    <button
-                      type="button"
-                      className="text-left"
-                      onClick={() => selectAppointment(appointment)}
-                    >
-                      <p className="text-sm font-bold text-platforma-text">
-                        {formatCalendarDateTime(
-                          appointment.start_at,
-                          locale,
-                          businessTimeZone,
-                        )}
-                      </p>
-                      <p className="mt-1 text-xs font-bold text-platforma-muted">
-                        {formatTime(
-                          appointment.start_at,
-                          locale,
-                          businessTimeZone,
-                        )}
-                        -
-                        {formatTime(
-                          appointment.end_at,
-                          locale,
-                          businessTimeZone,
-                        )}
-                      </p>
-                    </button>
-                    <button
-                      type="button"
-                      className="min-w-0 text-left"
-                      onClick={() => selectAppointment(appointment)}
-                    >
-                      <p className="truncate text-sm font-bold text-platforma-text">
-                        {client?.full_name || t("common.client")}
-                      </p>
-                      <p className="mt-1 truncate text-xs font-bold text-platforma-muted">
-                        {service?.name || t("common.service")}
-                      </p>
-                    </button>
-                    <div className="min-w-0 text-sm font-bold text-platforma-muted">
-                      <p className="truncate">
-                        {resource?.name || t("calendar.noResource")}
-                      </p>
-                      <p className="mt-1 truncate text-xs text-platforma-muted">
-                        {appointment.source}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <StatusBadge status={appointment.status} />
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => openAppointmentWorkspace(appointment)}
-                      >
-                        {t("appointments.card")}
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-              {!dayAppointments.length ? (
-                <button
-                  type="button"
-                  className="w-full p-8 text-left text-sm font-bold text-platforma-muted transition hover:bg-brand-50 hover:text-brand-700"
-                  onClick={() => openBookingForDate(date)}
-                >
-                  {t("calendar.freeDayHint")}
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-
-        {viewMode === "month" && monthInspectorOpen && !selectedAppointment ? (
-          <MonthInspectorPanel
-            date={date}
-            locale={locale}
-            businessTimeZone={businessTimeZone}
-            selectedDayHours={selectedDayHours}
-            dayAppointments={dayAppointments}
-            dayTasks={dayTasks}
-            openSlotsLabel={openSlotsLabel}
-            openSlotsCount={openSlotsCount}
-            selectedAppointmentId={selectedAppointmentId}
-            clientById={clientById}
-            serviceById={serviceById}
-            resourceById={resourceById}
-            onClose={() => setMonthInspectorOpen(false)}
-            onOpenBooking={openBookingForDate}
-            onOpenDay={() => {
-              setMonthInspectorOpen(false);
-              setViewMode("day");
-            }}
-            onSelectAppointment={selectAppointment}
-            onOpenAppointmentCard={openAppointmentWorkspace}
-            t={t}
-          />
-        ) : null}
-
+        <div className="w-full min-w-0 sm:min-w-64 sm:flex-1"><Input aria-label={t("calendar.searchPlaceholder")} placeholder={t("calendar.searchPlaceholder")} value={search} onChange={event => setSearch(event.target.value)} /></div>
+      {hasBranches && <div className="min-w-0 flex-1 sm:w-64 sm:flex-none"><Select aria-label={t("branches.branch")} value={branchFilter} onChange={(event) => setSearchParams((current) => { const next = new URLSearchParams(current); if (event.target.value) next.set("branch", event.target.value); else next.delete("branch"); return next; })} options={[{ value: "", label: t("branches.all") }, ...(branchesQuery.data || []).map((branch) => ({ value: branch.id, label: branch.name }))]} /></div>}
+      </CalendarToolbar>
+      <p className="mb-2 text-right text-xs text-platforma-muted">{businessTimeZone} · {timeZoneLabel}</p>
+      <ActiveCalendarFilters chips={activeFilterChips} onClearAll={clearAllFilters} t={t} />
+      {isCalendarDataLoading && <LoadingState />}
+      <section data-testid={isCalendarDataLoading ? undefined : "calendar-workspace-ready"}>
+        <CalendarBoard loading={isCalendarDataLoading} canViewTasks={canViewTasks} date={date} viewMode={viewMode} today={todayValue} locale={locale} timeZone={businessTimeZone}
+          appointments={appointmentList} tasks={canViewTasks ? taskItems : []} onSelectDay={selectMonthDay} onNavigate={setDate} t={t} />
+      </section>
+      <CalendarDayInspector open={inspectorOpen} loading={isCalendarDataLoading} canViewTasks={canViewTasks} date={date} locale={locale} timeZone={businessTimeZone}
+        dayAppointments={dayAppointments} dayTasks={canViewTasks ? dayTasks : []} clientById={clientById} serviceById={serviceById} resourceById={resourceById}
+        selectedAppointmentId={selectedAppointment?.id || null} canCreate={canCreateAppointment} hoursLabel={hoursLabel} availableSlots={availableSlots}
+        hoursUrl={canManageWorkingHours ? (hasBranches ? `/app/business/branches?branch=${branchFilter}&section=schedule` : "/app/business/working-hours") : undefined}
+        onClose={closeInspector}
+        onBack={() => { setSelectedAppointmentId(null); clearDeepLink(); }} onDayChange={selectMonthDay} onBooking={openBookingForDate} onSelectAppointment={selectAppointment} onOpenCard={openAppointmentWorkspace} t={t}>
         {selectedAppointment ? (
           <AppointmentDrawerPanel
             appointment={selectedAppointment}
@@ -1475,7 +716,6 @@ export function CalendarPage() {
             canRescheduleAppointment={canRescheduleAppointment}
             shouldShowRepeatBooking={shouldShowRepeatBooking}
             canArchiveAppointment={canArchiveAppointment}
-            onClose={() => setSelectedAppointmentId(null)}
             onRepeatBooking={openRepeatBooking}
             onStatusAction={(appointment, status) => {
               if (status === "cancelled" || status === "no_show") {
@@ -1491,7 +731,7 @@ export function CalendarPage() {
             t={t}
           />
         ) : null}
-      </section>
+      </CalendarDayInspector>
 
       <Modal
         title={t("calendar.newBooking")}
@@ -1558,7 +798,7 @@ export function CalendarPage() {
                 setStatusReason("");
               }}
             >
-              {t("common.cancel")}
+              {t("common.back")}
             </Button>
             <Button
               type="button"

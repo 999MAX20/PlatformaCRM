@@ -1,6 +1,8 @@
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { useState, type ReactNode } from "react";
 
 import { Button } from "../../../components/ui/Button";
+import { Modal } from "../../../components/ui/Modal";
 import { cn } from "../../../lib/cn";
 import { CalendarPicker } from "./CalendarPicker";
 import { CalendarResourceFilters } from "./CalendarFilters";
@@ -12,7 +14,6 @@ export function CalendarToolbar({
   viewMode,
   locale,
   todayValue,
-  weekDays,
   serviceFilter,
   resourceFilter,
   statusFilter,
@@ -26,13 +27,13 @@ export function CalendarToolbar({
   onServiceChange,
   onResourceChange,
   onStatusChange,
+  children,
   t,
 }: {
   date: string;
   viewMode: CalendarViewMode;
   locale: string;
   todayValue: string;
-  weekDays: string[];
   serviceFilter: string;
   resourceFilter: string;
   statusFilter: string;
@@ -46,8 +47,11 @@ export function CalendarToolbar({
   onServiceChange: (value: string) => void;
   onResourceChange: (value: string) => void;
   onStatusChange: (value: string) => void;
+  children?: ReactNode;
   t: CalendarTranslate;
 }) {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterCount = [serviceFilter, resourceFilter, statusFilter].filter(Boolean).length;
   const filterControls = (
     <CalendarResourceFilters
       serviceFilter={serviceFilter}
@@ -66,8 +70,8 @@ export function CalendarToolbar({
 
   return (
     <section className="mb-4 rounded-card border border-platforma-border bg-platforma-card p-3 shadow-xs">
-      <div className="flex flex-col gap-3 2xl:flex-row 2xl:items-center 2xl:justify-between">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <Button variant="secondary" size="icon" className="h-10 w-10 shrink-0" onClick={() => onShiftDate(-1)} aria-label={t(viewMode === "month" ? "calendar.previousMonth" : viewMode === "week" ? "calendar.previousWeek" : "calendar.previousDay")}>
             <ChevronLeft size={18} />
           </Button>
@@ -77,12 +81,6 @@ export function CalendarToolbar({
             locale={locale}
             todayValue={todayValue}
             periodLabel={formatCalendarPeriod(date, locale, viewMode)}
-            labels={{
-              previousMonth: t("calendar.previousMonth"),
-              nextMonth: t("calendar.nextMonth"),
-              today: t("calendar.today"),
-              weekdays: weekDays,
-            }}
           />
           <Button variant="secondary" size="icon" className="h-10 w-10 shrink-0" onClick={() => onShiftDate(1)} aria-label={t(viewMode === "month" ? "calendar.nextMonth" : viewMode === "week" ? "calendar.nextWeek" : "calendar.nextDay")}>
             <ChevronRight size={18} />
@@ -90,12 +88,11 @@ export function CalendarToolbar({
           <Button variant="secondary" className="h-10 px-3" onClick={() => onDateChange(todayValue)}>
             {t("calendar.today")}
           </Button>
-          <div className="grid grid-cols-4 rounded-control border border-platforma-border bg-surface-muted p-1">
+        </div>
+          <div className="grid shrink-0 grid-cols-2 rounded-control border border-platforma-border bg-surface-muted p-1">
             {[
-              { value: "day", label: t("calendar.day") },
               { value: "week", label: t("calendar.week") },
               { value: "month", label: t("calendar.month") },
-              { value: "list", label: t("appointments.title") },
             ].map((item) => (
               <button
                 key={item.value}
@@ -112,16 +109,16 @@ export function CalendarToolbar({
               </button>
             ))}
           </div>
-        </div>
       </div>
 
-      <details className="mt-3 lg:hidden">
-        <summary className="cursor-pointer list-none text-sm font-bold text-platforma-text">
-          <span className="inline-flex items-center gap-2"><Filter size={18} />{t("calendar.filters")}</span>
-        </summary>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">{filterControls}</div>
-      </details>
-      <div className="mt-3 hidden items-center gap-2 border-t border-platforma-border pt-3 lg:grid lg:grid-cols-[minmax(180px,0.8fr)_minmax(220px,1fr)_170px]">{filterControls}</div>
+      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-platforma-border pt-3">
+        {children}
+        <Button variant="secondary" aria-haspopup="dialog" aria-expanded={filtersOpen} onClick={() => setFiltersOpen(true)}><Filter size={17} />{t("calendar.filters")}{filterCount ? ` · ${filterCount}` : ""}</Button>
+      </div>
+      <Modal open={filtersOpen} onClose={() => setFiltersOpen(false)} title={t("calendar.filters")} size="sm" testId="calendar-filters">
+        <div className="space-y-4">{filterControls}</div>
+        <div className="mt-5 flex justify-end"><Button onClick={() => setFiltersOpen(false)}>{t("common.close")}</Button></div>
+      </Modal>
     </section>
   );
 }

@@ -128,6 +128,7 @@ for (const entity of ["client", "lead", "deal", "appointment"] as const) {
     const client = await session.create<{ id: number }>("clients", { full_name: `Field workflow ${stamp}` });
     let id = client.id;
     let path = "clients";
+    let calendarEntry = "";
     if (entity === "lead") {
       id = (await session.create<{ id: number }>("leads", { client: client.id, message: "Field workflow", responsible_user: session.userId })).id;
       path = "leads";
@@ -139,15 +140,21 @@ for (const entity of ["client", "lead", "deal", "appointment"] as const) {
       path = "deals";
     }
     if (entity === "appointment") {
+      const branch = await session.create<{ id: number }>("branches", { name: `Field branch ${stamp}` });
       const resource = await session.create<{ id: number }>("resources", { name: `Field specialist ${stamp}`, weekly_schedule: Array.from({ length: 7 }, (_, weekday) => ({ weekday, start_time: "09:00", end_time: "20:00", is_day_off: false })) });
       const service = await session.create<{ id: number }>("services", { name: `Field service ${stamp}`, duration_minutes: 30, price_from: 100 });
       const date = new Date(Date.now() + 4 * 86400_000).toISOString().slice(0, 10);
-      const slots = await session.read("appointments/available-slots", { business_id: session.business, service_id: service.id, resource_id: resource.id, date });
+      await session.action(`branches/${branch.id}/offers`, { service: service.id, duration_minutes: 30, price_from: "100" });
+      await session.action(`branches/${branch.id}/assignments`, { resource: resource.id, service_ids: [service.id] });
+      for (const staff of [null, resource.id]) await session.action(`branches/${branch.id}/schedule`, { resource: staff, date, intervals: [{ start: "09:00", end: "20:00" }] });
+      const slots = await session.read("appointments/available-slots", { business_id: session.business, branch_id: branch.id, service_id: service.id, resource_id: resource.id, date });
       expect(slots.length).toBeGreaterThan(0);
-      id = (await session.create<{ id: number }>("appointments", { client: client.id, service: service.id, resource: resource.id, start_at: slots[0].start_at })).id;
+      id = (await session.create<{ id: number }>("appointments", { client: client.id, branch: branch.id, service: service.id, resource: resource.id, start_at: slots[0].start_at })).id;
       path = "calendar";
+      calendarEntry = `/app/calendar?date=${date}&appointment=${id}&branch=${branch.id}`;
     }
-    await page.goto(`/app/${path}/${id}`);
+    await page.goto(calendarEntry || `/app/${path}/${id}`);
+    if (calendarEntry) await page.getByTestId("calendar-day-inspector").getByRole("button", { name: ru["calendar.openCard"], exact: true }).click();
     const input = page.getByLabel(label, { exact: true });
     await expect(input).toBeVisible();
     await input.fill(`Saved ${entity} value`);

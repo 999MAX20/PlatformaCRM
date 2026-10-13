@@ -1,4 +1,4 @@
-import { CalendarDays, Plus, UserRound, X } from "lucide-react";
+import { CalendarDays, Plus, UserRound } from "lucide-react";
 
 import { Button } from "../../../components/ui/Button";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
@@ -21,7 +21,6 @@ export function AppointmentDrawerPanel({
   canRescheduleAppointment,
   shouldShowRepeatBooking,
   canArchiveAppointment,
-  onClose,
   onRepeatBooking,
   onStatusAction,
   onReschedule,
@@ -42,7 +41,6 @@ export function AppointmentDrawerPanel({
   canRescheduleAppointment: (appointment: Appointment) => boolean;
   shouldShowRepeatBooking: (appointment: Appointment) => boolean;
   canArchiveAppointment: (appointment: Appointment) => boolean;
-  onClose: () => void;
   onRepeatBooking: (appointment: Appointment) => void;
   onStatusAction: (appointment: Appointment, status: Appointment["status"]) => void;
   onReschedule: (appointment: Appointment) => void;
@@ -55,22 +53,15 @@ export function AppointmentDrawerPanel({
   const statusActions = getAllowedStatusActions(appointment);
 
   return (
-    <aside className="fixed inset-x-3 bottom-3 z-40 max-h-[82vh] overflow-y-auto rounded-card border border-platforma-border bg-platforma-card p-5 shadow-premium sm:inset-x-auto sm:right-6 sm:top-24 sm:bottom-auto sm:w-[420px]">
-      <div className="pr-10">
+    <section data-testid="calendar-appointment-detail">
+      <div>
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-platforma-muted">{t("calendar.selectedAppointment")}</p>
-        <button
-          type="button"
-          className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-control text-platforma-muted transition hover:bg-surface-hover hover:text-platforma-text"
-          onClick={onClose}
-          aria-label={t("common.close")}
-        >
-          <X size={18} />
-        </button>
+
 
         <div className="mt-5">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate text-2xl font-bold leading-7 text-platforma-text">{clientById.get(appointment.client)?.full_name || t("common.client")}</p>
+              <p className="truncate text-2xl font-bold leading-7 text-platforma-text">{clientById.get(appointment.client)?.full_name || appointment.client_name || t("common.client")}</p>
               <p className="mt-2 text-sm font-bold text-platforma-muted">
                 {formatTime(appointment.start_at, locale, businessTimeZone)}-{formatTime(appointment.end_at, locale, businessTimeZone)} - {formatPickerDate(dateInTimeZone(appointment.start_at, businessTimeZone), locale)}
               </p>
@@ -85,14 +76,14 @@ export function AppointmentDrawerPanel({
               <p className="text-xs font-bold uppercase text-platforma-muted">{t("common.service")}</p>
               <p className="flex min-w-0 items-center gap-2 text-sm font-bold text-platforma-text">
                 <CalendarDays size={15} className="shrink-0 text-platforma-muted" />
-                <span className="truncate">{serviceById.get(appointment.service)?.name || t("common.service")}</span>
+                <span className="truncate">{serviceById.get(appointment.service)?.name || appointment.service_name || t("common.service")}</span>
               </p>
             </div>
             <div className="grid grid-cols-[88px_minmax(0,1fr)] items-center gap-3 border-t border-platforma-border/70 py-2">
               <p className="text-xs font-bold uppercase text-platforma-muted">{t("appointment.resource")}</p>
               <p className="flex min-w-0 items-center gap-2 text-sm font-bold text-platforma-text">
                 <UserRound size={15} className="shrink-0 text-platforma-muted" />
-                <span className="truncate">{appointment.resource ? resourceById.get(appointment.resource)?.name || t("appointment.noResource") : t("appointment.noResource")}</span>
+                <span className="truncate">{appointment.resource ? resourceById.get(appointment.resource)?.name || appointment.resource_name || t("appointment.noResource") : t("appointment.noResource")}</span>
               </p>
             </div>
             <div className="grid grid-cols-[88px_minmax(0,1fr)] items-center gap-3 border-t border-platforma-border/70 py-2">
@@ -156,6 +147,6 @@ export function AppointmentDrawerPanel({
           </div>
         </div>
       </div>
-    </aside>
+    </section>
   );
 }
