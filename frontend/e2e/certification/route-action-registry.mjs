@@ -557,12 +557,12 @@ export const routeActionRegistry = [
     page: "SettingsPage",
     roles: ["owner", "administrator"],
     capabilities: ["settings:update"],
-    primaryActions: ["update_business", "manage_team", "manage_billing"],
-    secondaryActions: ["configure_security", "configure_developer_access"],
+    primaryActions: ["update_business", "manage_team", "configure_appointment_messages", "manage_custom_fields"],
+    secondaryActions: ["configure_role_permissions", "review_security", "manage_quick_replies", "view_usage", "view_billing_empty_state"],
     controls: ["tabs", "forms", "dialogs", "tables"],
-    apiEndpoints: ["GET/PATCH /api/businesses/:id/", "GET/POST/PATCH /api/business-members/"],
+    apiEndpoints: ["GET/PATCH /api/businesses/:id/", "GET/PATCH /api/team/members/:id/", "GET/POST/PATCH /api/team/roles/", "POST/PATCH /api/team/role-permissions/", "GET/POST /api/team/invitations/", "GET/POST/PATCH /api/appointment-message-settings/", "GET/POST/PATCH /api/quick-replies/", "GET/POST/PATCH /api/custom-fields/"],
     entities: ["Business", "BusinessMember", "BusinessInvitation", "Subscription"],
-    automatedTests: ["e2e/smoke.spec.ts", "e2e/daily-workspaces.spec.ts"],
+    automatedTests: ["e2e/settings-functional.spec.ts", "e2e/settings-redesign.spec.ts", "e2e/settings-workflow.spec.ts", "e2e/settings-assignment.spec.ts"],
   }),
 
   platformRoute({

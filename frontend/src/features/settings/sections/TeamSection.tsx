@@ -56,7 +56,9 @@ export function TeamSection({ model }: { model: SettingsModel; }) {
       {model.revokeInvitationMutation.variables === invitation.id && <SettingsFeedback error={model.revokeInvitationMutation.error} />}
     </div>;
   }
-  const memberChanged = Boolean(selectedMember && memberDraft !== selectedMemberRole);
+  const memberChanged = Boolean(selectedMember && selectedMember.role !== "owner" && memberRole && (
+    memberDraft !== selectedMemberRole || String(selectedMember.business_role) !== String(memberRole.id)
+  ));
   return <SettingsSection id="team-access" active={activeSettingsSection} title={t("settings.section.team-access")}
     actions={canManageTeam && <Button type="button" onClick={openInvitation}><Plus size={16} />{t("settings.redesign.invite")}</Button>}>
     <div className="space-y-4 p-4 sm:p-5">
@@ -143,9 +145,10 @@ export function TeamSection({ model }: { model: SettingsModel; }) {
         <Select data-testid="team-role-select" label={t("settings.role")} value={memberDraft} disabled={!canManageTeam || selectedMember.role === "owner" || updateMemberMutation.isPending || teamRoles.isError}
           options={selectedMember.role === "owner" ? [{ value: "owner", label: t("settings.role.owner") }] : editableTeamRoleOptions.map(option => assignedRole && !assignedRole.is_system && option.value === selectedMemberRole ? { ...option, label: settingsRoleName(assignedRole, t) } : option)}
           onChange={event => { setRoleDrafts(current => ({ ...current, [Number(selectedMember.id)]: event.target.value as BusinessMembershipSummary["role"] })); updateMemberMutation.reset(); }} />
-        {canManageTeam && selectedMember.role !== "owner" && <Button type="button" variant="secondary" disabled={!memberRole || teamRoles.isLoading || teamRoles.isError || updateMemberMutation.isPending}
+        {canManageTeam && selectedMember.role !== "owner" && <Button type="button" variant="secondary" disabled={memberChanged || !memberRole || teamRoles.isLoading || teamRoles.isError || updateMemberMutation.isPending}
           onClick={() => configureRole(memberRole?.id)}>{t("settings.workflow.editRolePermissions")}</Button>}
-        {!teamRoles.isLoading && !teamRoles.isError && <RoleAccessPreview role={memberRole} baseRole={roles.find(role => role.preset_key === memberDraft)} />}
+        {memberChanged ? <p role="status" className="text-sm text-platforma-subtle">{t("settings.workflow.saveRoleFirst")}</p>
+          : !teamRoles.isLoading && !teamRoles.isError && <RoleAccessPreview role={memberRole} baseRole={roles.find(role => role.preset_key === memberDraft)} />}
         <TeamAccessControl key={selectedMember.id} member={selectedMember} canManage={canManageTeam} />
       </div>}
     </SettingsDrawer>

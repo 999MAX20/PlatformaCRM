@@ -315,6 +315,7 @@ export const en: Record<string, string> = {
   "settings.redesign.employee": "Employee",
   "settings.redesign.loginAccess": "CRM login",
   "settings.redesign.rolePreview": "Selected role access",
+  "settings.workflow.saveRoleFirst": "The role assignment is not saved. The selected role’s permissions are not applied yet.",
   "settings.redesign.configureRole": "Configure role",
   "settings.redesign.resource": "Section",
   "settings.redesign.action": "Action",

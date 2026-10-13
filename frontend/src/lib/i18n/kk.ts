@@ -315,6 +315,7 @@ export const kk: Record<string, string> = {
   "settings.redesign.employee": "Қызметкер",
   "settings.redesign.loginAccess": "CRM жүйесіне кіру",
   "settings.redesign.rolePreview": "Таңдалған рөлдің қолжетімділігі",
+  "settings.workflow.saveRoleFirst": "Рөл тағайындауы сақталмаған. Таңдалған рөлдің құқықтары әлі қолданылмаған.",
   "settings.redesign.configureRole": "Рөлді баптау",
   "settings.redesign.resource": "Бөлім",
   "settings.redesign.action": "Әрекет",

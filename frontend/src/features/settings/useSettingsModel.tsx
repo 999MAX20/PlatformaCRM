@@ -269,10 +269,10 @@ export function useSettingsModel() {
 
   const updateMemberMutation = useMutation({
     mutationFn: teamApi.updateMember,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team-members"] });
-      queryClient.invalidateQueries({ queryKey: ["auth-me"] });
-    },
+    onSuccess: () => Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["team-members"] }),
+      queryClient.invalidateQueries({ queryKey: ["auth-me"] }),
+    ]),
   });
 
   const inviteMutation = useMutation({

@@ -1,5 +1,99 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## SETTINGS-ASSIGNMENT-20261014 — Phase2 execution
+
+Primary explicitly transferred the sole writer to PlatformaCRM UI after Calendar
+receipt17fb7c1; primary prepares R01 read-only. Mode implementation, gap code/evidence.
+Canonical root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+base17fb7c10f4d9d3935a97050cb128f370a11e2e9d. Starting unrelated ONEC changes
+in STATUS/this checkpoint preserved in output/settings-assignment-20261014.
+Result: explicit Save assigns the selected role even when the legacy role string
+is unchanged; unapplied permissions cannot appear effective or be edited here.
+Reuse TeamSection, updateMemberMutation, existing team API and role editor.
+Preserve custom assignments; no silent assignment, backend fallback or migration.
+Risk: authorization presentation and query refresh. Focused checks: isolated
+real-API browser legacy/null assignment, effective permissions and denial, sibling
+unchanged, failure/retry, custom-role preservation and editor return. Check RU/KK/EN
+desktop/mobile keyboard; one completion build and diff/static checks. Reuse unchanged
+Settings/MB evidence; reconcile passport and SETUP-SETTINGS current controls only.
+No new notification, BusinessEvent, AI, env or external-delivery behavior.
+Delivery: scoped evidence, explicit owned staging, normal push to origin/main,
+actual CI readback and bounded writer handback to primary. R01 remains open.
+
+Implementation: compare persisted role FK as well as canonical role; preserve
+assigned custom-role identity, keep owner immutable, disable employee role editing
+and hide unapplied preview until explicit Save. Await member/auth invalidation.
+The neutral RU/KK/EN pending status also works for team viewers without Save rights.
+Evidence correction accepted by primary: planned clients list403 was not the
+existing API contract. TenantModelViewSet returns200 with an empty denied-business
+queryset and detail404; actual-access regression proves visible client/detail200
+before, effective permission absent + empty list/detail404 after, and unchanged
+legacy sibling access. No server change to manufacture403.
+Browser iterations (ignored output/crm-toolbars-20261013):
+- browser-1791924318847378800: fixture login shared browser refresh cookie; fixed
+  by a separate APIRequestContext for each tested actor.
+- browser-1791924561608255800: expected raw503 detail instead of existing normalized
+  alert; corrected assertion to the visible error state plus unchanged FK/retry.
+- browser-1791924674456775400: exactFK/effective deny passed; list403 assumption
+  failed and was corrected to the source-backed list/detail contract above.
+- browser-1791924789171465100: RU/KK/EN desktop3 PASS; custom-role editor locator
+  was ambiguous across four comboboxes; scope it by the existing role label.
+No product permission changes arose from these fixture/assertion corrections.
+Isolated build helper output/settings-assignment-20261014/build.py uses
+codex_verify.isolated_runtime and Vite policy validation: test:gate-env,
+npm run build (types/i18n/production/widget) and check:bundle PASS. An earlier
+ordinary build also passed but is not used as isolated environment evidence;
+final isolated build repeated after owner-state/copy correction.
+SETUP-SETTINGS actions/endpoints/tests and expected outcomes now reflect reachable
+controls, not removed developer/billing writes. Scoped outcome/test-path check
+PASS and status remains NOT_RUN (contract metadata, never a receipt).
+Broader npm run check:certification and its registry test remain FAIL on two
+proven baseline gaps: AI-ASSISTANT/redirect_to_agents outcome and business/branches
+route. Read-only in-memory import of git show17fb7c1 registry gives the same errors;
+router/outside contracts unchanged. Primary accepted these for R01 reconciliation.
+This does not block the Settings-specific contract proof or imply full FC003 PASS.
+Existing Settings08–09/MB scope retained; no rerun of unrelated pages/backend
+suites, no dependency install, live send or working-database migration.
+
+Settings coverage reconciliation (reuse is limited to unchanged inputs):
+- Company save/timezone/requisites: existing settings-functional/workflow evidence;
+  stored finance controls removed13.10, passport corrected without restoring them.
+- Team invitation/revoke/department/login: existing settings-functional evidence;
+  branch grants: closed MB evidence. Employee role assignment/editor is this delta.
+- Roles matrix/owner read-only/invitation preview: settings-redesign and workflow;
+  this regression adds real access, legacy sibling and custom-assignment proof.
+- Security audit/login/support filters: settings-workflow; records remain bounded
+  by existing history, no wider security or support policy acceptance inferred.
+- Three appointment-message scenarios: settings-functional; custom scenarios still
+  deferred. Local settings checks do not prove external client delivery.
+- Quick reply editor and insertion as draft: settings-workflow; no send.
+- Custom fields: settings-workflow full client/lead/deal/appointment consumers;
+  Calendar phase rechecked the changed appointment consumer, unchanged others reused.
+- Billing deliberately empty and usage from backend: settings-workflow; commercial
+  payment controls not restored. Personal notification preferences live in Account.
+Sources: [functional](../settings-functional-20261008.md),
+[redesign](../settings-redesign-20261009.md), [workflow](../settings-workflow-20261009.md).
+SETUP-SETTINGS is a contract inventory, not a replacement for these scoped receipts.
+
+Final focused browser evidence uses `.venv/Scripts/python.exe
+output/crm-toolbars-20261013/browser.py <project> <spec> [args]`, whose isolated_runtime
+allocates disposable DB/ports and starts canonical-root servers only:
+- desktop-chromium settings-assignment.spec.ts: RU/KK/EN3 PASS in the run above;
+  those unchanged successful tests reused after the custom locator-only correction.
+- desktop-chromium 'settings-(assignment|workflow).spec.ts' --grep
+  'assigned custom role|employee opens': 2 PASS, browser-1791924906320098700.log.
+- mobile-chromium settings-assignment.spec.ts: 4 PASS,
+  browser-1791924906303558200.log. Includes custom-role preservation, owner immutable,
+  keyboard Enter/save/retry/editor return and actual member/sibling access.
+Desktop RU and mobile KK/EN screenshots inspected: pending status, role control and
+Save remain readable/reachable, no horizontal overflow. Other localized screenshots
+and automated overflow assertions retained in the same run folders.
+`.venv/Scripts/python.exe output/settings-assignment-20261014/static.py` PASS:
+isolated manage.py check + makemigrations --check --dry-run, working/index hygiene.
+No listener remained on any of this task's six isolated backend/frontend port pairs.
+Calendar2f9035b CI38464742290 separately verified SUCCESS; receipt CI still running
+at this observation. Settings scoped implementation checks complete; publication below.
+
 ## TWO-CHAT-COORDINATION-20261014 — owner-authorized CRM workflow
 
 Owner instruction relayed by PlatformaMarket UI: adopt coordinated work by the two

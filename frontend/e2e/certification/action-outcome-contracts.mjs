@@ -7,6 +7,14 @@ function define(actions, expected) {
   }
 }
 
+define("configure_appointment_messages", "The three existing scenarios persist allowed channel/template/timing settings under settings:update; validation and recovery retain inputs. Saving is not evidence of external delivery.");
+define("manage_custom_fields", "Authorized definition changes preserve entity/type/options and existing values; the applicable full entity page can save and reload the configured field.");
+define("configure_role_permissions", "The employee's assigned role opens with its identity and return context; an unassigned or changed role must first be explicitly saved. Permission changes affect actual server access for assigned members only.");
+define("review_security", "Permitted audit, login and support records reflect the selected business and supported filters, without exposing credentials or claiming broader history.");
+define("manage_quick_replies", "Authorized shared templates persist and appear in the conversation picker; selecting one inserts a draft without sending.");
+define("view_usage", "Usage displays backend entitlements and measured counters with their units and limits; unavailable values are not fabricated.");
+define("view_billing_empty_state", "The deliberately empty billing page remains reachable without offering tariff changes, charging or payment actions.");
+
 define("open_document open_documents_index", "Public document names and empty page bodies are reachable without login; signup/account links preserve the source form in its original tab.");
 define("login", "Valid credentials establish the intended user session; reload retains it; invalid credentials do not enter CRM.");
 define("continue_mfa verify_totp", "The challenge requires a valid current second factor before issuing an authenticated session; invalid/replayed codes are rejected.");

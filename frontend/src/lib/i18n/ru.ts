@@ -311,6 +311,7 @@ export const ru: Record<string, string> = {
   "settings.redesign.employee": "Сотрудник",
   "settings.redesign.loginAccess": "Вход в CRM",
   "settings.redesign.rolePreview": "Доступ выбранной роли",
+  "settings.workflow.saveRoleFirst": "Назначение роли не сохранено. Права выбранной роли ещё не применены.",
   "settings.redesign.configureRole": "Настроить роль",
   "settings.redesign.resource": "Раздел",
   "settings.redesign.action": "Действие",

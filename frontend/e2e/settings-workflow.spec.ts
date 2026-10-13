@@ -18,6 +18,8 @@ test("employee opens assigned role, edits its existing permissions and returns t
   const member = members.find(item => item.role === "operator")!;
   const roles = await session.list<BusinessRole>("team/roles");
   const role = roles.find(item => item.id === member.business_role) || roles.find(item => item.preset_key === member.role)!;
+  const assignment = await page.request.patch(`${api}/api/team/members/${member.id}/`, { headers: session.headers, data: { business_role: role.id } });
+  expect(assignment.ok(), await assignment.text()).toBeTruthy();
   await page.goto("/app/settings#team-access");
   await page.locator("#team-access").getByRole("button").filter({ hasText: member.user.email }).click();
   await page.getByRole("dialog").getByRole("button", { name: ru["settings.workflow.editRolePermissions"], exact: true }).click();
