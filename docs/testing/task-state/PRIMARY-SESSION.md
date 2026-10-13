@@ -1,5 +1,79 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## ANALYTICS-REDESIGN-20261014 — period-based compact analytics
+
+Owner directly requested Computer Use audit, generated reference first, then full
+Analytics UI/UX and necessary backend redesign. Executor: UI continuation
+01a1369b-a07d-7701-8832-cbabe7824db5; registered primary/generation unchanged.
+Mode implementation; gap UX/calculation/API. Canonical root PlatformaCRM,
+branch codex/ui-testing-toolkit, base903405d638f1931dfe93aac44ae30e91354dfffb.
+Starting WIP only ONEC pilot STATUS+7/checkpoint+68; snapshots retained in ignored
+output/analytics-redesign-20261014. Preserve those blocks unstaged/unpublished.
+Browser audit: duplicate heading/subtitle, large KPI/AI banners, disconnected
+attention rows, repeated team headings, technical scheduled-report placeholders.
+Code: all-time dashboard mixed with default90-day summary; services counted from
+one paginated appointment page; CSV client treats queued JSON as a CSV file.
+Reference generated before implementation (illustrative data, neutral/emerald).
+Owner explicitly accepted event dates: leads created_at; visits start_at;
+won deals won_at; money payment/refund time; archived records retained in history.
+Operational attention/open queues remain current and are labelled separately.
+Reuse existing summary/export routes, permission scoping, financial_report,
+work-queue predicates, date picker, UI primitives and i18n. Preserve unrelated
+dashboard/AI consumers; no provider calls, money mutations, working DB migrations,
+new AI functionality, notification/BusinessEvent changes or overall R01 closure.
+Scope: Analytics selectors/API contract, matching exports, compact page with
+overview/sources/team/finance views, full server aggregates and unavailable states.
+Risk/check plan: focused isolated backend after each coherent selector/API slice;
+date/timezone boundaries, distinct conversion, archive, invalid period, role denial,
+tenant/resource scope and financial availability; matching export/queue regression.
+Completion: affected/dependent analytics/export tests, Django check/migration drift,
+RU/KK/EN desktop/mobile and keyboard flows, empty/error recovery, one isolated build,
+review owned diff, commit/normal push and actual CI. No full-project local gate.
+Implementation: workspace selector via existing summary route view=workspace;
+event-time/archived aggregates, distinct cohort conversion, services and scoped
+team tables, current queues separate. Existing dashboard/legacy report contracts
+preserved. Workspace CSV uses the same selector and existing export-job flow.
+Frontend overview/sources/services/team/finance, period/help dialogs, queued
+download status, RU/KK/EN copy and shared primitives implemented.
+Focused backend: first9 tests had two incorrect fixture expectations (existing
+cross-tenant resolver returns400, manager has BUSINESS analytics permission).
+Compared current contracts/tests; corrected expectations without weakening scope
+assertions. Second10 PASS; export iteration13 PASS. Logs in output/analytics-redesign-20261014.
+Completion backend: Django check0 issues, no migration changes, all71 tests across
+apps.analytics, apps.core.tests_b5_performance, apps.core.tests_import_export PASS
+(backend-completion.log). Isolated runtime, no ordinary database writes.
+Build initial dictionary check failed due to new translations before ...ru fallback;
+order fixed. Build/types/i18n/widget/bundle PASS (output/multibranch/build-1791919700456122500.log).
+Final UI repairs: removed duplicate date presets and silent source truncation;
+localized update timestamps and numeric KK dates. Final build/types/i18n/widget/
+bundle PASS: output/multibranch/build-1791920362094947200.log.
+CU: desktop1440 and mobile390 RU/KK/EN, five tabs, fixture totals and manual55000,
+empty2020 period, invalid-date400 -> picker30days recovery, today apply, help Escape
+and focus restoration, synchronous CSV PASS. Scoped tables scroll within cards.
+One initial locale save was interrupted by navigation; awaited saved state on retry.
+Queued CU export initially500: isolated_runtime REDIS_URL=memory:// inherited as
+Celery result backend for runserver (tests override it correctly). Disposable
+harness restarted with cache+memory://; no application/environment-file change.
+Owner reconciled unrelated HEAD a7c8e76 roadmap commit and explicitly authorized
+continuing on it. Real fetched main is a7c8e76 (origin/main tracking ref is stale
+because configured fetch refspec omits main); use FETCH_HEAD/ls-remote receipts.
+Commands: isolated_runtime + manage.py check; makemigrations --check --dry-run;
+manage.py test apps.analytics apps.core.tests_b5_performance apps.core.tests_import_export
+--noinput; .venv/Scripts/python.exe output/multibranch/frontend.py build.
+No full-project local gate, live provider, deployment, working-DB migration or R01
+certification; existing backend PASS reused after frontend/docs-only deltas.
+Queued CU after harness repair: 202 -> ready/download action reached. Download
+then reproduced400 because separate download resource mapping omitted workspace
+keys. Added mapping and regression proving200 streamed CSV + foreign Business404.
+Post-fix40 tests PASS (apps.analytics.tests_workspace, apps.core.tests_b5_performance,
+apps.core.tests_import_export); check0 and no migration drift, backend-download.log.
+Browser final download was not repeated after backend fix; API regression verifies
+that exact route. No real worker/broker certification; eager boundary only.
+Temporary CU servers stopped, no own listeners remain; live5173 tab retained.
+Final build inputs unchanged by this backend-only repair; prior build PASS reused.
+Diff/links reviewed; unrelated ONEC blocks remain unstaged. State: verified;
+owned conventional commit, static committed-range gate and normal push next.
+
 ## CRM-TOOLBARS refinement — owner feedback 2026-10-13
 
 Reopens only reproduced UX defects and approved requirement changes after b98381e:

@@ -218,6 +218,10 @@ def retention_ltv(business, appointments):
 
 
 def export_report_csv(business, report_key, *, user=None, start_date=None, end_date=None):
+    from apps.analytics.workspace_export import WORKSPACE_REPORTS, export_workspace_csv
+
+    if report_key in WORKSPACE_REPORTS:
+        return export_workspace_csv(business, report_key, user=user, start_date=start_date, end_date=end_date)
     summary = build_report_summary(business, user=user, start_date=start_date, end_date=end_date)
     rows, fields = _export_rows(summary, report_key)
     buffer = io.StringIO()

@@ -32,8 +32,8 @@ export function FinancialStatus({ report, compact = false }: { report?: Financia
 export function FinancialSummary({ report }: { report: FinancialReport }) {
   const { t } = useI18n();
   return (
-    <Surface as="section" padding="lg" className="mt-6" data-testid="financial-summary">
-      <h2 className="text-lg font-semibold text-platforma-ink">{t(report.source?.provider === "manual" ? "aiHistory.manual" : "finance.title")}</h2>
+    <Surface as="section" padding="md" data-testid="financial-summary">
+      <h2 className="text-base font-bold text-platforma-ink">{t(report.source?.provider === "manual" ? "aiHistory.manual" : "finance.title")}</h2>
       <div className="mt-3 text-platforma-subtle"><FinancialStatus report={report} /></div>
       {report.state === "unavailable" ? (
         <p className="mt-3 font-semibold text-platforma-subtle">{t("finance.unavailable")}</p>

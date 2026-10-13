@@ -212,6 +212,11 @@ def report_summary(request):
     business = _resolve_business(request)
     assert_resource_enabled(business, Resources.ANALYTICS)
     assert_can(request.user, business, Resources.ANALYTICS, Actions.VIEW)
+    if request.query_params.get("view") == "workspace":
+        from apps.analytics.workspace import build_analytics_workspace, workspace_period
+
+        start_date, end_date = workspace_period(business, request.query_params)
+        return Response(build_analytics_workspace(business, user=request.user, start_date=start_date, end_date=end_date))
     start_date, end_date = parse_bounded_date_range(request.query_params)
     return Response(
         build_report_summary(
@@ -230,7 +235,11 @@ def report_export(request):
     assert_resource_enabled(business, Resources.ANALYTICS)
     assert_can(request.user, business, Resources.ANALYTICS, Actions.VIEW)
     report_key = request.query_params.get("report", "source_roi")
-    start_date, end_date = parse_bounded_date_range(request.query_params)
+    from apps.analytics.workspace_export import WORKSPACE_REPORTS
+    from apps.analytics.workspace import workspace_period
+
+    start_date, end_date = (workspace_period(business, request.query_params) if report_key in WORKSPACE_REPORTS
+                            else parse_bounded_date_range(request.query_params))
     try:
         response, job = request_report_export(
             business=business,

@@ -1,8 +1,15 @@
 import { createCrudApi } from "./crud";
 import { apiClient } from "./client";
 import type { AnalyticsEvent, AnalyticsReportSummary, Id, OwnerDashboardMetrics, ReportWidget, ScheduledReport, TeamPerformanceMetrics } from "../types";
+import type { AnalyticsPeriod, AnalyticsWorkspace } from "../types/analyticsWorkspace";
 
 export const analyticsApi = {
+  workspace: async (business: Id, period: AnalyticsPeriod) => {
+    const { data } = await apiClient.get<AnalyticsWorkspace>("/api/analytics/reports/summary/", {
+      params: { business, view: "workspace", ...period },
+    });
+    return data;
+  },
   ...createCrudApi<AnalyticsEvent>("/api/analytics-events/"),
   widgets: createCrudApi<ReportWidget>("/api/report-widgets/"),
   scheduledReports: createCrudApi<ScheduledReport>("/api/scheduled-reports/"),

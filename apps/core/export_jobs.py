@@ -19,6 +19,10 @@ logger = logging.getLogger(__name__)
 
 
 def export_resource(export_key):
+    from apps.analytics.workspace_export import WORKSPACE_REPORTS
+
+    if export_key in WORKSPACE_REPORTS:
+        return Resources.ANALYTICS
     return {
         "clients": Resources.CLIENTS,
         "leads": Resources.LEADS,

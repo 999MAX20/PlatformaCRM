@@ -1,5 +1,11 @@
 # PlatformaCRM — текущий статус
 
+14.10.2026. ANALYTICS-REDESIGN: компактная аналитика с пятью вкладками,
+единым периодом по датам событий, серверными агрегатами и CSV реализована.
+Backend71 и после исправления скачивания40, check/migration drift, сборка
+и scoped CU PASS. Проверено локально; commit/push завершаются. Evidence —
+в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md). R01 остаётся отложенным.
+
 13.10.2026. CRM-TOOLBARS refinement: единые элементы трёх страниц, широкий поиск,
 один вход в фильтры, исправленные меню/выравнивание/выбор менеджера и компактная
 пагинация. Backend24, browser14 RU/KK/EN desktop/mobile и build PASS.

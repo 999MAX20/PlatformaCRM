@@ -186,6 +186,10 @@ def _resource_for_entity(entity_type):
 
 
 def _resource_for_export_key(export_key):
+    from apps.analytics.workspace_export import WORKSPACE_REPORTS
+
+    if export_key in WORKSPACE_REPORTS:
+        return Resources.ANALYTICS
     if export_key in {"source_roi", "manager_performance", "funnel_velocity", "retention_ltv"}:
         return Resources.ANALYTICS
     return _resource_for_entity(export_key)

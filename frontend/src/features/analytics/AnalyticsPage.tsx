@@ -1,552 +1,117 @@
-import { AlertTriangle, CalendarCheck, CheckCircle2, Download, Flame, MessageSquareText, PlugZap, ShieldAlert, TrendingDown, TrendingUp, Users } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
-
+import { Download, HelpCircle, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router";
 import { analyticsApi } from "../../api/analytics";
-import { asArray, getApiErrorMessage } from "../../api/client";
-import { PageAiHints, type PageAiHint } from "../../components/ai/PageAiHints";
-import { Badge } from "../../components/ui/Badge";
-import { Card, CardBody, Surface } from "../../components/ui/Card";
+import { analyticsExports } from "../../api/analyticsExports";
+import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { Button } from "../../components/ui/Button";
-import { PageHeader } from "../../components/ui/PageHeader";
-import { ErrorState, LoadingState } from "../../components/ui/StateViews";
-import { StatusBadge } from "../../components/ui/StatusBadge";
+import { DateRangePicker, isCalendarDate, type DateRangeValue } from "../../components/ui/DateRangePicker";
+import { Dialog } from "../../components/ui/Overlay";
+import { EmptyState, ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useActiveBusiness } from "../../hooks/useBusiness";
-import { useEntityData } from "../../hooks/useEntityData";
-import { formatMoney } from "../../lib/format";
+import { dateInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
-import type { CrmAiInsightCard, TeamPerformanceActionItem, TeamPerformanceMember, TeamPerformanceTeam } from "../../types";
-import type { LucideIcon } from "lucide-react";
+import type { Business, Id } from "../../types";
+import type { WorkspaceReport } from "../../types/analyticsWorkspace";
+import { useAuth } from "../auth/AuthProvider";
 import { FinancialSummary } from "./FinancialSummary";
+import { Overview, ServicesTable, SourcesTable, TeamTable } from "./WorkspaceSections";
 
-function Stat({ label, value, hint, icon: Icon }: { label: string; value: number | string; hint?: string; icon: typeof Flame }) {
-  return (
-    <Surface padding="lg">
-        <div className="mb-5 grid h-10 w-10 place-items-center rounded-control bg-surface-muted text-brand-700">
-          <Icon size={18} />
-        </div>
-        <p className="text-sm font-semibold uppercase text-platforma-subtle">{label}</p>
-        <p className="mt-3 text-3xl font-bold tracking-tight text-platforma-text">{value}</p>
-        {hint ? <p className="mt-2 text-sm font-semibold text-platforma-subtle">{hint}</p> : null}
-    </Surface>
-  );
-}
-
-const aiCardIcons: Record<string, LucideIcon> = {
-  overdue_tasks: Flame,
-  unanswered_conversations: MessageSquareText,
-  failed_connectors: PlugZap,
-  appointment_no_show_rate: TrendingDown,
-  lead_to_deal_missing: AlertTriangle,
-  crm_operating_norm: CheckCircle2,
-  no_operational_data: ShieldAlert,
+const tabs = ["overview", "sources", "services", "team", "finance"] as const;
+type Tab = typeof tabs[number];
+const reports: Record<Tab, WorkspaceReport> = {
+  overview: "workspace_overview", sources: "workspace_sources", services: "workspace_services", team: "workspace_team", finance: "workspace_finance",
 };
-
-function aiCardSeverity(severity: CrmAiInsightCard["severity"]): PageAiHint["severity"] {
-  if (severity === "critical" || severity === "warning" || severity === "good" || severity === "info") return severity;
-  return "info";
-}
-
-function aiCardCopyKey(key: string) {
-  return [
-    "overdue_tasks",
-    "unanswered_conversations",
-    "failed_connectors",
-    "appointment_no_show_rate",
-    "lead_to_deal_missing",
-    "crm_operating_norm",
-    "no_operational_data",
-  ].includes(key)
-    ? key
-    : "default";
-}
-
-function humanizeToken(value: string) {
-  return value.replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim();
-}
-
-function translatedToken(t: (key: string, vars?: Record<string, string | number>) => string, prefix: string, value: string) {
-  const key = `${prefix}.${value}`;
-  const translated = t(key);
-  return translated === key ? humanizeToken(value) : translated;
+function recentPeriod(today: string, days: number) {
+  const from = new Date(`${today}T12:00:00Z`);
+  from.setUTCDate(from.getUTCDate() - days + 1);
+  return { from: from.toISOString().slice(0, 10), to: today };
 }
 
 export function AnalyticsPage() {
+  const { business, isLoading } = useActiveBusiness();
+  const { user } = useAuth();
   const { t } = useI18n();
-  const { business } = useActiveBusiness();
-  const { appointments, services } = useEntityData({ appointments: true, services: true });
-  const metrics = useQuery({
-    queryKey: ["owner-dashboard", business?.id],
-    queryFn: () => analyticsApi.ownerDashboard(business?.id),
-    enabled: Boolean(business),
-  });
-  const teamPerformance = useQuery({
-    queryKey: ["team-performance", business?.id],
-    queryFn: () => analyticsApi.teamPerformance(business?.id),
-    enabled: Boolean(business),
-    retry: false,
-  });
-  const reportSummary = useQuery({
-    queryKey: ["analytics-report-summary", business?.id],
-    queryFn: () => analyticsApi.reportSummary(business?.id),
-    enabled: Boolean(business),
-  });
-  const scheduledReports = useQuery({
-    queryKey: ["scheduled-reports"],
-    queryFn: analyticsApi.scheduledReports.list,
-    enabled: Boolean(business),
-  });
-  const exportMutation = useMutation({
-    mutationFn: analyticsApi.exportReport,
-  });
-
-  if (!business) return <ErrorState message={t("analytics.noBusiness")} />;
-  if (appointments.isLoading || services.isLoading || metrics.isLoading) return <LoadingState scope="page" />;
-  if (metrics.error) return <ErrorState message={t("analytics.loadError")} />;
-
-  const appointmentList = appointments.data || [];
-  const dashboard = metrics.data;
-  const noShow = dashboard?.no_show_count || 0;
-  const conversion = dashboard?.conversion_lead_to_appointment || 0;
-  const crmFunnel = dashboard?.crm_funnel;
-  const sourceRows = crmFunnel?.lead_counts.by_source.map((row) => ({ source: row.key, count: row.count })) || dashboard?.leads_by_source || [];
-  const dealConversion = crmFunnel?.conversion_to_deal.rate ?? 0;
-  const wonValue = crmFunnel?.deal_outcomes.won_value ?? "0";
-  const noShowRate = crmFunnel?.appointments.no_show_rate ?? noShow;
-  const unansweredConversations = crmFunnel?.conversations.unanswered ?? 0;
-  const report = reportSummary.data;
-  const aiCards = asArray<CrmAiInsightCard>(dashboard?.ai_insight_cards);
-  const teamPerformanceMembers = asArray<TeamPerformanceMember>(teamPerformance.data?.members);
-  const teamPerformanceActions = asArray<TeamPerformanceActionItem>(teamPerformance.data?.action_items);
-  const teamPerformanceTeams = asArray<TeamPerformanceTeam>(teamPerformance.data?.teams);
-  const topSource = sourceRows[0];
-  const analyticsHints: PageAiHint[] = aiCards.length
-    ? aiCards.map((card) => {
-        const copyKey = aiCardCopyKey(card.key);
-        return {
-          id: card.key,
-          title: t(`analytics.aiCard.${copyKey}.title`),
-          description: t(`analytics.aiCard.${copyKey}.description`, { value: card.metric_value, sources: card.source_ids.length }),
-          actionLabel: card.no_data ? t("analytics.aiConnectData") : t("analytics.aiOpenSources"),
-          href: card.href,
-          icon: aiCardIcons[copyKey] || ShieldAlert,
-          severity: aiCardSeverity(card.severity),
-        };
-      })
-    : [
-        topSource
-          ? {
-              id: "top-source",
-              title: t("analytics.aiTopSourceTitle"),
-              description: t("analytics.aiTopSourceDesc", {
-                source: translatedToken(t, "analytics.source", topSource.source),
-                count: topSource.count,
-              }),
-              icon: TrendingUp,
-              severity: "info",
-            }
-          : {
-              id: "missing-sources",
-              title: t("analytics.aiMissingSourcesTitle"),
-              description: t("analytics.aiMissingSourcesDesc"),
-              icon: AlertTriangle,
-              severity: "warning",
-            },
-      ];
-
-  return (
-    <>
-      <PageHeader
-        title={t("analytics.title")}
-        description={t("analytics.description")}
-        actions={
-          <Button
-            variant="secondary"
-            onClick={() => exportMutation.mutate({ business: business.id, report: "manager_performance" })}
-            isLoading={exportMutation.isPending}
-          >
-            <Download size={16} />
-            {t("analytics.teamCsv")}
-          </Button>
-        }
-      />
-
-      <section className="mb-6 rounded-card border border-ai-100 bg-ai-50 p-5 shadow-card">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-4">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-control bg-surface-card text-ai-700 shadow-xs">
-              <TrendingUp size={22} />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-platforma-text">{t("analytics.smartReportTitle")}</h2>
-              <p className="mt-1 max-w-4xl text-base font-semibold leading-7 text-platforma-subtle">
-                {topSource
-                  ? t("analytics.smartReportText", {
-                      source: translatedToken(t, "analytics.source", topSource.source),
-                      conversion,
-                    })
-                  : t("analytics.smartReportNoSource")}
-              </p>
-            </div>
-          </div>
-          <Link to="/app/integrations" className="shrink-0">
-            <Button>{t("analytics.smartReportAction")} <TrendingUp size={16} /></Button>
-          </Link>
-        </div>
-      </section>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <Stat label={t("dashboard.newLeads")} value={dashboard?.new_leads || 0} hint={t("analytics.needProcessing")} icon={Flame} />
-        <Stat label={t("analytics.leadToDeal")} value={`${dealConversion}%`} hint={t("analytics.leadToDealHint")} icon={TrendingUp} />
-        <Stat label={t("analytics.wonValue")} value={formatMoney(wonValue)} hint={t("analytics.wonValueHint")} icon={CheckCircle2} />
-        <Stat label={t("analytics.unansweredConversations")} value={unansweredConversations} hint={t("analytics.unansweredConversationsHint")} icon={MessageSquareText} />
-        <Stat label={t("analytics.noShowRate")} value={`${noShowRate}%`} hint={t("analytics.noShowHint")} icon={TrendingDown} />
-      </div>
-
-      {report?.financial ? <FinancialSummary report={report.financial} /> : null}
-      <PageAiHints items={analyticsHints} className="mt-6" />
-
-      <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <Card>
-          <CardBody>
-            <h2 className="text-lg font-semibold text-platforma-ink">{t("analytics.leadSources")}</h2>
-            <div className="mt-4 divide-y divide-platforma-border">
-              {(sourceRows.length ? sourceRows : [{ source: t("analytics.noData"), count: 0 }]).map(({ source, count }) => (
-                <div key={source} className="flex items-center justify-between py-3">
-                  <span className="font-medium text-platforma-text">{translatedToken(t, "analytics.source", source)}</span>
-                  <Badge variant="neutral">{count}</Badge>
-                </div>
-              ))}
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <h2 className="text-lg font-semibold text-platforma-ink">{t("dashboard.attention")}</h2>
-            <div className="mt-4 divide-y divide-platforma-border">
-              {[
-                [t("dashboard.newLeads"), dashboard?.new_leads || 0],
-                [t("dashboard.openTasks"), dashboard?.open_tasks || 0],
-                [t("analytics.overdueTasks"), dashboard?.overdue_tasks || 0],
-                [t("analytics.unansweredConversations"), unansweredConversations],
-                [t("analytics.connectorErrors"), dashboard?.connector_health?.error || 0],
-                [t("analytics.noShow"), dashboard?.no_show_count || 0],
-              ].map(([label, count]) => (
-                <div key={label} className="flex items-center justify-between py-3">
-                  <div>
-                    <p className="font-medium text-platforma-subtle">{label}</p>
-                    <p className="text-xs text-platforma-muted">{t("analytics.openSectionHint")}</p>
-                  </div>
-                  <Badge variant={Number(count) > 0 ? "warning" : "neutral"}>{count}</Badge>
-                </div>
-              ))}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-
-      <details className="mt-6 rounded-card border border-platforma-border bg-surface-card shadow-card">
-        <summary className="cursor-pointer list-none px-5 py-4 text-lg font-semibold text-platforma-ink marker:hidden">
-          {t("analytics.detailedReports")}
-          <span className="ml-2 text-sm font-semibold text-platforma-muted">{t("analytics.detailedReportsHint")}</span>
-        </summary>
-      <div className="grid gap-6 border-t border-platforma-border p-5 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card>
-          <CardBody>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-platforma-ink">{t("analytics.operationalReports")}</h2>
-                <p className="mt-1 text-sm leading-6 text-platforma-subtle">{t("analytics.operationalReportsText")}</p>
-              </div>
-              <Button
-                variant="secondary"
-                className="rounded-full"
-                onClick={() => exportMutation.mutate({ business: business.id, report: "source_roi" })}
-                isLoading={exportMutation.isPending}
-              >
-                <Download size={16} />
-                CSV
-              </Button>
-            </div>
-            {reportSummary.isLoading ? <div className="mt-4"><LoadingState /></div> : null}
-            {reportSummary.error ? <div className="mt-4"><ErrorState error={reportSummary.error} message={getApiErrorMessage(reportSummary.error)} /></div> : null}
-            {report ? (
-              <div className="mt-5 grid gap-4 lg:grid-cols-4">
-                <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-platforma-muted">{t("analytics.repeatRate")}</p>
-                  <p className="mt-2 text-3xl font-semibold text-platforma-ink">{report.retention_ltv.repeat_rate}%</p>
-                  <p className="mt-1 text-sm text-platforma-subtle">{t("analytics.repeatClientsCount", { count: report.retention_ltv.repeat_clients })}</p>
-                </div>
-                <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-platforma-muted">{t("finance.averageServiceEstimate")}</p>
-                   <p className="mt-2 text-3xl font-semibold text-platforma-ink">{formatMoney(report.retention_ltv.average_service_value_estimate, business.currency)}</p>
-                   <p className="mt-1 text-sm text-platforma-subtle">{translatedToken(t, "analytics.dataQuality", report.retention_ltv.data_quality)}</p>
-                </div>
-                <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-platforma-muted">{t("analytics.openDeals")}</p>
-                  <p className="mt-2 text-3xl font-semibold text-platforma-ink">{report.funnel_velocity.open_deals}</p>
-                  <p className="mt-1 text-sm text-platforma-subtle">{t("analytics.wonLost")}: {report.funnel_velocity.won_deals}/{report.funnel_velocity.lost_deals}</p>
-                </div>
-                <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-platforma-muted">{t("analytics.appointmentRate")}</p>
-                  <p className="mt-2 text-3xl font-semibold text-platforma-ink">{crmFunnel?.appointments.completion_rate ?? 0}%</p>
-                  <p className="mt-1 text-sm text-platforma-subtle">{t("analytics.noShowRate")}: {crmFunnel?.appointments.no_show_rate ?? 0}%</p>
-                </div>
-              </div>
-            ) : null}
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <h2 className="text-lg font-semibold text-platforma-ink">{t("analytics.scheduledReports")}</h2>
-            <p className="mt-1 text-sm leading-6 text-platforma-subtle">{t("analytics.scheduledReportsText")}</p>
-            <div className="mt-4 space-y-3">
-              {(scheduledReports.data || []).map((item) => (
-                <div key={item.id} className="rounded-2xl border border-platforma-border bg-surface-muted p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-bold text-platforma-ink">{item.name}</p>
-                    <StatusBadge status={item.frequency} />
-                  </div>
-                  <p className="mt-1 text-xs text-platforma-subtle">{item.recipients_json.join(", ") || t("analytics.noRecipients")}</p>
-                </div>
-              ))}
-              {!scheduledReports.data?.length ? (
-                <div className="rounded-2xl bg-surface-muted p-3 text-sm font-semibold text-platforma-subtle">{t("analytics.noSchedules")}</div>
-              ) : null}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-
-      <div className="mt-6">
-        <Card>
-          <CardBody>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h2 className="text-lg font-semibold text-platforma-ink">{t("analytics.sourceRoi")}</h2>
-              <Button
-                variant="ghost"
-                className="rounded-full"
-                onClick={() => exportMutation.mutate({ business: business.id, report: "manager_performance" })}
-                isLoading={exportMutation.isPending}
-              >
-                <Download size={16} />
-                {t("analytics.teamCsv")}
-              </Button>
-            </div>
-            <div className="mt-4 divide-y divide-platforma-border">
-              {(report?.source_roi?.length ? report.source_roi : []).map((row) => (
-                <div key={row.source} className="grid gap-3 py-3 md:grid-cols-[1fr_repeat(4,120px)] md:items-center">
-                  <div>
-                    <p className="font-medium text-platforma-subtle">
-                      {translatedToken(t, "analytics.source", row.source)}
-                    </p>
-                     <p className="text-xs text-platforma-muted">{translatedToken(t, "analytics.roiStatus", row.roi_status)}</p>
-                  </div>
-                  <MiniMetric label={t("nav.leads")} value={row.leads} />
-                  <MiniMetric label={t("nav.appointments")} value={row.appointments} />
-                  <MiniMetric label={t("dashboard.conversion")} value={`${row.conversion_rate}%`} />
-                   <MiniMetric label={t("finance.serviceEstimate")} value={formatMoney(row.service_value_estimate, business.currency)} />
-                </div>
-              ))}
-              {!report?.source_roi?.length ? <p className="py-3 text-sm text-platforma-subtle">{t("analytics.sourcesEmpty")}</p> : null}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-
-      <div className="mt-6 grid gap-6 xl:grid-cols-2">
-        <Card>
-          <CardBody>
-            <h2 className="text-lg font-semibold text-platforma-ink">{t("analytics.dealFunnel")}</h2>
-            <div className="mt-4 space-y-3">
-              {(report?.funnel_velocity.deal_stages || []).map((stage) => (
-                <div key={stage.stage} className="rounded-2xl border border-platforma-border bg-surface-muted p-3">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-platforma-ink">{stage.stage}</p>
-                    <span className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-subtle">{stage.count}</span>
-                  </div>
-                  <p className="mt-1 text-xs text-platforma-subtle">{t("analytics.probability")} {stage.avg_probability}% · {t("analytics.avgDays")} {stage.avg_days_in_stage ?? "-"}</p>
-                </div>
-              ))}
-              {!report?.funnel_velocity.deal_stages.length ? <p className="text-sm text-platforma-subtle">{t("analytics.dealsEmpty")}</p> : null}
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <h2 className="text-lg font-semibold text-platforma-ink">{t("analytics.servicesByBookings")}</h2>
-            <div className="mt-4 divide-y divide-platforma-border">
-              {(services.data || []).map((service) => (
-                <div key={service.id} className="flex items-center justify-between py-3">
-                  <div>
-                    <p className="font-medium text-platforma-subtle">{service.name}</p>
-                    <p className="text-xs text-platforma-muted">{service.duration_minutes} {t("appointment.minutes")}</p>
-                  </div>
-                  <span className="rounded-full bg-surface-muted px-3 py-1 text-sm font-semibold text-platforma-subtle">
-                    {appointmentList.filter((appointment) => appointment.service === service.id).length}
-                  </span>
-                </div>
-              ))}
-              {!services.data?.length ? <p className="py-3 text-sm text-platforma-subtle">{t("services.emptyTitle")}</p> : null}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-      </details>
-
-      <details className="mt-6 rounded-card border border-platforma-border bg-surface-card shadow-card">
-        <summary className="cursor-pointer list-none px-5 py-4 marker:hidden">
-          <span className="text-xl font-bold text-platforma-ink">{t("analytics.teamPerformance")}</span>
-          <span className="ml-2 text-sm text-platforma-subtle">{t("analytics.teamPerformanceText")}</span>
-        </summary>
-      <div className="border-t border-platforma-border p-5">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-700">
-            <Users size={20} />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-platforma-ink">{t("analytics.teamPerformance")}</h2>
-            <p className="text-sm text-platforma-subtle">{t("analytics.teamPerformanceText")}</p>
-          </div>
-        </div>
-        {teamPerformance.isLoading ? <LoadingState /> : null}
-        {teamPerformance.error ? (
-          <Card>
-            <CardBody className="flex items-start gap-3">
-              <ShieldAlert className="mt-1 text-platforma-warning" size={22} />
-              <div>
-                <h3 className="font-bold text-platforma-ink">{t("analytics.teamHidden")}</h3>
-                <p className="mt-1 text-sm leading-6 text-platforma-subtle">
-                  {getApiErrorMessage(teamPerformance.error) || t("analytics.teamHiddenText")}
-                </p>
-              </div>
-            </CardBody>
-          </Card>
-        ) : null}
-        {teamPerformance.data ? (
-          <div className="space-y-5">
-            <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-              <Stat label={t("analytics.assignedLeads")} value={teamPerformance.data.totals.assigned_leads} icon={Users} />
-              <Stat label={t("dashboard.conversion")} value={`${teamPerformance.data.totals.appointment_conversion_rate}%`} icon={TrendingUp} />
-              <Stat label={t("analytics.lostLeads")} value={teamPerformance.data.totals.lost_leads} icon={TrendingDown} />
-              <Stat label={t("analytics.overdueHandoffs")} value={teamPerformance.data.totals.overdue_handoffs} icon={AlertTriangle} />
-              <Stat label={t("analytics.slaOverdue")} value={teamPerformance.data.totals.sla_overdue_deals} icon={Flame} />
-              <Stat label={t("analytics.overdueTasks")} value={teamPerformance.data.totals.tasks_overdue} icon={Flame} />
-            </div>
-
-            <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
-              <Card>
-                <CardBody>
-                  <div className="mb-4 flex items-center justify-between">
-                    <h3 className="font-bold text-platforma-ink">{t("analytics.employees")}</h3>
-                    <StatusBadge status={teamPerformance.data.scope} />
-                  </div>
-                  <div className="space-y-3">
-                    {teamPerformanceMembers.map((member) => (
-                      <div key={member.user.id} className="rounded-card border border-platforma-border bg-surface-muted p-4">
-                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                          <div>
-                            <p className="font-bold text-platforma-ink">{member.user.full_name || member.user.email}</p>
-                            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-platforma-muted">{t(`settings.role.${member.role.replace("business_", "")}`)}</p>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {asArray<{ id: string | number; name: string; is_lead: boolean }>(member.teams).map((team) => (
-                                <span key={team.id} className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-subtle">
-                                  {team.name}{team.is_lead ? ` · ${t("analytics.teamLead")}` : ""}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-2 text-sm md:grid-cols-4">
-                            <MiniMetric label={t("nav.leads")} value={member.assigned_leads} />
-                            <MiniMetric label={t("analytics.contact")} value={member.contacted_leads} />
-                            <MiniMetric label={t("dashboard.conversion")} value={`${member.appointment_conversion_rate}%`} />
-                            <MiniMetric label={t("analytics.lost")} value={member.lost_leads} danger={member.lost_leads > 0} />
-                            <MiniMetric label={t("nav.tasks")} value={member.tasks_overdue} danger={member.tasks_overdue > 0} />
-                          </div>
-                        </div>
-                        <div className="mt-3 grid gap-2 text-xs font-semibold text-platforma-subtle md:grid-cols-4">
-                          <span>{t("analytics.avgResponse")}: {member.avg_response_time_minutes ?? "-"} {t("analytics.minutesShort")}</span>
-                          <span>{t("analytics.handoffOverdue")}: {member.overdue_handoffs}</span>
-                          <span>{t("analytics.missedChats")}: {member.missed_chat_handoffs}</span>
-                          <span>{t("analytics.slaOverdueShort")}: {member.sla_overdue_deals}</span>
-                          <span>{t("analytics.wonLost")}: {member.deals_won}/{member.deals_lost}</span>
-                          <span>{t("analytics.noShow")}: {member.no_show_appointments}</span>
-                          <span>{t("analytics.closedLeads")}: {member.closed_leads}</span>
-                          <span>{t("nav.appointments")}: {member.appointments_created}</span>
-                        </div>
-                      </div>
-                    ))}
-                    {!teamPerformanceMembers.length ? <p className="text-sm text-platforma-subtle">{t("analytics.noEmployees")}</p> : null}
-                  </div>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardBody>
-                  <h3 className="font-bold text-platforma-ink">{t("analytics.actionList")}</h3>
-                  <div className="mt-4 space-y-3">
-                    {teamPerformanceActions.map((action) => (
-                      <Link
-                        key={`${action.user_id}-${action.type}`}
-                        to={action.route}
-                        className={action.severity === "critical" ? "block rounded-2xl border border-platforma-danger/20 bg-[var(--platforma-danger-soft)] p-3 transition hover:shadow-card" : "block rounded-2xl border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] p-3 transition hover:shadow-card"}
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <div>
-                            <p className={action.severity === "critical" ? "font-semibold text-platforma-danger" : "font-semibold text-platforma-warning"}>{t(`analytics.action.${action.type}.title`)}</p>
-                            <p className="mt-1 text-xs leading-5 text-platforma-subtle">{t(`analytics.action.${action.type}.description`, { count: action.count })}</p>
-                          </div>
-                          <span className={action.severity === "critical" ? "rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-danger" : "rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-warning"}>{action.count}</span>
-                        </div>
-                      </Link>
-                    ))}
-                    {!teamPerformanceActions.length ? (
-                      <div className="rounded-2xl bg-[var(--platforma-success-soft)] p-3 text-sm font-semibold text-platforma-success">{t("analytics.noTeamActions")}</div>
-                    ) : null}
-                  </div>
-
-                  <h3 className="mt-6 font-bold text-platforma-ink">{t("analytics.teamTab")}</h3>
-                  <div className="mt-4 space-y-3">
-                    {teamPerformanceTeams.map((team) => (
-                      <div key={team.id} className="rounded-2xl border border-platforma-border bg-surface-muted p-3">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="font-semibold text-platforma-ink">{team.name}</p>
-                            <p className="mt-1 text-xs text-platforma-subtle">{t("analytics.membersCount", { count: team.members_count })} · {t("analytics.lostRate")} {team.lost_rate}%</p>
-                          </div>
-                          <span className="rounded-full bg-surface-card px-2.5 py-1 text-xs font-bold text-platforma-subtle">{t("analytics.leadsCount", { count: team.assigned_leads })}</span>
-                        </div>
-                        <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-semibold text-platforma-subtle">
-                          <span>{t("analytics.slaOverdueShort")}: {team.sla_overdue_deals}</span>
-                          <span>{t("analytics.handoff")}: {team.overdue_handoffs}</span>
-                          <span>{t("nav.tasks")}: {team.tasks_overdue}</span>
-                          <span>{t("analytics.noShow")}: {team.no_show_appointments}</span>
-                        </div>
-                      </div>
-                    ))}
-                    {!teamPerformanceTeams.length ? (
-                      <div className="rounded-2xl bg-surface-muted p-3 text-sm font-semibold text-platforma-subtle">{t("analytics.noTeams")}</div>
-                    ) : null}
-                  </div>
-                </CardBody>
-              </Card>
-            </div>
-          </div>
-        ) : null}
-      </div>
-      </details>
-    </>
-  );
+  if (isLoading) return <LoadingState scope="page" />;
+  if (!business || !user) return <EmptyState title={t("analytics.noBusiness")} />;
+  return <AnalyticsWorkspacePage key={`${user.id}:${business.id}`} business={business} userId={user.id} />;
 }
 
-function MiniMetric({ label, value, danger }: { label: string; value: number | string; danger?: boolean }) {
-  return (
-    <div className={danger ? "rounded-control bg-[var(--platforma-danger-soft)] px-3 py-2 text-platforma-danger" : "rounded-control bg-surface-muted px-3 py-2 text-platforma-subtle"}>
-      <p className="text-[11px] font-bold uppercase tracking-[0.12em]">{label}</p>
-      <p className="mt-1 text-lg font-bold">{value}</p>
+function AnalyticsWorkspacePage({ business, userId }: { business: Business; userId: Id }) {
+  const { t, language } = useI18n();
+  const { setPageHeader } = usePageHeader();
+  const [params, setParams] = useSearchParams();
+  const today = dateInTimeZone(new Date(), business.timezone);
+  const defaults = recentPeriod(today, 30);
+  const start = params.get("start") || defaults.from;
+  const end = params.get("end") || defaults.to;
+  const active = tabs.includes(params.get("tab") as Tab) ? params.get("tab") as Tab : "overview";
+  const context = `${userId}:${business.id}:${start}:${end}:${active}`;
+  const [draft, setDraft] = useState<DateRangeValue>({ from: start, to: end });
+  const [help, setHelp] = useState(false);
+  const [periodOpen, setPeriodOpen] = useState(false);
+  useEffect(() => { setPageHeader({ title: t("analytics.title") }); return () => setPageHeader(null); }, [setPageHeader, t]);
+  const metrics = useQuery({
+    queryKey: ["analytics-workspace", userId, business.id, start, end],
+    queryFn: () => analyticsApi.workspace(business.id, { start, end }), retry: false,
+  });
+  const exportMutation = useMutation({
+    mutationFn: async () => ({ context, job: await analyticsExports.request(business.id, { start, end }, reports[active]) }),
+  });
+  const receipt = exportMutation.data?.context === context ? exportMutation.data : undefined;
+  const jobId = receipt?.job?.id;
+  const job = useQuery({
+    queryKey: ["analytics-export", userId, business.id, jobId],
+    queryFn: () => analyticsExports.job(jobId!, business.id), enabled: Boolean(jobId), retry: false,
+    refetchInterval: query => query.state.error || ["succeeded", "failed"].includes(query.state.data?.status || "") ? false : 3000,
+  });
+  const download = useMutation({ mutationFn: () => analyticsExports.download(jobId!, business.id) });
+  const currentJob = job.data || receipt?.job;
+  const canExport = Boolean(metrics.data) && !metrics.error && (active !== "team" || metrics.data?.team.available);
+  function changeTab(tab: Tab) { setParams(previous => { const next = new URLSearchParams(previous); next.set("tab", tab); return next; }); }
+  function applyPeriod() {
+    setParams(previous => { const next = new URLSearchParams(previous); next.set("start", draft.from); next.set("end", draft.to); return next; });
+    setPeriodOpen(false);
+  }
+  function openPeriod() { setDraft({ from: start, to: end }); setPeriodOpen(true); }
+  const dateLabel = (day: string) => isCalendarDate(day)
+    ? new Intl.DateTimeFormat(language, { day: "numeric", month: language === "kk" ? "numeric" : "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`)) : day;
+
+  return <div className="space-y-4" data-testid="analytics-workspace">
+    <h1 className="sr-only">{t("analytics.title")}</h1>
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-platforma-border pb-3">
+      <nav aria-label={t("analyticsWorkspace.sections")} className="flex flex-wrap gap-1">
+        {tabs.map(tab => <Button key={tab} variant={active === tab ? "secondary" : "ghost"} aria-current={active === tab ? "page" : undefined} onClick={() => changeTab(tab)} className="min-h-11 px-3">{t(`analyticsWorkspace.${tab}`)}</Button>)}
+      </nav>
+      <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto">
+        <Button variant="secondary" onClick={openPeriod} className="min-h-11" aria-label={t("analyticsWorkspace.period")}>{dateLabel(start)} — {dateLabel(end)}</Button>
+        <Button variant="secondary" disabled={!canExport} isLoading={exportMutation.isPending} onClick={() => exportMutation.mutate()}><Download size={16} />CSV</Button>
+        <Button variant="ghost" aria-label={t("analyticsWorkspace.refresh")} disabled={metrics.isFetching} onClick={() => void metrics.refetch()}><RefreshCw size={16} /></Button>
+        <Button variant="ghost" aria-label={t("analyticsWorkspace.method")} onClick={() => setHelp(true)}><HelpCircle size={17} /></Button>
+      </div>
     </div>
-  );
+    {exportMutation.error || download.error ? <ErrorState error={exportMutation.error || download.error} /> : null}
+    {receipt && !receipt.job ? <p role="status" className="text-sm text-platforma-subtle">{t("analyticsWorkspace.downloaded")}</p> : null}
+    {currentJob ? <div role="status" className="flex flex-wrap items-center gap-3 rounded-control border border-platforma-border bg-surface-muted p-3 text-sm">
+      <span>{t(`analyticsWorkspace.export.${currentJob.status}`)}</span>
+      {currentJob.status === "succeeded" ? <Button variant="secondary" isLoading={download.isPending} onClick={() => download.mutate()}>{t("analyticsWorkspace.download")}</Button> : null}
+    </div> : null}
+    {job.error ? <ErrorState error={job.error} action={<Button variant="secondary" onClick={() => void job.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : null}
+    {metrics.isPending ? <LoadingState scope="page" /> : metrics.error ? <ErrorState error={metrics.error} action={<Button variant="secondary" onClick={() => void metrics.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : metrics.data ? <>
+      <div aria-busy={metrics.isFetching}>
+        {active === "overview" ? <Overview data={metrics.data} /> : active === "sources" ? <SourcesTable data={metrics.data} /> : active === "services" ? <ServicesTable data={metrics.data} /> : active === "team" ? <TeamTable data={metrics.data} /> : <FinancialSummary report={metrics.data.financial} />}
+      </div>
+      <p className="text-xs text-platforma-subtle">{t("analyticsWorkspace.updated", { time: new Intl.DateTimeFormat(language, { dateStyle: "short", timeStyle: "short", timeZone: business.timezone }).format(new Date(metrics.data.generated_at)) })} · {metrics.data.period.timezone}</p>
+    </> : null}
+    <Dialog title={t("analyticsWorkspace.period")} open={periodOpen} onClose={() => setPeriodOpen(false)} size="sm">
+      <div className="space-y-4">
+        <DateRangePicker label={t("analyticsWorkspace.period")} value={draft} onChange={setDraft} today={today} />
+        <div className="flex justify-end gap-2"><Button variant="ghost" onClick={() => setPeriodOpen(false)}>{t("common.cancel")}</Button><Button disabled={!isCalendarDate(draft.from) || !isCalendarDate(draft.to) || draft.from > draft.to} onClick={applyPeriod}>{t("crmFilters.apply")}</Button></div>
+      </div>
+    </Dialog>
+    <Dialog title={t("analyticsWorkspace.method")} open={help} onClose={() => setHelp(false)} size="sm">
+      <dl className="space-y-4 text-sm">{["period", "conversion", "noShow", "history", "money"].map(key => <div key={key}><dt className="font-bold">{t(`analyticsWorkspace.method.${key}`)}</dt><dd className="mt-1 leading-6 text-platforma-subtle">{t(`analyticsWorkspace.method.${key}Text`)}</dd></div>)}</dl>
+    </Dialog>
+  </div>;
 }
