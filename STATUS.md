@@ -5,7 +5,8 @@
 подзаголовок, метрики, поиск/фильтры и финансовую форму. Primary подтвердил временного
 единственного scoped writer PlatformaCRM UI; registry не меняется. Реализация,
 desktop/mobile RU/KK/EN открытие форм/клавиатура и изолированная сборка PASS.
-Публикация подготавливается. Backend/внешние подключения вне scope.
+Опубликовано в main (`30b8f55`), CI выполняется. Scoped writer освобождён;
+primary generation 5 сохранён. Backend/внешние подключения вне scope.
 Контракт — [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md).
 
 13.10.2026. INBOX-COMPACT-20261013: утверждённая компактная компоновка Conversations

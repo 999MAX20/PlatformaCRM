@@ -49,6 +49,16 @@ Implementation and evidence, 13.10.2026:
   request/health semantics and live readiness) are not claimed fixed by this layout.
 - Eight intentional changed paths, no new tracked artifact. Publication receipt below.
 
+Publication: `30b8f55f1798ed334765a17da88fd2d3974eb007` normal-pushed to main,
+remote SHA read back exact. Fetched target matched starting8fda4cc; no merge/rebase.
+Working/index/actual8fda4cc..30b8f55 diff hygiene, changed-file encoding,
+63 local link paths and docs registration PASS. Existing anchor targets unchanged.
+[Implementation CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/38376829919)
+observed in_progress (no full-green claim). `gh` unavailable; read-only GitHub API
+helper used with the canonical repository URL and exact SHA. Local build/browser
+processes finished; normal dev retained. Scoped writer released at closure;
+primary generation5/registry unchanged. Next step is owner review, no new phase.
+
 ## INBOX-COMPACT-20261013 — approved full-height conversation workspace
 
 Owner approved the generated compact reference and detailed implementation analysis.
