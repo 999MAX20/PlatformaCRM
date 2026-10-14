@@ -162,7 +162,13 @@ def schedule_automation_run(run):
         if run_after <= timezone.now():
             process_automation_run(run.id)
         return run
-    process_automation_run_task.apply_async(args=[run.id], eta=run_after)
+    # The durable run must exist before a worker can consume it. A rolled-back
+    # CRM command must never enqueue work; a broker outage leaves the pending
+    # run for the existing due-run recovery rather than failing a committed CRM action.
+    transaction.on_commit(
+        lambda: process_automation_run_task.apply_async(args=[run.id], eta=run_after),
+        robust=True,
+    )
     return run
 
 

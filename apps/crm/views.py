@@ -9,6 +9,7 @@ from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.capabilities import assert_resource_enabled
 from apps.businesses.models import Business
 from apps.core.crm_cards import deal_crm_card
+from apps.core.crm_mutations import LockedCRMUpdateMixin
 from apps.core.crm_read_scope import readable_across_businesses, readable_queryset
 from apps.core.permissions import user_can_access_business
 from apps.core.viewsets import TenantModelViewSet
@@ -89,7 +90,7 @@ class DealPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class DealViewSet(TenantModelViewSet):
+class DealViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
     queryset = Deal.objects.select_related("business", "client", "lead", "pipeline", "stage", "owner")
     serializer_class = DealSerializer
     pagination_class = DealPagination

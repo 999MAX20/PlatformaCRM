@@ -8,10 +8,11 @@ from apps.activities.services import create_activity_event
 from apps.activities.taxonomy import ActivityEvents
 from apps.businesses.assignment_notifications import create_assignment_notifications
 from apps.businesses.assignment_policy import assert_assignment_allowed
-from apps.businesses.access import Resources
+from apps.businesses.access import Actions, Resources
 from apps.businesses.capabilities import assert_resource_enabled
 from apps.core.audit import write_actor_audit_log, write_audit_log
 from apps.core.domain_errors import InvalidTransition, ScheduleConflict
+from apps.core.crm_mutations import locked_crm_change
 from apps.core.models import AuditLog
 from apps.crm.models import Deal, Pipeline, PipelineStage
 from apps.leads.models import Lead
@@ -48,6 +49,7 @@ def allowed_lead_status_transitions(status: str) -> set[str]:
     return set(ALLOWED_LEAD_STATUS_TRANSITIONS.get(status, set()))
 
 
+@locked_crm_change("lead", resource=Resources.LEADS)
 def assign_lead(*, lead: Lead, actor, user_id=None, request=None) -> Lead:
     responsible_user_id = user_id or actor.id
     responsible_user = get_user_model().objects.filter(id=responsible_user_id, is_active=True).first()
@@ -112,6 +114,7 @@ def assign_lead(*, lead: Lead, actor, user_id=None, request=None) -> Lead:
     return lead
 
 
+@locked_crm_change("lead", resource=Resources.LEADS)
 def take_lead_in_work(*, lead: Lead, actor, request=None) -> Lead:
     if lead.status not in {Lead.Statuses.NEW, Lead.Statuses.CONTACTED, Lead.Statuses.LOST}:
         raise InvalidTransition(
@@ -127,6 +130,7 @@ def take_lead_in_work(*, lead: Lead, actor, request=None) -> Lead:
     )
 
 
+@locked_crm_change("lead", resource=Resources.LEADS)
 def mark_lead_contacted(*, lead: Lead, actor, request=None) -> Lead:
     if lead.status == Lead.Statuses.LOST:
         raise InvalidTransition(
@@ -142,6 +146,7 @@ def mark_lead_contacted(*, lead: Lead, actor, request=None) -> Lead:
     )
 
 
+@locked_crm_change("lead", resource=Resources.LEADS)
 def mark_lead_closed(*, lead: Lead, actor, request=None) -> Lead:
     return apply_lead_status(
         lead=lead,
@@ -153,6 +158,7 @@ def mark_lead_closed(*, lead: Lead, actor, request=None) -> Lead:
     )
 
 
+@locked_crm_change("lead", resource=Resources.LEADS)
 def mark_lead_lost(*, lead: Lead, actor, lost_reason: str, request=None) -> Lead:
     lost_reason = (lost_reason or "").strip()
     if not lost_reason:
@@ -168,6 +174,7 @@ def mark_lead_lost(*, lead: Lead, actor, lost_reason: str, request=None) -> Lead
     )
 
 
+@locked_crm_change("lead", resource=Resources.LEADS)
 def reopen_lead(*, lead: Lead, actor, request=None) -> Lead:
     if lead.status not in {Lead.Statuses.LOST, Lead.Statuses.CLOSED}:
         raise InvalidTransition(
@@ -185,8 +192,12 @@ def reopen_lead(*, lead: Lead, actor, request=None) -> Lead:
     )
 
 
+@locked_crm_change("lead", resource=Resources.DEALS, action=Actions.CREATE)
 def create_deal_from_lead(*, lead: Lead, actor, amount=0, title="", request=None) -> LeadDealResult:
+    from apps.crm.services import validate_deal_amount
+
     assert_resource_enabled(lead.business, Resources.DEALS)
+    amount = validate_deal_amount(amount or 0)
     existing_deal = lead.deals.filter(is_archived=False).order_by("-updated_at").first()
     if existing_deal:
         return LeadDealResult(deal=existing_deal, created=False)
@@ -256,6 +267,7 @@ def create_deal_from_lead(*, lead: Lead, actor, amount=0, title="", request=None
     return LeadDealResult(deal=deal, created=True)
 
 
+@locked_crm_change("lead")
 def apply_lead_status(
     *,
     lead: Lead,
@@ -272,6 +284,10 @@ def apply_lead_status(
 ) -> Lead:
     previous_status = lead.status
     previous_lost_reason = lead.lost_reason
+    if (previous_status == status
+            and (status != Lead.Statuses.LOST or lost_reason == lead.lost_reason)
+            and (service is None or service.pk == lead.service_id)):
+        return lead
     if previous_status != status and status not in allowed_lead_status_transitions(previous_status):
         raise InvalidTransition(
             errors={"status": f"Cannot move lead from '{previous_status}' to '{status}'."}
@@ -285,7 +301,8 @@ def apply_lead_status(
         lead.service = service
         update_fields.append("service")
     if status == Lead.Statuses.LOST:
-        lead.previous_status = previous_status if previous_status != Lead.Statuses.LOST else ""
+        if previous_status != Lead.Statuses.LOST:
+            lead.previous_status = previous_status
         lead.lost_reason = lost_reason or lead.lost_reason
         lead.lost_at = now
         lead.lost_by = actor
@@ -367,6 +384,7 @@ def can_mark_lead_appointment_created(lead: Lead) -> bool:
     )
 
 
+@locked_crm_change("lead")
 def mark_lead_appointment_created(
     *,
     lead: Lead,
@@ -417,6 +435,7 @@ def mark_lead_appointment_created(
     )
 
 
+@locked_crm_change("lead", resource=Resources.APPOINTMENTS, action=Actions.CREATE)
 def create_appointment_from_lead_contract(*, lead: Lead, actor, service, start_at, resource=None, branch=None, request=None):
     if service.business_id != lead.business_id:
         raise ValidationError({"service": "Service must belong to lead business."})
@@ -460,6 +479,7 @@ def create_appointment_from_lead_contract(*, lead: Lead, actor, service, start_a
     return appointment
 
 
+@locked_crm_change("lead", resource=Resources.TASKS, action=Actions.CREATE)
 def create_follow_up_task_from_lead(*, lead: Lead, actor, title: str, description: str = "", priority: str = Task.Priorities.NORMAL, due_at=None, assignee_id=None, request=None) -> Task:
     title = (title or "").strip()
     if not title:

@@ -20,6 +20,17 @@ Pipeline/PipelineStage принадлежат Business; стадия соотв�
 
 ## Ошибки и восстановление
 
+Дополнение CRM-S01, 14.10: сервисные команды и обычные изменения заявок/сделок
+атомарны с историей/аудитом; состояние перечитывается под блокировкой. Точный
+повтор terminal-команды не портит previous_status/previous_stage. Старая копия
+сделки не затирает новую сумму при переходе; quick terminal actions соблюдают
+обязательные поля стадии. Некорректная сумма отклоняется до записи. Повтор
+Lead→Deal проверяет текущую область просмотра сделки и видимость полей.
+Регрессии — [server scenarios](../../apps/core/tests_crm_server_scenarios.py) и
+[PostgreSQL concurrency](../../apps/core/tests_crm_server_concurrency.py);
+точные версии/проверки и оставшаяся граница —
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md#crm-s01-20261014--server-scenario-completeness).
+
 Неверная стадия/связь/назначение или отсутствующая причина отклоняются до перехода.
 Tenant и per-record права действуют в списке, board и вложенных карточках.
 Reopen — отдельное действие, не редактирование terminal timestamps. Ошибка UI не

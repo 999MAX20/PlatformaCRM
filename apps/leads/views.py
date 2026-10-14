@@ -6,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from django.db.models import Count, Q
 
 from apps.crm.serializers import DealSerializer
+from apps.crm.models import Deal
 
 from apps.activities.models import Note
 from apps.activities.serializers import NoteSerializer
@@ -19,6 +21,7 @@ from apps.automations.models import AutomationRule
 from apps.businesses.access import Actions, Resources, assert_can
 from apps.core.audit import write_audit_log
 from apps.core.crm_cards import lead_crm_card
+from apps.core.crm_mutations import LockedCRMUpdateMixin
 from apps.core.idempotency import CRMCommandResult, run_idempotent_crm_command
 from apps.core.models import AuditLog
 from apps.core.sanitization import sanitize_error_text
@@ -61,7 +64,7 @@ class LeadPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class LeadViewSet(TenantModelViewSet):
+class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
     queryset = Lead.objects.select_related("business", "client", "service", "responsible_user")
     serializer_class = LeadSerializer
     pagination_class = LeadPagination
@@ -282,8 +285,10 @@ class LeadViewSet(TenantModelViewSet):
                 title=title,
                 request=request,
             )
+            if not result.created:
+                assert_can(request.user, lead.business, Resources.DEALS, Actions.VIEW, obj=result.deal)
             return CRMCommandResult(
-                data=DealSerializer(result.deal).data,
+                data=DealSerializer(result.deal, context={"request": request}).data,
                 status_code=201 if result.created else 200,
                 resource=result.deal,
             )
@@ -296,6 +301,11 @@ class LeadViewSet(TenantModelViewSet):
             payload={"lead_id": lead.id, "amount": amount, "title": title},
             operation=operation,
         )
+        if command.replayed:
+            # A durable command receipt is not a durable permission grant.
+            deal = get_object_or_404(Deal, pk=command.data["id"], business=lead.business)
+            assert_can(request.user, lead.business, Resources.DEALS, Actions.VIEW, obj=deal)
+            return Response(DealSerializer(deal, context={"request": request}).data, status=command.status_code)
         return Response(command.data, status=command.status_code)
 
     @action(detail=True, methods=["post"], url_path="add-note")

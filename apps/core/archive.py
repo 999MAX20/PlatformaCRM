@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 
 from apps.activities.services import write_activity_event
@@ -24,9 +25,12 @@ def supports_archive(instance):
     return hasattr(instance, "is_archived")
 
 
+@transaction.atomic
 def archive_instance(request, instance, reason=""):
     if not supports_archive(instance):
         return instance
+    instance.__class__.objects.select_for_update().only("pk").get(pk=instance.pk)
+    instance.refresh_from_db()
     if instance.is_archived:
         return instance
     instance.is_archived = True
@@ -41,9 +45,12 @@ def archive_instance(request, instance, reason=""):
     return instance
 
 
+@transaction.atomic
 def restore_instance(request, instance):
     if not supports_archive(instance):
         return instance
+    instance.__class__.objects.select_for_update().only("pk").get(pk=instance.pk)
+    instance.refresh_from_db()
     if not instance.is_archived:
         return instance
     instance.is_archived = False

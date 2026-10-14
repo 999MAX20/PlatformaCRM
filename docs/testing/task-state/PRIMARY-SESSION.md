@@ -6,6 +6,142 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-S01-20261014 — server scenario completeness
+
+Owner request 14.10: persist the proposed four-step internal readiness plan and
+start step 1, complete CRM server scenarios. Mode implementation/verification;
+gap types code/evidence/policy. Current executor is this user task; no writer registry.
+Canonical root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+starting base/HEAD 973fef737b6276eac6f54bca112ca6daa31be851. Starting index/worktree
+clean, no untracked files. Preserve any subsequent unrelated changes.
+
+Observable result: bounded scenario matrix for concurrent/stale changes, command
+replay, changed membership/permissions, archive dependencies, appointment reminder
+reconciliation and overlapping built-in/user follow-up. Reuse domain services,
+state machines, command wrappers, permission scopes and current tests/closures.
+R01 and its unchanged 47-domain/15-browser evidence remain closed; this is the
+owner-requested additional completeness boundary, not a repeat of full R01.
+
+Acceptance: each named scenario has its existing rule, actual API/service path,
+test/evidence and disposition; proven in-scope defects receive minimal fixes and
+regression evidence. Policy D-04 and any genuinely undefined new rule require a
+specific owner decision before dependent behavior; continue independent scenarios.
+Do not turn an old open heading into a defect without current code evidence.
+
+Risk: lifecycle/data loss, duplicate effects, role/tenant bypass and stale reminders.
+Focused verification after each coherent backend change in the existing isolated
+runner environment; prove happy/invalid/denial/tenant, rollback and replay as
+applicable. Completion: affected/dependent suites, Django check/migration drift,
+diff hygiene and actual committed-range static gate. Use PostgreSQL only where
+row-lock/concurrency proof is required; no SQLite concurrency claim. Existing
+reachable API paths must be exercised; frontend build/browser only if UI changes
+or a concrete affected UI regression requires it. No full-project/E2E rerun by
+default, no installs for unchanged dependencies, no working DB/servers.
+
+Permissions unchanged except enforcing established rules; preserve single
+notification/BusinessEvent/activity/audit effects. AI/provider behavior, new
+permissions, lifecycle policy, billing, admin-panel implementation, incident UI,
+local operations S04 and external pilot R02+ are non-goals. No migration intended.
+Delivery: task-owned reviewed commit and normal push origin/main per AGENTS,
+remote SHA readback and actual CI reported separately; no deployment authorized.
+Inspection/reproduction: initial fixture failed before scenarios because two users
+had the same empty unique email; corrected fixture emails only. Then
+`output/crm-s01-20261014/check.py apps.core.tests_crm_server_scenarios` reproduced
+7 failures on unchanged product behavior (domain-1791963044595760300.log): lead
+status/assignment and deal stage survive failed audit; stale lead bypasses lost
+reopen; stale deal stage change overwrites a newer amount; repeated lost commands
+destroy lead previous_status/deal previous_stage. This is new evidence, not an
+inference from an old open acceptance heading.
+
+Lead slice: reuse Business-first locking (existing scheduling/payment convention),
+reload before service validation, atomic mutation/effects and permission recheck
+for the existing API permission. Exact repeated status is a no-op, preserving
+reopen metadata. No new permission/lifecycle policy or database migration.
+`.venv/Scripts/python.exe output/crm-s01-20261014/check.py
+apps.core.tests_crm_server_scenarios.LeadServerScenarios apps.leads.tests_crm_light`:
+Django check/drift and 30 tests PASS (domain-1791963172767257500.log), isolated
+SQLite/eager/locmem. PostgreSQL concurrency remains a separate required check.
+Owner was asked the precise D-04 choice (one built-in follow-up reused by the
+follow-up rule action, rule priority, or leave pending); no response assumed.
+Deal slice: stale state is reloaded before commands; ordinary updates use the
+same Business/record locks. Exact repeated terminal commands preserve reopen
+history; amount input uses the existing DecimalField limits. Stage requirements
+apply to quick terminal actions as well as move-stage (no new stage graph).
+Initial extra amount/update regressions failed on the old code; after the first
+fix, deal scenario + apps.crm.tests = 33 PASS (domain-1791963431530773800.log).
+The final stage-requirement addition has its own focused check below.
+
+Archive slice: all three new regressions reproduced on the old helper
+(domain-1791963516951665500.log): failed audit left archive/restore committed,
+stale repeated archive replaced the original reason. Shared archive/restore now
+reload under a row lock and commit effects atomically. New regressions plus
+apps.core.tests_archive, apps.clients.tests_archive_dependencies,
+apps.services.tests: 30 PASS (domain-1791963588236210300.log).
+
+Access slice: lead create-deal serialized without actor context and replayed
+stored fields after the actor lost sensitive-field access (two failing cases,
+domain-1791963653876327200.log). Existing/replayed deals now require current
+object view access and current field masking. No new role or permission model.
+Access scenarios + member deactivation + lead API + task workspace: 52 PASS
+(domain-1791963784882760200.log). Separate invalid create-deal amount regression
+PASS (domain-1791963896943227000.log); uses the same DecimalField validation.
+
+PostgreSQL: `.venv/Scripts/python.exe output/multibranch/postgres.py
+apps.core.tests_crm_server_concurrency apps.tasks.tests_concurrency
+apps.branches.tests_concurrency` = 6 PASS (postgres-1791963716070724300.log).
+Proved concurrent create-deal yields one linked deal, repeated lost one transition,
+detail/stage changes preserve both results, refund cap, task version conflict and
+single specialist slot. Disposable PostgreSQL17 initialized and stopped by the
+helper; no working DB, existing service or credentials used. Later relevant
+lead/deal changes require rerunning that subset; unchanged other proofs remain valid.
+Final stage-requirement regression + deal suite: 34 PASS
+(domain-1791963991920535800.log). Relevant PostgreSQL lead/deal subset rerun:
+3 PASS (postgres-1791964133807594600.log); unchanged refund/task/slot evidence reused.
+
+Automation dispatch slice: outer CRM transactions exposed premature broker dispatch.
+New baseline: 2 FAIL / 1 ERROR (domain-1791964279758754800.log). Non-inline enqueue
+now runs on_commit(robust=True): rollback discards dispatch; transport failure keeps
+the durable pending run available to existing recovery. No external messages sent.
+`.venv/Scripts/python.exe output/crm-s01-20261014/check.py
+apps.automations.tests_dispatch_commit apps.automations.tests
+apps.automations.tests_claim_ownership apps.automations.tests_queue_runtime`:
+36 PASS, check/drift PASS (domain-1791964360858427800.log).
+
+Completion affected/dependent run: 238 PASS, check/drift PASS
+(domain-1791964110612609600.log). Exact test labels, passed to the same isolated
+helper: apps.core.tests_crm_server_scenarios apps.leads.tests_crm_light apps.crm.tests
+apps.core.tests_archive apps.clients.tests_archive_dependencies apps.services.tests
+apps.businesses.tests_member_deactivation apps.scheduling.tests_settings_delivery
+apps.scheduling.tests apps.automations.tests apps.automations.tests_claim_ownership
+apps.payments.tests apps.branches.tests_scheduling apps.branches.tests_staff;
+plus apps.core.tests_business_flows_e2e.CrmBusinessFlowE2ETests methods
+test_command_claim_rejects_concurrent_processing_and_reclaims_stale_lock,
+test_command_keys_are_isolated_by_business_and_actor,
+test_failed_command_can_retry_and_expired_results_are_pruned,
+test_lead_client_appointment_task_flow, test_lead_to_deal_won_and_lost_flow,
+test_appointment_reschedule_cancel_and_no_show_flow; plus
+apps.ai_core.tests_crm_tools.CRMCommandTests methods
+test_archive_preserves_data_and_restore_is_confirmed,
+test_client_archive_respects_unfinished_work. The last two are shared archive
+consumer compatibility, without AI/provider calls. Automation tests were repeated
+after the later on_commit fix; unaffected suites were not repeated.
+
+| Boundary | Disposition / evidence |
+| --- | --- |
+| Concurrent/stale commands | Fixed fresh-state locking and atomic effects; API regressions and disposable PostgreSQL races PASS. Existing task version/booking/refund invariants PASS. |
+| Replay | Exact status replay preserves history; command claim/retry/expiry/tenant+actor isolation and create-deal concurrency PASS. |
+| Changed access | Existing member-deactivation checks PASS; current object/field access rechecked on create-deal replay, stale assignment mutation denied. |
+| Archive dependencies | Shared atomic archive/restore regressions PASS; client unfinished-work, service, branch/staff and representative archive consumers PASS. |
+| Visit reminders | Existing reschedule/cancel retry/inflight invalidation in tests_settings_delivery and scheduling lifecycle PASS; no reminder code change needed. |
+| Built-in/user follow-up | D-04 remains POLICY PENDING, not PASS. Owner question sent; no behavior selected without an answer. Existing automation checks do not resolve the policy. |
+
+No frontend/build/browser rerun: no frontend/contract shape change or demonstrated
+UI regression; reachable API flows tested. No full certification, installs, working
+DB migration or external delivery. All owned disposable test processes stopped.
+Publication contains independently verified fixes and the four-stage plan, not a
+claim of full S01 closure or production readiness. Next: owner D-04 decision, then
+its bounded implementation/regression; do not start S02 automatically.
+
 ## CRM-R01-FB009-20261014 — user-assisted screen-reader verification
 
 Final owner decision 14.10: defer screen-reader work and close R01 if this was

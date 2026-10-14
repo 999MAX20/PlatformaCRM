@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import DecimalField
 
 from apps.businesses.models import Business
 from apps.businesses.assignment_notifications import create_assignment_notifications
@@ -14,6 +16,7 @@ from apps.crm.pipeline_templates import DEFAULT_PIPELINE_TEMPLATE_KEY, DEFAULT_S
 from apps.core.audit import write_actor_audit_log, write_audit_log
 from apps.core.custom_fields import required_custom_fields_missing
 from apps.core.models import AuditLog
+from apps.core.crm_mutations import locked_crm_change
 
 
 def ensure_default_pipeline(business: Business) -> Pipeline:
@@ -39,16 +42,25 @@ def ensure_default_pipeline(business: Business) -> Pipeline:
     return pipeline
 
 
+@locked_crm_change("deal", resource=Resources.DEALS)
 def move_deal_stage(*, deal: Deal, stage: PipelineStage, actor, payload=None, source="api", request=None) -> Deal:
     payload = payload or {}
-    validate_stage_requirements(deal=deal, stage=stage, actor=actor, payload=payload)
     return apply_deal_stage(deal=deal, stage=stage, actor=actor, payload=payload, source=source, request=request)
 
 
+def validate_deal_amount(value):
+    field = Deal._meta.get_field("amount")
+    try:
+        return DecimalField(max_digits=field.max_digits, decimal_places=field.decimal_places).run_validation(value)
+    except ValidationError as exc:
+        raise ValidationError({"amount": exc.detail}) from exc
+
+
+@locked_crm_change("deal", resource=Resources.DEALS)
 def mark_deal_won(*, deal: Deal, actor, amount=None, source="api", request=None) -> Deal:
     stage = get_terminal_stage(deal, is_won=True)
     if amount not in (None, ""):
-        deal.amount = amount
+        deal.amount = validate_deal_amount(amount)
     return apply_deal_stage(
         deal=deal,
         stage=stage,
@@ -62,6 +74,7 @@ def mark_deal_won(*, deal: Deal, actor, amount=None, source="api", request=None)
     )
 
 
+@locked_crm_change("deal", resource=Resources.DEALS)
 def mark_deal_lost(*, deal: Deal, actor, lost_reason: str, source="api", request=None) -> Deal:
     lost_reason = (lost_reason or "").strip()
     if not lost_reason:
@@ -81,6 +94,7 @@ def mark_deal_lost(*, deal: Deal, actor, lost_reason: str, source="api", request
     )
 
 
+@locked_crm_change("deal", resource=Resources.DEALS)
 def reopen_deal(*, deal: Deal, actor, source="api", request=None) -> Deal:
     stage = get_reopen_stage(deal)
     return apply_deal_stage(
@@ -96,6 +110,7 @@ def reopen_deal(*, deal: Deal, actor, source="api", request=None) -> Deal:
     )
 
 
+@locked_crm_change("deal", resource=Resources.DEALS)
 def assign_deal_owner(*, deal: Deal, actor, user_id, request=None, source="api") -> Deal:
     assert_resource_enabled(deal.business, Resources.DEALS)
     owner = get_user_model().objects.filter(id=user_id, is_active=True).first()
@@ -154,6 +169,7 @@ def assign_deal_owner(*, deal: Deal, actor, user_id, request=None, source="api")
     return deal
 
 
+@transaction.atomic
 def apply_deal_stage(
     *,
     deal: Deal,
@@ -168,29 +184,39 @@ def apply_deal_stage(
     audit_metadata=None,
 ) -> Deal:
     payload = payload or {}
+    validate_stage_requirements(deal=deal, stage=stage, actor=actor, payload=payload)
     previous_status = deal.status
     previous_stage = deal.stage
     previous_lost_reason = deal.lost_reason
     previous_amount = Deal.objects.only("amount").get(pk=deal.pk).amount
+    target_status = Deal.Statuses.WON if stage.is_won else Deal.Statuses.LOST if stage.is_lost else Deal.Statuses.OPEN
+    target_reason = lost_reason if lost_reason is not None else payload.get("lost_reason", deal.lost_reason)
+    if (deal.stage_id == stage.pk and previous_status == target_status
+            and deal.amount == previous_amount
+            and (target_status != Deal.Statuses.LOST or target_reason == previous_lost_reason)):
+        return deal
     now = timezone.now()
 
     deal.stage = stage
     deal.probability = stage.probability
-    deal.stage_entered_at = now
+    if deal.stage_id != previous_stage.pk:
+        deal.stage_entered_at = now
     if stage.is_won:
         deal.status = Deal.Statuses.WON
         deal.won_at = deal.won_at or now
         deal.lost_at = None
         deal.lost_by = None
-        deal.previous_status = previous_status if previous_status != Deal.Statuses.WON else ""
-        deal.previous_stage = previous_stage if getattr(previous_stage, "id", None) else None
+        if previous_status != Deal.Statuses.WON:
+            deal.previous_status = previous_status
+            deal.previous_stage = previous_stage
         deal.lost_reason = ""
     elif stage.is_lost:
         deal.status = Deal.Statuses.LOST
         deal.lost_at = deal.lost_at or now
         deal.lost_by = actor
-        deal.previous_status = previous_status if previous_status != Deal.Statuses.LOST else ""
-        deal.previous_stage = previous_stage if getattr(previous_stage, "id", None) else None
+        if previous_status != Deal.Statuses.LOST:
+            deal.previous_status = previous_status
+            deal.previous_stage = previous_stage
         deal.won_at = None
         deal.lost_reason = lost_reason if lost_reason is not None else payload.get("lost_reason", deal.lost_reason)
     else:
