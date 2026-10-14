@@ -252,7 +252,11 @@ def deliver_outbound_message(message_id):
     return _finish_delivery(message, result=result)
 
 
+@transaction.atomic
 def _finish_delivery(message, *, result):
+    if message.sender_type == BotMessage.SenderTypes.MANAGER:
+        from apps.bots.safety_state import _locked
+        message.conversation = _locked(message.conversation)
     now = timezone.now()
     safe_result = sanitize_error_payload(result or {})
     payload = {
@@ -294,6 +298,9 @@ def _finish_delivery(message, *, result):
             message.status = BotMessage.Statuses.FAILED
 
     message.save(update_fields=update_fields)
+    if message.status == BotMessage.Statuses.SENT and message.sender_type == BotMessage.SenderTypes.MANAGER:
+        from apps.bots.handoff_recovery import schedule_after_staff_delivery
+        schedule_after_staff_delivery(message)
     return message
 
 

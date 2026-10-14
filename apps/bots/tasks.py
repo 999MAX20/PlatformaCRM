@@ -3,6 +3,12 @@ from celery import shared_task
 from apps.bots.outbound_delivery import deliver_outbound_message, process_due_outbound_messages
 
 
+@shared_task(name="bots.resume_answered_handoffs", queue="default")
+def resume_answered_handoffs_task(limit=100):
+    from apps.bots.handoff_recovery import resume_due_conversations
+    return {"resumed": resume_due_conversations(limit=limit)}
+
+
 @shared_task(bind=True, name="bots.process_outbound_message", queue="integrations")
 def process_outbound_message_task(self, message_id):
     message = deliver_outbound_message(message_id)

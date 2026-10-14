@@ -551,6 +551,8 @@ export type BotConversation = {
   bot_enabled?: boolean;
   handoff_required?: boolean;
   handoff_reason?: string;
+  handoff_resume_started_at?: string | null;
+  ai_resume_at?: string | null;
   last_message_at?: string | null;
   last_inbound_at?: string | null;
   last_outbound_at?: string | null;

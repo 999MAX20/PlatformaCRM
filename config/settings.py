@@ -414,6 +414,11 @@ CELERY_BEAT_SCHEDULE.update(
             "schedule": 60,
             "kwargs": {"limit": 100},
         },
+        "answered-handoff-recovery": {
+            "task": "bots.resume_answered_handoffs",
+            "schedule": 60,
+            "kwargs": {"limit": 100},
+        },
         "file-antivirus-runtime": {
             "task": "files.scan_due_attachments",
             "schedule": 15,

@@ -3245,6 +3245,9 @@ export const kk: Record<string, string> = {
   "conversations.emptyText":
     "Қосылған арналардан жаңа өтініштер осында автоматты түрде пайда болады.",
   "conversations.pauseBot": "Ботты тоқтату",
+  "conversations.keepAiPaused": "ЖИ өшірулі қалсын",
+  "conversations.aiReturnsAfter": "Жаңа хабарлар болмаса, {time} уақытынан кейін ЖИ-ге қайтарылады.",
+  "conversations.aiReturnWaiting": "Қызметкердің жауабы сәтті жіберіліп, бір сағат бойы жаңа хабар болмаса, ЖИ-ге қайтарылады.",
   "conversations.enableBot": "Ботты қосу",
   "conversations.closedFromInbox": "Inbox арқылы жабылды",
   "conversations.selectDialogText":

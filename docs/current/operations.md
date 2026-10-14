@@ -45,6 +45,14 @@ threshold и recovery; общая dashboard-картинка не доказыв
 границей риска; не считать весь интеграционный runtime очередью автоматически.
 SQLite/eager не доказывают locking и recovery PostgreSQL/Redis.
 
+CRM-R02-AI-RETURN: `bots.resume_answered_handoffs` выполняется beat каждые
+60 секунд в очереди `default`, до 100 просроченных сроков за запуск. Срок хранится
+в БД, повтор не дублирует переход; после простоя worker проверяет текущие условия.
+Миграция `bots/0012_answered_handoff_recovery` добавляет nullable поля без
+автоматического включения прежних диалогов. Для рабочего запуска нужны отдельно
+разрешённое применение миграции и работающие worker/beat; Git-публикация их не запускает.
+Правило возврата и исключения — [AI](ai.md#жизненный-цикл-preview-и-сбои).
+
 CRM-S04: для локальной изолированной проверки есть
 [`verify_recovery_s04.py`](../../scripts/verify_recovery_s04.py),
 [команда и граница](../testing/testing.md#s04-postgresqlredis-recovery-drill).

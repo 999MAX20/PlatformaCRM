@@ -6,6 +6,86 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-R02-AI-RETURN-20261014 — answered handoff idle recovery
+
+Owner explicitly authorized implementation; Meta integration and PS Cloud setup deferred.
+Owner confirmed: one hour after last customer/staff message, only after staff has
+answered; unanswered human requests, safety/review stops and explicit manual pause
+remain stopped. Timer sends nothing; only future inbound can trigger AI.
+Mode implementation; gap code. Canonical C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, base 5babe5cc89d9e4ac5ba90f54198c48b847c2a040;
+starting index/worktree clean. Reuse BotConversation, handoff/state services,
+outbox delivery, Celery beat, Inbox API/header, existing permission and audit layers.
+Scope: durable ordinary handoff eligibility/deadline, successful staff reply,
+readiness/current permission guards, repeat/concurrency safety, visible deadline
+and permanent-pause action. No provider/hosting setup, live calls or working DB migration.
+Risk: accidental AI reactivation or stale queued reply. Focused backend checks
+before UI; then affected safety/runtime/delivery suites, PostgreSQL concurrency,
+check/migration drift and isolated migration; frontend build plus focused browser
+flow (desktop/mobile/locales/error/recovery). Exact committed-range static at close.
+Permission model unchanged; timer rechecks authorized staff rights. Activity/audit
+record automatic transition, no new notification/BusinessEvent trigger or AI call.
+Intentional additive nullable migration; legacy handoffs remain stopped. New fields
+read-only in API; RU/KK/EN status copy. Scoped checks PASS; publication pending.
+
+Progress/evidence (isolated local boundary):
+- Nullable migration bots/0012 adds ordinary-handoff start, indexed deadline and
+  authorizing staff FK; no legacy handoff is enabled. Business/conversation locks
+  coordinate inbound, delivery and timer. Existing AI state service handles current
+  permissions/readiness/budget, memory revision, audit/activity and stale reply revocation.
+- Only explicit ordinary staff handoff from enabled AI is eligible. Automatic
+  safety/review or previous paused/handoff state cannot be relabelled by repeating
+  handoff. Latest successful manager reply arms the timer; latest inbound or pending/
+  failed reply prevents it. Retrying delivery reuses the same message. System notices
+  do not move the deadline. Timer invokes no model/provider and creates no message.
+- Inbox exposes read-only start/deadline, existing handoff action, time in Business
+  timezone and permanent-pause action through the existing permission-checked API.
+- First coherent backend slice: 12 PASS, domain-1791999764478572500.log.
+  Existing safety/runtime/notice regressions: 48 PASS, domain-1791999877458225300.log.
+  Expanded first attempt domain-1792000001632381400.log had one test-fixture TypeError
+  (AutoPipelineDecision omitted required reason), corrected; no acceptance waived.
+- PostgreSQL: `.venv/Scripts/python.exe output/multibranch/postgres.py
+  apps.bots.tests_handoff_recovery` — 22 PASS including two concurrent workers and
+  incoming message committed while timer waits for lock. Disposable PostgreSQL17
+  cluster/migration, removed after run; log postgres-1792000094757192000.log.
+- Affected/dependent completion command: `.venv/Scripts/python.exe
+  output/crm-s01-20261014/check.py apps.bots.tests_handoff_recovery
+  apps.bots.tests_safety_recovery apps.bots.tests_customer_safety
+  apps.bots.tests_handoff_notice apps.bots.tests_runtime_configuration apps.bots.tests
+  apps.ai_core.tests_inbox_continuity apps.integrations.tests.TelegramIntegrationSkeletonTests
+  apps.integrations.tests.WhatsAppIntegrationFoundationTests
+  apps.integrations.tests.InstagramIntegrationFoundationTests` — system/drift PASS,
+  186 PASS +2 PostgreSQL-only skips; domain-1792000231770901700.log. Channel tests use
+  controlled provider boundaries, not live accounts. App code unchanged afterward.
+- Strengthened the next-inbound regression to exercise actual eligibility and
+  classification/reply path with mocked provider work rather than bypass evaluation.
+  Same isolated helper, label apps.bots.tests_handoff_recovery.HandoffRecoveryTests.
+  test_only_next_inbound_can_run_ai_and_old_inbound_is_not_replayed — 1 PASS;
+  domain-1792000660141680500.log. Unaffected suites reused.
+- Build/types/i18n/widget/bundle: `.venv/Scripts/python.exe
+  output/ai-return-20261014/frontend.py` PASS; frontend-isolated-final.log. Existing
+  dependencies reused, no install. UI inputs unchanged since this check.
+- Browser first attempt browser-1792000192754094200.log failed fixture assertions:
+  raw 503 detail was intentionally normalized by app; previous failed test left a
+  scheduled fixture which affected next batch count. Corrected localized assertion,
+  explicit POST/CORS failure injection and scoped synthetic-fixture cleanup.
+  Second attempt browser-1792000488881878500.log timed out at webServer startup,
+  before scenarios. Changed runner to logged explicit disposable preparation before
+  Playwright (same pattern as existing S03 runner); did not extend app acceptance.
+  Third browser run browser-1792000732035444000.log: 4 PASS desktop/mobile,
+  actual API/handoff, failed and simulated successful provider delivery, localized
+  status/menu/keyboard and stop error/retry, actual task with advanced fixture clock,
+  repeated task no-op and no outbound. Visually inspected desktop RU/mobile KK.
+  Removed an empty existing safety container exposed by ordinary handoff without a
+  reason; rebuilt frontend PASS, then rerun only affected UI scenarios via --grep.
+  Final UI recheck: `.venv/Scripts/python.exe scripts/verify_handoff_recovery.py
+  --grep "answered handoff exposes"` — 2 PASS desktop/mobile;
+  browser-1792001061108407300.log. Final desktop RU/mobile KK screenshots inspected:
+  deadline readable, empty safety bar removed. Publication pending.
+- Changed document file links/new Python AST/diff hygiene PASS. Full release gate,
+  real AI/providers, working migration, cloud setup and production workers are out
+  of scope; local evidence does not activate the feature in an existing environment.
+
 ## CRM-R02-20261014 — pilot decisions and provider research
 
 Task contract: owner answered pilot questionnaire and requested Kazakhstan WhatsApp/

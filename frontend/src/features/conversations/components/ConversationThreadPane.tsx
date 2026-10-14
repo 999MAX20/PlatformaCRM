@@ -95,6 +95,9 @@ export function ConversationThreadPane({
   const availableLabel = availableAt ? new Intl.DateTimeFormat(language, {
     dateStyle: "short", timeStyle: "short", timeZone: business?.timezone || "UTC",
   }).format(new Date(availableAt)) : "";
+  const resumeLabel = selected?.ai_resume_at ? new Intl.DateTimeFormat(language, {
+    dateStyle: "short", timeStyle: "short", timeZone: business?.timezone || "UTC",
+  }).format(new Date(selected.ai_resume_at)) : "";
   return (
     <WorkQueueDetailPane
       className="min-w-0"
@@ -114,7 +117,12 @@ export function ConversationThreadPane({
       ) : (
         <>
           <ConversationThreadHeader selected={selected} headerActions={headerActions} threadMenu={threadMenu} canUpdate={canUpdate} canToggleBot={canToggleBot} onMobileClose={onMobileClose} onAssign={onAssign} assignPending={assignPending} onToggleBot={onToggleBot} toggleBotPending={toggleBotPending} onCloseConversation={onCloseConversation} closePending={closePending} onReopenConversation={onReopenConversation} reopenPending={reopenPending} t={t} />
-            {selected.ai_safety && (availableLabel || selected.handoff_required || (!selected.bot_enabled && selected.ai_safety.reason)) && <div className="shrink-0 space-y-1 border-b border-platforma-border bg-platforma-card px-4 py-2 text-xs text-platforma-subtle">
+          {selected.status === "open" && selected.handoff_required && !selected.bot_enabled && selected.handoff_resume_started_at && (
+            <p role="status" data-testid="inbox-ai-return" className="shrink-0 border-b border-platforma-border bg-platforma-card px-4 py-2 text-xs text-platforma-subtle">
+              {resumeLabel ? t("conversations.aiReturnsAfter", { time: resumeLabel }) : t("conversations.aiReturnWaiting")}
+            </p>
+          )}
+            {selected.ai_safety && (availableLabel || (selected.handoff_required && selected.handoff_reason) || (!selected.bot_enabled && selected.ai_safety.reason)) && <div className="shrink-0 space-y-1 border-b border-platforma-border bg-platforma-card px-4 py-2 text-xs text-platforma-subtle">
               {availableLabel && <p>{t("customerSafety.availableAt", { time: availableLabel })}</p>}
               {selected.handoff_required && selected.handoff_reason && <p role="status">{selected.handoff_reason}</p>}
               {!selected.bot_enabled && selected.ai_safety.reason && <p>{t("customerSafety.resumeHint")}</p>}

@@ -10,6 +10,7 @@ import {
   BellDot,
   CheckSquare,
   Link2,
+  PauseCircle,
   Sparkles,
   UserRound,
   X,
@@ -1355,6 +1356,16 @@ export function ConversationsPage() {
     .filter(kind => context.data?.[kind].state === "available" && context.data.actions[`link_${kind}`])
     .map(kind => ({ key: kind, label: t(`conversations.changeLink.${kind}`), icon: Link2, onSelect: () => openCrmLinkModal(kind) }));
   const threadMenu: ActionMenuItem[] = [
+    ...(canUpdate && selected?.status === "open" && selected.bot_enabled ? [{
+      key: "handoff", label: t("conversations.handoffToManager"), icon: UserRound,
+      disabled: handoffMutation.isPending,
+      onSelect: () => handoffMutation.mutate({ conversationId: selected.id, reason: "" }),
+    }] : []),
+    ...(canUpdate && canSuggestAi && selected?.status === "open" && selected.handoff_resume_started_at ? [{
+      key: "keep-ai-paused", label: t("conversations.keepAiPaused"), icon: PauseCircle,
+      disabled: toggleBotMutation.isPending,
+      onSelect: () => toggleBotMutation.mutate({ conversationId: selected.id, botEnabled: false }),
+    }] : []),
     ...(canUpdate ? [{ key: "unread", label: t("conversations.markUnreadAction"), icon: BellDot, onSelect: () => selected && markUnreadMutation.mutate(selected.id) },
       ...localizedPriorityOptions.map(option => ({ key: `priority-${option.value}`, label: `${t("conversations.priority")}: ${option.label}`, icon: BellDot, disabled: setPriorityMutation.isPending || selected?.priority === option.value, onSelect: () => selected && setPriorityMutation.mutate({ conversationId: selected.id, priority: option.value as NonNullable<InboxConversation["priority"]> }) }))] : []),
     ...(context.data?.actions.create_task ? [{ key: "task", label: t("conversations.createTask"), icon: CheckSquare, onSelect: createLinkedTask }] : []),

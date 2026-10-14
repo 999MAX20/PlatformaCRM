@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
 
@@ -26,11 +27,21 @@ CHAT_NOTIFICATION_ROLES = {
 }
 
 
+@transaction.atomic
 def register_bot_message(message, actor=None):
     conversation = message.conversation
+    original = conversation
+    from apps.businesses.models import Business
+    from apps.bots.models import BotConversation
+    Business.objects.select_for_update().get(pk=conversation.business_id)
+    conversation = BotConversation.objects.select_for_update().select_related("business", "bot").get(pk=conversation.pk)
+    message.conversation = conversation
     assert_entitlement_allows(conversation.business, EntitlementMetrics.BOT_MESSAGES)
     timestamp = message.created_at or timezone.now()
     update_fields = ["last_message_at", "updated_at"]
+    if message.direction == BotMessage.Directions.INBOUND or message.sender_type == BotMessage.SenderTypes.MANAGER:
+        conversation.ai_resume_at = None
+        update_fields.append("ai_resume_at")
 
     conversation.last_message_at = timestamp
     conversation.updated_at = timezone.now()
@@ -67,6 +78,7 @@ def register_bot_message(message, actor=None):
                 "lead_id": conversation.lead_id,
             },
         )
+    original.refresh_from_db()
     return conversation
 
 
@@ -172,13 +184,29 @@ def assign_conversation(conversation, user, *, actor=None):
     return conversation
 
 
+@transaction.atomic
 def handoff_conversation(conversation, reason="", *, actor=None):
-    if conversation.handoff_required and not conversation.bot_enabled and conversation.handoff_reason == reason:
+    from apps.bots.safety_state import _locked
+    from apps.bots.handoff_recovery import cancel_recovery, RECOVERY_FIELDS
+    original = conversation
+    conversation = _locked(conversation)
+    if actor is not None:
+        from apps.businesses.access import Actions, assert_can
+        assert_can(actor, conversation.business, Resources.CONVERSATIONS, Actions.UPDATE, obj=conversation)
+    if (conversation.handoff_required and not conversation.bot_enabled and conversation.handoff_reason == reason
+            and (actor is not None or not conversation.handoff_resume_started_at)):
+        original.refresh_from_db()
         return conversation
+    ordinary = bool(actor and conversation.bot_enabled and not conversation.handoff_required
+                    and not (conversation.ai_safety_state or {}).get("reason"))
+    cancel_recovery(conversation)
+    if ordinary:
+        conversation.handoff_resume_started_at = timezone.now()
     conversation.handoff_required = True
     conversation.handoff_reason = reason
     conversation.bot_enabled = False
-    conversation.save(update_fields=["handoff_required", "handoff_reason", "bot_enabled", "updated_at"])
+    conversation.save(update_fields=["handoff_required", "handoff_reason", "bot_enabled", *RECOVERY_FIELDS, "updated_at"])
+    original.refresh_from_db()
     _write_conversation_activity(
         conversation,
         event_type=ActivityEvents.CONVERSATION_HANDOFF_REQUESTED,
@@ -261,7 +289,11 @@ def set_conversation_priority(conversation, priority, *, actor=None):
     return conversation
 
 
+@transaction.atomic
 def close_conversation(conversation, *, reason="", actor=None):
+    from apps.bots.safety_state import _locked
+    from apps.bots.handoff_recovery import cancel_recovery, RECOVERY_FIELDS
+    conversation = _locked(conversation)
     if conversation.status == conversation.Statuses.CLOSED:
         return conversation
     previous_status = conversation.status
@@ -269,7 +301,8 @@ def close_conversation(conversation, *, reason="", actor=None):
     conversation.close_reason = reason
     conversation.handoff_required = False
     conversation.bot_enabled = False
-    conversation.save(update_fields=["status", "close_reason", "handoff_required", "bot_enabled", "updated_at"])
+    cancel_recovery(conversation)
+    conversation.save(update_fields=["status", "close_reason", "handoff_required", "bot_enabled", *RECOVERY_FIELDS, "updated_at"])
     BotMessage.objects.create(
         conversation=conversation,
         direction=BotMessage.Directions.OUTBOUND,

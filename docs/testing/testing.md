@@ -91,6 +91,23 @@ CI currently runs broad checks on every main/master push; report actual CI separ
 without duplicating its full scope locally for an unrelated small change. This policy
 update does not change executable runner or CI behavior.
 
+## Answered Inbox handoff recovery
+
+Run the scoped reachable flow with existing dependencies:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\verify_handoff_recovery.py
+```
+
+The runner uses a disposable database/ports and starts its own backend/frontend.
+The browser covers ordinary handoff, failed/successful staff delivery, deadline,
+RU/KK/EN, manual-stop error/retry and the periodic task without an outbound message.
+Provider success and elapsed time are injected only in guarded isolated fixtures;
+this is not live messenger delivery. Domain regressions live in
+`apps.bots.tests_handoff_recovery`; concurrency requires PostgreSQL. No install or
+working migration is part of this command. Build/types and affected backend gates
+remain separate under the verification matrix.
+
 ## Deterministic Local Quality Gate
 
 For release-candidate integration, the cross-platform full gate is shown below.

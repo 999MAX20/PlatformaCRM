@@ -113,6 +113,10 @@ class BotConversation(TimeStampedModel):
     bot_enabled = models.BooleanField(default=True)
     handoff_required = models.BooleanField(default=False)
     handoff_reason = models.TextField(blank=True)
+    handoff_resume_started_at = models.DateTimeField(null=True, blank=True, editable=False)
+    ai_resume_at = models.DateTimeField(null=True, blank=True, db_index=True, editable=False)
+    ai_resume_actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+                                      null=True, blank=True, related_name="scheduled_inbox_resumes", editable=False)
     close_reason = models.TextField(blank=True)
     last_message_at = models.DateTimeField(null=True, blank=True)
     last_inbound_at = models.DateTimeField(null=True, blank=True)

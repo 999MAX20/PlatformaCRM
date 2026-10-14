@@ -3233,6 +3233,9 @@ export const en: Record<string, string> = {
   "conversations.emptyText":
     "New requests from connected channels will appear here automatically.",
   "conversations.pauseBot": "Pause bot",
+  "conversations.keepAiPaused": "Keep AI turned off",
+  "conversations.aiReturnsAfter": "Return to AI after {time} if there are no new messages.",
+  "conversations.aiReturnWaiting": "Return to AI after a successful staff reply and one hour of inactivity.",
   "conversations.enableBot": "Enable bot",
   "conversations.closedFromInbox": "Closed from inbox",
   "conversations.selectDialogText":

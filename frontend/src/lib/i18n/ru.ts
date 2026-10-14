@@ -3243,6 +3243,9 @@ export const ru: Record<string, string> = {
   "conversations.emptyText":
     "Новые обращения с подключённых каналов появятся здесь автоматически.",
   "conversations.pauseBot": "Остановить бота",
+  "conversations.keepAiPaused": "Оставить ИИ выключенным",
+  "conversations.aiReturnsAfter": "Возврат к ИИ после {time}, если не будет новых сообщений.",
+  "conversations.aiReturnWaiting": "Возврат к ИИ — после успешного ответа сотрудника и часа тишины.",
   "conversations.enableBot": "Включить бота",
   "conversations.closedFromInbox": "Закрыто из inbox",
   "conversations.selectDialogText":

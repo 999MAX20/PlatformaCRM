@@ -100,6 +100,8 @@ class InboxConversationSerializer(serializers.ModelSerializer):
             "bot_enabled",
             "handoff_required",
             "handoff_reason",
+            "handoff_resume_started_at",
+            "ai_resume_at",
             "ai_safety",
             "last_message_at",
             "last_inbound_at",

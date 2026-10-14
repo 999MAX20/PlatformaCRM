@@ -51,7 +51,7 @@ def assert_customer_context(*, business, bot_id, conversation_id):
 
 
 @transaction.atomic
-def set_customer_ai_state(*, conversation, actor, enabled):
+def set_customer_ai_state(*, conversation, actor, enabled, automatic_recovery=False):
     from apps.ai_core.models import AgentConversation, AgentTurn
     from apps.bots.safety_state import reset_behavior_for_staff
     from apps.businesses.access import Actions, Resources, assert_can
@@ -72,7 +72,7 @@ def set_customer_ai_state(*, conversation, actor, enabled):
         if current.bot_enabled and not current.handoff_required:
             return current
         current = reset_behavior_for_staff(conversation=current, actor=actor)
-    elif not current.bot_enabled:
+    elif not current.bot_enabled and not current.handoff_resume_started_at:
         return current
     # A pause followed by resume must not revive old in-flight or queued answers.
     thread = AgentConversation.objects.select_for_update().filter(inbox_conversation=current).first()
@@ -87,8 +87,15 @@ def set_customer_ai_state(*, conversation, actor, enabled):
     from apps.bots.handoff_notice import NOTICE_SOURCE
     current.metadata_json = dict(current.metadata_json or {})
     current.metadata_json.pop(NOTICE_SOURCE, None)
-    current.save(update_fields=["bot_enabled", "handoff_required", "handoff_reason", "metadata_json", "updated_at"])
-    metadata = {"kind": "customer_ai_state", "enabled": enabled, "usage_preserved": True}
+    from apps.bots.handoff_recovery import cancel_recovery, RECOVERY_FIELDS
+    cancel_recovery(current)
+    current.save(update_fields=["bot_enabled", "handoff_required", "handoff_reason", "metadata_json", *RECOVERY_FIELDS, "updated_at"])
+    # Re-enabling must not resurrect queued legacy replies without a revision binding.
+    current.messages.filter(direction="outbound", sender_type__in=["bot", "ai"],
+                            status__in=["queued", "retry_scheduled"]).update(
+        status="failed", error_text="AI state changed; stale automatic reply cancelled.", delivery_next_retry_at=None)
+    metadata = {"kind": "customer_ai_state", "enabled": enabled, "usage_preserved": True,
+                "automatic_recovery": automatic_recovery}
     write_actor_audit_log(actor=actor, action=AuditLog.Actions.UPDATE, instance=current, metadata=metadata)
     create_activity_event(business=current.business, actor=actor, instance=current, event_type="customer_ai_state",
                           source="inbox", metadata=metadata)
