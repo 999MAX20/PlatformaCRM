@@ -6,6 +6,82 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-REBUILD-01-20261014 — truthful clinic workspace
+
+User explicitly requested starting after delivery of the specification. Authorized
+phase: roadmap result 1, overview/list/detail with truthful configuration, recorded
+failures and unavailable data; remove placeholder navigation. New onboarding/cases,
+permissions, /admin, working migrations, provider calls and runtime operations excluded.
+Mode implementation; gap code/UX. Reuses platform selectors/APIs, grants/MFA/audit,
+S02 pagination/search/support-note flow and shared UI. Approved requirement change
+to S02 health heuristics; historical closure remains at its original snapshot.
+Canonical C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+base b056c3d6795721c14a81f87707b9b189e92212f4; clean worktree/index at start.
+Risk: false healthy/zero readings, lost list context, leaking data or broadening
+support rights. No notification/BusinessEvent/AI-action/schema changes intended.
+Focused checks after coherent backend slice: isolated platform read-model regression
+tests incl unavailable/partial source, absence of optional setup, permissions and
+cross-business aggregation. Completion: affected S02/operations tests, system and
+migration drift checks; frontend build/types, targeted isolated browser flows for
+search/filter/return, health/no-data, locales/mobile/keyboard and preserved support
+journal permission/MFA/draft flow. No full E2E or dependency reinstall without cause.
+Acceptance: no sales/landing/subscription absence classified as service failure;
+unknown is not zero/healthy; list/detail/overview consistent; working navigation;
+existing grant/MFA and journal behavior retained. Verified commit + normal push
+to origin main under standing authorization; actual CI reported separately.
+Status: implemented and scoped verification passed on 15.10; publication follows
+standing authorization. Next result is manual clinic creation, not started.
+Owner clarification during implementation: pilot relevance alone never justifies
+removing production-useful logic/components. Keep estimated MRR and subscription
+logic, separate financial context from operational state and label estimate vs
+actual revenue. Remove only unused placeholders, duplication or incorrect signals.
+Implementation:
+- Platform source reads use independent savepoints; missing sources return null
+  with safe availability metadata. Missing service-state schema no longer erases
+  queue data. Batched service observations reuse existing 180-second freshness.
+- Optional sales/forms/landing/subscription absence is not a service failure;
+  health.score=null, recorded_signals clear/attention/unknown; form errors=30 days.
+  Latest activity has no fabricated Business.updated_at fallback. Billing failure
+  does not hide the operational overview. Read roles and support writes unchanged.
+- Overview keeps MRR/active subscriptions as an explicitly estimated financial
+  block. Clinic list/detail separate configuration, service observations, activity
+  and recorded errors. Status URL/filter/return, mobile layout, RU/KK/EN and explicit
+  permission fallback. Historical support journal/MFA/draft behavior retained.
+- Three working navigation destinations; old placeholder URLs redirect to overview
+  (billing to #finance). Placeholder source remains unreachable, no blanket deletion.
+  Vite /ready/ proxy fixed: same backend as /api, verified JSON200 through frontend.
+Verification (Python3.12.14, Node24.18.0, existing dependencies unchanged):
+- Initial isolated SQLite: `manage.py test apps.core.tests_platform_rebuild
+  apps.core.tests_platform_s02 apps.core.tests_platform_operations
+  apps.core.tests_service_status.ServiceObservationTests -v 1` via isolated_runtime:
+  42 PASS; output/platform-rebuild-01/backend-1792004343804014200.log.
+- Same targets on owned temporary PostgreSQL17 cluster: 45 PASS, including actual
+  failed SQL then successful read in the same transaction; cluster stopped/removed.
+  output/platform-rebuild-01/postgres-1792005183596053700.log. No working DB used.
+- After final overview/billing decoupling: isolated `manage.py test
+  apps.core.tests_platform_rebuild apps.core.tests_platform_s02.PlatformListTests
+  apps.core.tests_platform_operations.PlatformOperationsDashboardTests.test_platform_overview_returns_operations_summary
+  -v 1`: 19 PASS; backend-final-* log. Unchanged service/savepoint PG evidence reused.
+- Isolated `manage.py check` and `makemigrations --check --dry-run`: PASS/no changes;
+  output/platform-rebuild-01/system-checks.log. No migration authored/applied to work DB.
+- `npm run build`: PASS (i18n5869 aligned keys, tsc, app/widget builds);
+  `npm run check:bundle`: PASS. One initial JSX syntax failure fixed before PASS.
+- `python scripts/verify_platform_s02.py --rebuild`: 11 PASS, 1 existing mobile-only
+  skip, 2 failed assertions for explicit permission fallback (data was correctly
+  hidden but generic error rendered). Added dedicated ForbiddenState, no retry403.
+  `python scripts/verify_platform_s02.py --rebuild --grep "platform rebuild distinguishes|platform load recovery"`:
+  4 PASS on final UI. Combined 13 distinct scenarios PASS; unchanged prior successes
+  reused. Logs browser-1792004975761893500.log / browser-1792005275829312700.log.
+- Visual inspection: synthetic desktop overview/list/clinic and mobile overview/
+  clinic screenshots, no clipping; keyboard refresh/filter/search and no-overflow
+  assertions, RU/KK/EN, unknown/partial/stale/403, real financial/status/MFA flows.
+  Artifacts output/platform-rebuild-01/screenshots-first and frontend/test-results.
+Full E2E, dependency reinstalls, live providers and working migration skipped as
+outside this read-model/UI phase. Working handoff runtime untouched. Existing
+source migration core0012 and monitor activation remain separate environment work;
+the console honestly displays unknown without that source. No readiness claim.
+Diff/link/index/committed-range gate and remote SHA/actual CI reported at publication.
+
 ## PLATFORM-REBUILD-SPEC-20261014 — operator console specification
 
 Owner approved redesigning /platform from its workflows, retaining tested services

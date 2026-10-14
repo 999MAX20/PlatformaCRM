@@ -18,6 +18,7 @@ Settings завершён: [реестр UI/API/потребителей](../tes
 
 | Область | Что присутствует в реализации | Источник / граница оставшейся работы |
 | --- | --- | --- |
+| Platform console, PLATFORM-REBUILD-01 | Обзор/клиники/карточка: настройки, записанные ошибки и свежесть фоновых наблюдений разделены; MRR/подписки сохранены; status filter и no-data/403; прежние grant/MFA и журнал | [selectors](../../apps/core/platform_selectors.py), [UI](../../frontend/src/features/platform), [spec](../testing/platform-rebuild-spec-20261014.md); проверки в checkpoint; новая очередь обращений и ручное создание клиники не реализованы |
 | Операционная Главная | Полные distinct-счётчики, очередь действий, ближайшие записи, честное отсутствие финансовых данных | [work queues](../../apps/core/work_queues.py), [UI](../../frontend/src/features/dashboard/OperationalDashboard.tsx); локальная приёмка пакета 08.10, target/полный рабочий день отдельно |
 | Клиенты | Карточки, поиск/связи, история, archive/restore, проверка активных зависимостей | [clients](../../apps/clients), [services](../../apps/clients/services.py); общие edge cases и приёмка FC остаются |
 | Заявки | Lifecycle, ответственный, конверсия/связи, lost reason | [leads](../../apps/leads/services.py), [tests](../../apps/leads/tests_crm_light.py); не обходить services |

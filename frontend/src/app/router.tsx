@@ -17,10 +17,6 @@ import {
 import { useAuth } from "../features/auth/AuthProvider";
 import { LoginPage } from "../features/auth/LoginPage";
 import { getAuthReturnPathFromState } from "../features/auth/authReturnPath";
-import {
-  PlatformPlaceholderPage,
-  platformPages,
-} from "../features/platform/PlatformPlaceholderPage";
 import { NotFoundPage } from "../features/pilot/NotFoundPage";
 import { useActiveBusiness } from "../hooks/useBusiness";
 import { useI18n } from "../lib/i18n";
@@ -949,23 +945,23 @@ const router = createBrowserRouter([
       },
       {
         path: "prospects",
-        element: <PlatformPlaceholderPage {...platformPages.prospects} />,
+        element: <Navigate to="/platform" replace />,
       },
       {
         path: "landings",
-        element: <PlatformPlaceholderPage {...platformPages.landings} />,
+        element: <Navigate to="/platform" replace />,
       },
       {
         path: "billing",
-        element: <PlatformPlaceholderPage {...platformPages.billing} />,
+        element: <Navigate to="/platform#finance" replace />,
       },
       {
         path: "analytics",
-        element: <PlatformPlaceholderPage {...platformPages.analytics} />,
+        element: <Navigate to="/platform" replace />,
       },
       {
         path: "settings",
-        element: <PlatformPlaceholderPage {...platformPages.settings} />,
+        element: <Navigate to="/platform" replace />,
       },
     ],
   },

@@ -17,6 +17,8 @@ from apps.businesses.serializers import ActivateLandingBusinessSerializer
 from apps.core.audit import write_audit_log
 from apps.core.models import AuditLog
 from apps.core.operations_health import platform_operations_health
+from apps.core.platform_reads import read_platform_source
+from apps.core.service_status import platform_service_status
 from apps.core.permissions import IsPlatformAdmin, IsPlatformUser, can_log_support_action
 from apps.integrations.sanitization import sanitize_error_text
 
@@ -24,6 +26,7 @@ from apps.integrations.sanitization import sanitize_error_text
 from apps.core.platform_selectors import (
     _merchant_counts, _merchant_counts_many, _merchant_health,
     _merchant_support_workflow, _platform_operations_summary, platform_failure_summary,
+    platform_clinic_service_statuses,
 )
 from apps.core.platform_serializers import PlatformMerchantFilters, PlatformSupportNoteSerializer
 from rest_framework.pagination import PageNumberPagination
@@ -34,22 +37,26 @@ from rest_framework.pagination import PageNumberPagination
 def platform_overview(request):
     since = timezone.now() - timedelta(days=30)
     active_subscriptions = Subscription.objects.filter(status=Subscription.Statuses.ACTIVE)
-    mrr = active_subscriptions.aggregate(total=Sum("plan__monthly_price"))["total"] or 0
+    mrr = read_platform_source(lambda: active_subscriptions.aggregate(total=Sum("plan__monthly_price"))["total"] or 0)
 
     return Response(
         {
             "total_businesses": Business.objects.count(),
             "active_businesses": Business.objects.filter(status=Business.Statuses.ACTIVE).count(),
             "trial_businesses": Business.objects.filter(status=Business.Statuses.TRIAL).count(),
-            "active_subscriptions": active_subscriptions.count(),
-            "mrr_estimate": str(mrr),
+            "generated_at": timezone.now(),
+            "active_subscriptions": read_platform_source(active_subscriptions.count),
+            "mrr_estimate": str(mrr) if mrr is not None else None,
             "total_users": get_user_model().objects.count(),
-            "bot_count": Bot.objects.count(),
-            "active_bot_channels": BotChannel.objects.filter(status=BotChannel.Statuses.ACTIVE).count(),
-            "ai_requests_30d": AIRequestLog.objects.filter(created_at__gte=since).count(),
-            "conversations_30d": BotConversation.objects.filter(created_at__gte=since).count(),
+            "bot_count": read_platform_source(Bot.objects.count),
+            "active_bot_channels": read_platform_source(lambda: BotChannel.objects.filter(status=BotChannel.Statuses.ACTIVE).count()),
+            "ai_requests_30d": read_platform_source(lambda: AIRequestLog.objects.filter(created_at__gte=since).count()),
+            "conversations_30d": read_platform_source(lambda: BotConversation.objects.filter(created_at__gte=since).count()),
             "operations_summary": _platform_operations_summary(since),
             "errors": platform_failure_summary(),
+            "service_status": read_platform_source(platform_service_status, unavailable={
+                "scope": "background_processing", "status": "unknown", "businesses": None,
+            }),
         }
     )
 
@@ -80,6 +87,7 @@ def platform_merchants(request):
     paginator.page_size = params["page_size"]
     page = paginator.paginate_queryset(businesses, request)
     counts_by_id = _merchant_counts_many(page)
+    services_by_id = platform_clinic_service_statuses(page)
     data = []
 
     for business in page:
@@ -110,6 +118,8 @@ def platform_merchants(request):
                 "usage_summary": usage_summary(business),
                 "operations": counts,
                 "health": health,
+                "service_status": services_by_id[business.pk],
+                "generated_at": timezone.now(),
                 "support_workflow": _merchant_support_workflow(business, counts, health),
                 "latest_activity_at": counts["latest_activity_at"],
             }
@@ -143,6 +153,10 @@ def platform_merchant_detail(request, business_id):
             },
             "operations": counts,
             "health": health,
+            "service_status": platform_clinic_service_statuses([business])[business.pk],
+            "generated_at": timezone.now(),
+            "latest_activity_at": counts["latest_activity_at"],
+            "created_at": business.created_at,
             "support_workflow": _merchant_support_workflow(business, counts, health),
             "can_log_support_action": can_log_support_action(request.user, business),
         }

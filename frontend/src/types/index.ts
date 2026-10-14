@@ -139,36 +139,38 @@ export type EntitlementSummaryItem = {
 
 export type PlatformOperationsSummary = {
   total_monitored: number;
-  attention_merchants: number;
+  attention_merchants: number | null;
   risk_merchants: number;
-  no_sales_data_merchants: number;
-  form_error_merchants: number;
-  handoff_conversations: number;
-  new_leads_30d: number;
-  form_errors_30d: number;
-  failed_connectors: number;
+  no_sales_data_merchants: number | null;
+  form_error_merchants: number | null;
+  handoff_conversations: number | null;
+  new_leads_30d: number | null;
+  form_errors_30d: number | null;
+  failed_connectors: number | null;
+  unavailable_sources?: string[];
 };
 
 export type PlatformMerchantOperations = {
-  lead_count: number;
-  new_leads: number;
-  clients_count: number;
-  open_tasks: number;
-  unread_conversations: number;
-  handoff_conversations: number;
-  failed_connectors: number;
-  pending_connectors?: number;
-  connected_connectors: number;
-  form_errors: number;
-  lead_forms: number;
-  sales_events: number;
-  latest_activity_at: string;
+  lead_count: number | null;
+  new_leads: number | null;
+  clients_count: number | null;
+  open_tasks: number | null;
+  unread_conversations: number | null;
+  handoff_conversations: number | null;
+  failed_connectors: number | null;
+  pending_connectors?: number | null;
+  connected_connectors: number | null;
+  form_errors: number | null;
+  lead_forms: number | null;
+  sales_events: number | null;
+  latest_activity_at: string | null;
+  unavailable_sources?: string[];
 };
 
 export type PlatformMerchantHealth = {
-  score: number;
+  score: number | null;
   status: "healthy" | "setup" | "attention" | "risk" | string;
-  checks: Record<string, boolean>;
+  checks: Record<string, boolean | null>;
   blockers: string[];
   next_action: string;
 };
@@ -197,19 +199,21 @@ export type PlatformSupportWorkflow = {
 };
 
 export type PlatformOverview = {
+  generated_at?: string;
+  service_status?: PlatformOperationsHealth["service_status"];
   total_businesses: number;
   active_businesses: number;
   trial_businesses: number;
-  active_subscriptions: number;
-  mrr_estimate: string;
+  active_subscriptions: number | null;
+  mrr_estimate: string | null;
   total_users: number;
-  bot_count: number;
-  active_bot_channels: number;
-  ai_requests_30d: number;
-  conversations_30d: number;
+  bot_count: number | null;
+  active_bot_channels: number | null;
+  ai_requests_30d: number | null;
+  conversations_30d: number | null;
   operations_summary: PlatformOperationsSummary;
   errors: {
-    count: number;
+    count: number | null;
     items: unknown[];
   };
 };
@@ -233,6 +237,7 @@ export type PlatformProviderRolloutCheck = {
 };
 
 export type PlatformOperationsHealth = {
+  unavailable_sources?: string[];
   service_status?: {
     scope: string;
     status: "healthy" | "degraded" | "unknown";
@@ -247,8 +252,8 @@ export type PlatformOperationsHealth = {
   summary: {
     critical: number;
     warning: number;
-    active_support_grants: number;
-    connector_requests: number;
+    active_support_grants: number | null;
+    connector_requests: number | null;
   };
   runtime: {
     queue: {
@@ -258,12 +263,12 @@ export type PlatformOperationsHealth = {
       queues: string[];
       status: "healthy" | "warning" | "critical" | string;
       automation_runs: {
-        pending: number;
-        running: number;
-        failed: number;
+        pending: number | null;
+        running: number | null;
+        failed: number | null;
       };
-      failed_connector_syncs: number;
-      failed_webhook_deliveries: number;
+      failed_connector_syncs: number | null;
+      failed_webhook_deliveries: number | null;
     };
     production_readiness: {
       summary: Record<string, number>;
@@ -334,7 +339,9 @@ export type PlatformMerchant = {
   name: string;
   status: Business["status"];
   created_at?: string;
-  latest_activity_at?: string;
+  latest_activity_at?: string | null;
+  generated_at?: string;
+  service_status?: PlatformClinicService;
   landing_id?: string;
   landing_domain?: string;
   owner: Pick<User, "id" | "email" | "full_name">;
@@ -345,6 +352,19 @@ export type PlatformMerchant = {
   health?: PlatformMerchantHealth;
   support_workflow?: PlatformSupportWorkflow;
   can_log_support_action?: boolean;
+};
+
+export type PlatformClinicService = {
+  status: "healthy" | "degraded" | "unknown";
+  checked_at?: string;
+  max_age_seconds?: number;
+  source_available?: boolean;
+  components: Array<{
+    component: string;
+    state: "healthy" | "degraded" | "unknown";
+    last_state: string | null;
+    observed_at: string | null;
+  }>;
 };
 
 export type Bot = {

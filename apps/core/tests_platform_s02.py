@@ -55,7 +55,9 @@ class PlatformListTests(TestCase):
         summary = response.data["operations_summary"]
         self.assertEqual(summary["total_monitored"], 506)
         self.assertEqual(summary["no_sales_data_merchants"], 506)
-        self.assertLess(len(queries), 50)
+        # Independent source savepoints are intentional; bound data queries to
+        # catch N+1 regressions without counting transaction-control statements.
+        self.assertLess(sum(query["sql"].lstrip().upper().startswith("SELECT") for query in queries), 50)
 
 
 class PlatformSupportJournalTests(TestCase):

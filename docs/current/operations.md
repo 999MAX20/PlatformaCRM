@@ -40,6 +40,18 @@ provider failure и ценой AI. Логи структурированы с б
 Health endpoint не раскрывает credentials. Алерт имеет владельца, действие,
 threshold и recovery; общая dashboard-картинка не доказывает срабатывание алерта.
 
+PLATFORM-REBUILD-01: platform read APIs отделяют записанные ошибки источников
+от свежих ServiceComponentState. Последние используют существующую границу
+свежести 180 секунд; эти данные не подтверждают доступность всех провайдеров.
+Операционные источники читаются независимо с безопасным rollback чтения:
+недоступные значения возвращаются как null и/или unavailable_sources, без текста
+исключения. Отсутствующая таблица наблюдений не обнуляет очередь и другие данные.
+Ошибки форм в clinic summary считаются за 30 дней; failed jobs/events в обзоре —
+история, не признак текущего outage. Legacy health.score теперь null; health.status
+описывает recorded_signals (clear/attention/unknown), а не процент готовности.
+Миграции и запуск collector не выполняются как побочный эффект чтения.
+Vite направляет /ready/ в тот же backend, что /api; HTML оболочки не является readiness.
+
 Проверить очереди notifications, reports_exports, file_scans и все прочие,
 используемые текущими task routes. Синхронный connector sync остаётся отдельной
 границей риска; не считать весь интеграционный runtime очередью автоматически.

@@ -1516,7 +1516,7 @@ test("platform routes render without merchant sidebar", async ({
 
   await login(page, users.platform, /\/platform/);
 
-  const routes = ["/platform", "/platform/merchants", "/platform/settings"];
+  const routes = ["/platform", "/platform/merchants", "/platform/operations"];
   for (const route of routes) {
     await page.goto(route);
     await expect(page).toHaveURL(

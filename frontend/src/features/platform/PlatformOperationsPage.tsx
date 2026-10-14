@@ -1,3 +1,5 @@
+import { PlatformLoadError } from "./PlatformData";
+import { valueOrUnknown } from "./PlatformData";
 import { Button } from "../../components/ui/Button";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { PageHeader } from "../../components/ui/PageHeader";
@@ -8,7 +10,7 @@ import { Link } from "react-router";
 import { asArray } from "../../api/client";
 import { platformApi } from "../../api/platform";
 import { Card, CardBody } from "../../components/ui/Card";
-import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { LoadingState } from "../../components/ui/StateViews";
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
 
@@ -31,7 +33,7 @@ export function PlatformOperationsPage() {
   const health = useQuery({ queryKey: ["platform-operations-health"], queryFn: platformApi.operationsHealth });
 
   if (health.isLoading) return <LoadingState scope="page" />;
-  if (health.isError || !health.data) return <ErrorState error={health.error} message={t("platform.operations.error")} action={<Button variant="secondary" onClick={() => health.refetch()}>{t("platform.merchantDetail.refresh")}</Button>} />;
+  if (health.isError || !health.data) return <PlatformLoadError error={health.error} message={t("platform.operations.error")} onRetry={() => health.refetch()} />;
 
   const data = health.data;
   const productionFailedItems = asArray<typeof data.runtime.production_readiness.failed_items[number]>(data.runtime.production_readiness.failed_items);
@@ -50,6 +52,7 @@ export function PlatformOperationsPage() {
     <div className="space-y-5">
       <PageHeader title={t("platform.operations.title")} actions={<Button variant="secondary" onClick={() => health.refetch()} isLoading={health.isFetching}>{t("platform.merchantDetail.refresh")}</Button>} />
 
+      {!!data.unavailable_sources?.length && <StatusNotice compact tone="warning" title={t("platform.workspace.partial")} />}
       <StatusNotice data-testid="platform-service-state" compact role="status" ariaLive="polite"
         tone={data.service_status?.status === "degraded" ? "warning" : data.service_status?.status === "healthy" ? "success" : "info"}
         title={t(`serviceStatus.platform.${data.service_status?.status || "unknown"}`)}
@@ -79,14 +82,14 @@ export function PlatformOperationsPage() {
         <Card>
           <CardBody className="p-5">
             <ShieldCheck className="text-brand-600" size={22} />
-            <p className="mt-2 text-2xl font-semibold text-platforma-text">{data.summary.active_support_grants}</p>
+            <p className="mt-2 text-2xl font-semibold text-platforma-text">{valueOrUnknown(data.summary.active_support_grants)}</p>
             <p className="text-sm font-semibold text-platforma-faint">{t("platform.operations.supportGrants")}</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="p-5">
             <PlugZap className="text-platforma-info" size={22} />
-            <p className="mt-2 text-2xl font-semibold text-platforma-text">{data.summary.connector_requests}</p>
+            <p className="mt-2 text-2xl font-semibold text-platforma-text">{valueOrUnknown(data.summary.connector_requests)}</p>
             <p className="text-sm font-semibold text-platforma-faint">{t("platform.operations.connectorWorkItems")}</p>
           </CardBody>
         </Card>
@@ -105,17 +108,17 @@ export function PlatformOperationsPage() {
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
               <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
                 <ServerCog size={20} className="text-brand-600" />
-                <p className="mt-3 text-2xl font-semibold text-platforma-text">{data.runtime.queue.automation_runs.pending}</p>
+                <p className="mt-3 text-2xl font-semibold text-platforma-text">{valueOrUnknown(data.runtime.queue.automation_runs.pending)}</p>
                 <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">{t("platform.operations.pending")}</p>
               </div>
               <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
                 <Workflow size={20} className="text-platforma-warning" />
-                <p className="mt-3 text-2xl font-semibold text-platforma-text">{data.runtime.queue.automation_runs.running}</p>
+                <p className="mt-3 text-2xl font-semibold text-platforma-text">{valueOrUnknown(data.runtime.queue.automation_runs.running)}</p>
                 <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">{t("platform.operations.running")}</p>
               </div>
               <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
                 <AlertTriangle size={20} className="text-platforma-danger" />
-                <p className="mt-3 text-2xl font-semibold text-platforma-text">{data.runtime.queue.automation_runs.failed}</p>
+                <p className="mt-3 text-2xl font-semibold text-platforma-text">{valueOrUnknown(data.runtime.queue.automation_runs.failed)}</p>
                 <p className="text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">{t("platform.operations.failed")}</p>
               </div>
             </div>
@@ -182,7 +185,7 @@ export function PlatformOperationsPage() {
                   <p className="mt-1 text-sm text-platforma-faint">{item.provider} · {item.status}</p>
                   {["failed", "expired_credentials"].includes(item.status) && <p className="mt-2 text-xs font-semibold text-platforma-danger">{t("platform.operations.failureRecorded")}</p>}
                 </Link>
-              )) : <EmptyLine label={t("platform.operations.noConnectorRequests")} />}
+              )) : <EmptyLine label={t(data.unavailable_sources?.includes("connector_requests") ? "platform.workspace.unknown" : "platform.operations.noConnectorRequests")} />}
             </div>
           </CardBody>
         </Card>
@@ -197,7 +200,7 @@ export function PlatformOperationsPage() {
                   <p className="mt-1 text-sm text-platforma-faint">{item.trigger_type} · {t("platform.operations.attempts", { attempts: item.attempts, max: item.max_attempts })}</p>
                   <p className="mt-2 text-xs font-semibold text-platforma-danger">{t("platform.operations.failureRecorded")}</p>
                 </Link>
-              )) : <EmptyLine label={t("platform.operations.noFailedAutomationRuns")} />}
+              )) : <EmptyLine label={t(data.unavailable_sources?.includes("failed_automation_runs") ? "platform.workspace.unknown" : "platform.operations.noFailedAutomationRuns")} />}
             </div>
           </CardBody>
         </Card>
@@ -212,7 +215,7 @@ export function PlatformOperationsPage() {
                   <p className="mt-1 text-sm text-platforma-faint">{item.provider} · {item.direction}</p>
                   <p className="mt-2 text-xs font-semibold text-platforma-danger">{t("platform.operations.failureRecorded")}</p>
                 </Link>
-              )) : <EmptyLine label={t("platform.operations.noFailedIntegrationEvents")} />}
+              )) : <EmptyLine label={t(data.unavailable_sources?.includes("failed_integration_events") ? "platform.workspace.unknown" : "platform.operations.noFailedIntegrationEvents")} />}
             </div>
           </CardBody>
         </Card>

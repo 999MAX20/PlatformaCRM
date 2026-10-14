@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.db import DatabaseError
 from django.utils import timezone
 
 from apps.automations.models import AutomationRun
@@ -10,6 +9,7 @@ from apps.core.backup_readiness import run_backup_restore_readiness_check
 from apps.core.models import ExportJob, SupportAccessGrant
 from apps.core.production_audit import run_production_readiness_audit
 from apps.core.service_status import platform_service_status
+from apps.core.platform_reads import read_platform_source
 from apps.integrations.models import BusinessConnector, ConnectorSyncRun, IntegrationEventLog, WebhookDeliveryLog
 from apps.integrations.provider_rollout import run_provider_rollout_readiness_check
 from apps.notifications.models import Notification
@@ -212,32 +212,32 @@ def _unavailable_queue_summary():
         "automation_inline": getattr(settings, "AUTOMATIONS_RUN_INLINE", True),
         "default_queue": getattr(settings, "CELERY_TASK_DEFAULT_QUEUE", "default"),
         "queues": queues,
-        "automation_runs": {"pending": 0, "running": 0, "failed": 0, "retry_scheduled": 0},
-        "notifications": {"due": 0, "retry_scheduled": 0, "failed": 0},
-        "ai_jobs": {"retry_scheduled": 0, "failed": 0},
-        "export_jobs": {"pending": 0, "running": 0, "stale": 0, "failed": 0},
-        "failed_connector_syncs": 0,
-        "failed_webhook_deliveries": 0,
+        "automation_runs": {"pending": None, "running": None, "failed": None, "retry_scheduled": None},
+        "notifications": {"due": None, "retry_scheduled": None, "failed": None},
+        "ai_jobs": {"retry_scheduled": None, "failed": None},
+        "export_jobs": {"pending": None, "running": None, "stale": None, "failed": None},
+        "failed_connector_syncs": None,
+        "failed_webhook_deliveries": None,
         "outbound_messages": {
             "available": False,
-            "queued": 0,
-            "retry_scheduled": 0,
-            "due_retry": 0,
-            "delivering": 0,
-            "stale_delivering": 0,
-            "failed": 0,
-            "oldest_pending_age_seconds": 0,
-            "oldest_due_retry_age_seconds": 0,
+            "queued": None,
+            "retry_scheduled": None,
+            "due_retry": None,
+            "delivering": None,
+            "stale_delivering": None,
+            "failed": None,
+            "oldest_pending_age_seconds": None,
+            "oldest_due_retry_age_seconds": None,
         },
         "routing": {
             "available": False,
-            "active_policies": 0,
-            "automatic_policies": 0,
+            "active_policies": None,
+            "automatic_policies": None,
             "unassigned": {},
             "automatic_unassigned": {},
-            "active_sla_attention": 0,
-            "stale_sla_attention": 0,
-            "oldest_active_sla_age_seconds": 0,
+            "active_sla_attention": None,
+            "stale_sla_attention": None,
+            "oldest_active_sla_age_seconds": None,
             "status": "critical",
         },
         "status": "critical",
@@ -248,41 +248,41 @@ def platform_operations_health():
     production = run_production_readiness_audit()
     backup = run_backup_restore_readiness_check()
     providers = run_provider_rollout_readiness_check()
-    try:
-        queue = _queue_summary()
-        service_status = platform_service_status()
-        active_support_grants = SupportAccessGrant.objects.filter(is_active=True, expires_at__gt=timezone.now()).count()
-        connector_queue = _connector_queue()
-        work_queue = {
-            "connector_requests": connector_queue,
-            "failed_automation_runs": _latest_automation_failures(),
-            "failed_integration_events": _latest_integration_failures(),
-            "failed_webhook_deliveries": _latest_failed_webhooks(),
-        }
-        database = _database_status(available=True)
-    except DatabaseError as exc:
-        service_status = {"scope": "background_processing", "status": "unknown", "businesses": None}
-        queue = _unavailable_queue_summary()
-        active_support_grants = 0
-        connector_queue = []
-        work_queue = {
-            "connector_requests": [],
-            "failed_automation_runs": [],
-            "failed_integration_events": [],
-            "failed_webhook_deliveries": [],
-        }
-        database = _database_status(available=False, error=exc)
+    unavailable_sources = []
+
+    def read_source(key, reader, fallback):
+        result = read_platform_source(reader)
+        if result is None:
+            unavailable_sources.append(key)
+            return fallback
+        return result
+
+    queue = read_source("queue", _queue_summary, _unavailable_queue_summary())
+    service_status = read_source("service_status", platform_service_status, {
+        "scope": "background_processing", "status": "unknown", "businesses": None,
+    })
+    active_support_grants = read_source("support_grants", lambda: SupportAccessGrant.objects.filter(
+        is_active=True, expires_at__gt=timezone.now()).count(), None)
+    connector_queue = read_source("connector_requests", _connector_queue, [])
+    work_queue = {
+        "connector_requests": connector_queue,
+        "failed_automation_runs": read_source("failed_automation_runs", _latest_automation_failures, []),
+        "failed_integration_events": read_source("failed_integration_events", _latest_integration_failures, []),
+        "failed_webhook_deliveries": read_source("failed_webhook_deliveries", _latest_failed_webhooks, []),
+    }
+    database = _database_status(available=not unavailable_sources)
 
     critical_count = (
         production["summary"]["fail"]
         + backup["summary"]["paid_beta_blockers"]
         + providers["summary"]["blocked"]
-        + (1 if queue["status"] == "critical" and database["available"] else 0)
+        + (1 if queue["status"] == "critical" and "queue" not in unavailable_sources else 0)
         + (0 if database["available"] else 1)
     )
     warning_count = production["summary"]["warn"] + providers["summary"]["warning"]
 
     return {
+        "unavailable_sources": unavailable_sources,
         "environment": getattr(settings, "ENVIRONMENT", "unknown"),
         "service_status": service_status,
         "release": getattr(settings, "RELEASE", "unknown"),
@@ -292,7 +292,7 @@ def platform_operations_health():
             "critical": critical_count,
             "warning": warning_count,
             "active_support_grants": active_support_grants,
-            "connector_requests": len(connector_queue),
+            "connector_requests": None if "connector_requests" in unavailable_sources else len(connector_queue),
             "database_available": database["available"],
         },
         "runtime": {

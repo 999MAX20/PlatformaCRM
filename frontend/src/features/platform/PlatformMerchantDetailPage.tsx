@@ -1,7 +1,8 @@
+import { PlatformLoadError } from "./PlatformData";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { TaskDraftGuard } from "../tasks/components/TaskDraftGuard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, Headphones, MessageSquarePlus, RefreshCw, ShieldAlert, Store } from "lucide-react";
+import { ArrowLeft, MessageSquarePlus, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams, useLocation } from "react-router";
 
@@ -13,17 +14,9 @@ import { Card, CardBody, CardHeader } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
 import { Textarea } from "../../components/ui/Textarea";
-import { EmptyState, ErrorState, LoadingState } from "../../components/ui/StateViews";
-import { cn } from "../../lib/cn";
+import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { PlatformMetric, PlatformRecordedSignals, PlatformServiceBadge, platformDate } from "./PlatformData";
 import { useI18n } from "../../lib/i18n";
-
-function statusClass(status?: string | null) {
-  if (status === "healthy" || status === "active") return "border-platforma-success/20 bg-[var(--platforma-success-soft)] text-platforma-success";
-  if (status === "setup" || status === "trial") return "border-discovery-100 bg-discovery-50 text-discovery-700";
-  if (status === "attention" || status === "medium") return "border-platforma-warning/20 bg-[var(--platforma-warning-soft)] text-platforma-warning";
-  if (status === "risk" || status === "high" || status === "blocked") return "border-platforma-danger/20 bg-[var(--platforma-danger-soft)] text-platforma-danger";
-  return "border-platforma-border bg-surface-muted text-platforma-subtle";
-}
 
 export function PlatformMerchantDetailPage() {
   const { id } = useParams();
@@ -69,107 +62,58 @@ function PlatformMerchantContent({ id }: { id: string }) {
   });
 
   if (merchant.isLoading) return <LoadingState scope="page" />;
-  if (merchant.isError || !merchant.data) return <ErrorState error={merchant.error} message={t("platform.merchantDetail.error")} action={<Button variant="secondary" onClick={() => merchant.refetch()}>{t("platform.merchantDetail.refresh")}</Button>} />;
+  if (merchant.isError || !merchant.data) return <PlatformLoadError error={merchant.error} message={t("platform.merchantDetail.error")} onRetry={() => merchant.refetch()} />;
 
   const data = merchant.data;
-  const workflow = data.support_workflow;
   const operations = data.operations;
-  const health = data.health;
-
-  return (
-    <div className="space-y-5">
-      <TaskDraftGuard dirty={Boolean(note.trim())} pending={supportMutation.isPending} />
-      <Link to={returnTo} className="platforma-focus-ring inline-flex items-center gap-2 text-sm font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t("platform.nav.merchants")}</Link>
-      <PageHeader title={data.name} actions={<span className="rounded-control bg-surface-muted px-3 py-2 text-sm">{data.status}</span>} />
-
-      <div className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <Store className="text-brand-600" size={21} />
-              <p className="text-lg font-semibold text-platforma-text">{t("platform.merchantDetail.snapshot")}</p>
-            </div>
-          </CardHeader>
-          <CardBody className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-card border border-platforma-border bg-surface-muted/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.owner")}</p>
-              <p className="mt-2 font-bold text-platforma-text">{data.owner.full_name || t("platform.common.noName")}</p>
-              <p className="mt-1 text-sm text-platforma-faint">{data.owner.email}</p>
-            </div>
-            <div className="rounded-card border border-platforma-border bg-surface-muted/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.landing")}</p>
-              <p className="mt-2 font-bold text-platforma-text">{data.landing_domain || t("platform.merchantDetail.notConnected")}</p>
-              <p className="mt-1 text-sm text-platforma-faint">{data.landing_id || t("platform.merchantDetail.noLandingId")}</p>
-            </div>
-            <div className="rounded-card border border-platforma-border bg-surface-muted/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.crmOperations")}</p>
-              <p className="mt-2 text-sm font-semibold leading-6 text-platforma-subtle">
-                {t("platform.merchantDetail.leadsLine", { leads: operations?.lead_count ?? 0, new: operations?.new_leads ?? 0 })}<br />
-                {t("platform.merchantDetail.clientsLine", { clients: operations?.clients_count ?? 0, tasks: operations?.open_tasks ?? 0 })}<br />
-                {t("platform.merchantDetail.inboxLine", { unread: operations?.unread_conversations ?? 0, handoff: operations?.handoff_conversations ?? 0 })}
-              </p>
-            </div>
-            <div className="rounded-card border border-platforma-border bg-surface-muted/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.dataSources")}</p>
-              <p className="mt-2 text-sm font-semibold leading-6 text-platforma-subtle">
-                {t("platform.merchantDetail.connectorsLine", { ok: operations?.connected_connectors ?? 0, pending: operations?.pending_connectors ?? 0, failed: operations?.failed_connectors ?? 0 })}<br />
-                {t("platform.merchantDetail.formsLine", { forms: operations?.lead_forms ?? 0, errors: operations?.form_errors ?? 0 })}<br />
-                {t("platform.merchantDetail.salesEventsLine", { events: operations?.sales_events ?? 0 })}
-              </p>
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <ShieldAlert className={health?.status === "risk" ? "text-platforma-danger" : "text-platforma-warning"} size={21} />
-              <p className="text-lg font-semibold text-platforma-text">{t("platform.merchantDetail.pilotHealth")}</p>
-            </div>
-          </CardHeader>
-          <CardBody>
-            <p className="text-sm leading-6 text-platforma-subtle">{health?.next_action || t("platform.merchantDetail.monitorPilot")}</p>
-            <div className="mt-4 space-y-2">
-              {(health?.blockers || []).map((blocker) => (
-                <div key={blocker} className="rounded-control border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] px-3 py-2 text-sm font-semibold text-platforma-warning">
-                  {blocker}
-                </div>
-              ))}
-              {!health?.blockers?.length ? (
-                <div className="rounded-control border border-platforma-success/20 bg-[var(--platforma-success-soft)] px-3 py-2 text-sm font-semibold text-platforma-success">
-                  {t("platform.merchantDetail.noBlockers")}
-                </div>
-              ) : null}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <Headphones className="text-brand-600" size={21} />
-              <p className="text-lg font-semibold text-platforma-text">{t("platform.merchantDetail.supportWorkflow")}</p>
-            </div>
-          </CardHeader>
-          <CardBody>
-            <span className={cn("inline-flex rounded-full border px-3 py-1 text-xs font-semibold uppercase", statusClass(workflow?.priority))}>
-              {t("platform.merchantDetail.priority", { priority: workflow?.priority || "low" })}
-            </span>
-            <p className="mt-4 text-sm leading-6 text-platforma-subtle">{workflow?.summary || t("platform.merchantDetail.emptyWorkflow")}</p>
-            <div className="mt-4 space-y-2">
-              {(workflow?.next_steps || []).map((step) => (
-                <div key={step.key} className="flex items-center justify-between rounded-control border border-platforma-border bg-surface-muted px-3 py-3 text-sm font-bold text-platforma-text transition hover:bg-surface-card hover:shadow-soft">
-                  {step.label}
-                  <CheckCircle2 size={16} className="text-brand-600" aria-hidden="true" />
-                </div>
-              ))}
-              {!workflow?.next_steps?.length ? <EmptyState title={t("platform.merchantDetail.noNextSteps")} description={t("platform.merchantDetail.noNextStepsText")} /> : null}
-            </div>
-          </CardBody>
-        </Card>
-
+  return <div className="space-y-5" data-testid="platform-clinic-detail">
+    <TaskDraftGuard dirty={Boolean(note.trim())} pending={supportMutation.isPending} />
+    <Link to={returnTo} className="platforma-focus-ring inline-flex items-center gap-2 text-sm font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t("platform.nav.merchants")}</Link>
+    <PageHeader title={data.name} actions={<span className="rounded-control bg-surface-muted px-3 py-2 text-sm">{t(`platform.workspace.status.${data.status}`)}</span>} />
+    <Card><CardBody className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="min-w-0"><p className="text-xs text-platforma-faint">{t("platform.merchantDetail.owner")}</p><p className="mt-1 font-medium">{data.owner.full_name || t("platform.common.noName")}</p><p className="mt-1 break-all text-sm text-platforma-subtle">{data.owner.email}</p></div>
+      <div><p className="text-xs text-platforma-faint">{t("platform.merchants.created")}</p><p className="mt-1 text-sm">{platformDate(data.created_at, language)}</p></div>
+      <div><p className="text-xs text-platforma-faint">{t("platform.workspace.lastActivity")}</p><p className="mt-1 text-sm">{platformDate(data.latest_activity_at, language)}</p></div>
+      <div><p className="text-xs text-platforma-faint">{t("platform.workspace.snapshot")}</p><p className="mt-1 text-sm">{platformDate(data.generated_at, language)}</p><p className="mt-1 text-xs text-platforma-faint">#{data.id}</p></div>
+    </CardBody></Card>
+    <div className="grid gap-5 lg:grid-cols-2">
+      <Card>
+        <CardHeader><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="font-semibold">{t("platform.workspace.serviceTitle")}</h2><PlatformServiceBadge service={data.service_status} /></div></CardHeader>
+        <CardBody className="space-y-3 p-4">
+          {!data.service_status?.components.length && <p role="status" className="text-sm text-platforma-subtle">{t("serviceStatus.unknown.text")}</p>}
+          {data.service_status?.components.map(component => <div key={component.component} className="flex flex-wrap items-start justify-between gap-2 border-b border-platforma-border pb-3 last:border-0 last:pb-0">
+            <div><p className="text-sm font-medium">{t(`serviceStatus.component.${component.component}`)}</p><p className="mt-1 text-xs text-platforma-faint">{t("platform.workspace.observedAt", { date: platformDate(component.observed_at, language) })}</p></div>
+            <span className={component.state === "degraded" ? "text-sm text-platforma-warning" : "text-sm text-platforma-subtle"}>{t(`platform.workspace.service.${component.state}`)}</span>
+          </div>)}
+        </CardBody>
+      </Card>
+      <Card>
+        <CardHeader><h2 className="font-semibold">{t("platform.overview.errorsTitle")}</h2></CardHeader>
+        <CardBody className="space-y-4 p-4"><PlatformRecordedSignals operations={operations} /><Link to="/platform/operations" className="platforma-focus-ring inline-block text-sm font-medium text-brand-700">{t("platform.nav.operations")}</Link></CardBody>
+      </Card>
+    </div>
+    <div className="grid gap-5 lg:grid-cols-2">
+      <Card>
+        <CardHeader><h2 className="font-semibold">{t("platform.workspace.configuration")}</h2></CardHeader>
+        <CardBody className="p-2"><dl className="grid grid-cols-2">
+          <PlatformMetric label={t("platform.workspace.connectedSourcesTitle")} value={operations?.connected_connectors} />
+          <PlatformMetric label={t("platform.workspace.pendingSourcesTitle")} value={operations?.pending_connectors} />
+          <PlatformMetric label={t("platform.workspace.activeForms")} value={operations?.lead_forms} />
+          <div className="min-w-0 p-3"><dt className="text-sm text-platforma-subtle">{t("platform.merchantDetail.landing")}</dt><dd className="mt-1 break-all text-sm">{data.landing_domain || data.landing_id || t("platform.merchantDetail.notConnected")}</dd></div>
+        </dl></CardBody>
+      </Card>
+      <Card>
+        <CardHeader><h2 className="font-semibold">{t("platform.merchantDetail.crmOperations")}</h2></CardHeader>
+        <CardBody className="p-2"><dl className="grid grid-cols-2 sm:grid-cols-3">
+          <PlatformMetric label={t("platform.workspace.leads")} value={operations?.lead_count} />
+          <PlatformMetric label={t("platform.workspace.clients")} value={operations?.clients_count} />
+          <PlatformMetric label={t("platform.workspace.openTasks")} value={operations?.open_tasks} />
+          <PlatformMetric label={t("platform.workspace.unread")} value={operations?.unread_conversations} />
+          <PlatformMetric label={t("platform.overview.handoffConversations")} value={operations?.handoff_conversations} />
+          <PlatformMetric label={t("platform.workspace.salesEvents")} value={operations?.sales_events} />
+        </dl></CardBody>
+      </Card>
+    </div>
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -224,7 +168,6 @@ function PlatformMerchantContent({ id }: { id: string }) {
             {history.isSuccess && <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm"><span>{t("pagination.total", { total: history.data.count })}</span><div className="flex gap-2"><Button variant="secondary" disabled={!history.data.previous} onClick={() => setHistoryPage(value => value - 1)}>{t("pagination.previous")}</Button><Button variant="secondary" disabled={!history.data.next} onClick={() => setHistoryPage(value => value + 1)}>{t("pagination.next")}</Button></div></div>}
           </CardBody>
         </Card>
-      </div>
-    </div>
-  );
+    <p className="text-xs text-platforma-faint">{t("platform.workspace.activityScope")} {t("platform.workspace.unknownLegend")}</p>
+  </div>;
 }

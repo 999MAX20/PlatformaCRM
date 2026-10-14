@@ -1,4 +1,4 @@
-import { BarChart3, CreditCard, FileText, Activity, LayoutDashboard, LogOut, Settings, ShieldCheck, Store, Target } from "lucide-react";
+import { Activity, LayoutDashboard, LogOut, ShieldCheck, Store } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { useAuth } from "../../features/auth/AuthProvider";
 import { cn } from "../../lib/cn";
@@ -8,13 +8,8 @@ import { LanguageSelector } from "./LanguageSelector";
 
 const platformNav = [
   { to: "/platform", label: "platform.nav.overview", icon: LayoutDashboard, end: true },
-  { to: "/platform/operations", label: "platform.nav.operations", icon: Activity },
   { to: "/platform/merchants", label: "platform.nav.merchants", icon: Store },
-  { to: "/platform/prospects", label: "platform.nav.prospects", icon: Target },
-  { to: "/platform/landings", label: "platform.nav.landings", icon: FileText },
-  { to: "/platform/billing", label: "platform.nav.billing", icon: CreditCard },
-  { to: "/platform/analytics", label: "platform.nav.analytics", icon: BarChart3 },
-  { to: "/platform/settings", label: "platform.nav.settings", icon: Settings },
+  { to: "/platform/operations", label: "platform.nav.operations", icon: Activity },
 ];
 
 export function PlatformLayout() {

@@ -36,6 +36,10 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
+      "/ready/": {
+        target: apiProxyTarget,
+        changeOrigin: true,
+      },
       "/api": {
         target: apiProxyTarget,
         changeOrigin: true,

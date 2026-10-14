@@ -125,3 +125,85 @@ test("platform load recovery and localized operations remain reachable", async (
   await noOverflow(page);
   await page.screenshot({ path: info.outputPath("platform-overview.png"), fullPage: true });
 });
+
+test("platform rebuild keeps finance, real status filters and legacy links", async ({ page }, info) => {
+  test.skip(process.env.E2E_PLATFORM_REBUILD !== "1", "Requires rebuild fixtures");
+  const headers = await login(page);
+  const readiness = await page.request.get("/ready/");
+  expect(readiness.headers()["content-type"]).toContain("application/json");
+  expect((await readiness.json()).status).toBe("ok");
+  await expect(page.getByTestId("platform-finance")).toContainText(ru["platform.overview.mrr"]);
+  await expect(page.getByTestId("platform-finance")).toContainText(ru["platform.overview.mrrText"]);
+  const overview = await page.request.get(`${api}/api/platform/overview/`, { headers });
+  expect(Number((await overview.json()).mrr_estimate)).toBeGreaterThanOrEqual(4200);
+  const active = page.waitForResponse(response => response.url().includes("/api/platform/merchants/") && response.url().includes("status=active"));
+  await page.getByRole("link", { name: ru["platform.overview.activeMerchants"], exact: true }).click();
+  expect((await active).ok()).toBeTruthy();
+  await expect(page).toHaveURL(/status=active/);
+  await page.getByRole("textbox", { name: ru["platform.merchants.search"] }).fill("Rebuild Paid");
+  await expect(page.getByTestId("platform-clinic-row")).toHaveCount(1);
+  await expect(page.getByTestId("platform-clinic-row")).toContainText("Rebuild paid plan");
+  await page.getByRole("link", { name: "Rebuild Paid Clinic", exact: true }).click();
+  await expect(page.getByTestId("platform-clinic-detail")).toBeVisible();
+  await page.locator("main").getByRole("link", { name: ru["platform.nav.merchants"], exact: true }).click();
+  await expect(page).toHaveURL(/status=active/);
+  await expect(page.getByRole("textbox", { name: ru["platform.merchants.search"] })).toHaveValue("Rebuild Paid");
+  await page.getByRole("combobox", { name: ru["platform.merchants.status"], exact: true }).click();
+  await page.getByRole("option", { name: ru["platform.workspace.status.blocked"], exact: true }).click();
+  await expect(page.getByText(ru["platform.merchants.emptyTitle"], { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: ru["tasks.resetFilters"], exact: true }).click();
+  await expect(page.getByTestId("platform-clinic-row").first()).toBeVisible();
+  await noOverflow(page);
+  for (const route of ["settings", "prospects", "landings", "analytics", "billing"]) {
+    await page.goto(`/platform/${route}`);
+    await expect(page).toHaveURL(route === "billing" ? /\/platform#finance$/ : /\/platform\/?$/);
+    await expect(page.getByTestId("platform-overview-ready")).toBeVisible();
+  }
+  const nav = page.getByRole("navigation", { name: ru["platform.title"], exact: true }).filter({ visible: true });
+  await expect(nav.getByRole("link")).toHaveCount(3);
+  await page.screenshot({ path: info.outputPath("rebuild-overview.png"), fullPage: true });
+});
+
+test("platform rebuild distinguishes unavailable observations from recorded zero across locales", async ({ page }, info) => {
+  test.skip(process.env.E2E_PLATFORM_REBUILD !== "1", "Requires rebuild fixtures");
+  const headers = await login(page);
+  const response = await page.request.get(`${api}/api/platform/merchants/?search=S02%20Clinic%2000`, { headers });
+  const clinic = (await response.json()).results[0];
+  const url = `/platform/merchants/${clinic.id}`;
+  for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
+    await page.evaluate(value => localStorage.setItem("ai_smb_language", value), language);
+    await page.goto(url);
+    await expect(page.getByTestId("clinic-service-state")).toHaveText(copy["platform.workspace.service.unknown"]);
+    await expect(page.getByTestId("clinic-recorded-signals")).toHaveText(copy["platform.workspace.noRecordedFailures"]);
+    await expect(page.getByText(copy["platform.workspace.configuration"], { exact: true })).toBeVisible();
+    await noOverflow(page);
+    const refresh = page.getByRole("button", { name: copy["platform.merchantDetail.refresh"], exact: true });
+    await refresh.focus();
+    await expect(refresh).toBeFocused();
+    await refresh.press("Enter");
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: info.outputPath(`rebuild-clinic-${language}.png`), fullPage: true });
+  }
+  await page.route(`**/api/platform/merchants/${clinic.id}/`, async route => {
+    const response = await route.fetch();
+    const body = await response.json();
+    body.operations.failed_connectors = null;
+    body.operations.connected_connectors = null;
+    body.operations.unavailable_sources = ["integrations.businessconnector"];
+    body.service_status = { status: "unknown", components: [{ component: "automations", state: "unknown", last_state: "healthy", observed_at: "2020-01-01T00:00:00Z" }] };
+    await route.fulfill({ response, json: body });
+  });
+  await page.reload();
+  await expect(page.getByTestId("clinic-recorded-signals")).toHaveText(en["platform.workspace.partial"]);
+  await expect(page.getByTestId("clinic-recorded-signals")).not.toContainText(en["platform.workspace.noRecordedFailures"]);
+  await expect(page.getByTestId("clinic-service-state")).toHaveText(en["platform.workspace.service.unknown"]);
+  const connectionMetric = page.locator("dl > div").filter({ has: page.getByText(en["platform.workspace.connectedSourcesTitle"], { exact: true }) });
+  await expect(connectionMetric.locator("dd")).toHaveText("—");
+  await expect(page.getByTestId("platform-clinic-detail")).not.toContainText("platform.workspace.");
+  await page.screenshot({ path: info.outputPath("rebuild-partial.png"), fullPage: true });
+  await page.unroute(`**/api/platform/merchants/${clinic.id}/`);
+  await page.route(`**/api/platform/merchants/${clinic.id}/`, route => route.fulfill({ status: 403, json: { detail: "Access denied" } }));
+  await page.reload();
+  await expect(page.getByTestId("platform-clinic-detail")).toHaveCount(0);
+  await expect(page.getByTestId("permission-fallback")).toBeVisible();
+});

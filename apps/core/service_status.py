@@ -129,6 +129,20 @@ def observe_business_service(business_id, *, now=None):
 def business_service_status(business, *, now=None):
     now = now or timezone.now()
     rows = {row.component: row for row in ServiceComponentState.objects.filter(business=business)}
+    return _business_service_status_from_rows(rows, now=now)
+
+
+def business_service_status_many(business_ids, *, now=None):
+    """Same observation contract for a platform page, with one scoped query."""
+    now = now or timezone.now()
+    rows_by_business = {pk: {} for pk in business_ids}
+    for row in ServiceComponentState.objects.filter(business_id__in=rows_by_business):
+        rows_by_business[row.business_id][row.component] = row
+    return {pk: _business_service_status_from_rows(rows, now=now)
+            for pk, rows in rows_by_business.items()}
+
+
+def _business_service_status_from_rows(rows, *, now):
     components = []
     for component in COMPONENTS:
         row = rows.get(component)
