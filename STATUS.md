@@ -13,6 +13,8 @@ browser4 desktop/mobile RU/KK/EN, build/types/i18n/bundle и system/schema PASS.
 постоянный подробный просмотр CRM оператором для следующей реализации панели.
 Полный редизайн/read-path ещё не реализованы; support0002 рабочей БД не применена.
 Scope, проверки и публикация — checkpoint; предыдущий CI38637020865 PASS.
+Код `6bb2e46` опубликован normal push в main, удалённый SHA совпал;
+committed-range static PASS. CI38642643864 queued, итог ещё не подтверждён.
 
 15.10.2026. PLATFORM-SUPPORT-ACTIVATE завершён: проверены backup/restore,
 support0001 применена к локальной db.sqlite3; бизнес-данные сохранены, integrity

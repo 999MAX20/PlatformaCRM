@@ -71,8 +71,14 @@ working diff hygiene PASS. Product code gates reused after docs/test-only update
 No backend/product changes after these gates; test fixture/selector only.
 Working DB/migrations/servers unchanged; support0002 remains unapplied locally.
 Full local project/E2E and production/deployment not run: this is scoped delivery.
-Final reviewed commit, committed-range static, normal push and actual CI follow;
-their exact receipt is reported to the owner, not inferred from local PASS.
+Publication: reviewed 32 explicit paths including six new files; no unrelated
+work/private data. Commit6bb2e46433d789388510a2dfe9168b45423e38f2,
+`codex_verify.py --mode static --base-ref 330e0c11823b4cbef441c436a08634054429a3fa`
+PASS. Fetched main/FETCH_HEAD equalled starting base; configured origin/main
+tracking ref is stale (main is outside remote fetch refspec), so actual main
+verified with ls-remote. Normal `git push origin HEAD:main` PASS; remote exact
+SHA readback matched. GitHub CI38642643864 queued at inspection, not green yet.
+This docs receipt changes no verified application inputs; docs diff hygiene only.
 
 ## PLATFORM-SUPPORT-ACTIVATE-20261015 — local working activation
 
