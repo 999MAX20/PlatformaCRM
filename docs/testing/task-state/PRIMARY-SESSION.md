@@ -1,5 +1,32 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-R01-FB009-20261014 — user-assisted screen-reader verification
+
+Final owner decision 14.10: defer screen-reader work and close R01 if this was
+its last remaining criterion. The selected R01 checkpoint and primary handoff
+identify audible FB009 as that sole remainder; therefore R01 is closed against
+the owner's revised scope. FB009 is DEFERRED / NOT EXECUTED, never PASS. Existing
+accessibility support, broader FC003/FC008/clinical/live acceptance and unresolved
+external policies remain unchanged. R02 is next but not started by this decision.
+This supersedes the pending preparation state recorded below.
+
+Closure is docs-only: reconcile roadmap/acceptance/STATUS and this checkpoint;
+review all changes/links and working/index/actual committed-range hygiene, normal
+push and actual CI readback. Reuse unchanged product checks and successful CI
+38514642210 for base148dd9e; no rebuild, reinstall, app suite or working-DB change.
+Stopped helper session72135 with `stop` (exit0), verified neither51017 nor51018
+has a listener, and closed only owned Chrome tab1634112199. No audible test was
+performed; no screen-reader version or output is claimed. No product code changed.
+
+Preparation before deferral: primary transferred sole writer/checks/servers to
+PlatformaCRM UI; canonical root and branch unchanged, base148dd9e, clean tree.
+The reviewed isolated helper prepared a disposable administrator fixture;
+Chrome opened the RU Inbox and menu/focus setup was inspected. User-assisted
+listening never started. No real records, external messages, working-DB migrations
+or product edits occurred. Complete diff/private-data review and local-reference
+review PASS; no untracked source files. Docs hygiene gates are recorded with the
+publication SHA in the task receipt. Writer returns to primary after publication.
+
 ## CI-PUBLISH-20261014 — remaining documentation and actual CI receipt
 
 Owner explicitly requested all necessary CI checks and publication of all remaining
