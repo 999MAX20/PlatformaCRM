@@ -142,6 +142,16 @@ Publication contains independently verified fixes and the four-stage plan, not a
 claim of full S01 closure or production readiness. Next: owner D-04 decision, then
 its bounded implementation/regression; do not start S02 automatically.
 
+Publication receipt: implementation c4e03cade82b82a0ceb48efff0df207be26f93b0,
+normal push HEAD:main succeeded and remote SHA matched. Entire intended diff,
+new files and outgoing range reviewed for unrelated changes/private data; added
+local links and working/index/range hygiene PASS. Exact completion command:
+`.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+973fef737b6276eac6f54bca112ca6daa31be851` — PASS (check/drift/hygiene).
+GitHub run38531639534 observed queued after publication, not green; inspect
+[actual CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/38531639534)
+before relying on full CI acceptance. No deployment workflow was triggered.
+
 ## CRM-R01-FB009-20261014 — user-assisted screen-reader verification
 
 Final owner decision 14.10: defer screen-reader work and close R01 if this was
