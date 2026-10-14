@@ -112,6 +112,18 @@ Final S02 verification (14.10):
   stored origin/main ref was stale, use explicit remote readback/FETCH_HEAD.
   Final commit-range static and normal push pending below. S03/S04 not started.
 
+S02 delivery receipt: code fc322a67007abacc27349f6fe03626eda6203f45 committed
+on codex/ui-testing-toolkit in canonical root. Exact command
+`.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+821719d00fafef26e8a09a57cc4152900da81b82` PASS (working/index/committed diff,
+migration drift/system check). Fetch/FETCH_HEAD ancestry proved normal fast-forward;
+`git push origin HEAD:main` succeeded and `git ls-remote origin refs/heads/main`
+matched fc322a6. GitHub run38548233244 in_progress at readback, not CI PASS.
+Prior S01 runs38535866997/38535831639 completed success. No deployment workflow
+in repository, only CI; no deployment claimed. Final docs receipt checks:
+diff hygiene, changed links/commands/consistency; unchanged app checks reused.
+S02 closed in authorized scoped boundary; S03 next, not started.
+
 ## CRM-S01-20261014 — server scenario completeness
 
 D-04 continuation, owner approval 14.10: reuse one built-in appointment follow-up

@@ -6,10 +6,11 @@
 
 # PlatformaCRM — текущий статус
 
-14.10.2026. CRM-S02 реализован и локально проверен: серверный поиск/пагинация,
+14.10.2026. CRM-S02 закрыт в согласованной scoped-границе: серверный поиск/пагинация,
 полный журнал поддержки, реальные сводки и четыре страницы в общей дизайн-системе.
 28 backend tests, build/types/bundle и9 browser checks PASS (1 штатный mobile skip).
-Запись с grant/MFA работает; CORS-блокер исправлен. Итоговый static/push — следующий шаг.
+Запись с grant/MFA работает; CORS-блокер исправлен. Static PASS, код fc322a6
+опубликован в main, удалённый SHA подтверждён. CI38548233244 in_progress, не PASS.
 Объём, Git-снимок, проверки и границы прав — в
 [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#crm-s02-20261014--operational-platform-administration).
 S03/S04 не начаты. S01 остаётся закрытым в своей проверенной границе.
