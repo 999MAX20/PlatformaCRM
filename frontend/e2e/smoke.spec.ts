@@ -1,3 +1,4 @@
+import { ru } from "../src/lib/i18n/ru";
 ﻿import { expect, test, type Page } from "@playwright/test";
 import { createHmac } from "node:crypto";
 
@@ -1531,7 +1532,7 @@ test("platform routes render without merchant sidebar", async ({
   if (await firstMerchant.count()) {
     await firstMerchant.click();
     await expect(page).toHaveURL(/\/platform\/merchants\/\d+/);
-    await expect(page.getByText("Platform support")).toBeVisible();
+    await expect(page.getByTestId("support-action-history")).toBeVisible();
   }
 });
 
@@ -1552,7 +1553,7 @@ test("support note form follows the server capability and preserves history", as
   });
   await page.goto(href!);
   await expect(page.getByTestId("support-action-form")).toBeVisible();
-  await expect(page.getByTestId("support-action-form").getByRole("button")).toBeDisabled();
+  await expect(page.getByTestId("support-action-form").getByRole("button", { name: ru["platform.merchantDetail.saveAction"], exact: true })).toBeDisabled();
   await expect(page.getByTestId("support-action-history")).toBeVisible();
   allowed = false;
   await page.reload();

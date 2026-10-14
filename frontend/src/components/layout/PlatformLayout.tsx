@@ -1,149 +1,54 @@
-import {
-  BarChart3,
-  CreditCard,
-  FileText,
-  Activity,
-  LayoutDashboard,
-  LogOut,
-  Search,
-  Settings,
-  ShieldCheck,
-  Store,
-  Target,
-} from "lucide-react";
+import { BarChart3, CreditCard, FileText, Activity, LayoutDashboard, LogOut, Settings, ShieldCheck, Store, Target } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router";
-
 import { useAuth } from "../../features/auth/AuthProvider";
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
 import { Button } from "../ui/Button";
+import { LanguageSelector } from "./LanguageSelector";
 
 const platformNav = [
-  { to: "/platform", label: "platform.nav.overview", description: "platform.nav.overviewText", icon: LayoutDashboard, end: true },
-  { to: "/platform/operations", label: "platform.nav.operations", description: "platform.nav.operationsText", icon: Activity },
-  { to: "/platform/merchants", label: "platform.nav.merchants", description: "platform.nav.merchantsText", icon: Store },
-  { to: "/platform/prospects", label: "platform.nav.prospects", description: "platform.nav.prospectsText", icon: Target },
-  { to: "/platform/landings", label: "platform.nav.landings", description: "platform.nav.landingsText", icon: FileText },
-  { to: "/platform/billing", label: "platform.nav.billing", description: "platform.nav.billingText", icon: CreditCard },
-  { to: "/platform/analytics", label: "platform.nav.analytics", description: "platform.nav.analyticsText", icon: BarChart3 },
-  { to: "/platform/settings", label: "platform.nav.settings", description: "platform.nav.settingsText", icon: Settings },
+  { to: "/platform", label: "platform.nav.overview", icon: LayoutDashboard, end: true },
+  { to: "/platform/operations", label: "platform.nav.operations", icon: Activity },
+  { to: "/platform/merchants", label: "platform.nav.merchants", icon: Store },
+  { to: "/platform/prospects", label: "platform.nav.prospects", icon: Target },
+  { to: "/platform/landings", label: "platform.nav.landings", icon: FileText },
+  { to: "/platform/billing", label: "platform.nav.billing", icon: CreditCard },
+  { to: "/platform/analytics", label: "platform.nav.analytics", icon: BarChart3 },
+  { to: "/platform/settings", label: "platform.nav.settings", icon: Settings },
 ];
 
 export function PlatformLayout() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { t } = useI18n();
-
-  return (
-    <main className="min-h-screen bg-soft-mesh p-3 sm:p-4">
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[1500px] gap-4">
-        <aside className="hidden w-[300px] shrink-0 rounded-3xl border border-white/70 bg-midnight p-4 text-white shadow-premium lg:flex lg:flex-col">
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-white shadow-soft ring-1 ring-white/10">
-              <ShieldCheck size={23} />
-            </div>
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">PlatformaCRM</p>
-              <h1 className="text-lg font-semibold tracking-tight">{t("platform.title")}</h1>
-            </div>
-          </div>
-
-          <nav className="mt-6 space-y-1">
-            {platformNav.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  className={({ isActive }) =>
-                    cn(
-                      "group flex items-start gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-white/65 transition hover:bg-white/10 hover:text-white",
-                      isActive && "bg-white text-midnight shadow-soft hover:bg-white hover:text-midnight",
-                    )
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <Icon size={20} className={cn("mt-0.5 shrink-0", isActive ? "text-brand-600" : "text-white/70 group-hover:text-white")} />
-                      <span>
-                        <span className="block">{t(item.label)}</span>
-                        <span className={cn("mt-1 block text-xs font-medium", isActive ? "text-platforma-faint" : "text-white/70")}>{t(item.description)}</span>
-                      </span>
-                    </>
-                  )}
-                </NavLink>
-              );
-            })}
-          </nav>
-
-          <div className="mt-auto rounded-3xl border border-white/10 bg-white/5 p-4">
-            <p className="text-sm font-semibold">{t("platform.protectedTitle")}</p>
-            <p className="mt-2 text-xs leading-5 text-white/70">{t("platform.protectedText")}</p>
-          </div>
-        </aside>
-
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="glass-panel flex flex-col gap-3 rounded-3xl px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-            <div className="flex items-center gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-2xl bg-midnight text-white shadow-soft lg:hidden">
-                <ShieldCheck size={22} />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-platforma-faint">{t("platform.admin")}</p>
-                <h2 className="text-xl font-semibold tracking-tight text-midnight">{t("platform.controlCenter")}</h2>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="hidden min-w-[260px] items-center gap-2 rounded-2xl border border-platforma-border/80 bg-white/80 px-3 py-2 text-sm text-platforma-faint md:flex">
-                <Search size={17} />
-                {t("platform.search")}
-              </div>
-              <div className="hidden text-right sm:block">
-                <p className="text-sm font-semibold text-midnight">{user?.email}</p>
-                <p className="text-xs text-platforma-faint">{user?.role}</p>
-              </div>
-              <Button
-                variant="secondary"
-                className="rounded-full"
-                onClick={() => {
-                  logout();
-                  navigate("/login");
-                }}
-              >
-                <LogOut size={16} />
-                {t("header.logout")}
-              </Button>
-            </div>
-          </header>
-
-          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:hidden">
-            {platformNav.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2 rounded-2xl border border-white/70 bg-white/70 px-3 py-3 text-sm font-semibold text-platforma-subtle shadow-xs backdrop-blur-xl",
-                      isActive && "bg-midnight text-white",
-                    )
-                  }
-                >
-                  <Icon size={17} />
-                  {t(item.label)}
-                </NavLink>
-              );
-            })}
-          </div>
-
-          <section data-workspace-content className="min-w-0 flex-1 py-4">
-            <Outlet />
-          </section>
+  const navigation = (mobile = false) => platformNav.map(item => {
+    const Icon = item.icon;
+    return <NavLink key={item.to} to={item.to} end={item.end}
+      className={({ isActive }) => cn("platforma-focus-ring flex min-h-11 items-center gap-2.5 rounded-control px-3 py-2 text-sm font-medium text-platforma-subtle transition hover:bg-surface-hover hover:text-platforma-text",
+        mobile && "shrink-0", isActive && "bg-brand-50 text-platforma-text ring-1 ring-brand-100")}>
+      <Icon size={18} aria-hidden="true" /><span>{t(item.label)}</span>
+    </NavLink>;
+  });
+  return <div className="min-h-dvh bg-surface text-platforma-text">
+    <aside className="fixed inset-y-0 left-0 hidden w-56 flex-col border-r border-platforma-border bg-surface-card lg:flex">
+      <NavLink to="/platform" className="platforma-focus-ring flex h-14 items-center gap-2.5 border-b border-platforma-border px-4 font-semibold">
+        <ShieldCheck size={22} className="text-brand-600" aria-hidden="true" />PlatformaCRM
+      </NavLink>
+      <nav aria-label={t("platform.title")} className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">{navigation()}</nav>
+    </aside>
+    <div className="min-w-0 lg:pl-56">
+      <header className="sticky top-0 z-40 flex min-h-14 flex-wrap items-center justify-between gap-2 border-b border-platforma-border bg-surface-card px-3 py-2 sm:px-5">
+        <span className="text-sm font-semibold text-platforma-subtle">{t("platform.title")}</span>
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="hidden max-w-64 truncate text-sm text-platforma-subtle md:block">{user?.email}</span>
+          <LanguageSelector />
+          <Button variant="ghost" onClick={() => { logout(); navigate("/login"); }} aria-label={t("header.logout")}>
+            <LogOut size={17} aria-hidden="true" /><span className="hidden sm:inline">{t("header.logout")}</span>
+          </Button>
         </div>
-      </div>
-    </main>
-  );
+      </header>
+      <nav aria-label={t("platform.title")} className="flex gap-1 overflow-x-auto border-b border-platforma-border bg-surface-card p-2 lg:hidden">{navigation(true)}</nav>
+      <main data-workspace-content className="mx-auto min-w-0 max-w-[1600px] p-3 sm:p-5"><Outlet /></main>
+    </div>
+  </div>;
 }

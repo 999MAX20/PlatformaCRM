@@ -146,6 +146,15 @@ Password/security/MFA reset проверяют текущий пароль/фа�
 
 ## Файлы, секреты и публичный периметр
 
+CRM-S02, решение владельца 14.10.2026: платформенная админка показывает диагностику
+и журнал поддержки; восстановление фоновых операций выполняет уполномоченный
+сотрудник клиники через существующие права. Новых platform retry/cancel прав нет.
+GET `platform/merchants/{id}/support-actions/` доступен platform-ролям и возвращает
+только журнал выбранного Business с sanitization; POST сохраняет требования
+platform_admin + exact active grant + recent MFA. CORS разрешает заголовок
+`X-Zani-MFA-Step-Up` только в рамках уже разрешённых origins; это не отменяет
+серверную проверку токена и прав.
+
 Загрузка/скачивание проверяют entity/Business и соответствующие права.
 Quarantine/clean fingerprint обязательны даже для platform_admin; публичный
 bucket или прямой storage URL не заменяют download permission. Нет ручного

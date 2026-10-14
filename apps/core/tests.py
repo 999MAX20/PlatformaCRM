@@ -668,7 +668,7 @@ class PlatformDashboardTests(TestCase):
             self.assertEqual(overview.data["active_bot_channels"], 1)
             self.assertEqual(overview.data["ai_requests_30d"], 1)
             self.assertEqual(overview.data["conversations_30d"], 1)
-            merchant = next(item for item in merchants.data if item["id"] == self.business.id)
+            merchant = next(item for item in merchants.data["results"] if item["id"] == self.business.id)
             self.assertEqual(merchant["owner"]["email"], self.owner.email)
             self.assertEqual(merchant["plan"]["name"], self.plan.name)
             self.assertEqual(merchant["subscription_status"], Subscription.Statuses.ACTIVE)

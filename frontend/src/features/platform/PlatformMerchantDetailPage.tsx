@@ -1,7 +1,9 @@
+import { PageHeader } from "../../components/ui/PageHeader";
+import { TaskDraftGuard } from "../tasks/components/TaskDraftGuard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, CheckCircle2, Headphones, MessageSquarePlus, RefreshCw, ShieldAlert, Store } from "lucide-react";
 import { useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useLocation } from "react-router";
 
 import { platformApi } from "../../api/platform";
 import { getApiErrorMessage } from "../../api/client";
@@ -24,8 +26,16 @@ function statusClass(status?: string | null) {
 }
 
 export function PlatformMerchantDetailPage() {
-  const { t, language } = useI18n();
   const { id } = useParams();
+  return <PlatformMerchantContent key={id} id={id || ""} />;
+}
+
+function PlatformMerchantContent({ id }: { id: string }) {
+  const { t, language } = useI18n();
+  const location = useLocation();
+  const returnTo = typeof location.state?.returnTo === "string" && location.state.returnTo.startsWith("/platform/merchants?") ? location.state.returnTo : "/platform/merchants";
+  const [historyPage, setHistoryPage] = useState(1);
+  const history = useQuery({ queryKey: ["platform-support-history", id, historyPage], queryFn: () => platformApi.supportActions(id, historyPage), enabled: Boolean(id) });
   const queryClient = useQueryClient();
   const [note, setNote] = useState("");
   const [mfaCode, setMfaCode] = useState("");
@@ -48,6 +58,8 @@ export function PlatformMerchantDetailPage() {
       return platformApi.createSupportAction(id || "", { action_type: actionType, note }, stepUpToken);
     },
     onSuccess: () => {
+      setHistoryPage(1);
+      queryClient.invalidateQueries({ queryKey: ["platform-support-history", id] });
       setNote("");
       setMfaCode("");
       queryClient.invalidateQueries({ queryKey: ["platform-merchant", id] });
@@ -57,7 +69,7 @@ export function PlatformMerchantDetailPage() {
   });
 
   if (merchant.isLoading) return <LoadingState scope="page" />;
-  if (merchant.isError || !merchant.data) return <ErrorState message={t("platform.merchantDetail.error")} />;
+  if (merchant.isError || !merchant.data) return <ErrorState error={merchant.error} message={t("platform.merchantDetail.error")} action={<Button variant="secondary" onClick={() => merchant.refetch()}>{t("platform.merchantDetail.refresh")}</Button>} />;
 
   const data = merchant.data;
   const workflow = data.support_workflow;
@@ -66,56 +78,39 @@ export function PlatformMerchantDetailPage() {
 
   return (
     <div className="space-y-5">
-      <section className="glass-panel rounded-[2rem] p-6 sm:p-8">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <Link to="/platform/merchants" className="inline-flex items-center gap-2 text-sm font-black text-brand-700 hover:text-brand-900">
-              <ArrowLeft size={16} /> {t("platform.nav.merchants")}
-            </Link>
-            <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-brand-700">{t("platform.merchantDetail.eyebrow")}</p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-midnight sm:text-5xl">{data.name}</h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-platforma-subtle">
-              {t("platform.merchantDetail.description")}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <span className={cn("inline-flex rounded-full border px-4 py-2 text-sm font-black", statusClass(data.status))}>{data.status}</span>
-            <span className={cn("inline-flex rounded-full border px-4 py-2 text-sm font-black", statusClass(health?.status))}>
-              {health?.status || t("platform.common.unknown")} · {health?.score ?? 0}%
-            </span>
-          </div>
-        </div>
-      </section>
+      <TaskDraftGuard dirty={Boolean(note.trim())} pending={supportMutation.isPending} />
+      <Link to={returnTo} className="platforma-focus-ring inline-flex items-center gap-2 text-sm font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t("platform.nav.merchants")}</Link>
+      <PageHeader title={data.name} actions={<span className="rounded-control bg-surface-muted px-3 py-2 text-sm">{data.status}</span>} />
 
       <div className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
               <Store className="text-brand-600" size={21} />
-              <p className="text-lg font-black text-midnight">{t("platform.merchantDetail.snapshot")}</p>
+              <p className="text-lg font-semibold text-platforma-text">{t("platform.merchantDetail.snapshot")}</p>
             </div>
           </CardHeader>
           <CardBody className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-3xl border border-platforma-border bg-surface-muted/70 p-4">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.owner")}</p>
-              <p className="mt-2 font-bold text-midnight">{data.owner.full_name || t("platform.common.noName")}</p>
+            <div className="rounded-card border border-platforma-border bg-surface-muted/70 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.owner")}</p>
+              <p className="mt-2 font-bold text-platforma-text">{data.owner.full_name || t("platform.common.noName")}</p>
               <p className="mt-1 text-sm text-platforma-faint">{data.owner.email}</p>
             </div>
-            <div className="rounded-3xl border border-platforma-border bg-surface-muted/70 p-4">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.landing")}</p>
-              <p className="mt-2 font-bold text-midnight">{data.landing_domain || t("platform.merchantDetail.notConnected")}</p>
+            <div className="rounded-card border border-platforma-border bg-surface-muted/70 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.landing")}</p>
+              <p className="mt-2 font-bold text-platforma-text">{data.landing_domain || t("platform.merchantDetail.notConnected")}</p>
               <p className="mt-1 text-sm text-platforma-faint">{data.landing_id || t("platform.merchantDetail.noLandingId")}</p>
             </div>
-            <div className="rounded-3xl border border-platforma-border bg-surface-muted/70 p-4">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.crmOperations")}</p>
+            <div className="rounded-card border border-platforma-border bg-surface-muted/70 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.crmOperations")}</p>
               <p className="mt-2 text-sm font-semibold leading-6 text-platforma-subtle">
                 {t("platform.merchantDetail.leadsLine", { leads: operations?.lead_count ?? 0, new: operations?.new_leads ?? 0 })}<br />
                 {t("platform.merchantDetail.clientsLine", { clients: operations?.clients_count ?? 0, tasks: operations?.open_tasks ?? 0 })}<br />
                 {t("platform.merchantDetail.inboxLine", { unread: operations?.unread_conversations ?? 0, handoff: operations?.handoff_conversations ?? 0 })}
               </p>
             </div>
-            <div className="rounded-3xl border border-platforma-border bg-surface-muted/70 p-4">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.dataSources")}</p>
+            <div className="rounded-card border border-platforma-border bg-surface-muted/70 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("platform.merchantDetail.dataSources")}</p>
               <p className="mt-2 text-sm font-semibold leading-6 text-platforma-subtle">
                 {t("platform.merchantDetail.connectorsLine", { ok: operations?.connected_connectors ?? 0, pending: operations?.pending_connectors ?? 0, failed: operations?.failed_connectors ?? 0 })}<br />
                 {t("platform.merchantDetail.formsLine", { forms: operations?.lead_forms ?? 0, errors: operations?.form_errors ?? 0 })}<br />
@@ -129,19 +124,19 @@ export function PlatformMerchantDetailPage() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <ShieldAlert className={health?.status === "risk" ? "text-platforma-danger" : "text-platforma-warning"} size={21} />
-              <p className="text-lg font-black text-midnight">{t("platform.merchantDetail.pilotHealth")}</p>
+              <p className="text-lg font-semibold text-platforma-text">{t("platform.merchantDetail.pilotHealth")}</p>
             </div>
           </CardHeader>
           <CardBody>
             <p className="text-sm leading-6 text-platforma-subtle">{health?.next_action || t("platform.merchantDetail.monitorPilot")}</p>
             <div className="mt-4 space-y-2">
               {(health?.blockers || []).map((blocker) => (
-                <div key={blocker} className="rounded-2xl border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] px-3 py-2 text-sm font-semibold text-platforma-warning">
+                <div key={blocker} className="rounded-control border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] px-3 py-2 text-sm font-semibold text-platforma-warning">
                   {blocker}
                 </div>
               ))}
               {!health?.blockers?.length ? (
-                <div className="rounded-2xl border border-platforma-success/20 bg-[var(--platforma-success-soft)] px-3 py-2 text-sm font-semibold text-platforma-success">
+                <div className="rounded-control border border-platforma-success/20 bg-[var(--platforma-success-soft)] px-3 py-2 text-sm font-semibold text-platforma-success">
                   {t("platform.merchantDetail.noBlockers")}
                 </div>
               ) : null}
@@ -155,20 +150,20 @@ export function PlatformMerchantDetailPage() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <Headphones className="text-brand-600" size={21} />
-              <p className="text-lg font-black text-midnight">{t("platform.merchantDetail.supportWorkflow")}</p>
+              <p className="text-lg font-semibold text-platforma-text">{t("platform.merchantDetail.supportWorkflow")}</p>
             </div>
           </CardHeader>
           <CardBody>
-            <span className={cn("inline-flex rounded-full border px-3 py-1 text-xs font-black uppercase", statusClass(workflow?.priority))}>
+            <span className={cn("inline-flex rounded-full border px-3 py-1 text-xs font-semibold uppercase", statusClass(workflow?.priority))}>
               {t("platform.merchantDetail.priority", { priority: workflow?.priority || "low" })}
             </span>
             <p className="mt-4 text-sm leading-6 text-platforma-subtle">{workflow?.summary || t("platform.merchantDetail.emptyWorkflow")}</p>
             <div className="mt-4 space-y-2">
               {(workflow?.next_steps || []).map((step) => (
-                <Link key={step.key} to={step.href} className="flex items-center justify-between rounded-2xl border border-platforma-border bg-surface-muted px-3 py-3 text-sm font-bold text-midnight transition hover:bg-white hover:shadow-soft">
+                <div key={step.key} className="flex items-center justify-between rounded-control border border-platforma-border bg-surface-muted px-3 py-3 text-sm font-bold text-platforma-text transition hover:bg-surface-card hover:shadow-soft">
                   {step.label}
-                  <CheckCircle2 size={16} className="text-brand-600" />
-                </Link>
+                  <CheckCircle2 size={16} className="text-brand-600" aria-hidden="true" />
+                </div>
               ))}
               {!workflow?.next_steps?.length ? <EmptyState title={t("platform.merchantDetail.noNextSteps")} description={t("platform.merchantDetail.noNextStepsText")} /> : null}
             </div>
@@ -179,17 +174,14 @@ export function PlatformMerchantDetailPage() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <MessageSquarePlus className="text-brand-600" size={21} />
-              <p className="text-lg font-black text-midnight">{t("platform.merchantDetail.logSupportAction")}</p>
+              <p className="text-lg font-semibold text-platforma-text">{t("platform.merchantDetail.logSupportAction")}</p>
             </div>
           </CardHeader>
           <CardBody>
             {data.can_log_support_action ? (
               <div data-testid="support-action-form">
-                <div className="grid gap-3 sm:grid-cols-[220px_1fr]">
-                  <Select value={actionType} onChange={(event) => setActionType(event.target.value)} options={actionOptions} />
-                  <Input value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("platform.merchantDetail.notePlaceholder")} />
-                </div>
-                <Textarea className="mt-3" value={note} onChange={(event) => setNote(event.target.value)} placeholder={t("platform.merchantDetail.noteTextarea")} />
+                <Select label={t("platform.support.actionType")} value={actionType} onChange={(event) => setActionType(event.target.value)} options={actionOptions} disabled={supportMutation.isPending} />
+                <Textarea className="mt-3" label={t("platform.merchantDetail.notePlaceholder")} value={note} onChange={(event) => setNote(event.target.value)} maxLength={4000} disabled={supportMutation.isPending} placeholder={t("platform.merchantDetail.noteTextarea")} />
                 <Input
                   className="mt-3"
                   label={t("mfa.codeLabel")}
@@ -197,6 +189,7 @@ export function PlatformMerchantDetailPage() {
                   onChange={(event) => setMfaCode(event.target.value)}
                   placeholder={t("mfa.codePlaceholder")}
                   autoComplete="one-time-code"
+                  disabled={supportMutation.isPending}
                 />
                 {supportMutation.isError ? <ErrorState error={supportMutation.error} message={getApiErrorMessage(supportMutation.error)} /> : null}
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -205,27 +198,30 @@ export function PlatformMerchantDetailPage() {
                   </Button>
                 </div>
               </div>
-            ) : null}
-            <Button variant="secondary" onClick={() => merchant.refetch()} isLoading={merchant.isFetching}>
+            ) : <p className="mb-3 rounded-control bg-surface-muted p-3 text-sm text-platforma-subtle">{t("platform.support.readOnly")}</p>}
+            {supportMutation.isSuccess && <p role="status" className="my-3 text-sm text-platforma-success">{t("common.saved")}</p>}
+            <Button variant="secondary" onClick={() => { merchant.refetch(); history.refetch(); }} isLoading={merchant.isFetching}>
               <RefreshCw size={16} /> {t("platform.merchantDetail.refresh")}
             </Button>
             <div className="mt-5 space-y-2" data-testid="support-action-history">
-              {(workflow?.recent_actions || []).map((action) => (
-                <div key={action.id} className="rounded-2xl border border-platforma-border bg-surface-muted px-3 py-3">
+              {history.isPending ? <LoadingState /> : history.isError ? <ErrorState error={history.error} action={<Button variant="secondary" onClick={() => history.refetch()}>{t("platform.merchantDetail.refresh")}</Button>} /> : null}
+              {(history.data?.results || []).map((action) => (
+                <div key={action.id} className="rounded-control border border-platforma-border bg-surface-muted px-3 py-3">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-black text-midnight">{action.action_type}</p>
-                    <span className="rounded-full bg-white px-2 py-1 text-[11px] font-bold text-platforma-faint">{action.status}</span>
+                    <p className="text-sm font-semibold text-platforma-text">{action.action_type}</p>
+                    <span className="rounded-full bg-surface-card px-2 py-1 text-[11px] font-bold text-platforma-faint">{action.status}</span>
                   </div>
                   <p className="mt-1 text-sm leading-6 text-platforma-subtle">{action.note}</p>
                   <p className="mt-2 text-xs font-semibold text-platforma-faint">{action.actor_email || t("platform.title")} · {new Date(action.created_at).toLocaleString(locale)}</p>
                 </div>
               ))}
-              {!workflow?.recent_actions?.length ? (
-                <p className="rounded-2xl bg-surface-muted p-4 text-sm text-platforma-faint">
+              {history.isSuccess && !history.data.results.length ? (
+                <p className="rounded-control bg-surface-muted p-4 text-sm text-platforma-faint">
                   {t("platform.merchantDetail.noRecentActions")}
                 </p>
               ) : null}
             </div>
+            {history.isSuccess && <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm"><span>{t("pagination.total", { total: history.data.count })}</span><div className="flex gap-2"><Button variant="secondary" disabled={!history.data.previous} onClick={() => setHistoryPage(value => value - 1)}>{t("pagination.previous")}</Button><Button variant="secondary" disabled={!history.data.next} onClick={() => setHistoryPage(value => value + 1)}>{t("pagination.next")}</Button></div></div>}
           </CardBody>
         </Card>
       </div>

@@ -5381,8 +5381,10 @@ export const en: Record<string, string> = {
   "platform.overview.aiRequests": "AI requests / 30d",
   "platform.overview.activeChannels": "Active channels",
   "platform.overview.errorsTitle": "Operational signals",
-  "platform.overview.errorsText":
-    "Current platform overview errors: {errors}. Pilot signals: {connectors} integrations need attention, {merchants} merchants have no sales data.",
+  "platform.support.actionType": "Entry type",
+  "platform.support.readOnly": "Read-only history. Writing requires a platform administrator and active support access to this business.",
+  "platform.support.recoveryByClinic": "Recovery is performed by an authorized clinic staff member.",
+  "platform.overview.errorsText": "Recorded failed jobs and events: {errors}. Integrations needing attention: {connectors}.",
   "platform.common.noName": "No name",
   "platform.common.unknown": "unknown",
   "platform.merchants.loading": "Loading merchants...",

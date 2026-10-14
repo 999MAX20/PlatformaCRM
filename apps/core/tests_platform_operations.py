@@ -229,7 +229,7 @@ class PlatformOperationsDashboardTests(TestCase):
         response = self.api.get("/api/platform/merchants/")
 
         self.assertEqual(response.status_code, 200)
-        merchant = response.data[0]
+        merchant = response.data["results"][0]
         self.assertEqual(merchant["name"], "Pilot Merchant")
         self.assertEqual(merchant["operations"]["lead_count"], 1)
         self.assertEqual(merchant["operations"]["unread_conversations"], 1)

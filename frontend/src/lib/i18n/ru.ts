@@ -5362,8 +5362,10 @@ export const ru: Record<string, string> = {
   "platform.overview.aiRequests": "AI-запросы / 30д",
   "platform.overview.activeChannels": "Активные каналы",
   "platform.overview.errorsTitle": "Операционные сигналы",
-  "platform.overview.errorsText":
-    "Сейчас ошибок в platform overview: {errors}. Операционные сигналы пилота: {connectors} интеграций требуют внимания, {merchants} мерчей без данных продаж.",
+  "platform.support.actionType": "Тип записи",
+  "platform.support.readOnly": "Просмотр журнала. Для записи нужны права администратора платформы и действующий доступ поддержки к этому бизнесу.",
+  "platform.support.recoveryByClinic": "Восстановление выполняет уполномоченный сотрудник клиники.",
+  "platform.overview.errorsText": "Зафиксировано неуспешных заданий и событий: {errors}. Интеграций требуют внимания: {connectors}.",
   "platform.common.noName": "Без имени",
   "platform.common.unknown": "неизвестно",
   "platform.merchants.loading": "Загружаем мерчантов...",

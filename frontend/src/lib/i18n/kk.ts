@@ -5367,8 +5367,10 @@ export const kk: Record<string, string> = {
   "platform.overview.aiRequests": "AI-сұраулар / 30к",
   "platform.overview.activeChannels": "Белсенді арналар",
   "platform.overview.errorsTitle": "Операциялық сигналдар",
-  "platform.overview.errorsText":
-    "Platform overview қателері: {errors}. Пилот сигналдары: {connectors} интеграция назар қажет етеді, {merchants} мерчантта сату деректері жоқ.",
+  "platform.support.actionType": "Жазба түрі",
+  "platform.support.readOnly": "Журналды қарау. Жазу үшін платформа әкімшісінің құқығы және осы бизнеске белсенді қолдау рұқсаты қажет.",
+  "platform.support.recoveryByClinic": "Қалпына келтіруді клиниканың уәкілетті қызметкері орындайды.",
+  "platform.overview.errorsText": "Сәтсіз тапсырмалар мен оқиғалар: {errors}. Назар аударуды қажет ететін интеграциялар: {connectors}.",
   "platform.common.noName": "Аты жоқ",
   "platform.common.unknown": "белгісіз",
   "platform.merchants.loading": "Мерчанттар жүктелуде...",

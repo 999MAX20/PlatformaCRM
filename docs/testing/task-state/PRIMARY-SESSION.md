@@ -6,6 +6,112 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-S02-20261014 — operational platform administration
+
+Owner authorized S02 and the sequence inspect/reuse → server rules with focused
+checks → integrated UI aligned to shared design → affected-flow verification.
+Mode implementation; gaps code/evidence/UI. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+base821719d00fafef26e8a09a57cc4152900da81b82; clean starting index/worktree.
+No delegation/interchat coordination. Existing platform layout, four implemented
+pages, API, support grants/MFA/audit and operations diagnostics are reused.
+
+Observable result: bounded server search/pagination, useful business detail/support
+history, truthful overview/diagnostics and reachable support action with preserved
+draft/errors, shared tokens/components across the affected platform shell/pages.
+Keep existing platform/merchant access separation. No billing product, commercial
+analytics, implementation of five placeholder sections, AI/provider integration,
+S03 incident notification system or S04 infrastructure/backup work. No schema or
+working-DB changes intended. No new business suspension/identity/billing rights.
+
+Owner answered: keep diagnostics and support journal; recovery belongs to the
+authorized clinic employee. No platform retry/cancel rights added. Platform
+support suggestions no longer navigate to an unrelated active merchant context.
+
+Backend first slice: list API now returns count/next/previous/results with server
+search/status and bounded page_size1..100 (default20), stable created_at/pk order.
+Updated existing internal client/tests for this explicit response contract.
+Operational aggregation moved to selectors and batch queries; no500-business cap.
+Overview errors now count persisted failed automation/notification/integration/
+export records (not live outage status). Support notes receive typed validation.
+First attempted baseline aborted during URL import while helper extraction was
+in progress (domain-1791971477454376800.log); this is not a product regression
+reproduction. The original unbounded/constant/capped behavior is evidenced by code.
+After coherent implementation, isolated check/drift plus24 tests PASS:
+`.venv/Scripts/python.exe output/crm-s01-20261014/check.py
+apps.core.tests_platform_s02 apps.core.tests_platform_operations
+apps.core.tests.PlatformDashboardTests apps.core.tests.PlatformAccessFoundationTests`
+(domain-1791971540135176400.log).
+
+Support journal slice: GET existing support-actions route returns paginated,
+business-scoped, sanitized audit; POST retains admin + exact grant + fresh MFA.
+No operator write/recovery expansion. Full history supersedes the5-item preview.
+Focused/affected `check.py apps.core.tests_platform_s02
+apps.core.tests_platform_operations` =21 PASS plus check/drift
+(domain-1791971707365150100.log), including506-business accurate summary under50
+queries, invalid filters/notes, cross-business history and permission denials.
+
+Frontend reuses PageHeader/Card/Input/Select/Button/CrmPagination/LanguageSelector
+and existing draft guard; light shared shell, four operational pages, no new
+placeholder functionality. Search/page are URL-backed, detail returns to list
+context; form preserves error draft and has one labelled note field; full journal
+has page controls. Build/i18n/types/widget/bundle PASS via
+`.venv/Scripts/python.exe output/crm-s02-20261014/frontend.py` (isolated env,
+no dependency install). Browser verification is underway. First fixture attempt
+used interactive Django shell, causing syntax errors before browser acceptance;
+stopped owned session17387 and verified no matching child processes. Corrected
+fixture execution to shell -c; new disposable run, no working DB changes.
+
+Initial evidence: merchant list loads every business and filters client-side;
+overview examines at most500 while claiming total_monitored of all; errors count
+is hard-coded0. Platform shell has a nonfunctional search-looking block and
+different hero/sidebar styling from the current CRM workspace. Existing support
+write already requires platform_admin + exact grant + recent MFA; retain it.
+
+Risk: data scope, privileged support audit, pagination correctness, misleading
+operational summaries and inaccessible/error UI. Backend focused reproductions
+after each coherent slice, then affected platform/security/operations tests and
+check/drift. Frontend build once at completion; targeted isolated browser flows
+for list/search/pagination/detail/support note and deny/error/recovery, desktop and
+mobile, RU/KK/EN representative copy/keyboard states. No full-project local suite,
+dependency reinstall or reuse of another task's dev servers. Publish only own
+reviewed changes to origin/main, remote SHA and actual CI readback separately.
+
+Final S02 verification (14.10):
+- Final affected backend command: `.venv/Scripts/python.exe
+  output/crm-s01-20261014/check.py apps.core.tests_platform_s02
+  apps.core.tests_platform_operations apps.core.tests.PlatformDashboardTests
+  apps.core.tests.PlatformAccessFoundationTests`:28 PASS, system/drift PASS;
+  log output/crm-s01-20261014/domain-1791972669070503900.log.
+- Build/i18n/types/widget/bundle PASS, unchanged frontend product inputs since
+  output/crm-s02-20261014/frontend-isolated-final.log.
+- `.venv/Scripts/python.exe scripts/verify_platform_s02.py`:9 PASS/1 intentional
+  mobile skip (existing desktop-only route audit). Six new checks pass across
+  desktop/mobile; other smoke checks prove route and server-capability rendering.
+  Log output/crm-s02-20261014/browser-1791972639638775200.log. The tracked runner
+  provisions disposable DB/ports and opts in E2E_PLATFORM_S02 fixtures; no working DB.
+- Real grant + MFA enrollment/recovery-code step-up +201 support write verified;
+  bad factor preserves draft, paginated journal includes write, no-grant read-only,
+  server search/page/return/empty,503 recovery and RU/KK/EN operations keyboard
+  checks pass. Screenshots under frontend/test-results/platform-s02-*/platform-*.png
+  visually inspected for list/detail/overview/operations, desktop/mobile; horizontal
+  table scrolling stays inside its container.
+- Attempt2 stopped for test session mismatch after enrollment; fixture now reloads
+  the rotated session. Attempt3:4 PASS/2 support failures exposed missing CORS
+  allow-header, not backend denial. Added x-zani-mfa-step-up to existing headers,
+  with allowed/untrusted-origin preflight regression. Final browser run above PASS.
+  No permission bypass. Restored original latest_activity fallback semantics while
+  batching selectors; final backend run includes this delta.
+- No schema/env additions, migrations to working DB, external sends, BusinessEvents,
+  AI actions, new recovery rights or provider work. Audit write remains existing
+  support action. Full local suite/live queues/provider/deployed acceptance skipped
+  as outside S02; local SQLite/eager/locmem is not production readiness. Existing
+  environment warnings remain visible in diagnostics. Owned test servers stopped.
+- Reviewed all25 intended paths including new selectors/serializers/tests/runner;
+  synthetic fixture identities only. Actual remote main readback821719d at prepublish;
+  stored origin/main ref was stale, use explicit remote readback/FETCH_HEAD.
+  Final commit-range static and normal push pending below. S03/S04 not started.
+
 ## CRM-S01-20261014 — server scenario completeness
 
 D-04 continuation, owner approval 14.10: reuse one built-in appointment follow-up

@@ -1,3 +1,4 @@
+import { PageHeader } from "../../components/ui/PageHeader";
 import { useQuery } from "@tanstack/react-query";
 import { Bot, Building2, CircleAlert, CreditCard, MessageCircle, ShieldAlert, Sparkles, Store, TrendingUp, Users } from "lucide-react";
 import { Link } from "react-router";
@@ -27,29 +28,13 @@ export function PlatformOverviewPage() {
   const overview = useQuery({ queryKey: ["platform-overview"], queryFn: platformApi.overview });
 
   if (overview.isLoading) return <LoadingState scope="page" />;
-  if (overview.isError || !overview.data) return <ErrorState message={t("platform.overview.error")} />;
+  if (overview.isError || !overview.data) return <ErrorState error={overview.error} message={t("platform.overview.error")} action={<Button variant="secondary" onClick={() => overview.refetch()}>{t("platform.merchantDetail.refresh")}</Button>} />;
 
   const data = overview.data;
 
   return (
     <div className="space-y-5" data-testid="platform-overview-ready">
-      <section className="glass-panel rounded-[2rem] p-6 sm:p-8">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">{t("platform.overview.eyebrow")}</p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-midnight sm:text-5xl">{t("platform.overview.title")}</h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-platforma-subtle">
-              {t("platform.overview.description")}
-            </p>
-          </div>
-          <Link to="/platform/merchants">
-            <Button variant="secondary" className="rounded-full">
-              <Store size={17} />
-              {t("platform.nav.merchants")}
-            </Button>
-          </Link>
-        </div>
-      </section>
+      <PageHeader title={t("platform.overview.title")} actions={<div className="flex items-center gap-3"><Link to="/platform/merchants" className="platforma-focus-ring text-sm font-semibold text-brand-700">{t("platform.nav.merchants")}</Link><Button variant="secondary" onClick={() => overview.refetch()} isLoading={overview.isFetching}>{t("platform.merchantDetail.refresh")}</Button></div>} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {metricCards.map((metric) => {
@@ -60,9 +45,9 @@ export function PlatformOverviewPage() {
               <CardBody className="flex items-center justify-between gap-4 p-5">
                 <div>
                   <p className="text-sm font-semibold text-platforma-faint">{t(metric.labelKey)}</p>
-                  <p className="mt-2 text-3xl font-bold tracking-tight text-midnight">{value}</p>
+                  <p className="mt-2 text-3xl font-bold tracking-tight text-platforma-text">{value}</p>
                 </div>
-                <div className={`grid h-12 w-12 place-items-center rounded-2xl ${metric.tone}`}>
+                <div className={`grid h-12 w-12 place-items-center rounded-control ${metric.tone}`}>
                   <Icon size={22} />
                 </div>
               </CardBody>
@@ -75,28 +60,28 @@ export function PlatformOverviewPage() {
         <Card>
           <CardBody className="p-5">
             <ShieldAlert className="text-platforma-warning" size={22} />
-            <p className="mt-4 text-3xl font-bold text-midnight">{data.operations_summary.attention_merchants}</p>
+            <p className="mt-2 text-2xl font-bold text-platforma-text">{data.operations_summary.attention_merchants}</p>
             <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("platform.overview.attentionMerchants")}</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="p-5">
             <CircleAlert className="text-platforma-danger" size={22} />
-            <p className="mt-4 text-3xl font-bold text-midnight">{data.operations_summary.form_errors_30d}</p>
+            <p className="mt-2 text-2xl font-bold text-platforma-text">{data.operations_summary.form_errors_30d}</p>
             <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("platform.overview.formErrors")}</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="p-5">
             <MessageCircle className="text-brand-600" size={22} />
-            <p className="mt-4 text-3xl font-bold text-midnight">{data.operations_summary.handoff_conversations}</p>
+            <p className="mt-2 text-2xl font-bold text-platforma-text">{data.operations_summary.handoff_conversations}</p>
             <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("platform.overview.handoffConversations")}</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="p-5">
             <TrendingUp className="text-platforma-success" size={22} />
-            <p className="mt-4 text-3xl font-bold text-midnight">{data.operations_summary.new_leads_30d}</p>
+            <p className="mt-2 text-2xl font-bold text-platforma-text">{data.operations_summary.new_leads_30d}</p>
             <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("platform.overview.newLeads")}</p>
           </CardBody>
         </Card>
@@ -104,9 +89,9 @@ export function PlatformOverviewPage() {
 
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <Card>
-          <CardBody className="p-6">
+          <CardBody className="p-4">
             <p className="text-sm font-semibold text-platforma-faint">{t("platform.overview.mrr")}</p>
-            <p className="mt-3 text-5xl font-bold tracking-tight text-midnight">{formatMoney(data.mrr_estimate, language)} ₸</p>
+            <p className="mt-3 text-3xl font-bold tracking-tight text-platforma-text">{formatMoney(data.mrr_estimate, language)} ₸</p>
             <p className="mt-3 text-sm leading-6 text-platforma-faint">
               {t("platform.overview.mrrText")}
             </p>
@@ -114,21 +99,21 @@ export function PlatformOverviewPage() {
         </Card>
 
         <Card>
-          <CardBody className="p-6">
+          <CardBody className="p-4">
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-3xl border border-platforma-border bg-surface-muted p-4">
+              <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
                 <MessageCircle className="text-brand-600" size={22} />
-                <p className="mt-4 text-2xl font-bold text-midnight">{data.conversations_30d}</p>
+                <p className="mt-2 text-xl font-bold text-platforma-text">{data.conversations_30d}</p>
                 <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("platform.overview.conversations")}</p>
               </div>
-              <div className="rounded-3xl border border-platforma-border bg-surface-muted p-4">
+              <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
                 <Sparkles className="text-platforma-info" size={22} />
-                <p className="mt-4 text-2xl font-bold text-midnight">{data.ai_requests_30d}</p>
+                <p className="mt-2 text-xl font-bold text-platforma-text">{data.ai_requests_30d}</p>
                 <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("platform.overview.aiRequests")}</p>
               </div>
-              <div className="rounded-3xl border border-platforma-border bg-surface-muted p-4">
+              <div className="rounded-card border border-platforma-border bg-surface-muted p-4">
                 <Bot className="text-platforma-info" size={22} />
-                <p className="mt-4 text-2xl font-bold text-midnight">{data.active_bot_channels}</p>
+                <p className="mt-2 text-xl font-bold text-platforma-text">{data.active_bot_channels}</p>
                 <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("platform.overview.activeChannels")}</p>
               </div>
             </div>
@@ -137,13 +122,14 @@ export function PlatformOverviewPage() {
       </div>
 
       <Card>
-        <CardBody className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <CardBody className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[var(--platforma-success-soft)] text-platforma-success">
+            <div className="grid h-11 w-11 place-items-center rounded-control bg-surface-muted text-platforma-subtle">
               <CircleAlert size={21} />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-midnight">{t("platform.overview.errorsTitle")}</h2>
+              <h2 className="text-lg font-semibold text-platforma-text">{t("platform.overview.errorsTitle")}</h2>
+              <Link to="/platform/operations" className="platforma-focus-ring text-sm font-medium text-brand-700">{t("platform.nav.operations")}</Link>
               <p className="mt-1 text-sm leading-6 text-platforma-faint">
                 {t("platform.overview.errorsText", {
                   errors: data.errors.count,

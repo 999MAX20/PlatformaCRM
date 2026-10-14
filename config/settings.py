@@ -62,7 +62,7 @@ CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ALLOW_CREDENTIALS = env("CORS_ALLOW_CREDENTIALS")
 from corsheaders.defaults import default_headers
 
-CORS_ALLOW_HEADERS = (*default_headers, "idempotency-key", "x-task-version")
+CORS_ALLOW_HEADERS = (*default_headers, "idempotency-key", "x-task-version", "x-zani-mfa-step-up")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS", default=[])
 
 

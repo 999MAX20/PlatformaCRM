@@ -7,6 +7,16 @@ Yandex Cloud выбран как направление, конкретный pr
 
 ## Существующая основа
 
+CRM-S02 (14.10.2026): platform list использует `count/next/previous/results`,
+серверные `search`, `status`, `page`, `page_size` (1–100, default20).
+Сводка учитывает все Business без прежнего ограничения500 и пакетно собирает
+операционные показатели. Счётчик ошибок отражает сохранённые failed-записи
+automation/notification/integration/export, а не число текущих аварий сервиса.
+Поддержка читает полный постраничный журнал; запись требует admin/grant/MFA.
+Воспроизводимая локальная проверка: `.venv/Scripts/python.exe scripts/verify_platform_s02.py`
+(одноразовая БД, собственные порты, desktop/mobile). Это не live/provider/worker
+acceptance; точные результаты — в [checkpoint](../testing/task-state/PRIMARY-SESSION.md#crm-s02-20261014--operational-platform-administration).
+
 Django API, React delivery, Celery workers/beat, health/readiness и platform operations
 имеют код/config/scripts. Доступная страница и HTTP 200 не доказывают исправную БД,
 очередь, провайдера или источник запущенного сервера. Local/staging/prod разделяют
