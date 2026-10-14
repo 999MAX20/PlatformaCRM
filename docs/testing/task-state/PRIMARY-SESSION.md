@@ -26,7 +26,7 @@ flow (desktop/mobile/locales/error/recovery). Exact committed-range static at cl
 Permission model unchanged; timer rechecks authorized staff rights. Activity/audit
 record automatic transition, no new notification/BusinessEvent trigger or AI call.
 Intentional additive nullable migration; legacy handoffs remain stopped. New fields
-read-only in API; RU/KK/EN status copy. Scoped checks PASS; publication pending.
+read-only in API; RU/KK/EN status copy. Scoped checks PASS; code published in main.
 
 Progress/evidence (isolated local boundary):
 - Nullable migration bots/0012 adds ordinary-handoff start, indexed deadline and
@@ -81,10 +81,17 @@ Progress/evidence (isolated local boundary):
   Final UI recheck: `.venv/Scripts/python.exe scripts/verify_handoff_recovery.py
   --grep "answered handoff exposes"` — 2 PASS desktop/mobile;
   browser-1792001061108407300.log. Final desktop RU/mobile KK screenshots inspected:
-  deadline readable, empty safety bar removed. Publication pending.
+  deadline readable, empty safety bar removed.
 - Changed document file links/new Python AST/diff hygiene PASS. Full release gate,
   real AI/providers, working migration, cloud setup and production workers are out
   of scope; local evidence does not activate the feature in an existing environment.
+- Publication: f6d6373937c2f99bd6d95f7a76ce0f87b683b20f, normal push to origin/main,
+  remote SHA readback matches. Branch preserved codex/ui-testing-toolkit.
+  `.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+  5babe5cc89d9e4ac5ba90f54198c48b847c2a040` PASS (diff/system/migration drift).
+  CI38612574478 queued at receipt; not claimed green. Local test processes finished.
+  Authorized implementation complete; runtime activation requires separately scoped
+  working migration and updated beat/worker. Meta/PS Cloud and remaining R02 deferred.
 
 ## CRM-R02-20261014 — pilot decisions and provider research
 
