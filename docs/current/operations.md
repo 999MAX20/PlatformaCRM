@@ -53,6 +53,17 @@ CRM-R02-AI-RETURN: `bots.resume_answered_handoffs` выполняется beat �
 разрешённое применение миграции и работающие worker/beat; Git-публикация их не запускает.
 Правило возврата и исключения — [AI](ai.md#жизненный-цикл-preview-и-сбои).
 
+14.10 владелец разрешил активацию таймера в текущей локальной рабочей среде.
+`bots0012` применена к canonical `db.sqlite3` после проверенного SQLite backup;
+старые диалоги и их состояния сохранены, старым handoff таймер не назначается.
+Машинный runtime: `output/local-handoff-recovery/runtime.py`, команды через
+`.venv/Scripts/python.exe`: `run` / `status` / `stop`. Один supervisor запускает
+worker/beat только для `bots.resume_answered_handoffs` раз в 60 секунд; собственная
+файловая очередь использует существующие Windows-зависимости local-file-antivirus.
+Runtime, broker и backup — рабочие локальные файлы, не тестовый мусор.
+Автозапуск после перезагрузки Windows не настроен; это не облачный Redis runtime.
+Остальные задания, core0012, Meta/PS Cloud и production остаются вне этой операции.
+
 CRM-S04: для локальной изолированной проверки есть
 [`verify_recovery_s04.py`](../../scripts/verify_recovery_s04.py),
 [команда и граница](../testing/testing.md#s04-postgresqlredis-recovery-drill).

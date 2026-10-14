@@ -6,6 +6,63 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-R02-AI-RETURN-ACTIVATE-20261014 — local working activation
+
+Owner explicitly requested activation/check in the current working environment.
+Mode operation; gap environment. Canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, base 605e5766e02bd7fd4b0ddd175a1762ff3a67d9fe;
+starting tree/index clean. Target local db.sqlite3, not cloud/staging/production.
+Plan: verify server roots, consistent SQLite backup/integrity, apply only bots0012,
+preserve existing conversation states, start single supervised worker/beat scoped
+to bots.resume_answered_handoffs, observe real scheduled executions and repeat safety.
+Reuse tested service/migration and existing machine-local filesystem-broker pattern.
+Risk: accidental old-dialog reactivation, duplicate scheduler, unrelated queued work.
+Do not seed/reset merchant DB or accelerate real deadlines. No provider/model calls,
+core0012 migration, full runtime activation, Meta/PS Cloud setup or automatic startup
+at Windows login. Isolated transition/concurrency/UI evidence remains unchanged.
+Completion: backup integrity/data preservation, schema/system check, running process
+identity, beat-to-worker execution evidence, no outbound delta; docs diff/links.
+Initial evidence: only bots0012 required for target; core0012 separately pending.
+Redis localhost:6379 timed out; no existing Celery worker/beat. Existing antivirus
+runtime is stopped. Local focused runtime will use its own broker/control directory.
+Evidence/progress:
+- Backend PID13456/14092 current directory canonical root; Vite PID6888 canonical
+  frontend, proven by read-only process directory inspection. No server stopped.
+- `output/local-handoff-recovery/migrate_working.py`: SQLite online backup to
+  before-bots0012-20261014T181653Z.sqlite3; backup/working integrity PASS,
+  foreign key check zero issues. Applied only bots0012. Six conversation records
+  unchanged across all pre-existing columns; all table counts preserved (16 messages).
+  All new eligibility/deadline fields NULL. Django system check PASS.
+- Machine-local runtime.py uses one locked supervisor and dedicated filesystem
+  broker; only handoff task scheduled at 60s, default queue, expiry120s. No env
+  credentials changed. Existing output/local-file-antivirus/deps reused (pywin32);
+  first startup failed because this dependency directory was absent from sys.path,
+  stopped owned supervisor and corrected import path; no installation required.
+  Duplicate-lock failure wording corrected; no second supervisor started.
+- Runtime verification PASS: beat dispatch 18:20:07/18:21:07 UTC, worker successful
+  execution 18:20:08/18:21:08, both resumed=0 (no eligible working candidates).
+  Actual broker delivery and repeated scheduling proven; no real deadline accelerated,
+  no synthetic merchant data created. Existing 6 conversations and16 messages unchanged.
+  GET /health/ and /health/db/ on verified server127.0.0.1:8000 returned200.
+  Duplicate `runtime.py run` exits1 with "Handoff supervisor already running";
+  existing supervisor unchanged. Status heartbeat<3s, worker/beat exit_code null,
+  one start each after corrected setup. Supervisor PID2356, worker launcher11796
+  (actual17400), beat launcher20208 (actual6324), source/DB canonical.
+- Local runtime intentionally left running. Start hidden from canonical root with
+  `Start-Process -FilePath .venv/Scripts/python.exe -ArgumentList
+  'output/local-handoff-recovery/runtime.py','run' -WindowStyle Hidden`;
+  `.venv/Scripts/python.exe output/local-handoff-recovery/runtime.py status` reads
+  health, `... runtime.py stop` stops only this supervisor's children.
+  No Windows-login/reboot autostart configured. Backup/runtime files contain local
+  operational data, remain ignored under output and must not be committed/deleted
+  as test trash. Existing antivirus dependency folder is reused, not started/changed.
+- Completed requested local activation. Prior isolated transition/concurrency/UI
+  tests reused (application inputs unchanged); no redundant build/full suites or
+  real provider calls. Working transition on a due real conversation not exercised:
+  none exist; behavior remains covered by prior isolated tests. core0012 pending,
+  other queues/cloud acceptance out of scope. CI38612654544 still in_progress
+  when inspected during this operation, not claimed green. Docs hygiene/links checked.
+
 ## CRM-R02-AI-RETURN-20261014 — answered handoff idle recovery
 
 Owner explicitly authorized implementation; Meta integration and PS Cloud setup deferred.
