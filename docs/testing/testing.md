@@ -362,6 +362,47 @@ uptime, RPO/RTO, live monitoring or a production rollback. Those require the nam
 target environment and operator acceptance. The drill does not change data-retention
 policy or apply migrations to any working database.
 
+## S04 PostgreSQL/Redis recovery drill
+
+`scripts/verify_recovery_s04.py` runs synthetic data in a new native PostgreSQL
+cluster and a dedicated loopback Redis, with real Celery worker/beat processes.
+It never accepts a working database URL. Dependencies must already be available;
+the runner does not install services or download binaries/signatures.
+
+Example for the verified Windows environment (run from the canonical root):
+
+```powershell
+.venv/Scripts/python.exe scripts/verify_recovery_s04.py --phase full --pg-bin "C:/Program Files/PostgreSQL/17/bin" --redis-server "output/crm-s04-20261014/deps/redis/Redis-7.4.9-Windows-x64-msys2/redis-server.exe" --clamd "output/local-file-antivirus/engine/clamd.exe" --signatures "output/crm-s04-20261014/deps/signatures"
+```
+
+`--phase queue` omits file/restore scenarios and does not require ClamAV arguments.
+For another machine, pass its executable/signature locations. The signatures are
+copied into the disposable runtime; a harmless custom signature tests file
+quarantine, while standard EICAR is checked in memory to avoid host antivirus
+interfering with the worker fixture. The real scanner's 72-hour freshness check
+remains active. Keep signature updates in a dedicated test copy.
+
+Windows evidence uses PostgreSQL17, Redis7.4.9 MSYS2 portable and Celery `solo`.
+The [Redis portable release](https://github.com/redis-windows/redis-windows/releases/tag/7.4.9)
+archive `Redis-7.4.9-Windows-x64-msys2.zip` has SHA256
+`98af6511ca35601cc8d8200a92318e00f9d2d5425a9f7f3e8f699d3bdd59dcf6`.
+Verify the published hash before extracting/running it; do not substitute a
+Redis mock or the older filesystem-transport drill for this acceptance.
+
+The full drill checks WAIT/restart, kill during an action transaction, stale claim
+recovery, retry/cancel APIs with access denial, reminders without duplicates,
+real export/private download and permission revocation, scanner outage/retry and
+quarantine. It then deliberately discards its ephemeral Redis queue and proves
+durable DB work recovers through beat (cadence shortened to2 seconds in the drill).
+Finally `pg_dump`/`pg_restore` and private file/key copies are restored into a separate
+database and file root, followed by API access, integrity and relationship checks.
+
+Logs are retained under `output/crm-s04-20261014`; only owned processes are stopped.
+Disposable DB/files/keys are removed after the run. No real tenant, provider, working
+keyring or working scanner is used. This proves local recovery, not production
+Linux/prefork operation, Redis persistence, object storage, backup scheduling,
+cross-host disaster recovery, selected RPO/RTO or deployment rollback acceptance.
+
 ## External Network Policy
 
 Backend tests must not call real external services.

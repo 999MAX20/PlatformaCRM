@@ -6,6 +6,12 @@
 
 # PlatformaCRM — текущий статус
 
+14.10.2026. CRM-S04 реализован и проверен: изолированные PostgreSQL/Redis/
+workers, recovery/retry/cancel, экспорт/файлы и фактическое восстановление backup.
+Scope/проверки — [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#crm-s04-20261014--isolated-operations-and-recovery).
+Полный изолированный runtime и73 зависимых теста PASS; публикация завершается.
+Рабочая БД, облачная среда и внешние отправки вне объёма.
+
 14.10.2026. CRM-S03 закрыт в согласованной scoped-границе: понятное состояние сервиса,
 жизненный цикл инцидентов и уведомления без повторов. Scope/риски/проверки —
 в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#crm-s03-20261014--service-state-and-incident-notifications).
@@ -13,8 +19,8 @@
 Владелец выбрал owner/admin для колокольчика; сотрудникам — баннер.
 26 backend +11 PostgreSQL +8 browser checks, build/types/bundle PASS.
 Committed-range static PASS; код 1efc0f8 опубликован в main, SHA подтверждён.
-CI38554191822 queued, не PASS. Рабочий запуск мониторинга отдельно.
-S04 не начат; рабочая БД и внешние отправки вне объёма.
+CI38554277365 (итог S03) completed success. Рабочий запуск мониторинга отдельно.
+Рабочая БД и внешние отправки не затрагивались в S03.
 
 14.10.2026. CRM-S02 закрыт в согласованной scoped-границе: серверный поиск/пагинация,
 полный журнал поддержки, реальные сводки и четыре страницы в общей дизайн-системе.

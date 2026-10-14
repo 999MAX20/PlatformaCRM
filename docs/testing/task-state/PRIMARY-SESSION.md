@@ -6,6 +6,94 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-S04-20261014 — isolated operations and recovery
+
+Owner authorized S04 on 14.10 after S03. Mode evidence/environment with minimal
+fixes for reproduced in-scope defects. Canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, base b0f58e87ff4c2f981956cc1a7db4e2a1b1293763;
+clean starting index/worktree. No other writers/agents involved.
+Observable result: reproducible isolated PostgreSQL/Redis/Celery processing and
+recovery/retry/cancel with no duplicate effects; export/private files and actual
+backup restore validated against independent restored data. Reuse isolated_runtime,
+existing domain services/tasks, pilot_recovery_drill and native PostgreSQL tools.
+Existing SQLite/filesystem drill is prior evidence only, not PostgreSQL/Redis proof.
+
+Scope: synthetic local fixtures, dedicated loopback ports and queues, owned
+worker/beat lifecycle, disposable original/restored databases and file directories.
+No working DB migration/data/credentials, external delivery/AI/integrations, cloud
+provisioning, OS service changes, production RPO/RTO claims or new UI redesign.
+Retain owner/admin recipient and clinic-only recovery policies from S02/S03.
+
+Plan/risk/checks before implementation: inspect real queue/retry/lease/cancel and
+backup contracts; validate dependencies and isolation before starting processes.
+Then run real broker/worker restart/replay/retry/cancel scenarios incrementally;
+validate exports and fail-closed files through existing APIs with role/tenant denial.
+Restore pg_dump plus private files to separate target and assert relationships,
+checksums/permissions and credential decryptability using synthetic credentials.
+Required completion: reproducible runtime drill and affected/dependent domain tests,
+system/migration drift, docs/diff/committed-range gate. Build/browser only if product
+frontend changes or a missing reachable-flow acceptance requires it. Do not repeat
+unchanged S03 UI checks. Record failures and exact runtime boundary. Stop own
+processes on exit. Normal publish under standing authorization after scoped gates.
+Notification/BusinessEvent/AI/domain impacts: existing effects exercised only in
+synthetic data; no new business policy or provider calls planned. Migration none
+planned, all current schema applied only to disposable targets. Next: Redis runtime
+availability and focused gap inventory, then the first real worker check.
+
+
+S04 progress/evidence 14.10:
+- Native PostgreSQL17 reused. No Docker runtime/distribution available. Downloaded
+  Redis7.4.9 Windows MSYS2 portable archive from redis-windows release7.4.9 into
+  ignored output/crm-s04-20261014/deps; SHA256
+  98af6511ca35601cc8d8200a92318e00f9d2d5425a9f7f3e8f699d3bdd59dcf6 matched release.
+  No OS installation/service. This is a Windows compatibility runtime, not Linux
+  production/prefork certification. Celery uses a separate real Redis and solo pool.
+- New scripts/verify_recovery_s04.py + recovery_runtime/recovery_scenarios/recovery_files
+  reuse isolated_runtime, new native PG cluster and owned loopback Redis/worker;
+  no input accepts a working DB URL. Child runtime identity checks allocated ports,
+  database names/user and disposable media paths. Windows stop targets owned process
+  tree (venv launcher can own child Python). Outputs captured under S04 ignored folder.
+- First queue run1791978871224576200: worker restart/WAIT/replay PASS but runner
+  exited1 while printing mixed-encoding PG log. Fixed UTF-8 reporting/LC_ALL.
+- Expanded run1791979026175071000.log: transaction crash/rollback/recovery PASS, then assertion
+  expected403 for operator but scoped lookup correctly returned404. Fixed exact
+  expected denial, leaving owner-success and outsider-denial checks intact.
+- Queue rerun1791979107030349500 PASS: real PostgreSQL/Redis workers, committed
+  progress, kill inside action transaction, stale claim recovery, API retry/cancel,
+  access denial and one reminder under repeated dispatch. No product code changed.
+- Full run1791979270642852100.log stopped before scenarios because runner isolation marker
+  was added while initial process had already started. Fresh immutable run required;
+  owned Redis/PG stopped. Do not edit executable drill inputs while it is running.
+- Full run1791979334167615600.log: export/private download/replay/revoked actor PASS; file
+  outage/retry/clean PASS; disk EICAR did not produce expected infected status.
+  Small independent real-ClamAV in-memory diagnostic returned clean=False,size68,
+  engine1.5.4/28153. Avoid host-file AV interference: retain memory EICAR assertion,
+  add harmless S04 custom signature to a disposable COPY of signature DB for real
+  file/worker quarantine. Do not weaken freshness/scan/download assertions.
+- Existing local AV signature copy was stale (daily01.10); copied only signature
+  files into S04 deps and ran freshclam against that copy. Public signature update
+  succeeded to daily28153; working scanner/config/signatures untouched. Final full
+  drill uses real ClamAV1.5.4 and unchanged72h freshness check.
+- Focused affected/dependent gate via existing isolated check helper:
+  apps.core.tests_file_scanning, apps.automations.tests, apps.notifications.tests,
+  apps.tasks.tests_reminders, B5 large entity/report export tests, B1 notification
+  claim/transient retry tests:73 PASS; system/drift PASS.
+  output/crm-s01-20261014/domain-1791979399385763900.log.
+- S03 receipt CI38554277365 now completed success; historical S03 code remains closed.
+- Full runtime1791979527175071700.log PASS: exports/files + broker queue loss/durable
+  recovery through actual beat + pg_dump/pg_restore/private-file/key restore.
+  Restored API uses DRF APIClient against restored PostgreSQL/media, not browser UI.
+  FK constraints, tenant links, corrupted restored-file denial, missing encryption
+  key denial and correct-key decryption PASS. Owned worker/beat/ClamD/Redis/PG stopped.
+- Final guard refinement rejects internal modes before Django/settings import;
+  --worker/--drill/--restored with no runtime all rejected (3 checks PASS). Runtime
+  executable paths are validated before startup. Final full rerun PASS on
+  these exact inputs: output/crm-s04-20261014/runtime-1791979744347639300.log. No product behavior rewrite or new schema required.
+  No frontend/product changes, no full local release gate or dependency reinstall.
+- Final runner syntax and changed relative links PASS; working/index hygiene PASS.
+  Required runtime and dependent tests complete. Commit/static/publication follows.
+  No working DB migration or service installation, no production RPO/RTO claim.
+
 ## CRM-S03-20261014 — service state and incident notifications
 
 Owner asked to start S03 after S02. Mode implementation; gaps code/evidence.
