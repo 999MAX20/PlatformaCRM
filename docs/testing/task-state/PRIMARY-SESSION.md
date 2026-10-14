@@ -6,6 +6,40 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CI-B301-PAYLOAD-20261015 — requested CI repair
+
+Owner explicitly requested fixing the reported red CI. Canonical root
+C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit; base
+772bca11461e62e29865dc152dbc958ee6924f97. Starting dirty files: STATUS.md and
+this checkpoint, both our final CI evidence from the previous phase; preserve them.
+Mode diagnosis/fix; scope B301 client-card payload failure and affected verification.
+Reuse existing API/serializers and isolated runner. Risk: hiding a real regression
+with a weaker measurement or budget, changing response semantics or tenant scope.
+First compare the actual rendered HTTP body with the existing json.dumps metric
+on the unchanged representative fixture. Keep 150000-byte budget and row counts;
+repair the measured cause only. Focused gate: entire B301 module, with an explicit
+measurement regression if instrumentation is wrong. Completion: isolated system/
+migration checks, static diff gate, normal push and actual CI. No working DB,
+new platform phase, threshold increase, fixture shrink or frontend redesign.
+Diagnosis on unchanged code: isolated representative test reproduces FAIL,
+150011 synthetic bytes vs 135616 actual JSONRenderer body bytes (32 SQL queries).
+CI's snapshot measured 150019; both exceed only the
+synthetic metric. `json.dumps(default=str)` uses ASCII escapes and spaces unlike
+the HTTP renderer. Fix measures `len(response.content)` for all B301 surfaces;
+new Cyrillic/Kazakh fixture assertion checks UTF-8 bytes, not character count.
+No application, fixture-volume, budget, permission or response-field change.
+Baseline log: output/ci-b301-payload/baseline.log. Initial diagnostic invocation
+missed DJANGO_SETTINGS_MODULE and failed before DB/tests; corrected to config.settings.
+Verification: existing Python3.12.14 environment, disposable SQLite through
+`scripts.codex_verify.isolated_runtime`; `manage.py check` PASS;
+`manage.py makemigrations --check --dry-run` PASS/no changes;
+`manage.py test apps.core.tests_b301_performance -v 2` 4 PASS, including all nine
+read surfaces, 60-to-300 related-row scaling and cross-tenant denial.
+Logs: output/ci-b301-payload/{system,schema,focused}.log. No dependencies installed.
+Frontend/browser and separate application suites skipped: only test measurement
+changed; full existing push CI will validate the integrated candidate separately.
+Working diff hygiene PASS. Publication/remote CI pending at this checkpoint.
+
 ## PLATFORM-REBUILD-01-20261014 — truthful clinic workspace
 
 User explicitly requested starting after delivery of the specification. Authorized
@@ -29,8 +63,18 @@ Acceptance: no sales/landing/subscription absence classified as service failure;
 unknown is not zero/healthy; list/detail/overview consistent; working navigation;
 existing grant/MFA and journal behavior retained. Verified commit + normal push
 to origin main under standing authorization; actual CI reported separately.
-Status: implemented and scoped verification passed on 15.10; publication follows
-standing authorization. Next result is manual clinic creation, not started.
+Status: implemented and scoped verification passed on 15.10; commit
+772bca11461e62e29865dc152dbc958ee6924f97 normally pushed to origin main and
+remote SHA verified. Next result is manual clinic creation, not started.
+Post-publication CI38622945054: frontend build PASS; backend 1695 tests,
+1 failure/10 skipped. B301MeasuredPerformanceTests payload bound for client_crm_card
+failed at 150019 > 150000 bytes. Baseline CI38618663948 on b056c3d has the exact
+same test/assertion/value (1681 tests, 1 failure/10 skipped), proving a pre-existing
+failure outside this platform phase. Overall CI remains failed; no threshold
+relaxation, unrelated client-card fix or full local-suite rerun performed.
+At that phase's stop the CI evidence remained local/uncommitted; publication was
+paused after the failure was observed. The owner subsequently requested the scoped
+repair above, which includes this preserved evidence in its publication.
 Owner clarification during implementation: pilot relevance alone never justifies
 removing production-useful logic/components. Keep estimated MRR and subscription
 logic, separate financial context from operational state and label estimate vs

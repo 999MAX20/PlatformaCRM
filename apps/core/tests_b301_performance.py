@@ -1,4 +1,3 @@
-import json
 from time import perf_counter
 
 from django.db import connection
@@ -236,7 +235,9 @@ class B301MeasuredPerformanceTests(TestCase):
         with CaptureQueriesContext(connection) as captured:
             response = self.api.get(path, params or {})
         elapsed_ms = round((perf_counter() - started) * 1000, 2)
-        payload_bytes = len(json.dumps(response.data, default=str).encode("utf-8"))
+        # Budget the rendered HTTP body, including the API renderer's UTF-8 and
+        # separators, rather than a differently serialized copy of response.data.
+        payload_bytes = len(response.content)
         print(
             f"B301_METRIC surface={label} queries={len(captured)} "
             f"payload_bytes={payload_bytes} elapsed_ms={elapsed_ms}"
@@ -366,6 +367,19 @@ class B301MeasuredPerformanceTests(TestCase):
             REPRESENTATIVE_ROWS,
         )
         self.assertTrue(results["client_crm_card"]["meta"]["has_more"]["timeline"])
+
+    def test_payload_metric_measures_rendered_utf8_response(self):
+        self.client_record.full_name = "Клиент Әлия"
+        self.client_record.save(update_fields=["full_name"])
+
+        response, _, payload_bytes = self._get_metric(
+            "client_crm_card_utf8",
+            f"/api/clients/{self.client_record.id}/crm-card/",
+        )
+
+        self.assertIn(self.client_record.full_name.encode("utf-8"), response.content)
+        self.assertEqual(payload_bytes, len(response.content))
+        self.assertGreater(payload_bytes, len(response.content.decode("utf-8")))
 
     def test_performance_surfaces_preserve_tenant_boundaries(self):
         card = self.api.get(f"/api/clients/{self.other_client.id}/crm-card/")
