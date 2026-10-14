@@ -8,8 +8,8 @@ Yandex Cloud выбран владельцем как направление; р
 ## Локальная работа
 
 Единственный writable checkout — `C:/Users/user/Desktop/PlatformaCRM`.
-`Desktop/Zani` — junction, не вторая копия. Один зарегистрированный writer,
-текущая ветка сохраняется. Серверы запускаются из canonical root; перед UI
+`Desktop/Zani` — junction, не вторая копия. Текущая ветка сохраняется;
+чужие изменения не перезаписываются. Серверы запускаются из canonical root; перед UI
 проверкой сверить source root backend/frontend/worker и build/profile.
 Не останавливать чужие процессы и не доверять localhost по одному HTTP 200.
 

@@ -1,38 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "projectName": "PlatformaCRM",
   "projectId": "local-3368c3df041be97f9549005fc6749ad2",
   "canonicalRoot": "C:\\Users\\user\\Desktop\\PlatformaCRM",
-  "generation": 5,
-  "primaryThreadId": "01a130d8-8f15-7d23-bffc-5e61c21a98e2",
-  "successorThreadId": null,
-  "transition": "idle",
-  "autoHandoffEnabled": false,
-  "compactionPolicy": "restore_same_thread",
-  "handoffPolicy": "completed_scope_only",
-  "orchestratorThreadId": "01a02859-08f3-7082-920d-49400f0fbb09",
-  "handoff": null,
-  "hookActivationStatus": "REQUIRES_REVIEW_AND_TRUST",
-  "handoffPath": "actual_docs/PROJECT_HANDOFF.md",
   "checkpointPath": "docs/testing/task-state/PRIMARY-SESSION.md",
-  "protocolPath": "docs/testing/SESSION_ROLLOVER.md",
-  "retiredThreadIds": [
-    "01a02906-d0a3-7820-80f2-adad5cf5a613",
-    "01a02915-a366-7150-91bb-ce938cd50138",
-    "01a02954-6edd-74f2-8944-794408801f0d",
-    "01a02916-4955-7491-a51e-6372a6d17ca8",
-    "01a0c36e-33aa-7c72-be9b-72624dd2c739",
-    "01a0d6c1-3ee4-7f92-b94c-0242bb2eb35e",
-    "01a0fc25-6286-77a2-94be-cabb2b179381",
-    "01a11776-e13a-76c2-9fc0-75d38228f649"
-  ],
-  "sourceThreadIds": [
-    "01a02906-d0a3-7820-80f2-adad5cf5a613",
-    "01a02915-a366-7150-91bb-ce938cd50138",
-    "01a02954-6edd-74f2-8944-794408801f0d",
-    "01a02916-4955-7491-a51e-6372a6d17ca8",
-    "01a0fc25-6286-77a2-94be-cabb2b179381",
-    "01a11776-e13a-76c2-9fc0-75d38228f649"
-  ],
-  "lastAuthorization": "Owner explicit request 2026-10-12: PlatformaCRM UI reconstructs the unresponsive primary, archives it, creates one local successor named Платформа CRM продолжение in the same canonical project, verifies comprehension and transfers ownership; no product phase. Exceptional recovery, source archived/interrupted before metadata writes."
+  "contextTransferPath": "docs/testing/SESSION_ROLLOVER.md",
+  "policy": "User-directed tasks; explicit context transfer only. No thread ownership or automatic coordination."
 }

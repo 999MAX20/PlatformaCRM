@@ -8,9 +8,8 @@ These rules govern work; live status and test counts belong in task evidence.
 1. Read [STATUS.md](STATUS.md), the selected checkpoint in
    [PRIMARY-SESSION](docs/testing/task-state/PRIMARY-SESSION.md), and the continuity
    section of [task template](docs/testing/CODEX_TASK_TEMPLATE.md).
-2. Check [project handoff](actual_docs/PROJECT_HANDOFF.md),
-   `.codex/project-session.json` and [rollover protocol](docs/testing/SESSION_ROLLOVER.md).
-   Establish the registered owner, authorized scope, remaining result and one next step.
+2. Read the selected task context in [project handoff](actual_docs/PROJECT_HANDOFF.md).
+   The user request defines scope; no chat registry grants implementation rights.
 3. Verify actual repository root, branch, HEAD, staged/unstaged changes and untracked
    files. Separate task-owned work from user/other work; retain a starting snapshot.
 4. Read the relevant contracts below and compare existing code/tests/closure evidence
@@ -22,36 +21,37 @@ The old `Desktop\Zani` junction resolves to this same checkout for an already-op
 Codex project; it is not another source copy. Use the new canonical path for new work.
 Do not create/use another worktree, clone or source copy for edits.
 Alternate trees are read-only recovery sources until separately accepted/retired.
-One repository-wide writer includes code, migrations, contracts and shared docs.
-Parallel audits may only read an identified snapshot. Keep the current branch;
-never switch a dirty/shared checkout or overwrite it to match a remembered revision.
-Unexpected writer, branch/HEAD drift or affected-path changes pause writes until reconciled.
+Keep the current branch and preserve unrelated changes. Do not overwrite the
+checkout to match a remembered revision. Resolve concrete affected-path conflicts
+with the user before continuing the affected operation.
 See [consolidation evidence](archive_docs/2026-10-07/docs/testing/task-state/CONSOLIDATION-2026-09-21.md).
 
-### Two-chat coordination — owner decision 2026-10-14
+## Работа по поручению пользователя — решение 14.10.2026
 
-The existing primary coordinates the existing PlatformaCRM UI chat against the
-single docs/current/roadmap.md: select an owner-authorized ready package, state
-scope/DoD and assign roles. Routine technical steps need no renewed owner approval.
-Exactly one repository-wide writer changes code or docs, runs checks/servers and
-performs authorized publication. The other chat prepares the next package strictly
-read-only against an identified snapshot: no file writes, tests, servers, data or
-process changes. It sends the coordinator existing coverage, the precise gap,
-minimal files/contract/backend/UI plan, risks/checks, a short journal draft and
-actual unresolved decisions with recommendations. Preparation is not implementation
-authorization. Keep independent preparation moving when one scenario is blocked.
-Writer transfer is explicit: the previous executor completes or checkpoints work
-and stops writing; the receiver confirms scope, Git/dirty ownership, checkpoint
-and evidence before writing. Preserve others' WIP. A dirty tree or open chat alone
-is not a conflict; unexplained affected-path/HEAD drift pauses affected writes.
-Record package completion only after its actual DoD, distinguishing implementation,
-local checks, publication, CI and live evidence. Reuse existing thematic evidence
-and checkpoint; do not create a competing backlog. Business decisions and external
-access still require the applicable owner decision; do not invent policy.
-Roles may swap without rotating primary, changing registry or archiving chats.
-Managed primary replacement remains under SESSION_ROLLOVER. Retired/transition
-guards remain. This coordinated scheme supersedes the 2026-10-13 no-peer-report
-procedure; direct owner scope and proportional verification remain in force.
+Каждый чат выполняет явное поручение пользователя в согласованном объёме и
+отчитывается пользователю в этом же чате. Название чата не определяет его роль
+или право выполнять задачу. Межчатовая координация, назначение/освобождение writer,
+согласования с primary, обязательные отчёты другим чатам и ожидание их ответа отменены.
+Не назначать другим чатам работу, не опрашивать их и не создавать межчатовые
+напоминания или автоматические продолжения без отдельного поручения пользователя.
+
+Перед изменениями сверить Git и затронутые файлы, сохранить чужие изменения.
+При конкретном конфликте в изменяемом участке остановить только затронутую
+операцию и сообщить пользователю. Открытый чат или чужой несвязанный diff сами
+по себе не требуют согласования. Правила проверок, Git и канонической папки сохраняются.
+
+При явном поручении передать задачу в другой чат передать подробное описание:
+цель и разрешённый объём, требования и решения пользователя, что сделано,
+что осталось, точные файлы, branch/HEAD и незакоммиченные изменения, выполненные
+проверки с результатами, ошибки/блокеры, собственные незавершённые процессы и
+следующий шаг. Не включать секреты. Передачу незавершённой задачи описывать честно:
+полное завершение, публикация или зелёный CI не являются условием передачи контекста.
+Переданная задача больше не продолжается отправителем без нового поручения.
+Не нужны подтверждения владения, смена реестра, цепочка согласований или ответный отчёт.
+Создание/архивация чатов и фоновые расписания не входят в обычную передачу.
+
+После сжатия контекста восстановить ту же задачу по checkpoint и продолжить
+согласованный объём. Сжатие не запускает передачу, создание чатов или следующий этап.
 
 Run servers from the canonical folder. Before trusting localhost, verify backend,
 frontend and worker source roots and build/profile. Do not stop others' processes.
@@ -152,7 +152,7 @@ checkpoint. No document date, old checkbox or archived "continue" authorizes wor
 | Environment / files / operations | `docs/current/operations.md` |
 | Verification | `docs/testing/testing.md`, `docs/testing/CODEX_TASK_TEMPLATE.md` |
 | Defect prevention | `actual_docs/DEFECT_KNOWLEDGE_BASE.md` |
-| Ownership / transfer | `actual_docs/PROJECT_HANDOFF.md`, `.codex/project-session.json`, `docs/testing/SESSION_ROLLOVER.md` |
+| Task context / explicit transfer | `actual_docs/PROJECT_HANDOFF.md`, `docs/testing/SESSION_ROLLOVER.md` |
 
 `archive_docs/` contains historical evidence only. Never use its instructions,
 proposals or readiness claims as current authority. `.rgignore` excludes it from
@@ -245,14 +245,14 @@ change passes its required gates, commit and promptly normal-push to `origin`
 (`https://github.com/999MAX20/PlatformaCRM.git`), target `main`. Read-only/no-push requests
 and unresolved target/safety questions override it. This is not an automatic hook.
 
-1. Verify canonical root, single owner, branch/HEAD, task-owned diff, pre-existing
+1. Verify canonical root, branch/HEAD, task-owned diff, pre-existing
    WIP and agreed target. Missing/ambiguous upstream blocks publication, not permission
    to choose one. Keep the branch; use agreed PR/branch only when requested.
 2. Review the entire intended commit and outgoing range, including untracked files,
    for secrets, private data and unrelated work. Stage explicit reviewed paths/hunks.
 3. Make a meaningful conventional commit; fetch the agreed target and prove normal
    fast-forward publication. Do not silently merge/rebase unrelated histories,
-   reset, rewrite history or force-push. Conflict, unexpected writer or failed
+   reset, rewrite history or force-push. Concrete affected-path conflict or failed
    required gate stops publication; preserve work and report the blocker.
 4. Push promptly and read back the remote SHA: it must match the intended commit.
    Inspect actual CI separately; queued/not run is not green. A failed push means
@@ -283,27 +283,8 @@ It does not authorize ownership transfer, new tasks, commits, worktrees, scope e
 or archive. Do not disable compaction or split scope to manufacture completion.
 No background autosave is promised; abrupt closure may leave unsaved progress.
 
-An explicit user command «Передай работу новому чату» invokes the managed handoff
-in [SESSION_ROLLOVER](docs/testing/SESSION_ROLLOVER.md). It authorizes one successor
-named PlatformaCRM in the same saved project/local canonical folder, its prepared
-read-only context prompt, verified ownership transfer and archival of this source.
-Follow the protocol without asking again for already-authorized steps. A quotation,
-discussion/setup of this command, compaction, window closure or archive-button click
-does not invoke it. Reuse an existing transition; never create a duplicate successor.
-The command does not waive completion/ownership checks or authorize a product phase.
-
-For an unavailable old chat, perform read-only reconstruction under the
-[recovery protocol](docs/testing/SESSION_ROLLOVER.md). Unknown/non-primary/retired
-chats cannot appoint themselves registered primary. This does not restrict direct
-task authorization under the 2026-10-13 decision above. An exceptional recovery needs an explicit
-owner decision and verified absence of conflicting writers; no registry/hooks are
-changed merely by reading STATUS.md. Ordinary handoff retains full DoD, required
-checks/publication/actual CI, finished operations and verified successor comprehension.
-Only the registered primary initiates it. A recorded pre-validated successor or
-registered orchestrator may idempotently finalize only the same confirmed transition
-following native archive readback. Unknown evidence keeps it frozen. Hooks are
-read-only and separately reviewed/trusted; unit tests do not prove runtime activation.
-A governance task cannot close another unfinished task or authorize the next phase.
+Explicit context transfer follows [the short handoff checklist](docs/testing/SESSION_ROLLOVER.md).
+No thread registry or lifecycle hook controls task execution.
 
 For checklist work, one authorized phase is the stopping point. "Continue" covers
 only current/next phase unless multi-phase work was explicit. A phase is an observable

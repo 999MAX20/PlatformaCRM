@@ -1,34 +1,4 @@
 {
-  "description": "Read-only continuity adapter. Compact restores and continues the same task; unfinished scope defers handoff. Recorded validated successor/orchestrator may only recover confirmed handoff finalization. Exact hooks require review/trust; no direct task, file, Git or network writes.",
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "^(startup|resume|clear|compact)$",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$(git rev-parse --show-toplevel)/.codex/continuity-hook.cjs\"",
-            "commandWindows": "node \"C:\\Users\\user\\Desktop\\PlatformaCRM\\.codex\\continuity-hook.cjs\"",
-            "timeout": 5,
-            "additionalContextLimit": 5000,
-            "statusMessage": "Restore project state and continue the current task"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$(git rev-parse --show-toplevel)/.codex/continuity-hook.cjs\"",
-            "commandWindows": "node \"C:\\Users\\user\\Desktop\\PlatformaCRM\\.codex\\continuity-hook.cjs\"",
-            "timeout": 5,
-            "additionalContextLimit": 5000,
-            "statusMessage": "Restore project state and continue the current task"
-          }
-        ]
-      }
-    ]
-  }
+  "description": "Inter-chat lifecycle hooks removed by owner decision 2026-10-14.",
+  "hooks": {}
 }
