@@ -17,3 +17,10 @@ export type SupportEvent = {
   old_value: string; new_value: string; reason: string; created_at: string;
 };
 export type SupportFilters = { business?: number; search?: string; status?: string; assignee?: string; unread?: boolean; page?: number; page_size?: number };
+
+export type SupportIncidentRef = { component: string; episode: number };
+export type SupportIncident = SupportIncidentRef & {
+  id?: number; business: number; business_name?: string; source: "background_processing"; started_at: string; historical: boolean;
+  current: { state: "healthy" | "degraded" | "unknown"; last_state: string; observed_at: string; affected_count: number; recovered_at: string | null; fresh: boolean } | null;
+  snapshot: { state: string; observed_at: string; affected_count: number; recovered_at: string | null } | null;
+};

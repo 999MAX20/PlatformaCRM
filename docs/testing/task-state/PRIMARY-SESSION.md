@@ -6,6 +6,74 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-INCIDENT-LINK-20261015 — explicit incident links and console analysis
+
+Owner requested implementation of explicit incident-to-support linking plus a
+separate deeper analysis of platform UX/backend, especially overview/operations.
+Mode implementation + scoped analysis; gap domain/link UI and product workflow.
+Canonical C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+base330e0c11823b4cbef441c436a08634054429a3fa, clean starting tree/index.
+Reuse ServiceComponentState episodes, support case domain/access/idempotency,
+platform diagnostics, shared components/API/i18n. Current observation is mutable;
+links must pin component+episode and a safe immutable snapshot. Never replace an
+old incident with the component's latest incident or label stale state healthy.
+Outcome: diagnostic -> incident -> existing/new case; case -> pinned incident.
+Platform-only diagnostic association, same Business, current-role recheck; clinic
+public messages/events unchanged. Metadata audit; no patient text/provider payload,
+new CRM access, grant/MFA change, auto-ticket, notification, BusinessEvent or AI.
+Migration adds support link storage; isolated only, no working DB operation in
+this scope. No full redesign implementation or removal of unrelated code now.
+Analysis will amend existing platform spec/roadmap with evidence, operator jobs,
+page/content/action requirements, backend gaps, permissions and bounded phases.
+Owner clarified internal-data depth: permanent detailed CRM read access to all
+clinics for platform operators. Recorded in access/spec section13 for the next
+console implementation; linking does not implement this read-path or expand
+mutation/export authority. Risk: cross-tenant association, private diagnostic leak,
+misleading recovery after recurrence, duplicate creation/linking or lost drafts.
+Focused backend gates immediately after domain/API: allowed/denied/cross-tenant,
+role loss, replay, invalid/changed episode, rollback, fresh/stale/recovered/newer
+observation. Completion dependent support+service-status/platform tests in isolated
+runtime, migration/system checks; affected desktop/mobile/browser flows, build,
+i18n, bundle and diff/docs gates. Reuse unchanged prior checks; no full local E2E.
+Publish task-owned reviewed changes via normal origin/main and inspect actual CI.
+
+Implemented: immutable IncidentLink per case/component/episode with safe snapshot;
+explicit platform-only GET/POST, same-Business validation and role recheck,
+atomic create+link, idempotent repeated link and metadata audit. No clinic-public
+event/text/state change. New page from clinic/operations, reverse case links,
+business-bound selector, manual create, current/stale/historical distinction.
+Analysis: spec section13 includes page/workflow matrix, exact count/truncation/
+freshness gaps, monitoring coverage, query-cost risks and backend acceptance.
+Proposed next scope: Operations -> Overview -> unified clinic + detailed CRM view
+-> missing observations/authorized actions; full redesign not implemented now.
+
+Checks: isolated SQLite `manage.py test apps.support.tests_incidents -v2`: 9 PASS.
+Temporary PostgreSQL17 via `output/platform-incident/verify_postgres.py`:
+`manage.py test apps.support apps.core.tests_service_status
+apps.core.tests_platform_s02 apps.core.tests_platform_operations -v2`: 77 PASS,
+including concurrent link uniqueness/audit and collector concurrency. Isolated
+`manage.py check` and `makemigrations --check --dry-run` PASS. Logs in
+output/platform-incident; temporary cluster stopped/removed by runner.
+`npm --prefix frontend run build`: first type check exposed missing existing
+episode/start/recovery fields in PlatformClinicService type; fixed, complete
+build/types/RU-KK-EN key parity PASS. `npm --prefix frontend run check:bundle` PASS.
+First browser incident run failed because exact combobox test selector excluded
+the shared Select's selected-value suffix; selector corrected.
+`.venv/Scripts/python.exe scripts/verify_platform_support.py --grep
+'support incident|support team creates'`: 4 PASS, desktop/mobile, incident flow
+RU/KK/EN with keyboard/no-overflow, 503 preserves selected case then retry, explicit
+existing/new link and reverse navigation, ordinary create/stale-version regression.
+Visual review of RU desktop/mobile, KK mobile and EN desktop screenshots PASS;
+artifacts frontend/test-results/platform-support-incidents-*/incident*.png.
+Log output/platform-support/browser-1792014089000010800.log. Disposable browser
+runtime exited normally. Local Markdown links checked (204): no missing paths;
+working diff hygiene PASS. Product code gates reused after docs/test-only updates.
+No backend/product changes after these gates; test fixture/selector only.
+Working DB/migrations/servers unchanged; support0002 remains unapplied locally.
+Full local project/E2E and production/deployment not run: this is scoped delivery.
+Final reviewed commit, committed-range static, normal push and actual CI follow;
+their exact receipt is reported to the owner, not inferred from local PASS.
+
 ## PLATFORM-SUPPORT-ACTIVATE-20261015 — local working activation
 
 Owner said continue after the remaining action was explicitly identified as

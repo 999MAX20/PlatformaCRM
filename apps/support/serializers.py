@@ -52,8 +52,23 @@ class CreateInput(StrictInput):
     text = serializers.CharField(max_length=6000, trim_whitespace=True)
 
 
+class IncidentInput(StrictInput):
+    component = serializers.ChoiceField(choices=["automations", "notifications", "exports", "files"])
+    episode = serializers.IntegerField(min_value=1)
+
+
+class IncidentLinkInput(IncidentInput):
+    business = serializers.IntegerField(min_value=1)
+
+
+class IncidentContext(IncidentLinkInput):
+    page = serializers.IntegerField(min_value=1, default=1)
+    page_size = serializers.IntegerField(min_value=1, max_value=100, default=20)
+
+
 class PlatformCreateInput(CreateInput):
     business = serializers.IntegerField(min_value=1)
+    incident = IncidentInput(required=False)
 
 
 class MessageInput(StrictInput):

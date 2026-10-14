@@ -17,6 +17,7 @@ import { Textarea } from "../../components/ui/Textarea";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { PlatformMetric, PlatformRecordedSignals, PlatformServiceBadge, platformDate } from "./PlatformData";
 import { useI18n } from "../../lib/i18n";
+import { incidentPath } from "../support/SupportIncidents";
 
 export function PlatformMerchantDetailPage() {
   const { id } = useParams();
@@ -84,6 +85,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
           {data.service_status?.components.map(component => <div key={component.component} className="flex flex-wrap items-start justify-between gap-2 border-b border-platforma-border pb-3 last:border-0 last:pb-0">
             <div><p className="text-sm font-medium">{t(`serviceStatus.component.${component.component}`)}</p><p className="mt-1 text-xs text-platforma-faint">{t("platform.workspace.observedAt", { date: platformDate(component.observed_at, language) })}</p></div>
             <span className={component.state === "degraded" ? "text-sm text-platforma-warning" : "text-sm text-platforma-subtle"}>{t(`platform.workspace.service.${component.state}`)}</span>
+            {component.episode > 0 && component.started_at && <Link className="platforma-focus-ring inline-flex min-h-10 items-center text-sm text-brand-700" to={incidentPath(data.id, component.component, component.episode)}>{t("supportIncidents.open")}</Link>}
           </div>)}
         </CardBody>
       </Card>

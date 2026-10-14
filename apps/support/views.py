@@ -165,3 +165,38 @@ class SupportStaffView(SupportView):
         paginator.page_size = params["page_size"]
         page = paginator.paginate_queryset(users, request)
         return paginator.get_paginated_response([inputs.actor_identity(user) for user in page])
+
+
+class SupportIncidentView(SupportView):
+    platform = True
+
+    def get(self, request):
+        from apps.support.incidents import get_incident
+        params = self.scope(request, inputs.IncidentContext)
+        incident = get_incident(actor=request.user, business_id=params["business"], component=params["component"], episode=params["episode"])
+        cases = case_projection(request.user, platform=True).filter(
+            business_id=params["business"], incident_links__component=params["component"], incident_links__episode=params["episode"],
+        ).order_by("-updated_at", "-pk")
+        response = self.page(request, cases, params, inputs.CaseSerializer)
+        response.data["incident"] = incident
+        return response
+
+
+class CaseIncidentsView(SupportView):
+    platform = True
+
+    def get(self, request, pk):
+        from apps.support.incidents import case_incidents
+        params = self.scope(request, inputs.PageInput)
+        case = self.case(request, pk, params)
+        paginator = PageNumberPagination()
+        paginator.page_size = params["page_size"]
+        links = paginator.paginate_queryset(case.incident_links.order_by("-linked_at", "-pk"), request)
+        return paginator.get_paginated_response(case_incidents(actor=request.user, case_id=pk, links=links))
+
+    def post(self, request, pk):
+        from apps.support.incidents import link_incident
+        self.case(request, pk, self.scope(request))
+        data = self.validate_input(inputs.IncidentLinkInput, request.data)
+        link = link_incident(actor=request.user, case_id=pk, business_id=data["business"], component=data["component"], episode=data["episode"])
+        return Response({"id": link.pk}, status=200)

@@ -13,6 +13,7 @@ import { useI18n } from "../../lib/i18n";
 import type { SupportCase, SupportScope } from "../../types/support";
 import { SupportActionDialog, type SupportAction } from "./SupportActionDialog";
 import { SupportPager, SupportThread } from "./SupportThread";
+import { SupportIncidents } from "./SupportIncidents";
 import { SupportError, SupportStatusBadge, retainSupportData, supportDate } from "./SupportUI";
 
 export function SupportDetailPage({ platform = false }: { platform?: boolean }) {
@@ -67,6 +68,7 @@ function SupportDetail({ id, scope }: { id: number; scope: SupportScope }) {
       {item.available_actions.internal_note && <SupportThread item={item} scope={scope} internal onDraft={onDraft} />}
     </div>
     <SupportHistory item={item} scope={scope} />
+    {scope.platform && <SupportIncidents caseId={item.id} />}
     {action && <SupportActionDialog key={action} item={item} scope={scope} action={action} onClose={() => setAction(null)} onDraft={onDraft} />}
   </div>;
 }

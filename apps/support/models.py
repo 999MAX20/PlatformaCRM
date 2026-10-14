@@ -93,3 +93,25 @@ class ReadState(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["case", "user"], name="support_read_state_user_case")]
+
+
+class IncidentLink(models.Model):
+    """Immutable diagnostic reference; never part of the clinic conversation."""
+
+    case = models.ForeignKey(SupportCase, on_delete=models.PROTECT, related_name="incident_links")
+    component = models.CharField(max_length=32)
+    episode = models.PositiveIntegerField()
+    started_at = models.DateTimeField()
+    observed_at = models.DateTimeField()
+    state = models.CharField(max_length=16)
+    affected_count = models.PositiveIntegerField()
+    recovered_at = models.DateTimeField(null=True)
+    linked_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="support_incident_links")
+    linked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["case", "component", "episode"], name="support_case_incident_unique"),
+            models.CheckConstraint(condition=models.Q(episode__gte=1), name="support_incident_positive_episode"),
+        ]
+        indexes = [models.Index(fields=["component", "episode", "case"])]

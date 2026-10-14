@@ -73,3 +73,15 @@ class SupportConcurrencyTests(TransactionTestCase):
         self.race(lambda index: mark_read(actor=self.owner, case_id=self.case_id, through_id=ids[index]).last_read_message_id)
         self.assertEqual(ReadState.objects.get(user=self.owner).last_read_message_id, max(ids))
         self.assertEqual(SupportCase.objects.get(pk=self.case_id).public_messages.count(), 3)
+
+    def test_concurrent_incident_link_creates_one_snapshot_and_audit(self):
+        from django.utils import timezone
+        from apps.core.models import AuditLog, ServiceComponentState
+        from apps.support.incidents import link_incident
+        from apps.support.models import IncidentLink
+        now = timezone.now()
+        ServiceComponentState.objects.create(business=self.business, component="exports", state="degraded", episode=1, started_at=now, observed_at=now)
+        result = self.race(lambda _: link_incident(actor=self.staff, case_id=self.case_id, business_id=self.business.pk, component="exports", episode=1).pk)
+        self.assertEqual(result[0], result[1])
+        self.assertEqual(IncidentLink.objects.count(), 1)
+        self.assertEqual(AuditLog.objects.filter(metadata__event="incident_linked").count(), 1)

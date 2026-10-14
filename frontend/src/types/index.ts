@@ -364,6 +364,9 @@ export type PlatformClinicService = {
     state: "healthy" | "degraded" | "unknown";
     last_state: string | null;
     observed_at: string | null;
+    episode: number;
+    started_at: string | null;
+    recovered_at: string | null;
   }>;
 };
 

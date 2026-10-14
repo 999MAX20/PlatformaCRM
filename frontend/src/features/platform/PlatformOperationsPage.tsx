@@ -1,4 +1,5 @@
 import { PlatformLoadError } from "./PlatformData";
+import { incidentPath } from "../support/SupportIncidents";
 import { valueOrUnknown } from "./PlatformData";
 import { Button } from "../../components/ui/Button";
 import { StatusNotice } from "../../components/ui/StatusNotice";
@@ -58,7 +59,7 @@ export function PlatformOperationsPage() {
         title={t(`serviceStatus.platform.${data.service_status?.status || "unknown"}`)}
         description={data.service_status?.businesses ? t("serviceStatus.platform.counts", data.service_status.businesses) : t("serviceStatus.unknown.text")} />
       {!!data.service_status?.incidents?.length && <Card><CardBody className="space-y-2 p-4">
-        {data.service_status.incidents.map(item => <Link key={`${item.business_id}:${item.component}:${item.episode}`} to={`/platform/merchants/${item.business_id}`} className="platforma-focus-ring block rounded-control border border-platforma-border p-3 text-sm">
+        {data.service_status.incidents.map(item => <Link key={`${item.business_id}:${item.component}:${item.episode}`} to={incidentPath(item.business_id, item.component, item.episode)} className="platforma-focus-ring block rounded-control border border-platforma-border p-3 text-sm">
           {t("platform.merchants.merchant")} #{item.business_id} · {t(`serviceStatus.component.${item.component}`)} · {t("serviceStatus.platform.overdue", { count: item.affected_count })}
         </Link>)}
       </CardBody></Card>}

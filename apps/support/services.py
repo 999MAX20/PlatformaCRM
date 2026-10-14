@@ -42,8 +42,11 @@ def audit_case(actor, case, kind, **metadata):
     )
 
 
-def create_case(*, actor, business_id, subject, text, idempotency_key, platform=False):
+def create_case(*, actor, business_id, subject, text, idempotency_key, platform=False, incident=None):
     business = get_case_business(actor, business_id, platform=platform)
+    if incident is not None and not platform:
+        from rest_framework.exceptions import PermissionDenied
+        raise PermissionDenied()
     subject = clean_text(subject, "subject", 200)
     text = clean_text(text, "text", 6000)
     key = require_key(idempotency_key)
@@ -62,11 +65,14 @@ def create_case(*, actor, business_id, subject, text, idempotency_key, platform=
         PublicMessage.objects.create(case=case, author=actor, text=text, source=source)
         CaseEvent.objects.create(case=case, actor=actor, kind=CaseEvent.Kinds.CREATED)
         audit_case(actor, case, "created", source=source)
+        if incident is not None:
+            from apps.support.incidents import link_incident
+            link_incident(actor=actor, case_id=case.pk, business_id=business_id, **incident)
         return CRMCommandResult(data={"case_id": case.pk}, status_code=201, resource=case)
 
     return run_idempotent_crm_command(
         business=business, actor=actor, action=f"support.create.{source}",
-        idempotency_key=key, payload={"subject": subject, "text": text}, operation=perform,
+        idempotency_key=key, payload={"subject": subject, "text": text, **({"incident": incident} if incident is not None else {})}, operation=perform,
     )
 
 
