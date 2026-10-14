@@ -6,6 +6,43 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-REBUILD-SPEC-20261014 — operator console specification
+
+Owner approved redesigning /platform from its workflows, retaining tested services
+and removing obsolete code only after replacement. Current authorized phase:
+detailed functional analysis/specification, not deletion or product implementation.
+Owner additionally selected a simple internal support-case queue and manual clinic
+creation by platform_admin only. Staff help with setup under existing access rules.
+Support cases originate both from platform staff and the clinic CRM Support button.
+Mode analysis/docs; gaps product specification, code and environment evidence.
+Canonical C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+base293ac49f0d8b00731cc8b71d7848fb31de1d76f5, starting worktree/index clean.
+Reuse S02/S03 evidence, platform APIs/selectors, role/grant/MFA/audit, Business and
+onboarding services, shared UI. Preserve S02/S03/S04 closure boundaries.
+Deliverable: registered repository specification with roles/actions, journeys,
+screen map/states, data/API contracts, reuse/change/create/remove inventory,
+acceptance, rollout/retirement sequence and explicit unresolved policy.
+No /admin changes, source deletion, working migration, worker changes, provider
+calls, messages, billing or new account privileges. Local handoff runtime stays running.
+Risk: silently turning proposals into permissions or readiness claims. Checks:
+source/evidence traceability, decision consistency, document links/registry,
+working/index/real committed-range diff hygiene; no build/test install for docs.
+Status: specification complete; implementation not started.
+Deliverable: [registered specification](../platform-rebuild-spec-20261014.md).
+Includes source-backed gap analysis, four-screen navigation, role/action matrix,
+onboarding, support lifecycle/public-private separation, proposed API/data model,
+observability semantics, reuse/retirement inventory and acceptance matrix.
+Open policy: invitation delivery/acceptance, clinic case visibility, close/reopen,
+retention and SLA. Only dependent behavior awaits those decisions.
+Roadmap updated with proposed result order; existing S02/S03/S04 closure unchanged.
+Verification: `git diff --check` PASS; Python pathlib/re/json check of all 18
+specification links, unique evidence registry and UTF-8 PASS. Reviewed complete
+six-file docs change including new 323-line specification: no secrets/unrelated work.
+No executable examples added. No application tests/builds required for docs-only.
+Publication uses standing authorization, explicit six paths, normal push HEAD:main;
+index/committed-range checks and actual remote/CI result are reported in this task.
+No working DB/process/provider changes. Existing workflow is CI only, no deploy job.
+
 ## CRM-R02-AI-RETURN-ACTIVATE-20261014 — local working activation
 
 Owner explicitly requested activation/check in the current working environment.

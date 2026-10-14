@@ -26,6 +26,7 @@
 | Регрессионные прецеденты | [ZR rules](../actual_docs/DEFECT_KNOWLEDGE_BASE.md) |
 | Evidence операционного UI-пакета 08.10 | [Проверки шести экранов](testing/ui-operations-20261008.md) |
 | Evidence / предложение по странице подключений 08.10 | [Функциональный анализ и редизайн](testing/integrations-functional-review-20261008.md) |
+| Спецификация пересборки /platform 14.10 | [Сценарии, UX и backend-контракты](testing/platform-rebuild-spec-20261014.md) — решения владельца и предложения; не реализовано |
 
 ## История и новые документы
 
