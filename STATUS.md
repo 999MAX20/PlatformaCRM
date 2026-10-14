@@ -6,6 +6,14 @@
 
 # PlatformaCRM — текущий статус
 
+14.10.2026. CRM-R02: записаны ответы владельца по бесплатному реальному пилоту
+на 3–5 пользователей с ориентиром на 30.10 минимум на две недели.
+Нужны Telegram + WhatsApp, клиентский AI и инфраструктура в Казахстане.
+Провайдеры и правило возврата AI после часа тишины ещё требуют выбора/уточнения;
+R02 открыт, подключения и deployment не выполнены. Анализ и решения —
+в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#crm-r02-20261014--pilot-decisions-and-provider-research).
+Итоговый CI S04 (38562361806) завершён успешно.
+
 14.10.2026. CRM-S04 закрыт в локальной изолированной границе: PostgreSQL/Redis/
 workers, recovery/retry/cancel, экспорт/файлы и фактическое восстановление backup.
 Scope/проверки — [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#crm-s04-20261014--isolated-operations-and-recovery).

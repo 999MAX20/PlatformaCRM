@@ -6,6 +6,92 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-R02-20261014 — pilot decisions and provider research
+
+Task contract: owner answered pilot questionnaire and requested Kazakhstan WhatsApp/
+hosting research plus an explanation of current customer-agent controls. Mode analysis/
+docs; gap policy/environment and named future implementation. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+base 0175cd5884c4fc6b037eea18ccc92da0a46d3299; clean starting tree.
+Reuse current AI/channel/notification/operations implementations; no product rewrite,
+credentials, subscriptions, external messages, deployments or working migrations.
+Checks: inspect relevant code/contracts, primary provider sources, docs consistency,
+links, working/index/actual committed-range hygiene. No app tests/build for docs.
+
+Owner decisions:
+- Clinic name and branch count are not prerequisites for preparation; actual routing
+  must use the connected clinic's real Business/branch setup. 3–5 users; clinic
+  administrator collects feedback/accepts clinic workflow. Individual roles not assigned.
+- Exercise all current CRM functionality/behavior; this does not resume deferred ERP,
+  integrations, CRM analyst, billing or clinical-record development. Real client,
+  lead and appointment data after access opens; preserve data after the pilot.
+- Telegram AND WhatsApp are required; clinics connect their own accounts. YCloud
+  is a tentative WhatsApp choice, alternatives requested. No live accounts yet.
+- Only customer Inbox AI in pilot; CRM/analytics agent development remains paused.
+  Auto replies when agent/business policy permit; explicit prepare-reply action
+  yields a draft. Replies and appointment reminders are desired pilot scope.
+- Owner proposes returning a human-handled dialog to AI after 1 hour since the
+  last customer/operator message. No immediate outbound message on timer implied.
+  Current code has explicit staff resume, no hour-based resume found. Mandatory
+  safety/review stops remain current contract; timer applicability to these and
+  unanswered human requests needs a decision before dependent implementation.
+- Infrastructure should be physically in Kazakhstan; Yandex ecosystem is no longer
+  the selected hosting direction. Domain purchased, hosting account unspecified.
+- Owner is technical operator and sole pilot stop/resume decision maker. Platform
+  administration page is requested incident surface; it cannot alert through a
+  total application outage. Independent alert destination remains undecided.
+- Keep current client Excel/CSV import; no wider migration scope selected. Whether
+  CRM replaces an existing schedule or runs alongside it remains to be explained.
+- Target start 30 October 2026, duration at least approximately two weeks; target,
+  not a proven launch date. Free pilot, owner funds infrastructure/AI/messages;
+  do not introduce pilot billing caps or automatic spend cutoff. Existing abuse/
+  safety protections are not removed by this commercial decision.
+- Success: correct CRM relationships/no duplicate effects, grounded customer AI
+  availability/booking behavior, recovery/reliability. No invented uptime percentage
+  or guarantee of zero bugs. User chooses stop; no new automatic global shutdown.
+- Retain business data and accounts for continued use; billing/limits after pilot
+  require their own implementation. Observe interface/system behavior without
+  collecting raw message contents/secrets in diagnostic logs.
+
+Code inspection (not new runtime certification): AIAgentActionsSection.tsx exposes
+pipeline mode, auto_send_reply, creation_policy and per-tool controls; Inbox
+ConversationsPage.tsx has prepareReply preview and explicit insertion/send. Existing
+AI contract covers controlled client/lead/task/open deal/new appointment creation,
+fresh slot validation and staff-only existing-record changes. Resources such as
+chairs/equipment remain outside current scheduling scope. Telegram provider and
+Meta Cloud WhatsApp adapter exist; no YCloud adapter found. Existing reminder
+delivery uses Telegram/WhatsApp but live provider acceptance remains required.
+
+Primary-source research, 14 October 2026 (not contractual/provider certification):
+- YCloud is a WhatsApp provider headquartered in Singapore, distinct from Yandex:
+  https://www.ycloud.com/about-us
+- edna Kazakhstan states official Meta partnership; documented API and partner
+  program: https://edna.kz/about-company/ and
+  https://docs-pulse.edna.kz/docs/api/messages/sending . Candidate for API transport;
+  tenant onboarding, data geography, credentials/portability and terms unconfirmed.
+- IntellectDialog has Kazakhstan LLP details and WABA/API in its offer:
+  https://intellectdialog.com/docs/ophert/kz/ooo . API-only SaaS suitability and
+  location of processors/backups remain to verify, not inferred from local company.
+- SMSC.KZ documents WhatsApp send API: https://smsc.kz/api/http/send/whatsapp/ .
+  Full inbound/webhook/multi-clinic onboarding fit not established by this page.
+- PS Cloud lists PostgreSQL/KeyDB managed DBs and Kazakhstan locations:
+  https://www.ps.kz/ru/hosting/dbaas ; compute/S3 described at https://www.ps.kz/ru .
+  Recommended first infrastructure candidate. KeyDB is not the exact Redis runtime
+  tested in S04; compatibility/queue recovery or separate Redis must be verified.
+- Hoster.kz offers Kazakhstan cloud VPS: https://hoster.kz/cloud/vps/ . Alternative
+  with self-managed components; equivalent managed PostgreSQL/Redis not confirmed.
+- WhatsApp templates outside the 24h window and opt-in:
+  https://whatsappbusiness.com/policy/ . Hour-based AI timer does not reset this window.
+
+R02 remains OPEN: provider/target choice, safe onboarding credentials, applicable
+legal texts, RPO/RTO/backup retention and human-handoff timer policy are not finalized.
+No outreach to vendors. No unverified news about Yandex attacks accepted as fact.
+S04 receipt CI38562361806 completed success, checked before this analysis.
+Verification: changed relative link targets and working diff hygiene PASS; five
+intentional Markdown files reviewed. No app/environment inputs changed, so no
+build, install, browser or database tests run. Publication uses the standing normal
+push authorization; actual commit/remote SHA and CI are reported with the response.
+
 ## CRM-S04-20261014 — isolated operations and recovery
 
 Owner authorized S04 on 14.10 after S03. Mode evidence/environment with minimal
