@@ -297,5 +297,6 @@ urlpatterns = [
     path("api/ai/owner-brief/daily/", AIOwnerDailyBriefView.as_view(), name="ai_owner_daily_brief"),
     path("api/ai/tools/suggest/", AIToolSuggestView.as_view(), name="ai_tools_suggest"),
     path("api/ai/tools/<int:log_id>/execute/", AIToolExecuteView.as_view(), name="ai_tools_execute"),
+    path("api/", include("apps.support.urls")),
     path("api/", include(router.urls)),
 ]

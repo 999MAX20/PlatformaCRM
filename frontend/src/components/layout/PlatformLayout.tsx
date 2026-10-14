@@ -1,4 +1,4 @@
-import { Activity, LayoutDashboard, LogOut, ShieldCheck, Store } from "lucide-react";
+import { Activity, LayoutDashboard, LifeBuoy, LogOut, ShieldCheck, Store } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { useAuth } from "../../features/auth/AuthProvider";
 import { cn } from "../../lib/cn";
@@ -9,6 +9,7 @@ import { LanguageSelector } from "./LanguageSelector";
 const platformNav = [
   { to: "/platform", label: "platform.nav.overview", icon: LayoutDashboard, end: true },
   { to: "/platform/merchants", label: "platform.nav.merchants", icon: Store },
+  { to: "/platform/support", label: "supportCases.title", icon: LifeBuoy },
   { to: "/platform/operations", label: "platform.nav.operations", icon: Activity },
 ];
 

@@ -313,7 +313,12 @@ function BusinessRouteRedirect({ section }: { section: "services" | "resources" 
   );
 }
 
+const SupportListPage = lazy(() => import("../features/support/SupportListPage").then(module => ({ default: module.SupportListPage })));
+const SupportDetailPage = lazy(() => import("../features/support/SupportDetailPage").then(module => ({ default: module.SupportDetailPage })));
+
 const merchantChildren = [
+  { path: "support", element: <PageLoader><SupportListPage /></PageLoader> },
+  { path: "support/:id", element: <PageLoader><SupportDetailPage /></PageLoader> },
   {
     index: true,
     element: <UserStartRedirect />,
@@ -943,6 +948,8 @@ const router = createBrowserRouter([
           </PageLoader>
         ),
       },
+      { path: "support", element: <PageLoader><SupportListPage platform /></PageLoader> },
+      { path: "support/:id", element: <PageLoader><SupportDetailPage platform /></PageLoader> },
       {
         path: "prospects",
         element: <Navigate to="/platform" replace />,

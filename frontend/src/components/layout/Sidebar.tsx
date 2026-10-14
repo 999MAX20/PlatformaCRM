@@ -9,6 +9,7 @@ import {
   Inbox,
   KanbanSquare,
   ListChecks,
+  LifeBuoy,
   MessageSquareText,
   PlugZap,
   Settings,
@@ -61,6 +62,7 @@ const desktopSections = [
       { to: "/app/analytics", label: "nav.analytics", icon: BarChart3, resource: "analytics" },
       { to: "/app/timeline", label: "nav.timeline", icon: Clock3, resource: "analytics" },
       { to: "/app/settings", label: "nav.settings", icon: Settings, resource: "settings", action: "update" },
+      { to: "/app/support", label: "supportCases.title", icon: LifeBuoy },
     ],
   },
 ] satisfies SidebarSection[];
@@ -83,6 +85,7 @@ const mobileDrawerSections = [
       { to: "/app/analytics", label: "nav.analytics", icon: BarChart3, resource: "analytics" },
       { to: "/app/timeline", label: "nav.timeline", icon: Clock3, resource: "analytics" },
       { to: "/app/settings", label: "nav.settings", icon: Settings, resource: "settings", action: "update" },
+      { to: "/app/support", label: "supportCases.title", icon: LifeBuoy },
     ],
   },
 ] satisfies SidebarSection[];

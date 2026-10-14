@@ -124,6 +124,7 @@ INSTALLED_APPS = [
     "apps.leads",
     "apps.scheduling",
     "apps.tasks",
+    "apps.support",
     "apps.conversations",
     "apps.notifications",
     "apps.outreach",

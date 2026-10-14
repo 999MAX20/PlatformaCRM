@@ -6,6 +6,86 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-SUPPORT-20261015 — clinic and platform support infrastructure
+
+Owner explicitly skipped manual-business onboarding and requested support implementation.
+Canonical C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+base e52db325b961a89dcfcfddc57abdfac75c943eb4; clean worktree/index at start.
+Prior CI-B301 correction is published; CI38628077604 backend/frontend SUCCESS,
+1696 backend tests OK/10 skipped. No prior failure is carried as a current blocker.
+Mode implementation; gap domain/API/reachable UI. Reuse accounts/platform roles,
+Business membership, CRM idempotency, audit, shared UI/API/i18n and isolated runners.
+Outcome: clinic creates a case; platform queues/assigns/responds/keeps private notes;
+clinic reads replies, history and status. Platform can manually create clinic cases.
+Owner decisions: employee sees own, owner/admin all cases in own Business; platform
+resolves with outcome; author/owner/admin explicitly reopen with reason. Messages
+never implicitly change status. First release has no editing/deleting history,
+attachments, external notifications, SLA automation, AI, onboarding or new grants.
+Permissions: dedicated narrow support domain; no extra access to CRM/patient data.
+Platform_admin/platform_manager manage support; active membership scoped clinic
+access. Private notes have separate storage/selectors/API and never enter clinic data.
+Migrations: new support tables, isolated creation/upgrade only; working DB activation
+requires its own target authorization. Notifications: read states/unread in support
+UI; no external delivery or general notification fanout. Events/audit: immutable
+case history plus sanitized metadata audit, no message/note bodies in global audit.
+No BusinessEvent consumer or AI behavior added; no worker/process changes.
+Risk: cross-tenant/cross-case access, private-note leakage, replay and lost updates.
+Backend iteration gates after coherent domain/API slices: happy path, invalid input,
+all roles/role loss, tenant isolation, private-note non-disclosure, idempotency,
+rollback, version conflicts, actual PostgreSQL concurrency. Completion: affected
+dependent suites, system/migration checks, frontend build/types/i18n, focused real
+API browser flows desktop/mobile/keyboard/locales and failure/retry/draft/conflict.
+Publish reviewed task-only diff by normal push, inspect actual CI. No full E2E
+or dependency reinstall by default. No delegation, cross-task coordination or timers.
+Progress: new apps.support models/services/selectors/API; explicit case, public
+message, internal note, event and read-cursor tables; migration support0001 generated.
+Domain iteration isolated SQLite: 17 PASS (output/platform-support/domain.log).
+API+domain iteration isolated SQLite: 31 PASS (output/platform-support/api.log),
+including scoped pagination/query bound and private-note non-disclosure.
+Mutable case transitions/assignment use versions; immutable message/note appends
+use idempotency and row locks, never overwrite or silently transition. Private
+notes do not change public updated_at/version/unread. Manual platform cases retain
+real author and use the clinic owner as contact; no impersonated owner message.
+PostgreSQL isolated gate: `manage.py test apps.support apps.core.tests_platform_s02 -v 2`
+41 PASS including three real concurrent assignment/message/read-cursor tests.
+Owned temporary PostgreSQL cluster stopped and removed. Log postgres.log; wrapper
+reported an output-decoding error after successful test completion, verified from log.
+Frontend queue/detail/create/assign/status/public/private forms implemented;
+shared DraftGuard extracted unchanged with old TaskDraftGuard compatibility export.
+First browser run: both desktop/mobile public/private lifecycle scenarios PASS;
+conflict/recovery assertions hit getByLabel ambiguity after textarea value render.
+Fixed selectors to role=textbox; no assertion weakened. Added transient detail
+refresh failure coverage and retention of loaded list/card and drafts on temporary
+errors; permission/not-found/auth failures still hide data. Browser rerun pending.
+`npm run build` and `npm run check:bundle` initially PASS after fixing TS unknown
+conditional; final rerun after error recovery adjustment pending. 5936 i18n keys.
+Isolated `manage.py check` PASS; `makemigrations --check --dry-run` PASS/no drift.
+Logs output/platform-support. Working DB/processes untouched; support0001 activation
+pending separately authorized target. No dependency installation or full local E2E.
+
+Completion evidence (unchanged final app inputs):
+- `npm run build` PASS (types, 5936 i18n keys, app/widget production builds);
+  `npm run check:bundle` PASS. Log output/platform-support/build.log.
+- `.venv/Scripts/python.exe scripts/verify_platform_support.py`: second run
+  browser-1792011006191828400.log has 4 PASS (desktop/mobile lifecycle and conflict)
+  and 2 failures from ambiguous global refresh selector, not application failure.
+- `.venv/Scripts/python.exe scripts/verify_platform_support.py --grep "support handles recovery"`:
+  browser-1792011229031686100.log 2 PASS. Selector scoped to support page; explicit
+  503 responses and rendered error asserted before retry. Proves loaded detail and
+  draft survive failed refresh/send, keep-editing navigation guard, successful retry,
+  RU/KK/EN focus/no horizontal overflow and 403 content removal on both viewports.
+- Six distinct browser scenarios now PASS; unchanged lifecycle/conflict passes
+  reused after test-only selector adjustment. Desktop team and mobile clinic
+  screenshots visually inspected: clear public/private separation, wrapped controls,
+  readable forms/history, no horizontal overflow. Synthetic fixtures only.
+- Documentation relative links and working/index diff hygiene PASS; no secrets or
+  unrelated files in intended 45-path changeset. Shared DraftGuard implementation
+  matches previous task guard; compatibility export and representative flow verified.
+No required local failures remain. Full project/local E2E skipped per proportional
+scope; existing push CI inspected separately. All owned verification processes
+completed and disposable runtimes removed. No working migration, deployment,
+external messages, new grants or provider calls. Publication pending below.
+
 ## CI-B301-PAYLOAD-20261015 — requested CI repair
 
 Owner explicitly requested fixing the reported red CI. Canonical root
