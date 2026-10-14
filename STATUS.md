@@ -6,12 +6,17 @@
 
 # PlatformaCRM — текущий статус
 
+15.10.2026. PLATFORM-SUPPORT-ACTIVATE завершён: проверены backup/restore,
+support0001 применена к локальной db.sqlite3; бизнес-данные сохранены, integrity
+и read-only API/HTTP PASS. Поддержка активирована локально. CI38636405892:
+frontend SUCCESS, backend IN_PROGRESS. Scope/evidence — checkpoint.
+
 15.10.2026. PLATFORM-SUPPORT-20261015 реализован и локально проверен: очередь
 команды и поддержка в CRM, публичные ответы/приватные заметки, назначение, решение
 с итогом и явное возобновление. Employee — свои, owner/admin — все своей клиники.
 41 PostgreSQL и 6 browser checks, build/types/i18n/bundle, system/schema PASS.
 Код dd1c6bb опубликован в main, SHA подтверждён; CI38636349215 queued.
-Рабочая support0001 не применена; onboarding отложен. Evidence — в checkpoint.
+Рабочая support0001 применена отдельной операцией выше; onboarding отложен.
 Предыдущий CI-B301-PAYLOAD опубликован e52db32; CI38628077604 полностью PASS.
 
 15.10.2026. CI-B301-PAYLOAD: по поручению владельца исправлено измерение размера

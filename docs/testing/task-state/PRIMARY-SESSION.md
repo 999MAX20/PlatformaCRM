@@ -6,6 +6,42 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-SUPPORT-ACTIVATE-20261015 — local working activation
+
+Owner said continue after the remaining action was explicitly identified as
+applying support0001 to the current working DB. Mode operation; environment gap.
+Canonical C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+base de02851145568887576173cb9527df07c3fd5c9f; clean starting tree/index.
+Target canonical db.sqlite3, existing local backend8000/frontend5173; no staging,
+production, onboarding or new feature scope. Reuse passed support backend/browser
+checks; do not rerun full suites against working data. Plan: verify runtime roots,
+SQLite online backup and integrity, exact single migration plan, apply support0001,
+check existing table data/integrity and read-only support API/HTTP availability.
+Risk is working schema/data integrity; new migration only creates five tables.
+No seed, fake cases, credential/role changes, external sends or worker restart.
+CI for implementation is still running at initial inspection; no failed gate.
+Completion: runtime cwd verified read-only for backend PID1532 (8000), Vite
+PID6888 (5173, frontend) and existing handoff supervisor/worker/beat; all canonical.
+Environment local, SQLite canonical db.sqlite3; exact plan support0001 only.
+`output/local-support/activate.py` used SQLite online backup, verified integrity
+and restored to an in-memory DB with matching table digests before applying
+`manage.py migrate support 0001_initial --noinput`. PASS; five new empty tables.
+Backup: output/local-support/before-support0001-20261014T210057Z.sqlite3 (local
+private working backup, never staged). Report: output/local-support/activation.json.
+Working integrity PASS, foreign-key check 0 issues; hashes/counts of all existing
+business tables unchanged. Only expected content types/permissions and migration
+record added by Django. `manage.py check` PASS; target migration plan now empty.
+Read-only APIClient smoke on working DB: platform and clinic lists 200/empty,
+clinic-to-platform denial403. No new case/message/account or token persisted.
+Actual HTTP: health200, anonymous support APIs401, frontend app/platform support
+routes200. This is local API/route activation, not another authenticated browser
+suite or production certification; six prior isolated browser passes reused.
+Existing handoff runtime left running unchanged. No servers stopped/restarted.
+One initial diagnostics attempt lacked optional psutil; used existing native
+read-only process-root helper, no installation. CI38636405892 frontend SUCCESS,
+backend IN_PROGRESS at completion inspection; no green overall CI claim.
+Activation complete; repository receipt is docs-only with diff/link checks.
+
 ## PLATFORM-SUPPORT-20261015 — clinic and platform support infrastructure
 
 Owner explicitly skipped manual-business onboarding and requested support implementation.

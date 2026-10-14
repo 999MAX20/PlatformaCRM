@@ -153,3 +153,13 @@ Data exposure, потеря данных или необратимое дейс�
 
 Происхождение: [production readiness](../../archive_docs/2026-10-07/docs/production/production-readiness.md),
 [AV](../../archive_docs/2026-10-07/docs/security/file-antivirus.md).
+
+## Локальная активация поддержки — 15.10.2026
+
+По поручению владельца support0001 применена к canonical `db.sqlite3` после
+SQLite online backup и проверки восстановления/целостности. Созданы пять пустых
+таблиц поддержки; существующие бизнес-данные сохранены. Очереди доступны через
+локальные backend8000/frontend5173; read-only API и HTTP smoke PASS.
+Backup и отчёт находятся в `output/local-support/` и не публикуются в Git.
+Поддержке не нужен отдельный worker; существующие процессы оставлены без изменений.
+Это локальная активация, не deployment или приёмка облачной среды.
