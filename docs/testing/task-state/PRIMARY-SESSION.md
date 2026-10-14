@@ -130,6 +130,21 @@ Final notification evidence (14.10, after owner decision):
   committed-range static and publication receipt follow. No full local release gate,
   dependency install, working migration, external provider call or deployment.
 
+
+Publication receipt: S03 complete in agreed scoped boundary, S04 NOT started.
+Canonical root and branch unchanged. Code1efc0f8d45d246a9d191b2243d6d3b15573c8613
+normal-pushed origin HEAD:main; remote main read back at exactly this SHA.
+`.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+0a9b15f72621068a2f20d43bbf31a01679679f63` PASS on the actual committed range
+(diff working/index/range, migration drift, system check). New files and full
+outgoing range reviewed; a trailing blank line in the new test was removed before
+commit. No unrelated WIP. This receipt changes docs only; application PASS reused.
+GitHub CI38554191822 queued on readback, not claimed green. Push triggers existing
+CI only; no deployment requested/performed. All owned tests/servers/PG stopped.
+Remaining environment boundary: working core0012 migration, worker/beat operation,
+independent external monitoring and production acceptance. Next roadmap item S04
+requires its own user instruction; no automatic continuation/coordination.
+
 ## CRM-S02-20261014 — operational platform administration
 
 Owner authorized S02 and the sequence inspect/reuse → server rules with focused

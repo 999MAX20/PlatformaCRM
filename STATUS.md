@@ -6,13 +6,14 @@
 
 # PlatformaCRM — текущий статус
 
-14.10.2026. CRM-S03 реализован и локально проверен: понятное состояние сервиса,
+14.10.2026. CRM-S03 закрыт в согласованной scoped-границе: понятное состояние сервиса,
 жизненный цикл инцидентов и уведомления без повторов. Scope/риски/проверки —
 в [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#crm-s03-20261014--service-state-and-incident-notifications).
 Состояние/API/UI и уведомления реализованы; scoped-проверки PASS.
 Владелец выбрал owner/admin для колокольчика; сотрудникам — баннер.
 26 backend +11 PostgreSQL +8 browser checks, build/types/bundle PASS.
-Остались committed-range static и публикация; CI ещё не запускался.
+Committed-range static PASS; код 1efc0f8 опубликован в main, SHA подтверждён.
+CI38554191822 queued, не PASS. Рабочий запуск мониторинга отдельно.
 S04 не начат; рабочая БД и внешние отправки вне объёма.
 
 14.10.2026. CRM-S02 закрыт в согласованной scoped-границе: серверный поиск/пагинация,
