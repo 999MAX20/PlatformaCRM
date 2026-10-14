@@ -6,10 +6,11 @@
 
 # PlatformaCRM — текущий статус
 
-14.10.2026. CRM-S04 реализован и проверен: изолированные PostgreSQL/Redis/
+14.10.2026. CRM-S04 закрыт в локальной изолированной границе: PostgreSQL/Redis/
 workers, recovery/retry/cancel, экспорт/файлы и фактическое восстановление backup.
 Scope/проверки — [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#crm-s04-20261014--isolated-operations-and-recovery).
-Полный изолированный runtime и73 зависимых теста PASS; публикация завершается.
+Полный изолированный runtime и 73 зависимых теста PASS; committed-range static PASS.
+Код e3dbd97 опубликован в main, удалённый SHA подтверждён; CI38562250124 in_progress.
 Рабочая БД, облачная среда и внешние отправки вне объёма.
 
 14.10.2026. CRM-S03 закрыт в согласованной scoped-границе: понятное состояние сервиса,

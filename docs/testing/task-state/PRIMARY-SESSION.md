@@ -91,8 +91,14 @@ S04 progress/evidence 14.10:
   these exact inputs: output/crm-s04-20261014/runtime-1791979744347639300.log. No product behavior rewrite or new schema required.
   No frontend/product changes, no full local release gate or dependency reinstall.
 - Final runner syntax and changed relative links PASS; working/index hygiene PASS.
-  Required runtime and dependent tests complete. Commit/static/publication follows.
+  Required runtime and dependent tests complete.
   No working DB migration or service installation, no production RPO/RTO claim.
+- Closure: S04 complete in the agreed local isolated boundary. Commit e3dbd9711b7cf78e6092b35bac48b1d55be8f65e
+  passed scripts/codex_verify.py --mode static --base-ref b0f58e87ff4c2f981956cc1a7db4e2a1b1293763.
+  Normal push origin HEAD:main succeeded; remote SHA matched. CI38562250124 is
+  in_progress at publication, not a CI PASS. Final receipt changes only docs;
+  runtime/test evidence remains valid. All owned runtime processes stopped.
+  Canonical root/branch unchanged; no unrelated WIP. R02–R07 not started.
 
 ## CRM-S03-20261014 — service state and incident notifications
 
