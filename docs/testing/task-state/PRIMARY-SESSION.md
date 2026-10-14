@@ -45,6 +45,15 @@ API completion/cancellation, delayed execution, replay and transactional rollbac
 are covered. Existing permission/other S01 checks below reused unchanged.
 Prior implementation/receipt CI runs38531639534/38531700474 now confirmed SUCCESS.
 
+D-04 publication: 80273a4bc95b3bdcb36433daaaf80cbf2e5237f5 normal-pushed
+to origin/main; remote SHA matched. Reviewed all intended files/new tests and
+outgoing diff for secrets/unrelated changes; 3 added local links PASS.
+`.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+4152976f58c7dfdef217a4a7a755748343b1b341` = PASS, including committed-range
+hygiene, system check and no migration drift. GitHub
+[run38535831639](https://github.com/999MAX20/PlatformaCRM/actions/runs/38535831639)
+observed queued, not PASS; full CI acceptance is separate from scoped local closure.
+
 S01 is closed within its six-boundary contract; the D-04 pending entries below
 describe the earlier publication and are superseded by this owner-approved result.
 Next unfinished stage is S02; not started. Full production/pilot and external
