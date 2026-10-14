@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from "../features/auth/AuthProvider";
 import { I18nProvider } from "../lib/i18n";
 
 function SessionProviders({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -47,7 +48,7 @@ function SessionProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-        <ConnectivityStatus />
+        <ConnectivityStatus monitor={isAuthenticated} />
         <ActionConfirmProvider>
           <NotificationProvider>
             <UndoToastProvider>

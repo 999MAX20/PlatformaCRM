@@ -83,6 +83,7 @@ from apps.core.platform_views import (
 )
 from apps.core.security_views import SupportAccessGrantViewSet, security_audit, security_login_history, security_risk_summary
 from apps.core.views import health, health_db, platform_ping, readiness, work_queues
+from apps.core.service_status_views import service_status
 from apps.crm.views import DealViewSet, PipelineStageViewSet, PipelineViewSet, StageTransitionViewSet
 from apps.integrations.views import (
     ApiTokenViewSet,
@@ -207,6 +208,7 @@ router.register("pricing/kaspi/change-logs", KaspiPriceChangeLogViewSet, basenam
 
 urlpatterns = [
     path("health/", health, name="health"),
+    path("api/service-status/", service_status, name="service_status"),
     path("health/db/", health_db, name="health_db"),
     path("ready/", readiness, name="readiness"),
     path("admin/", admin.site.urls),

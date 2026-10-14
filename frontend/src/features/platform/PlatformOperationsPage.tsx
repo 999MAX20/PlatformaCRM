@@ -1,4 +1,5 @@
 import { Button } from "../../components/ui/Button";
+import { StatusNotice } from "../../components/ui/StatusNotice";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { useQuery } from "@tanstack/react-query";
 import { Activity, AlertTriangle, CheckCircle2, CircleDot, PlugZap, ServerCog, ShieldCheck, Workflow } from "lucide-react";
@@ -47,7 +48,18 @@ export function PlatformOperationsPage() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title={t("platform.operations.title")} actions={<div className="flex items-center gap-3"><StatusPill status={data.status} /><Button variant="secondary" onClick={() => health.refetch()} isLoading={health.isFetching}>{t("platform.merchantDetail.refresh")}</Button></div>} />
+      <PageHeader title={t("platform.operations.title")} actions={<Button variant="secondary" onClick={() => health.refetch()} isLoading={health.isFetching}>{t("platform.merchantDetail.refresh")}</Button>} />
+
+      <StatusNotice data-testid="platform-service-state" compact role="status" ariaLive="polite"
+        tone={data.service_status?.status === "degraded" ? "warning" : data.service_status?.status === "healthy" ? "success" : "info"}
+        title={t(`serviceStatus.platform.${data.service_status?.status || "unknown"}`)}
+        description={data.service_status?.businesses ? t("serviceStatus.platform.counts", data.service_status.businesses) : t("serviceStatus.unknown.text")} />
+      {!!data.service_status?.incidents?.length && <Card><CardBody className="space-y-2 p-4">
+        {data.service_status.incidents.map(item => <Link key={`${item.business_id}:${item.component}:${item.episode}`} to={`/platform/merchants/${item.business_id}`} className="platforma-focus-ring block rounded-control border border-platforma-border p-3 text-sm">
+          {t("platform.merchants.merchant")} #{item.business_id} · {t(`serviceStatus.component.${item.component}`)} · {t("serviceStatus.platform.overdue", { count: item.affected_count })}
+        </Link>)}
+      </CardBody></Card>}
+      <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-lg font-semibold">{t("serviceStatus.platform.diagnostics")}</h2><StatusPill status={data.status} /></div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>

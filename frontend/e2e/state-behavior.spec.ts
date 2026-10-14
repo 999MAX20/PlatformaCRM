@@ -80,7 +80,7 @@ test("reconnect waits for the app, keeps drafts and survives a failed probe", as
   let release: () => void = () => undefined;
   const pending = new Promise<void>(resolve => { release = resolve; });
   let attempts = 0;
-  await page.route("**/health/", async route => {
+  await page.route("**/ready/", async route => {
     attempts++;
     if (attempts === 1) await pending;
     await route.fulfill({ status: attempts === 1 ? 503 : 200, json: { status: "ok" } });

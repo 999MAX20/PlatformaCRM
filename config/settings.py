@@ -409,6 +409,11 @@ KASPI_COMPETITOR_MONITOR_API_KEY = env("KASPI_COMPETITOR_MONITOR_API_KEY", defau
 CELERY_BEAT_SCHEDULE = {}
 CELERY_BEAT_SCHEDULE.update(
     {
+        "service-status-observations": {
+            "task": "service.observe_status",
+            "schedule": 60,
+            "kwargs": {"limit": 100},
+        },
         "file-antivirus-runtime": {
             "task": "files.scan_due_attachments",
             "schedule": 15,

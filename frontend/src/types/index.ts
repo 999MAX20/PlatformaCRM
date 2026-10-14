@@ -233,6 +233,13 @@ export type PlatformProviderRolloutCheck = {
 };
 
 export type PlatformOperationsHealth = {
+  service_status?: {
+    scope: string;
+    status: "healthy" | "degraded" | "unknown";
+    businesses: { total: number; healthy: number; degraded: number; unknown: number } | null;
+    max_age_seconds?: number;
+    incidents?: Array<{ business_id: Id; component: string; episode: number; started_at: string; observed_at: string; affected_count: number }>;
+  };
   environment: string;
   release: string;
   generated_at: string;

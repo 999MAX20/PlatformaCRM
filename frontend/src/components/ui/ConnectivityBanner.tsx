@@ -23,7 +23,7 @@ export function ConnectivityBanner({ error, isReconnecting = false, onRetry }: C
       role="status"
       ariaLive="polite"
       compact
-      className="rounded-none border-x-0 border-t-0 shadow-none"
+      className="sticky top-0 z-[60] rounded-none border-x-0 border-t-0 shadow-none"
       icon={isReconnecting ? RefreshCw : WifiOff}
       iconClassName={isReconnecting ? "animate-spin motion-reduce:animate-none" : undefined}
       title={t(isReconnecting ? "fallback.connectivity.reconnectingTitle" : "fallback.connectivity.offlineTitle")}

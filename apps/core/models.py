@@ -357,3 +357,31 @@ class ExportJob(SanitizedErrorFieldsMixin, models.Model):
 
     def __str__(self):
         return f"{self.business}: {self.kind}/{self.export_key} export #{self.id}"
+
+
+class ServiceComponentState(models.Model):
+    """Latest observation and incident episode; stale is derived, never recovery."""
+
+    class Components(models.TextChoices):
+        AUTOMATIONS = "automations", "Automations"
+        NOTIFICATIONS = "notifications", "In-app notifications"
+        EXPORTS = "exports", "Exports"
+        FILES = "files", "File checks"
+
+    class States(models.TextChoices):
+        HEALTHY = "healthy", "No overdue work observed"
+        DEGRADED = "degraded", "Overdue work observed"
+
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="service_component_states")
+    component = models.CharField(max_length=32, choices=Components.choices)
+    state = models.CharField(max_length=16, choices=States.choices)
+    observed_at = models.DateTimeField()
+    affected_count = models.PositiveIntegerField(default=0)
+    episode = models.PositiveIntegerField(default=0)
+    started_at = models.DateTimeField(null=True, blank=True)
+    recovered_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["business", "component"], name="unique_business_service_component"),
+        ]

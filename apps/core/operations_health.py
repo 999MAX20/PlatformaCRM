@@ -9,6 +9,7 @@ from apps.businesses.routing import routing_health
 from apps.core.backup_readiness import run_backup_restore_readiness_check
 from apps.core.models import ExportJob, SupportAccessGrant
 from apps.core.production_audit import run_production_readiness_audit
+from apps.core.service_status import platform_service_status
 from apps.integrations.models import BusinessConnector, ConnectorSyncRun, IntegrationEventLog, WebhookDeliveryLog
 from apps.integrations.provider_rollout import run_provider_rollout_readiness_check
 from apps.notifications.models import Notification
@@ -249,6 +250,7 @@ def platform_operations_health():
     providers = run_provider_rollout_readiness_check()
     try:
         queue = _queue_summary()
+        service_status = platform_service_status()
         active_support_grants = SupportAccessGrant.objects.filter(is_active=True, expires_at__gt=timezone.now()).count()
         connector_queue = _connector_queue()
         work_queue = {
@@ -259,6 +261,7 @@ def platform_operations_health():
         }
         database = _database_status(available=True)
     except DatabaseError as exc:
+        service_status = {"scope": "background_processing", "status": "unknown", "businesses": None}
         queue = _unavailable_queue_summary()
         active_support_grants = 0
         connector_queue = []
@@ -281,6 +284,7 @@ def platform_operations_health():
 
     return {
         "environment": getattr(settings, "ENVIRONMENT", "unknown"),
+        "service_status": service_status,
         "release": getattr(settings, "RELEASE", "unknown"),
         "generated_at": timezone.now(),
         "status": _status_from_failures(critical_count, warning_count),

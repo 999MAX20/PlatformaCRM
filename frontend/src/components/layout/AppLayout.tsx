@@ -14,6 +14,7 @@ import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
 import { PageHeaderContext, type PageHeaderConfig } from "./PageHeaderContext";
 import { Sidebar } from "./Sidebar";
+import { ServiceStatusNotice } from "../notifications/ServiceStatusNotice";
 
 const CommandPalette = lazy(() => import("./CommandPalette").then((module) => ({ default: module.CommandPalette })));
 
@@ -123,6 +124,7 @@ export function AppLayout() {
               key={workspaceAnimationKey}
               className={`animate-fade-in mx-auto w-full flex-1 ${isInboxWorkspace ? "[--inbox-mobile-nav:calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] lg:[--inbox-mobile-nav:0px] min-h-0 overflow-hidden pb-[var(--inbox-mobile-nav)] pt-[var(--app-header-height)] max-w-none" : `${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}`}
             >
+              <ServiceStatusNotice />
               <MeasuredWorkspaceOutlet />
             </main>
           </div>

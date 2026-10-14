@@ -6,6 +6,130 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-S03-20261014 — service state and incident notifications
+
+Owner asked to start S03 after S02. Mode implementation; gaps code/evidence.
+Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+base0a9b15f72621068a2f20d43bbf31a01679679f63; clean starting index/worktree.
+Reuse operations_health, readiness, ConnectivityStatus/StatusNotice, notifications
+routing/bell/preferences and current tenant access; no interchat work/delegation.
+
+Observable result: employee-facing service impact separated from platform diagnostic
+readiness/history; incident start/recovery/freshness explicit; repeated observations
+cannot duplicate notices. Optional disconnected providers do not signal CRM outage.
+No external alert delivery/provider calls, working migrations, real clinics, S04
+worker provisioning/recovery/backup or broad redesign. Existing clinic-only recovery
+policy retained. Complete outage cannot be independently alerted from inside CRM.
+
+Initial evidence: platform status currently mixes production readiness, all-time
+failed jobs and optional provider rollout; no persisted service incident lifecycle.
+ConnectivityStatus listens only to browser network events and checks liveness
+/health, which does not prove DB availability. Existing notifications have role
+routing/preferences but no service-incident transition identity.
+
+Plan/risk: persist bounded per-Business/component observations with serialized
+transition state; read-only tenant-safe status projection; current-state impact
+from overdue internal background work, historical terminal failures remain separate
+operator diagnostics. Stale observations are unknown, never an inferred recovery.
+No external provider/config readiness in merchant service status. Reuse existing
+stale deadlines for jobs and explicit monitor freshness. UI uses a concise real
+status alert, existing bell and platform diagnostics, RU/KK/EN. Recipient policy
+decision approved by owner 14.10: staff banner + owner/admin bell. Active accounts
+and admin memberships required; existing normal SYSTEM preferences apply.
+
+Checks selected before implementation: focused isolated lifecycle tests after each
+backend slice (start/repeat/recovery/recurrence/stale/out-of-order/rollback), source
+classification and optional-provider exclusion, tenant/role denial and safe payloads;
+concurrency verification for transition dedupe where applicable. At completion
+changed/dependent notifications/core suites, system/drift and isolated migration;
+frontend build/types/bundle, targeted desktop/mobile status/bell/error/recovery and
+locale/keyboard flow. No full local suite or installs without demonstrated need.
+New observation schema is expected; no working DB migration authorized. Notifications
+SYSTEM only; no new permissions, CRM lifecycle changes, BusinessEvents or AI actions.
+Publish own reviewed change set using standing normal-push authorization after gates.
+
+S03 final notification slice: owner accepted the recommended recipient policy.
+Start/recovery notices are written atomically with observations, immediately SENT
+in-app (no external calls or worker dependency). Existing SYSTEM preferences apply.
+Owner receives even without a redundant membership; active admin memberships and
+active users only. Bell scopes service notices to their recipient, including for
+business-wide managers/admins; general authorized diagnostics retain their scope.
+Episode transitions provide dedupe; a failed notification write rolls back the
+sample. No S04 work. Final verification/publication follows below.
+
+Implementation: core ServiceComponentState + migration0012 stores one unique
+Business/component observation and recurring episode identity. Business row lock
+covers source sampling/transitions; old observations cannot overwrite newer ones.
+Current overdue automations, SYSTEM notifications, exports and pending/error file
+checks are signals; historical terminal failures, future scheduled work, unconfigured
+optional providers are excluded. Defaults reuse existing automation/export900s and
+file scan lease120s; sampling60s, batch100 oldest-first, freshness180s. Stale/missing
+observations mean unknown and never manufacture recovery. Cleared delay does not
+claim a failed action succeeded. API read-only, tenant-access checked, no payload,
+filename, entity ID or raw error. Platform summary includes bounded10 current incident
+rows and separates environment readiness from service impact. Existing independent
+external outage monitoring remains future environment work.
+
+UI: ServiceStatusNotice in AppLayout uses shared StatusNotice, real API, explicit
+unknown/error/recovery and RU/KK/EN copy. ConnectivityStatus adds authenticated visible-
+tab readiness polling30s and uses /ready (DB check), retaining event/manual recovery;
+reads only refetched after recovery, never mutations. Core task/beat and management
+command observe_service_status collect observations; not run on working database.
+
+Evidence:
+- First isolated core lifecycle slice5 PASS, log
+  output/crm-s01-20261014/domain-1791974102387565400.log.
+- Expanded run23 tests had1 test-assertion defect: checking substring42 also matched
+  timestamp microseconds. Replaced with checking absence of entity_id, keeping private
+  text assertion; rerun service suite8 PASS, domain-1791974335292258200.log.
+- Final affected `.venv/Scripts/python.exe output/crm-s01-20261014/check.py
+  apps.core.tests_service_status apps.core.tests_platform_operations
+  apps.notifications.tests_bell`:24 PASS/1 PostgreSQL-only skip; system/drift PASS,
+  domain-1791974664081098600.log. Dirty snapshot after bounded incident summary added.
+- `.venv/Scripts/python.exe output/multibranch/postgres.py
+  apps.core.tests_service_status`:9 PASS including two-collector concurrency;
+  output/multibranch/postgres-1791974472892395700.log. New migration applied only in
+  disposable DB. PG cluster stopped. Subsequent delta only platform read summary/test.
+- `.venv/Scripts/python.exe output/crm-s03-20261014/frontend.py`:final build/i18n/types/
+  widget/bundle PASS; output/crm-s03-20261014/frontend-isolated-final.log.
+- `.venv/Scripts/python.exe scripts/verify_service_s03.py`:8 PASS desktop/mobile,
+  log output/crm-s03-20261014/browser-1791974634359261200.log. Real isolated API/fixture
+  proves overdue export/banner/operator summary; boundary injection proves unknown,
+  recovered,503/retry; real authenticated flow with failed readiness detects API outage
+  despite navigator online. Existing reconnect/draft test also PASS on both viewports.
+  RU/KK/EN keyboard/no overflow checked. Screenshots frontend/test-results/service-s03-*/
+  service-impact*.png inspected (desktop RU/mobile KK); banner fits shared workspace.
+  First runner attempt failed before browsers due hard-coded seed slug; fixed to
+  isolated E2E_BUSINESS_SLUG, final run above passes. All owned browser servers stopped.
+- Git diff hygiene PASS. No committed-range gate yet (base==HEAD), no commit/push,
+  full local suite/live environment/external delivery not in this slice. Current
+  dirty files all task-owned; new scripts/verify_service_s03.py makes UI fixtures
+  reproducible. Prior S02 CI38548316979 and38548233244 are completed success.
+
+
+Final notification evidence (14.10, after owner decision):
+- Focused isolated service slice:10 PASS/1 PG skip,
+  output/crm-s01-20261014/domain-1791975503385609000.log.
+- Same isolated check helper with apps.core.tests_service_status,
+  apps.core.tests_platform_operations and apps.notifications.tests_bell:
+  26 PASS/1 PG skip, system/drift PASS;
+  output/crm-s01-20261014/domain-1791975534631519500.log.
+- PostgreSQL helper output/multibranch/postgres.py apps.core.tests_service_status:
+  11 PASS including one bell under concurrent collectors, rollback/retry,
+  recipients/preferences/inactive accounts and cross-business separation;
+  output/multibranch/postgres-1791975545105477900.log. Cluster stopped.
+- Browser run browser-1791975593912569800.log:7 PASS/1 failure. A real defect:
+  fixed desktop header intercepted the connectivity retry button. Screenshot
+  confirmed the banner behind the header. ConnectivityBanner now sticky z60;
+  regression waits for the real header before clicking, no forced clicks.
+- Rebuilt frontend after this fix: build/types/i18n/widget/bundle PASS,
+  output/crm-s03-20261014/frontend-isolated-final.log. Backend unchanged since PASS.
+- Final browser rerun:8 PASS desktop/mobile including real owner bell and retry
+  above the mounted header; output/crm-s03-20261014/browser-1791975767587824600.log.
+  All owned test processes stopped. Code/affected-flow verification complete;
+  committed-range static and publication receipt follow. No full local release gate,
+  dependency install, working migration, external provider call or deployment.
+
 ## CRM-S02-20261014 — operational platform administration
 
 Owner authorized S02 and the sequence inspect/reuse → server rules with focused
