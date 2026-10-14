@@ -818,7 +818,8 @@ class AutomationFoundationTests(TestCase):
         response = self.api.post(f"/api/appointments/{appointment.id}/complete/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(Task.objects.filter(business=self.business, appointment=appointment, title="Post-visit follow-up").exists())
+        task = Task.objects.get(business=self.business, appointment=appointment)
+        self.assertIn("completed appointment", task.title)
         run = AutomationRun.objects.get(trigger_type=AutomationRule.TriggerTypes.APPOINTMENT_COMPLETED)
         self.assertEqual(run.status, AutomationRun.Statuses.SUCCESS)
 

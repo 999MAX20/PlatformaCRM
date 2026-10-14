@@ -8,6 +8,49 @@
 
 ## CRM-S01-20261014 — server scenario completeness
 
+D-04 continuation, owner approval 14.10: reuse one built-in appointment follow-up
+without overwriting it; explicit create_task remains separate. Base4152976,
+canonical root/branch unchanged, clean tree. Scope scheduling follow-up service,
+automation action and targeted tests/docs only. Risk duplicate tasks/effects and
+overwriting staff work. Reuse existing task creation activity as origin evidence;
+serialize lookup/create with Business/Appointment locks. No schema, permissions,
+AI or external-delivery change. Focused checks: inline/delayed rules, replay,
+preserved fields/status, explicit task, tenant denial and PostgreSQL concurrency.
+Completion: affected scheduling/automation suites, check/drift/static; reuse
+unchanged earlier S01 checks. No frontend changes/build or working DB operation.
+
+D-04 result: implemented in scheduling service and automation engine. Built-in
+task is created before inline rules; task creation activity identifies it without
+matching editable titles. Business/Appointment locks serialize lookup/create.
+Reuse preserves staff changes, completed/archived status and original effects;
+explicit create_task and nonterminal follow-up configuration remain independent.
+No cleanup of historical duplicates or backfill performed.
+
+Baseline focused policy tests: 2 FAIL / 1 ERROR / 1 PASS
+(domain-1791966486639622000.log): duplicate cancellation task, wrong delayed task
+identity, three completion tasks instead of built-in plus explicit task.
+After fix, `.venv/Scripts/python.exe output/crm-s01-20261014/check.py
+apps.automations.tests_follow_up_policy apps.automations.tests apps.scheduling.tests`
+= 81 PASS, check/drift PASS (domain-1791966538894569000.log).
+Additional rollback/archive/nonterminal tests and dependent checks:
+`.venv/Scripts/python.exe output/crm-s01-20261014/check.py
+apps.automations.tests_follow_up_policy apps.automations.tests_dispatch_commit
+apps.automations.tests_claim_ownership apps.scheduling.tests_settings_delivery`
+= 23 PASS, check/drift PASS (domain-1791966624780128100.log).
+`.venv/Scripts/python.exe output/multibranch/postgres.py
+apps.automations.tests_follow_up_concurrency` = 1 PASS
+(postgres-1791966579872981300.log): competing rule/built-in creators return the same
+task. Disposable PostgreSQL17 stopped, no owned processes remain. Tenant denial,
+API completion/cancellation, delayed execution, replay and transactional rollback
+are covered. Existing permission/other S01 checks below reused unchanged.
+Prior implementation/receipt CI runs38531639534/38531700474 now confirmed SUCCESS.
+
+S01 is closed within its six-boundary contract; the D-04 pending entries below
+describe the earlier publication and are superseded by this owner-approved result.
+Next unfinished stage is S02; not started. Full production/pilot and external
+queues/delivery remain outside this result. Frontend unchanged, no build/browser
+rerun; no dependency installation, schema migration, AI/provider call or working DB.
+
 Owner request 14.10: persist the proposed four-step internal readiness plan and
 start step 1, complete CRM server scenarios. Mode implementation/verification;
 gap types code/evidence/policy. Current executor is this user task; no writer registry.
@@ -133,7 +176,7 @@ after the later on_commit fix; unaffected suites were not repeated.
 | Changed access | Existing member-deactivation checks PASS; current object/field access rechecked on create-deal replay, stale assignment mutation denied. |
 | Archive dependencies | Shared atomic archive/restore regressions PASS; client unfinished-work, service, branch/staff and representative archive consumers PASS. |
 | Visit reminders | Existing reschedule/cancel retry/inflight invalidation in tests_settings_delivery and scheduling lifecycle PASS; no reminder code change needed. |
-| Built-in/user follow-up | D-04 remains POLICY PENDING, not PASS. Owner question sent; no behavior selected without an answer. Existing automation checks do not resolve the policy. |
+| Built-in/user follow-up | D-04 approved and verified in continuation above: one built-in task reused without overwriting, explicit create_task separate; policy/API/rollback/tenant/concurrency PASS. |
 
 No frontend/build/browser rerun: no frontend/contract shape change or demonstrated
 UI regression; reachable API flows tested. No full certification, installs, working

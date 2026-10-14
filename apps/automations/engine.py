@@ -580,6 +580,15 @@ def _create_task(action, *, business, entity, payload):
 
 
 def _create_follow_up(action, *, business, entity, payload):
+    if _entity_type(entity, "Appointment"):
+        from rest_framework.exceptions import ValidationError
+        from apps.scheduling.services import create_appointment_follow_up_task
+
+        if entity.business_id != business.pk:
+            raise ValidationError({"entity": "Task entity must belong to the selected business."})
+        task = create_appointment_follow_up_task(appointment=entity, actor=_automation_actor(business))
+        if task is not None:
+            return task
     config = action.config or {}
     due_at = _parse_due_at(config.get("due_at")) or business_local_datetime(
         business,

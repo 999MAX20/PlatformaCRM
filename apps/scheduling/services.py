@@ -4,6 +4,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.analytics.models import AnalyticsEvent
+from apps.activities.models import ActivityEvent
 from apps.activities.services import create_activity_event, create_note_for_entity
 from apps.activities.taxonomy import ActivityEvents
 from apps.automations.engine import run_automations_for_event
@@ -430,12 +431,12 @@ def apply_appointment_status(
         metadata=transition_metadata or None,
         source=activity_source,
     )
+    if status_value in TERMINAL_APPOINTMENT_STATUSES:
+        create_appointment_follow_up_task(appointment=appointment, actor=actor, request=request, reason=reason)
     if status_value == Appointment.Statuses.CANCELLED:
         run_appointment_cancelled_automations(appointment)
     if status_value == Appointment.Statuses.COMPLETED:
         run_appointment_completed_automations(appointment)
-    if status_value in TERMINAL_APPOINTMENT_STATUSES:
-        create_appointment_follow_up_task(appointment=appointment, actor=actor, request=request, reason=reason)
     notify_appointment_responsible(appointment, f"Appointment status changed to {status_value}", actor=actor)
     if audit_metadata is not None:
         lifecycle_metadata = {
@@ -494,10 +495,30 @@ def _write_system_appointment_audit(*, appointment, actor, metadata):
     )
 
 
+@transaction.atomic
 def create_appointment_follow_up_task(*, appointment, actor, request=None, reason=""):
+    Business.objects.select_for_update().get(pk=appointment.business_id)
+    appointment = Appointment.objects.select_for_update().get(
+        pk=appointment.pk, business_id=appointment.business_id)
     task_spec = _appointment_follow_up_task_spec(appointment, reason=reason)
     if task_spec is None:
         return None
+
+    # Existing creation events identify built-in tasks, including older records.
+    # Do not match editable titles or absorb explicit user/automation tasks.
+    task_ids = ActivityEvent.objects.filter(
+        business_id=appointment.business_id, event_type=ActivityEvents.TASK_CREATED,
+        entity_type="Task", metadata__appointment_id=appointment.pk,
+        metadata__appointment_status=appointment.status,
+    ).values_list("entity_id", flat=True)
+    existing = Task.objects.filter(
+        business_id=appointment.business_id, appointment=appointment,
+        pk__in=[int(value) for value in task_ids if value.isdecimal()],
+    ).order_by("pk").first()
+    if existing is not None:
+        return existing
+    if appointment.is_archived:
+        raise InvalidTransition(errors={"appointment": "Restore the archived appointment before creating follow-up."})
 
     assignee = appointment_responsible_user(appointment, actor=actor)
     created_by = actor if _is_active_business_member(appointment.business, actor) else None

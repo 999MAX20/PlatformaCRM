@@ -51,7 +51,12 @@ UI `/app/tasks`, `/app/automations`; API tasks/automation-rules/automation-runs.
 
 ## Цель и ограничения
 
-[R01](../current/roadmap.md): D-04/V1-O09 при пересечении встроенного follow-up,
-импорта и правила; новая политика не выбирается автоматически. R04 — target
+[S01](../current/roadmap.md): D-04 утверждён владельцем 14.10 — create_follow_up
+для terminal-визита использует встроенную задачу без перезаписи; create_task
+остаётся отдельным действием. Существующая история создания идентифицирует
+встроенную задачу, Business/Appointment locks сериализуют lookup/create.
+Регрессии: [policy](../../apps/automations/tests_follow_up_policy.py),
+[concurrency](../../apps/automations/tests_follow_up_concurrency.py).
+Другие сценарии V1-O09/импорта не получают новой политики. R04 — target
 Redis/PostgreSQL/recovery; local/eager тесты этого не доказывают. R05 — рабочий цикл.
 09.10 — паспорт опубликованной основы, без новых запусков правил/очередей.
