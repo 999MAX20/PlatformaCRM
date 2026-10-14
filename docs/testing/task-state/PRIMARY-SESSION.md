@@ -1,5 +1,39 @@
 # PRIMARY-SESSION — PlatformaCRM
 
+## CI-PUBLISH-20261014 — remaining documentation and actual CI receipt
+
+Owner explicitly requested all necessary CI checks and publication of all remaining
+changes before continuing. Primary explicitly transferred the sole writer to
+PlatformaCRM UI for this bounded operation and stopped writes/checks/servers.
+Canonical root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+starting HEAD/base 0b4d7da9c136686a3b0ddbcfb4dd458875e9dd9e; index empty;
+starting dirty only ONEC STATUS +7 and this checkpoint +68, fully reviewed.
+Mode operation/docs; gap unpublished evidence and stale CI status, no code delta.
+Scope: publish the existing ONEC journal, record actual CI and verify normal push
+to origin/main. Reuse unchanged product checks; no app installs/builds/DB/browser
+reruns for Markdown. Focused/completion gates: whole intended diff and untracked
+review, secret/private-data review, local links, working/index/actual-range diff
+hygiene, remote SHA and GitHub job/step readback. No permissions, notifications,
+BusinessEvents, AI, migration, working data or external integration changes.
+ONEC access expansion and R01 audible screen-reader FB009 remain unresolved;
+publication does not authorize either external action or a new product phase.
+
+GitHub REST confirms success for Calendar runs 38464742290/38464828917,
+Settings 38467033037/38467146320 and R01 38471830909/38471973914.
+For exact starting HEAD, run38471973914 has both jobs and all steps successful:
+committed-range static, migration drift, Django check, readiness-audit JSON smoke,
+backend suite, Python dependency audit, frontend/widget build, bundle budget and
+frontend dependency audit. Older queued/in_progress entries are historical.
+Historical toolbar failures are not relabelled; the current descendant's full
+CI is independently successful. This docs commit triggers the existing workflow;
+its final SHA/run outcome is read back and reported in the task, without creating
+an endless chain of receipt-only commits. No deployment job exists in ci.yml.
+Whole diff and untracked review PASS (no untracked source files or sensitive
+payloads); `git diff --check` PASS and the checkpoint link resolves. Explicit
+fetch refreshed stale origin/main from 198e6a4 to the verified remote 0b4d7da;
+fetch configuration and working branch unchanged. Index and committed-range
+`git diff --check` are required before the normal publication/readback.
+
 ## CRM-R01-20261014 — bounded daily-cycle acceptance
 
 Mode verification with minimal proven regression fixes; gap evidence/code.
@@ -658,6 +692,74 @@ PASS (synthetic example.test fixtures only). GitHub REST confirms
 in_progress at receipt; not a green/full-release claim. Connector initially returned
 an empty workflow list, so the actual status was read directly from GitHub REST.
 Phase1 complete and published; next unfinished scope is separate calendar redesign.
+
+## ONEC-ODATA-PILOT-20261013 — bounded owner-authorized live discovery
+
+Owner approved proceeding with the proposed next step: prepare separate service
+access to the already identified company application in 1C Fresh Kazakhstan and
+read metadata plus a small clients/catalog sample. Operation/evidence scope;
+not implementation of the production connector or financial calculations.
+Executor: current non-retired PlatformaCRM UI task under direct authorization.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+clean starting HEAD 33795e273f0c782a143269ced190e49022472921. Registry unchanged.
+Target: the owner's authenticated Accounting for Kazakhstan 3.0 application;
+private application identifier and credentials stay out of committed evidence.
+Allowed external changes: dedicated service access and the minimum published
+object set needed for the sample. No business-document writes, CRM imports,
+working-DB mutations, notifications, BusinessEvents or AI actions.
+Risk/check plan: inspect existing OData settings before mutation; preserve any
+existing publication/access; protect the generated credential with Windows
+user-bound encryption; HTTP GET only, exact target, no redirects, bounded time,
+response size and at most 12 diagnostic API requests (no automatic retries).
+Prove authentication, returned schema and bounded sample shape without retaining
+customer payloads in Git. A successful read does not prove server-side read-only
+permissions, financial completeness or general availability for other 1C editions.
+Completion: report verified objects/fields, remaining mapping/access gaps and
+retained/revoked pilot configuration. Docs hygiene and secret review; no app build
+or database suite for this operational discovery. Production adapter remains deferred.
+
+Discovery so far: exact OData service answered HTTP 401 with Basic authentication
+challenge (one unauthenticated GET, no response payload retained). The in-app
+browser could not open the endpoint (ERR_BLOCKED_BY_CLIENT); direct bounded HTTP
+diagnostic confirmed reachability. A random pilot password was prepared without
+plaintext tool output and saved only as a Windows user-bound DPAPI blob in ignored
+local operational output. RSA-OAEP transfer key was removed after verified storage;
+DPAPI roundtrip and helper syntax passed. No application credential record or
+working database was changed. The service account form has not been saved.
+
+Access boundary discovered before save: selecting Counterparties in this
+configuration's OData form opens a mandatory dependency confirmation. Dependencies
+include employees, individuals, users, attachments, payroll and financial documents,
+not merely clients/catalog. Choosing No removes the selected object's checkbox
+(`.checkbox.select` disappears); thus this form did not provide the proposed
+three-object publication. No dependency expansion was accepted. The same dependency
+prompt appeared for Nomenclature and Organizations. Earlier DOM `check=true` is
+the checkbox control marker, not checked state; screenshot plus selected class
+established the actual state. Do not infer a narrow publication from that marker.
+
+Owner decision requested: restricted access prepared with a 1C specialist,
+separate test application, or explicit expanded access to the working application
+while our probe remains GET-only. This is an actual permission-scope change under
+AGENTS section 2, not a routine peer approval. Authenticated sample and mapping
+acceptance remain pending; no production-readiness or read-only-role claim.
+Suggested specialist request: for Accounting for Kazakhstan 3.0 in 1cfresh.kz,
+provide server-enforced read-only access limited to Counterparties, Nomenclature
+and Organizations (plus individually justified dependencies), explain whether the
+standard form can avoid its transitive dependency expansion, and confirm the
+required Fresh role or audited extension. No request has been sent externally.
+
+Owner follow-up confirmed the integration runtime must be strictly GET/read-only:
+no creation, changes, deletion or document posting in 1C. This does not establish
+server-side least privilege or resolve the previously requested publication-scope
+decision. Additional read-only inspection found the built-in Only viewing profile;
+its selected roles do not include OData, whereas the unfiltered role list exposes
+Remote access (OData). No role was enabled and no profile was saved. This is not
+proof that combining these roles would prevent writes. Specialist consultation
+is optional for the permissions question, not a prerequisite to coding a connector.
+All unsaved OData setup changes were explicitly discarded; no service account or
+object publication was created. Prepared DPAPI credential remains inactive in
+ignored local output for possible continuation. In-app session kept open. Only
+STATUS and this checkpoint are modified; no production source or DB changes.
 
 ## DIRECT-TASK-AUTHORIZATION-20261013 — owner-directed peer tasks
 
