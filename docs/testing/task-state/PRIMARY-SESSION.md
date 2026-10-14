@@ -86,6 +86,17 @@ scope; existing push CI inspected separately. All owned verification processes
 completed and disposable runtimes removed. No working migration, deployment,
 external messages, new grants or provider calls. Publication pending below.
 
+Publication: code dd1c6bba68739377f7fc5dcbe4deccab2500d2ec normal-pushed to
+origin/main; remote SHA read-back matched. Branch remains codex/ui-testing-toolkit
+in canonical C:/Users/user/Desktop/PlatformaCRM. Exact committed-range gate
+`.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref e52db325b961a89dcfcfddc57abdfac75c943eb4`
+PASS (output/platform-support/static.log), including migration/system checks.
+Push workflow contains CI only; no deployment action. GitHub run 38636349215
+queued at first inspection, not a green CI claim. Documentation receipt uses
+working/index/committed-range hygiene; unchanged application checks reused.
+Authorized implementation complete in local verified/published boundary;
+working DB support0001 activation remains a separate explicit-target operation.
+
 ## CI-B301-PAYLOAD-20261015 — requested CI repair
 
 Owner explicitly requested fixing the reported red CI. Canonical root

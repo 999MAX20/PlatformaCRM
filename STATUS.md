@@ -10,7 +10,8 @@
 команды и поддержка в CRM, публичные ответы/приватные заметки, назначение, решение
 с итогом и явное возобновление. Employee — свои, owner/admin — все своей клиники.
 41 PostgreSQL и 6 browser checks, build/types/i18n/bundle, system/schema PASS.
-Публикация/CI — в checkpoint. Рабочая support0001 не применена; onboarding отложен.
+Код dd1c6bb опубликован в main, SHA подтверждён; CI38636349215 queued.
+Рабочая support0001 не применена; onboarding отложен. Evidence — в checkpoint.
 Предыдущий CI-B301-PAYLOAD опубликован e52db32; CI38628077604 полностью PASS.
 
 15.10.2026. CI-B301-PAYLOAD: по поручению владельца исправлено измерение размера
