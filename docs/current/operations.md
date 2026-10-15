@@ -71,6 +71,14 @@ PLATFORM-OVERVIEW-20261015: `overview.attention` содержит полные d
 support links не скрывает сами наблюдения. Обращения активны до resolved,
 unassigned — без assigned_to; waiting_clinic — точный статус, не SLA-просрочка.
 
+PLATFORM-CLINIC-CRM-20261015: отдельный platform read API показывает Business-bound
+CRM и safe статусы подключений; поиск/статус/архив/client filter, page_size до50,
+стабильная сортировка и audit-before-response. Переписка читается без read-mark,
+сырые payload/credentials исключены. Техническая диагностика остаётся в Операциях,
+из карточки доступны Business-фильтрованные переходы. Это не новые источники
+наблюдений, не запуск collector и не допуск recovery/retry. Миграций нет;
+рабочая support0002 и live-проверки остаются отдельным объёмом.
+
 Проверить очереди notifications, reports_exports, file_scans и все прочие,
 используемые текущими task routes. Синхронный connector sync остаётся отдельной
 границей риска; не считать весь интеграционный runtime очередью автоматически.

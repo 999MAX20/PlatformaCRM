@@ -1,10 +1,15 @@
+import { retainSupportData } from "../support/SupportUI";
+import { Tabs } from "../../components/ui/Tabs";
+import { ClinicCrmBrowser } from "./ClinicCrmBrowser";
+import { ClinicAccessHistory } from "./ClinicAccessHistory";
+import { SupportListPage } from "../support/SupportListPage";
 import { PlatformLoadError } from "./PlatformData";
 import { PlatformPageHeading } from "../../components/layout/PlatformPageHeading";
 import { TaskDraftGuard } from "../tasks/components/TaskDraftGuard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, MessageSquarePlus, RefreshCw } from "lucide-react";
 import { useState } from "react";
-import { Link, useParams, useLocation } from "react-router";
+import { Link, useParams, useLocation, useSearchParams } from "react-router";
 
 import { platformApi } from "../../api/platform";
 import { getApiErrorMessage } from "../../api/client";
@@ -27,9 +32,16 @@ export function PlatformMerchantDetailPage() {
 function PlatformMerchantContent({ id }: { id: string }) {
   const { t, language } = useI18n();
   const location = useLocation();
+  const [params, setParams] = useSearchParams();
+  const sections = ["state", "work", "connections", "support", "access"];
+  const section = sections.find(value => value === params.get("section")) || "state";
+  function update(values: Record<string, string>) {
+    setParams(current => { const next = new URLSearchParams(current); for (const [key, value] of Object.entries(values)) { if (value) next.set(key, value); else next.delete(key); } return next; }, { state: location.state });
+  }
   const returnTo = typeof location.state?.returnTo === "string" && (location.state.returnTo === "/platform" || /^\/platform\/(merchants|operations)(\?|$)/.test(location.state.returnTo)) ? location.state.returnTo : "/platform/merchants";
   const [historyPage, setHistoryPage] = useState(1);
-  const history = useQuery({ queryKey: ["platform-support-history", id, historyPage], queryFn: () => platformApi.supportActions(id, historyPage), enabled: Boolean(id) });
+  const [readDenied, setReadDenied] = useState<unknown>(null);
+  const history = useQuery({ queryKey: ["platform-support-history", id, historyPage], queryFn: () => platformApi.supportActions(id, historyPage), enabled: Boolean(id) && section === "access", gcTime: 0 });
   const queryClient = useQueryClient();
   const [note, setNote] = useState("");
   const [mfaCode, setMfaCode] = useState("");
@@ -44,7 +56,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
   const merchant = useQuery({
     queryKey: ["platform-merchant", id],
     queryFn: () => platformApi.merchant(id || ""),
-    enabled: Boolean(id),
+    enabled: Boolean(id), gcTime: 0,
   });
   const supportMutation = useMutation({
     mutationFn: async () => {
@@ -62,21 +74,26 @@ function PlatformMerchantContent({ id }: { id: string }) {
     },
   });
 
+  if (readDenied) return <PlatformLoadError error={readDenied} message={t("platform.merchantDetail.error")} onRetry={() => { void merchant.refetch().then(result => { if (!result.isError) setReadDenied(null); }); }} />;
   if (merchant.isLoading) return <LoadingState scope="page" />;
-  if (merchant.isError || !merchant.data) return <PlatformLoadError error={merchant.error} message={t("platform.merchantDetail.error")} onRetry={() => merchant.refetch()} />;
+  if (!merchant.data || (merchant.isError && !retainSupportData(merchant.error))) return <PlatformLoadError error={merchant.error} message={t("platform.merchantDetail.error")} onRetry={() => merchant.refetch()} />;
 
   const data = merchant.data;
   const operations = data.operations;
   return <div className="space-y-5" data-testid="platform-clinic-detail">
-    <TaskDraftGuard dirty={Boolean(note.trim())} pending={supportMutation.isPending} />
+    {(Boolean(note.trim()) || supportMutation.isPending) && <TaskDraftGuard dirty={Boolean(note.trim())} pending={supportMutation.isPending} />}
     <Link to={returnTo} className="platforma-focus-ring inline-flex items-center gap-2 text-sm font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t(returnTo === "/platform" ? "platform.nav.overview" : returnTo.startsWith("/platform/operations") ? "platform.nav.operations" : "platform.nav.merchants")}</Link>
-    <PlatformPageHeading title={data.name} actions={<><Link to={`/platform/support?business=${data.id}`} className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-sm font-semibold text-brand-700">{t("supportCases.title")}</Link><span className="rounded-control bg-surface-muted px-3 py-2 text-sm">{t(`platform.workspace.status.${data.status}`)}</span></>} />
+    <PlatformPageHeading title={data.name} actions={<><Link to={`?section=support`} state={location.state} className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-sm font-semibold text-brand-700">{t("supportCases.title")}</Link><span className="rounded-control bg-surface-muted px-3 py-2 text-sm">{t(`platform.workspace.status.${data.status}`)}</span></>} />
+    {merchant.isError && <PlatformLoadError error={merchant.error} message={t("platform.merchantDetail.error")} onRetry={() => merchant.refetch()} />}
     <Card><CardBody className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
       <div className="min-w-0"><p className="text-xs text-platforma-faint">{t("platform.merchantDetail.owner")}</p><p className="mt-1 font-medium">{data.owner.full_name || t("platform.common.noName")}</p><p className="mt-1 break-all text-sm text-platforma-subtle">{data.owner.email}</p></div>
       <div><p className="text-xs text-platforma-faint">{t("platform.merchants.created")}</p><p className="mt-1 text-sm">{platformDate(data.created_at, language)}</p></div>
       <div><p className="text-xs text-platforma-faint">{t("platform.workspace.lastActivity")}</p><p className="mt-1 text-sm">{platformDate(data.latest_activity_at, language)}</p></div>
-      <div><p className="text-xs text-platforma-faint">{t("platform.workspace.snapshot")}</p><p className="mt-1 text-sm">{platformDate(data.generated_at, language)}</p><p className="mt-1 text-xs text-platforma-faint">#{data.id}</p></div>
+      <div><p className="text-xs text-platforma-faint">{t("platform.workspace.snapshot")}</p><p className="mt-1 text-sm">{platformDate(data.generated_at, language)}</p><p className="mt-1 text-xs text-platforma-faint">#{data.id} · {data.timezone || "UTC"}</p></div>
     </CardBody></Card>
+    <Tabs value={section} options={sections.map(value => ({ value, label: t(`clinicCrm.tab.${value}`) }))} ariaLabel={data.name} idPrefix="clinic" appearance="underline" onChange={value => setParams({ section: value }, { state: location.state })} />
+    <section role="tabpanel" id={`clinic-panel-${section}`} aria-labelledby={`clinic-tab-${section}`} className="space-y-5">
+    {section === "state" && <>
     <div className="grid gap-5 lg:grid-cols-2">
       <Card>
         <CardHeader><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="font-semibold">{t("platform.workspace.serviceTitle")}</h2><PlatformServiceBadge service={data.service_status} /></div></CardHeader>
@@ -91,7 +108,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
       </Card>
       <Card>
         <CardHeader><h2 className="font-semibold">{t("platform.overview.errorsTitle")}</h2></CardHeader>
-        <CardBody className="space-y-4 p-4"><PlatformRecordedSignals operations={operations} /><Link to="/platform/operations" className="platforma-focus-ring inline-block text-sm font-medium text-brand-700">{t("platform.nav.operations")}</Link></CardBody>
+        <CardBody className="space-y-4 p-4"><PlatformRecordedSignals operations={operations} /><Link to={`/platform/operations?section=incidents&business=${id}`} className="platforma-focus-ring inline-block text-sm font-medium text-brand-700">{t("platform.nav.operations")}</Link></CardBody>
       </Card>
     </div>
     <div className="grid gap-5 lg:grid-cols-2">
@@ -105,7 +122,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
         </dl></CardBody>
       </Card>
       <Card>
-        <CardHeader><h2 className="font-semibold">{t("platform.merchantDetail.crmOperations")}</h2></CardHeader>
+        <CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-semibold">{t("platform.merchantDetail.crmOperations")}</h2><Link to="?section=work" state={location.state} className="platforma-focus-ring text-sm text-brand-700">{t("clinicCrm.tab.work")}</Link></div></CardHeader>
         <CardBody className="p-2"><dl className="grid grid-cols-2 sm:grid-cols-3">
           <PlatformMetric label={t("platform.workspace.leads")} value={operations?.lead_count} />
           <PlatformMetric label={t("platform.workspace.clients")} value={operations?.clients_count} />
@@ -116,6 +133,12 @@ function PlatformMerchantContent({ id }: { id: string }) {
         </dl></CardBody>
       </Card>
     </div>
+    <p className="text-xs text-platforma-faint">{t("platform.workspace.activityScope")} {t("platform.workspace.unknownLegend")}</p>
+    </>}
+    {(section === "work" || section === "connections") && <ClinicCrmBrowser business={id} timezone={data.timezone || "UTC"} connections={section === "connections"} params={params} update={update} onDenied={setReadDenied} />}
+    {section === "support" && <SupportListPage platform fixedBusiness={Number(id)} />}
+    <div hidden={section !== "access"} className="space-y-5">
+      {section === "access" && <ClinicAccessHistory business={id} timezone={data.timezone || "UTC"} onDenied={setReadDenied} />}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -170,6 +193,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
             {history.isSuccess && <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm"><span>{t("pagination.total", { total: history.data.count })}</span><div className="flex gap-2"><Button variant="secondary" disabled={!history.data.previous} onClick={() => setHistoryPage(value => value - 1)}>{t("pagination.previous")}</Button><Button variant="secondary" disabled={!history.data.next} onClick={() => setHistoryPage(value => value + 1)}>{t("pagination.next")}</Button></div></div>}
           </CardBody>
         </Card>
-    <p className="text-xs text-platforma-faint">{t("platform.workspace.activityScope")} {t("platform.workspace.unknownLegend")}</p>
+    </div>
+    </section>
   </div>;
 }

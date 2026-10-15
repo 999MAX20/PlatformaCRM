@@ -336,6 +336,7 @@ export type PlatformOperationsHealth = {
 };
 
 export type PlatformMerchant = {
+  timezone?: string;
   id: Id;
   name: string;
   status: Business["status"];

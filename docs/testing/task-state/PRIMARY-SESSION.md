@@ -6,6 +6,113 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-CLINIC-CRM-20261015 — unified clinic and permanent CRM read access
+
+Owner: «приступай» after Overview; spec13.5 step3 and approved permanent read
+decision15.10. Implementation/code+UX gap. Canonical C:/Users/user/Desktop/PlatformaCRM,
+codex/ui-testing-toolkit; basefa8a041214ff2bb38edbc75c89f5f2880d71bc47, clean tree/index.
+Newer shell commits495f429/5b476b7/fa8a041 inspected and preserved; same root/branch.
+Result: clinic sections state, CRM work, connections, support, access/history;
+real searchable bounded lists/details for clients/leads/deals/tasks/appointments/
+Inbox and CRM payment records, related navigation within visible selected clinic.
+Inbox message bodies read without marking read/sending; no impersonation/merchant
+API expansion. Explicit allowlisted fields, no provider credentials/raw JSON.
+Reuse platform auth, existing models/selectors, scoped support, shared tabs/list/
+pagination/fields and new shell header. Recheck active platform role per read;
+Business-bound lookup before relations/detail; metadata-only view audit, no content
+or search text. Keep support-note grant/MFA and support lifecycle unchanged.
+No new write/export/file-download permission, collector behavior, AI/event/
+notification effects, schema or working DB migration. Existing detailed CRM
+permission is already owner-approved; no new business-policy decision required.
+Risks: cross-Business relation disclosure, stale role/cache, unaudited private reads,
+unbounded bodies/queries, lost return/draft state and accidental mutation.
+Backend slices: access+lists/details then child records/diagnostics; focused isolated
+tests after each coherent slice. Prove allowed/denied/inactive/role-loss, foreign
+Business/entity/relation, safe projections/audit failure, pagination/query budget,
+read-only/no side effects and unavailable-source recovery. Completion affected and
+dependent PostgreSQL suites, system/migration drift; reachable desktop/mobile
+RU/KK/EN keyboard/navigation/error/empty/403 flows, build/types/i18n/bundle.
+No full-project/live gate. Explicit owned diff review and verified normal push
+origin/main, remote SHA and actual CI. Next spec step4 remains separate.
+
+Implementation checkpoint: separate GET-only clinic list/detail/child/access-log APIs
+are in place. Collections cover clients/leads/deals/tasks/appointments/Inbox/payment
+journal and connector/channel configuration status. Child records include messages,
+comments, custom fields, notes, tags and activity. Explicit projections omit provider
+secrets, raw JSON and payloads; client/relation/member links are Business checked.
+Audit failure returns503 without data. UI has five clinic tabs and bounded lists,
+URL filters, details/relations, child paging, clinic-scoped support and read history.
+Source is locally verified; publication receipt follows below.
+
+Checks so far (canonical source, disposable isolated_runtime, unchanged dependencies):
+- SQLite first service slice8 PASS; child slice12 PASS; timezone/detail dependent
+  recheck26 PASS (tests_platform_crm + tests_platform_rebuild), logs under
+  output/platform-clinic-crm/{focused,children,timezone-focused}.log.
+- PostgreSQL17 isolated system/migration drift PASS. First command selected
+  tests_platform_crm/overview/worklists/operations/s02/rebuild/service_status and
+  support.tests_incidents:88 actual tests PASS, plus one loader ERROR caused by
+  nonexistent apps.support.tests. This command remains FAILED; log postgres.log.
+  Corrected missing selection only (no rerun of unchanged green cases):
+  apps.support.tests_api/tests_domain/tests_concurrency35 PASS,
+  postgres-support.log; disposable clusters shut down/removed.
+- Frontend build/types/i18n PASS after correcting new kk/en entry placement after
+  ...ru. Later UI changes still require completion build. New bool/status copy
+  review and browser checks remain pending.
+- Browser runner is existing scripts/verify_platform_overview.py --clinic-crm with
+  isolated extra fixture scripts/platform_clinic_fixture.py. Initial fixture failed
+  payment_single_link because it set both deal and appointment; corrected fixture
+  uses deal only. No ordinary DB touched. First browser run now in progress;
+  found test selector mismatch: shared labelled Select includes its selected value
+  in accessible name; corrected test helper, no shared-component rewrite.
+
+Completion15.10: 123 actual PostgreSQL test cases PASS across the88+35 selections
+above; the initial loader failure is retained as failed-command evidence, not
+relabelled green. Backend inputs have not changed since those checks. No schema
+change, ordinary DB migration, seed/reset, provider calls or collector startup.
+
+PostgreSQL test commands inside isolated_runtime with temporary PG17 cluster:
+`manage.py test apps.core.tests_platform_crm apps.support.tests apps.core.tests_platform_overview apps.core.tests_platform_worklists apps.core.tests_platform_operations apps.core.tests_platform_s02 apps.core.tests_platform_rebuild apps.core.tests_service_status apps.support.tests_incidents -v 2`
+(first command has the recorded loader error); then
+`manage.py test apps.support.tests_api apps.support.tests_domain apps.support.tests_concurrency -v 2`
+PASS. Both used `.venv/Scripts/python.exe output/platform-clinic-crm/verify_postgres.py`,
+`manage.py check` and `manage.py makemigrations --check --dry-run` in disposable DB.
+
+Frontend exact commands from canonical root:
+- `npm --prefix frontend run build` PASS on final UI, build-final.log;
+  types/Vite/widget and6197 i18n keys; `npm --prefix frontend run check:bundle`
+  PASS, largest477.7kB / shell329.9kB. No dependency install or lock changes.
+- `.venv/Scripts/python.exe scripts/verify_platform_overview.py --clinic-crm --spec e2e/platform-clinic-crm.spec.ts --grep "clinic CRM"`:
+  first browser run5 PASS/5 failed (browser-1792054689786813800.log): four test
+  Select-name mismatches, one test strict-locator collision after the desktop
+  support case was created. Corrected selectors/seed-row lookup and90s flow timeout.
+- Same runner/spec, `--grep "clinic CRM (search|manager|support|locales)"`:
+  8 PASS desktop/mobile, browser-1792055047032690700.log.
+- Review found 403 needed to hide clinic summary as well as requested CRM data.
+  Added shared denial callback to clinic boundary; list/detail/children/access
+  denial unmounts clinic title, metadata and bodies. `--grep "clinic CRM transient"`:
+  2 PASS desktop/mobile after fix, browser-1792055299094615100.log. Covers503
+  retained data/search+retry, child403 and list403 hiding whole clinic,404 recovery.
+- `.venv/Scripts/python.exe scripts/verify_platform_overview.py --clinic-crm --spec e2e/platform-clinic-crm.spec.ts e2e/platform-overview.spec.ts --grep "clinic CRM manager|operator overview preserves"`:
+  4 PASS, browser-1792055534435360000.log. Manager all9 record kinds, unread count
+  unchanged, no credential text, connections/access, plus dependent Overview
+  partial/empty/503/retry/403 regression. Total12 distinct browser cases verified
+  (10 new clinic +2 dependent Overview); repeated manager checks not double counted.
+
+Browser evidence: real isolated API data for paging24/10, archive/search/empty,
+client→task→client, fields/notes/tags/activity/comments, message paging23/20,
+payment/connection details, scoped support creation/back/draft cancellation,
+manager read-only, RU/KK/EN keyboard tabs and no horizontal overflow. Screenshot
+review covered RU desktop list/conversation and KK mobile list/RU mobile payment;
+artifacts retained under output/platform-clinic-crm/. All task-owned runtimes exited.
+No full-project E2E/release/live gate: this is scoped read/UI work. No new exports,
+impersonation, AI/event/notification or CRM mutations. Existing support writes
+continue through their unchanged services/permissions. Updated current access,
+frontend/operations, roadmap, spec delta and capabilities; next spec13.5 step4
+remains unstarted. Base fa8a041 CI38705753503 independently confirmed SUCCESS.
+Review: all29 intended paths (10 new) task-owned; local links218 PASS, registered
+doc roles unchanged, diff hygiene PASS. No private/customer data or secrets in
+intended diff; fixtures contain synthetic example.com identities only.
+
 ## PLATFORM-SHELL-20261015 — implementation
 
 Owner: «приступай», approved section14 shell reference. Implementation/code gap.

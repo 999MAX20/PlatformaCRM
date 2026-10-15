@@ -150,6 +150,7 @@ def platform_merchant_detail(request, business_id):
             "status": business.status,
             "landing_id": business.landing_id,
             "landing_domain": business.landing_domain,
+            "timezone": business.timezone,
             "owner": {
                 "id": business.owner_id,
                 "email": business.owner.email if business.owner else "",

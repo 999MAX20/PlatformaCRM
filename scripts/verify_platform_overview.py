@@ -15,6 +15,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--grep", default="operator overview|service status keeps operator")
 parser.add_argument("--spec", nargs="+", default=["e2e/platform-overview.spec.ts", "e2e/service-s03.spec.ts"])
 parser.add_argument("--project", nargs="+", default=["desktop-chromium", "mobile-chromium"])
+parser.add_argument("--clinic-crm", action="store_true", help="Add isolated clinic CRM acceptance fixtures")
 args = parser.parse_args()
 fixture = """
 from django.utils import timezone
@@ -45,10 +46,15 @@ for index in range(3):
     Business.objects.create(owner=owner,name=f'Overview Unverified {index}',slug=f'overview-unknown-{index}')
 """
 folder=ROOT/'output'/'platform-overview'
+if args.clinic_crm:
+    fixture += (ROOT/'scripts'/'platform_clinic_fixture.py').read_text(encoding='utf-8')
+    folder=ROOT/'output'/'platform-clinic-crm'
 folder.mkdir(parents=True,exist_ok=True)
 path=folder/f'browser-{time.time_ns()}.log'
 with isolated_runtime(python=sys.executable) as runtime, path.open('w',encoding='utf-8') as log:
     runtime.environment.update(E2E_PLATFORM_OVERVIEW='1',E2E_SERVICE_S03='1')
+    if args.clinic_crm:
+        runtime.environment['E2E_PLATFORM_CLINIC_CRM']='1'
     commands=[
         ([shutil.which('node'),'e2e/django-e2e.mjs','prepare'],ROOT/'frontend'),
         ([sys.executable,'manage.py','shell','-c',fixture],ROOT),

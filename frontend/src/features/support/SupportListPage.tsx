@@ -17,7 +17,7 @@ import { SupportClinicPicker } from "./SupportClinicPicker";
 import { SupportCreateDialog } from "./SupportCreateDialog";
 import { SupportError, SupportStatusBadge, retainSupportData, supportDate, supportStatuses } from "./SupportUI";
 
-export function SupportListPage({ platform = false }: { platform?: boolean }) {
+export function SupportListPage({ platform = false, fixedBusiness }: { platform?: boolean; fixedBusiness?: number }) {
   const { t, language } = useI18n();
   const active = useActiveBusiness();
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export function SupportListPage({ platform = false }: { platform?: boolean }) {
   const needle = useDebouncedValue(search, 250);
   const status = params.get("status") || "";
   const assignee = platform ? params.get("assignee") || "" : "";
-  const business = platform ? Number(params.get("business")) || undefined : undefined;
+  const business = platform ? fixedBusiness || Number(params.get("business")) || undefined : undefined;
   const page = Math.max(1, Math.floor(Number(params.get("page")) || 1));
   const pageSize = [10, 20, 30, 50, 100].includes(Number(params.get("page_size"))) ? Number(params.get("page_size")) : 20;
   const unread = params.get("unread") === "true";
@@ -40,7 +40,7 @@ export function SupportListPage({ platform = false }: { platform?: boolean }) {
     enabled: platform || Boolean(scope.business), refetchInterval: 30_000,
   });
   function update(values: Record<string, string>) {
-    setParams(current => { const next = new URLSearchParams(current); for (const [key, value] of Object.entries(values)) { if (value) next.set(key, value); else next.delete(key); } return next; }, { replace: true });
+    setParams(current => { const next = new URLSearchParams(current); for (const [key, value] of Object.entries(values)) { if (value) next.set(key, value); else next.delete(key); } return next; }, { replace: true, state: location.state });
   }
   if (!platform && active.isLoading) return <LoadingState scope="page" />;
   if (!platform && active.isError) return <SupportError error={active.error} retry={() => active.refetch()} />;
@@ -58,9 +58,9 @@ export function SupportListPage({ platform = false }: { platform?: boolean }) {
         options={[{ value: "", label: t("supportCases.allAssignees") }, ...["me", "unassigned", "unavailable"].map(value => ({ value, label: t(`supportCases.filter.${value}`) }))]} />}
       <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" className="platforma-focus-ring size-4" checked={unread} onChange={event => update({ unread: event.target.checked ? "true" : "", page: "" })} />{t("supportCases.unreadOnly")}</label>
       <Button variant="secondary" onClick={() => list.refetch()} isLoading={list.isFetching}>{t("common.refresh")}</Button>
-      {filtered && <Button variant="ghost" onClick={() => setParams({})}>{t("tasks.resetFilters")}</Button>}
+      {filtered && <Button variant="ghost" onClick={() => fixedBusiness ? update({ search: "", status: "", assignee: "", unread: "", page: "" }) : setParams({})}>{t("tasks.resetFilters")}</Button>}
     </div>
-    {platform && <details className="rounded-control border border-platforma-border p-3" open={Boolean(business) || undefined}>
+    {platform && !fixedBusiness && <details className="rounded-control border border-platforma-border p-3" open={Boolean(business) || undefined}>
       <summary className="platforma-focus-ring cursor-pointer text-sm font-medium">{t("supportCases.clinicFilter")}{business ? ` · #${business}` : ""}</summary>
       <div className="mt-3 max-w-md"><SupportClinicPicker value={business} onChange={value => update({ business: value ? String(value) : "", page: "" })} /></div>
     </details>}
@@ -80,6 +80,6 @@ export function SupportListPage({ platform = false }: { platform?: boolean }) {
       </table>
       <CrmPagination compact shown={rows.length} total={list.data?.count || 0} page={page} pageSize={pageSize} onPageChange={value => update({ page: String(value) })} onPageSizeChange={value => update({ page_size: String(value), page: "" })} previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")} />
     </Card>}
-    {creating && <SupportCreateDialog scope={scope} initialBusiness={business} onClose={() => setCreating(false)} onCreated={item => { setCreating(false); navigate(`${root}/${item.id}`, { state: { returnTo: location.pathname + location.search } }); }} />}
+    {creating && <SupportCreateDialog scope={scope} initialBusiness={business} fixedBusiness={Boolean(fixedBusiness)} onClose={() => setCreating(false)} onCreated={item => { setCreating(false); navigate(`${root}/${item.id}`, { state: { returnTo: location.pathname + location.search } }); }} />}
   </div>;
 }

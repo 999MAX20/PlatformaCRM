@@ -33,7 +33,7 @@ function SupportDetail({ id, scope }: { id: number; scope: SupportScope }) {
   const { t } = useI18n();
   const location = useLocation();
   const root = scope.platform ? "/platform/support" : "/app/support";
-  const returnTo = typeof location.state?.returnTo === "string" && (location.state.returnTo === root || location.state.returnTo.startsWith(root + "?") || (scope.platform && location.state.returnTo === "/platform")) ? location.state.returnTo : root;
+  const returnTo = typeof location.state?.returnTo === "string" && (location.state.returnTo === root || location.state.returnTo.startsWith(root + "?") || (scope.platform && (location.state.returnTo === "/platform" || /^\/platform\/merchants\/\d+\?section=support(?:&|$)/.test(location.state.returnTo)))) ? location.state.returnTo : root;
   const [drafts, setDrafts] = useState<Record<string, { dirty: boolean; pending: boolean }>>({});
   const [action, setAction] = useState<SupportAction | null>(null);
   const onDraft = useCallback((name: string, dirty: boolean, pending: boolean) => setDrafts(current => current[name]?.dirty === dirty && current[name]?.pending === pending ? current : { ...current, [name]: { dirty, pending } }), []);

@@ -74,6 +74,7 @@ from apps.core.custom_field_views import CustomFieldDefinitionViewSet, CustomFie
 from apps.core.import_export_views import ExportJobViewSet, ImportJobViewSet, export_entity, import_template, manual_catalog_item, manual_sale
 from apps.core.pilot_views import PilotReadinessView
 from apps.core.platform_worklists import platform_worklist
+from apps.core.platform_crm_views import platform_clinic_records, platform_clinic_record, platform_clinic_record_section, platform_clinic_access_log
 from apps.core.platform_views import (
     platform_activate_landing,
     platform_merchants,
@@ -255,6 +256,10 @@ urlpatterns = [
     path("api/platform/operations-worklist/", platform_worklist, name="platform_operations_worklist"),
     path("api/platform/merchants/", platform_merchants, name="platform_merchants"),
     path("api/platform/merchants/<int:business_id>/", platform_merchant_detail, name="platform_merchant_detail"),
+    path("api/platform/merchants/<int:business_id>/crm/<str:kind>/", platform_clinic_records),
+    path("api/platform/merchants/<int:business_id>/crm/<str:kind>/<int:record_id>/", platform_clinic_record),
+    path("api/platform/merchants/<int:business_id>/crm/<str:kind>/<int:record_id>/<str:section>/", platform_clinic_record_section),
+    path("api/platform/merchants/<int:business_id>/crm-access-log/", platform_clinic_access_log),
     path("api/platform/merchants/<int:business_id>/support-actions/", platform_merchant_support_action, name="platform_merchant_support_action"),
     path("api/platform/activate-landing/", platform_activate_landing, name="platform_activate_landing"),
     path("api/pilot/readiness/", PilotReadinessView.as_view(), name="pilot_readiness"),

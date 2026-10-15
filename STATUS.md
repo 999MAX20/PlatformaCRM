@@ -6,6 +6,13 @@
 
 # PlatformaCRM — текущий статус
 
+15.10.2026. PLATFORM-CLINIC-CRM реализован и локально проверен: единая карточка,
+постоянный подробный GET просмотр CRM, сообщения без read-mark, scoped поддержка
+и аудит. PostgreSQL123, browser12 distinct desktop/mobile, build/types/i18n/bundle,
+system/schema PASS; история исправленных запусков и точные границы — checkpoint.
+Новых миграций/рабочих DB изменений нет; публикация следует после проверки diff.
+CI предыдущего fa8a041 (38705753503) полностью SUCCESS. Следующий шаг4 не начат.
+
 15.10.2026. PLATFORM-SHELL: по утверждённому референсу внедрены sidebar64/224px,
 единый header57px, меню аккаунта и platform self-account без Business-настроек.
 18 scoped browser checks, build/types/i18n/bundle и визуальная проверка PASS.
