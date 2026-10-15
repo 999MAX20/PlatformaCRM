@@ -8,6 +8,17 @@
 
 ## PLATFORM-ADMIN-CAPABILITIES-20261015 — technical specification
 
+Follow-up: owner requested explicit documentation of the inspector discussion and
+an implementation plan. Docs-only continuation from clean HEAD4bf0c30 on the same
+canonical root/branch. Scope: spec15.7, ordered plan in the existing roadmap,
+status and this checkpoint. No implementation or live actions. Risk/checks:
+avoid duplicate backlog and invented permissions; inspect complete four-file diff,
+links, working/index/committed-range hygiene; skip app/DB/browser gates as docs-only.
+Completed plan and spec clarification in four intended files; added-link check
+PASS, full patch reviewed, working diff hygiene PASS. Fresh fetch still includes
+other-writer6e1bd46 in outgoing range: no push, CI or deployment. Documentation
+commit uses index/range hygiene checks; runtime code and working data unchanged.
+
 Owner requested persistence of the coverage analysis and direct administrative
 remediation requirements, after checking for an existing technical document.
 Mode documentation; gap product/policy specification. Reuse registered
