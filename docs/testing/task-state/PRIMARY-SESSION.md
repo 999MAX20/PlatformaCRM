@@ -6,6 +6,46 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-ADMIN-01-CONTRACT-20261015 — stage0
+
+User said proceed with the proposed plan. Under AGENTS one-phase rule, active
+scope is stage0: inspect existing layers and establish ADMIN-01 action contract.
+Starting canonical root C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, clean HEAD49e46a273eb0dea2a2770e712f180a12175d6f36.
+Applied zani-change-crm-domain and zani-run-verification; read references.
+No agents, source copies, runtime mutation, migrations or external operations.
+Checks for this contract phase: inspected source/field references, consistency,
+links and working/index/committed-range diff hygiene; no app gates for docs only.
+Future backend/UI acceptance is specified in spec15.8, not claimed as tested.
+Pending owner question via async: ADMIN-01 roles and grant policy. Proposed both
+platform roles + recent MFA + business support case, without owner grant; other
+choices admin-only or grant required. Existing access contract leaves these
+write rights unresolved, so dependent implementation has not begun. Phase0 map
+and proposed bounded API can be completed independently; do not infer an answer.
+Owner replied asking for a recommendation and whether primary company data
+should become support-only. Recommendation sent: display name/contacts remain
+self-service; legal_name/tax_id editable until explicit owner confirmation, then
+support-only on an owner request, both platform roles + MFA/audit without grant.
+Second async question pending to choose that policy vs lock after first fill vs
+retain current self-service. No choice received yet; do not mark recommendation
+approved. This would add merchant API/UI constraints and an explicit fixation
+state; migration impact must be assessed after the decision. Current work is
+three documentation files only, uncommitted; source/runtime/data unchanged.
+
+Owner explicitly agreed only to the annotated support permission proposal:
+both admin/operator may correct details with recent MFA and audit, no temporary
+owner grant; preserve reason, actor and history. Recorded in spec15.8/access.
+Do not treat this as acceptance of merchant legal-field locking/confirmation.
+Stage0 source map and bounded proposed API complete; next result ADMIN-01
+implementation. No backend/UI changes or application checks in this phase.
+Final scope is four docs paths including access; links/diff reviewed before
+commit. Publication still requires rechecking the outgoing other-writer commit.
+Completion: 13 new local references resolve; four intended documentation paths,
+working diff hygiene PASS. Fresh fetch still shows6e1bd46 in outgoing range;
+push blocked under AGENTS, no CI/deployment. Index and committed-range hygiene
+checked for the task commit; app tests skipped because runtime is unchanged.
+
+
 ## PLATFORM-ADMIN-CAPABILITIES-20261015 — technical specification
 
 Follow-up: owner requested explicit documentation of the inspector discussion and
