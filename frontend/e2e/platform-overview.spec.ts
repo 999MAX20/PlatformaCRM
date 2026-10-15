@@ -63,6 +63,10 @@ test('operator overview bounded queues return from clinic incident and case acro
     await page.evaluate(value=>localStorage.setItem('ai_smb_language',value),language);await page.reload();
     await expect(page.getByTestId('overview-attention')).toBeVisible();
     await expect(page.getByTestId('platform-finance')).toBeVisible();
+    const finance = page.getByTestId('platform-finance');
+    await finance.locator('summary').focus(); await page.keyboard.press('Enter');
+    await expect(finance.getByText(copy['platform.overview.mrrText'], { exact: true })).toBeVisible();
+    await finance.locator('summary').press('Enter');
     const link=page.getByRole('link',{name:copy['overviewWorkspace.degradedClinics'],exact:true});
     await link.focus();await expect(link).toBeFocused();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy();

@@ -35,12 +35,32 @@ test("support clinic request reaches team and public reply while private notes s
   const id = Number(page.url().split("/").pop());
   const team = await browser.newPage({ baseURL, viewport: page.viewportSize() || undefined });
   try {
-    await login(team, `support-team-${info.project.name}@example.com`);
+    const teamHeaders = await login(team, `support-team-${info.project.name}@example.com`);
     await team.goto(`/platform/support/${id}`);
+    const publicDraft = team.getByRole("textbox", { name: ru["supportCases.replyClinic"], exact: true });
+    await publicDraft.fill("The setting has been checked");
+    await team.getByRole("tab", { name: ru["supportCases.internalText"], exact: true }).click();
     await team.getByRole("textbox", { name: ru["supportCases.internalText"], exact: true }).fill("PRIVATE SUPPORT NOTE");
+    await team.getByRole("tab", { name: ru["supportCases.replyClinic"], exact: true }).click();
+    await expect(publicDraft).toHaveValue("The setting has been checked");
+    await expect(team.getByTestId("support-internal-notes")).toBeHidden();
+    await team.getByRole("tab", { name: ru["supportCases.internalText"], exact: true }).click();
+    await expect(team.getByRole("textbox", { name: ru["supportCases.internalText"], exact: true })).toHaveValue("PRIVATE SUPPORT NOTE");
+    await team.getByRole("link", { name: ru["supportCases.back"], exact: true }).click();
+    await team.getByRole("button", { name: ru["taskWorkspace.keepEditing"], exact: true }).click();
+    await expect(team.getByRole("textbox", { name: ru["supportCases.internalText"], exact: true })).toHaveValue("PRIVATE SUPPORT NOTE");
+    await page.getByRole("textbox", { name: ru["supportCases.replySupport"], exact: true }).fill("Additional clinic context");
+    await page.getByRole("button", { name: ru["supportCases.sendReply"], exact: true }).click();
+    await expect(page.getByTestId("support-public-thread").getByText("Additional clinic context", { exact: true })).toBeVisible();
     await team.getByRole("button", { name: ru["supportCases.saveNote"], exact: true }).click();
     await expect(team.getByTestId("support-internal-notes").getByText("PRIVATE SUPPORT NOTE", { exact: true })).toBeVisible();
-    await team.getByRole("textbox", { name: ru["supportCases.replyClinic"], exact: true }).fill("The setting has been checked");
+    await expect(team.getByTestId("support-public-thread").getByText("Additional clinic context", { exact: true })).toHaveCount(1);
+    const unreadCase = await team.request.get(`${api}/api/platform/support-cases/${id}/`, { headers: teamHeaders });
+    expect((await unreadCase.json()).unread_count).toBe(1);
+
+    await team.getByRole("tab", { name: ru["supportCases.replyClinic"], exact: true }).click();
+    await expect(publicDraft).toHaveValue("The setting has been checked");
+    await expect(team.getByTestId("support-public-thread")).not.toContainText("PRIVATE SUPPORT NOTE");
     await team.getByRole("button", { name: ru["supportCases.sendReply"], exact: true }).click();
     await expect(team.getByTestId("support-public-thread").getByText("The setting has been checked", { exact: true })).toBeVisible();
     await team.getByRole("button", { name: ru["supportCases.action.resolved"], exact: true }).click();
@@ -58,6 +78,18 @@ test("support clinic request reaches team and public reply while private notes s
     await noOverflow(page); await noOverflow(team);
     await page.screenshot({ path: info.outputPath("support-clinic.png"), fullPage: true });
     await team.screenshot({ path: info.outputPath("support-team.png"), fullPage: true });
+    for (const [language, copy] of [["kk", kk], ["en", en]] as const) {
+      await team.evaluate(value => localStorage.setItem("ai_smb_language", value), language);
+      await team.reload();
+      const replyTab = team.getByRole("tab", { name: copy["supportCases.replyClinic"], exact: true });
+      await replyTab.press("ArrowRight");
+      await expect(team.getByRole("tab", { name: copy["supportCases.internalText"], exact: true })).toBeFocused();
+      await expect(team.getByTestId("support-internal-notes")).toBeVisible();
+      await expect(team.getByTestId("support-public-thread")).toBeHidden();
+      await noOverflow(team);
+      await team.screenshot({ path: info.outputPath(`support-team-${language}.png`), fullPage: true });
+    }
+
   } finally { await team.close(); }
 });
 
@@ -66,6 +98,11 @@ test("support team creates cases and resolves stale version without losing the d
   const headers = await login(page, `support-team-${info.project.name}@example.com`);
   await page.goto(`/platform/support?search=Queue%20fixture%20${info.project.name}&page_size=10`);
   await expect(page.getByTestId("support-case-row")).toHaveCount(10);
+  await page.getByRole("button", { name: ru["supportCases.filter.me"], exact: true }).click();
+  await expect(page.getByText(ru["supportCases.noMatches"], { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: ru["supportCases.filter.unassigned"], exact: true }).click();
+  await expect(page.getByTestId("support-case-row")).toHaveCount(10);
+  await expect(page).toHaveURL(/assignee=unassigned/);
   await page.getByRole("button", { name: ru["pagination.next"], exact: true }).click();
   await expect(page).toHaveURL(/page=2/);
   await page.getByTestId("support-case-row").first().getByRole("link").click();

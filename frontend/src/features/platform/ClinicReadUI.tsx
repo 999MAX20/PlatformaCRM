@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { normalizeAppError } from "../../api/appError";
 import { Button } from "../../components/ui/Button";
+import { Select } from "../../components/ui/Select";
 import { useI18n } from "../../lib/i18n";
 import type { ClinicKind, ClinicValue } from "../../api/platformClinic";
 import { supportDate } from "../support/SupportUI";
@@ -19,10 +20,11 @@ export const clinicStatuses: Record<ClinicKind, string[]> = {
   connectors: ["draft", "connected", "pending_request", "setup_required", "provider_configuring", "error", "disconnected", "needs_attention", "syncing", "failed", "disabled", "expired_credentials"],
   channels: ["draft", "active", "paused", "error"],
 };
-export function ClinicPager({ page, count, size = 20, change }: { page: number; count: number; size?: number; change: (page: number) => void }) {
+export function ClinicPager({ page, count, size = 20, change, changeSize }: { page: number; count: number; size?: number; change: (page: number) => void; changeSize?: (size: number) => void }) {
   const { t } = useI18n();
   return <div className="flex flex-wrap items-center justify-between gap-3 border-t border-platforma-border p-3" data-testid="clinic-pagination">
     <span className="text-sm" aria-live="polite">{t("pagination.total", { total: count })} · {t("pagination.currentPage", { page, pages: Math.max(1, Math.ceil(count / size)) })}</span>
+    {changeSize && <Select aria-label={t("pagination.perPage")} value={String(size)} options={[10, 20, 50].map(value => ({ value: String(value), label: String(value) }))} onChange={event => changeSize(Number(event.target.value))} className="w-24" />}
     <div className="flex gap-2"><Button variant="secondary" disabled={page <= 1} onClick={() => change(page - 1)}>{t("pagination.previous")}</Button><Button variant="secondary" disabled={page * size >= count} onClick={() => change(page + 1)}>{t("pagination.next")}</Button></div>
   </div>;
 }

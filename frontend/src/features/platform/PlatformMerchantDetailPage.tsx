@@ -80,17 +80,25 @@ function PlatformMerchantContent({ id }: { id: string }) {
 
   const data = merchant.data;
   const operations = data.operations;
-  return <div className="space-y-5" data-testid="platform-clinic-detail">
+  return <div className="space-y-4" data-testid="platform-clinic-detail">
     {(Boolean(note.trim()) || supportMutation.isPending) && <TaskDraftGuard dirty={Boolean(note.trim())} pending={supportMutation.isPending} />}
-    <Link to={returnTo} className="platforma-focus-ring inline-flex items-center gap-2 text-sm font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t(returnTo === "/platform" ? "platform.nav.overview" : returnTo.startsWith("/platform/operations") ? "platform.nav.operations" : "platform.nav.merchants")}</Link>
-    <PlatformPageHeading title={data.name} actions={<><Link to={`?section=support`} state={location.state} className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-sm font-semibold text-brand-700">{t("supportCases.title")}</Link><span className="rounded-control bg-surface-muted px-3 py-2 text-sm">{t(`platform.workspace.status.${data.status}`)}</span></>} />
+    <PlatformPageHeading title={data.name} />
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+      <Link to={returnTo} className="platforma-focus-ring inline-flex min-h-10 items-center gap-2 font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t(returnTo === "/platform" ? "platform.nav.overview" : returnTo.startsWith("/platform/operations") ? "platform.nav.operations" : "platform.nav.merchants")}</Link>
+      <span className="text-platforma-faint">#{data.id}</span><span className="rounded-control bg-surface-muted px-2 py-1">{t(`platform.workspace.status.${data.status}`)}</span>
+      <span className="text-platforma-subtle">{data.timezone || "UTC"}</span>
+      <Link to="?section=support" state={location.state} className="platforma-focus-ring ml-auto inline-flex min-h-10 items-center font-medium text-brand-700">{t("supportCases.title")}</Link>
+    </div>
     {merchant.isError && <PlatformLoadError error={merchant.error} message={t("platform.merchantDetail.error")} onRetry={() => merchant.refetch()} />}
-    <Card><CardBody className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
+    <details className="rounded-control border border-platforma-border bg-surface-card text-sm" data-testid="clinic-identity">
+      <summary className="platforma-focus-ring cursor-pointer rounded-control px-3 py-2"><span className="text-platforma-subtle">{t("platform.merchantDetail.owner")}: </span><span className="break-words">{data.owner.full_name || data.owner.email || t("platform.common.noName")}</span></summary>
+      <div className="grid gap-3 border-t border-platforma-border p-3 sm:grid-cols-2 lg:grid-cols-4">
       <div className="min-w-0"><p className="text-xs text-platforma-faint">{t("platform.merchantDetail.owner")}</p><p className="mt-1 font-medium">{data.owner.full_name || t("platform.common.noName")}</p><p className="mt-1 break-all text-sm text-platforma-subtle">{data.owner.email}</p></div>
       <div><p className="text-xs text-platforma-faint">{t("platform.merchants.created")}</p><p className="mt-1 text-sm">{platformDate(data.created_at, language)}</p></div>
       <div><p className="text-xs text-platforma-faint">{t("platform.workspace.lastActivity")}</p><p className="mt-1 text-sm">{platformDate(data.latest_activity_at, language)}</p></div>
       <div><p className="text-xs text-platforma-faint">{t("platform.workspace.snapshot")}</p><p className="mt-1 text-sm">{platformDate(data.generated_at, language)}</p><p className="mt-1 text-xs text-platforma-faint">#{data.id} · {data.timezone || "UTC"}</p></div>
-    </CardBody></Card>
+      </div>
+    </details>
     <Tabs value={section} options={sections.map(value => ({ value, label: t(`clinicCrm.tab.${value}`) }))} ariaLabel={data.name} idPrefix="clinic" appearance="underline" onChange={value => setParams({ section: value }, { state: location.state })} />
     <section role="tabpanel" id={`clinic-panel-${section}`} aria-labelledby={`clinic-tab-${section}`} className="space-y-5">
     {section === "state" && <>

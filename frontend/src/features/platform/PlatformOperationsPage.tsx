@@ -18,6 +18,5 @@ export function PlatformOperationsPage() {
     <section role="tabpanel" id={`operations-panel-${section}`} aria-labelledby={`operations-tab-${section}`}>
       {section === "infrastructure" ? <OperationsInfrastructure /> : <OperationsWorklist key={section} section={section} params={params} update={update} />}
     </section>
-    <p className="text-xs text-platforma-subtle">{t("platform.support.recoveryByClinic")}</p>
   </div>;
 }

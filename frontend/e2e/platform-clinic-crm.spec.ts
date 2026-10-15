@@ -27,7 +27,7 @@ async function choose(page: Page, label: string, option: string) {
 async function selectKind(page: Page, kind: string) { await choose(page, ru['clinicCrm.records'], ru[`clinicCrm.kind.${kind}`]); }
 const rows = (page: Page) => page.getByTestId('clinic-record-row');
 
-test('clinic CRM search pagination archive and related navigation keep the selected clinic', async ({ page }) => {
+test('clinic CRM search pagination archive and related navigation keep the selected clinic', async ({ page }, info) => {
   const { root } = await openClinic(page);
   await expect(page.getByTestId('clinic-pagination')).toContainText('24');
   await choose(page, ru['pagination.perPage'], '10');
@@ -37,6 +37,16 @@ test('clinic CRM search pagination archive and related navigation keep the selec
   const title = await rows(page).first().getByRole('link').innerText();
   await rows(page).first().getByRole('link').click();
   await expect(page.getByRole('heading', { name: new RegExp(title) })).toBeVisible();
+  await expect(page.getByRole('heading', { name: new RegExp(title) })).toBeFocused();
+  const listPane = page.getByTestId('clinic-record-list');
+  if (info.project.name === 'desktop-chromium') {
+    await expect(listPane).toBeVisible();
+    await expect(listPane.locator('a[aria-current=true]')).toHaveText(title);
+  } else await expect(listPane).toBeHidden();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: new RegExp(title) })).toBeVisible();
+  await expect(page.getByTestId('clinic-record-detail').getByRole('alert')).toHaveCount(0);
+  await page.screenshot({ path: info.outputPath('clinic-master-detail.png'), fullPage: true });
   await page.getByRole('link', { name: ru['clinicCrm.back'], exact: true }).click();
   await expect(page).toHaveURL(/page=2/); await expect(rows(page)).toHaveCount(10);
   const search = page.getByRole('textbox', { name: ru['clinicCrm.search'], exact: true });
@@ -75,7 +85,7 @@ test('clinic CRM manager can inspect every record type and messages without chan
   await selectKind(page, 'conversations'); await rows(page).getByRole('link').click();
   await expect(page.getByText('Patient message 22', { exact: true })).toBeVisible();
   await expect(page.getByText('Patient message 00', { exact: true })).toHaveCount(0);
-  await page.getByTestId('clinic-pagination').getByRole('button', { name: ru['pagination.next'] }).click();
+  await page.getByTestId('clinic-record-detail').getByTestId('clinic-pagination').getByRole('button', { name: ru['pagination.next'] }).click();
   await expect(page.getByText('Patient message 00', { exact: true })).toBeVisible();
   await page.screenshot({ path: info.outputPath('clinic-conversation.png'), fullPage: true });
   const response = await page.request.get(`${api}/api/platform/merchants/${id}/crm/conversations/`, { headers });

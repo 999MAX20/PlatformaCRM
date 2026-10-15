@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { LockKeyhole } from "lucide-react";
 import { supportApi } from "../../api/support";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
@@ -22,8 +23,8 @@ export function SupportPager({ page, total, pageSize, onChange }: { page: number
   </div>;
 }
 
-export function SupportThread({ item, scope, internal = false, onDraft }: {
-  item: SupportCase; scope: SupportScope; internal?: boolean; onDraft: SupportDraftListener;
+export function SupportThread({ item, scope, internal = false, active = true, onDraft }: {
+  item: SupportCase; scope: SupportScope; internal?: boolean; active?: boolean; onDraft: SupportDraftListener;
 }) {
   const { t, language } = useI18n();
   const queryClient = useQueryClient();
@@ -56,13 +57,13 @@ export function SupportThread({ item, scope, internal = false, onDraft }: {
     onDraft(kind, Boolean(text.trim()), send.isPending);
   }, [kind, text, send.isPending, onDraft]);
   useEffect(() => {
-    if (internal || page !== 1 || thread.isError || thread.isFetching || latest <= attemptedRead.current) return;
+    if (!active || internal || page !== 1 || thread.isError || thread.isFetching || latest <= attemptedRead.current) return;
     attemptedRead.current = latest;
     if (latest) read.mutate(latest);
-  }, [internal, latest, page, thread.isError, thread.isFetching]);
+  }, [active, internal, latest, page, thread.isError, thread.isFetching]);
   const messages = thread.data?.results || [];
-  return <Card padding="md" variant={internal ? "muted" : "default"} className="min-w-0 space-y-4" data-testid={internal ? "support-internal-notes" : "support-public-thread"}>
-    <div><h2 className="font-semibold">{t(internal ? "supportCases.internalNotes" : "supportCases.publicThread")}</h2>{internal && <p className="mt-1 text-xs text-platforma-subtle">{t("supportCases.internalOnly")}</p>}</div>
+  return <Card padding="md" variant={internal ? "muted" : scope.platform ? "outlined" : "default"} className="min-w-0 space-y-4" data-testid={internal ? "support-internal-notes" : "support-public-thread"}>
+    <div><h2 className="flex items-center gap-2 font-semibold">{internal && <LockKeyhole size={16} aria-hidden="true" />}{t(internal ? "supportCases.internalNotes" : "supportCases.publicThread")}</h2>{internal && <p className="mt-1 text-xs text-platforma-subtle">{t("supportCases.internalOnly")}</p>}</div>
     {thread.isPending ? <LoadingState /> : thread.isError ? <SupportError error={thread.error} retry={() => thread.refetch()} /> : !messages.length ? <p className="text-sm text-platforma-subtle">{t(internal ? "supportCases.noNotes" : "supportCases.noMessages")}</p> : <div className="space-y-3">
       {(internal ? messages : [...messages].reverse()).map(message => <article key={message.id} className="rounded-control border border-platforma-border bg-surface-card p-3">
         <header className="flex flex-wrap items-start justify-between gap-1 text-xs text-platforma-subtle"><span className="break-words font-semibold">{message.author.name}</span><time dateTime={message.created_at}>{supportDate(message.created_at, language, item.business_timezone)}</time></header>

@@ -2,6 +2,8 @@ import { ru } from "./ru";
 
 export const kk: Record<string, string> = {
   ...ru,
+  "clinicCrm.readOnly": "Тек қарау",
+  "clinicCrm.moreDetails": "Қосымша мәліметтер",
   "clinicCrm.value.yes": "Иә",
   "clinicCrm.value.no": "Жоқ",
   "clinicCrm.value.manual": "Қолмен",

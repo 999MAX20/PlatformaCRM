@@ -6,6 +6,138 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-REFERENCE-REDESIGN-20261015 — analysis and implementation
+
+Owner explicitly requested detailed analysis of the six generated references,
+then implementation of the page redesign based on it. One authorized result covers
+all six screens; no new approval between analysis and implementation. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit, clean starting
+HEAD/index/tree 5d5586e00db5dc655c1e0c4093ccd0a9f32c41a2. No agents or other checkouts.
+Mode implementation, frontend composition/interaction gap. Reference artifacts:
+output/platform-page-references-20261015/{01-overview,02-businesses,03-business-crm,
+04-support-queue,05-support-case,06-operations}.png; prompts.json records sources.
+
+### Structural analysis before implementation
+
+Shared hierarchy is shell → compact toolbar → worklist → selected-record context.
+Keep existing Manrope, semantic neutral/emerald tokens, 64px rail/57px header,
+12px cards/10px controls, thin borders and restrained status colors. No global
+token/component redesign. Lists should occupy the first viewport; timestamps and
+metadata are secondary, not separate tall cards. Preserve text/icon status meaning,
+long localized strings, accessible names/focus, mobile reflow and keyboard operation.
+
+1. Overview: five linked metrics in one strip, two compact attention/support queues,
+   operational signal row, disclosure sections for usage/finance. Retain all actual
+   metrics, MRR definition, unavailable-source and fresh/unknown distinctions;
+   generation's arbitrary assignees/business associations are not data requirements.
+2. Businesses: one toolbar, shorter rows and clear business-status vs service-state
+   columns. Subscription/usage details remain discoverable within the row; do not
+   silently remove fields to imitate the picture. Search/pagination/return context
+   stay server-backed and URL-persistent; no new create-business/repair capability.
+3. Business CRM: single compact identity summary, existing tabs, kind/search/filter
+   toolbar, desktop list/detail split and mobile detail with return. All nine entity
+   types, children, relations, archive and pagination remain. No invented related
+   counts; no mutation buttons. Reject duplicate business title and generator text.
+4. Support queue: creation with filters, explicit assignee quick selection, compact
+   rows/unread indicator. Retain business picker, status/unread/unavailable filters,
+   server pagination, no priority/SLA inventions or unsupported filtering.
+5. Support case: main thread and side context/actions/history/incident links.
+   Public reply/internal note selected explicitly with separate retained drafts;
+   never mix private note content into public thread. Existing action dialogs keep
+   validation, transition reasons, permissions and draft guard. Reference dropdowns
+   do not authorize direct mutation or bypass confirmation. Internal conversation
+   can use its own selected tab instead of duplicating note content in both columns.
+6. Operations: compact existing tabs/filters and readable state/date/action table.
+   Current episodes and historical failures remain distinct. API has no connector
+   name/error explanation: render supplied provider/kind/ID, not invented diagnostic
+   copy. Keep counts, freshness, linked cases and support/business transitions;
+   no platform retry/reconnect or backend projection expansion in this redesign.
+
+Risk: draft loss/leakage on tab changes; master/detail URL/focus or denial regressions;
+hidden fields after compaction; overflow in locales/mobile. Reuse existing API clients,
+queries, Tabs, Card, inputs, pagination and domain dialogs; no backend/schema/roles,
+grant/MFA, AI, BusinessEvents, notification or provider behavior changes. Merchant
+support is a shared consumer: scope new composition to platform where applicable.
+
+Checks: focused existing platform overview/CRM/operations/support browser runners
+on isolated DB/ports, adding only meaningful master-detail and draft-mode regression
+assertions; desktop/mobile and RU/KK/EN/error/empty/403 flows. Inspect real screenshots
+against references and keyboard interactions. Completion build/types/i18n + bundle,
+working/index/real committed-range diff hygiene and changed docs/links. No dependency
+install, full-project E2E, working DB migration or provider calls. Existing local demo
+may be used for read-only visual inspection after verifying roots/ports.
+Standing commit/push applies only to permitted history; previous unrelated outgoing
+6e1bd46 remains a publication blocker until fresh Git evidence changes that boundary.
+
+### Implementation and verification (15 October)
+
+All six page compositions are implemented. Overview queues and business rows are
+compact; usage/finance/secondary metadata use native disclosures. CRM retains the
+list next to record details at wide desktop sizes and uses a return flow on mobile.
+Public/internal support tabs retain separate mounted drafts; actions still use the
+existing reason/version dialogs. Operations uses the existing scoped worklists.
+No backend, schema, roles, notifications, BusinessEvents or AI changes.
+
+A direct CRM URL on the local SQLite demo exposed concurrent audited list/detail
+reads returning 503. The frontend now starts detail after the list request settles;
+mandatory backend audit remains unchanged. Added direct reload regression coverage.
+
+- Final `npm --prefix frontend run build`: PASS (types, i18n, app and widget);
+  `output/platform-page-references-20261015/redesign-build-final.log`.
+- `npm --prefix frontend run check:bundle`: PASS (largest 477.7 kB; shell 329.9 kB).
+- `.venv/Scripts/python.exe scripts/verify_platform_overview.py --spec
+  e2e/platform-overview.spec.ts --grep 'operator overview'`: 6 PASS;
+  `output/platform-overview/browser-1792071183731646500.log`.
+- `.venv/Scripts/python.exe scripts/verify_platform_overview.py --clinic-crm --spec
+  e2e/platform-clinic-crm.spec.ts --grep 'clinic CRM'`: 10 PASS, desktop/mobile,
+  all kinds, direct reload, related records, permission/recovery, RU/KK/EN;
+  `output/platform-clinic-crm/browser-1792071724317698600.log`.
+- Earlier combined overview+CRM run: 12 PASS / 4 FAIL. CRM fixture changes overview
+  counts and long combined execution expires freshness. Separate runners with their
+  own intended fixtures passed; assertions were not relaxed. Original evidence:
+  `output/platform-clinic-crm/browser-1792070601454213300.log` and
+  `output/platform-reference-redesign/attempt1/test-results`.
+- Build attempt 1 caught i18n fallback key order; fixed before the final PASS.
+- Screenshots retained under `output/platform-reference-redesign/{overview-pass,crm-pass}`.
+  Local demo visual inspection: compact business/support tables, CRM desktop split
+  and mobile record. Support screenshots also cover RU/KK/EN and keyboard tabs.
+- `.venv/Scripts/python.exe scripts/verify_platform_support.py`: 8 PASS,
+  `output/platform-support/browser-1792072093953461900.log`. Separate drafts survive
+  switching and leave/cancel; private notes remain private; unseen public messages
+  remain unread while the internal tab is selected. Merchant support, stale version,
+  recovery/denial, incident links and locales passed. The final source/test changes
+  were saved before the browser worker started; screenshots include the added
+  incoming-message fixture. Artifacts: `output/platform-reference-redesign/support-pass`.
+- Operations first run: 2 PASS / 4 FAIL;
+  `output/platform-operations/browser-1792072359509893100.log` and
+  `output/platform-reference-redesign/operations-attempt1/test-results`.
+  The navigation test expected access history on the default state tab; `git show`
+  of the starting HEAD proves that history was already hidden outside Access.
+  Updated the test to open Access and follow the exact preserved return URL.
+  Provider assertions now use the existing localized Telegram label (the first
+  worker had loaded the old lowercase assertion before this test correction).
+  Recovery, filters and permission-loss checks passed unchanged. Only the four
+  affected navigation/provider scenarios reran with fresh isolated fixtures: 4 PASS,
+  `output/platform-operations/browser-1792072552194344500.log`, command
+  `.venv/Scripts/python.exe scripts/verify_platform_operations.py --grep
+  'operator worklists paginate|operator worklists separate'`. Together with the
+  unchanged recovery/permission scenarios this proves all six operations scenarios.
+  Screenshots: `output/platform-reference-redesign/operations-pass`.
+- Total final applicable browser boundary: 30 distinct scenarios PASS (6 overview,
+  10 CRM, 8 support/incident, 6 operations), desktop/mobile and RU/KK/EN. Inspected
+  final CRM, overview, support and operations screenshots and live business queue.
+- No dependency installs, full E2E, backend test suites, working-DB migrations or
+  external provider calls: this is a frontend change. Required committed-range
+  static/system/migration-drift checks follow the local implementation commit.
+- Fresh fetch still shows unrelated `6e1bd46` before this task's history; normal push
+  remains blocked by ownership boundary. No history rewritten or unrelated work staged.
+
+Implementation and required frontend checks complete. Entire intended diff reviewed:
+20 explicit task-owned paths, no untracked source or unrelated WIP, no new secrets.
+Next: local commit, committed-range static check, and publication only after the
+pre-existing unrelated outgoing-history boundary is resolved by the owner.
+
+
 ## PLATFORM-DIAGNOSTICS-01-20261015 — consistent diagnostic reads
 
 Owner said «приступай» after platform analysis and ordered recommendations.

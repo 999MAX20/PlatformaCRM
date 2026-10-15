@@ -26,13 +26,15 @@ test('operator worklists paginate filter and retain clinic and incident return c
   await expect(page.getByTestId('operations-row')).toHaveCount(10);
   await page.getByRole('button',{name:ru['pagination.next'],exact:true}).click();
   await expect(page).toHaveURL(/page=2/);
+  const returnPath = new URL(page.url()).pathname + new URL(page.url()).search;
   await page.getByTestId('operations-row').first().getByRole('link').first().click();
+  await page.getByRole('tab', { name: ru['clinicCrm.tab.access'], exact: true }).click();
   await expect(page.getByTestId('support-action-history')).toBeVisible();
-  await page.locator('main a[href^="/platform/operations?"]').click();
+  await page.locator(`main a[href="${returnPath}"]`).click();
   await expect(page).toHaveURL(/page=2/);
   await page.getByTestId('operations-row').first().getByRole('link',{name:new RegExp(ru['supportIncidents.open'])}).click();
   await expect(page.getByTestId('support-incident-page')).toBeVisible();
-  await page.locator('main a[href^="/platform/operations?"]').click();
+  await page.locator(`main a[href="${returnPath}"]`).click();
   await expect(page).toHaveURL(/page=2/);
   await page.getByRole('textbox',{name:ru['operationsWorkspace.search']}).fill(`${prefix} 00`);
   await expect(page.getByTestId('operations-row')).toHaveCount(2);
@@ -77,7 +79,7 @@ test('operator worklists separate dated failures connectors and infrastructure',
   await page.screenshot({path:info.outputPath('webhooks.png'),fullPage:true});
   await select(page,ru['operationsWorkspace.source'],ru['operationsWorkspace.integrations']);
   await expect(page.getByTestId('operations-row')).toHaveCount(1);
-  await expect(page.getByTestId('operations-row')).toContainText('telegram');
+  await expect(page.getByTestId('operations-row')).toContainText(ru['clinicCrm.value.telegram']);
   await page.getByRole('tab',{name:ru['operationsWorkspace.infrastructure'],exact:true}).click();
   await expect(page.getByTestId('operations-infrastructure')).toBeVisible();
   await expect(page.getByTestId('operations-table')).toHaveCount(0);

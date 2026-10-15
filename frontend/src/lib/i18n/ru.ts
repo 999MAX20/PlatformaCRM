@@ -1,4 +1,6 @@
 export const ru: Record<string, string> = {
+  "clinicCrm.readOnly": "Только просмотр",
+  "clinicCrm.moreDetails": "Дополнительные сведения",
   "clinicCrm.value.yes": "Да",
   "clinicCrm.value.no": "Нет",
   "clinicCrm.value.manual": "Вручную",

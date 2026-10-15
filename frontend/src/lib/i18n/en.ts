@@ -2,6 +2,8 @@ import { ru } from "./ru";
 
 export const en: Record<string, string> = {
   ...ru,
+  "clinicCrm.readOnly": "Read only",
+  "clinicCrm.moreDetails": "Additional details",
   "clinicCrm.value.yes": "Yes",
   "clinicCrm.value.no": "No",
   "clinicCrm.value.manual": "Manual",

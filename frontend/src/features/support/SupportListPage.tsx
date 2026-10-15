@@ -49,17 +49,22 @@ export function SupportListPage({ platform = false, fixedBusiness }: { platform?
   const filtered = Boolean(search || status || assignee || business || unread);
   const createButton = <Button id="support-create-button" onClick={() => setCreating(true)}>{t("supportCases.create")}</Button>;
   return <div className="space-y-4" data-testid="support-list">
-    <div className="flex justify-end">{createButton}</div>
-    <div className="flex flex-wrap items-end gap-3">
-      <Input label={t("supportCases.search")} value={search} onChange={event => update({ search: event.target.value, page: "" })} maxLength={200} className="sm:w-72" />
-      <Select label={t("supportCases.statusLabel")} value={status} onChange={event => update({ status: event.target.value, page: "" })} className="sm:w-56"
+    {!platform && <div className="flex justify-end">{createButton}</div>}
+    <div className="flex flex-wrap items-end gap-3 [&>label]:w-full sm:[&>label]:w-auto">
+      <Input label={platform ? undefined : t("supportCases.search")} aria-label={t("supportCases.search")} placeholder={platform ? t("supportCases.search") : undefined} value={search} onChange={event => update({ search: event.target.value, page: "" })} maxLength={200} className="sm:w-80" />
+      <Select label={platform ? undefined : t("supportCases.statusLabel")} aria-label={t("supportCases.statusLabel")} value={status} onChange={event => update({ status: event.target.value, page: "" })} className="w-full sm:w-56"
         options={[{ value: "", label: t("supportCases.allStatuses") }, { value: "active", label: t("supportCases.active") }, ...supportStatuses.map(value => ({ value, label: t(`supportCases.status.${value}`) }))]} />
-      {platform && <Select label={t("supportCases.assigneeFilter")} value={assignee} onChange={event => update({ assignee: event.target.value, page: "" })} className="sm:w-56"
-        options={[{ value: "", label: t("supportCases.allAssignees") }, ...["me", "unassigned", "unavailable"].map(value => ({ value, label: t(`supportCases.filter.${value}`) }))]} />}
-      <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" className="platforma-focus-ring size-4" checked={unread} onChange={event => update({ unread: event.target.checked ? "true" : "", page: "" })} />{t("supportCases.unreadOnly")}</label>
+      {!platform && <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" className="platforma-focus-ring size-4" checked={unread} onChange={event => update({ unread: event.target.checked ? "true" : "", page: "" })} />{t("supportCases.unreadOnly")}</label>}
       <Button variant="secondary" onClick={() => list.refetch()} isLoading={list.isFetching}>{t("common.refresh")}</Button>
       {filtered && <Button variant="ghost" onClick={() => fixedBusiness ? update({ search: "", status: "", assignee: "", unread: "", page: "" }) : setParams({})}>{t("tasks.resetFilters")}</Button>}
+      {platform && <div className="sm:ml-auto">{createButton}</div>}
     </div>
+    {platform && <div className="flex flex-wrap items-center gap-3">
+      <div role="group" aria-label={t("supportCases.assigneeFilter")} className="flex flex-wrap gap-2">
+        {["", "me", "unassigned", "unavailable"].map(value => <Button key={value} variant="ghost" className={assignee === value ? "bg-brand-50 text-brand-700 ring-1 ring-brand-100" : undefined} aria-pressed={assignee === value} onClick={() => update({ assignee: value, page: "" })}>{t(value ? `supportCases.filter.${value}` : "supportCases.allAssignees")}</Button>)}
+      </div>
+      <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" className="platforma-focus-ring size-4" checked={unread} onChange={event => update({ unread: event.target.checked ? "true" : "", page: "" })} />{t("supportCases.unreadOnly")}</label>
+    </div>}
     {platform && !fixedBusiness && <details className="rounded-control border border-platforma-border p-3" open={Boolean(business) || undefined}>
       <summary className="platforma-focus-ring cursor-pointer text-sm font-medium">{t("supportCases.clinicFilter")}{business ? ` · #${business}` : ""}</summary>
       <div className="mt-3 max-w-md"><SupportClinicPicker value={business} onChange={value => update({ business: value ? String(value) : "", page: "" })} /></div>
@@ -71,7 +76,7 @@ export function SupportListPage({ platform = false, fixedBusiness }: { platform?
           {["subject", ...(platform ? ["clinic"] : []), "statusLabel", "assignee", "updated"].map(key => <th scope="col" key={key} className="px-4 py-3 font-medium">{t(`supportCases.${key}`)}</th>)}
         </tr></thead>
         <tbody className="block md:table-row-group">{rows.map(item => <tr key={item.id} className="grid grid-cols-2 gap-y-2 border-b border-platforma-border py-3 last:border-0 hover:bg-surface-hover md:table-row md:py-0" data-testid="support-case-row">
-          <td className="col-span-2 min-w-0 px-4 py-2 align-top md:py-4"><Link to={`${root}/${item.id}`} state={{ returnTo: location.pathname + location.search }} className="platforma-focus-ring break-words font-semibold text-platforma-text hover:text-brand-700">{item.subject}</Link><p className="mt-1 text-xs text-platforma-subtle">{item.number} · {item.author.name}</p>{item.unread_count > 0 && <span className="mt-2 inline-block"><Badge variant="info">{t("supportCases.unreadCount", { count: item.unread_count })}</Badge></span>}</td>
+          <td className="col-span-2 min-w-0 px-4 py-3 align-top"><Link to={`${root}/${item.id}`} state={{ returnTo: location.pathname + location.search }} className="platforma-focus-ring break-words font-semibold text-platforma-text hover:text-brand-700">{item.subject}</Link><div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-platforma-subtle"><span>{item.number} · {item.author.name}</span>{item.unread_count > 0 && <Badge variant="info">{t("supportCases.unreadCount", { count: item.unread_count })}</Badge>}</div></td>
           {platform && <td className="min-w-0 break-words px-4 py-2 align-top md:py-4">{item.business_name}</td>}
           <td className="px-4 py-2 align-top md:py-4"><SupportStatusBadge status={item.status} /></td>
           <td className="min-w-0 break-words px-4 py-2 align-top md:py-4"><p className="text-xs text-platforma-faint md:hidden">{t("supportCases.assignee")}</p>{item.assignee?.name || t("supportCases.filter.unassigned")}{item.assignee?.available === false && <p className="mt-1 text-xs text-platforma-warning">{t("supportCases.assigneeUnavailable")}</p>}</td>
