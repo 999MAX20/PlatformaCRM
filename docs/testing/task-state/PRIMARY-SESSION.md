@@ -6,6 +6,54 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-OVERVIEW-20261015 — actionable operator overview
+
+Owner: «отлично, продолжаем», next spec13.5 step2. Implementation/code+UX gap.
+Canonical C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit;
+base c713b86e886e30e02a829fab7baed42a25ba4cd4, clean starting index/tree.
+Result: bounded clinic/support attention previews with responsible users, exact
+distinct clinic service counts and matching server-side merchant service filter,
+active/unassigned/waiting-clinic case counts with matching support links. Keep
+finance and real activity; label period, snapshot and partial sources. Refresh,
+transient failure recovery, no-data/empty/403, desktop/mobile/keyboard/RU-KK-EN.
+Reuse overview API, service-state definitions, scoped support selectors and shared
+UI/tokens; no new permissions, writes, events, notifications, AI or migrations.
+No detailed CRM read-path or new observations in this phase. Working DB untouched.
+Risks: count/list mismatch, duplicate clinics, stale observations treated as fresh,
+source failure becoming zero, unsafe case content and role-loss stale data.
+Focused backend slice first: shared clinic classification/filter + overview queue
+summary; happy/invalid/denied, dedup, missing sources/recovery, query budget and
+agreement with destination lists. Completion: dependent platform/service/support
+tests, isolated system/migration checks; targeted browser navigation/state flows,
+build/types/i18n/bundle. No full-project/live gate. Review explicit owned diff,
+commit, static real range, normal origin/main push, remote SHA and actual CI.
+Prior Operations CI38694788872 still in_progress at start; not claimed green.
+
+Implemented shared distinct-clinic service classification for overview and new
+merchant `service=degraded|unknown|healthy|attention` filter. Bounded preview6:
+fresh degraded clinics first, then unknown; component observation/start timestamps,
+exact-episode support link counts with separate missing-link fallback. Support:
+active/unassigned/waiting-clinic counts and six latest active cases with assignee
+availability; reuse existing permissions/status definitions, no message/note bodies.
+First isolated SQLite slice8 PASS (output/platform-overview/focused.log). Added
+component/link coverage then affected PostgreSQL suite76 PASS via temporary
+output/platform-overview/verify_postgres.py, log postgres.log; includes overview,
+worklists, operations, S02, rebuild, service status, support incidents. Isolated
+system/migration drift PASS; temporary PG stopped/removed. No backend changes since.
+UI includes matching KPI links, queue previews, exact return context from clinic/
+incident/case, server service filter, 30s polling and transient error retention;
+403 hides overview. Existing finance/activity and recorded signal data preserved.
+Build/types/i18n6003/bundle PASS, output/platform-overview/build.log.
+`.venv/Scripts/python.exe scripts/verify_platform_overview.py`: 8 PASS (1.4m),
+log output/platform-overview/browser-1792048385089682700.log. Includes six overview
+desktop/mobile cases and two unchanged operator service-S03 regression cases.
+Metric-to-list agreement, combined filter/return, clinic/incident/case return,
+RU/KK/EN keyboard/no-overflow, retained data on503/recovery, missing source vs
+zero/empty, role-loss403 covered. DesktopRU/mobileKK full-page captures inspected;
+no clipping or unrelated layout change. Own isolated runtime exited cleanly.
+Prior CI38694788872 backend/frontend SUCCESS now confirmed. Final diff/publication
+pending; next result is unified clinic + detailed CRM read-path, not started.
+
 ## PLATFORM-OPERATIONS-20261015 — operator worklists
 
 Owner said proceed after incident linking and console analysis. Current bounded

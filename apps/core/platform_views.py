@@ -18,7 +18,8 @@ from apps.core.audit import write_audit_log
 from apps.core.models import AuditLog
 from apps.core.operations_health import platform_operations_health
 from apps.core.platform_reads import read_platform_source
-from apps.core.service_status import platform_service_status
+from apps.core.service_status import platform_service_status, service_businesses, filter_service_businesses
+from apps.core.platform_overview import overview_attention
 from apps.core.permissions import IsPlatformAdmin, IsPlatformUser, can_log_support_action
 from apps.integrations.sanitization import sanitize_error_text
 
@@ -45,6 +46,7 @@ def platform_overview(request):
             "active_businesses": Business.objects.filter(status=Business.Statuses.ACTIVE).count(),
             "trial_businesses": Business.objects.filter(status=Business.Statuses.TRIAL).count(),
             "generated_at": timezone.now(),
+            "attention": overview_attention(request.user),
             "active_subscriptions": read_platform_source(active_subscriptions.count),
             "mrr_estimate": str(mrr) if mrr is not None else None,
             "total_users": get_user_model().objects.count(),
@@ -83,6 +85,8 @@ def platform_merchants(request):
                                       | Q(owner__full_name__icontains=needle) | Q(slug__icontains=needle))
     if params.get("status"):
         businesses = businesses.filter(status=params["status"])
+    if params.get("service"):
+        businesses = filter_service_businesses(service_businesses(businesses), params["service"])
     paginator = PageNumberPagination()
     paginator.page_size = params["page_size"]
     page = paginator.paginate_queryset(businesses, request)

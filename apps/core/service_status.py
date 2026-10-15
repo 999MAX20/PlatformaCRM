@@ -176,14 +176,30 @@ def observe_service_batch(*, limit=100):
     return len(business_ids)
 
 
-def platform_service_status(*, now=None):
+def service_businesses(queryset=None, *, now=None):
+    """Shared distinct-clinic classification for overview counts and filtered lists."""
     now = now or timezone.now()
     fresh = Q(service_component_states__observed_at__gte=now - timedelta(seconds=OBSERVATION_MAX_AGE_SECONDS),
               service_component_states__observed_at__lte=now)
-    businesses = Business.objects.annotate(
+    return (Business.objects.all() if queryset is None else queryset).annotate(
         fresh_count=Count("service_component_states", filter=fresh),
         degraded_count=Count("service_component_states", filter=fresh & Q(service_component_states__state="degraded")),
     )
+
+
+def filter_service_businesses(queryset, status):
+    if status == "degraded":
+        return queryset.filter(degraded_count__gt=0)
+    if status == "healthy":
+        return queryset.filter(fresh_count=len(COMPONENTS), degraded_count=0)
+    if status == "unknown":
+        return queryset.filter(fresh_count__lt=len(COMPONENTS), degraded_count=0)
+    return queryset.filter(Q(degraded_count__gt=0) | Q(fresh_count__lt=len(COMPONENTS)))
+
+
+def platform_service_status(*, now=None):
+    now = now or timezone.now()
+    businesses = service_businesses(now=now)
     total = businesses.count()
     degraded = businesses.filter(degraded_count__gt=0).count()
     healthy = businesses.filter(fresh_count=len(COMPONENTS), degraded_count=0).count()

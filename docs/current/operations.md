@@ -63,6 +63,14 @@ Health CLI сохраняет прежние release/readiness gates; connector_
 полный, массив-превью остаётся ограниченным. В UI readiness, текущие наблюдения
 и terminal failures представлены отдельно. Миграций/запуска collector нет.
 
+PLATFORM-OVERVIEW-20261015: `overview.attention` содержит полные distinct counts
+клиник и ограниченные очереди клиник/поддержки. Классификация наблюдений общая с
+`merchants?service=...`: degraded имеет приоритет над unknown; здоровая клиника
+требует свежих наблюдений всех компонентов. Отсутствующие/будущие/устаревшие
+наблюдения — unknown. Нет источника — null, а не пустая очередь; отсутствие
+support links не скрывает сами наблюдения. Обращения активны до resolved,
+unassigned — без assigned_to; waiting_clinic — точный статус, не SLA-просрочка.
+
 Проверить очереди notifications, reports_exports, file_scans и все прочие,
 используемые текущими task routes. Синхронный connector sync остаётся отдельной
 границей риска; не считать весь интеграционный runtime очередью автоматически.

@@ -19,15 +19,16 @@ export function PlatformMerchantsPage() {
   const [params, setParams] = useSearchParams();
   const query = params.get("search") || "";
   const status = params.get("status") || "";
+  const service = params.get("service") || "";
   const page = Math.max(1, Math.floor(Number(params.get("page")) || 1));
   const pageSize = [10, 20, 30, 50, 100].includes(Number(params.get("page_size"))) ? Number(params.get("page_size")) : 20;
   const search = useDebouncedValue(query, 250);
-  const merchants = useQuery({ queryKey: ["platform-merchants", search, status, page, pageSize], queryFn: () => platformApi.merchants({ search, status: status || undefined, page, page_size: pageSize }) });
+  const merchants = useQuery({ queryKey: ["platform-merchants", search, status, service, page, pageSize], queryFn: () => platformApi.merchants({ search, status: status || undefined, service: service || undefined, page, page_size: pageSize }) });
   function update(values: Record<string, string>) {
     setParams(current => { const next = new URLSearchParams(current); for (const [key, value] of Object.entries(values)) { if (value) next.set(key, value); else next.delete(key); } return next; }, { replace: true });
   }
   const rows = merchants.data?.results || [];
-  const filtered = Boolean(query || status);
+  const filtered = Boolean(query || status || service);
   return <div className="space-y-4" data-testid="platform-merchants-ready">
     <PageHeader title={t("platform.merchants.title")} />
     <div className="flex flex-wrap items-center gap-2">
@@ -36,7 +37,12 @@ export function PlatformMerchantsPage() {
         { value: "", label: t("platform.workspace.allStatuses") },
         ...["active", "trial", "inactive", "blocked"].map(value => ({ value, label: t(`platform.workspace.status.${value}`) })),
       ]} />
-      {filtered && <Button variant="ghost" onClick={() => update({ search: "", status: "", page: "" })}>{t("tasks.resetFilters")}</Button>}
+      <Select aria-label={t("platform.workspace.serviceTitle")} value={service} onChange={event => update({ service: event.target.value, page: "" })} options={[
+        { value: "", label: t("overviewWorkspace.allServiceStates") },
+        { value: "attention", label: t("overviewWorkspace.clinicQueue") },
+        ...["degraded", "unknown", "healthy"].map(value => ({ value, label: t(`platform.workspace.service.${value}`) })),
+      ]} />
+      {filtered && <Button variant="ghost" onClick={() => update({ search: "", status: "", service: "", page: "" })}>{t("tasks.resetFilters")}</Button>}
       <Button variant="secondary" onClick={() => merchants.refetch()} isLoading={merchants.isFetching}>{t("platform.merchantDetail.refresh")}</Button>
     </div>
     {merchants.isPending ? <LoadingState scope="page" /> : merchants.isError ? <PlatformLoadError error={merchants.error} message={t("platform.merchants.error")} onRetry={() => merchants.refetch()} /> : !rows.length ? <EmptyState title={t(filtered ? "platform.merchants.emptyTitle" : "platform.workspace.noClinics")} description={t(filtered ? "platform.workspace.noMatches" : "platform.workspace.noClinicsText")} /> : <Card>

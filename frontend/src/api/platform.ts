@@ -14,7 +14,7 @@ export const platformApi = {
     const { data } = await apiClient.get<PlatformOperationsHealth>("/api/platform/operations-health/");
     return data;
   },
-  merchants: async (params: { search?: string; page?: number; page_size?: number; status?: string } = {}) => {
+  merchants: async (params: { search?: string; page?: number; page_size?: number; status?: string; service?: string } = {}) => {
     const { data } = await apiClient.get<PlatformPage<PlatformMerchant>>("/api/platform/merchants/", { params });
     return data;
   },

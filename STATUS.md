@@ -6,6 +6,12 @@
 
 # PlatformaCRM — текущий статус
 
+15.10.2026. PLATFORM-OVERVIEW реализован и локально проверен: очередь внимания,
+согласованные KPI → фильтрованные клиники/поддержка, ответственные и обновление;
+финансовая логика сохранена. PostgreSQL76, browser8 desktop/mobile RU/KK/EN,
+build/types/i18n/bundle и system/schema PASS. Контракт/публикация — checkpoint.
+Предыдущий CI38694788872: backend/frontend SUCCESS.
+
 15.10.2026. PLATFORM-OPERATIONS реализован и локально проверен: рабочие
 списки текущих эпизодов/подключений, история ошибок и инфраструктура отдельно;
 фильтры, полные counts, пагинация и переходы. PostgreSQL67, browser8 desktop/mobile,

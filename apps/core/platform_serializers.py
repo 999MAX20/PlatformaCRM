@@ -6,6 +6,7 @@ from apps.businesses.models import Business
 class PlatformMerchantFilters(serializers.Serializer):
     search = serializers.CharField(required=False, allow_blank=True, max_length=200)
     status = serializers.ChoiceField(choices=Business.Statuses.choices, required=False)
+    service = serializers.ChoiceField(choices=("degraded", "unknown", "healthy", "attention"), required=False)
     page_size = serializers.IntegerField(default=20, min_value=1, max_value=100)
 
 

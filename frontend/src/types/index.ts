@@ -199,6 +199,7 @@ export type PlatformSupportWorkflow = {
 };
 
 export type PlatformOverview = {
+  attention: import("./platformOverview").OverviewAttention;
   generated_at?: string;
   service_status?: PlatformOperationsHealth["service_status"];
   total_businesses: number;
