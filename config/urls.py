@@ -75,6 +75,7 @@ from apps.core.import_export_views import ExportJobViewSet, ImportJobViewSet, ex
 from apps.core.pilot_views import PilotReadinessView
 from apps.core.platform_worklists import platform_worklist
 from apps.core.platform_crm_views import platform_clinic_records, platform_clinic_record, platform_clinic_record_section, platform_clinic_access_log
+from apps.core.platform_details_views import platform_business_details
 from apps.core.platform_views import (
     platform_activate_landing,
     platform_merchants,
@@ -260,6 +261,7 @@ urlpatterns = [
     path("api/platform/merchants/<int:business_id>/crm/<str:kind>/<int:record_id>/", platform_clinic_record),
     path("api/platform/merchants/<int:business_id>/crm/<str:kind>/<int:record_id>/<str:section>/", platform_clinic_record_section),
     path("api/platform/merchants/<int:business_id>/crm-access-log/", platform_clinic_access_log),
+    path("api/platform/merchants/<int:business_id>/details/", platform_business_details),
     path("api/platform/merchants/<int:business_id>/support-actions/", platform_merchant_support_action, name="platform_merchant_support_action"),
     path("api/platform/activate-landing/", platform_activate_landing, name="platform_activate_landing"),
     path("api/pilot/readiness/", PilotReadinessView.as_view(), name="pilot_readiness"),

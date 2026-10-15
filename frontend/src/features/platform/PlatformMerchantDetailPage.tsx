@@ -2,6 +2,7 @@ import { retainSupportData } from "../support/SupportUI";
 import { Tabs } from "../../components/ui/Tabs";
 import { ClinicCrmBrowser } from "./ClinicCrmBrowser";
 import { ClinicAccessHistory } from "./ClinicAccessHistory";
+import { BusinessDetailsForm } from "./BusinessDetailsForm";
 import { SupportListPage } from "../support/SupportListPage";
 import { PlatformLoadError } from "./PlatformData";
 import { PlatformPageHeading } from "../../components/layout/PlatformPageHeading";
@@ -33,7 +34,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
   const { t, language } = useI18n();
   const location = useLocation();
   const [params, setParams] = useSearchParams();
-  const sections = ["state", "work", "connections", "support", "access"];
+  const sections = ["state", "details", "work", "connections", "support", "access"];
   const section = sections.find(value => value === params.get("section")) || "state";
   function update(values: Record<string, string>) {
     setParams(current => { const next = new URLSearchParams(current); for (const [key, value] of Object.entries(values)) { if (value) next.set(key, value); else next.delete(key); } return next; }, { state: location.state });
@@ -44,6 +45,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
   const history = useQuery({ queryKey: ["platform-support-history", id, historyPage], queryFn: () => platformApi.supportActions(id, historyPage), enabled: Boolean(id) && section === "access", gcTime: 0 });
   const queryClient = useQueryClient();
   const [note, setNote] = useState("");
+  const [detailsDraft, setDetailsDraft] = useState({ dirty: false, pending: false });
   const [mfaCode, setMfaCode] = useState("");
   const [actionType, setActionType] = useState("support_note");
   const locale = language === "kk" ? "kk-KZ" : language === "en" ? "en-US" : "ru-RU";
@@ -81,7 +83,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
   const data = merchant.data;
   const operations = data.operations;
   return <div className="space-y-4" data-testid="platform-clinic-detail">
-    {(Boolean(note.trim()) || supportMutation.isPending) && <TaskDraftGuard dirty={Boolean(note.trim())} pending={supportMutation.isPending} />}
+    {(Boolean(note.trim()) || detailsDraft.dirty || supportMutation.isPending || detailsDraft.pending) && <TaskDraftGuard dirty={Boolean(note.trim()) || detailsDraft.dirty} pending={supportMutation.isPending || detailsDraft.pending} />}
     <PlatformPageHeading title={data.name} />
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
       <Link to={returnTo} className="platforma-focus-ring inline-flex min-h-10 items-center gap-2 font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t(returnTo === "/platform" ? "platform.nav.overview" : returnTo.startsWith("/platform/operations") ? "platform.nav.operations" : "platform.nav.merchants")}</Link>
@@ -145,6 +147,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
     </>}
     {(section === "work" || section === "connections") && <ClinicCrmBrowser business={id} timezone={data.timezone || "UTC"} connections={section === "connections"} params={params} update={update} onDenied={setReadDenied} />}
     {section === "support" && <SupportListPage platform fixedBusiness={Number(id)} />}
+    {section === "details" && <BusinessDetailsForm business={id} onDraft={setDetailsDraft} />}
     <div hidden={section !== "access"} className="space-y-5">
       {section === "access" && <ClinicAccessHistory business={id} timezone={data.timezone || "UTC"} onDenied={setReadDenied} />}
         <Card>

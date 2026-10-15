@@ -66,6 +66,9 @@ class BusinessViewSet(ModelViewSet):
 
     @transaction.atomic
     def perform_update(self, serializer):
+        # Refresh under the same lock as platform detail corrections. A serializer
+        # loaded before that correction must not save stale unrelated fields.
+        serializer.instance = Business.objects.select_for_update().get(pk=serializer.instance.pk)
         assert_can(self.request.user, serializer.instance, Resources.SETTINGS, Actions.UPDATE)
         business = serializer.save()
         write_audit_log(self.request, AuditLog.Actions.UPDATE, business)
@@ -376,7 +379,9 @@ class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):
     def accept(self, request):
         serializer = BusinessInvitationAcceptSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        invitation = BusinessInvitation.objects.select_for_update().select_related("business", "business_role", "team").filter(token=serializer.validated_data["token"]).first()
+        # Serialize token consumption without locking nullable role/team JOINs,
+        # which PostgreSQL cannot include in FOR UPDATE.
+        invitation = BusinessInvitation.objects.select_for_update(of=("self",)).select_related("business", "business_role", "team").filter(token=serializer.validated_data["token"]).first()
         if invitation is None:
             raise ValidationError("Invitation was not found.")
         if not invitation.is_pending:

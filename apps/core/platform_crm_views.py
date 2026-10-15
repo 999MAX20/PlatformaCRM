@@ -78,11 +78,13 @@ def platform_clinic_access_log(request, business_id):
     def read(business):
         paginator = PageNumberPagination()
         paginator.page_size = filters.validated_data["page_size"]
-        rows = AuditLog.objects.filter(business=business, metadata__kind="platform_crm_read").select_related("actor").order_by("-created_at", "-pk")
+        rows = AuditLog.objects.filter(business=business, metadata__kind__in=["platform_crm_read", "platform_business_details"]).select_related("actor").order_by("-created_at", "-pk")
         page = paginator.paginate_queryset(rows, request)
         return paginator.get_paginated_response([
             {"id": row.pk, "created_at": row.created_at, "actor": (row.actor.full_name or row.actor.email) if row.actor else None,
-             "resource": row.metadata.get("resource"), "record_id": row.metadata.get("record_id")}
+             "resource": row.metadata.get("resource", "business_details"), "record_id": row.metadata.get("record_id"),
+             **({"correction": {key: row.metadata.get(key) for key in ("support_case_id", "changed_fields", "reason")}}
+                if row.metadata.get("kind") == "platform_business_details" else {})}
             for row in page
         ]).data
     return audited_response(request, business_id, "access_log", read)

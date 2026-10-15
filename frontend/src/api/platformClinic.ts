@@ -12,7 +12,7 @@ export type ClinicRecord = {
   sections?: string[]; business?: { id: number; name: string; timezone: string };
 };
 export type ClinicChild = { id: number; created_at: string; text?: string; label?: string; value?: ClinicValue; author?: string | null; direction?: string; sender_type?: string; status?: string; event_type?: string };
-export type ClinicAccess = { id: number; created_at: string; actor: string | null; resource: string; record_id: number | null };
+export type ClinicAccess = { id: number; created_at: string; actor: string | null; resource: string; record_id: number | null; correction?: { support_case_id: number; changed_fields: string[]; reason: string } };
 const root = (business: string) => `/api/platform/merchants/${business}`;
 export const platformClinicApi = {
   list: async (business: string, kind: ClinicKind, params: Record<string, string | number>) => (await apiClient.get<PlatformPage<ClinicRecord>>(`${root(business)}/crm/${kind}/`, { params })).data,

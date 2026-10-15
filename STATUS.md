@@ -13,6 +13,13 @@ skip, policy9, build/types/i18n/bundle PASS. Scope/evidence — checkpoint.
 Локальный коммит только этой задачи; push блокируют8 прежних outgoing-коммитов.
 Чужой ADMIN-01 WIP сохранён; live/CI приёмка не объявляется.
 
+16.10.2026. PLATFORM-ADMIN-01: локально реализованы вкладка реквизитов и отдельный
+GET/PATCH API: обе platform-роли, MFA, обращение/причина, revision и атомарный аудит.
+Блокер PostgreSQL-приглашений исправлен; финальные82 backend и4 browser flows,
+system/schema PASS. Build/types/i18n/bundle PASS переиспользованы на неизменённых
+входах. Подготовлен проверенный локальный коммит; push блокируют прежние чужие
+outgoing6e1bd46/834656b. Демостенд5185/API8015 без миграций/seed; детали — checkpoint.
+
 15.10.2026. PLATFORM-ADMIN-01-CONTRACT: подготовлен этап0 согласованного плана.
 Сверены поля/сервисы/API/MFA/аудит, проект контракта реквизитов — раздел15.8
 спецификации. Владелец согласовал обе platform-роли, свежий MFA, основание

@@ -848,7 +848,7 @@ backend tests → API → reachable UI → проверка результата
 ### 15.8. ADMIN-01: карта переиспользования и проект контракта
 
 Этап0 выполнен по поручению «приступай» на срезе49e46a2. Карта сверена с кодом;
-новые права записи пока не реализованы. Владелец явно согласовал ADMIN-01:
+последующая локальная реализация описана в15.9. Владелец явно согласовал ADMIN-01:
 исправление реквизитов доступно platform_admin и platform_manager со свежим MFA,
 основанием и аудитом, без временного grant владельца. Сохраняются исполнитель
 и история действия. Это точечное решение о реквизитах, а не полномочие менять
@@ -913,4 +913,25 @@ invalid/unknown fields; конфликт с merchant-изменением; rollb
 UI: загрузка/ошибка, forbidden, заполнение и очистка, подтверждение результата,
 сохранение draft при ошибке,409 с перечитыванием, desktop/mobile RU/KK/EN и
 клавиатура. Backend focused checks выполняются до UI, затем affected suites,
-system/schema и build с целевым browser flow. Эти проверки ещё не запускались.
+system/schema и build с целевым browser flow. На этапе0 эти проверки не запускались;
+evidence реализации относится к15.9.
+
+### 15.9. ADMIN-01: локальная реализация
+
+Следующим поручением владелец запустил реализацию этапа1 на базеe24d52d.
+[Сервис](../../apps/core/platform_details.py), [API](../../apps/core/platform_details_views.py)
+и [форма](../../frontend/src/features/platform/BusinessDetailsForm.tsx) реализуют15.8.
+Используются существующие Business/SupportCase/MFA/audit; миграций нет. Revision
+считает allowlist и updated_at. Merchant update перечитывает Business под той же
+блокировкой, сохраняя соседние исправленные поля. Повтор старой команды даёт409;
+ошибка аудита откатывает запись. GET и PATCH имеют no-store, неизвестные поля
+отвергаются. Существующая история показывает метаданные исправления и обращение.
+
+Согласованные права относятся только к реквизитам. Нет изменения владельца,
+подписки, статусов, CRM lifecycle, credentials, уведомлений, BusinessEvent или AI.
+Самостоятельная правка business legal_name/tax_id сохранена. Остальные ADMIN-сценарии
+не начаты. [Backend tests](../../apps/core/tests_platform_details.py),
+[browser flow](../../frontend/e2e/platform-details.spec.ts) и
+[изолированный runner](../../scripts/verify_platform_details.py) проверяют границы.
+Результаты, неудачные попытки и блокеры — в существующем checkpoint. Наличие кода
+не означает зелёный расширенный gate, публикацию или deployment.

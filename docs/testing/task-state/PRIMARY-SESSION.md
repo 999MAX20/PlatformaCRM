@@ -55,6 +55,133 @@ Ready for owned-path local commit; committed-range static gate follows it agains
 e24d52dc6a630a1f167cc78f812ff5b4d98fcafb, with outcome in the task response.
 Push/CI not run due to the pre-existing outgoing-history publication blocker.
 
+## PLATFORM-ADMIN-01-20261015 — implementation
+
+Continuation16.10 owner «продолжай»: resolve the reproduced invitation PostgreSQL
+blocker and finish ADMIN-01 verification. Starting HEAD834656b on the same branch
+and canonical root; intervening CONNECTION-RECOVERY commit and its records are
+preserved. Existing23-path ADMIN-01 dirty snapshot is task-owned; no conflict.
+Minimal fix: lock invitation row itself, excluding nullable role/team JOIN rows.
+Preserve authentication, same-Business membership, single-use token and audit;
+no policy, schema, delivery, AI or BusinessEvent changes. Risk: concurrent accept.
+Focused gate: previous8 failures + explicit PostgreSQL single-winner/rollback
+regressions. Completion: original expanded backend labels plus new regressions,
+system/schema; rerun4 ADMIN-01 browser flows because shared auth recovery changed.
+Reuse unchanged frontend build/type/i18n evidence from834656b working snapshot;
+no install/full-E2E/working-DB changes. Review owned commit and outgoing history;
+«продолжай» does not authorize publishing other writers' existing commits.
+
+Continuation evidence: invitation SELECT now uses select_for_update(of=("self",));
+optional joins stay available, token consumption remains serialized. PostgreSQL
+focused10 PASS (previous8 failing acceptance cases + concurrent single-winner and
+audit-failure rollback/retry), system/schema PASS. Command
+`.venv/Scripts/python.exe output/admin01-invitations-focused.py`, log
+output/admin01-invitations-focused-20261016.log. No application code changed after
+this fix. Browser command `.venv/Scripts/python.exe scripts/verify_platform_details.py`
+PASS4 desktop/mobile on current shared auth; log browser-1792092221625169700.log.
+Completion82 backend suite is running through output/admin01-completion-20261016.py.
+Fresh fetch still contains prior unrelated6e1bd46 and834656b; preserve push boundary.
+
+Continuation completion16.10: `.venv/Scripts/python.exe output/admin01-completion-20261016.py`
+PASS82 PostgreSQL tests, system check and migration drift PASS. Labels:
+apps.core.tests_platform_details, apps.core.tests_platform_crm,
+apps.core.tests_platform_s02, apps.businesses.tests_settings_team,
+apps.businesses.tests_access, apps.businesses.tests_invitation_concurrency.
+Log output/admin01-completion-20261016.log. This supersedes the previous failed
+expanded gate for this fixed snapshot; original failure/baseline evidence below
+is retained. PostgreSQL single-use/rollback and existing permission/identity/
+foreign-business invitation scenarios passed without weakening expectations.
+All4 browser flows PASS on current shared auth; unchanged frontend build/types/
+i18n/bundle PASS reused from CONNECTION-RECOVERY834656b working snapshot (included
+the same ADMIN-01 frontend WIP), logs output/connection-recovery/build.log/bundle.log.
+No dependencies/config/frontend changed during this continuation. Full E2E,
+working DB migrations and deployment skipped as out of scope. Owned test servers
+and PostgreSQL clusters stopped; existing demo not changed this continuation.
+25 intended paths reviewed,13 added relative links resolve; working/new-file diff
+hygiene PASS. Local acceptance complete. Commit only this task's diff against
+834656b; committed-range static gate follows. No push/new CI: outgoing range still
+includes unrelated6e1bd46 and834656b. Their inclusion needs an explicit publication
+scope decision; no rewrite/cherry-pick/new worktree to bypass it. ADMIN-02 not started.
+
+Owner's next «приступай» authorizes ADMIN-01 implementation after stage0.
+Mode implementation; gap code. Canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, clean starting HEAD e24d52d. Reuse Business,
+platform role checks, MFA, SupportCase, audit and existing business card/API.
+Result: both platform roles correct only approved details with recent MFA,
+case/reason, atomic audit and stale-revision rejection. Merchant self-service
+remains available. No owner/subscription/status changes, migrations, working DB,
+notifications, BusinessEvent, AI, providers or other ADMIN phases.
+Risk: privileged write, stale role/token, cross-business case, lost updates.
+Focused checks before UI: explicit fields/validation, both roles and denials,
+MFA, business scope, merchant conflict, audit rollback/replay. Completion:
+affected backend/dependent tests, isolated system/schema, frontend build/types,
+i18n/bundle and targeted desktop/mobile locale/keyboard/error/recovery flow.
+No full-project gate without demonstrated cross-cutting risk. Commit reviewed
+task paths after checks; normal push only if prior outgoing6e1bd46 blocker is
+resolved. No deployment claims. No agents or alternate source tree.
+
+Implemented bounded platform_details service/serializers/view/route; explicit
+allowlist, fresh DB identity/epoch, case Business, revision of fields+updated_at,
+row lock, field-only save and atomic sanitized audit. Merchant perform_update
+refreshes instance under same lock so a previously loaded serializer preserves
+unrelated corrected fields. Existing history adds correction metadata/case link.
+UI details tab uses shared form components, API layer, MFA, draft guard, explicit
+reload after conflict; RU/KK/EN. No migration or ordinary DB writes.
+Focused SQLite first failed on fixture duplicate blank emails; fixed emails.
+Second run exposed test expectations (MFA401, expanded no-store header); fixed.
+PostgreSQL focused10 PASS, system/migration drift PASS via
+`.venv/Scripts/python.exe output/admin01-postgres.py`; log admin01-postgres.log.
+Completion PostgreSQL79 executed:71 PASS,8 FAIL in invitation acceptance due to
+FOR UPDATE nullable JOIN. Invocation: output/admin01-postgres-completion.py;
+labels core.tests_platform_details/core.tests_platform_crm/core.tests_platform_s02,
+businesses.tests_settings_team/businesses.tests_access. Real two-writer test PASS.
+No invitation code was changed. Baseline rerun loads e24d52d business view methods
+in memory (no source copy/reset); initial command duplicated test method names,
+thus8 loader errors, not baseline proof. Corrected baseline run pending.
+Browser `scripts/verify_platform_details.py`:2 locale/load/403 flows PASS;2 save
+flows initially FAIL (MFA generic session error and enrollment polling race).
+Added specific MFA feedback; fixture stops app polling before epoch rotation.
+Replaced mocked409 with actual second correction; fixed conflict envelope to
+DomainAPIException/category=conflict. Scoped rerun `--grep 'details save'`:2 PASS,
+real MFA/save/clear/persistence/draft guard/conflict/reload/history on desktop/mobile.
+Logs output/platform-details/browser-1792081627966120100.log and
+browser-1792081958166392900.log. Build/types/i18n/bundle initial PASS; after history
+and MFA changes final build and focused PostgreSQL details+CRM rerun pending.
+Publication remains blocked until required checks/outgoing range are resolved.
+
+Final local evidence:
+- `.venv/Scripts/python.exe output/admin01-final-focused.py`:24 PostgreSQL tests
+  PASS (core.tests_platform_details + core.tests_platform_crm, including actual
+  concurrent writes and correction history), system check and migration drift PASS.
+  Log output/admin01-final-focused.log. No app code changed after this snapshot.
+- Corrected `.venv/Scripts/python.exe output/admin01-baseline.py`:same8 invitation
+  FAIL with e24d52d BusinessViewSet.perform_update and BusinessInvitationViewSet.accept
+  loaded from Git into memory, with current unchanged invitation tests. PostgreSQL
+  rejects FOR UPDATE on nullable JOIN. Log admin01-baseline-invitations-retry.log.
+  This proves that path's baseline failure, not a full checkout certification.
+  Expanded79-test gate remains failed; do not mark it green or fix invitations
+  implicitly within ADMIN-01. Owned temporary PG clusters were stopped/removed.
+- `npm --prefix frontend run build` PASS after final UI/MFA/history changes
+  (check:i18n, tsc, app/widget build); output/admin01-build-final.log.
+  `npm --prefix frontend run check:bundle` PASS; largest locale478.1kB, shell329.9kB.
+- `scripts/verify_platform_details.py --grep 'details save'`:2 PASS; followed by
+  `--grep 'details load'`:2 PASS, log browser-1792082289134655100.log. Four final
+  distinct desktop/mobile flows cover real save/MFA/409/history plus load503/403,
+  recovery, RU/KK/EN, focus/keyboard and viewport overflow. Screenshots visually
+  inspected (RU desktop/mobile, KK desktop, EN mobile). Disposable databases/ports;
+  providers remain isolated. No full-project E2E or release/live certification.
+- Existing owned demo supervisor2732/backend15548/frontend18424 restarted from
+  canonical root via existing stand.py (no --seed, no migration). Same synthetic
+  output/platform-admin-demo-20261015/db.sqlite3, loopback5185/API8015, safe profile.
+  Both platform-role details GET and frontend HTTP200 PASS. Demo stays running;
+  verification processes have ended. Main working db.sqlite3 untouched.
+- Fresh fetch origin/main: previous outgoing6e1bd46 remains. HEAD e24d52d unchanged,
+  branch codex/ui-testing-toolkit. Required expanded gate failed, so no staging,
+  new commit, push, deployment or new CI. User-facing local implementation is
+  present; complete acceptance/publication is blocked. Next step is a separately
+  authorized resolution of invitation baseline/publication blockers, not ADMIN-02.
+  Working diff/new-file hygiene and added local documentation links checked.
+
 ## PLATFORM-ADMIN-01-CONTRACT-20261015 — stage0
 
 User said proceed with the proposed plan. Under AGENTS one-phase rule, active
