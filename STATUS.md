@@ -10,7 +10,8 @@
 постоянный подробный GET просмотр CRM, сообщения без read-mark, scoped поддержка
 и аудит. PostgreSQL123, browser12 distinct desktop/mobile, build/types/i18n/bundle,
 system/schema PASS; история исправленных запусков и точные границы — checkpoint.
-Новых миграций/рабочих DB изменений нет; публикация следует после проверки diff.
+Новых миграций/рабочих DB изменений нет. Код aed452f опубликован normal push
+в main, remote SHA совпал; committed-range static PASS. CI38711917194 выполняется.
 CI предыдущего fa8a041 (38705753503) полностью SUCCESS. Следующий шаг4 не начат.
 
 15.10.2026. PLATFORM-SHELL: по утверждённому референсу внедрены sidebar64/224px,

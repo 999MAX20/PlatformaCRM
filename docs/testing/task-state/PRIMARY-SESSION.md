@@ -113,6 +113,17 @@ Review: all29 intended paths (10 new) task-owned; local links218 PASS, registere
 doc roles unchanged, diff hygiene PASS. No private/customer data or secrets in
 intended diff; fixtures contain synthetic example.com identities only.
 
+Publication receipt: code commit aed452f12eb7991ac82a7211a403b77a60eb2635,
+canonical root/branch unchanged. `.venv/Scripts/python.exe scripts/codex_verify.py
+--mode static --base-ref fa8a041214ff2bb38edbc75c89f5f2880d71bc47` PASS on the
+actual committed range: working/index/range hygiene, isolated migration drift
+and Django system checks. Fetched main remained ancestor; normal `git push origin
+HEAD:main` succeeded and remote SHA read back exactly aed452f12eb7991ac82a7211a403b77a60eb2635.
+Actual push CI38711917194 is IN_PROGRESS (not green). Publication verified;
+no task-owned running processes or unfinished implementation. Next phase is
+spec13.5 step4 only on a new user instruction. This receipt is docs-only and
+reuses unchanged application PASS; no deployment/working-DB acceptance claimed.
+
 ## PLATFORM-SHELL-20261015 — implementation
 
 Owner: «приступай», approved section14 shell reference. Implementation/code gap.
