@@ -6,6 +6,26 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## ALL-CHANGES-PUBLICATION-20261016
+
+Owner explicitly requested "сделай пуш всех изменений и ci". Operation/evidence
+scope: publish the accumulated reviewed history and inspect actual GitHub CI;
+no additional product phase or working database changes. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit, clean HEAD
+f7d74d5b906dc9239c0486d53d4934f633a99d73. Authorization includes the previously
+blocked6e1bd46/834656b commits. Reviewed outgoing paths and workflow; only CI,
+no deployment step in .github/workflows/ci.yml. Reused prior scoped runtime
+evidence; `.venv/Scripts/python.exe scripts/codex_verify.py --mode static
+--base-ref origin/main` PASS against local tracking c7e26f6 (diff/system/schema).
+Remote fetch configuration does not automatically update origin/main; therefore
+publication readback uses `git ls-remote origin refs/heads/main` directly.
+`git push origin HEAD:main` succeeded normally (remote6e1bd46 -> f7d74d5);
+readback exactly f7d74d5b906dc9239c0486d53d4934f633a99d73. CI run
+https://github.com/999MAX20/PlatformaCRM/actions/runs/38795538634 is in progress
+at this record. This receipt is a docs-only follow-up; final CI outcome is
+reported in the task response after checking the final published SHA.
+No untracked WIP, source rewrite, force push, migration, seed or deployment.
+
 ## CONNECTION-RECOVERY-20261015 — implementation
 
 Owner requested fixing persistent connection notices after read-only analysis.
