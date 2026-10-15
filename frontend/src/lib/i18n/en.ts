@@ -6965,6 +6965,7 @@ export const en: Record<string, string> = {
   "operationsWorkspace.production": "Environment readiness",
   "operationsWorkspace.backups": "Backup recovery readiness",
   "operationsWorkspace.status.failed": "Failure recorded",
+  "operationsWorkspace.status.error": "Failure recorded",
   "operationsWorkspace.status.needs_attention": "Needs attention",
   "operationsWorkspace.status.expired_credentials": "Credentials expired",
   "operationsWorkspace.status.pass": "Passed",

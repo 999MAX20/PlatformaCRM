@@ -6988,6 +6988,7 @@ export const ru: Record<string, string> = {
   "operationsWorkspace.production": "Готовность среды",
   "operationsWorkspace.backups": "Готовность резервного восстановления",
   "operationsWorkspace.status.failed": "Зафиксирована ошибка",
+  "operationsWorkspace.status.error": "Зафиксирована ошибка",
   "operationsWorkspace.status.needs_attention": "Требует внимания",
   "operationsWorkspace.status.expired_credentials": "Истёк доступ",
   "operationsWorkspace.status.pass": "Пройдено",

@@ -6,6 +6,71 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-DIAGNOSTICS-01-20261015 — consistent diagnostic reads
+
+Owner said «приступай» after platform analysis and ordered recommendations.
+Bounded first phase: consistent connector error/attention classification across
+overview, merchant list/detail, operations queue and infrastructure preview;
+complete local demo scenarios for history, stale observations and recovery.
+Code/evidence gap, implementation mode. Canonical root, codex/ui-testing-toolkit,
+base d8f825bc54d0fbe07d106121582020b8b4b6f9ca; starting tree/index clean.
+Existing closed read model is reopened only for reproduced ERROR connector omission:
+business3 connector status=error while operations connector queue and error count=0.
+Preserve established needs_attention=setup (not failure) contract and disabled/
+disconnected/draft non-failure behavior. Reuse existing model/selector/worklist,
+safe_environment and persistent isolated demo. No provider calls, credentials,
+retry writes, permissions, BusinessEvents, AI, notifications or schema changes.
+No redesign in this phase; next recommended phase is compact page composition.
+Risk: shared counts/queue inconsistency or changing normal setup into an outage.
+Focused checks: regression for all connector statuses, same-business filtering,
+cross-surface totals, recovery, secrets and platform roles. Completion: affected
+read suites/dependents, isolated system/migration drift, demo API/browser evidence,
+diff hygiene and publication only of permitted outgoing history. Rendering the
+new ERROR row also requires its existing failed-status wording in RU/KK/EN; run
+frontend build/types/i18n once at completion. No full E2E or working-DB migrations.
+
+### Result and verification
+
+Shared platform_connector_status constants now include ERROR in failures and
+attention; needs_attention remains setup-only. Overview, business list/detail,
+operations queue and infrastructure reuse that classification. ERROR uses existing
+failed-status copy in all three locales. Regression covers every model status,
+both platform roles, business filtering, hidden provider secrets and recovery.
+
+Checks executed with .venv/Scripts/python.exe, scripts.codex_verify.isolated_runtime,
+disposable SQLite and safe environment (ordinary working DB untouched by these tests):
+- `manage.py test apps.core.tests_platform_worklists apps.core.tests_platform_rebuild -v 1`:
+  27 PASS; output/platform-diagnostics-01/focused.log.
+- `manage.py check` and `manage.py makemigrations --check --dry-run`: PASS.
+- `manage.py test apps.core.tests_platform_operations apps.core.tests_platform_overview apps.core.tests_platform_s02 apps.core.tests_service_status apps.support.tests_incidents -v 1`:
+  50 PASS, 1 existing has_select_for_update skip on SQLite (collector lock test);
+  output/platform-diagnostics-01/dependent.log. No concurrency code changed.
+- `npm.cmd --prefix frontend run build`: PASS (i18n, types, Vite and widget);
+  output/platform-diagnostics-01/build.log. No reinstall or broad E2E gate required.
+
+scripts/platform_diagnostics_fixture.py guards the exact isolated demo SQLite path
+and prepared marker, creates no jobs/provider calls, and was executed twice with
+stable IDs. Business3: ERROR/FAILED/EXPIRED_CREDENTIALS plus setup in the attention
+queue, disabled excluded; failed and successful integration/webhook/automation
+history records. Added business16 stale export observation/case20 and business17
+recovered export/case21. Existing manual records retained. Supervisor now excludes
+the intentional stale fixture from synthetic timestamp refresh. Only own demo
+processes restarted: supervisor10924, backend launcher16524, frontend12304.
+
+Live local API checks for admin and manager: queue4 = failures3 + setup1, consistent
+overview/detail/infrastructure; each failed history source count1; stale status
+unknown with current episode, recovered healthy with no current attention episode.
+Evidence: output/platform-diagnostics-01/api.json. Browser checked translated ERROR
+row, filtered history, stale and recovered episode pages with linked cases.
+These are synthetic observations, not real provider or production readiness.
+No schema migration, permission, notification, BusinessEvent or AI behavior changes.
+
+Entire intended diff/new files reviewed; working/index/committed-range hygiene is
+the completion gate. Fetch origin/main still leaves pre-existing unrelated 6e1bd46
+before own demo docs d8f825b; normal push would also publish that other writer's work.
+Keep local commit, do not push this range or rewrite history. No new CI run claimed.
+Next recommended phase: compact page composition; not started in this phase.
+
 ## PLATFORM-ADMIN-DEMO-20261015 — local manual preview
 
 Owner requested a running local test stand for the platform admin interface,

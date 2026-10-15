@@ -6997,6 +6997,7 @@ export const kk: Record<string, string> = {
   "operationsWorkspace.production": "Ортаның дайындығы",
   "operationsWorkspace.backups": "Резервтен қалпына келтіру дайындығы",
   "operationsWorkspace.status.failed": "Қате тіркелді",
+  "operationsWorkspace.status.error": "Қате тіркелді",
   "operationsWorkspace.status.needs_attention": "Назар аудару қажет",
   "operationsWorkspace.status.expired_credentials": "Қол жеткізу мерзімі аяқталды",
   "operationsWorkspace.status.pass": "Өтті",

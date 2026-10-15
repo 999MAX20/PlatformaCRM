@@ -9,6 +9,7 @@ from apps.integrations.models import BusinessConnector, BusinessEvent
 from apps.core.models import AuditLog
 from apps.integrations.sanitization import sanitize_error_text
 from apps.core.platform_reads import read_platform_source
+from apps.core.platform_connector_status import CONNECTOR_FAILURES, CONNECTOR_SETUP
 from apps.core.service_status import business_service_status_many
 
 def _merchant_counts(business):
@@ -52,8 +53,8 @@ def _merchant_counts_many(businesses):
         "unread_conversations": Count("pk", filter=Q(is_archived=False, unread_count__gt=0)),
         "handoff_conversations": Count("pk", filter=Q(is_archived=False, handoff_required=True))}, latest=True)
     collect(BusinessConnector, {
-        "failed_connectors": Count("pk", filter=Q(status__in=[BusinessConnector.Statuses.FAILED, BusinessConnector.Statuses.EXPIRED_CREDENTIALS])),
-        "pending_connectors": Count("pk", filter=Q(status=BusinessConnector.Statuses.NEEDS_ATTENTION)),
+        "failed_connectors": Count("pk", filter=Q(status__in=CONNECTOR_FAILURES)),
+        "pending_connectors": Count("pk", filter=Q(status__in=CONNECTOR_SETUP)),
         "connected_connectors": Count("pk", filter=Q(status__in=[BusinessConnector.Statuses.CONNECTED, BusinessConnector.Statuses.SYNCING]))})
     collect(LeadFormSubmissionError, {"form_errors": Count("pk", filter=Q(
         created_at__gte=timezone.now() - timezone.timedelta(days=30)))})

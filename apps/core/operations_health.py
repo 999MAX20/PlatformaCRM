@@ -10,7 +10,7 @@ from apps.core.models import ExportJob, SupportAccessGrant
 from apps.core.production_audit import run_production_readiness_audit
 from apps.core.service_status import platform_service_status
 from apps.core.platform_reads import read_platform_source
-from apps.core.platform_worklists import CONNECTOR_ATTENTION
+from apps.core.platform_connector_status import CONNECTOR_ATTENTION
 from apps.integrations.models import BusinessConnector, ConnectorSyncRun, IntegrationEventLog, WebhookDeliveryLog
 from apps.integrations.provider_rollout import run_provider_rollout_readiness_check
 from apps.notifications.models import Notification

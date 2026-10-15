@@ -12,13 +12,13 @@ from apps.automations.models import AutomationRun
 from apps.core.models import ServiceComponentState
 from apps.core.permissions import IsPlatformUser
 from apps.core.platform_reads import read_platform_source
+from apps.core.platform_connector_status import CONNECTOR_ATTENTION
 from apps.core.service_status import COMPONENTS, OBSERVATION_MAX_AGE_SECONDS
 from apps.integrations.models import BusinessConnector, IntegrationEventLog, WebhookDeliveryLog
 from apps.support.models import IncidentLink
 
 
 HISTORY = ("automations", "integrations", "webhooks")
-CONNECTOR_ATTENTION = ("needs_attention", "failed", "expired_credentials")
 
 
 class WorklistFilters(serializers.Serializer):

@@ -23,6 +23,12 @@ last sync/webhook, безопасную ошибку и доступный retry
 tenant и связей выполняется сервером. Merchant setup содержит необходимые поля;
 raw webhook/debug/provider stack не занимает повседневный экран.
 
+Platform diagnostics uses one connector classification across counters and queues:
+`error`, `failed`, `expired_credentials` are failures; `needs_attention` is setup
+attention, counted separately. The attention queue includes both groups; disabled,
+disconnected and draft connectors do not enter it. Connector state alone does not
+prove a background-service outage or recovery; component observations remain separate.
+
 Credential хранится за `ConnectorCredential`, не в `BotChannel.config_json`.
 Конфигурация канала содержит безопасные metadata/configured flags. Не возвращать
 secret в serializer/log/task payload. Ротация требует совместимого чтения старого

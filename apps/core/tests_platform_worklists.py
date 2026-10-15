@@ -85,6 +85,59 @@ class PlatformWorklistTests(TestCase):
         self.assertEqual(health.data['summary']['connector_requests'], 13)
         self.assertEqual(len(health.data['work_queue']['connector_requests']), 10)
 
+    def test_connector_statuses_agree_across_platform_surfaces_for_both_roles(self):
+        connectors = {
+            status: BusinessConnector.objects.create(
+                business=self.business, name=f"Source {status}", provider="website",
+                status=status, last_error="PRIVATE_PROVIDER_ERROR",
+                config_json={"token": "PRIVATE_TOKEN"},
+            ) for status in BusinessConnector.Statuses.values
+        }
+        foreign = BusinessConnector.objects.create(
+            business=self.other, name="Other failed source", provider="website", status="error",
+        )
+        expected = {connectors[status].pk for status in ("error", "failed", "expired_credentials", "needs_attention")}
+        for role in ("platform_manager", "platform_admin"):
+            with self.subTest(role=role):
+                self.staff.role = role
+                self.staff.save(update_fields=["role"])
+                self.api.force_authenticate(self.staff)
+                queue = self.api.get(self.url, {"source": "connectors", "business": self.business.pk}).data
+                self.assertEqual(queue["count"], 4)
+                self.assertEqual({row["id"] for row in queue["results"]}, expected)
+                self.assertNotIn("PRIVATE_", str(queue))
+                global_queue = self.api.get(self.url, {"source": "connectors"}).data
+                self.assertEqual(global_queue["count"], 5)
+                self.assertIn(foreign.pk, {row["id"] for row in global_queue["results"]})
+                detail = self.api.get(f"/api/platform/merchants/{self.business.pk}/").data
+                listing = self.api.get("/api/platform/merchants/").data
+                row = next(item for item in listing["results"] if item["id"] == self.business.pk)
+                for operations in (detail["operations"], row["operations"]):
+                    self.assertEqual(operations["failed_connectors"], 3)
+                    self.assertEqual(operations["pending_connectors"], 1)
+                    self.assertEqual(operations["connected_connectors"], 2)
+                    self.assertEqual(operations["failed_connectors"] + operations["pending_connectors"], queue["count"])
+                overview = self.api.get("/api/platform/overview/").data
+                self.assertEqual(overview["operations_summary"]["failed_connectors"], 4)
+                health = self.api.get("/api/platform/operations-health/").data
+                self.assertEqual(health["summary"]["connector_requests"], 5)
+                self.assertEqual({item["id"] for item in health["work_queue"]["connector_requests"]}, expected | {foreign.pk})
+
+    def test_connector_recovery_clears_current_attention_without_promoting_service_health(self):
+        connector = BusinessConnector.objects.create(
+            business=self.business, name="Recoverable", provider="website", status="error",
+        )
+        self.assertEqual(self.api.get(self.url, {"source": "connectors"}).data["count"], 1)
+        self.assertEqual(self.api.get(f"/api/platform/merchants/{self.business.pk}/").data["operations"]["failed_connectors"], 1)
+        connector.status = "connected"
+        connector.save(update_fields=["status", "updated_at"])
+        detail = self.api.get(f"/api/platform/merchants/{self.business.pk}/").data
+        self.assertEqual(detail["operations"]["failed_connectors"], 0)
+        self.assertEqual(detail["operations"]["connected_connectors"], 1)
+        self.assertEqual(detail["service_status"]["status"], "unknown")
+        self.assertEqual(self.api.get(self.url, {"source": "connectors"}).data["count"], 0)
+        self.assertEqual(self.api.get("/api/platform/operations-health/").data["summary"]["connector_requests"], 0)
+
     def test_history_period_includes_both_utc_dates_and_excludes_other_business(self):
         recent = AutomationRun.objects.create(business=self.business, trigger_type="manual", status="failed", error="PRIVATE_ERROR")
         old = AutomationRun.objects.create(business=self.business, trigger_type="manual", status="failed")
