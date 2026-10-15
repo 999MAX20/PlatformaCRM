@@ -6,6 +6,45 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-ADMIN-CAPABILITIES-20261015 — technical specification
+
+Owner requested persistence of the coverage analysis and direct administrative
+remediation requirements, after checking for an existing technical document.
+Mode documentation; gap product/policy specification. Reuse registered
+`docs/testing/platform-rebuild-spec-20261014.md`, add section15 rather than a
+competing document. Scope: coverage, business/personnel/owner recovery, email,
+confirmed subscription payment reconciliation, permission decision boundaries;
+update contract pointers, index, roadmap and status. No implementation, live data,
+new permissions, provider actions, deployment or agents.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+starting HEAD f3601712642be357127f8f7905c68fc9a273c61d; clean index/tree.
+Risk: proposed powers mistaken for implemented permissions or paid entitlement
+restoration mistaken for a new charge. Clearly separate approved product intent,
+proposed mechanisms and open policy. Focused/completion checks: complete intended
+diff, relative links, registry consistency, working/index/committed-range hygiene.
+Docs only: no app installs, builds, tests, DB or browser suites. Standing normal
+push applies only if outgoing range contains no unapproved other-writer work;
+previous blocker is outgoing 6e1bd46 and must be rechecked before publication.
+
+Owner then requested analysis first; only this task record had been edited.
+After analysis owner explicitly approved all five scenarios and requested the
+documentation update plus an explanation of database inspection/update for Paid
+without activation. Section15 now records approved scope, coverage, scenario
+acceptance, proposed read + explicit actions inspector and payment recovery test.
+Product/access/roadmap pointers and docs index entry are consistent; no new file
+or runtime behavior. Exact role matrix and payment evidence/period policy remain
+open; mere Paid metadata is not treated as verified funds.
+Verification: git diff --check PASS; PowerShell added-link existence/registry
+check PASS (all seven intended docs paths). Initial link-check attempt via python
+could not run because PATH resolves to Windows Store alias; replaced with native
+PowerShell, no install. Full intended patch reviewed, no secrets/new files.
+Index and actual committed-range hygiene are completion checks for this patch.
+No application suites/build/DB/browser needed for documentation-only scope.
+Fresh git fetch origin main: outgoing range still includes other-writer 6e1bd46
+before this task's prior commits. Normal push remains blocked by AGENTS section6;
+no history rewrite or publication of that work. No task CI/deployment triggered.
+
+
 ## PLATFORM-REFERENCE-REDESIGN-20261015 — analysis and implementation
 
 Owner explicitly requested detailed analysis of the six generated references,
