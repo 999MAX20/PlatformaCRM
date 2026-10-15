@@ -27,7 +27,7 @@ export function PlatformMerchantDetailPage() {
 function PlatformMerchantContent({ id }: { id: string }) {
   const { t, language } = useI18n();
   const location = useLocation();
-  const returnTo = typeof location.state?.returnTo === "string" && location.state.returnTo.startsWith("/platform/merchants?") ? location.state.returnTo : "/platform/merchants";
+  const returnTo = typeof location.state?.returnTo === "string" && /^\/platform\/(merchants|operations)(\?|$)/.test(location.state.returnTo) ? location.state.returnTo : "/platform/merchants";
   const [historyPage, setHistoryPage] = useState(1);
   const history = useQuery({ queryKey: ["platform-support-history", id, historyPage], queryFn: () => platformApi.supportActions(id, historyPage), enabled: Boolean(id) });
   const queryClient = useQueryClient();
@@ -69,7 +69,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
   const operations = data.operations;
   return <div className="space-y-5" data-testid="platform-clinic-detail">
     <TaskDraftGuard dirty={Boolean(note.trim())} pending={supportMutation.isPending} />
-    <Link to={returnTo} className="platforma-focus-ring inline-flex items-center gap-2 text-sm font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t("platform.nav.merchants")}</Link>
+    <Link to={returnTo} className="platforma-focus-ring inline-flex items-center gap-2 text-sm font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t(returnTo.startsWith("/platform/operations") ? "platform.nav.operations" : "platform.nav.merchants")}</Link>
     <PageHeader title={data.name} actions={<><Link to={`/platform/support?business=${data.id}`} className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control border border-platforma-control bg-surface-card px-3 py-2 text-sm font-semibold text-brand-700">{t("supportCases.title")}</Link><span className="rounded-control bg-surface-muted px-3 py-2 text-sm">{t(`platform.workspace.status.${data.status}`)}</span></>} />
     <Card><CardBody className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
       <div className="min-w-0"><p className="text-xs text-platforma-faint">{t("platform.merchantDetail.owner")}</p><p className="mt-1 font-medium">{data.owner.full_name || t("platform.common.noName")}</p><p className="mt-1 break-all text-sm text-platforma-subtle">{data.owner.email}</p></div>

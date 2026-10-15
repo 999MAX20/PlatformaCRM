@@ -6,6 +6,69 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-OPERATIONS-20261015 — operator worklists
+
+Owner said proceed after incident linking and console analysis. Current bounded
+phase: spec13.5 step1, working Operations; Overview and permanent detailed CRM
+read-path remain subsequent results. Mode implementation; gap code/UX/read-model.
+Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+base1c6291a1d5b8254845d894209a949762d483531e, clean index/tree. Prior CI38642701572
+backend/frontend completed SUCCESS. Reuse observations/incident links, existing
+failure/connector models, platform authorization, shared URL filters/pagination/
+date picker/tokens and isolated runner. No alternate checkout or delegation.
+Result: separate current background episodes, connector attention, dated recorded
+failures (automation/integration/webhook), and infrastructure/readiness. Server
+filters Business/name, component/freshness or UTC date period; full counts and
+bounded stable pagination; clinic/episode/support navigation, refresh/timestamps,
+partial/unavailable/error/empty/forbidden and mobile/keyboard/RU-KK-EN states.
+Risks: historical failures mistaken for live outage, truncated counts, mixed
+Business rows, sensitive payload leaks, missing sources masquerading as zero,
+unbounded queries and lost navigation context. New reads only; no lifecycle,
+mutation permission, notification, BusinessEvent, AI, migration or working DB
+effects. Legacy health CLI readiness semantics preserved separately from live
+service state. Existing snapshot coverage remains four background components.
+Focused backend tests immediately after read-model/API: >page counts and ordering,
+filter combinations/invalid inputs/period bounds, role denial, no sensitive
+payload, missing-source recovery, query-budget. Then affected platform/support/
+service-status tests and isolated check/migration drift. UI targeted Operations
+flows desktop/mobile/locales plus build/types/i18n/bundle; no full local E2E or
+deployment. Review explicit diff, static real range, normal origin/main push and
+remote SHA/actual CI. Working support0002 activation remains separate.
+
+Implemented read-only operations-worklist API with five safe source projections,
+Business/name search, component/freshness and UTC date filters (default30/max366
+days), full count and stable pagination. Query cost does not grow per Business.
+Incidents include fresh degraded and unknown latest episodes, not fresh recovered
+ones; missing support links preserve observations with null linked count. Full
+connector count fixed in legacy health; readiness item truncation removed while
+legacy health CLI failure semantics remain unchanged. UI now four tabs, shared
+date picker, pagination, URL filters, timestamp/polling30s and context return links.
+
+Focused isolated SQLite worklist tests: first FAIL due to duplicate empty emails
+in test fixture; fixed unique fixture emails. Retry11 PASS, log
+output/platform-operations/focused-retry.log. Affected PostgreSQL17 command:
+`manage.py test apps.core.tests_platform_worklists apps.core.tests_platform_operations
+apps.core.tests_platform_s02 apps.core.tests_platform_rebuild
+apps.core.tests_service_status apps.support.tests_incidents -v2`: 67 PASS;
+isolated check and makemigrations --check --dry-run PASS. Temporary PG runner
+output/platform-operations/verify_postgres.py, log postgres.log; cluster removed.
+Build first found nonexistent platform.nav.support key; reused supportCases.title.
+Complete build/types/i18n5990/bundle PASS, including final UI-only build after
+adding invalid-page recovery and visible Business filter context (build-final.log).
+First browser run: 5PASS/3FAIL. Dated sources/infrastructure and service-state
+separation PASS desktop/mobile; recovery/permission PASS mobile. Navigation test
+matched two Operations links, corrected to exact context-return href. Desktop
+recovery failed at initial page load during browser ERR_NETWORK_IO_SUSPENDED,
+confirmed trace (Vite disconnected), not an API assertion failure. Focused retry:
+`.venv/Scripts/python.exe scripts/verify_platform_operations.py --grep 'operator worklists paginate|operator worklists preserve'`
+4 PASS; log output/platform-operations/browser-1792046511215175900.log.
+Combined eight distinct desktop/mobile scenarios PASS, reusing unchanged history/
+infrastructure and service-S03 cases from browser-1792046238705349500.log.
+RU/KK/EN, keyboard, overflow, filters, return context, 503/recovery, source loss,
+invalid-page recovery and 403 covered. Screenshots inspected. Own runtimes exited;
+working DB/collector/processes unchanged. No full E2E/live acceptance required.
+Next bounded result is Overview, not started. Publication/static receipt follows.
+
 ## PLATFORM-INCIDENT-LINK-20261015 — explicit incident links and console analysis
 
 Owner requested implementation of explicit incident-to-support linking plus a

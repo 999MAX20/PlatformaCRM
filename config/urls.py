@@ -73,6 +73,7 @@ from apps.core.file_attachment_views import FileAttachmentViewSet
 from apps.core.custom_field_views import CustomFieldDefinitionViewSet, CustomFieldValueViewSet
 from apps.core.import_export_views import ExportJobViewSet, ImportJobViewSet, export_entity, import_template, manual_catalog_item, manual_sale
 from apps.core.pilot_views import PilotReadinessView
+from apps.core.platform_worklists import platform_worklist
 from apps.core.platform_views import (
     platform_activate_landing,
     platform_merchants,
@@ -251,6 +252,7 @@ urlpatterns = [
     path("api/work-queues/", work_queues, name="work_queues"),
     path("api/platform/overview/", platform_overview, name="platform_overview"),
     path("api/platform/operations-health/", platform_operations_health_view, name="platform_operations_health"),
+    path("api/platform/operations-worklist/", platform_worklist, name="platform_operations_worklist"),
     path("api/platform/merchants/", platform_merchants, name="platform_merchants"),
     path("api/platform/merchants/<int:business_id>/", platform_merchant_detail, name="platform_merchant_detail"),
     path("api/platform/merchants/<int:business_id>/support-actions/", platform_merchant_support_action, name="platform_merchant_support_action"),

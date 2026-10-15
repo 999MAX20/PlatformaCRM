@@ -1,9 +1,11 @@
 import { apiClient } from "./client";
 import type { PlatformMerchant, PlatformOperationsHealth, PlatformOverview, PlatformSupportAction } from "../types";
+import type { OperationFilters, OperationPage } from "../types/platformOperations";
 
 export type PlatformPage<T> = { count: number; next: string | null; previous: string | null; results: T[] };
 
 export const platformApi = {
+  operationsWorklist: async (params: OperationFilters) => (await apiClient.get<OperationPage>("/api/platform/operations-worklist/", { params })).data,
   overview: async () => {
     const { data } = await apiClient.get<PlatformOverview>("/api/platform/overview/");
     return data;

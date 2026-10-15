@@ -61,7 +61,8 @@ test("service status shows actual impact and safely handles stale, recovered and
 test("service status keeps operator diagnostics separate from employee impact", async ({ page }) => {
   await login(page, "platform_admin@example.com");
   await page.goto("/platform/operations");
-  await expect(page.getByTestId("platform-service-state")).toContainText(ru["serviceStatus.platform.degraded"]);
+  await expect(page.getByTestId("operations-row").filter({hasText:ru["platform.workspace.service.degraded"]}).first()).toBeVisible();
+  await page.getByRole("tab", {name:ru["operationsWorkspace.infrastructure"],exact:true}).click();
   await expect(page.getByRole("heading", { name: ru["serviceStatus.platform.diagnostics"] })).toBeVisible();
   await expect(page.getByTestId("service-status-notice")).toHaveCount(0);
 });

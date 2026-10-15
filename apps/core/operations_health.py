@@ -10,6 +10,7 @@ from apps.core.models import ExportJob, SupportAccessGrant
 from apps.core.production_audit import run_production_readiness_audit
 from apps.core.service_status import platform_service_status
 from apps.core.platform_reads import read_platform_source
+from apps.core.platform_worklists import CONNECTOR_ATTENTION
 from apps.integrations.models import BusinessConnector, ConnectorSyncRun, IntegrationEventLog, WebhookDeliveryLog
 from apps.integrations.provider_rollout import run_provider_rollout_readiness_check
 from apps.notifications.models import Notification
@@ -80,13 +81,7 @@ def _latest_failed_webhooks(limit=8):
 def _connector_queue(limit=10):
     limit = _bounded_limit(limit)
     queryset = (
-        BusinessConnector.objects.filter(
-            status__in=[
-                BusinessConnector.Statuses.NEEDS_ATTENTION,
-                BusinessConnector.Statuses.FAILED,
-                BusinessConnector.Statuses.EXPIRED_CREDENTIALS,
-            ]
-        )
+        BusinessConnector.objects.filter(status__in=CONNECTOR_ATTENTION)
         .order_by("status", "-updated_at")
     )
     return [
@@ -253,7 +248,8 @@ def platform_operations_health():
     def read_source(key, reader, fallback):
         result = read_platform_source(reader)
         if result is None:
-            unavailable_sources.append(key)
+            if key not in unavailable_sources:
+                unavailable_sources.append(key)
             return fallback
         return result
 
@@ -264,6 +260,7 @@ def platform_operations_health():
     active_support_grants = read_source("support_grants", lambda: SupportAccessGrant.objects.filter(
         is_active=True, expires_at__gt=timezone.now()).count(), None)
     connector_queue = read_source("connector_requests", _connector_queue, [])
+    connector_count = read_source("connector_requests", lambda: BusinessConnector.objects.filter(status__in=CONNECTOR_ATTENTION).count(), None)
     work_queue = {
         "connector_requests": connector_queue,
         "failed_automation_runs": read_source("failed_automation_runs", _latest_automation_failures, []),
@@ -292,7 +289,7 @@ def platform_operations_health():
             "critical": critical_count,
             "warning": warning_count,
             "active_support_grants": active_support_grants,
-            "connector_requests": None if "connector_requests" in unavailable_sources else len(connector_queue),
+            "connector_requests": None if "connector_requests" in unavailable_sources else connector_count,
             "database_available": database["available"],
         },
         "runtime": {
@@ -300,12 +297,12 @@ def platform_operations_health():
             "queue": queue,
             "production_readiness": {
                 "summary": production["summary"],
-                "failed_items": [item for item in production["items"] if item["status"] == "fail"][:8],
-                "warning_items": [item for item in production["items"] if item["status"] == "warn"][:8],
+                "failed_items": [item for item in production["items"] if item["status"] == "fail"],
+                "warning_items": [item for item in production["items"] if item["status"] == "warn"],
             },
             "backup_readiness": {
                 "summary": backup["summary"],
-                "failed_items": [item for item in backup["items"] if item["status"] == "fail"][:8],
+                "failed_items": [item for item in backup["items"] if item["status"] == "fail"],
             },
             "provider_rollout": providers,
         },

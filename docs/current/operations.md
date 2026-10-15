@@ -52,6 +52,17 @@ PLATFORM-REBUILD-01: platform read APIs отделяют записанные о
 Миграции и запуск collector не выполняются как побочный эффект чтения.
 Vite направляет /ready/ в тот же backend, что /api; HTML оболочки не является readiness.
 
+PLATFORM-OPERATIONS-20261015 добавляет read-only `operations-worklist` с источниками
+incidents/connectors/automations/integrations/webhooks, строгими bounded filters,
+стабильной пагинацией и safe projections без payload/error text/credentials.
+Эпизоды: только последний известный episode по компоненту, свежие degraded и
+устаревшие/будущие наблюдения как unknown; fresh healthy не попадает в очередь.
+Полного исторического incident ledger это не создаёт. При отсутствии таблицы
+support links наблюдения остаются доступны, число обращений неизвестно.
+Health CLI сохраняет прежние release/readiness gates; connector_requests count
+полный, массив-превью остаётся ограниченным. В UI readiness, текущие наблюдения
+и terminal failures представлены отдельно. Миграций/запуска collector нет.
+
 Проверить очереди notifications, reports_exports, file_scans и все прочие,
 используемые текущими task routes. Синхронный connector sync остаётся отдельной
 границей риска; не считать весь интеграционный runtime очередью автоматически.

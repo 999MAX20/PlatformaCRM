@@ -6,6 +6,13 @@
 
 # PlatformaCRM — текущий статус
 
+15.10.2026. PLATFORM-OPERATIONS реализован и локально проверен: рабочие
+списки текущих эпизодов/подключений, история ошибок и инфраструктура отдельно;
+фильтры, полные counts, пагинация и переходы. PostgreSQL67, browser8 desktop/mobile,
+build/types/i18n/bundle и system/schema PASS. Scope/публикация — checkpoint.
+CI предыдущего изменения 38642701572 полностью PASS. Обзор и подробный CRM
+read-path следуют отдельными результатами; рабочие миграции не входят в scope.
+
 15.10.2026. PLATFORM-INCIDENT-LINK реализован и локально проверен: связь эпизода
 с существующим/новым обращением, снимок и обратные переходы. PostgreSQL77,
 browser4 desktop/mobile RU/KK/EN, build/types/i18n/bundle и system/schema PASS.

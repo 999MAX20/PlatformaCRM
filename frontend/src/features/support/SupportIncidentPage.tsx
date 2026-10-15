@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams, useLocation } from "react-router";
 import { supportApi } from "../../api/support";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
@@ -26,6 +26,8 @@ export function SupportIncidentPage() {
 function IncidentContent({ business, component, episode }: { business: number; component: string; episode: number }) {
   const { t } = useI18n();
   const navigate = useNavigate(), queryClient = useQueryClient();
+  const location = useLocation();
+  const returnTo = typeof location.state?.returnTo === "string" && /^\/platform\/operations(\?|$)/.test(location.state.returnTo) ? location.state.returnTo : null;
   const [page, setPage] = useState(1), [creating, setCreating] = useState(false);
   const [search, setSearch] = useState(""), [caseId, setCaseId] = useState("");
   const needle = useDebouncedValue(search, 250);
@@ -37,6 +39,7 @@ function IncidentContent({ business, component, episode }: { business: number; c
   if (!result.data || (result.isError && !retainSupportData(result.error))) return <SupportError error={result.error} retry={() => result.refetch()} />;
   const item = result.data;
   return <div className="space-y-4" data-testid="support-incident-page">
+    {returnTo && <Link className="platforma-focus-ring inline-flex min-h-10 items-center text-sm text-brand-700" to={returnTo}>{t("platform.nav.operations")}</Link>}
     <Link className="platforma-focus-ring inline-flex min-h-10 items-center text-sm text-brand-700" to={`/platform/merchants/${business}`}>{t("supportIncidents.back")}</Link>
     <PageHeader title={t("supportIncidents.open")} actions={<Button variant="secondary" onClick={() => result.refetch()} isLoading={result.isFetching}>{t("common.refresh")}</Button>} />
     {result.isError && <SupportError error={result.error} retry={() => result.refetch()} />}
