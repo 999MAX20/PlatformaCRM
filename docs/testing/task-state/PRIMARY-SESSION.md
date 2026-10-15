@@ -6,6 +6,61 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-ADMIN-DEMO-20261015 — local manual preview
+
+Owner requested a running local test stand for the platform admin interface,
+populated business data and admin/operator functionality. Environment/data task;
+no product changes or deployment. Canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, starting HEAD 6e1bd465a12a1d81e66631461105ca3999890ea9,
+clean starting index/worktree. Reuse codex_verify.safe_environment and existing
+smoke/overview/CRM fixtures in an ignored persistent output directory. Separate
+SQLite, media, loopback ports 8015/5185; preserve ordinary DB and existing servers.
+Synthetic data only; inert providers, mock AI, local email; no permission bypass.
+Risk: wrong DB/environment or misleading fixture health. Check explicit DB path,
+process source roots, login and reachable UI/API for both platform roles; label
+synthetic service observations. Completion: live URLs/accounts and restart helper,
+docs diff hygiene, normal publication of task evidence. No full application gate
+for environment-only work; no dependency installation or production migration.
+
+Local result: frontend http://127.0.0.1:5185, backend 127.0.0.1:8015,
+both loopback-only. Persistent ignored output/platform-admin-demo-20261015 contains
+stand.py, start.ps1, enrich.py, operations.py, verify.py, README.txt, db.sqlite3,
+logs and process/verification JSON. Source roots are canonical; development Vite,
+Django --noreload, isolated media and safe_environment, mock AI/local email,
+disabled external providers. Supervisor PID16732; backend launcher11112/runtime15844,
+frontend15956. Existing 8000/5173 processes were not stopped/reconfigured.
+Synthetic component observations refreshed every60s only in demo DB; three businesses
+intentionally lack observations. This is fixture health, not live-service readiness.
+
+Seed15 businesses/30 clients/19 cases, all support statuses, three unassigned cases,
+active/trial/inactive/blocked businesses. Main rich business id15, ДЕМО — Альфа Сервис:
+24 active clients plus archive, linked lead/deal/task/appointment/payment/conversation,
+23 messages, notes/custom field/tag/activity, connector/channel and audit trail.
+Additional failed connector/sync/event/export fixtures in business3 for Operations.
+All demo accounts use the existing smoke password documented only in local README.
+Platform administrator and platform manager roles remain unchanged; no grants or MFA
+bypass added. Persistent data survives server restart; start.ps1 does not reseed.
+
+Validation: stand.py --seed migrated only the explicit demo DB; initial Windows
+shell stdin execution was interactive and produced IndentationError despite exit0.
+Preserved incomplete DB as partial-seed.sqlite3, reran clean explicit shell -c seed
+with business/client/case/role assertions: PASS. operations.py execution PASS.
+verify.py: HTTP login + nine populated CRM list kinds + support list for both roles
+PASS (verification.json). Browser: admin overview,24-client list,scoped support,
+internal-note save; operator login/overview and case19 transition to in_progress
+with visible actor/reason history verified. Fixture observations visible
+as9 degraded/3 healthy/3 unknown. Startup navigation timed out during Vite dependency
+optimization; subsequent page loaded normally. No dependencies installed.
+Ordinary db.sqlite3 is used by pre-existing servers and its hash changed during
+this interval, so no claim of global byte stability: read-only comparison confirms
+none of the three stand-specific business slugs there versus all3 in demo DB.
+No commands in this task targeted ordinary DB for migration/seed/write.
+Full regression/build skipped: no application source/config/lockfile changes.
+Documentation diff hygiene PASS; no new tracked links/files. Publication boundary:
+fetch origin/main returned c7e26f6 while the starting HEAD6e1bd46 is another task's
+unpublished receipt commit. Do not publish that unrelated outgoing commit from this
+task; keep this task's evidence committed locally. No new push/CI for this local stand.
+
 ## CRM-NEUTRAL-TERMS-20261015 — industry-neutral interface
 
 Owner request in PlatformaCRM UI: after the PlatformaCRM admin-panel implementation
