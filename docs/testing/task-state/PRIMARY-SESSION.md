@@ -73,6 +73,15 @@ changes or real credentials in the reviewed diff. Prior docs CI38698958050 SUCCE
 No dependency install, full E2E/backend suite, working DB migration, live provider,
 screen-reader certification or changes to retained dev processes were performed.
 
+Publication: implementation5b476b7544bcec0040a44a97219b9b27b5c4c0f2 normal-pushed
+to origin/main; ls-remote SHA matched. `.venv/Scripts/python.exe scripts/codex_verify.py
+--mode static --base-ref 495f429ee81ee17910fabfb99f4979b84a19e1ee` PASS on the real
+committed range: working/index/range hygiene, isolated migration drift/system check.
+All24 staged files reviewed, including both new sources; no unrelated WIP remained.
+CI38705646141 in_progress at readback, not green. This receipt is docs only;
+application evidence unchanged. All owned verification commands/runtimes exited;
+retained user dev processes unchanged. Scope complete; no next product phase started.
+
 ## PLATFORM-SHELL-20261015 — reference and change contract
 
 User requested current /platform screenshot, sidebar/header reference and a

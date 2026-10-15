@@ -9,8 +9,9 @@
 15.10.2026. PLATFORM-SHELL: по утверждённому референсу внедрены sidebar64/224px,
 единый header57px, меню аккаунта и platform self-account без Business-настроек.
 18 scoped browser checks, build/types/i18n/bundle и визуальная проверка PASS.
-Исправлены возврат фокуса меню и Escape внутри карточки. Публикация выполняется;
-границы, исходный референс и evidence — в checkpoint и разделе14 spec.
+Исправлены возврат фокуса меню и Escape внутри карточки. Код5b476b7 опубликован
+в main, remote SHA совпал; committed-range static PASS. CI38705646141 выполняется.
+Границы, исходный референс и evidence — в checkpoint и разделе14 spec.
 
 15.10.2026. PLATFORM-OVERVIEW реализован и локально проверен: очередь внимания,
 согласованные KPI → фильтрованные клиники/поддержка, ответственные и обновление;
