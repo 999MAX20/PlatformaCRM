@@ -134,8 +134,23 @@ mandatory backend audit remains unchanged. Added direct reload regression covera
 
 Implementation and required frontend checks complete. Entire intended diff reviewed:
 20 explicit task-owned paths, no untracked source or unrelated WIP, no new secrets.
-Next: local commit, committed-range static check, and publication only after the
-pre-existing unrelated outgoing-history boundary is resolved by the owner.
+Implementation committed as `b4ee81a` on `codex/ui-testing-toolkit`.
+`.venv/Scripts/python.exe scripts/codex_verify.py --mode static --base-ref
+5d5586e00db5dc655c1e0c4093ccd0a9f32c41a2`: PASS on that commit, including working,
+index and actual committed-range diff hygiene, isolated migration drift (no changes)
+and Django system check (no issues). No app changes after this evidence.
+
+Local demo Vite exited with Windows EBUSY while watching a generated Playwright
+report asset. After tests, verified both dedicated ports were free and restarted
+only this stand via its existing `stand.py`, hidden, same canonical source and
+persistent synthetic DB; no seed/reset/migrations. Restart logs and current process
+IDs are under `output/platform-admin-demo-20261015`. Ordinary ports were untouched.
+
+Push not attempted: fresh origin/main fetch still leaves `6e1bd46` (other writer)
+before this task's commits. Existing owner rules prohibit publishing that work.
+No CI was triggered for this local implementation; no deployment claimed.
+Next is only owner resolution of that publication boundary; all requested six-screen
+analysis/implementation and applicable local verification are complete.
 
 
 ## PLATFORM-DIAGNOSTICS-01-20261015 — consistent diagnostic reads

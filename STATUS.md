@@ -8,7 +8,8 @@
 
 15.10.2026. PLATFORM-REFERENCE-REDESIGN: проанализированы шесть референсов и
 реализованы все шесть компоновок Обзора, Бизнесов, CRM, Поддержки и Операций.
-Scoped browser и build/types/i18n/bundle PASS; права и backend не менялись.
+Scoped browser, build/types/i18n/bundle и static/system/schema PASS; backend не менялся.
+Код b4ee81a зафиксирован локально на codex/ui-testing-toolkit.
 Анализ, проверки и исправления — в текущем checkpoint. Публикация блокируется
 предшествующим чужим коммитом; редизайн доступен на локальном демостенде.
 
