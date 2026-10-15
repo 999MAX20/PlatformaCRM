@@ -76,8 +76,13 @@ isolated loopback browser servers via scripts.codex_verify.isolated_runtime):
   gh CLI unavailable; GitHub public Actions API is available for actual CI readback.
   Fetch uses an explicit main tracking ref because the configured remote fetch
   refspec omits main; origin/main confirmed equal to base before publication.
-Publication/static committed-range check follows. Automation crm-2 is to be paused
-after the final publication report.
+Publication15.10: code c7e26f612b7c7bb69754c03d813ecf64472d5faa committed on
+codex/ui-testing-toolkit and normal-pushed to origin/main; remote SHA readback
+matches. `.venv/Scripts/python.exe scripts/codex_verify.py --mode static
+--base-ref ee653a3b4abcf18c7a1b244caeebb4e4d419b685`:PASS, including isolated
+system/schema and committed-range hygiene. GitHub Actions38715135513 in_progress
+at receipt time; not claimed green. Prior base CI38712007561 completed success.
+Automation crm-2 paused after completion to prevent repeated implementation.
 
 ## PLATFORM-CLINIC-CRM-20261015 — unified clinic and permanent CRM read access
 

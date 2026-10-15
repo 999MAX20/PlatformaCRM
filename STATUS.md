@@ -11,6 +11,8 @@ RU/KK/EN подписи новых platform-страниц, поддержки, 
 пользовательские данные сохранены. Правило — в AGENTS/контрактах и проверке i18n.
 Backend53, терминология4, browser10 desktop/mobile RU/KK/EN, system/schema,
 build/types/i18n/bundle PASS. Scope/evidence и публикация — checkpoint.
+Код c7e26f6 опубликован normal push в main, remote SHA совпал; static PASS.
+CI38715135513 выполняется, не объявлен зелёным. Автопродолжение crm-2 остановлено.
 
 15.10.2026. PLATFORM-CLINIC-CRM реализован и локально проверен: единая карточка,
 постоянный подробный GET просмотр CRM, сообщения без read-mark, scoped поддержка
