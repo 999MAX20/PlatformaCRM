@@ -1142,6 +1142,17 @@ class CanonicalBusinessRoleTests(TestCase):
         self.assertEqual(actual, expected)
         self.assertEqual(default_member.role, BusinessMember.Roles.SPECIALIST)
 
+    def test_legacy_specialist_default_name_is_neutral_and_saved_name_is_preserved(self):
+        legacy_role = BusinessRole.objects.get(
+            business=self.business, preset_key=BusinessMember.Roles.DOCTOR,
+        )
+        self.assertEqual(legacy_role.name, "Специалист (прежняя роль)")
+        legacy_role.name = "Врач команды — название владельца"
+        legacy_role.save(update_fields=["name"])
+        ensure_default_roles(self.business)
+        legacy_role.refresh_from_db()
+        self.assertEqual(legacy_role.name, "Врач команды — название владельца")
+
     def test_operator_manages_operational_calendar_but_not_control_plane(self):
         operator, _ = self.create_member(BusinessMember.Roles.OPERATOR, "pc2-operator@example.com")
 

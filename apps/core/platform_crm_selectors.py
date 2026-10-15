@@ -63,7 +63,7 @@ def clinic_access(actor, business_id):
 
 def clinic_kind(kind):
     if kind not in MODELS:
-        raise ValidationError({"kind": "Unsupported clinic record type."})
+        raise ValidationError({"kind": "Unsupported business record type."})
     return MODELS[kind]
 
 

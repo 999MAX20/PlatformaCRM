@@ -200,7 +200,7 @@ ROLE_DISPLAY_NAMES = {
     BusinessMember.Roles.ACCOUNTANT: "Бухгалтер",
     BusinessMember.Roles.SUPPORT: "Поддержка",
     BusinessMember.Roles.STAFF: "Специалист (legacy staff)",
-    BusinessMember.Roles.DOCTOR: "Специалист (legacy doctor)",
+    BusinessMember.Roles.DOCTOR: "Специалист (прежняя роль)",
 }
 
 

@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "check:i18n": "node scripts/check-i18n.mjs",
+    "test:terminology": "node --test scripts/tests/industry-terms.test.mjs",
     "test:action-feedback": "node --test scripts/tests/action-feedback-policy.test.mjs",
     "test:action-colors": "node --test scripts/tests/action-color-policy.test.mjs",
     "test:action-colors:browser": "playwright test e2e/action-color-roles.spec.ts --config=playwright.action-colors.config.ts",

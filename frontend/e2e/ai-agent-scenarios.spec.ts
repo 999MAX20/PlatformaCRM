@@ -39,7 +39,7 @@ test("creation requires purpose; CRM settings drive work, approval and analytics
   const editor = page.getByTestId("ai-agent-editor");
   await expect(editor.getByRole("tab")).toHaveCount(5);
   await expect(editor.getByRole("tab", { name: "Каналы", exact: true })).toHaveCount(0);
-  await expect(editor.getByRole("button", { name: "Шаблон: администратор стоматологии" })).toHaveCount(0);
+  await expect(editor.getByRole("button", { name: "Шаблон: администратор бизнеса" })).toHaveCount(0);
   await editor.getByRole("textbox", { name: "Главная инструкция", exact: true }).fill("Use only enabled sources and show the evidence.");
   await editor.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
   await expect(editor.getByRole("button", { name: "Сохранить изменения", exact: true })).toBeDisabled();
@@ -115,7 +115,9 @@ test("customer creation keeps its own interface and duplicate CRM choice is disa
   await expect(editor.getByRole("tab", { name: "Каналы", exact: true })).toBeVisible();
   await expect(editor.getByRole("tab", { name: "Работа с CRM", exact: true })).toHaveCount(0);
   await expect(editor.getByRole("switch", { name: "Изменить статус агента Customer inbox" })).toBeDisabled();
-  await expect(editor.getByRole("button", { name: "Шаблон: администратор стоматологии" })).toBeVisible();
+  await expect(editor.getByRole("button", { name: "Шаблон: администратор бизнеса" })).toBeVisible();
+  await expect(editor.getByRole("textbox", { name: "Описание роли", exact: true })).toHaveValue("Администратор бизнеса");
+  await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue(/Только|Используй только данные бизнеса/);
   await page.screenshot({ path: info.outputPath("customer-profile.png"), fullPage: true });
 });
 

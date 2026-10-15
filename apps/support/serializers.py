@@ -20,7 +20,7 @@ class CaseContext(StrictInput):
 
     def validate(self, attrs):
         if not self.context.get("platform") and not attrs.get("business"):
-            raise serializers.ValidationError({"business": "Select a clinic."})
+            raise serializers.ValidationError({"business": "Select a business."})
         return attrs
 
 

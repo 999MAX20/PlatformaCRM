@@ -6,6 +6,12 @@
 
 # PlatformaCRM — текущий статус
 
+15.10.2026. CRM-NEUTRAL-TERMS реализован и локально проверен: нейтральные
+RU/KK/EN подписи новых platform-страниц, поддержки, ресурсов и общего шаблона ИИ;
+пользовательские данные сохранены. Правило — в AGENTS/контрактах и проверке i18n.
+Backend53, терминология4, browser10 desktop/mobile RU/KK/EN, system/schema,
+build/types/i18n/bundle PASS. Scope/evidence и публикация — checkpoint.
+
 15.10.2026. PLATFORM-CLINIC-CRM реализован и локально проверен: единая карточка,
 постоянный подробный GET просмотр CRM, сообщения без read-mark, scoped поддержка
 и аудит. PostgreSQL123, browser12 distinct desktop/mobile, build/types/i18n/bundle,

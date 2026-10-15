@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { industryTermViolations } from "./industry-terms.mjs";
 
 function dictionaryBlock(name) {
   const source = fs.readFileSync(path.resolve(`src/lib/i18n/${name}.ts`), "utf8");
@@ -36,6 +37,12 @@ function sourceFiles(directory) {
 for (const [language, dictionary] of Object.entries(dictionaries)) {
   // A fallback spread after translated entries silently restores Russian copy.
   const block = dictionaryBlock(language);
+  const entries = [...block.matchAll(/"([^"\n]+)":\s*("(?:[^"\\]|\\.)*")/g)]
+    .map((match) => [match[1], JSON.parse(match[2])]);
+  const industryTerms = industryTermViolations(entries);
+  if (industryTerms.length) {
+    failures.push(`${language}: industry-specific generic UI labels: ${industryTerms.join(", ")}`);
+  }
   const fallback = block.indexOf("...ru");
   const firstKey = block.search(/^\s*"[^"]+":/m);
   if (fallback !== -1 && firstKey !== -1 && fallback > firstKey) {

@@ -6,6 +6,79 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-NEUTRAL-TERMS-20261015 — industry-neutral interface
+
+Owner request in PlatformaCRM UI: after the PlatformaCRM admin-panel implementation
+finishes, replace clinic/patient/doctor and analogous industry-specific system copy,
+then establish a rule that the common CRM interface is industry-neutral.
+Prerequisite confirmed: PLATFORM-CLINIC-CRM completed/published aed452f, receipt
+ee653a3; source task idle. Canonical C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, base ee653a3b4abcf18c7a1b244caeebb4e4d419b685;
+starting index/working tree clean. Implementation + policy gap.
+
+Scope: RU/KK/EN system copy including new platform CRM tabs, support/errors,
+resource presets and default customer-AI role/template; authoritative frontend,
+product/AI rules and AGENTS wording consistent with multi-industry CRM.
+Reuse existing i18n, components, API error handling, AI profile creation and test
+runners. Preserve stored customer data, explicit industry choices/templates,
+API identifiers/enums and permission/lifecycle/approval/safety rules. No schema,
+working DB changes, external calls, notification or BusinessEvent changes.
+Risks: translated grammar, label overflow, saved-profile compatibility, accidental
+loss of AI safety/confirmation clauses. Focused checks: translation inventory,
+new-profile/template behavior and unchanged stored-profile loading, affected backend
+error tests in isolated runtime. Completion: build/types/i18n, representative
+platform/support/resources/AI UI in RU/KK/EN desktop/mobile and keyboard states,
+system/schema checks for backend text edits, diff hygiene, reviewed normal push
+and actual CI status. No full E2E, provider or deployed acceptance claim.
+Implementation completed: 153 translated values (RU52/KK50/EN51), including the
+new Business work tab, platform/support labels and errors, equipment/work-area
+presets and neutral AI default role. API keys/enums and stored profiles/data stay
+unchanged. Four backend error messages and the default legacy specialist role
+name are neutral; role creation does not rewrite an existing stored name.
+AGENTS and active product/frontend/AI contracts now require industry-neutral UI.
+The existing build's check:i18n rejects known industry entity names in generic
+translated values, with explicit industry-choice exceptions and safety preserved.
+
+Verification15.10 (canonical source; existing dependencies; disposable SQLite,
+isolated loopback browser servers via scripts.codex_verify.isolated_runtime):
+- Installed `.venv/Scripts/python.exe` using the documented isolated focused
+  helper: `manage.py test apps.core.tests_platform_crm apps.support.tests_api
+  apps.support.tests_domain -v 1`:43 PASS; `manage.py check` and
+  `manage.py makemigrations --check --dry-run`:PASS; output/neutral-terms/backend.log.
+- After the role-name edit, same isolated helper:
+  `manage.py test apps.businesses.tests_access.CanonicalBusinessRoleTests
+  apps.businesses.tests_role_visibility -v 1`:10 PASS, output/neutral-terms/roles.log.
+  Includes explicit preservation of an owner-saved industry role name. No model
+  or migration inputs changed after the recorded system/schema checks.
+- `npm --prefix frontend run test:terminology`:4 PASS. Rejects RU/KK/EN inflections,
+  preserves technical keys, explicit industry choices and medical/legal safety.
+- `npm --prefix frontend run build`:PASS (i18n6197 keys, types, Vite/widget),
+  output/neutral-terms/build.log. `npm --prefix frontend run check:bundle`:PASS,
+  largest477.5kB and shell329.9kB. Placeholder parity of all153 changed values PASS.
+- `.venv/Scripts/python.exe scripts/verify_platform_overview.py --clinic-crm
+  --spec e2e/platform-clinic-crm.spec.ts e2e/neutral-terminology.spec.ts
+  e2e/ai-agents-ux.spec.ts e2e/ai-agent-scenarios.spec.ts
+  --grep "clinic CRM locales|neutral resource|visible profile|customer creation"`:
+  8 PASS desktop/mobile. Log output/platform-clinic-crm/browser-1792057000584706000.log.
+  New profile + resource defaults RU/KK/EN, explicit template apply/cancel,
+  saved-profile preservation, keyboard modal focus and platform tabs/no overflow.
+- `.venv/Scripts/python.exe scripts/verify_platform_overview.py
+  --spec e2e/platform-overview.spec.ts --grep "operator overview bounded queues"`:
+  2 PASS desktop/mobile, overview/business/incident/support navigation RU/KK/EN.
+  Log output/platform-overview/browser-1792057250427938200.log.
+- Visual review: RU desktop AI, KK mobile equipment dialog, EN mobile Business
+  work and RU desktop overview. Changed labels fit; explicit fixture data named
+  Clinic/Patient remain unchanged as required. First-run screenshots copied to
+  output/neutral-terms before the second browser run replaced test-results.
+- Working diff hygiene PASS; reviewed changed/new files contain only task work.
+  Full E2E, live providers/deployment and working DB checks skipped as outside this
+  copy/default-template scope. No installs, schema/data migrations or external sends.
+  gh CLI unavailable; GitHub public Actions API is available for actual CI readback.
+  Fetch uses an explicit main tracking ref because the configured remote fetch
+  refspec omits main; origin/main confirmed equal to base before publication.
+Publication/static committed-range check follows. Automation crm-2 is to be paused
+after the final publication report.
+
 ## PLATFORM-CLINIC-CRM-20261015 — unified clinic and permanent CRM read access
 
 Owner: «приступай» after Overview; spec13.5 step3 and approved permanent read

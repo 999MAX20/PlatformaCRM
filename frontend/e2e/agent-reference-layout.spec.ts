@@ -79,7 +79,7 @@ test("centered agent workspace keeps natural flow and all five sections usable a
         expect(geometry.header.height).toBeLessThanOrEqual(105);
         expect(geometry.editor.width).toBe(960);
         if (section === "profile") {
-          const preset = await editor.getByRole("button", { name: "Шаблон: администратор стоматологии", exact: true }).boundingBox();
+          const preset = await editor.getByRole("button", { name: "Шаблон: администратор бизнеса", exact: true }).boundingBox();
           expect(preset!.height).toBeGreaterThanOrEqual(36);
           expect(preset!.height).toBeLessThanOrEqual(40);
           const role = editor.getByRole("textbox", { name: "Описание роли", exact: true });

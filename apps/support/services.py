@@ -57,7 +57,7 @@ def create_case(*, actor, business_id, subject, text, idempotency_key, platform=
         # Manual creation records the actual platform author, not an impersonation.
         requester = current_business.owner if platform else actor
         if not requester.is_active:
-            raise ValidationError({"business": "The clinic owner account is inactive."})
+            raise ValidationError({"business": "The business owner account is inactive."})
         case = SupportCase.objects.create(
             business=current_business, created_by=actor, requester=requester,
             subject=subject, source=source, last_public_message_at=timezone.now(),

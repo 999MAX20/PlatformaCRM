@@ -297,6 +297,21 @@ old "continue" messages do not authorize multiple new phases.
 
 ## 8. Authenticated UI content
 
+### Industry-neutral terminology — owner decision 2026-10-15
+
+The shared CRM interface and platform administration serve businesses in any
+industry. A dentistry pilot does not authorize dental terminology in common
+navigation, headings, fields, statuses, errors, empty states, resource presets or
+default AI roles/instructions. Use Business, Client, Specialist and neutral resource
+names (RU: «Бизнес», «Клиент», «Специалист», «Оборудование»/«Рабочее место»), with
+correct grammar and equivalent RU/KK/EN translations. Apply this to new pages and
+components as well as existing ones; check visible values, not just translation keys.
+Explicit industry choices and deliberately selected industry templates may name the
+industry. Preserve user-entered business data, medical/legal safety restrictions
+and technical API/DB identifiers; these are not generic interface labels. Do not
+make an industry template the default for every business. Review terminology and
+representative translated screens when adding or changing UI copy.
+
 Every visible block must serve navigation, a metric, real business data, an action,
 form, list/entity card, chart, integration status, meaningful empty-state action or
 system alert. Do not invent decorative/marketing/demo/motivational/explanatory blocks

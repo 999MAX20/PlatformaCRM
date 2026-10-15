@@ -24,7 +24,7 @@ def audited_response(request, business_id, kind, read, *, record_id=None):
                                       "category": AuditLog.Categories.ACCESS})
     except DatabaseError:
         # A failed audit must not return private data, even when the SELECT worked.
-        return Response({"detail": "Clinic records are temporarily unavailable.", "code": "temporary_service_failure", "category": "temporary"}, status=503, headers={"Cache-Control": "no-store"})
+        return Response({"detail": "Business records are temporarily unavailable.", "code": "temporary_service_failure", "category": "temporary"}, status=503, headers={"Cache-Control": "no-store"})
     return Response(payload, headers={"Cache-Control": "no-store"})
 
 
