@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { normalizeAppError, type AppError } from "../../api/appError";
-import { checkServiceConnection } from "../../api/connectivity";
+import { checkServiceConnection, SERVICE_AVAILABLE_EVENT } from "../../api/connectivity";
 import { ConnectivityBanner } from "./ConnectivityBanner";
 
 const offlineError: AppError = {
@@ -31,6 +31,7 @@ export function ConnectivityStatus({ monitor = false }: { monitor?: boolean }) {
       await checkServiceConnection(controller.signal);
       if (controller.signal.aborted) return;
       setState("online");
+      if (!wasOnline) window.dispatchEvent(new Event(SERVICE_AVAILABLE_EVENT));
       // Reads only. Never replay pending mutations after a connection failure.
       if (!wasOnline) void queryClient.refetchQueries({ type: "active" }, { cancelRefetch: false });
     } catch (cause) {

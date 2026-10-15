@@ -16,6 +16,7 @@ import {
 } from "../../api/client";
 import axios from "axios";
 import { normalizeAppError } from "../../api/appError";
+import { SERVICE_AVAILABLE_EVENT } from "../../api/connectivity";
 import { Button } from "../../components/ui/Button";
 import { ErrorState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
@@ -160,13 +161,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (Date.now() >= retryAt && navigator.onLine && document.visibilityState === "visible") void restoreCurrentSession();
     };
     const delay = Math.max(Math.min(60_000, 5_000 * 2 ** Math.min(recoveryAttempts.current, 4)), retryAfter);
-    const timer = window.setTimeout(recover, delay);
+    // A hidden/offline tick must not consume the only scheduled attempt.
+    const timer = window.setInterval(recover, delay);
     window.addEventListener("online", recover);
     window.addEventListener("focus", recover);
+    window.addEventListener(SERVICE_AVAILABLE_EVENT, recover);
+    document.addEventListener("visibilitychange", recover);
     return () => {
-      window.clearTimeout(timer);
+      window.clearInterval(timer);
       window.removeEventListener("online", recover);
       window.removeEventListener("focus", recover);
+      window.removeEventListener(SERVICE_AVAILABLE_EVENT, recover);
+      document.removeEventListener("visibilitychange", recover);
     };
   }, [recoveryError, restoreCurrentSession]);
 

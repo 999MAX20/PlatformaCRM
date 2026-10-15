@@ -6,6 +6,55 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CONNECTION-RECOVERY-20261015 — implementation
+
+Owner requested fixing persistent connection notices after read-only analysis.
+Mode implementation; gap code/evidence; canonical root PlatformaCRM, branch
+codex/ui-testing-toolkit, starting HEAD e24d52dc6a630a1f167cc78f812ff5b4d98fcafb.
+Pre-existing ADMIN-01 WIP (backend/platform UI, i18n, contracts/status/checkpoint)
+is unrelated and preserved. Only append task evidence to shared records.
+Reuse ConnectivityStatus, public readiness API, AuthProvider and existing browser
+fixtures. Scope: recovery after hidden/offline state, public probe independent
+of auth, successful service retry resumes pending session recovery. Preserve
+drafts, identity checks, Retry-After and explicit-only business mutations.
+No backend/permission/tenant/BusinessEvent/AI/migration/provider changes.
+Risk: shared authentication recovery; do not hide errors before actual success.
+Checks: regression before fix, targeted connectivity/session browser suites in
+isolated_runtime with disposable DB/ports, frontend build/types/i18n/bundle,
+diff hygiene. No full-project gate or working DB writes. Commit only owned hunks;
+publication requires review of existing outgoing history, never other writers' WIP.
+
+Implementation: readiness uses a public axios client without auth interceptors;
+successful recovery probe signals AuthProvider to attempt session recovery.
+Auth recovery repeats its timer and listens to visibilitychange, respecting
+Retry-After, visibility/online state and existing single-flight/identity guards.
+Existing business mutations are never replayed. UI copy/layout unchanged.
+Before-fix regression: `.venv/Scripts/python.exe scripts/verify_connection_recovery.py`
+failed all4 desktop/mobile checks on expected notice dismissal (not setup).
+Log output/connection-recovery/browser-1792090622310699100.log. Both missing
+behaviors reproduced: hidden startup retry and successful upper retry leaving
+session error. This does not establish the historical screenshot's exact cause.
+`npm --prefix frontend run build` PASS (i18n6206, tsc, app/widget build);
+`npm --prefix frontend run check:bundle` PASS. Logs output/connection-recovery/
+build.log and bundle.log. Error/action-feedback Node tests9 PASS, policy.log.
+Targeted browser completion: `.venv/Scripts/python.exe scripts/verify_connection_recovery.py
+e2e/connection-recovery.spec.ts e2e/session-persistence.spec.ts e2e/state-behavior.spec.ts`
+PASS27;11 mobile session-suite duplicates skipped by its existing desktop-only
+guard. Log browser-1792090778383703400.log. New regressions4 PASS desktop/mobile;
+session503/429/offline, expired token, logout, multiple tabs, draft preservation,
+failed/retried probe and keyboard feedback expiration covered. No full-project/
+release gate claimed; no backend code or working DB changed by this task.
+Fetch origin/main confirms8 pre-existing outgoing commits6e1bd46..e24d52d;
+normal push would include unrelated work. Preserve this publication blocker.
+Public probe `.venv/Scripts/python.exe scripts/verify_connection_recovery.py
+e2e/connection-probe.spec.ts`:2 PASS desktop/mobile, no Authorization header and
+successful public response across a concurrent session-generation change.
+Log browser-1792090946031338700.log. Total browser29 PASS;11 intentional skips.
+Owned test servers exit with the runners; existing dev servers untouched.
+Ready for owned-path local commit; committed-range static gate follows it against
+e24d52dc6a630a1f167cc78f812ff5b4d98fcafb, with outcome in the task response.
+Push/CI not run due to the pre-existing outgoing-history publication blocker.
+
 ## PLATFORM-ADMIN-01-CONTRACT-20261015 — stage0
 
 User said proceed with the proposed plan. Under AGENTS one-phase rule, active
