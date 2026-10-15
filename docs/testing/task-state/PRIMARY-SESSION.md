@@ -51,8 +51,16 @@ Metric-to-list agreement, combined filter/return, clinic/incident/case return,
 RU/KK/EN keyboard/no-overflow, retained data on503/recovery, missing source vs
 zero/empty, role-loss403 covered. DesktopRU/mobileKK full-page captures inspected;
 no clipping or unrelated layout change. Own isolated runtime exited cleanly.
-Prior CI38694788872 backend/frontend SUCCESS now confirmed. Final diff/publication
-pending; next result is unified clinic + detailed CRM read-path, not started.
+Prior CI38694788872 backend/frontend SUCCESS now confirmed. Reviewed26 explicit
+task-owned paths, six new files, no unrelated work or real secrets. Document
+links185 and working/index diff hygiene PASS. Commit
+0c9666e38ec652c03ceab671324fd6c41ab42840 normal-pushed to origin/main; remote SHA
+matched, clean tree. `.venv/Scripts/python.exe scripts/codex_verify.py --mode static
+--base-ref c713b86e886e30e02a829fab7baed42a25ba4cd4` PASS: real committed range,
+isolated migration/system and diff checks. CI38697901995 in_progress at receipt;
+not claimed green. This receipt changes docs only, application evidence unchanged.
+Next result is unified clinic + detailed CRM read-path, not started. Working DB,
+collector and other processes unchanged; support0002 activation remains separate.
 
 ## PLATFORM-OPERATIONS-20261015 — operator worklists
 

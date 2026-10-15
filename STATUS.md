@@ -11,6 +11,8 @@
 финансовая логика сохранена. PostgreSQL76, browser8 desktop/mobile RU/KK/EN,
 build/types/i18n/bundle и system/schema PASS. Контракт/публикация — checkpoint.
 Предыдущий CI38694788872: backend/frontend SUCCESS.
+Код 0c9666e опубликован в main, удалённый SHA совпал; committed-range static PASS.
+CI38697901995 выполняется; итог ещё не подтверждён.
 
 15.10.2026. PLATFORM-OPERATIONS реализован и локально проверен: рабочие
 списки текущих эпизодов/подключений, история ошибок и инфраструктура отдельно;
