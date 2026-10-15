@@ -6,7 +6,7 @@ import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
-import { PageHeader } from "../../components/ui/PageHeader";
+import { PlatformPageHeading } from "../../components/layout/PlatformPageHeading";
 import { EmptyState, LoadingState } from "../../components/ui/StateViews";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useI18n } from "../../lib/i18n";
@@ -41,7 +41,7 @@ function IncidentContent({ business, component, episode }: { business: number; c
   return <div className="space-y-4" data-testid="support-incident-page">
     {returnTo && <Link className="platforma-focus-ring inline-flex min-h-10 items-center text-sm text-brand-700" to={returnTo}>{t(returnTo === "/platform" ? "platform.nav.overview" : "platform.nav.operations")}</Link>}
     <Link className="platforma-focus-ring inline-flex min-h-10 items-center text-sm text-brand-700" to={`/platform/merchants/${business}`}>{t("supportIncidents.back")}</Link>
-    <PageHeader title={t("supportIncidents.open")} actions={<Button variant="secondary" onClick={() => result.refetch()} isLoading={result.isFetching}>{t("common.refresh")}</Button>} />
+    <PlatformPageHeading title={t("supportIncidents.open")} actions={<Button variant="secondary" onClick={() => result.refetch()} isLoading={result.isFetching}>{t("common.refresh")}</Button>} />
     {result.isError && <SupportError error={result.error} retry={() => result.refetch()} />}
     <Card padding="md" className="space-y-4"><p className="font-semibold">{item.incident.business_name} · #{business}</p><IncidentSummary incident={item.incident} /></Card>
     <Card padding="md" className="space-y-4">

@@ -1,4 +1,6 @@
 export const ru: Record<string, string> = {
+  "platform.shell.account": "Мой аккаунт",
+  "platform.shell.case": "Обращение",
   "analyticsWorkspace.overview": "Обзор",
   "analyticsWorkspace.sources": "Источники",
   "analyticsWorkspace.services": "Услуги",

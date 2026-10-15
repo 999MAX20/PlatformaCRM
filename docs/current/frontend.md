@@ -283,6 +283,16 @@ focus; dismiss в углу, recovery под сообщением. Техниче
 
 ## Поддержка клиники и платформы
 
+PLATFORM-SHELL-20261015: platform navigation резервирует64px на desktop;
+hover/клавиатурный фокус раскрывают224px поверх контента. Общий header57px
+показывает единственный h1 текущего маршрута; имена доступных сущностей приходят
+из загруженной страницы и очищаются при уходе/denial. Main имеет отступ24px
+desktop и16px ниже lg; действия страниц сохраняются в их рабочих toolbar.
+Меню email+профиль открывает `/platform/account`: личный профиль, безопасность
+и язык через действующие self APIs, без Business/start-page/notification settings.
+Merchant account/support сохраняют свои маршруты и настройки. Контракт и scoped
+evidence: [platform spec, раздел14](../testing/platform-rebuild-spec-20261014.md).
+
 PLATFORM-SUPPORT-20261015: `/app/support` и `/platform/support` используют
 общие компоненты очереди и карточки с раздельными API-областями. Фильтры, поиск
 и пагинация сохраняются в URL; возврат из карточки сохраняет контекст.

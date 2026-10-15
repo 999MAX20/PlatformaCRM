@@ -6,7 +6,6 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
-import { PageHeader } from "../../components/ui/PageHeader";
 import { CrmPagination } from "../../components/crm/CrmPagination";
 import { LoadingState, EmptyState } from "../../components/ui/StateViews";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
@@ -30,7 +29,6 @@ export function PlatformMerchantsPage() {
   const rows = merchants.data?.results || [];
   const filtered = Boolean(query || status || service);
   return <div className="space-y-4" data-testid="platform-merchants-ready">
-    <PageHeader title={t("platform.merchants.title")} />
     <div className="flex flex-wrap items-center gap-2">
       <Input aria-label={t("platform.merchants.search")} placeholder={t("platform.merchants.search")} value={query} onChange={event => update({ search: event.target.value, page: "" })} className="w-full sm:w-80" />
       <Select aria-label={t("platform.merchants.status")} value={status} onChange={event => update({ status: event.target.value, page: "" })} className="w-48" options={[

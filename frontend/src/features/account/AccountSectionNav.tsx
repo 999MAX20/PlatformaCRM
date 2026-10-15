@@ -3,14 +3,17 @@ import { useEffect, useState } from "react";
 
 import { useI18n } from "../../lib/i18n";
 
-const sections = [
+const allSections = [
   { id: "profile", label: "account.profileEyebrow", icon: UserRound },
   { id: "interface", label: "account.interfaceTitle", icon: Settings2 },
   { id: "security", label: "account.loginHistoryEyebrow", icon: ShieldCheck },
   { id: "notifications", label: "account.notificationsEyebrow", icon: Bell },
 ] as const;
 
-export function AccountSectionNav() {
+const personalSections = allSections.filter(section => section.id !== "notifications");
+
+export function AccountSectionNav({ platform = false }: { platform?: boolean }) {
+  const sections = platform ? personalSections : allSections;
   const { t } = useI18n();
   const [active, setActive] = useState<string>("profile");
 
@@ -43,11 +46,11 @@ export function AccountSectionNav() {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
     };
-  }, []);
+  }, [sections]);
 
   return (
     <div className="account-section-nav-rail">
-    <nav aria-label={t("account.sectionNavigation")} className="grid grid-cols-4 gap-1 rounded-card border border-platforma-border bg-surface-card p-2 shadow-soft xl:sticky xl:top-20 xl:mx-auto xl:w-14 xl:grid-cols-1 2xl:w-48">
+    <nav aria-label={t("account.sectionNavigation")} className={`grid ${platform ? "grid-cols-3" : "grid-cols-4"} gap-1 rounded-card border border-platforma-border bg-surface-card p-2 shadow-soft xl:sticky xl:top-20 xl:mx-auto xl:w-14 xl:grid-cols-1 2xl:w-48`}>
       {sections.map(({ id, label, icon: Icon }) => (
         <a key={id} href={`#${id}`} title={t(label)} aria-current={active === id ? "location" : undefined}
           className={`platforma-focus-ring flex min-h-11 items-center justify-center gap-2 rounded-control px-1 py-2 text-center text-xs font-semibold 2xl:justify-start 2xl:text-left 2xl:text-sm ${active === id ? "bg-brand-50 text-brand-700" : "text-platforma-subtle hover:bg-surface-hover"}`}>

@@ -6,6 +6,7 @@ import { supportApi } from "../../api/support";
 import { DraftGuard } from "../../components/actions/DraftGuard";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
+import { PlatformPageHeading } from "../../components/layout/PlatformPageHeading";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { EmptyState, LoadingState } from "../../components/ui/StateViews";
 import { useActiveBusiness } from "../../hooks/useBusiness";
@@ -47,7 +48,7 @@ function SupportDetail({ id, scope }: { id: number; scope: SupportScope }) {
     <DraftGuard dirty={Object.values(drafts).some(draft => draft.dirty)} pending={Object.values(drafts).some(draft => draft.pending)} />
     {detail.isError && <SupportError error={detail.error} retry={() => detail.refetch()} />}
     <Link to={returnTo} className="platforma-focus-ring inline-flex min-h-10 items-center gap-2 text-sm font-medium text-brand-700"><ArrowLeft size={16} aria-hidden="true" />{t(returnTo === "/platform" ? "platform.nav.overview" : "supportCases.back")}</Link>
-    <PageHeader title={item.subject} actions={<Button variant="secondary" onClick={() => detail.refetch()} isLoading={detail.isFetching}>{t("common.refresh")}</Button>} />
+    {scope.platform ? <PlatformPageHeading title={`${t("platform.shell.case")} ${item.number}`} subject={item.subject} actions={<Button variant="secondary" onClick={() => detail.refetch()} isLoading={detail.isFetching}>{t("common.refresh")}</Button>} /> : <PageHeader title={item.subject} actions={<Button variant="secondary" onClick={() => detail.refetch()} isLoading={detail.isFetching}>{t("common.refresh")}</Button>} />}
     <Card padding="md" className="space-y-3">
       <div className="flex flex-wrap items-center gap-3"><span className="font-semibold">{item.number}</span><SupportStatusBadge status={item.status} /><span className="text-sm text-platforma-subtle">{t(`supportCases.source.${item.source}`)}</span></div>
       <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">

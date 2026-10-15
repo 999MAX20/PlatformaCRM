@@ -1,5 +1,4 @@
 import { useSearchParams } from "react-router";
-import { PageHeader } from "../../components/ui/PageHeader";
 import { Tabs } from "../../components/ui/Tabs";
 import { useI18n } from "../../lib/i18n";
 import { OperationsWorklist } from "./OperationsWorklist";
@@ -14,7 +13,6 @@ export function PlatformOperationsPage() {
     setParams(current => { const next = new URLSearchParams(current); for (const [key, value] of Object.entries(values)) { if (value) next.set(key, value); else next.delete(key); } return next; }, { replace: true });
   }
   return <div className="space-y-4" data-testid="platform-operations-ready">
-    <PageHeader title={t("platform.operations.title")} />
     <Tabs value={section} options={sections.map(value => ({ value, label: t(`operationsWorkspace.${value}`) }))} ariaLabel={t("platform.operations.title")} idPrefix="operations" appearance="underline"
       onChange={value => update({ section: value, page: "", component: "", freshness: "", date_from: "", date_to: "" })} />
     <section role="tabpanel" id={`operations-panel-${section}`} aria-labelledby={`operations-tab-${section}`}>

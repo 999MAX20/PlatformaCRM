@@ -949,6 +949,7 @@ const router = createBrowserRouter([
           </PageLoader>
         ),
       },
+      { path: "account", element: <PageLoader><AccountPage platform /></PageLoader> },
       { path: "support", element: <PageLoader><SupportListPage platform /></PageLoader> },
       { path: "support/:id", element: <PageLoader><SupportDetailPage platform /></PageLoader> },
       { path: "merchants/:id/incidents/:component/:episode", element: <PageLoader><SupportIncidentPage /></PageLoader> },

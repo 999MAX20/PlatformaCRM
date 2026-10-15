@@ -16,14 +16,22 @@ import { tokenStorage } from "../../lib/storage";
 import type { UserPreference } from "../../types";
 import { NotificationSoundControl } from "./NotificationSoundControl";
 
-export function InterfaceSettingsCard() {
-  const { user, refreshUser } = useAuth();
+export function InterfaceSettingsCard({ platform = false }: { platform?: boolean }) {
+  return platform ? <PersonalInterfaceSettings /> : <MerchantInterfaceSettings />;
+}
+
+function MerchantInterfaceSettings() {
   const { business } = useActiveBusiness();
+  return <PersonalInterfaceSettings businessId={business?.id} merchant />;
+}
+
+function PersonalInterfaceSettings({ businessId, merchant = false }: { businessId?: number; merchant?: boolean }) {
+  const { user, refreshUser } = useAuth();
   const { t, language, setLanguage } = useI18n();
-  const pages = availableStartPages(user, business?.id);
+  const pages = availableStartPages(user, businessId);
   const savedStartPage = pages.find(({ value }) => value === user?.preferences?.start_page)?.value || "dashboard";
   const [selectedStartPage, setSelectedStartPage] = useState<UserPreference["start_page"]>(savedStartPage);
-  useEffect(() => setSelectedStartPage(savedStartPage), [user?.id, business?.id, savedStartPage]);
+  useEffect(() => setSelectedStartPage(savedStartPage), [user?.id, businessId, savedStartPage]);
   const savedLanguage = user?.preferences?.language || language;
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(savedLanguage);
   useEffect(() => setSelectedLanguage(savedLanguage), [user?.id, savedLanguage]);
@@ -31,7 +39,7 @@ export function InterfaceSettingsCard() {
     if (user?.preferences?.language) setLanguage(user.preferences.language);
   }, [user?.preferences?.language, setLanguage]);
   const mutation = useMutation({
-    mutationFn: async (value: Pick<UserPreference, "language" | "start_page">) => {
+    mutationFn: async (value: Pick<UserPreference, "language"> & Partial<Pick<UserPreference, "start_page">>) => {
       const generation = tokenStorage.getGeneration();
       await prepareLanguage(value.language);
       assertCurrentSession(generation);
@@ -51,20 +59,20 @@ export function InterfaceSettingsCard() {
       <h2 className="mb-3 text-base font-bold">{t("account.interfaceTitle")}</h2>
       {mutation.error ? <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} /> : null}
       {mutation.isSuccess ? <p role="status" className="mb-3 text-sm text-platforma-success">{t("account.interfaceSaved")}</p> : null}
-      <form className="grid max-w-[560px] gap-3 sm:grid-cols-2" onSubmit={(event) => { event.preventDefault(); mutation.mutate({ language: selectedLanguage, start_page: selectedStartPage }); }}>
+      <form className="grid max-w-[560px] gap-3 sm:grid-cols-2" onSubmit={(event) => { event.preventDefault(); mutation.mutate({ language: selectedLanguage, ...(merchant ? { start_page: selectedStartPage } : {}) }); }}>
         <div className="min-w-0 flex-1">
           <Select label={t("common.language")} value={selectedLanguage} disabled={mutation.isPending}
             onChange={(event) => { mutation.reset(); setSelectedLanguage(event.target.value as Language); }}
             options={[{ value: "ru", label: "Русский" }, { value: "kk", label: "Қазақша" }, { value: "en", label: "English" }]} />
         </div>
-        <Select label={t("account.startPage")} value={selectedStartPage} disabled={mutation.isPending}
+        {merchant && <Select label={t("account.startPage")} value={selectedStartPage} disabled={mutation.isPending}
           onChange={(event) => { mutation.reset(); setSelectedStartPage(event.target.value as UserPreference["start_page"]); }}
-          options={pages.map(({ value, label }) => ({ value, label: t(label) }))} />
+          options={pages.map(({ value, label }) => ({ value, label: t(label) }))} />}
         <div className="flex sm:col-span-2 sm:justify-end">
-          <Button size="sm" type="submit" disabled={selectedLanguage === savedLanguage && selectedStartPage === savedStartPage} isLoading={mutation.isPending}>{t("common.save")}</Button>
+          <Button size="sm" type="submit" disabled={selectedLanguage === savedLanguage && (!merchant || selectedStartPage === savedStartPage)} isLoading={mutation.isPending}>{t("common.save")}</Button>
         </div>
       </form>
-      <NotificationSoundControl />
+      {merchant && <NotificationSoundControl />}
     </Card>
   );
 }

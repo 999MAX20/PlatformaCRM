@@ -498,9 +498,12 @@ Onboarding, Meta/PS Cloud, billing-разработка, SLA и автомати
 ## 14. PLATFORM-SHELL-20261015 — референс и контракт оболочки
 
 Запрос владельца 15.10: снимок `/platform`, визуальный референс сайдбара/хедера
-и контракт последующих изменений. Этот пакет — проектирование, не внедрение.
+и контракт последующих изменений. Исходный пакет495f429 — проектирование.
+Последующее «приступай» разрешило внедрение этого контракта; состояние реализации
+и scoped evidence ведутся в PLATFORM-SHELL implementation checkpoint.
 Требования ниже основаны на прямом запросе; размеры и детали меню — предложение
-референса. Новые API, настройки клиники, роли и продуктовые страницы не внедрены.
+референса. В исходном пакете не внедрялись новые API, настройки клиники, роли
+или продуктовые страницы.
 Референс не является evidence работы будущего интерфейса.
 
 ### 14.1. Наблюдаемый исходный интерфейс
@@ -571,7 +574,7 @@ LanguageSelector и отдельный logout. Высота header в наблю
   Это личный аккаунт вошедшего сотрудника, а не настройки платформы или клиники.
   Переходы ведут к соответствующим разделам `/platform/account`.
   LanguageSelector остаётся доступен в личном «Интерфейсе»; локализация сохраняется.
-- `/platform/account` сейчас отсутствует. `/account` и `/app/account` находятся
+- На момент референса `/platform/account` отсутствовал. `/account` и `/app/account` находятся
   за MerchantRoute и возвращают platform user на обзор. Прямая ссылка на них
   не выполняет требование. Добавить защищённый platform-route для self-account,
   переиспользуя существующие API `/api/auth/me/` и подходящие секции личного кабинета.
@@ -596,7 +599,7 @@ PageHeaderContext; не импортировать merchant Sidebar с его Bu
 как готовую platform navigation. Shell-компоненты должны оставаться небольшими.
 
 Основные файлы: `frontend/src/components/layout/PlatformLayout.tsx`,
-`frontend/src/app/router.tsx`, будущие platform shell/header/account компоненты,
+`frontend/src/app/router.tsx`, platform shell/header/account компоненты,
 существующие Profile/Security/Interface части, RU/KK/EN keys. Для удаления дублей:
 PlatformOverviewPage, PlatformMerchantsPage, PlatformMerchantDetailPage,
 PlatformOperationsPage, SupportListPage, SupportDetailPage, SupportIncidentPage.
@@ -617,6 +620,9 @@ logout/session cleanup; representative `/app/account` и `/app/support` regressi
 не расширять backend автоматически ради UI. Финально одна изолированная frontend
 build/types/i18n/bundle и целевые browser tests; полный E2E не требуется без нового риска.
 
-Текущий пакет проверяется только как контракт/референс: ссылки, consistency,
-diff hygiene и визуальное поведение макета. App build, API/DB suites и реальные
-изменения аккаунта не требуются. Evidence внедрения и production PASS не заявляются.
+Исходный пакет495f429 проверен как контракт/референс: ссылки, consistency,
+diff hygiene и визуальное поведение макета. Его проверки не сертифицируют код.
+Внедрение по последующему поручению проверяется по приёмке выше; команды,
+ошибки/исправления, итоговая граница и публикация — в
+[implementation checkpoint](task-state/PRIMARY-SESSION.md#platform-shell-20261015--implementation).
+Production acceptance в этот scope не входит.

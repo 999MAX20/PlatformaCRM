@@ -13,6 +13,8 @@ from scripts.codex_verify import isolated_runtime
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--grep", default="operator overview|service status keeps operator")
+parser.add_argument("--spec", nargs="+", default=["e2e/platform-overview.spec.ts", "e2e/service-s03.spec.ts"])
+parser.add_argument("--project", nargs="+", default=["desktop-chromium", "mobile-chromium"])
 args = parser.parse_args()
 fixture = """
 from django.utils import timezone
@@ -25,6 +27,7 @@ from apps.support.services import create_case
 from apps.support.incidents import link_incident
 owner=User.objects.get(email='business_owner@example.com')
 staff=User.objects.get(email='platform_admin@example.com')
+manager=User.objects.create_user(username='shell-manager',email='platform_manager@example.com',password='ZaniTest123!',role=User.Roles.PLATFORM_MANAGER,full_name='Shell manager')
 now=timezone.now()
 for business in Business.objects.all():
     for component in COMPONENTS:
@@ -49,7 +52,7 @@ with isolated_runtime(python=sys.executable) as runtime, path.open('w',encoding=
     commands=[
         ([shutil.which('node'),'e2e/django-e2e.mjs','prepare'],ROOT/'frontend'),
         ([sys.executable,'manage.py','shell','-c',fixture],ROOT),
-        ([shutil.which('npx.cmd') or shutil.which('npx'),'playwright','test','e2e/platform-overview.spec.ts','e2e/service-s03.spec.ts','--grep',args.grep,'--project=desktop-chromium','--project=mobile-chromium'],ROOT/'frontend'),
+        ([shutil.which('npx.cmd') or shutil.which('npx'),'playwright','test',*args.spec,'--grep',args.grep,*[f'--project={project}' for project in args.project]],ROOT/'frontend'),
     ]
     for command,cwd in commands:
         result=subprocess.run(command,cwd=cwd,env=runtime.environment,stdout=log,stderr=subprocess.STDOUT)

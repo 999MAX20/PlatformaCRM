@@ -1,8 +1,9 @@
-import {
- ru } from "./ru";
+import { ru } from "./ru";
 
 export const kk: Record<string, string> = {
   ...ru,
+  "platform.shell.account": "Менің аккаунтым",
+  "platform.shell.case": "Өтініш",
   "analyticsWorkspace.overview": "Шолу",
   "analyticsWorkspace.sources": "Дереккөздер",
   "analyticsWorkspace.services": "Қызметтер",

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "react-router";
 import { KeyRound, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -24,7 +25,13 @@ import { DocumentLinks } from "../documents/DocumentLinks";
 import { NotificationPreferencesCard } from "./NotificationPreferencesCard";
 import "./accountPage.css";
 
-export function AccountPage() {
+export function AccountPage({ platform = false }: { platform?: boolean }) {
+  const { hash, key } = useLocation();
+  useEffect(() => {
+    if (!platform || !["#profile", "#security", "#interface"].includes(hash)) return;
+    const frame = requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView());
+    return () => cancelAnimationFrame(frame);
+  }, [platform, hash, key]);
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const { user, refreshUser, logout } = useAuth();
@@ -85,12 +92,12 @@ export function AccountPage() {
   });
   return (
     <div data-account-page className="relative mx-auto max-w-[var(--account-content-width)] [&_input]:min-h-11 sm:[&_input]:min-h-10 [&_button]:min-h-11 sm:[&_button]:min-h-9">
-      <AccountSectionNav />
+      <AccountSectionNav platform={platform} />
       <div className="min-w-0 space-y-4">
       <Card id="profile" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-lg font-bold text-platforma-text">{t("account.profileEyebrow")}</h1>
+            {platform ? <h2 className="text-lg font-bold text-platforma-text">{t("account.profileEyebrow")}</h2> : <h1 className="text-lg font-bold text-platforma-text">{t("account.profileEyebrow")}</h1>}
           </div>
           <Button size="sm" variant="ghost" data-testid="merchant-logout" onClick={logout}><LogOut size={16} />{t("header.logout")}</Button>
         </div>
@@ -104,10 +111,10 @@ export function AccountPage() {
           <div className="flex items-end sm:col-span-2 sm:justify-end"><Button size="sm" type="submit" disabled={!profileDirty} isLoading={profileMutation.isPending}>{t("common.save")}</Button></div>
         </form>
         </div>
-        <AccountAccessSummary />
+        {!platform && <AccountAccessSummary />}
       </Card>
 
-      <InterfaceSettingsCard />
+      <InterfaceSettingsCard platform={platform} />
 
       <Card id="security" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <h2 className="mb-3 text-base font-bold">{t("account.loginHistoryEyebrow")}</h2>
@@ -134,7 +141,7 @@ export function AccountPage() {
         </details>
       </Card>
 
-      <NotificationPreferencesCard />
+      {!platform && <NotificationPreferencesCard />}
 
       <DocumentLinks />
       <Modal

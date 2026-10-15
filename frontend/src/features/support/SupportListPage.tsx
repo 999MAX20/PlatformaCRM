@@ -7,7 +7,6 @@ import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
-import { PageHeader } from "../../components/ui/PageHeader";
 import { Select } from "../../components/ui/Select";
 import { EmptyState, LoadingState } from "../../components/ui/StateViews";
 import { useActiveBusiness } from "../../hooks/useBusiness";
@@ -50,7 +49,7 @@ export function SupportListPage({ platform = false }: { platform?: boolean }) {
   const filtered = Boolean(search || status || assignee || business || unread);
   const createButton = <Button id="support-create-button" onClick={() => setCreating(true)}>{t("supportCases.create")}</Button>;
   return <div className="space-y-4" data-testid="support-list">
-    {platform ? <PageHeader title={t("supportCases.title")} actions={createButton} /> : <div className="flex justify-end">{createButton}</div>}
+    <div className="flex justify-end">{createButton}</div>
     <div className="flex flex-wrap items-end gap-3">
       <Input label={t("supportCases.search")} value={search} onChange={event => update({ search: event.target.value, page: "" })} maxLength={200} className="sm:w-72" />
       <Select label={t("supportCases.statusLabel")} value={status} onChange={event => update({ status: event.target.value, page: "" })} className="sm:w-56"

@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { MoreHorizontal } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
@@ -23,6 +24,7 @@ export type ActionMenuItem = {
   onSelect: () => void;
   tone?: ActionTone;
   disabled?: boolean;
+  separatorBefore?: boolean;
 };
 
 export function ActionMenu({
@@ -31,12 +33,16 @@ export function ActionMenu({
   disabled = false,
   overlay,
   focusReturnId,
+  triggerContent,
+  triggerClassName,
 }: {
   label: string;
   items: ActionMenuItem[];
   disabled?: boolean;
   overlay?: "drawer" | "modal";
   focusReturnId?: string;
+  triggerContent?: ReactNode;
+  triggerClassName?: string;
 }) {
   const menuId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -84,6 +90,11 @@ export function ActionMenu({
       const target = event.target as Node;
       if (menuRef.current?.contains(target) || triggerRef.current?.contains(target)) return;
       setOpen(false);
+      // Wait for native pointer focus. Preserve a clicked control's focus,
+      // but restore the trigger when the click landed on non-focusable content.
+      window.requestAnimationFrame(() => {
+        if (document.activeElement === document.body) triggerRef.current?.focus({ preventScroll: true });
+      });
     };
     document.addEventListener("pointerdown", closeOnOutsidePointer);
     return () => document.removeEventListener("pointerdown", closeOnOutsidePointer);
@@ -101,7 +112,7 @@ export function ActionMenu({
     const currentIndex = enabledItems.indexOf(document.activeElement as HTMLButtonElement);
     if (event.key === "Escape") {
       event.preventDefault();
-      if (overlay) event.stopPropagation();
+      event.stopPropagation();
       closeAndRestoreFocus();
       return;
     }
@@ -122,9 +133,9 @@ export function ActionMenu({
       <Button
         ref={triggerRef}
         type="button"
-        variant="icon"
-        size="icon"
-        className="ml-auto h-9 min-h-9 w-9"
+        variant={triggerContent ? "ghost" : "icon"}
+        size={triggerContent ? "sm" : "icon"}
+        className={cn("ml-auto h-9 min-h-9", !triggerContent && "w-9", triggerClassName)}
         aria-label={label}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -137,7 +148,7 @@ export function ActionMenu({
           setOpen((current) => !current);
         }}
       >
-        <MoreHorizontal aria-hidden="true" size={17} />
+        {triggerContent || <MoreHorizontal aria-hidden="true" size={17} />}
       </Button>
       {open ? createPortal(
         <PopoverSurface
@@ -163,6 +174,7 @@ export function ActionMenu({
                 className={cn(
                   "platforma-focus-ring flex min-h-10 w-full items-center gap-2 rounded-control px-3 py-2 text-left text-sm font-semibold transition disabled:pointer-events-none disabled:bg-disabled-surface disabled:text-disabled-content disabled:ring-1 disabled:ring-disabled-border disabled:opacity-100",
                   actionMenuToneClasses[item.tone || "neutral"],
+                  item.separatorBefore && "mt-1 border-t border-platforma-border pt-3",
                 )}
                 onClick={() => {
                   closeAndRestoreFocus();

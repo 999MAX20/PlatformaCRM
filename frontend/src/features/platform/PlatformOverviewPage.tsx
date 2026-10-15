@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import { platformApi } from "../../api/platform";
 import { Button } from "../../components/ui/Button";
 import { Card, CardBody, CardHeader } from "../../components/ui/Card";
-import { PageHeader } from "../../components/ui/PageHeader";
+import { PlatformPageHeading } from "../../components/layout/PlatformPageHeading";
 import { LoadingState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { useI18n } from "../../lib/i18n";
@@ -23,7 +23,7 @@ export function PlatformOverviewPage() {
   const mrr = data.mrr_estimate == null ? null : `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(Number(data.mrr_estimate))} ₸`;
 
   return <div className="space-y-5" data-testid="platform-overview-ready">
-    <PageHeader title={t("platform.overview.title")} actions={<Button variant="secondary" onClick={() => overview.refetch()} isLoading={overview.isFetching}>{t("platform.merchantDetail.refresh")}</Button>} />
+    <PlatformPageHeading title={t("platform.nav.overview")} actions={<Button variant="secondary" onClick={() => overview.refetch()} isLoading={overview.isFetching}>{t("platform.merchantDetail.refresh")}</Button>} />
     {overview.isError && <PlatformLoadError error={overview.error} message={t("platform.overview.error")} onRetry={() => overview.refetch()} />}
     <p className="text-xs text-platforma-faint">{t("platform.workspace.snapshotAt", { date: platformDate(data.generated_at, language) })}</p>
     <StatusNotice data-testid="platform-overview-service" compact tone={service?.status === "degraded" ? "warning" : service?.status === "healthy" ? "success" : "info"}

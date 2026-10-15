@@ -6,6 +6,73 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-SHELL-20261015 — implementation
+
+Owner: «приступай», approved section14 shell reference. Implementation/code gap.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit;
+base495f429ee81ee17910fabfb99f4979b84a19e1ee, clean index/tree at start.
+Result: overlay64/224 sidebar, single route-aware57px header, consistent insets,
+account menu and platform self-account without Business dependencies. Reuse menu,
+account/security APIs and shared controls; preserve merchant support/account.
+Scope excludes domain/API/permission changes, migrations, working DB and new pages
+other than self-account. No notification/BusinessEvent/AI or provider effects.
+Risks: stale entity titles, lost actions, keyboard/focus, accidental tenant reads.
+Focused checks: isolated browser routes/back/forward, states/403, menu and hover,
+RU/KK/EN desktop/mobile, self-account save/failure/draft/language/logout and
+representative merchant account/support plus shared ActionMenu consumers.
+Completion: isolated frontend build/types/i18n/bundle, diff/links/private-data
+review, real committed-range static, normal origin/main push and CI readback.
+No full E2E/backend suite unless a changed contract demonstrates the need.
+
+Implemented: four-item platform navigation reserves64px and overlays224px on
+hover/keyboard focus;57px header owns one route title. Entity metadata comes from
+accessible loaded content, keyed by pathname and cleared on unmount/denial.
+Root page titles removed, actions/back links retained. Profile menu uses shared
+ActionMenu; account route reuses self profile/security/language with merchant
+access/start-page/notifications excluded. RU/KK/EN labels, long-title truncation,
+mobile navigation and hash section navigation retained. No API/schema changes.
+Shared menu fixes: outside blank-space click restores trigger focus after native
+pointer focus; Escape stops bubbling so it cannot close a parent task inspector.
+Visual review found Account's width token previously supplied only by AppLayout;
+PlatformLayout now supplies the equivalent width, keeping the section rail visible.
+
+Verification uses existing dependencies and disposable isolated_runtime DB/ports,
+locmem/eager/provider-safe environment, canonical source. Exact browser entrypoint:
+`.venv/Scripts/python.exe scripts/verify_platform_overview.py` with these selections:
+- `--spec e2e/platform-shell.spec.ts e2e/platform-overview.spec.ts e2e/account-user-settings.spec.ts e2e/account-interface.spec.ts --grep "platform shell|operator overview|personal language saves|start page persists"`:
+  11 PASS/7 failed, log output/platform-overview/browser-1792051135764100200.log.
+  Four merchant-account regressions and five overview cases PASS. Test defects:
+  locale loop waited on the preceding route, manager fixture absent, attempted
+  focus refetch despite disabled focus polling;180s fixture freshness expired.
+- `--spec e2e/platform-shell.spec.ts e2e/platform-overview.spec.ts --grep "platform shell|operator overview bounded"`:
+  4 PASS/6 failed, browser-1792051546225492100.log. Both bounded overview cases
+  PASS, completing overview coverage. Corrected test hover target under overlay,
+  normalized503 assertion and explicit task fixture; diagnosed menu focus loss.
+- `--spec e2e/platform-shell.spec.ts --grep "platform shell"`:
+  7 PASS/1 failed, browser-1792051929701485500.log. Both self-account cases and
+  both metadata/denial cases PASS. Desktop task-inspector Escape bubbling reproduced
+  and fixed in shared menu; inspected account screenshots and corrected width token.
+- `--spec e2e/platform-shell.spec.ts --grep "platform shell route|platform shell bounds"`:
+  4 PASS, browser-1792052269967603500.log, both viewports, including default task
+  menu and merchant support/route denial. No assertions or product freshness weakened.
+
+- `--spec e2e/platform-shell.spec.ts --grep "platform shell self account"`:
+  2 PASS, browser-1792052521655195900.log, after width correction. Desktop/mobile
+  screenshots reviewed: section navigation fully visible, no overlap/clipping.
+
+Final scoped coverage:18 distinct browser cases PASS across the above runs:
+8 shell/self-account,6 overview and4 merchant-account regression cases. Unchanged
+coverage reused; affected menu/account checks rerun after fixes. Initial build
+stopped at two misplaced locale keys, corrected before acceptance. Isolated
+`npm run test:gate-env`:1 PASS; final `npm run build` and `npm run check:bundle`
+PASS after all product fixes, output/platform-shell/build-accepted.log;
+types/i18n6005/production/widget, app shell329.9KiB under400KiB, all chunks under500KiB.
+Desktop operations, mobileKK overview and corrected account screenshots reviewed.
+Working diff hygiene and three added local doc-link targets PASS; no unrelated
+changes or real credentials in the reviewed diff. Prior docs CI38698958050 SUCCESS.
+No dependency install, full E2E/backend suite, working DB migration, live provider,
+screen-reader certification or changes to retained dev processes were performed.
+
 ## PLATFORM-SHELL-20261015 — reference and change contract
 
 User requested current /platform screenshot, sidebar/header reference and a

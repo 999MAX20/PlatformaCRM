@@ -40,7 +40,12 @@ Signup legal IDs пока имеют placeholder-тексты; юридичес�
 [Access](../../apps/businesses/access.py), [role services](../../apps/businesses/role_services.py),
 [accounts](../../apps/accounts), [security API](../../apps/core/security_views.py),
 [API auth](../../frontend/src/api/auth.ts), [account UI](../../frontend/src/features/account/AccountPage.tsx).
-UI `/app/account`, `/app/settings`; API auth/team/security, отдельная platform-зона.
+UI `/app/account`, `/app/settings`, `/platform/account`; API auth/team/security,
+отдельная platform-зона. 15.10 PLATFORM-SHELL переиспользует личный профиль,
+безопасность и язык для platform admin/manager без Business. Настройки стартовой
+страницы, Business access и уведомлений остаются в merchant account. Новых прав,
+API и изменений MFA нет; scope/evidence —
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md#platform-shell-20261015--implementation).
 09.10: роли открываются из drawer сотрудника/приглашения с возвратом и сохранением
 черновика; правится существующая общая роль, что явно обозначено в матрице.
 Личные уведомления перенесены в Account с областью Business/User. Security сохраняет
