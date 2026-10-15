@@ -67,7 +67,15 @@ infrastructure and service-S03 cases from browser-1792046238705349500.log.
 RU/KK/EN, keyboard, overflow, filters, return context, 503/recovery, source loss,
 invalid-page recovery and 403 covered. Screenshots inspected. Own runtimes exited;
 working DB/collector/processes unchanged. No full E2E/live acceptance required.
-Next bounded result is Overview, not started. Publication/static receipt follows.
+Next bounded result is Overview, not started. Reviewed 24 explicit task-owned paths
+including seven new files; no unrelated changes or real credentials included.
+Local document links183 PASS; working/index diff hygiene PASS. Code commit
+e464fe81575fb41210df53c5bc222718b1d1a35c normal-pushed to origin/main; remote SHA
+matched, clean tree. `scripts/codex_verify.py --mode static --base-ref
+1c6291a1d5b8254845d894209a949762d483531e` PASS (real committed range, isolated
+migration/system and diff checks). CI38694737037 in_progress at receipt time,
+not claimed green. This receipt changes documentation only; application evidence
+remains valid. No new migration; prior support0002 working activation still separate.
 
 ## PLATFORM-INCIDENT-LINK-20261015 — explicit incident links and console analysis
 
