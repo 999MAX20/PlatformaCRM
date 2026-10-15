@@ -6,6 +6,38 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-SHELL-20261015 — reference and change contract
+
+User requested current /platform screenshot, sidebar/header reference and a
+contract for later implementation, not product edits. Canonical root and branch
+codex/ui-testing-toolkit retained. Initial HEAD c713b86 plus unrelated Overview
+WIP; read-only inspection preserved it. That work independently committed through
+0c9666e/b41d8da before these documentation edits; owned diff is only this record,
+STATUS and section14 of the existing registered platform-rebuild spec.
+Mode design/docs; gap proposed shell behavior and consistent page geometry.
+Reuse /app64/224 overlay rail, tokens/menu primitives, personal account APIs;
+no merchant navigation/Business scope in platform self-account. Main risks:
+duplicate/stale headers, moved controls, inaccessible profile route and unintended
+Business reads. Current checks: docs diff/links/consistency and local mock behavior;
+future implementation checks are specified in section14, not claimed here.
+
+Captured actual Chrome /platform at1536x639 in RU; screenshot and inline reference
+stored in the task visualization output outside Git. Page-heading tops measured
+Overview/Support92.4px vs Clinics/Operations82.4px, shell header62.4px. No UI writes,
+account changes, data mutations, migration, external call or app test performed.
+Reference preview checks PASS: hover64->224->64 with constant main-left64.8px,
+header57px, one changing h1 on navigation, profile menu and Escape focus return;
+1024 desktop and390 narrow no horizontal overflow. Browser viewport restored.
+Mock rows are a small copied dev sample, not live results or a body redesign.
+Personal notifications excluded because existing preferences require Business;
+/platform/account is a future route, existing /app/account redirects platform users.
+Preview CLI first rejected destination+--serve; corrected invocation succeeded.
+No app build/install/backend suites: only documentation and an external mock changed.
+Own preview server/tab closed, port5186 no longer listening; user's dev servers
+and original platform tab retained. Full intended diff/private-data and reference
+review PASS; working diff hygiene and reference JavaScript syntax PASS.
+Publish only the reviewed documentation delta; actual CI readback is separate.
+
 ## PLATFORM-OVERVIEW-20261015 — actionable operator overview
 
 Owner: «отлично, продолжаем», next spec13.5 step2. Implementation/code+UX gap.
