@@ -6,6 +6,38 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## BUSINESS-LOGIC-QUESTIONS-20261016 — documentation
+
+Owner requested saving the preceding analysis questions inside the project.
+Mode documentation; gap policy/evidence. Result: 25 numbered discussion questions,
+scenario/options/proposal/dependency, approved boundaries and decision-record format.
+No new product policy, roadmap phase, implementation, tests or live operations authorized.
+Root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+starting HEAD cafcea5b2b2143077072fbefd3330b7b8839c1f2.
+Starting dirty ADMIN03/support/account/runtime/docs work is unrelated and preserved;
+STATUS and this checkpoint receive only separate additive task entries. Starting
+tracked patch and shared-file copies retained in the task's temporary snapshot.
+Scope: docs/testing/business-logic-questions-20261016.md, documentation registry,
+docs README, acceptance cross-reference and these task/status entries.
+Risk: proposals mistaken for approved policy or a competing backlog. Mitigation:
+evidence role, explicit unapproved status, existing IDs and contract ownership.
+Verification plan: docs-only working/index/real committed-range diff hygiene,
+25 unique sequential IDs, local link targets, JSON registration and full intended
+patch review. No app build/install/database/browser suite: runtime unchanged.
+Permission/notification/BusinessEvent/AI/migration/environment effects: none.
+Publication: explicit task-owned paths/hunks only; normal push to origin main
+only after fetch proves the outgoing range is authorized and fast-forward.
+Docs verification PASS: git diff --check -- <six task paths> and
+ git diff --cached --check; PowerShell validation found exactly Q01-Q25,
+24 existing local link targets and one evidence registration in parsed JSON.
+Intended staged diff reviewed: six documentation files, additive task changes only;
+concurrent ADMIN03 change in docs/README.md excluded from the index.
+Application suites skipped by docs-only matrix. Fetch/direct remote readback
+confirmed main=cafcea5; origin/main tracking ref is stale and is not used as base.
+Workflow inspected: push triggers CI, no deployment job declared.
+Next delivery steps: docs commit, git diff --check cafcea5...HEAD, normal
+HEAD:main push, direct remote SHA readback and actual CI status inspection.
+
 ## PLATFORM-ADMIN-02-20261016 — implementation
 
 Owner approved the proposed ordinary ownership transfer and requested implementation.

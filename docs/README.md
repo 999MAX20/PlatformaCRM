@@ -13,6 +13,7 @@
 | В какой последовательности идём к production | [Единый roadmap](current/roadmap.md) |
 | Что реализовано и где код | [Паспорта](pre-production/README.md), [карта модулей](pre-production/capabilities.md) |
 | Что ещё не принято / не решено | [Приёмка](current/acceptance.md) |
+| Какие бизнес-вопросы обсудить | [25 вопросов от 16.10](testing/business-logic-questions-20261016.md) — аналитический материал и неутверждённые предложения; не новый roadmap |
 | CRM, запись, задачи, деньги, автоматизации | [CRM](current/crm.md) |
 | Tenant, роли, MFA, сессии, поддержка | [Доступ](current/access.md) |
 | AI, знания, подтверждения, безопасность клиента | [AI](current/ai.md) |
