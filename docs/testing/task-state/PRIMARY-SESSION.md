@@ -6,6 +6,80 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-ADMIN-ACCEPTANCE-20261016 — stage6 scoped acceptance
+
+Owner authorized acceptance of ADMIN01–04 plus the implemented ADMIN05 foundation;
+all deferred ADMIN05 policy/code/environment/live criteria remain open for later.
+Mode verification with minimal fixes only for reproduced in-scope defects.
+Observable result: reachable business/support → diagnosis → authorized action →
+verified result → audit/history across the five existing scenarios.
+Canonical C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+base3c6939ee9f014b0bba1d00a4e990180610f9adc4; clean initial index/worktree.
+Reuse existing services, APIs, support links, scenario fixtures and browser specs.
+Risk: shared navigation/auth/MFA/permissions and interoperation, no new money policy.
+Plan: map criteria to existing tests; combined isolated PostgreSQL affected/dependent
+suites with real locks; run the five existing browser suites together on one
+disposable DB/dedicated servers, add coverage for support/card/history navigation.
+Build/types/i18n/bundle from3c6939ee reused while product inputs stay unchanged;
+rerun affected gates for fixes. Completion: docs links/registry/diff/index/committed
+range and normal push/readback/actual CI. No app installs, working migrations,
+full-project E2E, real mail/provider calls or deployment. Permissions, notifications,
+BusinessEvent/AI and migration contracts remain unchanged unless a proven defect
+requires a minimal documented correction. Stage6 full closure is excluded while
+ADMIN05 deferred items remain open; report a scoped acceptance boundary explicitly.
+
+### Criteria, evidence and reproduced defect
+
+| Boundary | Existing proof reused in the combined run |
+| --- | --- |
+| ADMIN01 details | strict fields, revision/conflict, both platform roles, MFA, tenant scope, audit rollback; UI save/reload/history and case link |
+| ADMIN02 ownership | both personal consents, admin-only execution, one owner, business-local previous role, credential revocation, concurrency/rollback; real operator/owner/recipient browser sessions |
+| ADMIN03 recovery | matching requester/identity evidence, owner consent for employee, verified new mailbox, one completion, epoch/session/MFA revocation; locally captured email and public completion |
+| ADMIN04 employee access | both platform roles, required owner consent, stale role/epoch/terms denial, specialist/task/history preservation, invitation rotation and concurrency; owner/account confirmation flows |
+| ADMIN05 foundation | verified bank/adapter receipt, separate application, exact amount/currency/period, duplicate/concurrent apply, independent restrictions and rollback; checkout/check/recovery UI |
+| Shared navigation/history | updated platform-details browser scenario follows actual history case link → same Business → all five tabs → readable history in RU/KK/EN; permissions/loading/error/drafts tested by existing scenario suites |
+
+`.venv/Scripts/python.exe output/admin-acceptance-backend.py`:162 PASS on temporary
+PostgreSQL17, `manage.py check` PASS and `makemigrations --check --dry-run` PASS.
+Exact `manage.py test` labels: apps.billing.tests_commerce,
+apps.billing.tests_commerce_concurrency, apps.billing.tests,
+apps.billing.tests_settings_scope, apps.core.tests_platform_details,
+apps.businesses.tests_ownership, apps.accounts.tests_recovery,
+apps.businesses.tests_employee_access, apps.businesses.tests_employee_access_concurrency,
+apps.businesses.tests_invitation_concurrency, apps.support.tests_api,
+apps.support.tests_domain. Script uses isolated_runtime plus fresh initdb/createdb,
+loopback random port and finally pg_ctl stop. Log output/admin-acceptance-backend.log.
+No backend changes after this PASS; temporary cluster stopped.
+
+Initial `.venv/Scripts/python.exe scripts/verify_platform_admin_acceptance.py`
+reproduced technical labels `clinicCrm.kind.ownership/account_recovery/employee_access/
+billing_orders` in access history after visiting all sections. Screenshot/error context
+from platform-details desktop; log output/platform-admin-acceptance/browser-1792170464678134900.log.
+Stopped the run after reproduction to apply a minimal fix: ClinicAccessHistory maps
+these four existing resource identifiers to existing translated tab labels. Backend
+identifiers, data, permissions and audit unchanged. Expanded regression asserts all
+four labels/no raw keys, history→case→Business navigation and RU/KK/EN/mobile overflow.
+Final combined browser:26 PASS, no skips, log
+output/platform-admin-acceptance/browser-1792170686600166200.log. All five suites
+together, desktop/mobile, RU/KK/EN, support→Business→five tabs→history. Inspected
+history KK desktop/EN mobile screenshots, labels/wrapping/case links; automated
+locale/overflow assertions PASS. No partial run called PASS.
+`npm --prefix frontend run build` PASS types/i18n/app/widget, log
+output/admin-acceptance-build.log; `npm --prefix frontend run check:bundle` PASS.
+Vite informational timing/chunk warning remains within the bundle budget.
+Dedicated browser servers and temporary PostgreSQL stopped; no owned processes.
+
+SCOPED PASS for the agreed local stage6 slice. No remaining code/evidence gap
+found in this accepted slice. Full ADMIN05 and full stage6 remain OPEN: deferred
+policy/provider/expiry/documents/live/working-environment criteria unchanged.
+No permission/notification/BusinessEvent/AI/model/migration changes. Product,
+access/integrations/operations/README and acceptance IDs need no changes: their
+policy/rollout boundaries are preserved. Roadmap/spec/passports/frontend/testing/
+defect knowledge/STATUS/handoff updated. No dependency install, full-project E2E,
+live mail/provider, working migration or deployment. Final docs/diff/index/real
+committed-range checks and publication/CI in final receipt. Base3c6939ee plus
+task-owned diff identifies the tested source; only docs followed application PASS.
+
 ## PLATFORM-ADMIN-05-20261016 — payment foundation; full stage incomplete
 
 ### Implementation evidence — 16.10.2026

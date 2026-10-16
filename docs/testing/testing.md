@@ -6,6 +6,26 @@ This local catalogue does not replace authenticated CRM E2E certification.
 
 ## Verification Selection And Evidence
 
+### Platform administrative acceptance (scoped stage6)
+
+Run the existing ADMIN01–04 and ADMIN05 foundation browser scenarios together:
+
+```powershell
+.venv/Scripts/python.exe scripts/verify_platform_admin_acceptance.py
+```
+
+The runner reuses literal fixtures from the five standalone runners without executing
+their entry points, uses isolated_runtime, dedicated ports and disposable SQLite.
+Recovery mail is captured locally; the card adapter is an isolated fake. It covers
+desktop/mobile, RU/KK/EN and support → business → action → history navigation.
+For diagnosis only, `--grep 'details save'` narrows the browser cases with fresh data.
+Backend/concurrency proof still requires the affected PostgreSQL suites; browser
+PASS cannot close deferred commercial policy, live provider or working-migration
+criteria. Commands/results for the accepted slice are in
+[PLATFORM-ADMIN-ACCEPTANCE-20261016](task-state/PRIMARY-SESSION.md).
+
+### Gate selection
+
 This guide owns command selection and test-environment safety for `AGENTS.md`,
 the task template and verification skills. Choose required checks before coding;
 do not lower the agreed acceptance criteria after a failure.

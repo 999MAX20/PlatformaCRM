@@ -24,6 +24,13 @@
 страницы только из-за правки Markdown или локальной косметики. Сохранять исходный
 success path, действующие permissions и tenant isolation.
 
+16.10, stage6: после добавления ADMIN02–05 новые audit resource IDs не имели
+UI-подписей в общей истории. Сквозной переход воспроизвёл `clinicCrm.kind.*` вместо
+названий разделов. Исправлено отображение через существующие переводы вкладок;
+[регрессия](../frontend/e2e/platform-details.spec.ts) проверяет все четыре подписи,
+RU/KK/EN, mobile и переход история → обращение → Business. Это применение ZR-004
+к техническим ключам, без изменения backend identifiers или разрешений.
+
 Общие FC/UX/FB и backend обязательства остаются в
 [acceptance](../docs/current/acceptance.md). Неизвестная полнота старого dedicated
 regression test (включая ZD-001) — evidence gap для целевой проверки, не команда

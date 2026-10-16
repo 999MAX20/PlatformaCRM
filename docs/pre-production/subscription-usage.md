@@ -75,3 +75,11 @@ BILLING_CARD_ADAPTER=None; рабочих предложений, банка, э
 PostgreSQL affected/concurrency и проверки среды — [checkpoint ADMIN-05](../testing/task-state/PRIMARY-SESSION.md).
 Полный ADMIN-05/5a/5b остаётся открыт: реальные деньги, документы, цены/периоды,
 коммерческий expiry enforcement и приёмка выбранной среды не закрыты.
+
+
+16.10, этап6: общая локальная приёмка ADMIN01–04 + основы ADMIN05 — SCOPED PASS.
+Проверены PostgreSQL concurrency/permissions/rollback и совместный browser flow
+desktop/mobile/RU/KK/EN; исправлены подписи ресурсов в общей истории просмотра.
+Источник — база3c6939ee + эта UI-дельта; [checkpoint](../testing/task-state/PRIMARY-SESSION.md),
+PLATFORM-ADMIN-ACCEPTANCE-20261016. Полный этап6 и ADMIN05 не закрыты; отложенные
+коммерческие решения/код/live evidence и рабочая среда сохраняются без изменений.

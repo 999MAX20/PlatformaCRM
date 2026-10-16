@@ -87,3 +87,11 @@ R02/R07 — юридические тексты; V1-O06 не разрешает 
 Scoped PostgreSQL/concurrency/browser/build PASS — checkpoint ADMIN-04.
 Остаток: рабочая businesses0013 и целевая среда; глобальный unlock исключён,
 история запросов ограничена последними50 (не полный журнал/поиск).
+
+
+16.10, этап6: общая локальная приёмка ADMIN01–04 + основы ADMIN05 — SCOPED PASS.
+Проверены PostgreSQL concurrency/permissions/rollback и совместный browser flow
+desktop/mobile/RU/KK/EN; исправлены подписи ресурсов в общей истории просмотра.
+Источник — база3c6939ee + эта UI-дельта; [checkpoint](../testing/task-state/PRIMARY-SESSION.md),
+PLATFORM-ADMIN-ACCEPTANCE-20261016. Полный этап6 и ADMIN05 не закрыты; отложенные
+коммерческие решения/код/live evidence и рабочая среда сохраняются без изменений.

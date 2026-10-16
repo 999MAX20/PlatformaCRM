@@ -85,6 +85,27 @@ test('details save with real MFA retains errors and prevents stale overwrite', a
   await page.getByRole('tab', { name: ru['clinicCrm.tab.access'], exact: true }).click();
   await expect(page.getByTestId('clinic-access-history')).toContainText('Concurrent correction');
   await expect(page.getByTestId('clinic-access-history').getByRole('link', { name: `${ru['businessDetails.caseId']} #${caseId}`, exact: true }).first()).toHaveAttribute('href', `/platform/support/${caseId}`);
+  // Acceptance chain: completed action -> audit -> support case -> same business
+  // -> each diagnosis/action surface, without relying on a manually typed deep link.
+  await page.getByTestId('clinic-access-history').getByRole('link', { name: `${ru['businessDetails.caseId']} #${caseId}`, exact: true }).first().click();
+  await expect(page).toHaveURL(new RegExp(`/platform/support/${caseId}$`));
+  await page.getByTestId('support-case-context').getByRole('link', { name: 'Corrected business', exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/platform/merchants/${id}$`));
+  for (const [section, testId] of [['details', 'business-details-form'], ['ownership', 'business-ownership'], ['recovery', 'business-recovery'], ['employees', 'business-employee-access'], ['billing', 'platform-billing']] as const) {
+    await page.getByRole('tab', { name: ru[`clinicCrm.tab.${section}`], exact: true }).click();
+    await expect(page.getByTestId(testId)).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/platform/merchants/${id}\\?section=${section}$`));
+  }
+  await page.getByRole('tab', { name: ru['clinicCrm.tab.access'], exact: true }).click();
+  for (const [language, copy] of [['ru', ru], ['kk', kk], ['en', en]] as const) {
+    await page.evaluate(value => localStorage.setItem('ai_smb_language', value), language);await page.reload();
+    for (const section of ['ownership', 'recovery', 'employees', 'billing']) {
+      await expect(page.getByTestId('clinic-access-history')).toContainText(copy[`clinicCrm.tab.${section}`]);
+    }
+    await expect(page.getByTestId('clinic-access-history')).not.toContainText(/clinicCrm\.(kind|section)\./);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBeTruthy();
+    await page.screenshot({ path: info.outputPath(`admin-history-${language}.png`), fullPage: true });
+  }
 });
 
 test('details load recovery forbidden and localized keyboard form', async ({ page }, info) => {

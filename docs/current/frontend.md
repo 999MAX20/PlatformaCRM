@@ -394,3 +394,10 @@ ADMIN-05,16.10: `/app/settings#billing` содержит предложения/
 RU/KK/EN, error/loading/empty/forbidden. Недоступная конфигурация видна честно;
 состояние active не выдаётся за доказательство полной коммерческой политики.
 Границы и проверки — [паспорт](../pre-production/subscription-usage.md).
+
+Этап6,16.10: история просмотра карточки бизнеса использует существующие переводы
+разделов владельца, восстановления, сотрудников и оплаты подписки вместо технических
+resource IDs. Общая цепочка история → обращение → тот же Business → пять разделов
+проверяется в platform-details, включая RU/KK/EN и mobile; evidence и границы
+общей приёмки — PLATFORM-ADMIN-ACCEPTANCE-20261016 в
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md).
