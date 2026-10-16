@@ -23,6 +23,7 @@ import { InterfaceSettingsCard } from "./InterfaceSettingsCard";
 import { AccountAccessSummary } from "./AccountAccessSummary";
 import { OwnershipConfirmations } from "./OwnershipConfirmations";
 import { RecoveryConfirmations } from "./RecoveryConfirmations";
+import { EmployeeAccessConfirmations } from "./EmployeeAccessConfirmations";
 import { DocumentLinks } from "../documents/DocumentLinks";
 import { NotificationPreferencesCard } from "./NotificationPreferencesCard";
 import "./accountPage.css";
@@ -120,6 +121,7 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
 
       {!platform && <OwnershipConfirmations />}
       {!platform && <RecoveryConfirmations />}
+      {!platform && <EmployeeAccessConfirmations />}
 
       <Card id="security" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <h2 className="mb-3 text-base font-bold">{t("account.loginHistoryEyebrow")}</h2>

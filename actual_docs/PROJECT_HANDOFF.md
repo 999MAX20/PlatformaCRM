@@ -6,6 +6,12 @@
 
 # PlatformaCRM — владелец и передача
 
+16.10, дельта ADMIN-04: Business-scoped исправления доступа сотрудника/приглашений
+реализованы и локально проверены; owner consent, обе platform-роли/MFA/обращение.
+Рабочая businesses0013 отдельно, глобальный unlock исключён. Публикация/CI и
+остаток — PLATFORM-ADMIN-04-20261016 в [checkpoint](../docs/testing/task-state/PRIMARY-SESSION.md).
+Это запись результата, не передача задачи и не поручение начать ADMIN-05.
+
 Актуально 16.10: ADMIN-01/02/03 опубликованы; текущая документационная сверка —
 DOCS-RECONCILIATION-20261016 в [checkpoint](../docs/testing/task-state/PRIMARY-SESSION.md).
 Новое поручение задаёт пользователь; исторические роли ниже не дают полномочий.

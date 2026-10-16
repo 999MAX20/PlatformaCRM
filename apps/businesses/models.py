@@ -373,6 +373,37 @@ class SLAAttention(TimeStampedModel):
         return f"{self.business_id}:{self.resource}:{self.entity_id}:{self.reason}"
 
 
+class EmployeeAccessRepair(TimeStampedModel):
+    """Immutable, Business-scoped support request; never a global account unlock."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    # Immutable references/summaries preserve support history without changing
+    # existing member, role or invitation deletion semantics.
+    target_id = models.PositiveBigIntegerField()
+    target_name = models.CharField(max_length=255)
+    target_email = models.EmailField()
+    target_role_id = models.PositiveBigIntegerField(null=True, blank=True)
+    target_role_name = models.CharField(max_length=128, blank=True)
+    target_role_key = models.CharField(max_length=32, blank=True)
+    action = models.CharField(max_length=20, choices=[(value, value) for value in
+        ("disable", "restore", "role", "reissue", "revoke")])
+    status = models.CharField(max_length=20, default="pending", choices=[(value, value) for value in
+        ("pending", "completed", "cancelled", "declined")])
+    support_case = models.ForeignKey("support.SupportCase", on_delete=models.PROTECT)
+    reason = models.TextField()
+    revision = models.CharField(max_length=64)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="employee_access_consents")
+    owner_epoch = models.PositiveBigIntegerField()
+    owner_confirmed_at = models.DateTimeField(null=True, blank=True)
+    prepared_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="prepared_access_repairs")
+    executed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="executed_access_repairs", null=True, blank=True)
+    expires_at = models.DateTimeField()
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
 class BusinessInvitation(TimeStampedModel):
     class Statuses(models.TextChoices):
         PENDING = "pending", "Pending"

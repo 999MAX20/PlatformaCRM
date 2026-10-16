@@ -27,7 +27,7 @@ Security-изменения отзывают прежние credentials; tracked
 
 Tenant/scope/capability применяются до выдачи списков/counts/children, также в worker,
 экспорте и AI. Support grant выдаёт owner с recent MFA; support-note требует
-platform_admin + точный активный grant + recent MFA. Это ограничение именно support-note: ADMIN-01 и ADMIN-03 разрешены обеим
+platform_admin + точный активный grant + recent MFA. Это ограничение именно support-note: ADMIN-01/03/04 разрешены обеим
 platform-ролям со свежим MFA, ADMIN-02 — только platform_admin. Каждый сценарий
 проверяет обращение и свою доменную политику, общего tenant write-доступа нет.
 Для production/платного пилота требуется privileged MFA по текущему контракту.
@@ -73,3 +73,17 @@ R02/R07 — юридические тексты; V1-O06 не разрешает 
 Код опубликован (`cafcea5` / `dc1eedf`), scoped backend/browser/build PASS в checkpoint.
 Остаток: рабочие businesses0012/accounts0011, support email/FRONTEND_URL/SMTP и
 проверка разрешённой среды. ADMIN-04 и восстановление подписки этим не закрыты.
+
+Дельта ADMIN-04,16.10: [инспектор](../../frontend/src/features/platform/BusinessEmployeeAccessPanel.tsx)
+показывает отдельно User, membership, роль, приглашения и scoped зависимости.
+[Сервис](../../apps/businesses/employee_access.py) отключает/восстанавливает доступ
+выбранного бизнеса, меняет существующую роль, отзывает/перевыпускает непринятое
+приглашение. Восстановление/роль/перевыпуск требуют личного согласия владельца;
+все команды — обе platform-роли, свежий MFA, открытое обращение, причина и аудит.
+Согласие привязано к условиям/owner epoch и сроку24ч; повтор не дублирует эффект.
+История, специалист, назначения, другие Business и глобальный аккаунт сохраняются.
+Старый invitation token недействителен после перевыпуска; новый доступен владельцу
+через обычные настройки команды, автоматической отправки нет.
+Scoped PostgreSQL/concurrency/browser/build PASS — checkpoint ADMIN-04.
+Остаток: рабочая businesses0013 и целевая среда; глобальный unlock исключён,
+история запросов ограничена последними50 (не полный журнал/поиск).

@@ -375,9 +375,13 @@ class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):
         write_audit_log(self.request, AuditLog.Actions.CREATE, instance, business=business)
 
     @action(detail=True, methods=["post"])
+    @transaction.atomic
     def revoke(self, request, pk=None):
         invitation = self.get_object()
         business = self.check_team_permission(Actions.MANAGE, instance=invitation)
+        Business.objects.select_for_update().get(pk=business.pk)
+        invitation = BusinessInvitation.objects.select_for_update().get(pk=invitation.pk)
+        self.check_team_permission(Actions.MANAGE, instance=invitation)
         if invitation.accepted_at:
             raise ValidationError("Accepted invitation cannot be revoked.")
         invitation.revoked_at = timezone.now()
@@ -407,6 +411,12 @@ class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):
     def accept(self, request):
         serializer = BusinessInvitationAcceptSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        # Match support/ownership lock order before consuming the token. Re-fetch
+        # the token after the Business lock: a concurrent reissue invalidates it.
+        stub = BusinessInvitation.objects.filter(token=serializer.validated_data["token"]).values("business_id").first()
+        if stub is None:
+            raise ValidationError("Invitation was not found.")
+        Business.objects.select_for_update().get(pk=stub["business_id"])
         # Serialize token consumption without locking nullable role/team JOINs,
         # which PostgreSQL cannot include in FOR UPDATE.
         invitation = BusinessInvitation.objects.select_for_update(of=("self",)).select_related("business", "business_role", "team").filter(token=serializer.validated_data["token"]).first()
@@ -414,7 +424,15 @@ class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):
             raise ValidationError("Invitation was not found.")
         if not invitation.is_pending:
             raise ValidationError(f"Invitation is {invitation.status}.")
+        if invitation.role == BusinessMember.Roles.OWNER:
+            raise ValidationError("Ownership cannot be granted through an invitation.")
+        if invitation.business_role_id and (invitation.business_role.business_id != invitation.business_id or not invitation.business_role.is_active or invitation.business_role.preset_key == "owner"):
+            raise ValidationError("The invitation role is no longer available.")
+        if invitation.team_id and (invitation.team.business_id != invitation.business_id or not invitation.team.is_active):
+            raise ValidationError("The invitation team is no longer available.")
         user = User.objects.filter(email__iexact=invitation.email).first()
+        if user is not None and user.pk == invitation.business.owner_id:
+            raise ValidationError("The current owner's membership cannot be replaced by an invitation.")
         full_name = serializer.validated_data.get("full_name") or invitation.full_name
         phone = (serializer.validated_data.get("phone") or invitation.phone or "").strip()
         if user is None:

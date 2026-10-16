@@ -18,6 +18,9 @@ from apps.accounts.mfa_views import (
 )
 from apps.accounts.views import ChangePasswordView, CurrentUserLoginHistoryView, CurrentUserView, OwnerSignupView, PasswordResetConfirmView, PasswordResetRequestView, SocialAuthView
 from apps.accounts.recovery_views import platform_recovery, platform_recovery_action, recovery_confirmations, recovery_decision, public_recovery
+from apps.businesses.employee_access_views import (
+    platform_employee_access, platform_employee_access_action, employee_access_confirmations, employee_access_decision,
+)
 from apps.activities.views import ActivityEventViewSet, NoteViewSet, SegmentFilterViewSet, SegmentViewSet, TaggedObjectViewSet, TagViewSet
 from apps.ai_core.views import (
     AIAnalystBriefView,
@@ -229,6 +232,10 @@ urlpatterns = [
     path("api/auth/account-recovery/", public_recovery),
     path("api/auth/recovery-confirmations/", recovery_confirmations),
     path("api/auth/recovery-confirmations/<uuid:recovery_id>/", recovery_decision),
+    path("api/platform/merchants/<int:business_id>/employee-access/", platform_employee_access),
+    path("api/platform/merchants/<int:business_id>/employee-access/<uuid:repair_id>/", platform_employee_access_action),
+    path("api/auth/employee-access-confirmations/", employee_access_confirmations),
+    path("api/auth/employee-access-confirmations/<uuid:repair_id>/", employee_access_decision),
     path("api/platform/merchants/<int:business_id>/account-recovery/", platform_recovery),
     path("api/platform/merchants/<int:business_id>/account-recovery/<uuid:recovery_id>/", platform_recovery_action),
     path("api/auth/password-reset/confirm/", PasswordResetConfirmView.as_view(), name="auth_password_reset_confirm"),

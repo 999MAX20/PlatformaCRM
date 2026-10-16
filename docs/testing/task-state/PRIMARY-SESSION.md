@@ -25,6 +25,119 @@ current ADMIN04 checkpoint prevents reopening already approved permissions.
 Fetch main readback matched starting HEAD. Delivery: task-only docs commit, normal
 push to main, remote SHA readback, inspect CI separately; no deployment requested.
 
+## PLATFORM-ADMIN-04-20261016 — preparation and employee access repair
+
+Owner said to continue after published documentation reconciliation e73da43;
+next unfinished administrative scenario is ADMIN-04. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+starting HEAD/base e73da43e9ecdd5d7175cb8b60aa950206b5af0a7, clean tree/index.
+Mode implementation; gaps code/evidence. Observable goal:
+operator diagnoses employee User/membership/invitation/dependencies and performs
+specifically authorized repairs with audit, preserving history/specialist state.
+Reuse BusinessMember/BusinessInvitation/BusinessRole, support cases, platform card,
+MFA, current user/epoch checks, Account confirmations and existing invitation accept.
+No ADMIN05, ownership transfer, credential bypass, live sends, deployment or working
+migration implied. ADMIN03 remains the approved identity/email recovery procedure.
+
+Source review: invitations have pending/accepted/revoked/expired states and seven-day
+expiry; creation currently records delivery_channel but does not perform sending.
+Existing recipient must authenticate as that exact account; new recipient chooses
+own password. Token acceptance locks invitation and creates/updates membership.
+BusinessMember and User each have independent is_active; disabling membership does
+not disable specialist or automatically reassign work. Current membership writes
+share a Business/member lock with ADMIN02 ownership; any new writes must preserve
+this boundary and cannot downgrade/disable the owner. Existing platform card has
+separate details/ownership/recovery/work/support/access sections and reusable draft
+and permission/error handling. New diagnostics must not disclose credentials/tokens.
+
+Owner approved both platform roles + recent MFA and support case for invitation
+reissue/revoke, membership disable/restore and assigning an existing role, preserving
+the owner and specialist. Owner then approved personal owner confirmation for
+granting/restoring access or role change, and repairs limited to the selected
+Business. No global User unblock. Disable/revoke need an open case and reason but
+no owner wait; restore/role/reissue require owner confirmation of immutable terms.
+Persist a 24-hour request with actor, owner/epoch, exact target/action/role and
+state revision; reject stale consent and repeat effects. Owner confirms in Account;
+platform executes with fresh MFA. Reissued link remains in existing merchant team
+invitation flow (no automatic email/transport claim and no token in platform reads).
+Intentional businesses0013 migration is tested only in isolation.
+
+Diagnostic design from existing code: reuse audited_response/clinic_access for
+Business-scoped, fail-closed audited reads and no-store responses. List inactive
+members too; report User.is_active separately from BusinessMember.is_active and
+role availability. Scope specialist Resources by business + linked_user, and show
+their state independently; never infer specialist retirement from disabled login.
+Show invitation status/expiry and recipient identity without token or acceptance URL.
+An invitation recipient without a membership must not expose another Business's
+account or dependencies. Dependency counts/links must use the selected Business.
+Existing ADMIN03 candidates intentionally exclude inactive accounts/members;
+its recovery list therefore cannot replace this inspector.
+
+Verification plan: high-risk access changes; focused isolated service/API checks
+before UI for role/MFA/tenant denial, owner protection, invalid/expired/stale inputs,
+repeat/concurrency, audit rollback, preserved specialist/history/other memberships
+and invitation acceptance. Completion: affected/dependent team/invitation/ownership/
+recovery/support suites, PostgreSQL concurrency, system/schema and any intentional
+isolated migration; targeted operator/account/invitation desktop/mobile flow, RU/KK/EN,
+loading/error/empty/forbidden/conflict/draft states, frontend build/types/i18n/bundle.
+No full E2E, dependency reinstall, working DB/SMTP/provider or production evidence.
+Notification/BusinessEvent/AI impact: expected no new automatic reassignment or events;
+invitation delivery/confirmation transport must be explicit in accepted contract.
+Implemented: EmployeeAccessRepair + businesses0013, employee_access service,
+selectors and dedicated platform/account APIs; token-free scoped diagnostics;
+BusinessEmployeeAccessPanel, Account confirmations, RU/KK/EN; isolated browser runner.
+Invitation accept/revoke now share Business lock with repair and protect current
+owner/unavailable role/team. Immutable target summaries preserve request history
+without preventing ordinary membership/role deletion. No automatic transport,
+reassignment, global credential/account change, new BusinessEvent or AI effect.
+
+Focused iteration: `output/admin04-focused.py` initially failed on test-fixture
+resolved_at/requester constraints, wrong invitation URL, expected MFA403 versus
+the existing MFA401/code contract. Fixed fixtures/expectations; next14 tests PASS
+before dependent UI. `output/admin04-focused-final.py`14 PASS after summary fields.
+`output/admin04-backend.py`: PostgreSQL122 real tests passed; overall gate FAILED
+because nonexistent apps.businesses.tests label produced one loader error. This is
+not reported as a green gate. Corrected/expanded `output/admin04-backend-completion.py`
+73 PASS (employee access, concurrency, settings/team, invitation concurrency, access),
+system check and migration drift PASS. Reuse unaffected ownership/member-deactivation/
+recovery/platform-CRM results from the former run; source unchanged in those paths.
+Stable cross-business participant lock order then checked through
+`output/admin04-lock-order.py`: PostgreSQL23 PASS, including4 concurrency cases,
+system/schema PASS. All temporary clusters stopped/removed; no working DB touched.
+Frontend first build stopped at fallback ordering in en/kk; moved existing ru spread
+before translations. `npm --prefix frontend run build` PASS (i18n/types/app/widget),
+`npm --prefix frontend run check:bundle` PASS. Logs: output/admin04-build-fixed.log,
+output/admin04-bundle.log. `output/admin04-support.py`:32 dependent support API/domain
+tests PASS on isolated PostgreSQL; no support source changes required.
+
+Browser: `.venv/Scripts/python.exe scripts/verify_platform_employee_access.py` first
+run4 PASS (invitation reissue/accept/revoke and states/locales, desktop/mobile),2 failed
+because test-only raw GET reused pre-MFA-enrollment credentials (401). Actual UI
+disable succeeded. Changed helper to inspect the current UI-authenticated GET;
+`--grep 'disable restore role'` then2 PASS. Combined6 scenarios cover all5 commands,
+personal owner consent, support-case creation for inactive membership, preserved
+specialist/assigned task, invalid MFA, conflict, draft guard, empty/503/retry/403,
+RU/KK/EN and desktop/mobile. Logs in output/platform-employee-access/browser-*.log;
+first-run screenshots/traces preserved in first-run/. Manually viewed RU desktop,
+KK mobile and completed mobile invitation/member histories; no page overflow.
+Source unchanged between the two browser runs; only the helper changed. Servers
+were canonical local sources on dedicated ports with disposable fixtures; stopped
+by runner. No live provider, working migration or full-project E2E claimed.
+
+During implementation HEAD advanced to36f068a (separate docs questions task).
+Reviewed3-file docs-only commit; its additive STATUS/checkpoint entries preserved.
+ADMIN04 starting base remains e73da43; no source conflict or ownership transfer.
+Current docs/spec/roadmap/passports record implementation and residual boundaries.
+No remaining local implementation criterion identified; working businesses0013,
+target acceptance, external invitation delivery and full history beyond50 requests
+remain explicit boundaries. Global unlock excluded; ADMIN05 not started.
+Final review: working diff hygiene PASS; output/admin04-links.py confirms76 unique
+registered paths and383 local links/anchors in changed docs with no issues. Reviewed
+all intended source/test/migration/UI/docs additions; no secrets, real customer data
+or unrelated WIP included. No runtime/full-E2E rerun for subsequent docs-only edits.
+Delivery receipt (commit, normal push, remote SHA, actual CI) follows in task reply
+and output/admin04-publication.json. No owned processes remain.
+
 ## DOCS-RECONCILIATION-20261016 — current documentation and roadmap
 
 Owner requested documenting ADMIN-03 delivery, reconciling all active technical

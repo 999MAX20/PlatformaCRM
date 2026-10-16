@@ -11,6 +11,14 @@
 [Документ](docs/testing/business-logic-questions-20261016.md) учитывает уже принятые
 полномочия ADMIN-04; рекомендации не утверждены, runtime не менялся.
 
+16.10.2026. ADMIN-04 реализован: инспектор доступа сотрудника/приглашений,
+Business-scoped исправления, обе platform-роли + MFA/обращение и личное согласие
+владельца для восстановления/роли/перевыпуска. Аккаунт, специалист и история сохранены.
+PostgreSQL/concurrency/поддержка, browser6, build/types/i18n/bundle PASS;
+commit/push/CI — итоговая квитанция задачи. Рабочая businesses0013 отдельно,
+глобальный unlock исключён. ADMIN-05 не начат. Evidence — checkpoint ADMIN-04.
+
+
 16.10.2026. DOCS-RECONCILIATION: [действующие техдокументы и roadmap](docs/testing/docs-reconciliation-20261016.md)
 сверены с dc1eedf. ADMIN-01/02/03 опубликованы; CI первых двух success, ADMIN03
 на момент сверки выполняется. Исправлены MB/права/среда/старые push-блокеры;
