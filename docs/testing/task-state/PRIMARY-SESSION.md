@@ -6,6 +6,64 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-ADMIN-05-20261016 — preparation, payment evidence contract
+
+Owner follow-up: save the bank-transfer proposal in technical documentation for
+later discussion and explain the next stage. Current mode docs-only; implementation
+paused pending money/source decisions, no recommendation treated as approval.
+Scope: spec15.4 proposal, roadmap status/dependencies and corrected stale 3/5 count
+to 4/5 from existing ADMIN04 evidence, subscription passport, STATUS/checkpoint.
+Starting dirty STATUS/checkpoint belong to this same task; no unrelated WIP.
+Plan: preserve proposal/requirement/runtime boundaries; diff hygiene and local-link/
+registry consistency only. No app tests/build/DB needed for Markdown.
+Product/access contracts and README unchanged: no adopted policy, API, permission,
+setup or runtime change. Existing registered docs reused, no new backlog.
+Result: proposal records evidence, immutable obligation/payment/application links,
+proposed roles, minimum exact-payment scope and unresolved Q20-Q22, storage and
+period/refund decisions. Next after 5a is 5b; after ADMIN05 is stage6 acceptance.
+Checks: working diff hygiene PASS; registry76 and local links157, no issues.
+No application tests/build: docs-only. Index/committed-range hygiene at publication.
+Delivery: normal push
+under standing authorization, remote SHA and actual CI reported in final receipt.
+
+
+
+Owner requested continuation after ADMIN04 publication 243de5d. Next roadmap phase
+is ADMIN05a: verified payment evidence and inspector; ADMIN05b recovery depends
+on its approved contract. Mode preparation/implementation; gaps policy/code/evidence.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+starting HEAD/base 243de5d60eee90eb00f4c5b11aa9ecde38ff8179, clean index/tree.
+Observable goal: inspect real subscription/payment evidence without inventing Paid;
+reuse billing models, entitlement summary, platform audited reads and support/MFA.
+No working DB changes, live payment collection, provider credentials, new prices,
+CRM payment ledger reuse or full commercial billing rollout authorized implicitly.
+
+Source review: billing has SubscriptionPlan/Subscription/UsageCounter only; no
+verified platform-payment ledger/invoice obligation/provider reconciliation source.
+Metadata pause/resume/cancel changes status but is not paid-access enforcement.
+get_plan_limits reads the plan independently of subscription status/due date;
+ACTIVE/GRACE/READ_ONLY is approved future policy, not current enforcement.
+CRM Payment represents merchant receipts and cannot establish SaaS payment.
+Existing seed prices/limits are not approved commercial terms.
+
+Open owner decision requested: bank-transfer confirmation by platform_admin from
+bank evidence, followed by support/admin recovery with MFA/case (proposal), versus
+specified payment provider, versus diagnostic-only scope. No answer inferred.
+Period/amount/currency/refund rules remain unresolved Q20-Q22; settle the selected
+source first and present concrete dependent terms before financial writes.
+Permission/notification/BusinessEvent/AI/migration impacts are pending that choice;
+no runtime source edits or processes started during preparation.
+
+Verification plan: money/access high risk. After each authorized backend slice,
+focused isolated tests for exact amount/currency/Business/obligation, confirmation
+origin, invalid/refunded/stale evidence, role/MFA denial, duplicate/concurrent
+application and audit rollback; completion affected billing/platform/access suites,
+system/migration drift, applicable isolated migration, targeted reachable browser
+states and frontend build/types/i18n/bundle. No full-project gate just for continuation.
+For this preparation note only: diff hygiene, document consistency and local links.
+Next step: owner chooses payment evidence source; then finalize bounded ADMIN05a
+contract. ADMIN04 closed evidence is retained; no new acceptance marked passed.
+
 ## BUSINESS-LOGIC-QUESTIONS-CATEGORIES-20261016 — documentation
 
 Owner requested two categories: questions solvable together through analysis and
