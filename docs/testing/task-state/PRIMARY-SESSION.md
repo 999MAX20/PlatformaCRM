@@ -6,6 +6,125 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PLATFORM-ADMIN-02-20261016 — implementation
+
+Owner approved the proposed ordinary ownership transfer and requested implementation.
+Annotation excludes transfer without the previous owner's participation; assisted
+support recovery is a separate future scope, not an override implemented here.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+clean starting HEAD7f7d0c931778180e2cf59ba996c6d3889d1827d3. Prior publication
+and CI38795672431 confirmed success. No unrelated dirty files at start.
+Mode implementation; gap code. Reuse Business.owner, BusinessMember/BusinessRole,
+SupportCase, platform/merchant identity checks, MFA, session revocation, audit,
+platform business card and personal account. Add a bounded persisted transfer
+request with immutable terms and explicit consent by both authenticated parties.
+Only platform_admin executes with recent MFA, same-Business case and reason;
+platform_manager reads/prepares the support case but cannot execute the transfer.
+One active request per business; cancellation/expiry, stale revision, replay,
+disabled participant and changed membership must never silently transfer ownership.
+Preserve historical authorship, specialist state, assignments and other memberships.
+No new permission framework, provider calls, payment/ADMIN03/ADMIN04 or recovery.
+API/UI must show old/new owner, prior access outcome, consent state and audit result.
+Both parties' pre-transfer credentials will be revoked through existing auth epoch
+mechanism; global user identity/role remains unchanged. New owner login then follows
+existing privileged MFA rules. In-app consent is reachable from personal account;
+no email/SMS/provider delivery introduced. No BusinessEvent/AI mutation introduced.
+Migration: intentional request model only, generated/tested in isolated DB; no
+working/demo/staging/production migrations or seeds authorized by this task.
+Owner clarified: explicitly select an existing employee profile or disable only
+this business access. The selected outcome is immutable and shown to both parties.
+Risk: privilege retention, stale consent, cross-tenant transfer and concurrent writes.
+Focused backend tests before dependent UI: admin/manager/foreign denial, consent,
+MFA, invalid input, role/owner consistency, revoked sessions, audit rollback/retry,
+PostgreSQL concurrent single-winner and concurrent owner membership repair.
+Completion: affected account/team/platform/permissions suites, system/schema and
+isolated migration; real desktop/mobile operator -> owner -> recipient -> operator
+flow, denied/error/empty/stale/recovery states; RU/KK/EN and keyboard; frontend
+build/types/i18n/bundle once. Full project E2E/live deployment not part of this scope.
+Preserve checks as evidence, review exact owned range, normal push under standing
+authorization and inspect CI. No new task/phase after ADMIN02 completion.
+
+Implementation checkpoint16.10: request model/migration0012, strict platform and
+personal-account APIs, two consents, scoped previous-owner role/disable choice,
+MFA execution, revision/epoch checks, atomic audit and session revocation implemented.
+Existing profile repair and both membership write APIs now share the Business lock;
+owner deletion/deactivation and stale serializer overwrite are rejected.
+First isolated PostgreSQL run15 failed (5 failures/3 errors): existing session
+revocation FOR UPDATE included nullable blacklist JOIN, plus two new fixture errors.
+Fixed token lock to of=("self",), corrected RefreshToken fixture/source field.
+Retry15 PASS, then expanded30 PASS with team/deactivation dependencies; system and
+migration drift PASS. Logs output/admin02-focused.log, admin02-focused-retry.log,
+admin02-member-checks.log; commands are matching .py helpers through .venv Python.
+Later role-lock refinement passed all3 PostgreSQL concurrency tests through
+output/admin02-role-concurrency.py: role changes invalidate consent, one execution
+wins, and profile repair cannot restore the former owner. System/schema PASS;
+disposable PostgreSQL stopped successfully. Local Windows memory load reached98%
+(8GB RAM, roughly0.5GB free), with unrelated shell reads also delayed. Browser run
+output/platform-ownership/browser-1792096415078106000.log failed initial load/timeout
+and stalled teardown; it was stopped using its verified owned process tree only.
+This is NOT UI acceptance. Repeat browser sequentially after PostgreSQL completion.
+Sequential rerun started via scripts/verify_platform_ownership.py; evidence is
+output/platform-ownership/browser-1792098068984475800.log. Corrected combobox
+locators to include the shared Select's selected-value accessible-name suffix.
+Platform/account UI and RU/KK/EN copy are implemented; build, final dependent gates,
+browser screenshots, documentation closure, commit/push/CI remain outstanding.
+Working/demo databases have not been migrated; existing demo was not modified.
+
+Owner resumed ADMIN02 after the completion audit16.10; scope remains unchanged.
+Sequential browser rerun ended before scenarios with webServer startup timeout120s;
+all isolated migrations had passed. It is not UI PASS. The earlier build stopped
+without a completion result after i18n; no build process survived the interruption.
+HEAD remains7f7d0c9 and all listed ADMIN02 changes remain uncommitted. Resumed
+build log: output/admin02-build-resume.log. Continue serially: finish build, diagnose
+isolated server startup, verify the four browser scenarios, run affected/dependent
+backend labels via output/admin02-completion.py, then close docs and publish/CI.
+Do not rerun unchanged passing concurrency checks or expand to other ADMIN phases.
+
+Resume results: npm run build PASS (i18n6230 keys, TypeScript, app/widget Vite),
+npm run check:bundle PASS; logs output/admin02-build-resume.log and
+output/admin02-bundle.log. No dependency/config changes or installation.
+Startup diagnostic: direct installed Playwright CLI --version completed in0.3s;
+npx incurred delay. The task browser helper now uses the installed CLI directly
+and logs server startup via pw:webserver, without increasing acceptance timeouts.
+Run output/platform-ownership/browser-1792131850189933600.log reached all4 tests:
+desktop/mobile recovery,503/403, manager read-only, decline, RU/KK/EN, keyboard and
+overflow checks PASS2. Both completion tests failed only at exact getByLabel lookup
+of the filled textarea; snapshots retain the correct value and accessible textbox.
+Replaced that lookup with getByRole('textbox', name=reason), preserving assertion.
+Only completion scenarios rerun via scripts/verify_platform_ownership.py --grep
+"ownership complete"; log browser-1792132046834654100.log. Previous screenshots
+preserved in output/admin02-browser-attempt3; representative RU mobile, KK desktop
+and EN mobile inspected. No demonstrated product regression from these failures.
+
+Completion browser rerun PASS2 (desktop36.2s/mobile38.9s), both consent accounts,
+MFA error/retry and retained draft, explicit transfer, owner readback and both old
+sessions redirected to login. Together with the unchanged state scenarios this
+covers4 targeted flows; completed desktop and participant mobile screenshots also
+inspected. Temporary servers terminated by the runner. Final isolated PostgreSQL
+suite154 is running via output/admin02-completion.py (system/schema already PASS):
+apps.businesses.tests_ownership.OwnershipTests, tests_access, tests_settings_team,
+tests_member_deactivation; apps.accounts.tests, tests_mfa, tests_session_policy,
+tests_device_sessions, tests_email_changes; apps.core.tests_platform_details and
+tests_mixed_membership_scope. Unchanged concurrency3 PASS reused separately.
+
+Final local acceptance16.10: PostgreSQL154 PASS in200.011s, system/schema PASS;
+the temporary database/cluster stopped successfully. All runtime inputs remained
+unchanged after the above build and browser passes. Commands: `.venv/Scripts/python.exe
+output/admin02-completion.py`, `output/admin02-role-concurrency.py`,
+`scripts/verify_platform_ownership.py` and its `--grep "ownership complete"` rerun;
+from frontend, `npm run build` and `npm run check:bundle`. Logs are named above.
+Scope is these affected/dependent suites and4 browser flows, not full-project E2E
+or deployed acceptance. No dependencies installed, provider effects, working DB
+migrations or seeds. Migration0012 was applied only to disposable PG/SQLite DBs.
+Owned change set29 files reviewed, including12 new files; whitespace/diff hygiene
+and8 added relative links PASS via output/admin02-review.py. No foreign WIP or
+staged changes. Root/branch remain canonical; current remote main readback7f7d0c9
+matches the task base. CI workflow has checks/tests/audits only, no deploy job.
+Next: explicit-path commit, committed-range static gate against7f7d0c9, normal
+HEAD:main push, remote SHA readback and actual CI. Final commit/push/CI receipt
+will be reported in the task response; no follow-up documentation commit loop.
+No next ADMIN phase is authorized by completion of this one.
+
 ## ALL-CHANGES-PUBLICATION-20261016
 
 Owner explicitly requested "сделай пуш всех изменений и ci". Operation/evidence

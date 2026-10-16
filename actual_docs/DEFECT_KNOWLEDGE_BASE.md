@@ -18,7 +18,7 @@
 | ZR-008 Canonical route and information budget | Assert one canonical URL, safe aliases and one unique decision per dashboard surface | Dashboard, overview and landing workspaces |
 | ZR-009 Server-owned connector authority | Reject foreign bindings and forged verification; delayed writes/results must not overwrite newer setup; verify allowed dedicated setup | Channel/connector APIs, credential rotation, OAuth and provider webhook resolution |
 | ZR-010 Session recovery continuity | Distinguish network/429/5xx from invalid credentials; retain drafts, serialize tab cookie changes, reject old-account continuations and verify current-device logout | Shared auth/API client, startup, account security and every authenticated form |
-| ZR-011 PostgreSQL row-lock scope | Nullable select_related JOINs cannot be locked by an unrestricted FOR UPDATE; lock the intended entity explicitly and prove single-winner concurrency and rollback on PostgreSQL | Invitation acceptance; [regressions](../apps/businesses/tests_invitation_concurrency.py), ADMIN-01 continuation16.10 snapshot/evidence in PRIMARY-SESSION |
+| ZR-011 PostgreSQL row-lock scope | Nullable JOINs, including reverse blacklist filters, cannot be locked by an unrestricted FOR UPDATE; lock the intended entity explicitly and prove concurrency, revocation and rollback on PostgreSQL | Invitation acceptance [regressions](../apps/businesses/tests_invitation_concurrency.py); session revocation during ownership transfer [regressions](../apps/businesses/tests_ownership.py). ADMIN-01/02 snapshots and evidence in PRIMARY-SESSION |
 
 Охват shared-layer выбирать по затронутым callers и риску; не запускать все
 страницы только из-за правки Markdown или локальной косметики. Сохранять исходный

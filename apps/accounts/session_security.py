@@ -61,7 +61,7 @@ def revoke_user_refresh_sessions(user):
     """Blacklist refresh sessions and advance the epoch checked by every JWT."""
     locked_user = User.objects.select_for_update().get(pk=user.pk)
     tokens = list(
-        OutstandingToken.objects.select_for_update()
+        OutstandingToken.objects.select_for_update(of=("self",))
         .filter(user=locked_user, expires_at__gt=timezone.now(), blacklistedtoken__isnull=True)
         .only("id")
     )

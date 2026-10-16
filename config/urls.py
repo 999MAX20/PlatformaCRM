@@ -76,6 +76,10 @@ from apps.core.pilot_views import PilotReadinessView
 from apps.core.platform_worklists import platform_worklist
 from apps.core.platform_crm_views import platform_clinic_records, platform_clinic_record, platform_clinic_record_section, platform_clinic_access_log
 from apps.core.platform_details_views import platform_business_details
+from apps.businesses.ownership_views import (
+    platform_business_ownership, platform_ownership_action,
+    account_ownership_transfers, account_ownership_decision,
+)
 from apps.core.platform_views import (
     platform_activate_landing,
     platform_merchants,
@@ -224,6 +228,8 @@ urlpatterns = [
     path("api/auth/password-reset/confirm/", PasswordResetConfirmView.as_view(), name="auth_password_reset_confirm"),
     path("api/auth/me/avatar/", CurrentUserAvatarView.as_view(), name="auth_me_avatar"),
     path("api/auth/me/", CurrentUserView.as_view(), name="auth_me"),
+    path("api/auth/ownership-transfers/", account_ownership_transfers),
+    path("api/auth/ownership-transfers/<uuid:transfer_id>/decision/", account_ownership_decision),
     path("api/auth/change-password/", ChangePasswordView.as_view(), name="auth_change_password"),
     path("api/auth/sessions/", AccountSessionsView.as_view(), name="auth_sessions"),
     path("api/auth/sessions/<uuid:session_id>/revoke/", RevokeAccountSessionView.as_view(), name="auth_session_revoke"),
@@ -262,6 +268,8 @@ urlpatterns = [
     path("api/platform/merchants/<int:business_id>/crm/<str:kind>/<int:record_id>/<str:section>/", platform_clinic_record_section),
     path("api/platform/merchants/<int:business_id>/crm-access-log/", platform_clinic_access_log),
     path("api/platform/merchants/<int:business_id>/details/", platform_business_details),
+    path("api/platform/merchants/<int:business_id>/ownership/", platform_business_ownership),
+    path("api/platform/merchants/<int:business_id>/ownership/<uuid:transfer_id>/", platform_ownership_action),
     path("api/platform/merchants/<int:business_id>/support-actions/", platform_merchant_support_action, name="platform_merchant_support_action"),
     path("api/platform/activate-landing/", platform_activate_landing, name="platform_activate_landing"),
     path("api/pilot/readiness/", PilotReadinessView.as_view(), name="pilot_readiness"),

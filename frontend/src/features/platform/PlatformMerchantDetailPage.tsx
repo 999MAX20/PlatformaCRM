@@ -3,6 +3,7 @@ import { Tabs } from "../../components/ui/Tabs";
 import { ClinicCrmBrowser } from "./ClinicCrmBrowser";
 import { ClinicAccessHistory } from "./ClinicAccessHistory";
 import { BusinessDetailsForm } from "./BusinessDetailsForm";
+import { BusinessOwnershipPanel } from "./BusinessOwnershipPanel";
 import { SupportListPage } from "../support/SupportListPage";
 import { PlatformLoadError } from "./PlatformData";
 import { PlatformPageHeading } from "../../components/layout/PlatformPageHeading";
@@ -34,7 +35,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
   const { t, language } = useI18n();
   const location = useLocation();
   const [params, setParams] = useSearchParams();
-  const sections = ["state", "details", "work", "connections", "support", "access"];
+  const sections = ["state", "details", "ownership", "work", "connections", "support", "access"];
   const section = sections.find(value => value === params.get("section")) || "state";
   function update(values: Record<string, string>) {
     setParams(current => { const next = new URLSearchParams(current); for (const [key, value] of Object.entries(values)) { if (value) next.set(key, value); else next.delete(key); } return next; }, { state: location.state });
@@ -148,6 +149,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
     {(section === "work" || section === "connections") && <ClinicCrmBrowser business={id} timezone={data.timezone || "UTC"} connections={section === "connections"} params={params} update={update} onDenied={setReadDenied} />}
     {section === "support" && <SupportListPage platform fixedBusiness={Number(id)} />}
     {section === "details" && <BusinessDetailsForm business={id} onDraft={setDetailsDraft} />}
+    {section === "ownership" && <BusinessOwnershipPanel business={id} onDraft={setDetailsDraft} />}
     <div hidden={section !== "access"} className="space-y-5">
       {section === "access" && <ClinicAccessHistory business={id} timezone={data.timezone || "UTC"} onDenied={setReadDenied} />}
         <Card>

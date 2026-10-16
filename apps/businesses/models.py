@@ -72,6 +72,41 @@ class Business(TimeStampedModel):
         return self.name
 
 
+class BusinessOwnershipTransfer(TimeStampedModel):
+    """Immutable terms, participant consent and outcome of a support-led transfer."""
+
+    class Statuses(models.TextChoices):
+        PENDING = "pending", "Pending"
+        COMPLETED = "completed", "Completed"
+        CANCELLED = "cancelled", "Cancelled"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    business = models.ForeignKey(Business, on_delete=models.PROTECT, related_name="ownership_transfers")
+    previous_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="outgoing_ownership_transfers")
+    new_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="incoming_ownership_transfers")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="prepared_ownership_transfers")
+    support_case = models.ForeignKey("support.SupportCase", on_delete=models.PROTECT, related_name="ownership_transfers")
+    reason = models.CharField(max_length=2000)
+    previous_owner_role = models.CharField(max_length=32, blank=True)
+    previous_owner_business_role = models.ForeignKey("BusinessRole", null=True, blank=True, on_delete=models.PROTECT, related_name="ownership_transfers")
+    expected_revision = models.CharField(max_length=64)
+    status = models.CharField(max_length=16, choices=Statuses.choices, default=Statuses.PENDING)
+    previous_owner_confirmed_at = models.DateTimeField(null=True, blank=True)
+    new_owner_confirmed_at = models.DateTimeField(null=True, blank=True)
+    previous_owner_auth_epoch = models.PositiveBigIntegerField(null=True, blank=True)
+    new_owner_auth_epoch = models.PositiveBigIntegerField(null=True, blank=True)
+    expires_at = models.DateTimeField()
+    completed_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["business"], condition=Q(status="pending"), name="unique_pending_ownership_transfer"),
+            models.CheckConstraint(condition=~Q(previous_owner=models.F("new_owner")), name="ownership_transfer_distinct_users"),
+        ]
+
+
 class BusinessCapability(TimeStampedModel):
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="capabilities")
     module_key = models.CharField(max_length=32)

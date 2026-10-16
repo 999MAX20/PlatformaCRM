@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from django.db import transaction
 from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied
 
@@ -243,10 +244,13 @@ def owner_business_role(business: Business | None):
     ).first()
 
 
+@transaction.atomic
 def ensure_owner_memberships_for_user(user):
     if not user or not user.is_authenticated:
         return
-    owned_businesses = Business.objects.filter(owner=user).only("id")
+    # A profile read must not restore an owner's privileges after a concurrent
+    # transfer. Re-evaluate ownership under the transfer's Business row lock.
+    owned_businesses = Business.objects.select_for_update().filter(owner=user).order_by("pk")
     for business in owned_businesses:
         membership = (
             BusinessMember.objects.select_related("business_role")

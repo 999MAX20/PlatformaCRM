@@ -14,6 +14,7 @@ from apps.billing.entitlements import EntitlementMetrics, assert_entitlement_all
 from apps.businesses.access import Actions, Resources, assert_can, can, ensure_default_roles
 from apps.businesses.capabilities import assert_resource_enabled, ensure_business_capabilities
 from apps.businesses.models import Business, BusinessCapability, BusinessInvitation, BusinessMember, BusinessRole, RolePermission, RoutingPolicy, Team, TeamMember
+from apps.businesses.member_writes import assert_member_deletable, lock_member
 from apps.businesses.serializers import (
     BusinessInvitationAcceptSerializer,
     BusinessInvitationSerializer,
@@ -83,6 +84,19 @@ class BusinessMemberViewSet(TenantModelViewSet):
         business = serializer.validated_data["business"]
         assert_entitlement_allows(business, EntitlementMetrics.USERS)
         super().perform_create(serializer)
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        instance = lock_member(serializer.instance)
+        refreshed = self.get_serializer(instance, data=serializer.initial_data, partial=serializer.partial)
+        refreshed.is_valid(raise_exception=True)
+        super().perform_update(refreshed)
+        serializer.instance = refreshed.instance
+
+    @transaction.atomic
+    def destroy(self, request, *args, **kwargs):
+        assert_member_deletable(lock_member(self.get_object()))
+        return super().destroy(request, *args, **kwargs)
 
 
 class RoutingPolicyViewSet(TenantModelViewSet):
@@ -167,6 +181,17 @@ class TeamAccessMixin:
     @transaction.atomic
     def perform_update(self, serializer):
         instance = self.get_object()
+        if isinstance(instance, BusinessMember):
+            # Recheck permissions and serializer invariants after a concurrent
+            # ownership transfer, rather than saving a pre-transfer instance.
+            instance = lock_member(instance)
+            business = instance.business
+            self.check_team_permission(Actions.MANAGE, instance=instance)
+            refreshed = self.get_serializer(instance, data=serializer.initial_data, partial=serializer.partial)
+            refreshed.is_valid(raise_exception=True)
+            serializer.instance = refreshed.save()
+            write_audit_log(self.request, AuditLog.Actions.UPDATE, serializer.instance, business=business)
+            return
         business = self.check_team_permission(Actions.MANAGE, instance=instance)
         lookup = "team__business" if isinstance(instance, TeamMember) else "business"
         assert_tenant_ownership_unchanged(serializer, business_lookup=lookup)
@@ -176,6 +201,9 @@ class TeamAccessMixin:
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        if isinstance(instance, BusinessMember):
+            instance = lock_member(instance)
+            assert_member_deletable(instance)
         business = self.check_team_permission(Actions.MANAGE, instance=instance)
         write_audit_log(request, AuditLog.Actions.DELETE, instance, business=business, metadata={"repr": str(instance)})
         self.perform_destroy(instance)

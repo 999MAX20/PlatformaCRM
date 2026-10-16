@@ -21,6 +21,7 @@ import { MfaSecurityCard } from "./MfaSecurityCard";
 import { AccountSectionNav } from "./AccountSectionNav";
 import { InterfaceSettingsCard } from "./InterfaceSettingsCard";
 import { AccountAccessSummary } from "./AccountAccessSummary";
+import { OwnershipConfirmations } from "./OwnershipConfirmations";
 import { DocumentLinks } from "../documents/DocumentLinks";
 import { NotificationPreferencesCard } from "./NotificationPreferencesCard";
 import "./accountPage.css";
@@ -115,6 +116,8 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
       </Card>
 
       <InterfaceSettingsCard platform={platform} />
+
+      {!platform && <OwnershipConfirmations />}
 
       <Card id="security" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <h2 className="mb-3 text-base font-bold">{t("account.loginHistoryEyebrow")}</h2>
