@@ -189,3 +189,37 @@ class UserAvatar(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="account_avatar")
     image = models.BinaryField(editable=False)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class AccountRecovery(models.Model):
+    """Support-verified account recovery; credentials never appear in projections."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="account_recoveries")
+    support_case = models.ForeignKey("support.SupportCase", on_delete=models.PROTECT)
+    prepared_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name="prepared_recoveries")
+    executed_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, related_name="executed_recoveries")
+    owner = models.ForeignKey(User, on_delete=models.PROTECT, related_name="recovery_confirmations")
+    owner_required = models.BooleanField()
+    owner_confirmed_at = models.DateTimeField(null=True)
+    owner_epoch = models.PositiveBigIntegerField()
+    new_email = models.EmailField()
+    revision = models.CharField(max_length=64)
+    identity_required = models.BooleanField()
+    verified_reference = models.CharField(max_length=500, blank=True)
+    reason = models.CharField(max_length=2000)
+    status = models.CharField(max_length=16, default="pending", choices=[
+        ("pending", "Pending"), ("sent", "Sent"), ("completed", "Completed"),
+        ("cancelled", "Cancelled"), ("declined", "Declined"),
+    ])
+    token_hash = models.CharField(max_length=64, blank=True)
+    token_expires_at = models.DateTimeField(null=True)
+    delivery_status = models.CharField(max_length=16, default="not_sent")
+    last_attempt_at = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    completed_at = models.DateTimeField(null=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user"], condition=models.Q(status__in=["pending", "sent"]), name="one_active_account_recovery")]

@@ -15,6 +15,14 @@ Yandex Cloud больше не выбранное направление. Тех
 проверкой сверить source root backend/frontend/worker и build/profile.
 Не останавливать чужие процессы и не доверять localhost по одному HTTP 200.
 
+ADMIN-03: `ACCOUNT_RECOVERY_SUPPORT_EMAIL` задаёт публичный адрес поддержки,
+`FRONTEND_URL` — доверенный адрес приложения для ссылок восстановления (HTTPS;
+HTTP допускается только localhost/127.0.0.1). Без адреса поддержки экран честно
+показывает отсутствие настройки; без frontend origin/почтового транспорта заявка
+остаётся с безопасным состоянием ошибки отправки. Console/file/dummy backend
+не выводит recovery-секреты. Проверка локального test outbox не доказывает SMTP
+или доставку в ящик. Новая миграция accounts0011 требует отдельной рабочей активации.
+
 Runtime/параметры определены [settings](../../config/settings.py),
 [примером env](../../.env.example) и scripts. Не печатать рабочий `.env` или токены.
 Технические legacy Zani/ZANI identifiers не переименовывать без отдельной

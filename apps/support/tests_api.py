@@ -12,6 +12,22 @@ from apps.support.tests_domain import SupportFixture
 
 
 class SupportAPITests(SupportFixture):
+    def test_platform_explicit_requester_is_scoped_and_replay_bound(self):
+        self.api.force_authenticate(self.platform_manager)
+        payload = {"business": self.business.pk, "subject": "Lost access", "text": "Recovery request", "requester_id": self.employee.pk}
+        response = self.api.post(self.platform_url(), payload, format="json", HTTP_IDEMPOTENCY_KEY="recovery-requester")
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["contact"]["id"], self.employee.pk)
+        self.assertEqual(response.data["author"]["id"], self.platform_manager.pk)
+        self.assertEqual(self.api.post(self.platform_url(), payload, format="json", HTTP_IDEMPOTENCY_KEY="recovery-requester").data["id"], response.data["id"])
+        self.assertEqual(self.api.post(self.platform_url(), {**payload, "requester_id": self.owner.pk}, format="json", HTTP_IDEMPOTENCY_KEY="recovery-requester").status_code, 409)
+        for user in [self.other_owner, self.platform_manager]:
+            result = self.api.post(self.platform_url(), {**payload, "requester_id": user.pk}, format="json", HTTP_IDEMPOTENCY_KEY=f"bad-{user.pk}")
+            self.assertEqual(result.status_code, 400)
+        self.api.force_authenticate(self.employee)
+        self.assertEqual(self.api.get(self.clinic_url()).data["count"], 1)
+        self.assertEqual(self.api.post(self.clinic_url(), {"subject": "Bad", "text": "Body", "requester_id": self.owner.pk}, format="json", HTTP_IDEMPOTENCY_KEY="spoof-requester").status_code, 400)
+
     def setUp(self):
         self.api = APIClient()
         self.api.force_authenticate(self.employee)

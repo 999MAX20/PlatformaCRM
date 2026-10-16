@@ -54,6 +54,7 @@ const ResetPasswordPage = lazy(() =>
     default: module.ResetPasswordPage,
   })),
 );
+const AccountRecoveryPage = lazy(() => import("../features/auth/AccountRecoveryPage").then(module => ({ default: module.AccountRecoveryPage })));
 const MfaPage = lazy(() =>
   import("../features/auth/MfaPage").then((module) => ({
     default: module.MfaPage,
@@ -896,6 +897,11 @@ const router = createBrowserRouter([
         </PageLoader>
       </PublicRoute>
     ),
+  },
+  {
+    path: "/recover-account",
+    errorElement: <RouteErrorBoundary />,
+    element: <PageLoader><AccountRecoveryPage /></PageLoader>,
   },
   {
     path: "/invite/:token",

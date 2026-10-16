@@ -1,5 +1,7 @@
 """Case commands: access, mutable state, history and audit form one transaction."""
 from django.db import transaction
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django.db.models import F
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
@@ -42,9 +44,9 @@ def audit_case(actor, case, kind, **metadata):
     )
 
 
-def create_case(*, actor, business_id, subject, text, idempotency_key, platform=False, incident=None):
+def create_case(*, actor, business_id, subject, text, idempotency_key, platform=False, incident=None, requester_id=None):
     business = get_case_business(actor, business_id, platform=platform)
-    if incident is not None and not platform:
+    if (incident is not None or requester_id is not None) and not platform:
         from rest_framework.exceptions import PermissionDenied
         raise PermissionDenied()
     subject = clean_text(subject, "subject", 200)
@@ -56,6 +58,12 @@ def create_case(*, actor, business_id, subject, text, idempotency_key, platform=
         current_business = get_case_business(actor, business_id, platform=platform)
         # Manual creation records the actual platform author, not an impersonation.
         requester = current_business.owner if platform else actor
+        if requester_id is not None:
+            from apps.businesses.models import BusinessMember
+            requester = get_object_or_404(get_user_model(), pk=requester_id, is_active=True)
+            if requester.is_platform_user or not (current_business.owner_id == requester.pk or BusinessMember.objects.filter(
+                business=current_business, user=requester, is_active=True).exists()):
+                raise ValidationError({"requester_id": "Select an active participant of this business."})
         if not requester.is_active:
             raise ValidationError({"business": "The business owner account is inactive."})
         case = SupportCase.objects.create(
@@ -72,7 +80,8 @@ def create_case(*, actor, business_id, subject, text, idempotency_key, platform=
 
     return run_idempotent_crm_command(
         business=business, actor=actor, action=f"support.create.{source}",
-        idempotency_key=key, payload={"subject": subject, "text": text, **({"incident": incident} if incident is not None else {})}, operation=perform,
+        idempotency_key=key, payload={"subject": subject, "text": text, **({"incident": incident} if incident is not None else {}),
+            **({"requester_id": requester_id} if requester_id is not None else {})}, operation=perform,
     )
 
 

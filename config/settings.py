@@ -530,6 +530,8 @@ AUTH_SESSION_IDLE_DAYS = env.int("AUTH_SESSION_IDLE_DAYS", default=7)
 AUTH_SESSION_ABSOLUTE_DAYS = env.int("AUTH_SESSION_ABSOLUTE_DAYS", default=30)
 
 EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend")
+FRONTEND_URL = env("FRONTEND_URL", default="")
+ACCOUNT_RECOVERY_SUPPORT_EMAIL = env("ACCOUNT_RECOVERY_SUPPORT_EMAIL", default="")
 EMAIL_HOST = env("EMAIL_HOST", default="")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")

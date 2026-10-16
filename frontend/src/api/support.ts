@@ -8,7 +8,7 @@ const keyed = (scope: SupportScope, key: string) => ({ params: params(scope), he
 export const supportApi = {
   list: async (scope: SupportScope, filters: SupportFilters) => (await apiClient.get<SupportPage<SupportCase>>(root(scope), { params: params(scope, filters) })).data,
   detail: async (scope: SupportScope, id: number) => (await apiClient.get<SupportCase>(`${root(scope)}${id}/`, { params: params(scope) })).data,
-  create: async (scope: SupportScope, payload: { subject: string; text: string; business?: number; incident?: SupportIncidentRef }, key: string) => (await apiClient.post<SupportCase>(root(scope), payload, keyed(scope, key))).data,
+  create: async (scope: SupportScope, payload: { subject: string; text: string; business?: number; incident?: SupportIncidentRef; requester_id?: number }, key: string) => (await apiClient.post<SupportCase>(root(scope), payload, keyed(scope, key))).data,
   incident: async (business: number, incident: SupportIncidentRef, page = 1) => (await apiClient.get<SupportPage<SupportCase> & { incident: SupportIncident }>("/api/platform/support-incidents/", { params: { business, ...incident, page, page_size: 10 } })).data,
   caseIncidents: async (id: number, page = 1) => (await apiClient.get<SupportPage<SupportIncident>>(`/api/platform/support-cases/${id}/incidents/`, { params: { page, page_size: 10 } })).data,
   linkIncident: async (id: number, business: number, incident: SupportIncidentRef) => (await apiClient.post(`/api/platform/support-cases/${id}/incidents/`, { business, ...incident })).data,

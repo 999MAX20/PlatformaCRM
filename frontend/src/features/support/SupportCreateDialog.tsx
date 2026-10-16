@@ -13,8 +13,8 @@ import type { SupportCase, SupportIncidentRef, SupportScope } from "../../types/
 import { SupportClinicPicker } from "./SupportClinicPicker";
 import { SupportError, useSupportKey } from "./SupportUI";
 
-export function SupportCreateDialog({ scope, initialBusiness, fixedBusiness = false, incident, onClose, onCreated }: {
-  scope: SupportScope; initialBusiness?: number; fixedBusiness?: boolean; incident?: SupportIncidentRef; onClose: () => void; onCreated: (item: SupportCase) => void;
+export function SupportCreateDialog({ scope, initialBusiness, fixedBusiness = false, incident, requester, onClose, onCreated }: {
+  scope: SupportScope; initialBusiness?: number; fixedBusiness?: boolean; incident?: SupportIncidentRef; requester?: { id: number; name: string }; onClose: () => void; onCreated: (item: SupportCase) => void;
 }) {
   const { t } = useI18n();
   const confirm = useActionConfirm();
@@ -27,7 +27,7 @@ export function SupportCreateDialog({ scope, initialBusiness, fixedBusiness = fa
   const dirty = Boolean(subject.trim() || text.trim());
   const create = useMutation({
     mutationFn: () => {
-      const payload = { subject: subject.trim(), text: text.trim(), ...(scope.platform ? { business, ...(incident ? { incident } : {}) } : {}) };
+      const payload = { subject: subject.trim(), text: text.trim(), ...(scope.platform ? { business, ...(incident ? { incident } : {}), ...(requester ? { requester_id: requester.id } : {}) } : {}) };
       return supportApi.create(scope, payload, key.forPayload(payload));
     },
     onSuccess: item => {
@@ -50,6 +50,7 @@ export function SupportCreateDialog({ scope, initialBusiness, fixedBusiness = fa
     <Modal open title={t("supportCases.create")} onClose={() => void close()} closeOnBackdrop={false} testId="support-create-dialog" focusReturnId="support-create-button">
       <form className="space-y-4" onSubmit={event => { event.preventDefault(); create.mutate(); }}>
         {scope.platform && <SupportClinicPicker value={business} onChange={setBusiness} disabled={create.isPending || Boolean(incident) || fixedBusiness} required />}
+        {scope.platform && requester && <p className="text-sm">{t("recovery.account")}: {requester.name}</p>}
         <Input label={t("supportCases.subject")} value={subject} onChange={event => setSubject(event.target.value)} maxLength={200} required disabled={create.isPending} autoFocus={!scope.platform}
           error={create.isError && error.fieldErrors.subject ? t("supportCases.invalidSubject") : undefined} />
         <Textarea label={t("supportCases.description")} value={text} onChange={event => setText(event.target.value)} maxLength={6000} required disabled={create.isPending}

@@ -67,6 +67,7 @@ class IncidentContext(IncidentLinkInput):
 
 
 class PlatformCreateInput(CreateInput):
+    requester_id = serializers.IntegerField(min_value=1, max_value=9223372036854775807, required=False)
     business = serializers.IntegerField(min_value=1)
     incident = IncidentInput(required=False)
 

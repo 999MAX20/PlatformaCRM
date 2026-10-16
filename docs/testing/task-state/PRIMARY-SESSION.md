@@ -38,6 +38,130 @@ Workflow inspected: push triggers CI, no deployment job declared.
 Next delivery steps: docs commit, git diff --check cafcea5...HEAD, normal
 HEAD:main push, direct remote SHA readback and actual CI status inspection.
 
+## PLATFORM-ADMIN-03-20261016 — implementation
+
+Owner requested continuing ADMIN-03 after ADMIN-02. Explicit decision: loss of
+all access requires contacting support and supplying information for identity
+verification. This does not yet define sufficient evidence or operator authority.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+starting HEAD cafcea5b2b2143077072fbefd3330b7b8839c1f2, clean working tree.
+Mode preparation, gaps policy/code/evidence. Scope: email/access diagnostics and
+support-assisted recovery; no ownership transfer, ADMIN04, billing or deployment.
+
+Read-only source review: accounts/email_changes.py already requires own password
+and enabled MFA, confirms a ten-minute new-mailbox code, limits invalid attempts,
+checks auth epoch and revokes sessions. SMTP failure rolls back the challenge;
+successful send is transport acceptance, not proof of mailbox delivery. Existing
+MFA recovery codes require possession; disable_mfa requires password and factor.
+SupportCase can be created by platform staff, but ordinary support access requires
+authentication. A channel accessible without login must be selected for total loss.
+User identity/email are global: recovery must not be disguised as a membership edit.
+
+Owner approved both platform_admin and platform_manager executing recovery in
+response to the proposed recent-MFA/support-case flow. Admin-only restriction rejected.
+Initial questions, resolved by the accepted procedure below: evidence for identifying an
+owner versus employee and contact channel without login.
+No dependent recovery mutation implemented before these decisions. Existing account,
+MFA/session, support/audit and platform card layers will be reused.
+
+Verification plan: high-risk identity/access behavior. After each coherent backend
+slice, isolated happy/invalid/denied/cross-tenant, expiry/replay, stale auth, rollback
+and concurrency checks; completion affected account/MFA/session/email/support suites,
+system/schema and any intentional isolated migration, then targeted desktop/mobile
+UI recovery flows and RU/KK/EN, build/types/i18n/bundle. No live mail, working migration
+or full-project E2E implied. Preparation docs require diff/link/consistency checks;
+runtime tests have not run and implementation acceptance is not claimed.
+Owner accepted the proposed procedure: support email accessible without login,
+manual comparison with previously verified records for owners; employee confirmation
+by the current owner in their account, plus account-holder identity verification
+where other businesses are linked. Public identifiers alone never suffice; absent
+evidence or discrepancies block recovery. Both platform roles may execute with MFA.
+Do not collect identity-document copies by default. Record verification outcome and
+reference/basis, not document contents. Contact email remains environment-configured;
+no address was supplied and no fictional address will be shown.
+
+Implementation contract: immutable, expiring support-linked recovery request;
+owner confirmation when applicable; explicit operator verification attestation;
+one-time new-mailbox link, claimant-chosen password, atomic session/MFA credential
+revocation, mandatory MFA re-enrollment on next login, audit and preserved User ID,
+Business ownership and memberships. Existing social links are old login credentials:
+clear them at completion, shown in the user-facing consequences. No API exposes
+link/token/password/factor. Delivery acceptance is not mailbox delivery proof.
+Real SMTP/contact configuration and working migrations remain outside this task.
+First implementation: AccountRecovery/model migration accounts0011, scoped platform
+and owner-confirmation APIs, public one-time completion, safe transport status and
+retry, retained account identity/memberships, atomic credential revocation/audit.
+Focused gate `.venv/Scripts/python.exe output/admin03-focused.py`:28 tests PASS
+(recovery + existing email change), isolated SQLite migration/system check PASS.
+Only after this pass added platform panel, personal confirmation and public page.
+Initial frontend build failed i18n ordering (fallback must precede translated keys);
+fixed dictionary placement. `npm --prefix frontend run build` retry PASS including
+i18n/types/app/widget; `npm --prefix frontend run check:bundle` PASS. Logs:
+output/admin03-focused.log, admin03-build.log, admin03-build-retry.log, admin03-bundle.log.
+Expanded isolated PostgreSQL gate running via output/admin03-completion.py;
+one selected label apps.support.tests is absent (actual labels tests_domain/tests_api),
+so that missing boundary must be run separately; passing unchanged labels need not repeat.
+Browser runner scripts/verify_platform_recovery.py uses only disposable data and
+scripts.recovery_test_mail synthetic outbox, guarded to the isolated temp DB.
+Next: finish PG/dependent checks, real desktop/mobile browser gate, review and publish.
+
+PG result:156 labels reported,155 actual tests PASS and1 loader error for the absent
+apps.support.tests module; no product failure. Correct support modules then31 PASS
+via output/admin03-support.py. End-to-end review found platform case creation always
+used business owner, making a locked-out employee's new case unreachable. Extended
+existing service with optional platform-only active same-business requester_id,
+bound it into idempotency payload, kept actual operator author and default behavior.
+Focused/dependent support32 PASS via output/admin03-support-requester.py; system/schema
+PASS. UI reuses SupportCreateDialog with the selected immutable requester from the
+recovery panel. Browser test now creates this actual case before the recovery request.
+Subsequent recovery lock refinement serializes both owner/target accounts and
+platform authority; affected recovery suite will rerun in PostgreSQL via
+output/admin03-locks.py, including a consent-vs-owner-epoch race. Broader unchanged
+account tests retain their above evidence. Temporary PG clusters stopped cleanly.
+
+Final scoped verification16.10: recovery27 PostgreSQL PASS (including3 concurrency
+tests) via `.venv/Scripts/python.exe output/admin03-locks.py`; system/schema PASS.
+Support32 final tests PASS; unchanged broader account/access/session suites retain
+the155-test run evidence above (26 older recovery cases replaced by the27 final cases).
+This gives188 distinct backend tests across final/reused evidence, not a full suite.
+`scripts/verify_platform_recovery.py`:4 desktop/mobile flows PASS, log
+output/platform-recovery/browser-1792138337908625600.log. The browser server loaded
+the lock refinement before starting. Actual case creation -> owner confirmation ->
+synthetic mailbox -> new password -> login and final readback, invalid MFA/draft,
+503/403, empty, RU/KK/EN and keyboard/contact/overflow checks passed. Inspected
+RU desktop completed panel and KK mobile request screenshots. Temporary servers
+terminated; no browser/provider behavior is claimed for a working environment.
+Final `npm --prefix frontend run build` PASS (6273 locale keys, types, app/widget),
+`npm --prefix frontend run check:bundle` PASS; output/admin03-build-final.log and
+admin03-bundle-final.log. No dependency installation or working migrations/seeds.
+Manual identity verification remains an operator judgment requiring prior verified
+evidence; code enforces required recorded basis/consent and cannot authenticate
+document contents. No AI/BusinessEvent mutation; external mail only after separately
+configured working activation. Existing requester-less support creation unchanged.
+
+Reviewed owned files/new files and credential patterns with output/admin03-review.py;
+diff/link checks PASS, final staged/committed checks follow. Branch/root unchanged.
+`git fetch origin main` FETCH_HEAD and direct ls-remote both cafcea5b2b2143077072fbefd3330b7b8839c1f2;
+local origin/main is stale because configured fetch refspecs omit main. Do not use
+that stale tracking ref to infer outgoing foreign commits. CI workflow contains
+checks/tests/audits, no deployment. Next: explicit-path commit, static gate against
+cafcea5, normal HEAD:main push and remote SHA/actual CI. Receipt in task response;
+no new phase and no follow-up documentation-commit loop required.
+
+Pre-publication snapshot: unrelated concurrent documentation appeared in
+docs/current/acceptance.md, docs/documentation-index.json,
+docs/testing/business-logic-questions-20261016.md and a separate docs/README.md row.
+Preserve those working changes; stage only this task's README specification row
+and explicit ADMIN03 paths. No source/runtime overlap observed; no coordination
+or additional product task is implied.
+
+The index briefly held that other task's changes; staging guard stopped before
+any mutation. It then cleared after docs-only1c8ffa544ab577bd935bdb1ad017bfc8ea99d522
+was committed and published by that task (direct remote SHA matched). Compared
+cafcea5..1c8ffa5: only those six documentation files; tested runtime inputs unchanged.
+Current reviewed commit base is therefore1c8ffa5; use it for the ADMIN03 committed
+static gate and fast-forward publication. Shared-file unrelated text is preserved.
+
 ## PLATFORM-ADMIN-02-20261016 — implementation
 
 Owner approved the proposed ordinary ownership transfer and requested implementation.
