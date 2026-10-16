@@ -4,6 +4,10 @@
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
     {
+      "path": "docs/testing/admin05-payments-partner-brief-20261016.txt",
+      "role": "evidence"
+    },
+    {
       "path": "docs/testing/docs-reconciliation-20261016.md",
       "role": "evidence"
     },

@@ -8,6 +8,28 @@
 
 ## PLATFORM-ADMIN-05-20261016 — preparation, payment evidence contract
 
+Owner follow-up: document comparative payment analysis and create a short plain-text
+partner discussion brief. Mode docs-only; no adopted financial policy or runtime.
+Base 4994e45f5cc078aa97fdb770d94b8120d9ab44c0, canonical PlatformaCRM,
+branch codex/ui-testing-toolkit, clean start. Scope: existing spec15.4 analysis,
+partner .txt brief registered as evidence, roadmap/passport/navigation and status.
+Plan/risk: distinguish buyer from payment method, verified public competitor facts
+from proposed architecture and unresolved tax/period/permissions decisions. Reuse
+sources researched in this conversation; no claims of live provider acceptance.
+Checks: diff working/index/committed range, registry and local links, concise brief
+content review. No app tests/build/install/DB: documentation only.
+Result: spec15.4 records competitor facts with primary sources and proposed common
+transfer/card architecture; UTF-8 .txt partner brief covers buyer types and seven
+decisions. Roadmap/passport/status/navigation updated; registry77 and local links193
+PASS (0 issues), working diff hygiene PASS. Source facts reused from preceding
+research, no provider contract/test/live acceptance claimed. Brief reviewed for
+clarity, no secrets/private data; no unrelated changes. Product/access/acceptance
+contracts unchanged: no new approved rules and open IDs retained. Index/range checks
+at publication; commit/push/remote SHA/CI in delivery receipt.
+
+
+
+
 Owner follow-up: save the bank-transfer proposal in technical documentation for
 later discussion and explain the next stage. Current mode docs-only; implementation
 paused pending money/source decisions, no recommendation treated as approval.
