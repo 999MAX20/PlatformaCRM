@@ -6,6 +6,25 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## BUSINESS-LOGIC-QUESTIONS-CATEGORIES-20261016 — documentation
+
+Owner requested two categories: questions solvable together through analysis and
+proposals, versus questions requiring owner/partner business decisions.
+Mode documentation; gap policy framing. Canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, start/base e73da43e9ecdd5d7175cb8b60aa950206b5af0a7.
+Scope: existing questions document plus separate status/checkpoint entries only.
+Pre-existing ADMIN04 source/untracked work and shared-file edits remain unrelated;
+only additive task hunks staged. No new policy, permissions, roadmap or runtime change.
+Plan/risk: avoid treating analysis as owner approval; keep all Q01-Q25 exactly once,
+mark mixed dependencies, reconcile Q10 with already accepted ADMIN04 authority.
+Result: 10 analytical questions, 15 owner/partner decisions; original scenarios kept.
+Checks: PowerShell regex coverage/unique IDs/category counts 10+15 and local link
+existence PASS; working/index diff checks and real committed-range check required.
+No app installs/build/database/browser tests: docs-only matrix. Source review of
+current ADMIN04 checkpoint prevents reopening already approved permissions.
+Fetch main readback matched starting HEAD. Delivery: task-only docs commit, normal
+push to main, remote SHA readback, inspect CI separately; no deployment requested.
+
 ## DOCS-RECONCILIATION-20261016 — current documentation and roadmap
 
 Owner requested documenting ADMIN-03 delivery, reconciling all active technical
