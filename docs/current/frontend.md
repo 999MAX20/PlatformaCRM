@@ -385,3 +385,12 @@ PLATFORM-INCIDENT-LINK-20261015: из диагностики бизнеса и �
 ссылку с новым паролем. Ошибки/MFA/конфликты сохраняют форму; действия используют
 профильные API и серверные проверки. Карта и ограничения —
 [паспорт доступа](../pre-production/identity-access.md); рабочая почта проверяется отдельно.
+
+
+ADMIN-05,16.10: `/app/settings#billing` содержит предложения/покупателя/заказ,
+банковские реквизиты и checkout/reconcile; `/platform/merchants/:id?section=billing`
+— инспектор заказа, receipt, попыток, application, подписки/технических квот и
+команды со свежим MFA/обращением. API layer и общие формы/confirmation/draft guards;
+RU/KK/EN, error/loading/empty/forbidden. Недоступная конфигурация видна честно;
+состояние active не выдаётся за доказательство полной коммерческой политики.
+Границы и проверки — [паспорт](../pre-production/subscription-usage.md).

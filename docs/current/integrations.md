@@ -92,3 +92,12 @@ timeout, revoked credential и возобновление. Не отправля
 Архив происхождения (не текущий rollout-план):
 [blueprint](../../archive_docs/2026-10-07/docs/integrations/CONNECTOR_BLUEPRINT.md),
 [provider rollout](../../archive_docs/2026-10-07/docs/integrations/provider-rollout.md).
+
+
+ADMIN-05: SaaS card payments используют отдельный billing adapter (checkout,
+authenticate_notification, lookup), а не merchant Connector. Redirect и payload
+не подтверждают поступление: результат повторно читается у адаптера. Неопределённый
+checkout запрещает вторую попытку до сверки; receipt и application сохраняются
+отдельно, повторы идемпотентны. Реальный adapter не выбран; FakeCard доступен только
+в изолированных тестах. Нет BusinessEvent/AI-trigger, отправки писем или реальных денег.
+Оставшиеся provider/live требования — [паспорт](../pre-production/subscription-usage.md).

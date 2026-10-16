@@ -208,3 +208,12 @@ PLATFORM-INCIDENT-LINK-20261015 добавляет миграцию `support0002
 не применяется. Локальная активация support0001 не означает активацию связей.
 Поддержке не нужен отдельный worker; существующие процессы оставлены без изменений.
 Это локальная активация, не deployment или приёмка облачной среды.
+
+
+ADMIN-05: billing0006 создаёт offer/order/receipt/attempt/event; миграция проверена
+в изолированных SQLite/PostgreSQL, к рабочей БД не применялась. Runtime defaults:
+BILLING_COMMERCE_ENABLED=False, BILLING_CARD_ADAPTER=None. Нет рабочих предложений,
+автоматического seed цен или выбранного банка. Активация, provisioning утверждённых
+условий и реальный adapter требуют отдельного scope после коммерческих решений.
+Тестовый адаптер включается только изолированным browser runner с проверкой disposable DB.
+Рабочий rollout и expiry enforcement остаются открыты — [паспорт](../pre-production/subscription-usage.md).

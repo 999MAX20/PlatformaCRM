@@ -64,6 +64,17 @@ os.environ["CLAMD_PORT"] = str(scanner.server_address[1])
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 import django
 django.setup()
+
+# This file already asserts a disposable quality-gate database above. Never a runtime provider.
+if os.environ.get("E2E_BILLING_COMMERCE") == "1":
+    from django.conf import settings
+    from dataclasses import replace
+    from apps.billing.tests_commerce import FakeCard
+    class IsolatedCard(FakeCard):
+        def lookup(self, *, attempt_id):
+            return replace(super().lookup(attempt_id=attempt_id), status="confirmed")
+    settings.BILLING_COMMERCE_ENABLED = True
+    settings.BILLING_CARD_ADAPTER = IsolatedCard()
 from django.core.management import call_command
 from django.db import close_old_connections, OperationalError
 from apps.core.file_scanning import scan_due_attachments

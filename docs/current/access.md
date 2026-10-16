@@ -289,3 +289,11 @@ UI не сохраняет CRM cache после ухода и скрывает �
 [проверки](../../apps/core/tests_platform_crm.py); граница приёмки/публикация —
 [checkpoint](../testing/task-state/PRIMARY-SESSION.md), требования —
 [раздел13 спецификации](../testing/platform-rebuild-spec-20261014.md).
+
+
+ADMIN-05, локальная основа16.10: merchant orders требуют billing VIEW/MANAGE
+выбранного Business. Банковское поступление подтверждает только platform_admin;
+обе platform-роли читают инспектор с аудитом и выполняют recovery/reconcile со свежим
+MFA, открытым обращением этого Business и основанием. Платёж не снимает независимые
+блокировки; изменившаяся подписка/условия блокируют применение. Полный коммерческий
+доступ не заявлен; границы — [паспорт](../pre-production/subscription-usage.md).

@@ -1,3 +1,4 @@
+from apps.billing.commerce_views import merchant_orders, merchant_card, platform_orders, platform_payment_action, card_notification
 from apps.accounts.avatar_views import CurrentUserAvatarView
 from apps.accounts.session_views import AccountSessionsView, RevokeAccountSessionView
 from apps.accounts.email_change_views import EmailChangeRequestView, EmailChangeConfirmView
@@ -218,6 +219,12 @@ router.register("pricing/kaspi/recommendations", KaspiPricingRecommendationViewS
 router.register("pricing/kaspi/change-logs", KaspiPriceChangeLogViewSet, basename="kaspi-price-change-log")
 
 urlpatterns = [
+    path("api/billing/businesses/<int:business_id>/orders/", merchant_orders),
+    path("api/billing/businesses/<int:business_id>/orders/<uuid:order_id>/<slug:action>/", merchant_card),
+    path("api/billing/card-notifications/<slug:provider>/", card_notification),
+    path("api/platform/merchants/<int:business_id>/billing-orders/", platform_orders),
+    path("api/platform/merchants/<int:business_id>/billing-orders/<uuid:order_id>/<slug:action>/", platform_payment_action),
+
     path("health/", health, name="health"),
     path("api/service-status/", service_status, name="service_status"),
     path("health/db/", health_db, name="health_db"),

@@ -6,7 +6,109 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
-## PLATFORM-ADMIN-05-20261016 — preparation, payment evidence contract
+## PLATFORM-ADMIN-05-20261016 — payment foundation; full stage incomplete
+
+### Implementation evidence — 16.10.2026
+
+Implemented bank/card order foundation, merchant flow, platform inspector and safe
+recovery. Separate payment/application transactions; immutable order terms, unique
+receipt/open attempt, row locks, role/MFA/case checks, audit rollback and independent
+blocks. No real provider, prices, legal documents or commercial expiry rollout.
+All task changes belong to this scope; starting worktree was clean at11179a6.
+
+Commands/results (canonical checkout, existing deps, disposable DB/ports only):
+- `.venv/Scripts/python.exe output/admin05-focused.py`:9 PASS bank slice,
+  then20 PASS card/API before frontend. First bank run8 PASS plus wrong test import;
+  corrected import without weakening assertions.
+- `.venv/Scripts/python.exe output/admin05-backend.py`: initial PostgreSQL run failed
+  because accessible_businesses DISTINCT cannot be locked with FOR UPDATE. Corrected
+  to outer Business query with scoped PK subquery; SQLite alone missed this defect.
+- `.venv/Scripts/python.exe output/admin05-backend-fixed.py`:59 PASS on temporary
+  PostgreSQL17 cluster. Exact test labels: `apps.billing.tests_commerce`,
+  `apps.billing.tests_commerce_concurrency`, `apps.billing.tests`,
+  `apps.billing.tests_settings_scope`, `apps.core.tests_platform_details`.
+  `manage.py check` and `manage.py makemigrations --check --dry-run` PASS under
+  isolated_runtime; clean DB applies billing0006. Cluster stopped in finally.
+- `npm --prefix frontend run build`: PASS types/i18n/app/widget; informational
+  Vite timing/chunk warning. `npm --prefix frontend run check:bundle`: PASS budgets.
+- `.venv/Scripts/python.exe scripts/verify_billing_commerce.py`: initial run stopped
+  on Select accessible-name mismatch; next run4 PASS recovery/locales and4 failures
+  from ambiguous tax_id selector. Test selectors fixed; no product assertion removed.
+  Keyboard test initially sent two ArrowDown events and returned to placeholder;
+  corrected to one using the shared Select keyboard contract.
+  `--grep 'bank order|card checkout|billing empty'`:2 states PASS (including explicit
+  403/503 fallback),4 keyboard-test failures as above. Final
+  `--grep 'bank order|card checkout'`:4 PASS, log
+  `output/billing-commerce/browser-1792169779896389800.log`.
+  Combined8 scenarios PASS:2 recovery from earlier run,2 strengthened state cases,
+  4 bank/card cases. Relevant product inputs unchanged across runs; no full-suite
+  PASS claimed. Desktop/mobile screenshots inspected, RU/KK/EN and overflow checks,
+  keyboard offer selection, actual API result and duplicate application verified.
+  Dedicated browser servers terminated; no owned processes left.
+- `.venv/Scripts/python.exe output/admin04-links.py`:77 registered docs,248 local
+  links PASS at the intermediate snapshot; final docs/index/range results follow
+  in the publication receipt. No new authority documents or registry entries.
+
+Residual code: selected provider adapter, expiry/grace/read-only enforcement,
+document/fiscal integration after policy. Evidence: live payment/webhook/recovery,
+full5a/5b/6. Environment: working billing0006 and commercial configuration not applied.
+Owner decisions: seller/bank/provider, prices/period/start, documents/fiscalization,
+third-party payer, refunds/partial/overpayment/compensation consequences. No live
+money/working migration/production access or complete ADMIN05 claim.
+Current product/acceptance requirements preserved; no new policy or closed IDs.
+Updated roadmap/spec/passport/access/frontend/integrations/operations/partner brief.
+README/product/CRM/AI require no changes: setup/default permissions/legacy lifecycle
+remain; commercial requirements and open acceptance IDs are not resolved by foundation.
+Publication and CI recorded in final receipt; full E2E/dependency install/live checks
+not run (proportional scoped implementation, no rollout authorization).
+
+### Implementation authorization and boundary — 16.10.2026
+
+Iteration evidence: `.venv/Scripts/python.exe output/admin05-focused.py` uses
+isolated_runtime, generated billing0006 only (no working DB). First bank slice:
+9 tests, 8 PASS + one test import error (MfaStepUpRequired module typo); corrected
+import then 9 PASS before card service/API work. No assertions weakened. New
+card/API focused run pending. No real provider selected/connected.
+
+
+Owner approved main logic for bank transfer and card acquiring, 5a diagnostics and
+5b recovery; explicitly deferred unresolved commercial decisions and asked to mark
+ADMIN05 incomplete. Canonical root C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, base11179a6d390323e8e6a4eeafb6aec6b7276940c9, clean start.
+Mode implementation; code/evidence plus explicit policy/environment remainder.
+Approved: buyer distinct from payment method; platform_admin confirms bank receipt;
+both platform roles inspect/recover with fresh MFA/open case/reason; exact full
+payment, one application, immutable evidence/audit, independent blocks retained.
+
+Deferred: seller/bank/provider; prices and period-start rules; documents/fiscalization;
+third-party personal-card payment for company; refunds/overpayment disposition.
+No live payments, working migration, money movement or policy approval implied.
+Implementation accepts only explicit approved offer terms and has no seeded live
+prices/period calculation. Commerce disabled by default. No provider is selected:
+provider-neutral checkout/verified-result/reconciliation contract with isolated test
+adapter; unconfigured card mode fails closed. Actual adapter/live certification is
+remaining work, never advertised as working production acquiring.
+Reuse Subscription/Plan, entitlement_summary, billing permissions, platform audited
+reads, support cases, MFA, shared UI, API layer, isolated test/browser runners.
+SaaS receipt belongs to platform billing, not merchant Connector/CRM Payment;
+provider-specific integration remains behind an adapter. No merchant BusinessEvent
+or AI automation event; durable billing history and audit own the effects.
+
+Observable result: merchant offer/order/payment flow and operator order/receipt/
+application inspector with bank-confirm and safe retry; no false Paid or double
+period. Applied subscription fields/actual technical quotas are re-read; full
+commercial expiry enforcement and live acceptance remain visibly unproven until
+remaining rollout contract is implemented, not inferred from status=active.
+Verification high risk: each coherent service slice isolated focused tests before
+UI. Money/amount/currency/order/tenant, fresh role/MFA denial, audit rollback,
+idempotency/stale input, missing adapter, uncertain create/reconcile, refund/late
+notifications, cross-channel overpayment, preservation of security/manual blocks.
+Completion real PostgreSQL concurrency + affected billing/platform suites,
+system/migration drift, intentional isolated migration, targeted merchant/operator
+browser desktop/mobile and RU/KK/EN; frontend build/types/i18n/bundle once.
+No deps install, full E2E, working DB, real provider/send/deployment.
+
+
 
 Owner follow-up: document comparative payment analysis and create a short plain-text
 partner discussion brief. Mode docs-only; no adopted financial policy or runtime.

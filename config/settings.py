@@ -593,3 +593,9 @@ LOGGING = {
         },
     },
 }
+
+
+# ADMIN-05 foundation. Enable only with approved offer terms and a certified provider.
+# Real payment processing, fiscalization and financial expiry enforcement are not deployed.
+BILLING_COMMERCE_ENABLED = False
+BILLING_CARD_ADAPTER = None
