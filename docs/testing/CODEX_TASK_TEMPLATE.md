@@ -119,6 +119,9 @@ acceptance evidence; keep valid historical closures attached to their old SHA.
 ```text
 Result / completed acceptance criteria:
 Files and contracts changed:
+Roadmap note: completed work / remaining criterion (or none in agreed scope) / evidence:
+Technical docs outside roadmap updated (or unchanged with reason):
+Remaining gap type: code / evidence / environment / owner decision:
 Checks run: exact commands, outcomes, snapshot/commit and environment
 Checks skipped: reason and acceptance impact
 Known risks / proven baseline failures:

@@ -1,6 +1,7 @@
 # Команда, аккаунт и безопасность доступа
 
-Срез `768b2675`, 09.10.2026. Владелец управляет своим Business и командой,
+Исходная основа `768b2675`, 09.10.2026; актуальные дельты 16.10 описаны ниже.
+Владелец управляет своим Business и командой,
 сотрудник — собственным аккаунтом; platform support имеет отдельную ограниченную роль.
 Единственный нормативный источник прав — [access](../current/access.md).
 
@@ -26,7 +27,9 @@ Security-изменения отзывают прежние credentials; tracked
 
 Tenant/scope/capability применяются до выдачи списков/counts/children, также в worker,
 экспорте и AI. Support grant выдаёт owner с recent MFA; support-note требует
-platform_admin + точный активный grant + recent MFA. Platform_manager write не получает.
+platform_admin + точный активный grant + recent MFA. Это ограничение именно support-note: ADMIN-01 и ADMIN-03 разрешены обеим
+platform-ролям со свежим MFA, ADMIN-02 — только platform_admin. Каждый сценарий
+проверяет обращение и свою доменную политику, общего tenant write-доступа нет.
 Для production/платного пилота требуется privileged MFA по текущему контракту.
 Recovery codes одноразовые, TOTP secrets зашифрованы; reset обязательной MFA
 не выдаёт privileged сессию без фактора. Восстановление владельца — отдельная операция.
@@ -56,3 +59,17 @@ API и изменений MFA нет; scope/evidence —
 [R01](../current/roadmap.md) — применимые роли, R04 — target MFA/операции,
 R02/R07 — юридические тексты; V1-O06 не разрешает новую матрицу автоматически.
 09.10 — паспорт существующей модели, без смены прав или credentials.
+
+## ADMIN-02/03 — реализованные дополнения 16.10
+
+[Передача владельца](../../apps/businesses/ownership.py) сохраняет два личных
+согласия и прежнюю роль/отключение только Business; подтверждения доступны в Account,
+исполнение — в карточке платформы. [Recovery](../../apps/accounts/recovery.py)
+сохраняет User ID и memberships, подтверждает новый mailbox, меняет пароль,
+отзывает сессии/MFA/social links и требует нового MFA enrollment. Проверка личности
+ручная; автоматическая проверка документов не реализована и не обещается.
+[Диагностика](../../apps/accounts/recovery_selectors.py) показывает обычный email-change
+и ограниченные последние 50 recovery-заявок; это не полный почтовый журнал.
+Код опубликован (`cafcea5` / `dc1eedf`), scoped backend/browser/build PASS в checkpoint.
+Остаток: рабочие businesses0012/accounts0011, support email/FRONTEND_URL/SMTP и
+проверка разрешённой среды. ADMIN-04 и восстановление подписки этим не закрыты.

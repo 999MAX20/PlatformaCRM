@@ -1,9 +1,11 @@
 # Эксплуатация и допуск окружения
 
-Срез `768b2675`, 09.10.2026. Пользовательский результат — работающая CRM с
+Исходная основа `768b2675`, 09.10.2026; актуальные дельты 16.10 описаны ниже.
+Пользовательский результат — работающая CRM с
 восстановлением после отказа; операционный владелец должен уметь обнаружить и
 устранить проблему. [Operations contract](../current/operations.md) определяет требования.
-Yandex Cloud выбран как направление, конкретный production deployment не доказан.
+Решение 14.10 заменило Yandex Cloud требованием размещения в Казахстане;
+конфигурация PS Cloud отложена. Конкретный production deployment не доказан.
 
 ## Существующая основа
 
@@ -12,7 +14,8 @@ CRM-S02 (14.10.2026): platform list использует `count/next/previous/re
 Сводка учитывает все Business без прежнего ограничения500 и пакетно собирает
 операционные показатели. Счётчик ошибок отражает сохранённые failed-записи
 automation/notification/integration/export, а не число текущих аварий сервиса.
-Поддержка читает полный постраничный журнал; запись требует admin/grant/MFA.
+Прежний support-actions журнал читается постранично; запись support-note требует
+admin/grant/MFA. Обращения apps/support и ADMIN-01/02/03 имеют отдельные правила.
 Воспроизводимая локальная проверка: `.venv/Scripts/python.exe scripts/verify_platform_s02.py`
 (одноразовая БД, собственные порты, desktop/mobile). Это не live/provider/worker
 acceptance; точные результаты — в [checkpoint](../testing/task-state/PRIMARY-SESSION.md#crm-s02-20261014--operational-platform-administration).
@@ -46,7 +49,7 @@ Backup включает БД, приватные файлы и доступно�
 [platform API](../../frontend/src/api/platform.ts),
 [operations UI](../../frontend/src/features/platform/PlatformOperationsPage.tsx),
 [testing](../testing/testing.md). UI `/platform/operations` отделён от merchant Settings.
-[CI текущей версии](https://github.com/999MAX20/PlatformaCRM/actions/runs/37832658462)
+[CI исторической основы 09.10](https://github.com/999MAX20/PlatformaCRM/actions/runs/37832658462)
 подтверждает свои backend/frontend jobs, не deployment. Локальные functional reports
 сохраняют ограничения среды. Не поднимать PAID_BETA flags ради зелёного readiness.
 
@@ -57,3 +60,10 @@ Backup включает БД, приватные файлы и доступно�
 оператор и измеренные параметры. BE-GAP-006/007/011 и target FB-008 остаются открыты.
 R05/R07 — персонал и финальный кандидат; Git push не означает развёртывание.
 09.10 — паспорт основы и условий допуска, без операций с окружениями.
+
+Сверка 16.10: S03 добавил состояния/уведомления, S04 — изолированный реальный
+recovery, PLATFORM-OPERATIONS/OVERVIEW/CLINIC-CRM — списки и подробное чтение.
+ADMIN-01/02/03 опубликованы; их права и рабочие миграции/почта —
+[паспорт доступа](identity-access.md). Полный incident ledger, новые наблюдения,
+независимый мониторинг и target R04 остаются; локальные receipts не означают
+актуальную проверку запущенных служб 16.10.

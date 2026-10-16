@@ -6,6 +6,57 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## DOCS-RECONCILIATION-20261016 — current documentation and roadmap
+
+Owner requested documenting ADMIN-03 delivery, reconciling all active technical
+contracts/passports/specifications and roadmap with implementation, recording
+remaining work for closed stages, and mandatory ongoing documentation rules.
+Mode audit + documentation; gaps evidence/roadmap/documentation. No product changes,
+new stages, migrations, live calls or deployment. Canonical root
+C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+starting HEAD/base dc1eedf93a1532f538cd513a339130b3b4580835; working/index clean.
+Reuse current registry, source/service/API/UI/tests, scoped checkpoint evidence and
+Git/CI receipts. Historical test results retain their exact boundaries; this static
+review is not a fresh functional/security/production certification.
+Risk: stale planned status, conflating support-note with new platform permissions,
+and local scoped completion with live readiness. Focus: reconcile these claims,
+retain open acceptance and distinguish requirement/code/evidence/environment gaps.
+Completion: active-document coverage record, corrected contradictions and stage
+notes; rules in AGENTS/template/engineering/passport guidance; working/index/range
+hygiene, local links/anchors, registry JSON and intended patch review. No builds,
+installs, DB/browser suites for docs-only. No runtime permission/notification/event/
+AI/env effects. Publish reviewed docs to origin main by normal fast-forward only;
+inspect actual CI separately. No owned background processes started.
+
+Completed static reconciliation16.10: coverage and code/evidence mapping in
+`docs/testing/docs-reconciliation-20261016.md`; roadmap now records actual ADMIN01/02/03
+and MB/S/R closures with explicit remaining code/evidence/environment/policy boundaries.
+Corrected stale multi-branch activation, Kazakhstan hosting, manager permissions,
+publication blockers and accepted analytics definitions. Existing integrations UI gaps
+remain documented (selected Business/pagination and generic1C credential payload,
+error/view/history handling); no source fixes or new product phase performed.
+AGENTS, engineering, task/passport templates and documentation navigation now require
+completed work + remaining criterion and updating focused docs outside roadmap.
+Historical reports/archives retained; the active integration review gets only a dated
+pointer to current evidence. Found/corrected obsolete writer coordination in testing,
+README and handoff; no coordination actions were taken.
+Verification: `git diff --check` PASS; `.venv/Scripts/python.exe
+output/docs-reconciliation/verify_docs.py` PASS: unique76-entry registry, all registered
+paths present, local targets/anchors valid, only Markdown/JSON changes. Full intended
+patch/new report reviewed; no secrets/private user data or unrelated source changes.
+App install/build/system/schema/DB/browser suites skipped by docs-only matrix, not
+claimed as fresh PASS. Intermediate inspection corrections (duplicate capability rows
+and misplaced handoff notice) fixed before staging; initial report patch syntax error
+made no edit. GitHub CLI absent; read-only GitHub API used for CI instead.
+`git fetch origin main`, `git rev-parse FETCH_HEAD` and direct `git ls-remote origin
+refs/heads/main` confirm dc1eedf; local origin/main tracking ref is stale and unused.
+GitHub API: f7d74d5/cafcea5 CI success; dc1eedf CI38873408099 in_progress at observation.
+Workflow inspected: CI only, no deployment. Working/code inputs unchanged from base.
+Next delivery: explicit reviewed-path stage, cached diff check, conventional docs
+commit, real committed-range hygiene against dc1eedf, normal HEAD:main push and
+remote SHA/actual CI receipt in task response and ignored output/docs-reconciliation.
+No implementation residual within this docs scope; no owned servers/background jobs.
+
 ## BUSINESS-LOGIC-QUESTIONS-20261016 — documentation
 
 Owner requested saving the preceding analysis questions inside the project.

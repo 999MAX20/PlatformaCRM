@@ -5,7 +5,7 @@
 фактическое состояние направлений — [паспорта](../docs/pre-production/README.md).
 В этой папке сохранены стабильные пути для инструментов:
 
-- [PROJECT_HANDOFF](PROJECT_HANDOFF.md) — состояние передачи владельца;
+- [PROJECT_HANDOFF](PROJECT_HANDOFF.md) — контекст задач и исторические передачи;
 - [DEFECT_KNOWLEDGE_BASE](DEFECT_KNOWLEDGE_BASE.md) — регрессионные правила;
 - [generated inventory](UNIFIED_FALLBACK_INVENTORY.generated.md) — машинный
   каталог из frontend script, не требования и не статус сертификации.

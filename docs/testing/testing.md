@@ -40,8 +40,10 @@ CLI/helper implementation. Diff hygiene does not inspect untracked files and
 does not prove instruction behavior. For a changed skill, also validate its
 frontmatter/references and reason through relevant decision scenarios.
 
-Use only the canonical source folder named in AGENTS.md, with one repository-wide
-writer. Isolate test databases, loopback ports and worker queues, not source edits.
+Use only the canonical source folder named in AGENTS.md. Each task follows the
+user-authorized scope and preserves unrelated edits; writer assignment and cross-task
+approval are not required. Isolate test databases, loopback ports and worker queues,
+not source edits.
 Never use an existing merchant
 database, real credentials or someone else's server as a convenient test fixture.
 
