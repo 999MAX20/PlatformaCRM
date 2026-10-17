@@ -1,5 +1,7 @@
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 
+from apps.businesses.access import Resources, can_view_sensitive_field
 from apps.clients.models import Client
 from apps.clients.services import duplicate_payload, find_duplicate_clients, merge_clients, merge_clients_dry_run
 from apps.core.permissions import accessible_businesses
@@ -60,6 +62,36 @@ class ClientSerializer(serializers.ModelSerializer):
             "next_step_priority",
         ]
         read_only_fields = ["created_at", "updated_at", "is_archived", "archived_at", "archived_by", "archive_reason"]
+
+    def notes_visible(self, business):
+        actor = getattr(self.context.get("request"), "user", None) or self.context.get("actor")
+        # A list can contain different Business roles for the same user.
+        cache = getattr(self, "_notes_visibility", None)
+        if cache is None:
+            cache = self._notes_visibility = {}
+        if business.pk not in cache:
+            cache[business.pk] = bool(actor and can_view_sensitive_field(actor, business, Resources.CLIENTS, "notes"))
+        return cache[business.pk]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        visibility = getattr(self, "_notes_visibility", {})
+        if instance.business_id not in visibility:
+            self.notes_visible(instance.business)
+        if not self._notes_visibility[instance.business_id]:
+            data["notes"] = ""
+        return data
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        business = attrs.get("business", getattr(self.instance, "business", None))
+        if "notes" in attrs and business and not self.notes_visible(business):
+            if attrs["notes"]:
+                raise PermissionDenied("This field is not available to your role.")
+            # Existing clients submit the masked empty value during ordinary edits.
+            # It must not become a request to clear the stored private note.
+            attrs.pop("notes")
+        return attrs
 
 
 class DuplicateCheckSerializer(serializers.Serializer):

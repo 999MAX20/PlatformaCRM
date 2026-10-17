@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover - local env may install requirements aft
 
 from apps.clients.models import Client
 from apps.clients.services import duplicate_payload, find_duplicate_clients
-from apps.businesses.access import Actions, Resources, scope_queryset
+from apps.businesses.access import Actions, Resources, can_view_sensitive_field, scope_queryset
 from apps.businesses.capabilities import assert_resource_enabled
 from apps.core.audit import write_audit_log
 from apps.core.csv_safety import safe_csv_cell
@@ -856,12 +856,12 @@ def import_template_response(entity_type):
     return response
 
 
-def export_csv_response(queryset, fields, filename):
+def export_csv_response(queryset, fields, filename, *, redacted_fields=()):
     buffer = io.StringIO()
     writer = csv.writer(buffer)
     writer.writerow(fields)
     for instance in queryset.iterator(chunk_size=1000):
-        writer.writerow([safe_csv_cell(getattr(instance, field, "")) for field in fields])
+        writer.writerow(["" if field in redacted_fields else safe_csv_cell(getattr(instance, field, "")) for field in fields])
     response = HttpResponse(buffer.getvalue(), content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response
@@ -872,6 +872,7 @@ def export_clients(business, *, user=None):
         entity_export_queryset(business, ImportJob.EntityTypes.CLIENTS, user=user),
         ["id", "full_name", "phone", "email", "source", "notes", "created_at"],
         "clients.csv",
+        redacted_fields=() if user and can_view_sensitive_field(user, business, Resources.CLIENTS, "notes") else ("notes",),
     )
 
 

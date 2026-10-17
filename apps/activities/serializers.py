@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.activities.models import ActivityEvent, Note, Segment, SegmentFilter, Tag, TaggedObject
 from apps.activities.write_validation import CLIENT_LINK_ERROR, HistoryWriteValidationMixin
+from apps.activities.segments import assert_segment_filter_visible
 from apps.integrations.sanitization import sanitize_error_payload
 
 
@@ -133,6 +134,11 @@ class SegmentFilterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Segment must belong to the selected business.")
         if business is None and segment is not None:
             attrs["business"] = segment.business
+        if segment is not None:
+            assert_segment_filter_visible(
+                segment=segment, field=attrs.get("field", getattr(self.instance, "field", None)),
+                actor=getattr(self.context.get("request"), "user", None),
+            )
         return attrs
 
 

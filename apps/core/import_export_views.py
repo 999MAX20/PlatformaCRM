@@ -7,7 +7,8 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from django.conf import settings
 from django.http import FileResponse
 
-from apps.businesses.access import Actions, Resources, assert_can
+from apps.businesses.access import Actions, Resources, assert_can, can_view_sensitive_field
+from apps.clients.export_privacy import private_notes_redacted_csv
 from apps.businesses.capabilities import assert_resource_enabled
 from apps.core.audit import write_audit_log
 from apps.core.import_export import (
@@ -116,6 +117,10 @@ class ExportJobViewSet(ReadOnlyModelViewSet):
             business=job.business,
             metadata={"kind": "file_download", "entity_type": "export_job", "export_key": job.export_key},
         )
+        if job.kind == ExportJob.Kinds.ENTITY and job.export_key == "clients" and not can_view_sensitive_field(
+            request.user, job.business, Resources.CLIENTS, "notes"
+        ):
+            return private_notes_redacted_csv(job.result_file)
         return FileResponse(job.result_file.open("rb"), as_attachment=True, filename=f"{job.export_key}.csv")
 
 @api_view(["GET"])

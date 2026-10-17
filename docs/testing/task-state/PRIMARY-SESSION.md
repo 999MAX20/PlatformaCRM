@@ -6,6 +6,72 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-03-20261017 — client sensitive-note read parity
+
+Owner authorizes next AUD-03 only. Mode: fix reproduced Client.notes disclosure;
+gap: code/evidence. Canonical root C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, base 74d9b179f71d03f9f0303f656cfea375c373b3aa, clean start.
+Reuse can_view_sensitive_field, ClientSerializer, CRM projections and CSV exports;
+do not introduce field grants, change role policy or expand into other AUD items.
+Scope: Client.notes in direct/list/write responses, nested cards, segment/Inbox
+serializer consumers, API-token response without a session actor, sync/background
+CSV and stored CSV download after role narrowing. Fail closed without actor;
+owner/allowed roles retain notes. Masked empty round-trips must not erase secrets.
+Separate history Note records are not Client.notes and retain their existing policy.
+
+Risk: lost actor context hides owner data; cached exports bypass current rights;
+masked fields overwrite stored data; per-row permissions cause avoidable N+1.
+Focused checks after each backend slice: owner/operator/custom role, same user with
+different Business roles, no-context fallback, create/update and masked edit safety;
+then sync/queued/download exports and nearest existing suites. Completion: affected
+dependent suites, system/migration drift, diff/docs/links, normal push and actual CI.
+No planned model/migration/environment/provider/notification/BusinessEvent/AI changes.
+No working DB or deployment. No frontend changes unless a demonstrated consumer
+regression requires them. Pre/post patch reviews here; no other-chat delegation.
+
+Implementation progress: ClientSerializer masks notes with the existing policy and
+per-Business serializer cache; context-free output fails closed. CRM cards/segment/
+Inbox consumers now pass actor/request explicitly. Hidden empty edit values are
+ignored to preserve stored notes; nonempty restricted writes are denied, consistent
+with the existing CRM AI field validation. Owner edits/clearing remain supported.
+Sync/queued CSV producers retain columns but mask notes; stored-file download streams
+CSV parsing/redaction under current rights, preserving quoted multiline rows and
+the original private file. Existing Inbox context/AI read and duplicate/merge
+snapshots were inspected; they already mask or omit this field.
+
+Separate bypass review found a notes-segment predicate/count oracle. Segment/filter
+reads and actions, client list filtering by segment, and filter writes now apply
+the same field policy; ordinary segments and owner evaluation remain available.
+This closes an alternate Client.notes projection, not a new permission framework.
+
+Focused commands used `.venv/Scripts/python.exe -c $aud03Check`, Python
+`isolated_runtime(python=sys.executable)`, subprocess with runtime.environment and
+`manage.py test apps.clients.tests_sensitive_notes -v 1`:
+- API/serializer slice: 5 PASS, 1.788s.
+- Export/role-change/token slice: 8 PASS, 1.917s.
+- Segment predicate slice: 9 PASS, 2.419s.
+No failed checks so far. `manage.py check` PASS and `makemigrations --check --dry-run`
+PASS (no changes). Affected/dependent run PASS: 199 tests, 130.584s:
+`manage.py test apps.clients apps.activities apps.core.tests_import_export apps.core.tests_crm_projection_access apps.core.tests_b5_performance apps.conversations.tests_inbox_context apps.conversations.tests_client_linking apps.integrations.tests_public_api apps.ai_core.tests_crm_tools -v 1`.
+Result: AUD-03 closed in local scope. No code/evidence/owner-decision remainder
+within this boundary. Tests used disposable isolated SQLite/media and the existing
+venv; background job service invoked directly, no live broker/provider/storage.
+No working DB mutation or migration. Live rollout/deployment remains separate;
+stored private export files are masked on download, not rewritten or deleted.
+
+Post-patch review checked all ClientSerializer callers, CSV producer/worker/download,
+segment predicate/count bypasses, existing Inbox/AI field guards and merge snapshots.
+No frontend source changed: no frontend build/browser or full-project suite, because
+this scoped backend change is covered through reachable API tests and dependent suites.
+Contracts access/CRM, clients/identity/data-lifecycle passports, capabilities, roadmap
+and STATUS updated together. Frontend/AI/provider/operations contracts and README need
+no change: no UI/config/setup/grant or provider behavior introduced. Historical audit
+evidence remains immutable; this checkpoint supersedes its AUD-03 finding only.
+Docs links/registry/diff hygiene and reviewed source/untracked files checked before
+publication. Snapshot: base 74d9b179 plus this bounded commit; final SHA, normal push
+read-back and actual CI are recorded in the task completion receipt. Next AUD-13 is
+not started and requires the next instruction.
+
 ## AUD-02-20261017 — activity and form write boundaries
 
 Owner continuation authorizes AUD-02 only. Mode: fix confirmed security boundary;

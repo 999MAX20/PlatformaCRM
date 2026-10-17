@@ -3,7 +3,7 @@ from django.db.models import BooleanField, Case, CharField, Count, DateTimeField
 from django.db.models.functions import Cast, Coalesce, Greatest, NullIf
 
 from apps.activities.models import Segment, TaggedObject
-from apps.activities.segments import evaluate_segment_queryset
+from apps.activities.segments import evaluate_segment_queryset, readable_segments
 from apps.bots.models import BotConversation
 from apps.businesses.access import Resources
 from apps.clients.identity import normalize_email, normalize_phone
@@ -73,12 +73,12 @@ def filter_client_queryset(queryset, request, *, client_ids=None):
         ).values_list("entity_id", flat=True)
         queryset = queryset.filter(id__in=tagged_client_ids)
     if segment_id:
-        segment = Segment.objects.filter(
+        segment = readable_segments(Segment.objects.filter(
             id=segment_id,
             business_id__in=queryset.values_list("business_id", flat=True),
             entity_type=Segment.EntityTypes.CLIENT,
             is_active=True,
-        ).first()
+        ), request.user).first()
         if segment is None:
             return queryset.none()
         segment_ids = evaluate_segment_queryset(segment).values_list("id", flat=True)

@@ -483,7 +483,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         return Response(
             {
                 "conversation": self.get_serializer(result.conversation).data,
-                "client": ClientSerializer(result.client).data,
+                "client": ClientSerializer(result.client, context={"request": request}).data,
                 "lead": LeadSerializer(result.lead).data if result.lead else None,
                 "deal": DealSerializer(result.deal).data if result.deal else None,
                 "task": TaskSerializer(result.task).data if result.task else None,
@@ -544,7 +544,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         if conversation.client_id:
-            return Response({"client": ClientSerializer(conversation.client).data, "duplicates": [], "created": False})
+            return Response({"client": ClientSerializer(conversation.client, context={"request": request}).data, "duplicates": [], "created": False})
 
         full_name = serializer.validated_data.get("full_name") or conversation.external_user_id or conversation.external_thread_id or f"Inbox visitor #{conversation.id}"
         phone = serializer.validated_data.get("phone", "")
@@ -578,7 +578,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
             text="Client created from inbox conversation.",
             metadata={"client_id": client.id, "channel": conversation.channel},
         )
-        return Response({"client": ClientSerializer(client).data, "duplicates": [], "created": True}, status=status.HTTP_201_CREATED)
+        return Response({"client": ClientSerializer(client, context={"request": request}).data, "duplicates": [], "created": True}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path="create-lead")
     def create_lead(self, request, pk=None):

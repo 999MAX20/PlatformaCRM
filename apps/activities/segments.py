@@ -3,6 +3,26 @@ from django.utils import timezone
 
 from apps.activities.models import Segment, SegmentFilter, TaggedObject
 from apps.clients.models import Client
+from apps.businesses.access import Resources, can_view_sensitive_field
+from apps.businesses.models import Business
+from rest_framework.exceptions import PermissionDenied
+
+
+def readable_segments(queryset, actor):
+    """A predicate/count over a hidden note is itself a sensitive projection."""
+    businesses = Business.objects.filter(pk__in=queryset.values("business_id"))
+    allowed = [business.pk for business in businesses
+               if actor and can_view_sensitive_field(actor, business, Resources.CLIENTS, "notes")]
+    private_ids = SegmentFilter.objects.filter(field=SegmentFilter.Fields.NOTES).exclude(
+        segment__business_id__in=allowed,
+    ).values("segment_id")
+    return queryset.exclude(pk__in=private_ids)
+
+
+def assert_segment_filter_visible(*, segment, field, actor):
+    if field == SegmentFilter.Fields.NOTES or segment.filters.filter(field=SegmentFilter.Fields.NOTES).exists():
+        if not actor or not can_view_sensitive_field(actor, segment.business, Resources.CLIENTS, "notes"):
+            raise PermissionDenied("This field is not available to your role.")
 
 
 def _value_list(value_json):

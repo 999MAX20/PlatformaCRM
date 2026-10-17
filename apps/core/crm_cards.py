@@ -553,7 +553,7 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
                 "notes": related_counts["notes"] > NOTES_LIMIT,
             },
         },
-        "client": ClientSerializer(client).data if client is not None else None,
+        "client": ClientSerializer(client, context={"actor": actor}).data if client is not None else None,
         "lead": LeadListSerializer(primary_lead).data if primary_lead is not None else None,
         "deal": DealListSerializer(primary_deal, context={"actor": actor}).data if primary_deal is not None else None,
         "appointment": AppointmentSerializer(primary_appointment).data if primary_appointment is not None else None,

@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.activities.models import ActivityEvent, Note, Segment, SegmentFilter, Tag, TaggedObject
-from apps.activities.segments import evaluate_segment_queryset, refresh_segment_count
+from apps.activities.segments import evaluate_segment_queryset, readable_segments, refresh_segment_count
 from apps.activities.serializers import (
     ActivityEventSerializer,
     ActivityTimelineSerializer,
@@ -84,6 +84,9 @@ class SegmentViewSet(TenantModelViewSet):
     queryset = Segment.objects.select_related("business").prefetch_related("filters")
     serializer_class = SegmentSerializer
 
+    def get_queryset(self):
+        return readable_segments(super().get_queryset(), self.request.user)
+
     @action(detail=True, methods=["get"])
     def evaluate(self, request, pk=None):
         segment = self.get_object()
@@ -91,7 +94,7 @@ class SegmentViewSet(TenantModelViewSet):
         return Response(
             {
                 "count": clients.count(),
-                "clients": ClientSerializer(clients[:100], many=True).data,
+                "clients": ClientSerializer(clients[:100], many=True, context={"request": request}).data,
             }
         )
 
@@ -105,6 +108,11 @@ class SegmentViewSet(TenantModelViewSet):
 class SegmentFilterViewSet(TenantModelViewSet):
     queryset = SegmentFilter.objects.select_related("business", "segment")
     serializer_class = SegmentFilterSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        segments = readable_segments(Segment.objects.filter(pk__in=queryset.values("segment_id")), self.request.user)
+        return queryset.filter(segment__in=segments)
 
     def _business_from_serializer(self, serializer):
         business = super()._business_from_serializer(serializer)

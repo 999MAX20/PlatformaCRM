@@ -24,7 +24,11 @@ Duplicate preview использует нормализованные телеф
 Business и object scope обязательны. AUD-02 устраняет foreign links/подмену
 авторства notes/activity: проверяются прямые и polymorphic CRM-связи, автор из
 сессии, прежняя связь при relink. Версия и проверки — checkpoint AUD-02-20261017.
-Выдача внутренних notes оператору через client detail остаётся AUD-03.
+AUD-03 закрывает выдачу Client.notes через list/detail, карточки, segment evaluate,
+public token и CSV. Оператор получает пустое поле; owner/разрешённая роль — значение.
+Пустой masked edit сохраняет исходную заметку, непустая запрещённая запись даёт 403.
+Notes-сегменты скрываются вместе с условиями/счётчиками. Версия, изолированные
+API-проверки и граница публикации — checkpoint AUD-03-20261017; deployment отдельно.
 Generic API не обеспечивает контракт
 по всем входам; [evidence](../testing/project-audit-20261017.md) и
 [очередь исправлений](../current/roadmap.md#project-audit-20261017).
