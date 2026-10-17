@@ -1,8 +1,11 @@
 # Inbox и ручная работа с обращениями
 
-Граница аудита 17.10 (`56dd124`): штатные Inbox actions не защищают generic
-BotMessage PATCH; writable delivery state допускает обход родительского scope
-и повторную постановку outbound. AUD-14 открыт в
+AUD-14, 17.10: generic BotMessage/legacy Message запрещают PATCH/PUT/DELETE истории;
+родительский scope применяется к list/detail и intake. Входящий текст сохраняет
+обычную регистрацию, но sender/provider payload/IDs/delivery state не принимаются.
+Send/retry доступны через существующие Inbox actions; дубли и ошибки проверены
+локально, без реальной доставки. Версия/команды — checkpoint AUD-14-20261017.
+Статус и оставшаяся внешняя приёмка — в
 [roadmap](../current/roadmap.md#project-audit-20261017);
 [условия и ограничения](../testing/project-audit-20261017.md#aud-14--обычный-patch-сообщения-обходит-отправку-через-inbox).
 Внешняя отправка в аудите не выполнялась.

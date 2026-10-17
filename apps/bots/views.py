@@ -40,6 +40,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import MethodNotAllowed, PermissionDenied
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework import status
 
@@ -286,7 +287,9 @@ class BotMessageViewSet(TenantModelViewSet):
     queryset = BotMessage.objects.select_related("conversation", "conversation__business", "conversation__bot")
     serializer_class = BotMessageSerializer
     business_lookup = "conversation__business"
+    http_method_names = ["get", "post", "head", "options"]
 
+    @transaction.atomic
     def perform_create(self, serializer):
         super().perform_create(serializer)
         message = serializer.instance

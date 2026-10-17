@@ -59,8 +59,16 @@ AUD-13, 17.10: обычные PATCH/PUT через TenantModelViewSet прове
 и запрет смены Business сохраняются; при CRM lock reload исходные права проверяются
 повторно. Смена responsible_user заявки проходит assign_lead и его assignment policy,
 историю/аудит/уведомления в одной транзакции с остальными полями. Чужой tenant остаётся
-недоступным. Это не закрывает отдельные ограничения message payload/lifecycle AUD-14.
+недоступным. Message payload/lifecycle отдельно защищён в AUD-14 ниже.
 Версия и изолированные проверки — checkpoint AUD-13-20261017.
+
+AUD-14, 17.10: BotMessage и legacy Message наследуют OWN/TEAM от родительского
+диалога, в object check и queryset до pagination. Generic PATCH/PUT/DELETE истории
+запрещены. Authenticated POST сохраняет только входящий текст от client; требует
+CREATE сообщения и VIEW/UPDATE диалога, повторно проверяемых под блокировкой.
+Произвольный sender, provider payload/ID, delivery status/retry/timestamps не принимаются.
+Исходящие сообщения и retry проходят существующие Inbox actions с UPDATE диалога;
+чужой message_id нельзя повторить через другой диалог. Версия/проверки — AUD-14 checkpoint.
 
 Назначения проверяют активного участника того же бизнеса и область caller.
 Новый assignee не может быть временно недоступен. Operator может self-claim
@@ -87,7 +95,7 @@ Business type — метаданные, не автоматическое скр
 NONE не стирает набор разрешённых действий. Управление определениями custom fields
 требует `settings:update`; запись значения также требует доступа VIEW/UPDATE к самой
 CRM-сущности и разрешённой роли поля. Списки значений ограничиваются объектным scope.
-Право менять обычные сообщения не заменяет `conversations:manage` для общих быстрых
+Право отвечать в диалоге не заменяет `conversations:manage` для общих быстрых
 ответов. Реестр и граница проверки — [Settings evidence](../testing/settings-functional-20261008.md).
 
 Код: [tenant viewsets](../../apps/core/viewsets.py),

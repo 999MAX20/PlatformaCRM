@@ -58,6 +58,13 @@ Marketplace по умолчанию read_only. Отдельный inventory_writ
 [CRM](crm.md#деньги-и-аналитика). Реестр external financial readers пока пуст;
 общий connector не становится денежным источником автоматически.
 
+AUD-14, 17.10: generic message API не позволяет менять историю или назначать delivery
+state, external IDs, raw payload и timestamps. Authenticated inbound-text POST имеет
+allowlist, client sender и parent permissions; он не подменяет доверенный webhook.
+Исходящие send/retry и запись provider metadata остаются за существующими сервисами.
+Проверки локальные, с mock/изолированной доставкой: checkpoint AUD-14-20261017;
+активация провайдера, credentials и rollout этим не меняются.
+
 ## Импорт, экспорт и public ingress
 
 CSV/XLSX импорт переиспользует [imports](../../apps/core/import_export.py): роли/Business,

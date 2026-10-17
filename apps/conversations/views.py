@@ -2,6 +2,7 @@ from apps.conversations.models import Conversation, Message, QuickReplyTemplate
 from apps.conversations.serializers import ConversationSerializer, MessageSerializer, QuickReplyTemplateSerializer
 from apps.core.viewsets import TenantModelViewSet
 from apps.businesses.access import Actions, Resources, assert_can
+from django.db import transaction
 
 
 class ConversationViewSet(TenantModelViewSet):
@@ -13,6 +14,11 @@ class MessageViewSet(TenantModelViewSet):
     queryset = Message.objects.select_related("conversation", "conversation__business")
     serializer_class = MessageSerializer
     business_lookup = "conversation__business"
+    http_method_names = ["get", "post", "head", "options"]
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
 
 
 class QuickReplyTemplateViewSet(TenantModelViewSet):

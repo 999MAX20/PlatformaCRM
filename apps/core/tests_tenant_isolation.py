@@ -253,7 +253,7 @@ class TenantObjectBoundaryTests(TestCase):
         self.assertEqual(foreign_client.business_id, self.business_b.id)
         self.assertEqual(foreign_client.full_name, "Client B")
 
-    def test_generic_update_allows_derived_owner_change_inside_same_business(self):
+    def test_message_history_cannot_be_reparented_inside_same_business(self):
         self.api.force_authenticate(self.owner_a)
         conversation_a = Conversation.objects.create(
             business=self.business_a,
@@ -277,12 +277,12 @@ class TenantObjectBoundaryTests(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.status_code, 405, response.data)
         message.refresh_from_db()
-        self.assertEqual(message.conversation_id, another_conversation_a.id)
-        self.assertEqual(message.text, "Moved inside tenant")
+        self.assertEqual(message.conversation_id, conversation_a.id)
+        self.assertEqual(message.text, "Original message")
 
-    def test_generic_update_rejects_derived_business_reassignment(self):
+    def test_message_history_cannot_be_reparented_to_another_business(self):
         self._grant_owner_a_access_to_business_b()
         self.api.force_authenticate(self.owner_a)
         conversation_a = Conversation.objects.create(
@@ -307,8 +307,7 @@ class TenantObjectBoundaryTests(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, 400, response.data)
-        self.assertIn("The owning business cannot be changed.", str(response.data))
+        self.assertEqual(response.status_code, 405, response.data)
         message.refresh_from_db()
         self.assertEqual(message.conversation_id, conversation_a.id)
         self.assertEqual(message.text, "Original message")

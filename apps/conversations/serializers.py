@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.conversations.models import Conversation, Message, QuickReplyTemplate
+from apps.conversations.message_history import InboundMessageSerializerMixin
 
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -31,7 +32,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class MessageSerializer(serializers.ModelSerializer):
+class MessageSerializer(InboundMessageSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = [
@@ -42,7 +43,7 @@ class MessageSerializer(serializers.ModelSerializer):
             "raw_payload",
             "created_at",
         ]
-        read_only_fields = ["created_at"]
+        read_only_fields = ["raw_payload", "created_at"]
 
 
 class QuickReplyTemplateSerializer(serializers.ModelSerializer):

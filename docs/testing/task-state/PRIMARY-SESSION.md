@@ -6,6 +6,95 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-14-20261017 — immutable message history and parent scope
+
+Owner continuation authorizes AUD-14 only. Mode fix confirmed message PATCH/delivery
+bypass; gap code/evidence. Root C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, base 7c10df881f7d9efbf252985f52378085fe4957b9; clean start.
+Reuse access scope, existing message serializers, Inbox send/retry, inbound registration
+and provider services. Preserve supported authenticated inbound text creation, but
+server delivery metadata/provider IDs/payload and sender provenance cannot be supplied.
+Generic PATCH/PUT/DELETE must not rewrite or remove message history (BotMessage and
+legacy Message). Read/create scope derives from conversation, not an ownerless child.
+Send/retry remain on existing guarded services; no new delivery or permission model.
+Non-goals: unrelated BotConversation lifecycle, AUD-15+, provider activation, migrations,
+working DB or real sends. No new UI unless an actual consumer regression requires it.
+Risk: own/team message lists become empty/leaky; counterfeit inbound side effects;
+existing intake/send/retry regressions; history change or partial inbound registration.
+Focused reproducer and checks after each slice: payload/sender/status/requeue rejection,
+owner/operator own/team/business parent scopes, foreign tenant, normal inbound, valid
+send/retry/dedupe and invalid retry. Completion affected/dependent message/Inbox/access/
+provider-boundary suites, system/migration drift, docs/diff review, normal push/actual CI.
+Provider calls mocked/isolated. Notifications/BusinessEvents retain existing services;
+no new AI action or confirmation policy. No agents or other-chat coordination.
+
+AUD-14 implementation: message endpoints retain GET/POST only. Shared inbound
+serializer allowlist accepts conversation/text/client sender (+ inbound direction for
+BotMessage); provider metadata/state/payload/IDs/timestamps are read-only and explicit
+input is rejected. No-context intake fails closed. Existing message serialization
+remains readable; validation rejects direct serializer edits too. Parent VIEW/UPDATE
+is checked at validation and after Business-first/parent row lock. Message creation,
+registration and generic audit/activity are atomic; existing intake notifications and
+BOT_MESSAGE_RECEIVED automation are retained. Scope helpers derive child OWN/TEAM
+from parent query/object. Main UI uses Inbox send/retry, generic bot messages only read.
+Two old tenant tests expected legacy message edits/reparenting; their expected result
+now is 405 with preserved original parent/text, matching immutable-history acceptance.
+
+Focused wrapper `.venv/Scripts/python.exe -c $aud14Check` uses isolated_runtime,
+subprocess manage.py with runtime.environment and bounded captured logs.
+`manage.py test apps.conversations.tests_message_history -v 1`:
+- Fixture setup initially failed (0 tests): Bot.scenario is a property; corrected to
+  existing default inbox scenario before baseline reproduction.
+- Baseline 3 FAIL, 0.123s: PATCH requeues/rewrites (200), wrong-parent intake (201),
+  OWN history list missing allowed message. These are reproduced code defects.
+- First boundary slice: 3 PASS, 0.157s.
+- Extended parent/sender/metadata/intake/rollback/send/retry suite: 11 PASS, 0.599s.
+Final focused: 15 PASS, 4.729s, including 13 new history tests and the two updated
+`apps.core.tests_tenant_isolation.TenantObjectBoundaryTests.test_message_history_cannot_be_reparented_inside_same_business` and
+`...test_message_history_cannot_be_reparented_to_another_business` labels (same wrapper).
+System check PASS; makemigrations --check --dry-run PASS, no changes.
+Affected/dependent: 288 tests, 216.450s, OK (286 PASS, 2 skipped), same isolated wrapper:
+`manage.py test apps.conversations apps.bots.tests apps.bots.tests_pause_inbound apps.bots.tests_handoff_recovery apps.businesses.tests_access apps.core.tests_tenant_isolation apps.core.tests_crm_projection_access apps.core.tests_platform_crm apps.activities.tests_write_boundaries apps.ai_core.tests_conversation_memory apps.ai_core.tests_crm_tools -v 1`.
+Additional focused PostgreSQL gate selected for the newly locked inbound-create
+boundary: apps.conversations.tests_message_history_concurrency tests two concurrent
+POSTs preserve both rows and unread_count. Uses isolated_runtime with a new native
+PostgreSQL17 cluster under ignored output/aud14-pg-*, localhost free port, synthetic
+trust-only test user/database, hidden child processes. initdb/pg_ctl/createdb and
+manage.py test via inline $aud14Pg; finally stops only its own cluster.
+Final PostgreSQL17 run PASS: 1 test, 2.979s, both POST 201, two distinct rows and
+unread_count=2. Owned cluster stopped successfully; postmaster.pid absent.
+SQLite skips: new MessageIntakeConcurrencyTests and existing
+HandoffRecoveryConcurrencyTests.test_two_workers_resume_once. New intake checked
+separately on PostgreSQL; unchanged handoff concurrency remains outside this gate.
+Initial PostgreSQL harness hung on inherited stdout pipe from pg_ctl; no tests ran.
+Stopped only owned cluster and changed subprocess output to files. First actual
+concurrency run failed BrokenBarrierError: a barrier inside intake waited while the
+other request waited on earlier database writes. Moved synchronization to request
+start, retaining all success/count/history assertions; corrected run passed.
+Synthetic logs retained in ignored output/aud14-pg-ij0o3kcf (test2/test3 and stop logs).
+No working DB/server is reused or stopped. This is not a full provider/live drill.
+
+Host command startup/migration preparation slowed temporarily; the focused run
+completed without timeout/error. No other processes stopped, no test gates weakened.
+
+Closure: AUD-14 implemented and verified locally on base 7c10df881f7d9efbf252985f52378085fe4957b9
+plus this task-owned commit (publication SHA/remote/CI receipt in task final).
+Roadmap, access/CRM/integration contracts and identity/Inbox/capabilities passports
+updated consistently. No code/evidence/owner-decision remainder in accepted scope.
+Environment remainder: deployment and live provider acceptance are separate; no real
+sends, credentials, working DB migrations or external delivery claims.
+Frontend/API consumer inspection found no message-edit consumer; unchanged UI/build
+inputs mean no browser/build gate required. AI/frontend/operations/README need no
+changes: no new AI action, UI, settings, schema, setup or deployment behavior.
+Full-project/release suite not run: bounded backend/history/access change, affected
+and dependent suites above. Historical audit evidence preserved, with current status
+in roadmap/passports. No new documents/backlog or agents. No owned processes remain.
+Documentation verification PASS: 9 changed docs, changed relative link/anchor,
+registry uniqueness and AUD-01..22 mapping; git diff --check PASS. Intended source,
+tests and untracked files reviewed; synthetic fixtures only, no secrets/unrelated WIP.
+Fetched origin/main matches base 7c10df88; normal HEAD:main publication intended.
+Next unfinished criterion AUD-15 is not started or authorized by this closure.
+
 ## AUD-13-20261017 — original-object update and lead assignment
 
 Owner continuation authorizes AUD-13 only. Mode: fix confirmed generic PATCH scope

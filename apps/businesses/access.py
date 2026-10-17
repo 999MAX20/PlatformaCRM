@@ -416,6 +416,8 @@ def _is_business_shared_configuration_queryset(queryset):
 
 
 def _object_matches_scope(obj, user, business: Business | None, scope: str, action: str) -> bool:
+    if obj.__class__.__name__ in {"BotMessage", "Message"}:
+        return _object_matches_scope(obj.conversation, user, business, scope, action)
     if obj.__class__.__name__ in {"Pipeline", "PipelineStage", "StageTransition", "Branch"}:
         return True
 
@@ -545,6 +547,13 @@ def _filter_queryset_by_users(
     business: Business | None,
     include_business_wide_notifications: bool,
 ):
+    if queryset.model.__name__ in {"BotMessage", "Message"}:
+        parent_model = queryset.model._meta.get_field("conversation").related_model
+        parents = _filter_queryset_by_users(
+            parent_model.objects.filter(business=business), user_ids, business=business,
+            include_business_wide_notifications=include_business_wide_notifications,
+        )
+        return queryset.filter(conversation__in=parents)
     if queryset.model.__name__ == "Task":
         return queryset.filter(Q(assignee_id__in=user_ids) | Q(created_by_id__in=user_ids) | Q(watchers__id__in=user_ids)).distinct()
     model_fields = {field.name for field in queryset.model._meta.get_fields()}

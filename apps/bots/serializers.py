@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db import transaction
 
 from apps.core.security_config import has_strong_shared_secret
 from apps.bots.models import Bot, BotChannel, BotConversation, BotMessage
@@ -9,6 +10,7 @@ from apps.billing.entitlements import EntitlementMetrics, assert_entitlement_all
 from apps.billing.usage import increment_usage
 from apps.clients.models import Client
 from apps.conversations.auto_pipeline import maybe_run_auto_pipeline
+from apps.conversations.message_history import InboundMessageSerializerMixin
 from apps.outreach.consent import payload_has_explicit_consent
 from apps.outreach.models import OutreachCampaign
 from apps.outreach.services import record_explicit_consent
@@ -266,7 +268,9 @@ class BotConversationSerializer(serializers.ModelSerializer):
         return conversation
 
 
-class BotMessageSerializer(serializers.ModelSerializer):
+class BotMessageSerializer(InboundMessageSerializerMixin, serializers.ModelSerializer):
+    input_fields = InboundMessageSerializerMixin.input_fields | {"direction"}
+
     class Meta:
         model = BotMessage
         fields = [
@@ -288,6 +292,8 @@ class BotMessageSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = [
+            "external_message_id", "payload_json", "error_text", "status",
+            "sent_at", "delivered_at", "read_at",
             "created_at",
             "delivery_attempts",
             "delivery_max_attempts",
@@ -298,6 +304,7 @@ class BotMessageSerializer(serializers.ModelSerializer):
         }
         validators = []
 
+    @transaction.atomic
     def create(self, validated_data):
         message = super().create(validated_data)
         register_bot_message(message)
