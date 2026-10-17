@@ -6,11 +6,17 @@
 
 # PlatformaCRM — текущий статус
 
+17.10.2026. AUD-01 закрыт в локальном scope: offline-кэш/очередь изолированы по
+пользователю/Business/правам, очищаются при завершении сессии; empty/denied/loading
+и recovery проверены. Storage9, desktop/mobile browser, build/types/i18n/bundle PASS.
+Остальные критерии AUD-10 открыты; следующий AUD-02 не начат. Версия, команды,
+граница и публикационная квитанция — checkpoint AUD-01-20261017 и итог задачи.
+
 17.10.2026. PROJECT-AUDIT: оформлены 20 подтверждённых пунктов и два риска на
 проверку. [Единый roadmap](docs/current/roadmap.md#project-audit-20261017) содержит
 порядок, критерии и правила изменения статуса; [evidence](docs/testing/project-audit-20261017.md)
-разделяет API/browser, source и непроверенное. Исправления не начаты; следующий
-пункт AUD-01. Security scan завершён с partial coverage, не полная сертификация.
+разделяет API/browser, source и непроверенное. Ход исправлений — AUD roadmap;
+исходный security scan завершён с partial coverage, не полная сертификация.
 Документационная проверка/публикация — checkpoint PROJECT-AUDIT-20261017.
 
 16.10.2026. Этап6: завершена согласованная локальная приёмка ADMIN-01–04

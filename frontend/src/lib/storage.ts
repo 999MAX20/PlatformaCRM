@@ -1,4 +1,5 @@
 import { readSessionIdentity } from "../api/sessionIdentity";
+import { clearLeadOfflineStorage } from "./leadOfflineStorage";
 
 const ACCESS_TOKEN_KEY = "ai_smb_access_token";
 const USER_EMAIL_KEY = "ai_smb_user_email";
@@ -41,6 +42,7 @@ export const tokenStorage = {
     sessionGeneration += 1;
     userId = null;
     accessToken = null;
+    clearLeadOfflineStorage();
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(USER_EMAIL_KEY);
   },

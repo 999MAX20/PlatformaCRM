@@ -6,6 +6,107 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-01-20261017 — offline lead data isolation
+
+Owner continuation authorizes the next roadmap item AUD-01 only. Mode: implement
+and verify the reproduced cross-account offline disclosure. Canonical checkout,
+branch codex/ui-testing-toolkit, base de78a674262132227183d2bc7bd175719e533080,
+clean starting index/worktree. Reuse lead offline hook, tokenStorage session-clear
+boundary and existing isolated Playwright fixtures; no worktree or delegation.
+
+Observable result: A logout → B → offline cannot show or replay A's stored leads;
+user/Business/access-context switches never reuse another scope, legacy unscoped
+data is discarded, successful empty responses remove stale rows, while offline
+fallback/reconnect for the same authorized context still works. Scope includes
+queue isolation because it shares the leaking storage boundary; queue capacity,
+idempotency and recovery UX remain AUD-10. No backend/API policy, migrations,
+notifications, BusinessEvents or AI behavior changes intended.
+
+Risk: stale React/query state or late callbacks repopulate cache after logout;
+storage failures or loading/empty confusion break legitimate offline use.
+Pre-patch separate review: inspect storage copies, token/session-clear callers,
+query placeholder/identity lifecycle and direct consumers. Independent delegation
+is unavailable under owner's no-other-chat instruction; perform separate review
+passes here, including one bypass/regression pass after focused checks.
+
+Focused checks: behavioral storage tests; isolated browser original A/B trigger,
+legacy data, empty/loading/error/recovery and same-user Business/access changes;
+nearest session-cache-isolation checks. Completion: build/types/i18n, bundle check,
+diff/index/actual committed-range hygiene, updated AUD-01 status/passports/evidence,
+normal push and actual CI receipt. No reinstall/full E2E/backend suite needed unless
+the implementation demonstrates shared impact requiring it; no live providers or
+working DB writes. Earlier audit evidence remains historical, not overwritten.
+
+Outcome: fixed in the authorized local scope. Original A → logout → B → offline
+trigger no longer discloses A's data or replays its legacy queue. Same-context offline
+fallback survives reload plus 503/connection loss and reconnect; empty success clears
+stale rows, loading preserves them, 403 hides/purges them. All ordinary display
+preferences remain. Queue isolation is a completed subcriterion of AUD-10; its
+capacity/drop/idempotency/recovery work remains open. Next AUD-02 not started.
+
+Implementation: frontend/src/lib/leadOfflineStorage.ts provides versioned owner/
+Business keys and access-envelope checks, removes ownerless legacy records and
+filters mixed-Business rows. tokenStorage.clear covers logout, expiry, new login,
+cross-tab invalidation and MFA transition. Lead hook resets in-memory scope before
+render; generation/identity guards stop old callbacks from restoring storage or
+continuing replay. Query placeholder cannot cross user/Business; only a genuine
+successful response refreshes cache, including empty. Temporary/offline failures
+can display the authorized snapshot with the existing offline warning; permission
+errors cannot. No new UI copy/layout or backend policy.
+
+Verification, canonical source, disposable SQLite/dedicated localhost ports:
+- `node --test frontend/scripts/tests/lead-offline-storage.test.mjs`: 9 PASS.
+  Covers same-scope reload, different user/Business, copied envelope, narrowed rights,
+  legacy removal, empty snapshot, mixed rows, cleanup/preferences and denied storage.
+- Initial `npx --prefix frontend tsc -b frontend/tsconfig.json --pretty false`
+  found optional query access TS18048; explicit query guard fixed it; repeat PASS.
+- `.venv/Scripts/python.exe scripts/verify_connection_recovery.py e2e/leads-offline-isolation.spec.ts e2e/session-cache-isolation.spec.ts`
+  first run: 19 PASS / 3 FAIL, log
+  output/connection-recovery/browser-1792217041319146300.log.
+  Two failures exposed error panel hiding a valid offline snapshot (desktop/mobile);
+  fixed only this fallback. One was a hidden mobile-link test locator.
+  All 12 nearest session-cache cases PASS: same-tab/cross-tab identity changes,
+  late 200/401 mutation, refresh/retry and queued refresh/logout.
+- `.venv/Scripts/python.exe scripts/verify_connection_recovery.py e2e/leads-offline-isolation.spec.ts`:
+  11 PASS / 1 FAIL, log output/connection-recovery/browser-1792217363636187100.log.
+  Loading/empty/403/expiry and temporary fallback PASS on both viewports. Remaining
+  mobile locator selected bottom navigation under an opened drawer; inspected
+  error-context, selected the visible bottom link without opening the drawer.
+- Separate bypass/compatibility review inspected all tokenStorage.clear callers,
+  direct hook/query consumers, legacy/state copies, permission narrowing and late
+  responses. Found network source/category mismatch: normalized category is offline,
+  not network. Corrected allowlist and added real connection-loss case; no other
+  concrete surviving bypass found. This was sequential review, not independent audit.
+- Final affected rerun:
+  `.venv/Scripts/python.exe scripts/verify_connection_recovery.py e2e/leads-offline-isolation.spec.ts --grep 'A logout|same session'`:
+  6 PASS, no skips, log output/connection-recovery/browser-1792217576811081000.log.
+  Original exploit, 503 and actual aborted connection/reconnect pass desktop/mobile.
+  Reuse unchanged loading/empty/403/expiry and session checks above; no claim that
+  earlier whole failing runs passed. Final coverage is 14 distinct lead browser cases
+  plus 12 nearest session cases across these runs.
+- `npm --prefix frontend run build`: PASS, final output/aud01-build-final.log;
+  types, 6420 i18n keys RU/KK/EN, app/widget builds. Informational chunk/plugin/npm
+  warnings retained; `npm --prefix frontend run check:bundle`: PASS.
+- Working/index/actual committed-range diff hygiene and changed docs links/anchors
+  are checked before publication. No dependency reinstall, backend/full E2E suite,
+  working migration, provider send or deployment: no relevant backend/config delta.
+
+Evidence version: base de78a674 plus task diff; source blob IDs before publication:
+leadOfflineStorage 12e084621809ce3d79d0af02f0c4c23700ecf987;
+tokenStorage 8820e63a6a5c548ab7dd22a842bb66dc73e05cd2;
+offline hook 10e5cd1d9e3e79848b5bf4fbf64873f61f920c79;
+workspace hook ebe25b56daf3e710b0a5566ccd60b95250375126.
+Final commit/push/actual CI receipt is returned in this task. Build/source inputs
+did not change after final checks. Owned browser runtimes finished and disposable
+DBs were cleaned by isolated_runtime; no background continuation.
+
+Documentation: roadmap and frontend contract plus capabilities/access/leads/tasks
+passports reflect the changed boundary. Historical audit report remains unchanged.
+README, backend access/CRM/API specifications, migrations and existing acceptance IDs
+need no change: their setup/runtime contracts are not modified. In-scope code,
+evidence and owner decisions: no remainder. Target deployment/live rollout remains
+separate; cache is limited to 50 previously loaded rows and AUD-10 remains partial.
+
 ## PROJECT-AUDIT-20261017 — additional review and remediation roadmap
 
 Owner requested documentation of the twelve findings reported 16.10, an additional

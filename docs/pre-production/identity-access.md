@@ -1,8 +1,11 @@
 # Команда, аккаунт и безопасность доступа
 
-Граница 17.10 (`56dd124`): session revocation не очищает общий offline-кэш;
-обнаружены обход UPDATE scope и несогласованные sensitive-field проверки.
-AUD-01/02/03/13/14/17/18 открыты в [roadmap](../current/roadmap.md#project-audit-20261017).
+AUD-01, 17.10: offline-кэш заявок и pending queue разделены по пользователю,
+Business и снимку прав; tokenStorage.clear очищает их при logout/expiry/new login.
+Legacy-данные без владельца удаляются; callbacks старой сессии не восстанавливают
+записи после очистки. Проверки и версия — checkpoint AUD-01-20261017.
+Обход UPDATE scope и несогласованные sensitive-field проверки
+AUD-02/03/13/14/17/18 остаются открыты в [roadmap](../current/roadmap.md#project-audit-20261017).
 [Evidence](../testing/project-audit-20261017.md) уточняет конкретные входы; это
 не отменяет действующие требования access и не объявляет все API проверенными.
 

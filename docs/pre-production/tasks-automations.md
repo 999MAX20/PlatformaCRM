@@ -5,7 +5,9 @@
 ошибки истории UI. AUD-04–07 и offline task replay AUD-10 открыты в
 [roadmap](../current/roadmap.md#project-audit-20261017);
 [методы проверки](../testing/project-audit-20261017.md). Task command idempotency
-не доказывает её использование offline-клиентом.
+не доказывает её использование offline-клиентом. В AUD-01 изолированы локальная
+очередь и callbacks сессии; capacity/drop, durable idempotency и recovery UX
+AUD-10 этим не закрыты. Logout/expiry удаляют pending queue.
 
 Исходная основа `768b2675`, 09.10.2026; актуальные дельты 16.10 описаны ниже.
 Результат для сотрудника — видимый следующий шаг,

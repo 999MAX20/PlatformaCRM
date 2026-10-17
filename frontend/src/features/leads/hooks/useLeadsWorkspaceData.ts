@@ -1,14 +1,16 @@
 import { useCrmFilters, crmFilterParams } from "../../../components/crm/useCrmFilters";
 import { useMemo } from "react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { getApiErrorMessage } from "../../../api/client";
+import { normalizeAppError } from "../../../api/appError";
 import { leadsApi } from "../../../api/leads";
 import { teamApi } from "../../../api/team";
 import { useActiveBusiness } from "../../../hooks/useBusiness";
 import { useEntityData } from "../../../hooks/useEntityData";
 import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import { hasPermission } from "../../../lib/permissions";
+import { leadOfflineScope } from "../../../lib/leadOfflineStorage";
 import { useAuth } from "../../auth/AuthProvider";
 import type { Id } from "../../../types";
 import type { LeadAiInsight, LeadFilter, Translate } from "../types";
@@ -65,11 +67,11 @@ export function useLeadsWorkspaceData({
   }), [state, debouncedSearch, page, pageSize, sortByAi]);
 
   const leads = useQuery({
-    queryKey: ["leads", "paginated", business?.id, leadListParams],
+    queryKey: ["leads", "paginated", user?.id, business?.id, leadListParams],
     queryFn: () => leadsApi.listPaginated(leadListParams),
     enabled: Boolean(business),
     retry: false,
-    placeholderData: keepPreviousData,
+    placeholderData: (previous, query) => query && query.queryKey[2] === user?.id && query.queryKey[3] === business?.id ? previous : undefined,
   });
   const leadSummary = useQuery({
     queryKey: ["leads", "summary", business?.id, leadListParams],
@@ -78,15 +80,26 @@ export function useLeadsWorkspaceData({
     retry: false,
   });
 
-  const onlineLeads = leads.data?.results || [];
+  const errorCategory = leads.error ? normalizeAppError(leads.error).category : undefined;
+  const accessDenied = errorCategory === "authentication" || errorCategory === "permission";
+  const onlineLeads = useMemo(() => accessDenied ? [] : leads.data?.results || [], [accessDenied, leads.data]);
+  const offlineScope = useMemo(() => leadOfflineScope(user, business?.id), [user, business?.id]);
   const { isOnline, offlineQueue, cachedLeads, enqueueOfflineAction } = useLeadOfflineQueue({
-    businessId: business?.id,
+    scope: offlineScope,
     onlineLeads,
+    hasFreshData: leads.isSuccess && !leads.isPlaceholderData,
+    accessDenied,
     t,
     onNotice: setNotice,
     onWarning: showWarning,
   });
   const allLeads = onlineLeads.length ? onlineLeads : (!isOnline ? cachedLeads : []);
+  const workspaceErrors = [clients.error, services.error, leads.error, leadSummary.error];
+  const pageError = workspaceErrors.find(Boolean);
+  // A usable offline snapshot is the fallback for connectivity/server failures,
+  // never for revoked access or an invalid request. The offline notice stays visible.
+  const usingOfflineCache = !isOnline && cachedLeads.length > 0 && workspaceErrors.every(error =>
+    !error || ["offline", "temporary", "provider"].includes(normalizeAppError(error).category));
   useLeadRealtime({
     businessReady: Boolean(business),
     isOnline,
@@ -157,8 +170,8 @@ export function useLeadsWorkspaceData({
     tasks,
     leads,
     retryWorkspace: () => { void Promise.all([clients.refetch(), services.refetch(), leads.refetch(), leadSummary.refetch()]); },
-    pageError: clients.error || services.error || leads.error || leadSummary.error,
-    pageErrorMessage: getApiErrorMessage(clients.error || services.error || leads.error || leadSummary.error),
+    pageError: usingOfflineCache ? undefined : pageError,
+    pageErrorMessage: getApiErrorMessage(pageError),
     isPageLoading: leads.isLoading || clients.isLoading || services.isLoading || tasks.isLoading,
     allLeads,
     rows,

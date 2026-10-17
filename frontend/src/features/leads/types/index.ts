@@ -77,8 +77,6 @@ export const LEADS_PAGE_SIZE = 10;
 export const LEAD_PRESETS_KEY = "zani_leads_filter_presets";
 export const LEAD_COLUMNS_KEY = "zani_leads_columns";
 export const LEAD_COLUMN_ORDER_KEY = "zani_leads_column_order";
-export const LEAD_OFFLINE_QUEUE_KEY = "zani_leads_offline_queue";
-export const LEAD_CACHE_KEY = "zani_leads_cache";
 
 export const leadFilters: LeadFilter[] = [
   "all",
