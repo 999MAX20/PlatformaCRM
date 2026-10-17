@@ -5,6 +5,7 @@ from apps.clients.services import duplicate_payload, find_duplicate_clients
 from apps.core.permissions import accessible_businesses
 from apps.integrations.sanitization import sanitize_config
 from apps.leads.models import Lead, LeadForm, LeadFormField, LeadFormSubmission, LeadFormSubmissionError
+from apps.leads.form_assignment import FORM_ASSIGNEE_ERROR, validate_form_assignee
 from apps.scheduling.models import Resource
 from apps.services.models import Service
 from apps.tasks.models import Task
@@ -294,6 +295,17 @@ class LeadFormSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["public_id", "created_at", "updated_at", "submissions_count"]
+        extra_kwargs = {"default_responsible_user": {"error_messages": {"does_not_exist": FORM_ASSIGNEE_ERROR}}}
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        business = attrs.get("business", getattr(self.instance, "business", None))
+        if self.instance is None or "default_responsible_user" in attrs:
+            user = attrs.get("default_responsible_user")
+            # Null means the existing owner default at capture time.
+            validate_form_assignee(business=business, user=user or business.owner,
+                                   actor=self.context["request"].user)
+        return attrs
 
 
 class LeadFormSubmissionSerializer(serializers.ModelSerializer):
@@ -319,7 +331,7 @@ class LeadFormSubmissionSerializer(serializers.ModelSerializer):
             "user_agent",
             "created_at",
         ]
-        read_only_fields = ["form_name", "created_at"]
+        read_only_fields = fields
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -347,7 +359,7 @@ class LeadFormSubmissionErrorSerializer(serializers.ModelSerializer):
             "user_agent",
             "created_at",
         ]
-        read_only_fields = ["form_name", "created_at"]
+        read_only_fields = fields
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

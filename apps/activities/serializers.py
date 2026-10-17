@@ -1,10 +1,13 @@
 from rest_framework import serializers
 
 from apps.activities.models import ActivityEvent, Note, Segment, SegmentFilter, Tag, TaggedObject
+from apps.activities.write_validation import CLIENT_LINK_ERROR, HistoryWriteValidationMixin
 from apps.integrations.sanitization import sanitize_error_payload
 
 
-class ActivityEventSerializer(serializers.ModelSerializer):
+class ActivityEventSerializer(HistoryWriteValidationMixin, serializers.ModelSerializer):
+    attribution_field = "actor"
+
     class Meta:
         model = ActivityEvent
         fields = [
@@ -21,7 +24,8 @@ class ActivityEventSerializer(serializers.ModelSerializer):
             "metadata",
             "created_at",
         ]
-        read_only_fields = ("created_at",)
+        read_only_fields = ("actor", "created_at")
+        extra_kwargs = {"client": {"error_messages": {"does_not_exist": CLIENT_LINK_ERROR}}}
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -46,7 +50,9 @@ class ActivityTimelineSerializer(ActivityEventSerializer):
         return event.client.full_name if event.client and event.client.business_id == event.business_id else ""
 
 
-class NoteSerializer(serializers.ModelSerializer):
+class NoteSerializer(HistoryWriteValidationMixin, serializers.ModelSerializer):
+    attribution_field = "author"
+
     class Meta:
         model = Note
         fields = [
@@ -60,6 +66,8 @@ class NoteSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+        read_only_fields = ("author", "created_at", "updated_at")
+        extra_kwargs = {"client": {"error_messages": {"does_not_exist": CLIENT_LINK_ERROR}}}
 
 
 class TagSerializer(serializers.ModelSerializer):

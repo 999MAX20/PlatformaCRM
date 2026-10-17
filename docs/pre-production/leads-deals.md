@@ -21,12 +21,17 @@ Pipeline/PipelineStage имеют Business; сервис сделки прове
 Требуемые поля стадии проверяются сервером. Lead status следует существующему
 `ALLOWED_LEAD_STATUS_TRANSITIONS`, а не произвольному PATCH. Назначаемый сотрудник
 активен в том же Business; допустимость назначения в generic PATCH требует AUD-13.
+AUD-02 проверяет default_responsible_user через assignment policy и повторно
+при capture, включая отключённого после загрузки аккаунта пользователя.
+Недопустимый default даёт контролируемую ошибку без частичного Client/Lead;
+submissions/error журналы доступны через API/admin только для чтения.
+Версия и проверки — checkpoint AUD-02-20261017; старые записи не мигрировались.
 CRUD полей форм не разрешает Business через form (AUD-19). Поиск/выбор и
 надёжность replay — AUD-08/10. AUD-01 реализует изоляцию offline-кэша и очереди
 по пользователю/Business/правам, очистку при logout/expiry, замену пустым ответом
 и fallback только при временной/сетевой ошибке. Это до 50 ранее загруженных строк,
 не полная offline-база; pending queue очищается вместе с сессией.
-Версия и проверки AUD-01 — checkpoint; остальные исправления открыты в
+Версия и проверки AUD-01/02 — checkpoint; остальные исправления открыты в
 [едином roadmap](../current/roadmap.md#project-audit-20261017);
 [evidence 17.10](../testing/project-audit-20261017.md) на `56dd124`.
 

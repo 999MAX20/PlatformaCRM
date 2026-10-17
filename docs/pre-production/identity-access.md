@@ -4,8 +4,11 @@ AUD-01, 17.10: offline-кэш заявок и pending queue разделены �
 Business и снимку прав; tokenStorage.clear очищает их при logout/expiry/new login.
 Legacy-данные без владельца удаляются; callbacks старой сессии не восстанавливают
 записи после очистки. Проверки и версия — checkpoint AUD-01-20261017.
-Обход UPDATE scope и несогласованные sensitive-field проверки
-AUD-02/03/13/14/17/18 остаются открыты в [roadmap](../current/roadmap.md#project-audit-20261017).
+AUD-02 проверяет связи notes/activity и привязывает создание к actor сессии;
+формы проверяют допустимого ответственного, журналы отправок read-only через API/admin.
+Версия и проверки — checkpoint AUD-02-20261017. Обход UPDATE scope и
+несогласованные sensitive-field проверки AUD-03/13/14/17/18 остаются открыты
+в [roadmap](../current/roadmap.md#project-audit-20261017).
 [Evidence](../testing/project-audit-20261017.md) уточняет конкретные входы; это
 не отменяет действующие требования access и не объявляет все API проверенными.
 

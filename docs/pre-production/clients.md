@@ -21,9 +21,11 @@ Duplicate preview использует нормализованные телеф
 
 ## Права, ошибки и восстановление
 
-Business и object scope обязательны. Аудит 17.10 на `56dd124` выявил
-непроверенные foreign links/авторство notes/activity (AUD-02) и выдачу внутренних
-notes оператору через client detail (AUD-03). Generic API не обеспечивает контракт
+Business и object scope обязательны. AUD-02 устраняет foreign links/подмену
+авторства notes/activity: проверяются прямые и polymorphic CRM-связи, автор из
+сессии, прежняя связь при relink. Версия и проверки — checkpoint AUD-02-20261017.
+Выдача внутренних notes оператору через client detail остаётся AUD-03.
+Generic API не обеспечивает контракт
 по всем входам; [evidence](../testing/project-audit-20261017.md) и
 [очередь исправлений](../current/roadmap.md#project-audit-20261017).
 Archive/soft DELETE/merge требуют `clients:delete`, а не update. Архивация проверяет

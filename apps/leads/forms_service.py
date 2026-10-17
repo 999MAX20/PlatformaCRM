@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 
 from django.db import transaction
+from rest_framework.exceptions import APIException
 
 from apps.activities.services import create_activity_event
 from apps.analytics.models import AnalyticsEvent
@@ -9,6 +10,7 @@ from apps.automations.models import AutomationRule
 from apps.clients.models import Client
 from apps.clients.services import duplicate_payload, find_duplicate_clients
 from apps.leads.models import Lead, LeadFormSubmission, LeadFormSubmissionError
+from apps.leads.form_assignment import validate_form_assignee
 from apps.notifications.models import Notification
 from apps.integrations.crm_mapping import record_lead_captured_event
 from apps.integrations.sanitization import sanitize_config, sanitize_error_text
@@ -62,6 +64,13 @@ def submit_lead_form(*, lead_form, payload, request=None):
     duplicate_rows = duplicate_payload(duplicates, phone=phone, email=email)
 
     with transaction.atomic():
+        responsible_user = lead_form.default_responsible_user or lead_form.business.owner
+        try:
+            validate_form_assignee(business=lead_form.business, user=responsible_user)
+        except APIException as exc:
+            # A legacy or since-disabled default must not receive a new lead.
+            # Keep the public error generic and let the view retain its error log.
+            raise ValueError("The form's responsible user is not available.") from exc
         if duplicates:
             client = duplicates[0]
             _fill_missing_client_source_attribution(client, source_detail=source_detail, source_context=source_context)
@@ -89,7 +98,7 @@ def submit_lead_form(*, lead_form, payload, request=None):
             client=client,
             source=_lead_source(source),
             message=message,
-            responsible_user=lead_form.default_responsible_user or lead_form.business.owner,
+            responsible_user=responsible_user,
         )
         submission = LeadFormSubmission.objects.create(
             form=lead_form,

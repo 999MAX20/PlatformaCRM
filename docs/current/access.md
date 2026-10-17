@@ -19,6 +19,17 @@ CRM-MB01, решение владельца 12.10.2026: клиентская б�
 Generic update не меняет владельца Business, включая ownership через parent.
 Same-business связь сама по себе ещё не даёт актёру права на связанный объект.
 
+AUD-02, 17.10: POST/PATCH notes и activity-events проверяют client и текстовую
+ссылку entity_type/entity_id в том же Business, а также VIEW/UPDATE связанной
+CRM-сущности. При relink проверяется и прежняя связь; неподдержанные типы/неполные
+ссылки отклоняются. Поддержаны Client, Lead, Deal, Appointment, Task, Conversation,
+BotConversation, Message, BotMessage и Payment; имена без учёта регистра и bot-алиасы
+приводятся к имени модели, ID — к проверенному PK. Пустая ссылка допустима.
+Author/actor берётся из сессии при создании и не меняется входным PATCH/PUT;
+редактирование не переписывает исторического автора. Чужие и отсутствующие client
+или default_responsible_user дают одинаковую безопасную ошибку. Это граница
+пользовательского API, а не запрет серверным сервисам создавать системные события.
+
 Основные merchant presets: owner, admin, manager, operator, specialist.
 Director — отображаемое название admin, не новая роль и не owner. Исторические
 staff/doctor/marketer/accountant/support сохраняют совместимость, но не задают

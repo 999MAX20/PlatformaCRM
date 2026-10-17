@@ -8,6 +8,12 @@ class ReadOnlyLogAdminMixin:
     def has_add_permission(self, request):
         return False
 
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 @admin.register(Lead)
 class LeadAdmin(admin.ModelAdmin):
@@ -30,7 +36,7 @@ class LeadFormAdmin(admin.ModelAdmin):
 
 
 @admin.register(LeadFormSubmission)
-class LeadFormSubmissionAdmin(admin.ModelAdmin):
+class LeadFormSubmissionAdmin(ReadOnlyLogAdminMixin, admin.ModelAdmin):
     list_display = ("id", "form", "business", "client", "lead", "landing_id", "page_domain", "created_at")
     list_filter = ("business", "form", "page_domain")
     search_fields = ("form__name", "landing_id", "page_domain", "client__full_name", "client__phone", "lead__message")

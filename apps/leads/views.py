@@ -28,6 +28,7 @@ from apps.core.sanitization import sanitize_error_text
 from apps.core.viewsets import TenantModelViewSet
 from apps.core.work_queues import stale_leads_queryset
 from apps.leads.forms_service import log_lead_form_submission_error, submit_lead_form
+from apps.leads.form_assignment import validate_form_assignee
 from apps.leads.models import Lead, LeadForm, LeadFormField, LeadFormSubmission, LeadFormSubmissionError
 from apps.leads.selectors import annotate_lead_next_task
 from apps.leads.workspace import lead_workspace_queryset, lead_workspace_summary
@@ -436,6 +437,7 @@ class LeadFormViewSet(TenantModelViewSet):
         if business is None:
             raise ValidationError("Business is required.")
         assert_can(request.user, business, Resources.LEADS, Actions.CREATE)
+        validate_form_assignee(business=business, user=business.owner, actor=request.user)
         form = LeadForm.objects.create(
             business=business,
             name=request.data.get("name") or "Website lead form",
@@ -466,12 +468,14 @@ class LeadFormSubmissionViewSet(TenantModelViewSet):
     queryset = LeadFormSubmission.objects.select_related("business", "form", "client", "lead")
     serializer_class = LeadFormSubmissionSerializer
     access_resource = "leads"
+    http_method_names = ["get", "head", "options"]
 
 
 class LeadFormSubmissionErrorViewSet(TenantModelViewSet):
     queryset = LeadFormSubmissionError.objects.select_related("business", "form")
     serializer_class = LeadFormSubmissionErrorSerializer
     access_resource = "leads"
+    http_method_names = ["get", "head", "options"]
 
 
 class PublicLeadFormView(APIView):

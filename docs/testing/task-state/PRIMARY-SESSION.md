@@ -6,6 +6,104 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-02-20261017 — activity and form write boundaries
+
+Owner continuation authorizes AUD-02 only. Mode: fix confirmed security boundary;
+gap: code/evidence. Root C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, base 35543e4f86ff6424de2b1d12a654ba788c760c6e;
+clean starting index/worktree. Reuse tenant viewsets, access/assignment policy,
+activity serializers and form capture services; no alternate tree or delegation.
+
+Result: notes/events cannot link foreign or forbidden CRM records or spoof authors;
+POST binds actor to session and PATCH preserves attribution. Form defaults require
+an active eligible same-Business assignee; submissions/errors are server-managed.
+Inspect polymorphic links and capture-time stale defaults as equivalent entry points.
+AUD-03/13/19 and general CRUD redesign are non-goals. No UI redesign, migrations,
+new permissions, provider calls, working DB writes or new AI behavior. Existing audit,
+activity and capture BusinessEvents must remain; assignment notifications unchanged.
+
+Risk: rejecting legitimate CRM notes/history or public capture, partial-update bypass,
+stale assignment after configuration. Focused API regressions for create/update,
+foreign/missing/null/aliased links, attribution, permission denial and ordinary flows;
+run each coherent backend slice before dependent changes. Completion: affected and
+dependent suites in isolated_runtime, system/migration drift, source/diff review,
+roadmap/contracts/passports/evidence, normal push and actual CI. No frontend build
+or full E2E absent frontend changes or demonstrated need. Separate pre-patch and
+post-patch bypass/compatibility reviews here (owner prohibits other-chat delegation).
+
+Initial trace: activities serializers expose client/author/actor without validation;
+generic save trusts those values. LeadFormSerializer accepts unrestricted defaults;
+submission/error viewsets permit generic writes, while public capture is the proper
+writer. Generic form-field authorization is separately tracked as AUD-19.
+
+Outcome: fixed in the authorized local write-boundary scope. Notes/events validate
+direct client and supported polymorphic CRM links, tenant plus VIEW/UPDATE scope;
+old links are checked before relinking. Canonical model/PK storage matches the
+authorized lookup. Session actor is set on create and read-only on update. Missing
+and foreign client/default-assignee errors are indistinguishable. Ordinary note
+create/edit, public capture, source attribution, automation/BusinessEvent and
+read projections remain covered by the existing tests.
+
+Form configuration/template creation reuse assignment_policy; explicit null keeps
+the established owner default and checks that assignment. Capture checks current
+membership/availability/account state even if the caller holds a stale user object.
+An invalid default gives the existing generic public error and retained sanitized
+error log, without partial Client/Lead/submission. No automatic fallback/reassignment
+was introduced. Submission/error logs allow GET/HEAD/OPTIONS only, including no
+inherited archive/restore; Django admin permits inspection but no add/change/delete.
+
+Separate review inspected serializer consumers (CRM cards, lead/appointment note
+actions), tenant save/ownership enforcement, forms_service/public submit, assignment
+helpers and admin. Confirmed and fixed stale user-state, textual ID normalization,
+missing/foreign error-shape differences and the admin log-write entry point.
+Other generic CRUD, sensitive client fields and form-field parent authorization
+remain their existing AUD-03/13/19 items. This was sequential review, not an
+independent security certification. Original audit evidence is not rewritten.
+
+Verification: canonical source, installed .venv, disposable SQLite and safe provider
+defaults from scripts.codex_verify.isolated_runtime; no ordinary DB writes/install.
+Outer command `.venv/Scripts/python.exe -c $aud02Check` used Python
+`with isolated_runtime(python=sys.executable) as runtime` and
+`subprocess.run([sys.executable, 'manage.py', *args], env=runtime.environment)`.
+Later runs captured output and printed bounded failure logs or the success summary.
+Exact inner commands/results, in order:
+- `manage.py test apps.activities.tests_write_boundaries -v 1`: initial 5 setup
+  errors (duplicate blank User.email in new fixture, not application failure).
+  Assigned unique synthetic emails and extended role tests; repeat 7 PASS.
+- `.venv/Scripts/python.exe -m py_compile apps/activities/write_validation.py apps/leads/form_assignment.py apps/leads/serializers.py apps/leads/forms_service.py apps/leads/tests_form_write_boundaries.py`: PASS.
+- `manage.py test apps.leads.tests_form_write_boundaries apps.leads.tests_forms -v 1`:
+  13 PASS after the coherent form slice, before dependent completion work.
+- `manage.py check`: PASS; `manage.py makemigrations --check --dry-run`: PASS,
+  no changes. No migrations authored or applied to a working DB.
+- `manage.py test apps.activities apps.leads apps.core.tests_tenant_isolation apps.core.tests_crm_projection_access apps.scheduling.tests.CorePlatformTests.test_doctor_can_execute_advertised_add_note_for_own_appointment apps.scheduling.tests.CorePlatformTests.test_appointment_add_note_rolls_back_when_audit_fails -v 1`:
+  112 PASS, 69.517s. Covers changed domains, tenant ownership, projections and
+  existing note actions/rollback. Includes canonical-ID and stale-account fixes.
+- After safe error-shape and admin read-only changes:
+  `manage.py test apps.activities.tests_write_boundaries apps.leads.tests_form_write_boundaries -v 1`:
+  17 PASS, 1.491s, system check PASS. New API/admin assertions cover the changed
+  entry points; unchanged dependent flow evidence above reused, not repeated.
+- Working/index/actual committed-range hygiene, changed-document links/anchors and
+  reviewed untracked files are required before publication; final receipt in chat.
+- `.venv/Scripts/python.exe -c $aud02Docs`: PASS, 9 changed documentation files,
+  2 changed links/anchors, registry and AUD-01..22 mapping. Reused the existing
+  project-audit validator in memory, filtering to the documentation subset;
+  no generated inventory or historical audit content changed.
+
+No frontend build/browser suite: no frontend source/copy/layout changes; existing
+reachable note and public-form API flows exercised with real isolated DB writes.
+No full-project gate, live provider, deployment, PostgreSQL concurrency certification
+or existing-data migration claimed. No new OpenAPI artifact/generator in this gate;
+API behavior is documented in the current access/CRM contracts. Source schema is
+unchanged. Documentation updated: roadmap, access/CRM, clients/leads/identity and
+capabilities passports. README/setup, AI/integrations/operations contracts need no
+change: no setup, provider mapping, AI action, event schema or environment delta.
+
+Evidence version: base 35543e4f plus task diff; final commit/push/remote SHA/actual CI
+returned in this task. All owned test runtimes completed and disposable DBs cleaned.
+In-scope code/evidence/owner decision remainder: none. Deployment and any authorized
+analysis/remediation of legacy working records remain separate; old authors are not
+rewritten. Next AUD-03 not started. No background continuation or other task assigned.
+
 ## AUD-01-20261017 — offline lead data isolation
 
 Owner continuation authorizes the next roadmap item AUD-01 only. Mode: implement

@@ -6,10 +6,16 @@
 
 # PlatformaCRM — текущий статус
 
+17.10.2026. AUD-02 закрыт в локальном scope: notes/activity проверяют связи и
+авторство; формы — допустимого ответственного; submission/error API/admin read-only.
+Affected/dependent 112 PASS, финальные focused17 PASS, system/migration drift PASS.
+Scope, ограничения, версия и команды — checkpoint AUD-02-20261017; публикационная
+квитанция — итог задачи. Deployment не выполнен; следующий AUD-03 не начат.
+
 17.10.2026. AUD-01 закрыт в локальном scope: offline-кэш/очередь изолированы по
 пользователю/Business/правам, очищаются при завершении сессии; empty/denied/loading
 и recovery проверены. Storage9, desktop/mobile browser, build/types/i18n/bundle PASS.
-Остальные критерии AUD-10 открыты; следующий AUD-02 не начат. Версия, команды,
+Остальные критерии AUD-10 открыты; продолжение — AUD-02. Версия, команды,
 граница и публикационная квитанция — checkpoint AUD-01-20261017 и итог задачи.
 
 17.10.2026. PROJECT-AUDIT: оформлены 20 подтверждённых пунктов и два риска на
