@@ -1,5 +1,12 @@
 # Внешние каналы и интеграции
 
+Граница аудита 17.10 (`56dd124`): UI mapping/errors/history и сохранённые export
+jobs не образуют полного рабочего цикла; metadata ImportJob остаётся writable,
+а download не учитывает последующее сужение scope. AUD-12/16/18/20 открыты;
+concurrency и XLSX resource bounds — риски AUD-21/22 на проверку.
+[Roadmap](../current/roadmap.md#project-audit-20261017),
+[evidence](../testing/project-audit-20261017.md). AV на confirm сохранён.
+
 Исходная основа `768b2675`, 09.10.2026; актуальные дельты 16.10 описаны ниже.
 Telegram/WhatsApp включены в подготовку пилота R02 решением 14.10;
 фактическое подключение/доставка не приняты. Остальные внешние подключения отложены;

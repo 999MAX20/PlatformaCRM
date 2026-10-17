@@ -1,8 +1,12 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-16",
+  "asOf": "2026-10-17",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
+    {
+      "path": "docs/testing/project-audit-20261017.md",
+      "role": "evidence"
+    },
     {
       "path": "docs/testing/admin05-payments-partner-brief-20261016.txt",
       "role": "evidence"

@@ -6,6 +6,73 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PROJECT-AUDIT-20261017 — additional review and remediation roadmap
+
+Owner requested documentation of the twelve findings reported 16.10, an additional
+review for missed problems, and one roadmap with explicit completion/remaining-work
+statuses. Current phase: audit + documentation; application fixes follow individual
+roadmap items, not this documentation phase. No guarantee of finding every possible
+vulnerability; distinguish confirmed defects, policy questions and unreviewed scope.
+
+Canonical C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+starting HEAD/base 56dd1243ef1ad5a4b15ddb94115aaaa6d2b0047a; clean index/worktree.
+Gap types: code/evidence/roadmap, with existing environment and owner-decision gaps
+retained. Reuse current services/contracts and earlier isolated audit evidence on
+the unchanged SHA. No application changes, migrations, live provider calls or
+working-data changes. Review is sequential in this task; no inter-task delegation.
+
+Plan: inspect additional security/domain/UI boundaries; validate new source-backed
+findings and counterevidence; record a registered audit report and add stable IDs,
+dependencies, acceptance and status rules to docs/current/roadmap.md. Update the
+relevant documentation's verification boundary without rewriting historical PASS.
+Risk: overstating coverage, turning hypotheses into defects, or duplicating backlog.
+Focused checks: evidence-to-source paths/lines and reachability, existing decisions,
+roadmap/report consistency. Completion: docs-only diff/index/actual committed-range
+hygiene, local links/anchors, JSON registry, complete intended diff review; verified
+commit and normal push to origin/main under AGENTS.md, with actual CI reported.
+App build/full test suite not required for documentation; any audit probe must use
+the documented disposable environment. Product permissions, events and AI runtime
+remain unchanged. Delivery and final findings are recorded below when complete.
+
+Outcome 17.10: audit/documentation phase complete locally. Registered
+[project evidence](../project-audit-20261017.md) and one
+[AUD roadmap](../../current/roadmap.md#project-audit-20261017): AUD-01..20 confirmed
+(12 prior + 8 additional), AUD-21/22 source risks, AUD-V01 coverage follow-up.
+No fixes started. Each row records acceptance, dependencies, status and remainder;
+AUD-12 has three explicit subcriteria. Next implementation item AUD-01, not started.
+
+Codex Security scan 1997f7a8-3449-4add-98d8-4bc1d5adc571 finalized successfully:
+six additional static findings, 3 high/3 medium, partial coverage. Generated report
+exists in local workbench; no independent baseline reviewer. Working-tree warning
+is caused by this docs checkpoint; apps/frontend/config/scripts diff from base empty.
+Original twelve findings reuse unchanged-source isolated evidence described in report.
+No product processes started this phase; earlier owned servers/browser already stopped.
+
+Documentation reconciliation: updated capabilities and clients, leads/deals, access,
+Inbox, integrations, tasks/automations and settings/notifications passports at their
+affected evidence boundaries. Existing product/access/CRM/AI/frontend/integration
+contracts remain required behavior, so no normative changes needed. Existing
+specification ADMIN-01..05, acceptance IDs and repository README setup unchanged:
+this audit changes neither their behavior nor their accepted scope. No archive edits.
+
+Checks: `git diff --check` PASS; local
+`.venv/Scripts/python.exe output/project-audit-20261017/verify_docs.py` PASS
+(14 docs files, 45 changed local links/anchors at first completion, JSON/registry and
+unique AUD-01..22 mapping). Intended docs diff/new report reviewed for scope and
+secrets; no credentials or private production data included. App build/tests,
+migrations and full runner skipped per docs-only matrix; this is not release PASS.
+Stage/index and actual committed-range hygiene are publication gates, with final
+commit/push/CI receipt in this task response. Initial `git fetch origin main` left
+the configured tracking ref stale; explicit
+`git fetch origin refs/heads/main:refs/remotes/origin/main` and `git ls-remote`
+agree at starting 56dd124; outgoing range contains only this docs change.
+CI workflow inspected: checks/tests, no deployment step found. `gh` is not on PATH;
+query actual CI by GitHub API after push.
+
+Remainder for this bounded audit/docs scope: no code work intended; publication
+receipt still follows. Product fixes, extra proof, target environment and owner-policy
+questions remain explicitly open in the roadmap; no claim of all vulnerabilities found.
+
 ## PLATFORM-ADMIN-ACCEPTANCE-20261016 — stage6 scoped acceptance
 
 Owner authorized acceptance of ADMIN01–04 plus the implemented ADMIN05 foundation;

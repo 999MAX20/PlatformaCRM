@@ -11,6 +11,7 @@
 | --- | --- |
 | Что строим и что отложено | [Продукт](current/product.md) |
 | В какой последовательности идём к production | [Единый roadmap](current/roadmap.md) |
+| Найденные проблемы 17.10 и их исправление | [Evidence аудита](testing/project-audit-20261017.md), статусы только в [AUD roadmap](current/roadmap.md#project-audit-20261017); подтверждённые дефекты отделены от рисков |
 | Что реализовано и где код | [Паспорта](pre-production/README.md), [карта модулей](pre-production/capabilities.md) |
 | Сверка техдокументов с кодом 16.10 | [Покрытие, исправленные статусы и остатки](testing/docs-reconciliation-20261016.md) — evidence на dc1eedf, не новая сертификация |
 | Что ещё не принято / не решено | [Приёмка](current/acceptance.md) |
