@@ -191,6 +191,10 @@ class TenantModelViewSet(ModelViewSet):
             business = instance.rule.business
         if resource is not None:
             assert_can(self.request.user, business, resource, Actions.VIEW, obj=instance)
+            if getattr(self, "action", "") in {"update", "partial_update"}:
+                # Authorize the stored object before payload fields can make it
+                # appear owned by the caller. Keep candidate checks on save too.
+                assert_can(self.request.user, business, resource, Actions.UPDATE, obj=instance)
         return instance
 
     def get_unassigned_action_object(self):

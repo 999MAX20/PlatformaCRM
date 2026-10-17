@@ -6,11 +6,17 @@
 
 # PlatformaCRM — текущий статус
 
+17.10.2026. AUD-13 закрыт в локальном scope: PATCH/PUT проверяют UPDATE исходного
+объекта; переназначение заявки использует сервис с атомарной историей/уведомлениями.
+Focused13 PASS; affected324: 323 PASS, 1 PG-only skip; system/migration drift PASS.
+Scope, версия, команды и пропуск — checkpoint AUD-13-20261017; commit/push/CI —
+итог задачи. Deployment не выполнен. Следующий AUD-14 не начат.
+
 17.10.2026. AUD-03 закрыт в локальном scope: Client.notes защищены общей field policy
 в API/карточках/сегментах/экспорте; пустой masked edit сохраняет данные, готовый CSV
 проверяет текущую роль. Focused9 и affected199, system/migration drift PASS.
 Версия, scope и проверки — checkpoint AUD-03-20261017; commit/push/CI — итог задачи.
-Deployment не выполнен. Следующий AUD-13 не начат.
+Deployment не выполнен; продолжение — AUD-13.
 
 17.10.2026. AUD-02 закрыт в локальном scope: notes/activity проверяют связи и
 авторство; формы — допустимого ответственного; submission/error API/admin read-only.

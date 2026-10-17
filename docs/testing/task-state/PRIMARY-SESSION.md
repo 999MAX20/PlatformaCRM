@@ -6,6 +6,74 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-13-20261017 — original-object update and lead assignment
+
+Owner continuation authorizes AUD-13 only. Mode: fix confirmed generic PATCH scope
+bypass; gap code/evidence. Root C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, base f2bd3be71a793aaaeadcf833b779eaf6726c9476, clean start.
+Reuse TenantModelViewSet, LockedCRMUpdateMixin, assign_lead and assignment policy.
+Result: VIEW business/UPDATE own cannot take another user's lead via PATCH/PUT;
+original UPDATE checked before input changes ownership. Valid lead reassignment
+uses the existing service and its audit/activity/notifications atomically with edits.
+Retain candidate/tenant checks and existing assign action including unassigned claim.
+No new permission model, assignment/unassignment policy, lifecycle expansion or AUD-14.
+Risk: shared guard changes consumers, mixed edits partially commit, duplicate effects,
+null/same-target round-trips and inactive target. Focused regressions after each slice;
+then affected lead/shared access/CRM/task/message consumers, system/migration checks,
+diff/docs and normal push/actual CI. API flows plus static UI consumer inspection;
+frontend build/browser only if frontend code or demonstrated affected UI needs it.
+No migrations/working DB/provider/deployment. Existing assignment notifications reused;
+no new BusinessEvent or AI behavior. No subagents or other-chat coordination.
+
+AUD-13 progress: generic get_object now checks original UPDATE for PATCH/PUT in
+addition to VIEW; candidate checks and tenant immutability remain. Lead updates
+route changed responsible_user through assign_lead under the existing Business/row
+lock and outer transaction; ordinary audit failure rolls back assignment effects.
+Changed assignment to null is rejected (no unassign domain action); unchanged null
+and same-target round-trips remain ordinary edits. Updates reuse the service's owner
+exception and inactive/role/availability checks rather than competing serializer rules.
+Main lead UI already uses leadsApi.assign with recoverable feedback; no UI changes.
+
+Focused command: `.venv/Scripts/python.exe -c $aud13Check`,
+`isolated_runtime(python=sys.executable)` and subprocess with runtime.environment,
+`manage.py test apps.leads.tests_assignment_patch -v 1`.
+- Initial fixture setup failed on duplicate empty email (0 tests); synthetic unique
+  emails and required notification send_at fixed before the reproducer.
+- Baseline two regressions FAILED as expected: lead and notification PATCH returned
+  200 for takeover (expected 403), 2 tests, 0.086s; no production code changed yet.
+- Original-object guard: 2 PASS, 0.096s.
+- Assignment service/roles/null/rollback/shared consumers: 10 PASS, 0.774s.
+- Owner exception, inactive unchanged assignee and stale reload: 13 PASS, 1.053s.
+System check PASS; makemigrations --check --dry-run PASS (no changes).
+Affected/dependent run (same isolated command wrapper): 324 tests, 278.592s, OK; 323 passed, 1 skipped:
+`manage.py test apps.leads apps.core.tests_tenant_isolation apps.core.tests_mixed_membership_scope apps.core.tests_crm_server_scenarios apps.businesses.tests_access apps.tasks apps.notifications apps.crm apps.activities.tests_write_boundaries apps.clients.tests_sensitive_notes apps.branches.tests_access apps.bots.tests.InboxBackendTests apps.scheduling.tests.CorePlatformTests.test_resource_manager_can_view_but_cannot_update_settings apps.scheduling.tests.CorePlatformTests.test_generic_patch_cannot_bypass_appointment_lifecycle_actions apps.scheduling.tests.CorePlatformTests.test_generic_patch_cannot_bypass_appointment_reschedule_action apps.scheduling.tests.CorePlatformTests.test_generic_patch_cannot_bypass_appointment_archive_action -v 1`.
+This covers shared consumers because original UPDATE is a shared security change;
+not a full-project certification. Existing SQLite isolation/media/venv, no installs.
+Skipped: apps.tasks.tests_concurrency.TaskConcurrentCommandsTests.
+test_same_version_allows_only_one_competing_change requires has_select_for_update;
+SQLite cannot prove PostgreSQL concurrency. Existing locking was not changed; this
+phase proves reauthorization after a stale read, not a new concurrency certification.
+No new migrations or working DB/provider/live effects. No outstanding failed gates.
+
+Result: AUD-13 closed in local scope. Source UPDATE is enforced before payload
+validation and after CRM lock reload; scoped assignment through both PATCH/assign,
+role/tenant/invalid target, null/no-op, history/notifications and rollback verified.
+Post-patch review covered generic candidate checks, custom perform_update consumers,
+LeadSerializer callers, existing main UI assignment/error flow and inherited locks.
+No frontend code: build/browser skipped; reachable API tests provide the changed flow.
+No full-project run: affected shared consumers selected explicitly above.
+
+Docs: roadmap/access/CRM, leads-deals/identity passports, capabilities and STATUS
+reconciled. README/frontend/AI/integration/operations docs need no change: setup,
+UI, provider and deployment contracts unchanged; notifications reuse existing policy,
+no new BusinessEvent. Historical audit is preserved; this evidence supersedes AUD-13.
+Code/evidence/owner decision remainder in accepted scope: none. Environment remainder:
+actual deployment/live acceptance separate; no claim of full PostgreSQL certification.
+Diff/links/registry, new test file and outgoing source reviewed before publication.
+Base f2bd3be7 plus this bounded commit identifies the verified snapshot; final SHA,
+normal push read-back and actual CI are in the completion receipt. AUD-14 next,
+not started; its message delivery/payload boundary is not closed by this shared guard.
+
 ## AUD-03-20261017 — client sensitive-note read parity
 
 Owner authorizes next AUD-03 only. Mode: fix reproduced Client.notes disclosure;

@@ -80,7 +80,10 @@ class LeadSerializer(serializers.ModelSerializer):
                 {"service": "Select an active service that is not archived."}
             )
         responsible_user = attrs.get("responsible_user") if "responsible_user" in attrs else getattr(self.instance, "responsible_user", None)
-        if responsible_user and business and not business.members.filter(user=responsible_user, is_active=True).exists():
+        # Updates use assign_lead: the owner exception, account/role/availability
+        # checks and scope must match the assign action. Unchanged historical
+        # assignees do not prevent ordinary edits after their access is disabled.
+        if self.instance is None and responsible_user and business and not business.members.filter(user=responsible_user, is_active=True).exists():
             raise serializers.ValidationError({"responsible_user": "Responsible user must be an active business member."})
         return attrs
 

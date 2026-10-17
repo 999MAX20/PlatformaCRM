@@ -196,6 +196,21 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
             payload={"trigger_type": AutomationRule.TriggerTypes.LEAD_CREATED, "lead_id": lead.id},
         )
 
+    def perform_update(self, serializer):
+        self._enforce_business_access(serializer)
+        if "responsible_user" in serializer.validated_data:
+            target = serializer.validated_data.pop("responsible_user")
+            if getattr(target, "pk", None) != serializer.instance.responsible_user_id:
+                if target is None:
+                    raise ValidationError({"responsible_user": "Select an assignee; clearing an assignment is not supported."})
+                serializer.instance = assign_lead(
+                    lead=serializer.instance, actor=self.request.user,
+                    user_id=target.pk, request=self.request,
+                )
+        # LockedCRMUpdateMixin keeps the assignment, ordinary edit and all
+        # audit/activity/notification writes in the same transaction.
+        super().perform_update(serializer)
+
     def _legacy_perform_update_disabled(self, serializer):
         previous_status = serializer.instance.status
         previous_responsible_user_id = serializer.instance.responsible_user_id
