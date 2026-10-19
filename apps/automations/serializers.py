@@ -2,17 +2,9 @@ from rest_framework import serializers
 
 from apps.automations.condition_fields import validate_condition_field
 from apps.automations.models import AutomationAction, AutomationCondition, AutomationRule, AutomationRun
+from apps.automations.action_validation import validate_action_config, validate_action_list, SUPPORTED_AUTOMATION_ACTION_TYPES
+from apps.businesses.models import Business
 from apps.integrations.sanitization import sanitize_config, sanitize_error_payload, sanitize_error_text
-
-
-SUPPORTED_AUTOMATION_ACTION_TYPES = {
-    AutomationAction.ActionTypes.CREATE_TASK,
-    AutomationAction.ActionTypes.CREATE_FOLLOW_UP,
-    AutomationAction.ActionTypes.CREATE_NOTIFICATION,
-    AutomationAction.ActionTypes.ASSIGN_USER,
-    AutomationAction.ActionTypes.ADD_NOTE,
-    AutomationAction.ActionTypes.WAIT,
-}
 
 
 class AutomationConditionSerializer(serializers.ModelSerializer):
@@ -39,18 +31,35 @@ class AutomationActionSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         action_type = attrs.get("action_type") or getattr(self.instance, "action_type", None)
         delay_seconds = attrs.get("delay_seconds", getattr(self.instance, "delay_seconds", 0))
-        if action_type not in SUPPORTED_AUTOMATION_ACTION_TYPES:
-            raise serializers.ValidationError(
-                {"action_type": "This action is not supported by the current automation engine."}
-            )
-        if action_type == AutomationAction.ActionTypes.WAIT and not delay_seconds:
-            raise serializers.ValidationError({"delay_seconds": "Wait action requires a positive delay."})
+        rule = attrs.get("rule", getattr(self.instance, "rule", None))
+        attrs["config"] = validate_action_config(
+            action_type=action_type, config=attrs.get("config", getattr(self.instance, "config", {})),
+            delay_seconds=delay_seconds, business=rule.business, trigger_type=rule.trigger_type,
+            actor=getattr(self.context.get("request"), "user", None),
+        )
         return attrs
 
 
 class AutomationRuleSerializer(serializers.ModelSerializer):
     conditions = AutomationConditionSerializer(many=True, read_only=True)
     actions = AutomationActionSerializer(many=True, read_only=True)
+
+    def validate(self, attrs):
+        active = attrs.get("is_active", getattr(self.instance, "is_active", False))
+        trigger_changed = self.instance is not None and attrs.get("trigger_type", self.instance.trigger_type) != self.instance.trigger_type
+        if active or trigger_changed:
+            business = attrs.get("business", getattr(self.instance, "business", None))
+            trigger = attrs.get("trigger_type", getattr(self.instance, "trigger_type", None))
+            actions = list(self.instance.actions.values("action_type", "config", "delay_seconds")) if self.instance else []
+            if actions or active:
+                validate_action_list(actions, business=business, trigger_type=trigger,
+                                     actor=getattr(self.context.get("request"), "user", None))
+            for condition in self.instance.conditions.all():
+                try:
+                    validate_condition_field(condition.field, trigger_type=trigger)
+                except ValueError as exc:
+                    raise serializers.ValidationError({"conditions": str(exc)}) from exc
+        return attrs
 
     class Meta:
         model = AutomationRule
@@ -180,14 +189,11 @@ class ManualAutomationRuleSerializer(serializers.Serializer):
                 condition_errors[index] = {"field": str(exc)}
         if condition_errors:
             raise serializers.ValidationError({"conditions": condition_errors})
+        business = Business.objects.filter(pk=attrs["business"]).first()
+        if business is None:
+            raise serializers.ValidationError({"business": "Business was not found."})
+        attrs["actions"] = validate_action_list(
+            attrs["actions"], business=business, trigger_type=trigger_type,
+            actor=getattr(self.context.get("request"), "user", None),
+        )
         return attrs
-
-    def validate_actions(self, actions):
-        if not actions:
-            raise serializers.ValidationError("At least one action is required.")
-        for action in actions:
-            if action["action_type"] not in SUPPORTED_AUTOMATION_ACTION_TYPES:
-                raise serializers.ValidationError(f"{action['action_type']} is not supported by the current automation engine.")
-            if action["action_type"] == AutomationAction.ActionTypes.WAIT and not action.get("delay_seconds"):
-                raise serializers.ValidationError("Wait action requires delay_seconds.")
-        return actions

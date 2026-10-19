@@ -3,7 +3,9 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
 
-import { automationRulesApi, automationRunsApi } from "../../api/automations";
+import { automationActionErrors, automationRulesApi, automationRunsApi } from "../../api/automations";
+import { teamApi } from "../../api/team";
+import { AutomationActionFields } from "./AutomationActionFields";
 import { getApiErrorMessage } from "../../api/client";
 import { Badge, type BadgeVariant } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
@@ -63,19 +65,13 @@ function defaultActions(t: (key: string) => string) {
     {
       action_type: "create_task",
       config: { title },
-      configText: JSON.stringify({ title }),
       delay_seconds: 0,
     },
-  ] as Array<AutomationActionDraft & { configText: string }>;
+  ] as AutomationActionDraft[];
 }
 
 function valueJson(value: string) {
   return { value };
-}
-
-function parseConfig(configText: string) {
-  if (!configText.trim()) return {};
-  return JSON.parse(configText) as Record<string, unknown>;
 }
 
 function formatJson(value: unknown) {
@@ -124,8 +120,13 @@ export function AutomationsPage() {
     priority: 100,
   });
   const [conditions, setConditions] = useState<Array<AutomationConditionDraft & { rawValue: string }>>([]);
-  const [actions, setActions] = useState<Array<AutomationActionDraft & { configText: string }>>(() => defaultActions(t));
+  const [actions, setActions] = useState<AutomationActionDraft[]>(() => defaultActions(t));
   const [preview, setPreview] = useState<AutomationPreview | null>(null);
+  const [previewSignature, setPreviewSignature] = useState("");
+  const [actionErrors, setActionErrors] = useState<Record<number, string[]>>({});
+  const members = useQuery({ queryKey: ["automation-members", business?.id], queryFn: () => teamApi.allMembers(business?.id), enabled: advancedOpen && Boolean(business) });
+  const draftSignature = JSON.stringify({ advancedForm, conditions, actions, business: business?.id });
+  const validPreview = previewSignature === draftSignature ? preview : null;
   const [advancedError, setAdvancedError] = useState<string | null>(null);
   const [selectedRun, setSelectedRun] = useState<AutomationRun | null>(null);
   const triggers = triggerKeys.map((item) => ({ value: item.value, label: t(item.labelKey) }));
@@ -158,13 +159,16 @@ export function AutomationsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["automation-rules"] }),
   });
   const previewMutation = useMutation({
-    mutationFn: () => automationRulesApi.previewManual(buildManualPayload()),
-    onSuccess: (data) => {
+    mutationFn: async ({ payload, signature }: { payload: ManualAutomationRulePayload; signature: string }) => ({ data: await automationRulesApi.previewManual(payload), signature }),
+    onSuccess: ({ data, signature }) => {
       setPreview(data);
+      setPreviewSignature(signature);
+      setActionErrors({});
       setAdvancedError(null);
     },
     onError: (error) => {
       setPreview(null);
+      setActionErrors(automationActionErrors(error));
       setAdvancedError(getApiErrorMessage(error, t));
     },
   });
@@ -179,7 +183,7 @@ export function AutomationsPage() {
       setConditions([]);
       setActions(defaultActions(t));
     },
-    onError: (error) => setAdvancedError(getApiErrorMessage(error, t)),
+    onError: (error) => { setActionErrors(automationActionErrors(error)); setAdvancedError(getApiErrorMessage(error, t)); },
   });
   const retryRunMutation = useMutation({
     mutationFn: (runId: number) => automationRunsApi.retry(runId),
@@ -209,7 +213,7 @@ export function AutomationsPage() {
       })),
       actions: actions.map((action) => ({
         action_type: action.action_type,
-        config: parseConfig(action.configText),
+        config: action.config,
         delay_seconds: Number(action.delay_seconds || 0),
       })),
     };
@@ -480,7 +484,7 @@ export function AutomationsPage() {
           className="space-y-5"
           onSubmit={(event) => {
             event.preventDefault();
-            if (!preview) {
+            if (!validPreview) {
               setAdvancedError(t("automations.previewRequired"));
               return;
             }
@@ -519,7 +523,7 @@ export function AutomationsPage() {
             </div>
             <div className="space-y-3">
               {conditions.map((condition, index) => (
-                <div key={`${condition.field}-${index}`} className="grid gap-2 md:grid-cols-[1fr_120px_1fr_auto]">
+                <div key={index} className="grid gap-2 md:grid-cols-[1fr_120px_1fr_auto]">
                   <Input
                     placeholder={t("automations.fieldPlaceholder")}
                     value={condition.field}
@@ -544,29 +548,35 @@ export function AutomationsPage() {
             </div>
           </Surface>
 
+          {members.isError ? <div role="alert"><ErrorState message={getApiErrorMessage(members.error, t)} /><Button type="button" variant="secondary" onClick={() => members.refetch()}>{t("common.retry")}</Button></div> : null}
           <Surface variant="muted" className="p-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="font-bold text-platforma-ink">{t("automations.actions")}</h3>
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => setActions([...actions, { action_type: "wait", config: {}, configText: "{}", delay_seconds: 300 }])}
+                onClick={() => setActions([...actions, { action_type: "wait", config: {}, delay_seconds: 300 }])}
               >
                 <Plus size={16} /> {t("automations.addAction")}
               </Button>
             </div>
             <div className="space-y-3">
               {actions.map((action, index) => (
-                <div key={`${action.action_type}-${index}`} className="rounded-card border border-platforma-border bg-surface-card p-3">
+                <div key={index} className="rounded-card border border-platforma-border bg-surface-card p-3">
                   <div className="grid gap-2 md:grid-cols-[1fr_150px_auto]">
                     <Select
+                      label={t("automations.actionType")}
+                      error={actionErrors[index]?.includes("action_type") ? t("automations.triggerActionInvalid") : undefined}
                       value={action.action_type}
-                      onChange={(event) => setActions(actions.map((item, itemIndex) => itemIndex === index ? { ...item, action_type: event.target.value as AutomationActionDraft["action_type"] } : item))}
+                      onChange={(event) => setActions(actions.map((item, itemIndex) => itemIndex === index ? { ...item, action_type: event.target.value as AutomationActionDraft["action_type"], config: {}, delay_seconds: event.target.value === "wait" ? 300 : 0 } : item))}
                       options={actionOptions}
                     />
                     <Input
                       type="number"
-                      placeholder={t("automations.delaySeconds")}
+                      label={t("automations.delaySeconds")}
+                      min={action.action_type === "wait" ? 1 : 0}
+                      step={1}
+                      error={actionErrors[index]?.includes("delay_seconds") ? t("automations.fieldInvalid") : undefined}
                       value={action.delay_seconds}
                       onChange={(event) => setActions(actions.map((item, itemIndex) => itemIndex === index ? { ...item, delay_seconds: Number(event.target.value) } : item))}
                     />
@@ -574,30 +584,24 @@ export function AutomationsPage() {
                       <Trash2 size={16} />
                     </Button>
                   </div>
-                  <Textarea
-                    className="mt-2 font-mono text-xs"
-                    value={action.configText}
-                    onChange={(event) => {
-                      setPreview(null);
-                      setActions(actions.map((item, itemIndex) => itemIndex === index ? { ...item, configText: event.target.value } : item));
-                    }}
-                    placeholder={t("automations.configPlaceholder")}
-                  />
+                  <AutomationActionFields action={action} members={members.data || []} membersLoading={members.isLoading}
+                    invalidFields={actionErrors[index]}
+                    onChange={config => { setPreview(null); setActionErrors({}); setActions(actions.map((item, itemIndex) => itemIndex === index ? { ...item, config } : item)); }} />
                 </div>
               ))}
             </div>
           </Surface>
 
-          {preview ? (
+          {validPreview ? (
             <div className="rounded-card border border-platforma-success/20 bg-[var(--platforma-success-soft)] p-4 text-sm text-platforma-success">
-              <p className="font-bold">{t("automations.previewOk", { name: preview.name })}</p>
-              <p className="mt-1">{preview.will_run_when}</p>
-              <p className="mt-2 font-semibold">{t("automations.previewMeta", { conditions: preview.conditions_count, actions: preview.actions_count })}</p>
+              <p className="font-bold">{t("automations.previewOk", { name: validPreview.name })}</p>
+
+              <p className="mt-2 font-semibold">{t("automations.previewMeta", { conditions: validPreview.conditions_count, actions: validPreview.actions_count })}</p>
             </div>
           ) : null}
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="secondary" onClick={() => previewMutation.mutate()} isLoading={previewMutation.isPending}>
+            <Button type="button" variant="secondary" onClick={(event) => { if (event.currentTarget.form?.reportValidity()) previewMutation.mutate({ payload: buildManualPayload(), signature: draftSignature }); }} isLoading={previewMutation.isPending}>
               {t("automations.testPreview")}
             </Button>
             <Button type="submit" isLoading={createManualMutation.isPending}>

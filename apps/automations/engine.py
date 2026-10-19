@@ -13,6 +13,7 @@ from apps.activities.services import create_activity_event, create_note_for_enti
 from apps.activities.taxonomy import ActivityEvents
 from apps.automations.condition_fields import UNRESOLVED_CONDITION_VALUE, extract_condition_value
 from apps.automations.models import AutomationAction, AutomationRule, AutomationRun
+from apps.automations.action_validation import validate_action_config, validate_action_list
 from apps.businesses.access import Resources
 from apps.businesses.capabilities import assert_resource_enabled, is_module_enabled
 from apps.core.domain_errors import ModuleDisabled
@@ -247,6 +248,14 @@ def process_automation_run(run_id):
                 run.action_results = [{"status": "skipped", "reason": "Conditions did not match."}]
             else:
                 actions = list(rule.actions.all())
+                # Validate the pending configuration before the first new effect.
+                if run.current_action_index < len(actions) or not actions:
+                    validate_action_list(
+                        [{"action_type": item.action_type, "config": item.config, "delay_seconds": item.delay_seconds}
+                         for item in actions[run.current_action_index:]],
+                        business=run.business, trigger_type=rule.trigger_type,
+                        actor=_automation_actor(run.business), entity=entity,
+                    )
                 while run.current_action_index < len(actions):
                     with transaction.atomic():
                         current = AutomationRun.objects.select_for_update().get(id=run.id)
@@ -534,6 +543,9 @@ def _compare(actual, operator, expected):
 
 
 def _execute_action(action, *, business, entity, payload):
+    action.config = validate_action_config(action_type=action.action_type, config=action.config,
+                           delay_seconds=action.delay_seconds, business=business,
+                           trigger_type=action.rule.trigger_type, actor=_automation_actor(business), entity=entity)
     if action.action_type == AutomationAction.ActionTypes.WAIT:
         return {"action": action.action_type, "status": "delayed", "delay_seconds": action.delay_seconds}
     if action.action_type == AutomationAction.ActionTypes.CREATE_TASK:

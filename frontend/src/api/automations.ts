@@ -1,6 +1,18 @@
 import { apiClient } from "./client";
+import axios from "axios";
 import { createCrudApi } from "./crud";
 import type { AutomationPreview, AutomationRule, AutomationRun, AutomationTemplate, Id, ManualAutomationRulePayload } from "../types";
+
+export function automationActionErrors(error: unknown): Record<number, string[]> {
+  if (!axios.isAxiosError(error)) return {};
+  const actions: unknown = error.response?.data?.errors?.actions;
+  if (!actions || typeof actions !== "object") return {};
+  return Object.fromEntries(Object.entries(actions).map(([index, value]) => {
+    const item = value && typeof value === "object" ? value as Record<string, unknown> : {};
+    const config = item.config && typeof item.config === "object" ? item.config as Record<string, unknown> : {};
+    return [Number(index), [...Object.keys(item), ...Object.keys(config)]];
+  }).filter(([index]) => Number.isInteger(index)));
+}
 
 export const automationRulesApi = {
   ...createCrudApi<AutomationRule>("/api/automation-rules/"),

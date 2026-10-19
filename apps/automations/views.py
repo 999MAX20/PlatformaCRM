@@ -3,7 +3,9 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from apps.automations.engine import cancel_automation_run, retry_automation_run
+from apps.automations.action_validation import validate_action_list
 from apps.automations.models import AutomationAction, AutomationCondition, AutomationRule, AutomationRun
+from apps.automations.permissions import IsAutomationRuleMember
 from apps.billing.entitlements import EntitlementMetrics, assert_entitlement_allows
 from apps.automations.serializers import (
     ApplyAutomationTemplateSerializer,
@@ -92,6 +94,9 @@ class AutomationRuleViewSet(TenantModelViewSet):
         if template is None:
             raise ValidationError({"template_key": "Unknown automation template."})
 
+        validate_action_list([dict(item) for item in template["actions"]], business=business,
+                             trigger_type=template["trigger_type"], actor=request.user)
+
         rule = AutomationRule.objects.create(
             business=business,
             name=template["name"],
@@ -114,7 +119,7 @@ class AutomationRuleViewSet(TenantModelViewSet):
 
     @action(detail=False, methods=["post"], url_path="preview")
     def preview(self, request):
-        serializer = ManualAutomationRuleSerializer(data=request.data)
+        serializer = ManualAutomationRuleSerializer(data=request.data, context=self.get_serializer_context())
         serializer.is_valid(raise_exception=True)
         business = self._business_for_manual_payload(serializer.validated_data)
         assert_can(request.user, business, Resources.AUTOMATIONS, Actions.CREATE)
@@ -123,7 +128,7 @@ class AutomationRuleViewSet(TenantModelViewSet):
 
     @action(detail=False, methods=["post"], url_path="create-manual")
     def create_manual(self, request):
-        serializer = ManualAutomationRuleSerializer(data=request.data)
+        serializer = ManualAutomationRuleSerializer(data=request.data, context=self.get_serializer_context())
         serializer.is_valid(raise_exception=True)
         business = self._business_for_manual_payload(serializer.validated_data)
         assert_can(request.user, business, Resources.AUTOMATIONS, Actions.CREATE)
@@ -180,12 +185,14 @@ class AutomationRuleViewSet(TenantModelViewSet):
 
 
 class AutomationConditionViewSet(TenantModelViewSet):
+    permission_classes = [IsAutomationRuleMember]
     queryset = AutomationCondition.objects.select_related("rule", "rule__business")
     serializer_class = AutomationConditionSerializer
     business_lookup = "rule__business"
 
 
 class AutomationActionViewSet(TenantModelViewSet):
+    permission_classes = [IsAutomationRuleMember]
     queryset = AutomationAction.objects.select_related("rule", "rule__business")
     serializer_class = AutomationActionSerializer
     business_lookup = "rule__business"

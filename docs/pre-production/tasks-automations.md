@@ -2,7 +2,7 @@
 
 Граница аудита 17.10 (`56dd124`): наличие engine/leases не закрывает создание
 частичного активного правила, пустой состав, неполную проверку конфигурации и
-ошибки истории UI. AUD-04–07 и offline task replay AUD-10 открыты в
+ошибки истории UI. После исправления AUD-06 пункты AUD-04/05/07 и offline task replay AUD-10 открыты в
 [roadmap](../current/roadmap.md#project-audit-20261017);
 [методы проверки](../testing/project-audit-20261017.md). Task command idempotency
 не доказывает её использование offline-клиентом. В AUD-01 изолированы локальная
@@ -36,6 +36,15 @@ AutomationRule/Condition/Action/Run используют Business и capabilitie
 Есть create_task, create_notification, assign_user, add_note, create_follow_up, wait.
 Webhook action не следует из наличия интеграционного endpoint. Управление retry/cancel
 требует `automations:manage`; automation не обходит approvals AI или права CRM.
+
+AUD-06, 19.10: единая проверка action config в preview/save/CRUD/activate/execute,
+включая права, активных участников, trigger и типы полей. Пустой состав не включается;
+предметная форма заменяет JSON, ошибки относятся к полям, изменение ввода сбрасывает
+preview. Member loading/error/retry сохраняет ввод. Подтверждены scoped backend и
+browser RU/KK/EN desktop/mobile; версия/команды/пропуски —
+[AUD-06 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-06-20261019--executable-automation-action-configuration).
+Остатка кода/доказательств в AUD-06 нет; общий atomic save/editor (AUD-04/05), история
+(AUD-07), реальные worker/provider/deployment остаются за его границей.
 
 ## Очередь и ошибки
 

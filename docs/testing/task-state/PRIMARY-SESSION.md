@@ -6,6 +6,84 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-06-20261019 — executable automation action configuration
+
+Owner continuation authorizes next AUD-06 only. Root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, clean base 474f432df52d8bbb80f6e307525d25aaaaef425e.
+Mode fix confirmed preview/config gap; reuse action models, manual serializers,
+condition allowlist, assignment policy, owner runtime actor, domain services, shared
+form inputs/i18n/API clients. Result: all six supported action types share config
+validation across preview/manual save/action CRUD/activation/runtime; malformed types,
+missing required assignment, invalid enums/dates/delays and unavailable/foreign users
+fail before effects. Runtime rechecks current membership, entity tenant and applicable
+permissions; preview is configuration validation, not proof of future event success.
+Keep valid task/note/notification defaults and D-04 appointment follow-up behavior.
+UI: typed fields for each action with translated errors and invalidated preview when
+inputs change; no merchant JSON requirement. Existing simple draft flow/editor and
+atomic aggregate persistence remain AUD-05/AUD-04; do not close those IDs here.
+No provider activation, AI feature, strict event graph rewrite, new permission model,
+migration/working DB/deployment. Existing runtime owner identity, queue claims, WAIT,
+idempotency, retry/cancel and domain activity/notification/BusinessEvent kept.
+Risk: permissive legacy config, stale references/permissions, preview/save disagreement,
+partial edits, UI stale success, runtime failure/replay and follow-up regression.
+Checks: focused baseline and backend validation after each coherent slice; then
+all automation/dependent domain/tenant/access tests and system/migration drift in
+isolated_runtime. Targeted reachable browser flow desktop/mobile/RU/KK/EN with mock
+providers or isolated backend, error/recovery/keyboard; frontend build/types/i18n/bundle
+once at completion. No full E2E/release gate. Docs/roadmap/passports + diff review,
+normal push and actual CI. No agents/other chats, preserve unrelated work.
+
+Progress and closure, 19.10:
+- Baseline isolated focused3 FAILED (0.064s): missing assignment preview200,
+  non-object action config POST201, malformed draft activation200. First fix3 PASS.
+- Shared action_validation validates all six configs and active Business members,
+  existing assignment permissions/capabilities; serializers/template/runtime reuse it.
+  Effective PATCH and trigger changes revalidate. Pending-action preflight prevents
+  an earlier new effect when a later config is already invalid. Existing retry and
+  completed-action semantics preserved. Action/Condition object permission now derives
+  Business from parent rule; ordinary owned CRUD was previously incorrectly403.
+- Expanded18 initially failed2: inherited parent permission and retry test setup.
+  Narrow permission fix and use of real retry endpoint: 18 PASS (5.560s), including
+  unchanged D-04 policy6. Final focused14 PASS (1.112s): valid six-action matrix,
+  malformed values, CRUD, activation, permissions, foreign/inactive users, trigger,
+  tenant entity, revoked membership preflight and successful retry with one effect.
+- Completion `.venv/Scripts/python.exe -c $aud06Final` uses isolated_runtime and
+  subprocess commands: `manage.py check`; `manage.py makemigrations --check --dry-run`;
+  `manage.py test apps.automations apps.tasks.tests apps.notifications.tests apps.core.tests_tenant_isolation apps.core.tests_api_contracts apps.core.tests_crm_server_scenarios apps.businesses.tests_access apps.leads.tests_assignment_patch -v 1`.
+  PASS: 207 tests, 206 passed/1 skipped, 155.134s; system check and migration drift PASS.
+  Skip: existing tests_follow_up_concurrency (requires has_select_for_update).
+  No new locks/concurrency mechanism; D-04 policy passes, PG concurrency not rerun.
+- Typed action fields replace merchant JSON; API helper maps indexed field errors,
+  draft signature invalidates old/in-flight preview on any input change. Members
+  use existing team API, loading/error/retry. New translations RU/KK/EN; no SMS offer.
+- Browser Playwright CLI session aud06, canonical Vite65395/Django65394, disposable
+  isolated_runtime SQLite and synthetic prepare_e2e_smoke_data; no working DB touched.
+  RU desktop: missing assignee400 + inline error, valid member preview, edit invalidates,
+  stale save stays in form, re-preview/save succeeds; reload confirms draft persisted.
+  EN mobile390x844: simulated team503, retry to real API restores without losing input;
+  keyboard Enter/ArrowDown selects notification; typed text/link preview200. KK mobile
+  task fields revealed intrinsic-grid overflow; local grid-cols-1/min-w-0 fix verified
+  with screenshot and each input/textarea bounds. Escape closes modal. Screenshots
+  inspected: output/playwright/aud06/{ru-desktop,en-mobile,kk-mobile-fixed}.png.
+  Browser route503 is only fault injection, not provider certification. Existing
+  background-worker freshness banner and server template Russian copy outside scope.
+  Two CLI quoting syntax failures fixed by single-line code argument; no product fault.
+- Initial TypeScript caught nonexistent TeamMember.user.is_active; removed frontend
+  assumption, backend retains authoritative account check. Final `npm run build`
+  (types+i18n+production/widget) and `npm run check:bundle` PASS after grid/SMS changes;
+  i18n6440 keys, chunks/app shell within budget. Full E2E/release gate not requested.
+  Ignored logs output/aud06-verification/final-{0,1,2}.log and frontend-final.log.
+- Docs: CRM action contract, tasks/automations passport, capabilities, roadmap and
+  STATUS reconciled. Access/frontend contracts unchanged: existing parent tenant and
+  shared UI rules applied, no new role model. AI/integrations/setup README unchanged:
+  no AI/provider/config/schema change. Existing task/notification/activity semantics
+  and D-04 follow-up preserved. No working migration, live provider or deployment.
+  All WIP belongs to AUD-06 from clean474f432d. Version is this commit's source tree;
+  publication SHA/remote/actual CI receipt in final response. No in-scope code,
+  evidence or owner decision remaining; environment/live acceptance stays separate.
+  Next AUD-04 not started; aggregate atomic save and existing-rule editor AUD-04/05
+  remain open. Validation guard alone does not close either item.
+
 ## AUD-15-20261019 — pipeline configuration relationship boundaries
 
 Owner request 19.10: reconcile recent completed tasks with roadmap and continue next
