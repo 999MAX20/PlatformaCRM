@@ -1,0 +1,6 @@
+# Preserve original artifact bytes and SHA-256 across Windows checkouts.
+report.md -text
+findings.json -text
+coverage.json -text
+scan-manifest.json -text
+threatmodel.md -text

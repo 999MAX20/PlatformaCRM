@@ -6,6 +6,63 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PROJECT-RISK-REVIEW-20261019 — consolidation and comprehensive audit
+
+Follow-up owner scope: preserve current audit records; full Deep Scan explicitly
+deferred until later. Saved exact generated report/findings/coverage/manifest/model
+under docs/testing/security-audit-20261019-partial, with README and SHA-256 receipt.
+All 36 raw records retained, including duplicates; no new AUD IDs or runtime fixes.
+Source artifacts remain unchanged. Verification: JSON parse, 36 count, partial flag,
+byte identity and credential-pattern review PASS. New-document local links/anchors,
+registry uniqueness/existence and working/index diff hygiene PASS. Staged five blobs
+match original SHA-256; scoped .gitattributes preserves bytes across checkout.
+No app install/build/tests: documentation-only preservation, runtime unchanged.
+Publication fetch found origin/main at68c6bf0b, an ancestor of starting HEADdf2b9708;
+outgoing range includes five earlier task commits AUD15/06/04/05/16 already reviewed
+and checked in their checkpoints. No foreign remote commits or merge/rebase needed.
+Normal push will include that existing history; actual readback/CI in task response.
+Scope completion is preservation/publication only; comprehensive audit stays partial.
+Product contracts, specifications and passports need no behavioral changes: no code,
+API, permissions, environment or verified product result changed in this follow-up.
+
+Interruption checkpoint: owner explicitly canceled Deep Scan on 19.10 at 18:34 UTC
+(23:34 Asia/Qyzylorda). Scan 220130aa-3d20-4bcf-9415-8d794f1087e3 is canceled;
+active reviews 0, one succeeded, four canceled, no worker/coordinator error recorded.
+Configured 4 workers, allowance 3 subagents, maximum 40 full scans, 4 consecutive
+no-new stopping threshold, 96-hour cap. First full review ran 18:17:23–18:33:24;
+another launched 18:33:25. Thus ongoing work, not established deadlock. Parent failed
+to explain multi-pass duration and gave repetitive wait updates; do not repeat that.
+Original pending call returned canceled; no completion/restart/further audit work.
+Retained report: C:/Users/user/.codex/state/plugins/codex-security/scans/PlatformaCRM/
+df2b9708401a3075e590b3e5e97bc5369383c34a_20261019T181719Z_op40ld9x/report.md.
+Generated canceled report contains 36 findings (19 medium/17 low), partial coverage;
+not yet reconciled/deduplicated against AUD and not a completed certification.
+Remaining: reconcile saved results if requested, choose bounded continuation explicitly,
+final documentation verification and publication. Own six docs remain uncommitted.
+User authorized global config change to on-request/workspace-write; valid TOML,
+only those two values changed; backup config.toml.before-security-sandbox-20261019-231443.bak.
+Managed profile now works; initial missing-profile blocker is resolved. Diagnosis
+read service DB in read-only mode with explicit sandbox escalation; no app data changed.
+
+Owner explicitly requested one consolidated document from PROJECT-AUDIT and the
+PlatformaCRM UI / PlatformaCRM 2 discussions, followed by a fresh repository-wide
+audit, especially SQL injection, HTTP/API/outbound requests, attachments and avatars.
+Mode docs + security analysis; no runtime fixes, deployment, working DB changes or
+external attacks. Canonical root C:/Users/user/Desktop/PlatformaCRM, current branch
+codex/ui-testing-toolkit, clean starting HEAD df2b9708401a3075e590b3e5e97bc5369383c34a.
+Reuse AUD IDs, roadmap, existing evidence and approved contracts; preserve historical
+reports and closed local scopes. New findings must have source/attack path and
+counterevidence; distinguish confirmed defect, hypothesis, evidence gap and policy.
+First consolidate, then use the Codex Security Deep workflow for the whole repository.
+No other chat is assigned work. Plugin-managed audit workers follow its own workflow.
+Checks: docs registry/local links/consistency and working/index/committed diff hygiene;
+scan canonical report and honest coverage; no app build/install merely for docs.
+Any runtime probes must be harmless and isolated, with synthetic files/data and no
+real recipients/provider calls. Completion: reconcile findings/statuses, reviewed
+docs commit and normal push, remote SHA and actual CI. Existing AUD-20 implementation
+does not start here. Product contracts/passports change only if their factual claims
+are affected; analysis alone does not create new behavior or policy.
+
 ## AUD-16-20261019 — import job write boundaries
 
 Owner requested document reconciliation first, then AUT-16 interpreted as existing

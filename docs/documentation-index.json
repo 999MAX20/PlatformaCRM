@@ -1,8 +1,40 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-17",
+  "asOf": "2026-10-19",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
+    {
+      "path": "docs/testing/security-audit-20261019-partial/preservation.json",
+      "role": "evidence"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/threatmodel.md",
+      "role": "evidence"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/scan-manifest.json",
+      "role": "evidence"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/coverage.json",
+      "role": "evidence"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/findings.json",
+      "role": "evidence"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/report.md",
+      "role": "evidence"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/README.md",
+      "role": "evidence"
+    },
+    {
+      "path": "docs/testing/project-risk-register-20261019.md",
+      "role": "evidence"
+    },
     {
       "path": "docs/testing/project-audit-20261017.md",
       "role": "evidence"
