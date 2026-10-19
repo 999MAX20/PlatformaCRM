@@ -1,11 +1,14 @@
 import { Ban, ClipboardCheck, Eye, Play, Plus, RotateCcw, Settings2, Trash2, Workflow } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
 
 import { automationActionErrors, automationRulesApi, automationRunsApi } from "../../api/automations";
 import { teamApi } from "../../api/team";
 import { AutomationActionFields } from "./AutomationActionFields";
+import { editedConditionValue, ruleEditorDraft } from "./editorDraft";
+import { hasPermission } from "../../lib/permissions";
+import { useAuth } from "../auth/AuthProvider";
 import { getApiErrorMessage } from "../../api/client";
 import { Badge, type BadgeVariant } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
@@ -70,10 +73,6 @@ function defaultActions(t: (key: string) => string) {
   ] as AutomationActionDraft[];
 }
 
-function valueJson(value: string) {
-  return { value };
-}
-
 function formatJson(value: unknown) {
   return JSON.stringify(value ?? {}, null, 2);
 }
@@ -106,11 +105,23 @@ export function AutomationsPage() {
   const { t, language } = useI18n();
   const queryClient = useQueryClient();
   const { business } = useActiveBusiness();
+  const { user } = useAuth();
+  const canCreate = hasPermission(user, business?.id, "automations", "create");
+  const canUpdate = hasPermission(user, business?.id, "automations", "update");
   const { automationRules } = useEntityData({ automationRules: true });
   const templates = useQuery({ queryKey: ["automation-templates"], queryFn: automationRulesApi.templates });
   const runs = useQuery({ queryKey: ["automation-runs"], queryFn: automationRunsApi.list });
   const [createOpen, setCreateOpen] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const editorSession = useRef(0);
+  const [editingRuleId, setEditingRuleId] = useState<number | null>(null);
+  const [editorLoading, setEditorLoading] = useState(false);
+  const [editorLoadError, setEditorLoadError] = useState<unknown>(null);
+  useEffect(() => {
+    editorSession.current += 1;
+    setAdvancedOpen(false);
+    setCreateOpen(false);
+  }, [business?.id]);
   const [form, setForm] = useState({ name: "", trigger_type: "lead_created", description: "" });
   const [advancedForm, setAdvancedForm] = useState({
     name: "",
@@ -125,7 +136,7 @@ export function AutomationsPage() {
   const [previewSignature, setPreviewSignature] = useState("");
   const [actionErrors, setActionErrors] = useState<Record<number, string[]>>({});
   const members = useQuery({ queryKey: ["automation-members", business?.id], queryFn: () => teamApi.allMembers(business?.id), enabled: advancedOpen && Boolean(business) });
-  const draftSignature = JSON.stringify({ advancedForm, conditions, actions, business: business?.id });
+  const draftSignature = JSON.stringify({ advancedForm, conditions, actions, business: business?.id, editingRuleId, session: editorSession.current });
   const validPreview = previewSignature === draftSignature ? preview : null;
   const [advancedError, setAdvancedError] = useState<string | null>(null);
   const [selectedRun, setSelectedRun] = useState<AutomationRun | null>(null);
@@ -140,10 +151,11 @@ export function AutomationsPage() {
 
   const mutation = useMutation({
     mutationFn: (payload: Partial<AutomationRule>) => automationRulesApi.create(payload),
-    onSuccess: () => {
+    onSuccess: (rule) => {
       queryClient.invalidateQueries({ queryKey: ["automation-rules"] });
       setCreateOpen(false);
       setForm({ name: "", trigger_type: "lead_created", description: "" });
+      if (canUpdate) void openEditor(rule.id);
     },
   });
   const applyTemplateMutation = useMutation({
@@ -159,32 +171,75 @@ export function AutomationsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["automation-rules"] }),
   });
   const previewMutation = useMutation({
-    mutationFn: async ({ payload, signature }: { payload: ManualAutomationRulePayload; signature: string }) => ({ data: await automationRulesApi.previewManual(payload), signature }),
-    onSuccess: ({ data, signature }) => {
+    mutationFn: async ({ payload, signature, id, session }: { payload: ManualAutomationRulePayload; signature: string; id: number | null; session: number }) => ({
+      data: await (id ? automationRulesApi.previewConfiguration(id, payload) : automationRulesApi.previewManual(payload)), signature, session,
+    }),
+    onSuccess: ({ data, signature, session }) => {
+      if (session !== editorSession.current) return;
       setPreview(data);
       setPreviewSignature(signature);
       setActionErrors({});
       setAdvancedError(null);
     },
-    onError: (error) => {
+    onError: (error, variables) => {
+      if (variables.session !== editorSession.current) return;
       setPreview(null);
       setActionErrors(automationActionErrors(error));
       setAdvancedError(getApiErrorMessage(error, t));
     },
   });
   const createManualMutation = useMutation({
-    mutationFn: () => automationRulesApi.createManual(buildManualPayload()),
-    onSuccess: () => {
+    mutationFn: ({ id, payload }: { id: number | null; payload: ManualAutomationRulePayload; session: number }) =>
+      id ? automationRulesApi.saveConfiguration(id, payload) : automationRulesApi.createManual(payload),
+    onSuccess: (_rule, variables) => {
       queryClient.invalidateQueries({ queryKey: ["automation-rules"] });
+      if (variables.session !== editorSession.current) return;
+      editorSession.current += 1;
       setAdvancedOpen(false);
       setPreview(null);
       setAdvancedError(null);
+    },
+    onError: (error, variables) => {
+      if (variables.session !== editorSession.current) return;
+      setActionErrors(automationActionErrors(error)); setAdvancedError(getApiErrorMessage(error, t));
+    },
+  });
+
+  async function openEditor(id: number | null = null) {
+    const session = ++editorSession.current;
+    setEditingRuleId(id);
+    setAdvancedOpen(true);
+    setPreview(null);
+    setAdvancedError(null);
+    setActionErrors({});
+    setEditorLoadError(null);
+    setEditorLoading(Boolean(id));
+    if (id === null) {
       setAdvancedForm({ name: "", trigger_type: "lead_created", description: "", is_active: false, priority: 100 });
       setConditions([]);
       setActions(defaultActions(t));
-    },
-    onError: (error) => { setActionErrors(automationActionErrors(error)); setAdvancedError(getApiErrorMessage(error, t)); },
-  });
+      return;
+    }
+    try {
+      const rule = await automationRulesApi.get(id);
+      if (session !== editorSession.current) return;
+      if (rule.business !== business?.id) throw new Error("Rule context changed.");
+      const draft = ruleEditorDraft(rule);
+      setAdvancedForm(draft.form);
+      setConditions(draft.conditions);
+      setActions(draft.actions.length ? draft.actions : defaultActions(t));
+    } catch (error) {
+      if (session === editorSession.current) setEditorLoadError(error);
+    } finally {
+      if (session === editorSession.current) setEditorLoading(false);
+    }
+  }
+
+  function closeEditor() {
+    if (createManualMutation.isPending) return;
+    editorSession.current += 1;
+    setAdvancedOpen(false);
+  }
   const retryRunMutation = useMutation({
     mutationFn: (runId: number) => automationRunsApi.retry(runId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["automation-runs"] }),
@@ -209,7 +264,7 @@ export function AutomationsPage() {
       conditions: conditions.map((condition) => ({
         field: condition.field,
         operator: condition.operator,
-        value: valueJson(condition.rawValue),
+        value: condition.value,
       })),
       actions: actions.map((action) => ({
         action_type: action.action_type,
@@ -232,7 +287,7 @@ export function AutomationsPage() {
             <Link to="/app/settings#automations">
               <Button type="button" variant="secondary">{t("automations.backToSettings")}</Button>
             </Link>
-            <Button onClick={() => setCreateOpen(true)}><Plus size={18} />{t("automations.createRule")}</Button>
+            <Button disabled={!canCreate} onClick={() => setCreateOpen(true)}><Plus size={18} />{t("automations.createRule")}</Button>
           </div>
         }
       />
@@ -261,7 +316,7 @@ export function AutomationsPage() {
         </summary>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-2xl text-sm leading-6 text-platforma-subtle">{t("automations.advancedText")}</p>
-          <Button type="button" variant="secondary" onClick={() => setAdvancedOpen(true)}>
+          <Button type="button" variant="secondary" disabled={!canCreate} onClick={() => void openEditor()}>
             <Settings2 size={18} />
             {t("automations.advancedBuilder")}
           </Button>
@@ -288,12 +343,14 @@ export function AutomationsPage() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Button
                     variant="secondary"
+                    disabled={!canCreate}
                     onClick={() => applyTemplateMutation.mutate({ templateKey: template.key, isActive: false })}
                     isLoading={applyTemplateMutation.isPending}
                   >
                     {t("automations.addDraft")}
                   </Button>
                   <Button
+                    disabled={!canCreate}
                     onClick={() => applyTemplateMutation.mutate({ templateKey: template.key, isActive: true })}
                     isLoading={applyTemplateMutation.isPending}
                   >
@@ -326,7 +383,9 @@ export function AutomationsPage() {
               <p className="mt-2 text-sm leading-6 text-platforma-subtle">{triggers.find((item) => item.value === rule.trigger_type)?.label || rule.trigger_type}</p>
               {rule.description ? <p className="mt-3 text-sm leading-6 text-platforma-subtle">{rule.description}</p> : null}
               <div className="mt-4 flex flex-wrap gap-2">
+                {canUpdate ? <Button variant="secondary" onClick={() => void openEditor(rule.id)}>{t("common.edit")}</Button> : null}
                 <Button
+                  disabled={!canUpdate || (!rule.is_active && !rule.actions?.length)}
                   variant={rule.is_active ? "warning" : "primary"}
                   onClick={() => toggleMutation.mutate({ rule, isActive: !rule.is_active })}
                   isLoading={toggleMutation.isPending}
@@ -341,7 +400,7 @@ export function AutomationsPage() {
           <EmptyState
             title={t("automations.emptyTitle")}
             description={t("automations.emptyDescription")}
-            action={<Button variant="secondary" onClick={() => setCreateOpen(true)}><Plus size={16} />{t("automations.createRule")}</Button>}
+            action={canCreate ? <Button variant="secondary" onClick={() => setCreateOpen(true)}><Plus size={16} />{t("automations.createRule")}</Button> : undefined}
           />
         ) : null}
       </div>
@@ -472,14 +531,15 @@ export function AutomationsPage() {
             });
           }}
         >
-          <Input placeholder={t("automations.ruleNamePlaceholder")} value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
-          <Select value={form.trigger_type} onChange={(event) => setForm({ ...form, trigger_type: event.target.value })} options={triggers} />
-          <Input placeholder={t("automations.descriptionPlaceholder")} value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
+          <Input label={t("automations.name")} placeholder={t("automations.ruleNamePlaceholder")} value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
+          <Select label={t("automations.trigger")} value={form.trigger_type} onChange={(event) => setForm({ ...form, trigger_type: event.target.value })} options={triggers} />
+          <Input label={t("automations.descriptionLabel")} placeholder={t("automations.descriptionPlaceholder")} value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
           <Button type="submit" isLoading={mutation.isPending}>{t("automations.saveDraft")}</Button>
         </form>
       </Modal>
 
-      <Modal title={t("automations.advancedBuilder")} open={advancedOpen} onClose={() => setAdvancedOpen(false)}>
+      <Modal title={editingRuleId ? t("common.edit") : t("automations.advancedBuilder")} open={advancedOpen} onClose={closeEditor}>
+        {editorLoading ? <LoadingState /> : editorLoadError ? <div className="space-y-3"><ErrorState message={getApiErrorMessage(editorLoadError, t)} /><Button onClick={() => void openEditor(editingRuleId)}>{t("common.retry")}</Button></div> : (
         <form
           className="space-y-5"
           onSubmit={(event) => {
@@ -488,9 +548,10 @@ export function AutomationsPage() {
               setAdvancedError(t("automations.previewRequired"));
               return;
             }
-            createManualMutation.mutate();
+            createManualMutation.mutate({ id: editingRuleId, payload: buildManualPayload(), session: editorSession.current });
           }}
         >
+          <fieldset disabled={createManualMutation.isPending} className="min-w-0 space-y-5">
           {advancedError ? <ErrorState message={advancedError} /> : null}
           <div className="grid gap-3 md:grid-cols-2">
             <Input label={t("automations.name")} value={advancedForm.name} onChange={(event) => setAdvancedForm({ ...advancedForm, name: event.target.value })} required />
@@ -516,7 +577,7 @@ export function AutomationsPage() {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => setConditions([...conditions, { field: "source", operator: "eq", value: {}, rawValue: "" }])}
+                onClick={() => setConditions([...conditions, { field: "source", operator: "eq", rawValue: "", value: { value: "" } }])}
               >
                 <Plus size={16} /> {t("automations.addCondition")}
               </Button>
@@ -537,7 +598,7 @@ export function AutomationsPage() {
                   <Input
                     placeholder={t("automations.expectedValue")}
                     value={condition.rawValue}
-                    onChange={(event) => setConditions(conditions.map((item, itemIndex) => itemIndex === index ? { ...item, rawValue: event.target.value } : item))}
+                    onChange={(event) => setConditions(conditions.map((item, itemIndex) => itemIndex === index ? { ...item, rawValue: event.target.value, value: editedConditionValue(event.target.value) } : item))}
                   />
                   <Button type="button" variant="ghost" className="px-3" aria-label={t("automations.removeCondition")} onClick={() => setConditions(conditions.filter((_, itemIndex) => itemIndex !== index))}>
                     <Trash2 size={16} />
@@ -601,14 +662,16 @@ export function AutomationsPage() {
           ) : null}
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="secondary" onClick={(event) => { if (event.currentTarget.form?.reportValidity()) previewMutation.mutate({ payload: buildManualPayload(), signature: draftSignature }); }} isLoading={previewMutation.isPending}>
+            <Button type="button" variant="secondary" onClick={(event) => { if (event.currentTarget.form?.reportValidity()) previewMutation.mutate({ payload: buildManualPayload(), signature: draftSignature, id: editingRuleId, session: editorSession.current }); }} isLoading={previewMutation.isPending}>
               {t("automations.testPreview")}
             </Button>
             <Button type="submit" isLoading={createManualMutation.isPending}>
               {t("automations.saveRule")}
             </Button>
           </div>
+          </fieldset>
         </form>
+        )}
       </Modal>
     </>
   );

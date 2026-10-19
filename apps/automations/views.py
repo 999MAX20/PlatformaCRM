@@ -132,13 +132,23 @@ class AutomationRuleViewSet(AtomicConfigurationMixin, TenantModelViewSet):
     @action(detail=True, methods=["put"])
     def configuration(self, request, pk=None):
         rule = self.get_object()
+        payload = self._existing_configuration_payload(request, rule)
+        rule = save_configuration(request=request, business=rule.business,
+                                  payload=payload, rule=rule)
+        return Response(self.get_serializer(rule).data)
+
+    @action(detail=True, methods=["post"], url_path="preview")
+    def preview_configuration(self, request, pk=None):
+        rule = self.get_object()
+        return Response(self._manual_preview(self._existing_configuration_payload(request, rule)))
+
+    def _existing_configuration_payload(self, request, rule):
+        assert_can(request.user, rule.business, Resources.AUTOMATIONS, Actions.UPDATE, obj=rule)
         serializer = ManualAutomationRuleSerializer(data=request.data, context=self.get_serializer_context())
         serializer.is_valid(raise_exception=True)
         if serializer.validated_data["business"] != rule.business_id:
             raise ValidationError({"business": "The owning business cannot be changed."})
-        rule = save_configuration(request=request, business=rule.business,
-                                  payload=serializer.validated_data, rule=rule)
-        return Response(self.get_serializer(rule).data)
+        return serializer.validated_data
 
     def _manual_preview(self, payload):
         trigger_label = dict(AutomationRule.TriggerTypes.choices).get(payload["trigger_type"], payload["trigger_type"])

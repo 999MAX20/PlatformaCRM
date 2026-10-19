@@ -2,7 +2,7 @@
 
 Граница аудита 17.10 (`56dd124`): наличие engine/leases не закрывает создание
 частичного активного правила, пустой состав, неполную проверку конфигурации и
-ошибки истории UI. После исправлений AUD-06/04 пункты AUD-05/07 и offline task replay AUD-10 открыты в
+ошибки истории UI. После исправлений AUD-06/04/05 пункт AUD-07 и offline task replay AUD-10 открыты в
 [roadmap](../current/roadmap.md#project-audit-20261017);
 [методы проверки](../testing/project-audit-20261017.md). Task command idempotency
 не доказывает её использование offline-клиентом. В AUD-01 изолированы локальная
@@ -43,7 +43,7 @@ AUD-06, 19.10: единая проверка action config в preview/save/CRUD/
 preview. Member loading/error/retry сохраняет ввод. Подтверждены scoped backend и
 browser RU/KK/EN desktop/mobile; версия/команды/пропуски —
 [AUD-06 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-06-20261019--executable-automation-action-configuration).
-Остатка кода/доказательств в AUD-06 нет; редактор (AUD-05), история
+Остатка кода/доказательств в AUD-06 нет; редактор закрыт отдельно в AUD-05, история
 (AUD-07), реальные worker/provider/deployment остаются за его границей.
 
 AUD-04, 19.10: create-manual/apply-template и PUT configuration существующего
@@ -54,8 +54,19 @@ lock; последнее действие активного правила не
 payload и требует UPDATE исходного правила; response сохраняет прежнюю rule-схему.
 Контракт/defaults — [CRM](../current/crm.md), версия и точные проверки —
 [AUD-04 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-04-20261019--atomic-automation-configuration).
-Новый редактор в UI этим не заявляется: AUD-05 остаётся открытым. Версионирование
+Редактор закрыт отдельно в AUD-05 ниже. Версионирование
 конфигурации выполняющегося Run не добавлено; рабочие данные не мигрировались.
+
+AUD-05, 19.10: существующее правило можно открыть, изменить, проверить и сохранить
+из карточки; простой черновик автоматически ведёт в редактор. Detail preview
+использует UPDATE без требования CREATE/квоты нового правила. Загрузка/retry,
+ошибки сохранения, защита от старого preview, сохранение typed values и
+настроек действий проверены; полный локальный сценарий создал одну реальную Task.
+Focused30, affected153 (150 PASS, 3 PG-only skip), system/migration drift,
+frontend helpers4, browser RU/KK/EN desktop/mobile и build/types/i18n/bundle PASS.
+Версия и точные команды — [AUD-05 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-05-20261019--reachable-automation-rule-editor).
+Остатка кода/доказательств/решений в scope нет; AUD-07, live worker/providers
+и deployment отдельно. Рабочая БД не менялась.
 
 ## Очередь и ошибки
 

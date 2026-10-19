@@ -6,6 +6,90 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-05-20261019 — reachable automation rule editor
+
+Owner «продолжай» authorizes AUD-05 only. Root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, clean base46e25ee799d8bf74a7350a2941502bb5c1353f84.
+Result: simple draft opens reachable existing-rule editor; load current composition,
+edit typed fields/conditions/actions, validate, atomically save, enable and execute
+an actual CRM action. Reuse AUD-06 builder/validation, AUD-04 configuration PUT,
+existing permission helper/team API/form primitives. Existing-rule preview must
+require UPDATE rather than CREATE/quota for new rules. Preserve existing condition
+value types, action settings, active state and priority on untouched round trip.
+Scope editor controls/loading/error/retry/forbidden and stale preview; no history
+pagination/redesign (AUD-07), new engine semantics, action types, schema or provider.
+Permission/tenant: backend UPDATE+original Business; role-aware UI, server authoritative.
+No new notification/BusinessEvent/AI/env/migration behavior; actual create_task uses
+existing domain engine, isolated synthetic DB only, no working/deployed changes.
+Risks: editing wrong rule, failed GET overwrites, loss of config/typed condition values,
+stale preview after switch, role denial, activation of empty draft, failed save loss.
+Checks: focused detail-preview permission/tenant/no-write and full lifecycle backend
+before frontend dependencies; completion all automations + API/tenant/access dependent
+suites and check/migration drift. Browser real isolated backend simple draft→editor→
+preview→save→enable→lead event→one task; edit reload/failed GET+save recovery, stale
+preview, desktop/mobile and RU/KK/EN/keyboard. Build/types/i18n/bundle once at end.
+Existing PG locking proof unchanged from AUD-04; rerun only if locking changes.
+Docs/contract/passport/roadmap and diff gate; commit normal push and actual CI. Stop
+at AUD-05, no other chats/agents/automation or subsequent phase.
+
+Progress: baseline detail-preview tests4 failed (0.136s): missing route returned404;
+three diagnostic messages accessed .data on HTML404, one asserted404 !=200. Added
+POST /api/automation-rules/{id}/preview/, shared existing-configuration validation
+with configuration PUT; UPDATE on original rule, Business immutable, no CREATE/quota.
+Focused30 PASS (2.690s): tests_rule_editor4 + configuration12 + action_validation14.
+Covers read-only preview, invalid/tenant/role denial, update-only/no-creation-quota,
+simple draft→configure→preview→enable→one actual Task under duplicate event.
+Frontend editor uses existing builder+API PUT, fresh rule GET with loading/error/retry,
+session guard for stale load/preview/save, permission helper, preserves active/priority
+and typed condition/action data. Empty draft opens editor after creation; empty rule
+cannot enable. Helpers tested with `node --test scripts/tests/automation-editor.test.mjs`:
+4 PASS (clone/typed values, edits, legacy assignment aliases, zoned deadline display).
+`node node_modules/typescript/bin/tsc -b --pretty false` in frontend PASS. Earlier
+root npx --no-install tsc resolved the wrong cached command; no dependencies installed.
+Previous AUD-04 commit46e25ee7 CI run39269034161 verified completed/success.
+Completion checks on base46e25ee7 + task-owned dirty snapshot, canonical root:
+- `.venv/Scripts/python.exe` with `scripts.codex_verify.isolated_runtime` and
+  subprocess environment: `manage.py check`, `manage.py makemigrations --check
+  --dry-run` PASS; `manage.py test apps.automations apps.core.tests_tenant_isolation
+  apps.core.tests_api_contracts apps.core.tests_crm_server_scenarios
+  apps.businesses.tests_access -v 1`: 153 found, 150 PASS, 3 PG-only skip, 108.770s.
+  Logs output/aud05-verification/final-{0,1,2}.log. No working DB touched.
+  PG locking code unchanged; AUD-04 PG29 evidence retained, no redundant PG rerun.
+- frontend: `node --test scripts/tests/automation-editor.test.mjs` 4 PASS;
+  `npm run build` (i18n/types/app/widget) PASS; `npm run check:bundle` PASS.
+  Logs output/aud05-verification/frontend-{build,bundle}.log; no install/lock delta.
+- Playwright CLI `npx --no-install --package @playwright/cli playwright-cli -s=aud05`
+  open/snapshot/click/run-code against isolated_runtime disposable SQLite + Vite,
+  prepared by `node frontend/e2e/django-e2e.mjs prepare`; inline automation.
+  Verified simple create auto-opens editor, empty draft disabled, detail preview200,
+  PUT200, enable and POST real client/lead through authenticated API => Task count1
+  (rule1, lead3, task2), run success visible after reload. Existing editor reloads.
+  Injected GET503 hides form; retry loads; PUT503/403 retain draft, retry200.
+  Modified form and held preview from closed session cannot authorize save.
+  RU desktop1280x720, EN/KK mobile390x844; screenshots visually inspected, no modal
+  horizontal overflow, Tab enters name field, Escape closes. Saved types array,
+  active=true, priority42, delay9, timestamp seconds survive UI preview/save200.
+  Server canonical UTC `2026-12-01T07:30:12+00:00` preserved exactly after reload.
+  Initial browser assertion wrongly expected custom503 detail (normalizer shows
+  safe generic error); corrected to alert/no-form/retry. Initial timestamp assertion
+  wrongly expected incoming +05:00 string; source DateTimeField normalizes UTC.
+  Fresh isolated roundtrip proved stored UTC/seconds and all fields unchanged;
+  no production fix needed for either harness expectation. Artifacts:
+  output/playwright/aud05/, output/aud05-browser/, output/aud05-roundtrip/.
+  Both owned runtimes/CLI stopped, disposable DBs removed; no shared servers stopped.
+- Docs synchronized: roadmap, CRM API/behavior contract, tasks-automations passport,
+  capabilities and STATUS. Frontend/access/AI/engineering contracts and README need
+  no change: existing shared patterns/permissions/AI and setup unchanged. Historical
+  audit evidence retained; live worker/provider/deployment and AUD-07 stay open.
+  Existing server template text is RU in EN/KK outside changed editor; no template
+  localization work or whole-page certification claimed.
+Required scope PASS; code/evidence/owner-decision remainder none. Docs links/registry,
+diff/untracked review, explicit staging, conventional commit, static actual-base gate,
+normal origin HEAD:main push, remote readback and actual CI complete publication;
+publication receipt is the task response. No new migration/env/dependency/provider
+changes. No full-project/release gate: bounded editor, tested dependent areas above.
+Next unfinished AUD-16 not started. No active owned background work after cleanup.
+
 ## AUD-04-20261019 — atomic automation configuration
 
 Owner «Приступай» authorizes AUD-04 only. Canonical root C:/Users/user/Desktop/PlatformaCRM,

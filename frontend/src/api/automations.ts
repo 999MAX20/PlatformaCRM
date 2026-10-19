@@ -32,6 +32,14 @@ export const automationRulesApi = {
     const { data } = await apiClient.post<AutomationPreview>("/api/automation-rules/preview/", payload);
     return data;
   },
+  previewConfiguration: async (id: Id, payload: ManualAutomationRulePayload) => {
+    const { data } = await apiClient.post<AutomationPreview>(`/api/automation-rules/${id}/preview/`, payload);
+    return data;
+  },
+  saveConfiguration: async (id: Id, payload: ManualAutomationRulePayload) => {
+    const { data } = await apiClient.put<AutomationRule>(`/api/automation-rules/${id}/configuration/`, payload);
+    return data;
+  },
   createManual: async (payload: ManualAutomationRulePayload) => {
     const { data } = await apiClient.post<AutomationRule>("/api/automation-rules/create-manual/", payload);
     return data;

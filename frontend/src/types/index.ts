@@ -1664,7 +1664,7 @@ export type AutomationRun = {
 export type AutomationConditionDraft = {
   field: string;
   operator: "eq" | "gt" | "lt" | "contains" | "in";
-  value: Record<string, unknown>;
+  value: unknown;
 };
 
 export type AutomationActionDraft = {

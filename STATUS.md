@@ -6,18 +6,24 @@
 
 # PlatformaCRM — текущий статус
 
+19.10.2026. AUD-05 закрыт в локальном scope: редактор существующего правила,
+preview/update и полный сценарий до одной реальной задачи. Focused30, affected153
+(150 PASS, 3 PG-only skip), helpers4, system/migration drift, browser RU/KK/EN
+desktop/mobile, build/types/i18n/bundle PASS. Scope/команды — checkpoint AUD-05-20261019;
+commit/push/CI — итог задачи. Deployment не выполнен. Следующий AUD-16 не начат.
+
 19.10.2026. AUD-04 закрыт в локальном scope: атомарное создание/замена состава
 автоматизации и истории; защита активного состава при конкурентных изменениях.
 Focused26 PASS; affected208: 205 PASS, 3 PG-only skip; PostgreSQL29 PASS,
 system/migration drift PASS. Scope/команды — checkpoint AUD-04-20261019;
-commit/push/CI — итог задачи. Deployment не выполнен. Следующий AUD-05 не начат.
+commit/push/CI — итог задачи. Deployment не выполнен. AUD-05 закрыт отдельно выше.
 
 19.10.2026. AUD-06 закрыт в локальном scope: общая проверка действий в
 preview/save/activate/execute, предметная форма, ошибки RU/KK/EN и актуальность preview.
 Focused14 PASS; affected207: 206 PASS, 1 PG-only skip; system/migration drift,
 browser desktop/mobile, build/types/i18n/bundle PASS. Версия/команды/границы —
 checkpoint AUD-06-20261019; commit/push/CI — итог задачи. Deployment не выполнен.
-AUD-06 опубликован `046c83bf`, CI success. Продолжение AUD-04 отражено выше; UI-редактор AUD-05 открыт.
+AUD-06 опубликован `046c83bf`, CI success. Продолжение AUD-04 отражено выше; UI-редактор AUD-05 закрыт отдельно выше.
 
 19.10.2026. Сверка AUD-01/02/03/13/14: закрытие соответствует коду и evidence,
 все пять опубликованы в main, CI success. Сводка roadmap актуализирована.

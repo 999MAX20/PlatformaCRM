@@ -3,6 +3,7 @@ import { Select } from "../../components/ui/Select";
 import { Textarea } from "../../components/ui/Textarea";
 import { useI18n } from "../../lib/i18n";
 import type { AutomationActionDraft, TeamMember } from "../../types";
+import { actionUserConfig, localDateTimeValue } from "./editorDraft";
 
 export function AutomationActionFields({ action, onChange, members, membersLoading, invalidFields = [] }: {
   action: AutomationActionDraft;
@@ -36,14 +37,14 @@ export function AutomationActionFields({ action, onChange, members, membersLoadi
       <Input label={t("automations.taskTitle")} maxLength={255} value={text("title")} error={error("title")} onChange={event => update("title", event.target.value)} />
       <Select label={t("tasks.priority")} value={text("priority") || "normal"} options={priorityOptions} error={error("priority")} onChange={event => update("priority", event.target.value)} />
       <Textarea label={t("automations.descriptionLabel")} value={text("description")} error={error("description")} onChange={event => update("description", event.target.value)} />
-      <Input label={t("automations.dueAt")} type="datetime-local" value={text("due_at")} error={error("due_at")} onChange={event => update("due_at", event.target.value)} />
+      <Input label={t("automations.dueAt")} type="datetime-local" value={localDateTimeValue(text("due_at"))} error={error("due_at")} onChange={event => update("due_at", event.target.value ? new Date(event.target.value).toISOString() : "")} />
       {action.action_type === "create_follow_up" ? <Input label={t("automations.dueInDays")} type="number" min={1} step={1} value={text("due_in_days") || 1} error={error("due_in_days")} onChange={event => update("due_in_days", event.target.value ? Number(event.target.value) : "")} /> : null}
     </> : null}
     {notification || action.action_type === "add_note" ? <Textarea label={t("automations.actionText")} value={text("text")} error={error("text")} onChange={event => update("text", event.target.value)} /> : null}
     {task || notification || action.action_type === "assign_user" ? <Select
-      label={t(notification ? "automations.recipient" : "tasks.assignee")} value={text(userField)}
+      label={t(notification ? "automations.recipient" : "tasks.assignee")} value={String(config[userField] ?? config.user_id ?? config.assignee_id ?? config.owner_id ?? "")}
       options={userOptions} disabled={membersLoading} error={error(userField)}
-      onChange={event => update(userField, event.target.value ? Number(event.target.value) : "")}
+      onChange={event => onChange(actionUserConfig(config, userField, event.target.value ? Number(event.target.value) : ""))}
     /> : null}
     {notification ? <>
       <Select label={t("automations.channel")} value={text("channel") || "system"}
