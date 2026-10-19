@@ -6,6 +6,84 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-04-20261019 — atomic automation configuration
+
+Owner «Приступай» authorizes AUD-04 only. Canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, clean base046c83bf2bd1340aa482b76d40ac04b1a9d2a9b5.
+Mode fix reproduced persistence gap; result: manual/template aggregate creation and
+full composition replacement commit rule/conditions/actions/history together or
+roll back together. Activation and direct child CRUD cannot commit invalid active
+composition. Reuse AUD-06 validators, Business ownership/access, existing audit and
+activity helpers and API response shapes. Add bounded aggregate update API for the
+existing rule; reachable editor is AUD-05, not included here. Existing simple draft,
+preview and create callers preserved. No schema/env/provider/AI/action execution
+rewrite, no working DB, deployment or later phase. No notification/BusinessEvent
+on configuration save; record aggregate create/update in existing audit/activity.
+Risk: partial active configuration, history without writes, permission bypass,
+concurrent activation/child deletion and stale aggregate. Serialize configuration
+writes within Business using DB transaction/row lock; keep engine effect semantics.
+Checks: isolated fault injection baseline then focused regression after each coherent
+service/API slice; success, invalid data, permissions, tenant denial, create/template/
+replace/audit rollback and active-last-action guard. Completion all automations plus
+core tenant/API/CRM scenarios and access; check/migration drift; isolated PostgreSQL
+concurrent config writes because new locking boundary. Existing unchanged UI callers
+get API-path evidence; no build/browser solely for backend transaction change unless
+frontend contract wiring needs edits. Docs/roadmap/passport consistency, diff hygiene,
+commit/normal push/actual CI. Preserve any subsequent unrelated WIP; no agents/chats.
+
+AUD-04 progress: baseline tests_configuration3 confirmed FAIL (0.095s): manual
+second action fault500 left rule+condition+first action; template action fault500
+left rule; deleting active last action returned204. Initial test expected exceptions,
+but the API handler returns500; changed only harness expectation, then confirmed
+persistence counts before implementation. First slice: configuration service owns
+atomic Business lock + writes/history; generic rule/action/condition CRUD uses the
+same lock and validates affected active aggregates before commit. Focused17 PASS (1.136s).
+Previous AUD-06 commit046c83bf CI run39236951562 verified completed/success 19.10.
+
+Second slice: PUT /api/automation-rules/{id}/configuration/ replaces the full
+composition with original-Business UPDATE enforcement; same Manual serializer and
+AUD-06 validation. Service deep-copies shared template data before normalization.
+Focused26 PASS (0.960s): aggregate success/order/history; condition/action/activity
+failures roll back creation/replacement; invalid replacement, UPDATE denial/foreign
+404/Business immutability; active source reparent rollback; generic history failure;
+allowed child deletion, draft emptying and activation guard. PostgreSQL races2 and
+completion suites running. Frontend source consumers inspected: AutomationsPage
+uses unchanged create/applyTemplate/createManual/update API; no frontend edits or
+build inputs changed. API evidence proves changed persistence paths, existing-rule
+editor remains AUD-05. No build/browser rerun solely for backend transactions.
+
+PostgreSQL17 isolated gate: tests_configuration12 + tests_action_validation14 +
+tests_configuration_concurrency2 + tests_follow_up_concurrency1 =29 PASS, 10.537s.
+Owned pg initialized with trust only on dedicated loopback/temp data, started hidden,
+then stopped via pg_ctl and temp directories removed. Post-test wrapper exited1 only
+when printing a mixed-encoding server-log tail to cp1251; tests/cleanup had completed.
+Read-back ASCII summary confirmed29/OK; no aud04-pg postgres process or temp directory
+remained. Do not mislabel this postprocessing failure as an application test failure
+or rerun unchanged tests merely to change wrapper exit. Full log retained.
+
+Completion, 19.10: affected208 tests PASS (205 passed, 3 PostgreSQL-only skips),
+157.064s; `manage.py check` and `manage.py makemigrations --check --dry-run` PASS.
+Command `.venv/Scripts/python.exe -` with $aud04Final uses isolated_runtime then
+subprocess `[sys.executable, 'manage.py', ...]` for check, migration drift and:
+`test apps.automations apps.tasks.tests apps.notifications.tests apps.core.tests_tenant_isolation apps.core.tests_api_contracts apps.core.tests_crm_server_scenarios apps.businesses.tests_access -v 1`.
+Skipped SQLite tests are the two new configuration races and existing follow-up
+concurrency; all three passed on isolated PostgreSQL17. Focused commands same helper
+with `test apps.automations.tests_configuration apps.automations.tests_action_validation -v 1`.
+PG command: `test apps.automations.tests_configuration apps.automations.tests_action_validation apps.automations.tests_configuration_concurrency apps.automations.tests_follow_up_concurrency -v 2`.
+Logs output/aud04-verification/{baseline-confirmed,slice1,slice2,postgres,final-0,
+final-1,final-2}.log retained ignored. No running owned process or working DB mutation.
+Docs gate: changed links/anchors, registry and AUD01..22 mapping PASS (6 docs),
+working diff hygiene PASS; index/actual committed-range gate follows publication.
+Only AUD-04-owned changes from clean046c83bf. Version is this commit's source tree;
+commit/remote/actual CI receipt in final answer. CRM contract documents full PUT
+replacement defaults/child ID recreation; passport, capabilities, roadmap and STATUS
+agree. No new rule model, permissions, migration/env/provider/AI/notification or
+BusinessEvent behavior. Access/frontend/setup README unchanged: existing rules and
+callers reused; UI editor is AUD-05, current API paths covered above. No full/release
+or live provider/deployment gate requested. Config version pinning for in-flight Run
+not introduced. Code/evidence/owner-decision remainder in AUD-04: none. Deployment
+outside scope. Stop here; next AUD-05 not started.
+
 ## AUD-06-20261019 — executable automation action configuration
 
 Owner continuation authorizes next AUD-06 only. Root C:/Users/user/Desktop/PlatformaCRM,

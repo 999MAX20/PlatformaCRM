@@ -316,11 +316,27 @@ AUD-06: preview, manual save, action CRUD, активация и execution ис�
 эффекта и каждое действие перед выполнением; actor остаётся владельцем Business.
 Ошибка использует существующий retry, уже выполненные эффекты не откатываются.
 Preview подтверждает текущую конфигурацию, а не будущую доставку или доступность
-сотрудника. Атомарная запись всего правила и редактор существующего состава остаются
-отдельными AUD-04/05. UI предоставляет предметные поля, выбор сотрудников и ошибки
+сотрудника. AUD-04: manual/template creation и полная замена состава сохраняют
+правило, условия, действия, audit/activity одной транзакцией. Ошибка записи любой
+части откатывает весь результат. Generic CRUD правила/детей использует ту же
+Business row lock и проверяет затронутый активный состав перед commit; удаление или
+перенос последнего действия активного правила отклоняется. Выключенный черновик
+может быть пустым, его включение требует валидного состава.
+`PUT /api/automation-rules/{id}/configuration/` принимает полный manual payload
+(`business`, `name`, `trigger_type`, `actions`, необязательные `conditions`,
+`description`, `is_active`, `priority`); отсутствие optional полей использует
+manual defaults, включая is_active=false и conditions=[]. Это полная замена,
+а не PATCH. Требуется UPDATE исходного правила; Business неизменяем. Успех200
+возвращает обычный rule с новым составом; ID детей при замене пересоздаются.
+Конфигурационные записи сериализуются внутри Business, но это не версионирование
+сценария уже запущенного Run. Достижимый редактор состава остаётся AUD-05.
+UI предоставляет предметные поля, выбор сотрудников и ошибки
 RU/KK/EN; изменение формы требует нового preview. SMS не предлагается как канал.
 Код: [action validation](../../apps/automations/action_validation.py);
-проверки: [AUD-06 tests](../../apps/automations/tests_action_validation.py).
+проверки: [AUD-06 tests](../../apps/automations/tests_action_validation.py),
+[atomic configuration](../../apps/automations/configuration.py),
+[rollback tests](../../apps/automations/tests_configuration.py),
+[concurrency tests](../../apps/automations/tests_configuration_concurrency.py).
 
 D-04, решение владельца 14.10: для завершённого, отменённого или пропущенного
 визита существует одна встроенная follow-up задача. Она создаётся до запуска

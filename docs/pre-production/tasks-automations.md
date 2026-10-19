@@ -2,7 +2,7 @@
 
 Граница аудита 17.10 (`56dd124`): наличие engine/leases не закрывает создание
 частичного активного правила, пустой состав, неполную проверку конфигурации и
-ошибки истории UI. После исправления AUD-06 пункты AUD-04/05/07 и offline task replay AUD-10 открыты в
+ошибки истории UI. После исправлений AUD-06/04 пункты AUD-05/07 и offline task replay AUD-10 открыты в
 [roadmap](../current/roadmap.md#project-audit-20261017);
 [методы проверки](../testing/project-audit-20261017.md). Task command idempotency
 не доказывает её использование offline-клиентом. В AUD-01 изолированы локальная
@@ -43,8 +43,19 @@ AUD-06, 19.10: единая проверка action config в preview/save/CRUD/
 preview. Member loading/error/retry сохраняет ввод. Подтверждены scoped backend и
 browser RU/KK/EN desktop/mobile; версия/команды/пропуски —
 [AUD-06 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-06-20261019--executable-automation-action-configuration).
-Остатка кода/доказательств в AUD-06 нет; общий atomic save/editor (AUD-04/05), история
+Остатка кода/доказательств в AUD-06 нет; редактор (AUD-05), история
 (AUD-07), реальные worker/provider/deployment остаются за его границей.
+
+AUD-04, 19.10: create-manual/apply-template и PUT configuration существующего
+правила используют общий атомарный сервис с audit/activity. Сбой условия, действия
+или истории откатывает состав и поля. Generic rule/child CRUD разделяет Business
+lock; последнее действие активного правила нельзя удалить/перенести. PostgreSQL
+подтверждает гонки delete/delete и activate/delete. Полная замена принимает manual
+payload и требует UPDATE исходного правила; response сохраняет прежнюю rule-схему.
+Контракт/defaults — [CRM](../current/crm.md), версия и точные проверки —
+[AUD-04 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-04-20261019--atomic-automation-configuration).
+Новый редактор в UI этим не заявляется: AUD-05 остаётся открытым. Версионирование
+конфигурации выполняющегося Run не добавлено; рабочие данные не мигрировались.
 
 ## Очередь и ошибки
 

@@ -3,7 +3,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from apps.automations.engine import cancel_automation_run, retry_automation_run
-from apps.automations.action_validation import validate_action_list
+from apps.automations.configuration import save_configuration
+from apps.automations.configuration_views import AtomicConfigurationMixin
 from apps.automations.models import AutomationAction, AutomationCondition, AutomationRule, AutomationRun
 from apps.automations.permissions import IsAutomationRuleMember
 from apps.billing.entitlements import EntitlementMetrics, assert_entitlement_allows
@@ -67,9 +68,10 @@ AUTOMATION_TEMPLATES = [
 ]
 
 
-class AutomationRuleViewSet(TenantModelViewSet):
+class AutomationRuleViewSet(AtomicConfigurationMixin, TenantModelViewSet):
     queryset = AutomationRule.objects.prefetch_related("conditions", "actions").select_related("business")
     serializer_class = AutomationRuleSerializer
+    action_permission_map = {**TenantModelViewSet.action_permission_map, "configuration": Actions.UPDATE}
 
     def perform_create(self, serializer):
         business = serializer.validated_data["business"]
@@ -94,26 +96,9 @@ class AutomationRuleViewSet(TenantModelViewSet):
         if template is None:
             raise ValidationError({"template_key": "Unknown automation template."})
 
-        validate_action_list([dict(item) for item in template["actions"]], business=business,
-                             trigger_type=template["trigger_type"], actor=request.user)
-
-        rule = AutomationRule.objects.create(
-            business=business,
-            name=template["name"],
-            description=template["description"],
-            trigger_type=template["trigger_type"],
-            is_active=serializer.validated_data["is_active"],
-        )
-        for condition in template.get("conditions", []):
-            AutomationCondition.objects.create(rule=rule, **condition)
-        for order, action_data in enumerate(template["actions"]):
-            AutomationAction.objects.create(
-                rule=rule,
-                order=order,
-                action_type=action_data["action_type"],
-                config=action_data.get("config", {}),
-                delay_seconds=action_data.get("delay_seconds", 0),
-            )
+        payload = {key: value for key, value in template.items() if key != "key"}
+        payload["is_active"] = serializer.validated_data["is_active"]
+        rule = save_configuration(request=request, business=business, payload=payload)
 
         return Response(self.get_serializer(rule).data, status=201)
 
@@ -134,25 +119,7 @@ class AutomationRuleViewSet(TenantModelViewSet):
         assert_can(request.user, business, Resources.AUTOMATIONS, Actions.CREATE)
         assert_entitlement_allows(business, EntitlementMetrics.AUTOMATIONS)
 
-        payload = serializer.validated_data
-        rule = AutomationRule.objects.create(
-            business=business,
-            name=payload["name"],
-            description=payload.get("description", ""),
-            trigger_type=payload["trigger_type"],
-            is_active=payload.get("is_active", False),
-            priority=payload.get("priority", 100),
-        )
-        for condition in payload.get("conditions", []):
-            AutomationCondition.objects.create(rule=rule, **condition)
-        for order, action_data in enumerate(payload["actions"]):
-            AutomationAction.objects.create(
-                rule=rule,
-                order=order,
-                action_type=action_data["action_type"],
-                config=action_data.get("config", {}),
-                delay_seconds=action_data.get("delay_seconds", 0),
-            )
+        rule = save_configuration(request=request, business=business, payload=serializer.validated_data)
 
         return Response(self.get_serializer(rule).data, status=201)
 
@@ -161,6 +128,17 @@ class AutomationRuleViewSet(TenantModelViewSet):
         if business is None:
             raise ValidationError({"business": "Business was not found."})
         return business
+
+    @action(detail=True, methods=["put"])
+    def configuration(self, request, pk=None):
+        rule = self.get_object()
+        serializer = ManualAutomationRuleSerializer(data=request.data, context=self.get_serializer_context())
+        serializer.is_valid(raise_exception=True)
+        if serializer.validated_data["business"] != rule.business_id:
+            raise ValidationError({"business": "The owning business cannot be changed."})
+        rule = save_configuration(request=request, business=rule.business,
+                                  payload=serializer.validated_data, rule=rule)
+        return Response(self.get_serializer(rule).data)
 
     def _manual_preview(self, payload):
         trigger_label = dict(AutomationRule.TriggerTypes.choices).get(payload["trigger_type"], payload["trigger_type"])
@@ -184,14 +162,14 @@ class AutomationRuleViewSet(TenantModelViewSet):
         }
 
 
-class AutomationConditionViewSet(TenantModelViewSet):
+class AutomationConditionViewSet(AtomicConfigurationMixin, TenantModelViewSet):
     permission_classes = [IsAutomationRuleMember]
     queryset = AutomationCondition.objects.select_related("rule", "rule__business")
     serializer_class = AutomationConditionSerializer
     business_lookup = "rule__business"
 
 
-class AutomationActionViewSet(TenantModelViewSet):
+class AutomationActionViewSet(AtomicConfigurationMixin, TenantModelViewSet):
     permission_classes = [IsAutomationRuleMember]
     queryset = AutomationAction.objects.select_related("rule", "rule__business")
     serializer_class = AutomationActionSerializer
