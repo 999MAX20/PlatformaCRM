@@ -45,10 +45,16 @@ class ImportJobAdmin(admin.ModelAdmin):
     list_display = ("id", "business", "entity_type", "status", "total_rows", "imported_count", "actor", "created_at")
     list_filter = ("entity_type", "status", "business")
     search_fields = ("business__name", "actor__email", "original_filename")
-    readonly_fields = ("created_at", "updated_at", "imported_at")
+    readonly_fields = tuple(field.name for field in ImportJob._meta.fields if field.name != "source_file")
     exclude = ("source_file",)  # File widgets expose storage URLs outside quarantine.
 
     def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
         return False
 
 

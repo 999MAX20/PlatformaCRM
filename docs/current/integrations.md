@@ -74,6 +74,27 @@ upload limits, карантин/scan до parsing, preview/mapping/validation, �
 Рабочую базу не seed/reset ради проверки. Отдельно доказывать rollback/частичный
 результат согласно фактическому режиму импорта, а не обещать общую атомарность.
 
+AUD-16: `POST /api/import-jobs/` принимает только `business`, `entity_type` и
+`source_file`; остальные входные поля отклоняются400. Actor и имя файла берутся
+сервером, все результаты/счётчики/timestamps управляются сервисом. Generic
+PUT/PATCH/DELETE не поддерживаются405; Django admin показывает историю read-only
+без ссылки на source_file. Контекст и источник существующего job неизменяемы.
+`POST /api/import-jobs/{id}/preview/` принимает только `mapping` — объект
+поддерживаемое поле → существующий заголовок файла. Некорректный mapping400
+не меняет сохранённый preview. Без mapping сохраняется выбранное соответствие
+или применяется автоопределение; неизвестные заголовки возвращают preview с
+ready=false, чтобы mapping можно было исправить отдельным preview.
+Preview и confirm держат row lock ImportJob до конца транзакции и перечитывают
+состояние после ожидания. IMPORTED/CANCELLED нельзя открыть preview повторно;
+confirm разрешён только из PREVIEWED. Проверяются актуальные actor/CREATE/модуль,
+исходные ограниченные байты и AV, mapping и строки, а не доверенные клиентом
+preview/errors. Ошибка до commit откатывает CRM-записи, события, sync и audit,
+сохраняя предыдущее состояние job для повтора. Scanner unavailable возвращает
+503 temporary_service_failure с retryable=true, без импорта. Последовательный
+повтор confirm завершённого job отклоняется400. Семантика импортируемых lead/deal
+lifecycle (AUD-20), полный UI (AUD-12) и XLSX resource bounds (AUD-22) отдельно.
+Версия и граница проверок — [AUD-16 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-16-20261019--import-job-write-boundaries).
+
 Public lead/widget ingress привязан к разрешённому business/form/channel,
 ограничен validation/rate limits/origin policy и не раскрывает приватные CRM-данные.
 Секретный API token не размещается в браузерном виджете; клиентские данные

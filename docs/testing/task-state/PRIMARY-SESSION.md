@@ -6,6 +6,99 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-16-20261019 — import job write boundaries
+
+Owner requested document reconciliation first, then AUT-16 interpreted as existing
+AUD-16 (no AUT ID). Canonical root C:/Users/user/Desktop/PlatformaCRM, branch
+codex/ui-testing-toolkit, clean starting HEAD4a13153c4c24c9b72f9b01bbf9e252606927ea5e.
+No other WIP. Scope: current audit completed-task docs, then AUD-16 only; no agents,
+other tasks, deployment/working DB changes. Three result statuses are fully done,
+partially done with explicit remaining work, not done; live acceptance stays separate.
+Scan found stale AUD-05 open claim in capabilities and stale roadmap summary/status
+vocabulary; corrected roadmap, capabilities, tasks-automations, STATUS. Existing
+CRM/access/frontend contracts already contain relevant completed changes. Historical
+evidence is retained; no mass timestamp or whole-project re-certification.
+AUD-05 published4a13153c, CI39284791120 still queued at readback, not success.
+Docs checks: changed links/registry/AUD mapping and diff hygiene, no app retest.
+
+Implementation plan: prevent client writes to ImportJob actor/status/counters/preview
+and immutable context/source. Existing create + preview mapping + confirm API/service
+reused; mapping changes rebuild server preview. Confirm locks/reloads job and checks
+current lifecycle/permissions/rows again; preserve AV/original-byte limits and rollback.
+No new models/schema, providers, AI, imported-entity lifecycle rewrite (AUD-20),
+XLSX resource-risk work (AUD-22), full import UI (AUD-12), export scope (AUD-18).
+AUD-21 remains separate risk; narrow changed-locking evidence does not implicitly
+close the separate phase. Integration events, connector history and audit retained,
+effects transactional, no new external sends.
+Risks: forged mapping/preview, duplicate confirmation, preview reopening imported job,
+foreign actor/tenant, revoked permission, changed source, half import on invalid rows.
+Focused tests before dependent changes: forged inputs/immutable updates, allowed
+create, mapping re-preview validation, terminal preview/confirm, stale model reload,
+source revalidation/AV/limits, denied tenant/role, rollback. Completion affected import
+and dependent security/API/tenant/access suites + system/migration drift; isolated PG
+for changed locking path. Inspect existing frontend caller compatibility; no build if
+frontend unchanged, API integration covers unchanged reachable calls. Docs contract,
+passport/roadmap/evidence at closure; verified commit normal push, actual CI. Stop at
+AUD-16; AUD-20 not authorized here. Final status below supersedes implementation progress.
+
+AUD-16 progress: initial baseline8: 17 assertion failures (0.558s), confirming
+forged fields, ordinary mutation, terminal reopen/stale confirm and mapping shape.
+First focused29 had 28 PASS + rollback-fixture error: mock omitted saved phone
+header; fixed fixture so rollback is reached with valid mapping. Next focused12
+found unknown-column preview ready flag and existing scanner503 normalized to500;
+fixed missing mapping error and used existing TemporaryServiceFailure (503 retryable).
+Focused14 PASS (0.607s): boundaries13 + ImportAntivirusTests1. Added explicit malformed
+request/state cases and PG races; final gates running. API/admin source/context are
+immutable; admin bypass closed with read-only history. No frontend calls need changes:
+importExportApi.upload sends only allowed3 fields, confirm sends no payload. Existing
+ImportPanel remains limited; AUD-12 not implemented. README/setup unchanged.
+
+AUD-16 completion: выполнено полностью в согласованном локальном scope.
+Code/evidence/owner-decision remainder none. Environment: local disposable SQLite
+and PostgreSQL17 only, scanner mocked, no working DB/migration/deployment/provider.
+Version: base4a13153c + reviewed task-owned diff, final commit/remote/CI in response.
+
+Exact checks via `.venv/Scripts/python.exe` and `scripts.codex_verify.isolated_runtime`
+environment, subprocess `[sys.executable, 'manage.py', *command]`:
+- focused: `test apps.core.tests_import_job_boundaries
+  apps.core.tests_file_scanning.ImportAntivirusTests -v 1`: 14 PASS0.607s.
+- affected `test apps.core.tests_import_job_boundaries apps.core.tests_import_job_concurrency
+  apps.core.tests_import_export apps.core.tests_import_samples apps.core.tests_file_scanning
+  apps.core.tests_tenant_isolation apps.core.tests_api_contracts apps.businesses.tests_access
+  apps.core.tests_export_jobs -v 1`: 113 discovered, 110 PASS, 2 PG-only skip,
+  one loader ERROR96.899s because last label DOES NOT EXIST. This command was not green.
+  Corrected missing export coverage with actual tests (unchanged source inputs):
+  `test apps.core.tests_b5_performance.BackendPerformanceRegressionTests.test_large_entity_export_uses_background_job_and_private_download
+  apps.core.tests_b5_performance.BackendPerformanceRegressionTests.test_entity_export_rejects_absolute_row_limit
+  -v 1`: 2 PASS1.090s. Valid affected labels comprise 112 passing tests +2 PG-only
+  skips across these runs. No product assertion failed in affected run; unchanged
+  passing suites not repeated merely for a corrected loader label.
+- `check` PASS; `makemigrations --check --dry-run` PASS, no changes.
+- Owned disposable PG17 cluster: initdb -A trust --encoding=UTF8 --locale=C,
+  loopback random port, isolated_runtime environment with DATABASE_URL overridden
+  only to owned temporary cluster, `test apps.core.tests_import_job_boundaries
+  apps.core.tests_import_job_concurrency -v 1`: 17 PASS6.274s, no skips. Two
+  simultaneous confirm =>200/400 with one Client/event/sync; preview/confirm cannot
+  reopen committed job. Cluster stopped and removed in finally; no shared process
+  stopped. No active owned sessions. Logs output/aud16-verification/{baseline,
+  focused,focused-final,focused-pass,final-0,completion-0,completion-1,completion-2,
+  postgres}.log; failed harness iterations retained, not overwritten as PASS.
+- Frontend build/browser/full release skipped: no frontend/dependency changes,
+  existing upload/confirm payloads unchanged, real API integration tests cover them.
+  No claim of full mapping/history UI (AUD-12) or source resource limits (AUD-22).
+- Docs synchronized: roadmap three statuses, capabilities including stale AUD-05
+  correction, tasks-automations, integrations passport, integration/access contracts,
+  STATUS. CRM/frontend/AI/product contracts and README/setup need no changes:
+  imported CRM lifecycle/engine/AI/UX/setup remain unchanged. Clients/leads-deals/inbox
+  passports checked against prior completed scope; no stale open claims found there.
+  Historical evidence not rewritten. AUD-21 partial note reflects only overlapping
+  locking evidence; residual original-risk/concurrent failure recovery criterion remains.
+  AUD-10 partial remainder retained. No new backlog or acceptance IDs removed.
+Working/index/actual committed-range diff hygiene, changed doc links/registry and
+explicit new-file/secret review accompany publication. Standing normal origin
+HEAD:main push, remote readback and actual CI required; receipt in final response.
+Next authorized stopping point reached; AUD-20 not started.
+
 ## AUD-05-20261019 — reachable automation rule editor
 
 Owner «продолжай» authorizes AUD-05 only. Root C:/Users/user/Desktop/PlatformaCRM,

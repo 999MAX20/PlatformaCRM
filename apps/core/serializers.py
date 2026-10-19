@@ -125,6 +125,14 @@ class ImportJobSerializer(serializers.ModelSerializer):
     actor_email = serializers.EmailField(source="actor.email", read_only=True)
     summary_json = serializers.SerializerMethodField()
 
+    def to_internal_value(self, data):
+        if not isinstance(data, dict):
+            return super().to_internal_value(data)
+        unexpected = set(data) - {"business", "entity_type", "source_file"}
+        if unexpected:
+            raise serializers.ValidationError({field: "This field is managed by the server." for field in sorted(unexpected)})
+        return super().to_internal_value(data)
+
     class Meta:
         model = ImportJob
         fields = [
@@ -147,6 +155,10 @@ class ImportJobSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "imported_at",
+        ]
+        read_only_fields = [
+            "actor", "original_filename", "status", "mapping_json", "preview_json",
+            "duplicates_json", "errors_json", "total_rows", "imported_count", "error", "imported_at",
         ]
 
     def get_summary_json(self, obj):

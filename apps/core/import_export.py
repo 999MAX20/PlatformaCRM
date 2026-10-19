@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 try:
     from openpyxl import load_workbook
@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover - local env may install requirements aft
 
 from apps.clients.models import Client
 from apps.clients.services import duplicate_payload, find_duplicate_clients
-from apps.businesses.access import Actions, Resources, can_view_sensitive_field, scope_queryset
+from apps.businesses.access import Actions, Resources, assert_can, can_view_sensitive_field, scope_queryset
 from apps.businesses.capabilities import assert_resource_enabled
 from apps.core.audit import write_audit_log
 from apps.core.csv_safety import safe_csv_cell
@@ -131,10 +131,52 @@ IMPORT_TEMPLATES = {
 }
 
 
-def build_import_preview(job: ImportJob, mapping=None):
+def import_resource(entity_type):
+    resources = {
+        ImportJob.EntityTypes.CLIENTS: Resources.CLIENTS,
+        ImportJob.EntityTypes.LEADS: Resources.LEADS,
+        ImportJob.EntityTypes.DEALS: Resources.DEALS,
+        ImportJob.EntityTypes.SALES: Resources.INTEGRATIONS,
+        ImportJob.EntityTypes.CATALOG: Resources.INTEGRATIONS,
+    }
+    if entity_type not in resources:
+        raise ValidationError("Unsupported import/export entity.")
+    return resources[entity_type]
+
+
+def _locked_import_job(job, request=None):
+    # Do not trust the object loaded before waiting for another preview/confirm.
+    job = ImportJob.objects.select_for_update().get(pk=job.pk)
+    if request is not None:
+        if job.actor_id != request.user.pk and not request.user.is_platform_user:
+            raise PermissionDenied("This import belongs to another user.")
+        resource = import_resource(job.entity_type)
+        assert_can(request.user, job.business, resource, Actions.CREATE)
+        assert_resource_enabled(job.business, resource)
+    return job
+
+
+def _validate_import_mapping(entity_type, mapping, headers, *, allow_empty=False):
+    if not isinstance(mapping, dict) or not mapping and not allow_empty:
+        raise ValidationError({"mapping": "Select at least one column mapping."})
+    allowed = FIELDS_BY_ENTITY[entity_type]
+    if any(field not in allowed or not isinstance(header, str) or header not in headers
+           for field, header in mapping.items()):
+        raise ValidationError({"mapping": "Map supported fields to columns present in the file."})
+    return mapping
+
+
+@transaction.atomic
+def build_import_preview(job: ImportJob, mapping=None, request=None):
+    job = _locked_import_job(job, request)
+    if job.status in {ImportJob.Statuses.IMPORTED, ImportJob.Statuses.CANCELLED}:
+        raise ValidationError("A completed or cancelled import cannot be previewed again.")
     rows = read_tabular_file(job.source_file)
     headers = list(rows[0].keys()) if rows else []
-    mapping = mapping or guess_mapping(headers, aliases_for_entity(job.entity_type))
+    auto_mapping = mapping is None
+    if auto_mapping:
+        mapping = job.mapping_json or guess_mapping(headers, aliases_for_entity(job.entity_type))
+    mapping = _validate_import_mapping(job.entity_type, mapping, headers, allow_empty=auto_mapping)
     preview_rows = rows[: settings.IMPORT_PREVIEW_ROWS]
     duplicate_aware_entities = {
         ImportJob.EntityTypes.CLIENTS,
@@ -146,6 +188,8 @@ def build_import_preview(job: ImportJob, mapping=None):
         else []
     )
     row_errors = validate_import_rows(job.entity_type, rows, mapping)
+    if not mapping:
+        row_errors.insert(0, {"row": 0, "field": "mapping", "message": "Select at least one column mapping."})
     job.mapping_json = mapping
     job.preview_json = {
         "headers": headers,
@@ -172,14 +216,15 @@ def build_import_preview(job: ImportJob, mapping=None):
 
 @transaction.atomic
 def confirm_import(job: ImportJob, request):
-    if job.entity_type == ImportJob.EntityTypes.DEALS:
-        assert_resource_enabled(job.business, Resources.DEALS)
+    job = _locked_import_job(job, request)
+    if job.status != ImportJob.Statuses.PREVIEWED:
+        raise ValidationError("Only a previewed import can be confirmed.")
     mapping = job.mapping_json or {}
-    if not mapping:
-        raise ValidationError("Run preview before confirming import.")
-    if (job.errors_json or {}).get("rows"):
-        raise ValidationError("Fix import errors before confirming.")
     rows = read_tabular_file(job.source_file)
+    _validate_import_mapping(job.entity_type, mapping, list(rows[0].keys()) if rows else [])
+    row_errors = validate_import_rows(job.entity_type, rows, mapping)
+    if row_errors:
+        raise ValidationError({"rows": row_errors, "detail": readable_import_error(row_errors)})
     connector = ensure_excel_csv_connector(job)
     sync_run = ConnectorSyncRun.objects.create(
         business=job.business,
@@ -558,7 +603,7 @@ def normalize_client_source(value):
 def read_tabular_file(path):
     from io import BytesIO, StringIO
     from apps.core.antivirus import ScanUnavailable, scan_stream
-    from rest_framework.exceptions import APIException
+    from apps.core.domain_errors import TemporaryServiceFailure
 
     # Scan and parse the same bounded bytes, including old jobs and confirmation.
     with (path.open("rb") if hasattr(path, "storage") else open(path, "rb")) as source:
@@ -568,9 +613,7 @@ def read_tabular_file(path):
     try:
         result = scan_stream(BytesIO(content))
     except ScanUnavailable:
-        error = APIException("File security check is temporarily unavailable. Retry later.")
-        error.status_code = 503
-        raise error from None
+        raise TemporaryServiceFailure("File security check is temporarily unavailable. Retry later.") from None
     if not result.clean:
         raise ValidationError("File was blocked by the security check.")
     extension = Path(path.name if hasattr(path, "storage") else path).suffix.lower()

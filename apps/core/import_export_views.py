@@ -18,6 +18,7 @@ from apps.core.import_export import (
     create_manual_sale,
     import_template_response,
     mark_excel_csv_import_failed,
+    import_resource,
 )
 from apps.core.file_validation import validate_file_upload
 from apps.core.export_jobs import request_entity_export
@@ -30,6 +31,7 @@ from apps.integrations.serializers import BusinessEventSerializer
 
 
 class ImportJobViewSet(TenantModelViewSet):
+    http_method_names = ["get", "post", "head", "options"]
     serializer_class = ImportJobSerializer
     queryset = ImportJob.objects.select_related("business", "actor")
     access_resource = Resources.CLIENTS
@@ -51,7 +53,7 @@ class ImportJobViewSet(TenantModelViewSet):
         _validate_import_file(upload)
         job = serializer.save(actor=self.request.user, original_filename=getattr(upload, "name", ""))
         try:
-            build_import_preview(job)
+            serializer.instance = build_import_preview(job, request=self.request)
         except Exception as exc:
             job.status = ImportJob.Statuses.FAILED
             job.error = sanitize_error_text(exc)
@@ -69,25 +71,15 @@ class ImportJobViewSet(TenantModelViewSet):
     @action(detail=True, methods=["post"])
     def preview(self, request, pk=None):
         job = self.get_object()
-        assert_can(request.user, job.business, _resource_for_entity(job.entity_type), Actions.CREATE)
-        job = build_import_preview(job, mapping=request.data.get("mapping") or None)
+        if not isinstance(request.data, dict) or set(request.data) - {"mapping"}:
+            raise ValidationError({"mapping": "Only column mapping can be changed through preview."})
+        job = build_import_preview(job, mapping=request.data.get("mapping"), request=request)
         return Response(self.get_serializer(job).data)
 
     @action(detail=True, methods=["post"])
     def confirm(self, request, pk=None):
         job = self.get_object()
-        assert_can(request.user, job.business, _resource_for_entity(job.entity_type), Actions.CREATE)
-        if job.status == ImportJob.Statuses.IMPORTED:
-            raise ValidationError("This import job was already confirmed.")
-        try:
-            job = confirm_import(job, request)
-        except ValidationError:
-            raise
-        except Exception as exc:
-            job.status = ImportJob.Statuses.FAILED
-            job.error = sanitize_error_text(exc)
-            job.save(update_fields=["status", "error", "updated_at"])
-            raise
+        job = confirm_import(job, request)
         return Response(self.get_serializer(job).data)
 
 
@@ -179,15 +171,7 @@ def _resolve_business_for_write(request):
 
 
 def _resource_for_entity(entity_type):
-    if entity_type == ImportJob.EntityTypes.CLIENTS:
-        return Resources.CLIENTS
-    if entity_type == ImportJob.EntityTypes.LEADS:
-        return Resources.LEADS
-    if entity_type == ImportJob.EntityTypes.DEALS:
-        return Resources.DEALS
-    if entity_type in {ImportJob.EntityTypes.SALES, ImportJob.EntityTypes.CATALOG}:
-        return Resources.INTEGRATIONS
-    raise ValidationError("Unsupported import/export entity.")
+    return import_resource(entity_type)
 
 
 def _resource_for_export_key(export_key):

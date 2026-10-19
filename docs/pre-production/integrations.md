@@ -1,9 +1,10 @@
 # Внешние каналы и интеграции
 
 Граница аудита 17.10 (`56dd124`): UI mapping/errors/history и сохранённые export
-jobs не образуют полного рабочего цикла; metadata ImportJob остаётся writable,
-а download не учитывает последующее сужение scope. AUD-12/16/18/20 открыты;
-concurrency и XLSX resource bounds — риски AUD-21/22 на проверку.
+jobs не образуют полного рабочего цикла; download не учитывает последующее
+сужение scope. AUD-12/18/20 не выполнены; защита ImportJob реализована в AUD-16
+ниже. AUD-21 получил узкие concurrency-проверки AUD-16, отдельный риск ещё не
+закрыт; XLSX resource bounds AUD-22 не проверен.
 [Roadmap](../current/roadmap.md#project-audit-20261017),
 [evidence](../testing/project-audit-20261017.md). AV на confirm сохранён.
 
@@ -13,6 +14,24 @@ Telegram/WhatsApp включены в подготовку пилота R02 ре
 существующий код сохранён. Цель — получать полезные CRM-сигналы и доставлять
 сообщения через выбранного провайдера, без копирования всей ERP.
 Нормативный источник — [интеграционный контракт](../current/integrations.md).
+
+## ImportJob — AUD-16
+
+Служебные поля управляются сервером; upload принимает только Business, тип и файл.
+Generic PUT/PATCH/DELETE и редактирование/удаление через admin закрыты; история
+и source metadata сохраняются. Mapping меняется только через валидируемый preview;
+без распознанных колонок можно получить preview с ошибкой и затем исправить mapping.
+Preview/confirm сериализуются row lock; повтор не открывает завершённый job.
+Confirm перечитывает состояние, права, capability, файл/AV/лимит, mapping и строки.
+Ошибка откатывает импорт, события и историю; scanner503 оставляет повтор возможным.
+Контракт/API — [integrations](../current/integrations.md#импорт-экспорт-и-public-ingress).
+Проверки и публикация — [AUD-16 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-16-20261019--import-job-write-boundaries).
+Статус: выполнено полностью в согласованном локальном scope. Остатка кода,
+доказательств и решений владельца нет. Scoped проверки: 112 SQLite PASS, 2 PG-only
+skip выполнены в PostgreSQL17 PASS; system/migration drift PASS. Публикация/CI —
+итог задачи. Рабочая БД, миграции и deployment не затронуты.
+Полный интерфейс mapping/errors/history (AUD-12), lifecycle imports (AUD-20),
+экспорт scope (AUD-18) и XLSX resource limits (AUD-22) этим не закрываются.
 
 ## Реализованная основа
 

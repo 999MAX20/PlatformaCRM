@@ -37,7 +37,7 @@ AutomationRule/Condition/Action/Run используют Business и capabilitie
 Webhook action не следует из наличия интеграционного endpoint. Управление retry/cancel
 требует `automations:manage`; automation не обходит approvals AI или права CRM.
 
-AUD-06, 19.10: единая проверка action config в preview/save/CRUD/activate/execute,
+AUD-06 — выполнено полностью в локальном scope, 19.10: единая проверка action config в preview/save/CRUD/activate/execute,
 включая права, активных участников, trigger и типы полей. Пустой состав не включается;
 предметная форма заменяет JSON, ошибки относятся к полям, изменение ввода сбрасывает
 preview. Member loading/error/retry сохраняет ввод. Подтверждены scoped backend и
@@ -46,7 +46,7 @@ browser RU/KK/EN desktop/mobile; версия/команды/пропуски �
 Остатка кода/доказательств в AUD-06 нет; редактор закрыт отдельно в AUD-05, история
 (AUD-07), реальные worker/provider/deployment остаются за его границей.
 
-AUD-04, 19.10: create-manual/apply-template и PUT configuration существующего
+AUD-04 — выполнено полностью в локальном scope, 19.10: create-manual/apply-template и PUT configuration существующего
 правила используют общий атомарный сервис с audit/activity. Сбой условия, действия
 или истории откатывает состав и поля. Generic rule/child CRUD разделяет Business
 lock; последнее действие активного правила нельзя удалить/перенести. PostgreSQL
@@ -57,7 +57,7 @@ payload и требует UPDATE исходного правила; response с�
 Редактор закрыт отдельно в AUD-05 ниже. Версионирование
 конфигурации выполняющегося Run не добавлено; рабочие данные не мигрировались.
 
-AUD-05, 19.10: существующее правило можно открыть, изменить, проверить и сохранить
+AUD-05 — выполнено полностью в локальном scope, 19.10: существующее правило можно открыть, изменить, проверить и сохранить
 из карточки; простой черновик автоматически ведёт в редактор. Detail preview
 использует UPDATE без требования CREATE/квоты нового правила. Загрузка/retry,
 ошибки сохранения, защита от старого preview, сохранение typed values и
