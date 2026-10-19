@@ -19,6 +19,18 @@ from apps.core.models import AuditLog
 from apps.core.crm_mutations import locked_crm_change
 
 
+def validate_pipeline_links(*, business, pipeline, stages=None):
+    """Configuration edges must stay inside one Business and one pipeline."""
+    if pipeline.business_id != business.pk:
+        raise ValidationError({"pipeline": "Pipeline must belong to the selected business."})
+    errors = {}
+    for field, stage in (stages or {}).items():
+        if stage.business_id != business.pk or stage.pipeline_id != pipeline.pk:
+            errors[field] = "Stage must belong to the selected business and pipeline."
+    if errors:
+        raise ValidationError(errors)
+
+
 def ensure_default_pipeline(business: Business) -> Pipeline:
     pipeline, _ = Pipeline.objects.get_or_create(
         business=business,

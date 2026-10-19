@@ -6,6 +6,80 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-15-20261019 — pipeline configuration relationship boundaries
+
+Owner request 19.10: reconcile recent completed tasks with roadmap and continue next
+work, starting AUD-15. This bounded cycle implements AUD-15; later audit items retain
+their existing order. Root C:/Users/user/Desktop/PlatformaCRM; branch
+codex/ui-testing-toolkit; clean base 68c6bf0bf5e13139165bcdc9aa7cedc3d0240c74.
+Remote main matches base. No unrelated WIP, no agents or other-chat coordination.
+Reconciliation: AUD-01/02/03/13/14 code commits and scoped closure evidence present;
+remote includes all five. GitHub Actions checked 19.10: all completed/success:
+35543e4f run39009392123; 74d9b179 run39010350380; f2bd3be7 run39012177880;
+7c10df88 run39021653299; 68c6bf0b run39025582912. Historical CI-pending messages
+remain true for their time; current receipt supersedes them. Roadmap AUD-14 row was
+closed correctly but introductory summary omitted it; corrected. AUD-10 remains
+partial; deployment/live/provider acceptance and other open IDs are not closed.
+
+Mode fix confirmed source gap; acceptance: PipelineStage.business matches pipeline;
+StageTransition.business/pipeline/from_stage/to_stage all agree on POST/PUT/PATCH,
+including fields omitted in partial updates. Denied mutations leave rows, nested
+pipeline/board and audit unchanged. Existing same-Business valid configuration,
+readers and deal moves remain usable; permissions and tenant denial retained.
+Reuse current serializers, TenantModelViewSet and CRM validation/services; no new
+permission system, state graph, pipeline migration workflow or UI editor.
+Stage pipeline binding must not be changed through generic edit after creation:
+it would invalidate existing deal/history/transition references. Same pipeline
+round-trip and ordinary stage edits remain allowed; no automatic data migration.
+Risk: partial update bypass, foreign board pollution and broken stage consumers.
+Focused reproducer before fix, focused links/partial updates/roles/read projections
+and normal configuration/deal-move checks after each slice; completion affected CRM,
+core tenant/projection/lifecycle and access suites, isolated system/migration drift,
+docs consistency/diff review, commit/normal push/actual CI. UI inspection determines
+whether browser/build required; no UI edits expected (current consumers read stages).
+No model/migration/env/provider changes; current audit/activity retained, no new
+notifications, BusinessEvent or AI action/approval. Working DB untouched.
+
+Progress: baseline isolated `manage.py test apps.crm.tests_pipeline_boundaries -v 1`
+FAILED 4/4 (0.082s): foreign-pipeline stage POST 201; wrong-pipeline transition POST
+201; pipeline-only transition PATCH 200; existing stage reparent PATCH 200.
+Added shared validate_pipeline_links in CRM services and serializer validation of
+complete effective values (including omitted PATCH fields). Existing stage pipeline
+binding immutable; ordinary edits and same-ID round-trip preserved. No view/schema
+or permission changes. First fixed slice: 4 PASS, 0.079s. Expanded focused gate:
+12 PASS, 0.780s: endpoint matrix, malformed old row, PUT/PATCH, valid transition relink,
+role denial, tenant isolation, board/nested projections, ordinary stage/deal flow.
+Commands use `.venv/Scripts/python.exe -c $aud15Check`, isolated_runtime environment,
+subprocess manage.py with bounded captured logs and synthetic disposable SQLite/media.
+
+Completion gate PASS (`.venv/Scripts/python.exe -c $aud15CompleteCheck`,
+same isolated_runtime/subprocess boundary):
+`manage.py check`; `manage.py makemigrations --check --dry-run`;
+`manage.py test apps.crm apps.core.tests_tenant_isolation apps.core.tests_crm_projection_access apps.core.tests_crm_server_scenarios apps.core.tests_api_contracts apps.core.tests_platform_crm apps.businesses.tests_access -v 1`.
+Frontend inspection: frontend/src/api/deals.ts exposes pipelineStagesApi; actual
+consumers use .list in useEntityData/prefetch and display stages in deal screens.
+No reachable stage-reparent UI consumer, no UI code/build inputs changed; affected
+API flow proves create/update/read/board and move-stage. No browser/build needed.
+No new locks/transaction design: PostgreSQL concurrency rerun not required for
+pure configuration validation; existing lifecycle locks untouched. No full/release
+gate: scoped CRM validation, dependent suites selected above. No external providers.
+
+Final result: 158 affected/dependent tests PASS, 120.935s, no skips; check PASS,
+makemigrations --check --dry-run PASS (no changes). Focused12 evidence retained;
+no relevant source changes after the passed gate. Initial four expected reproducer
+failures are fixed; no failing required gates or unresolved task blocker.
+Closure: AUD-15 implemented/verified on base 68c6bf0b plus this task-owned commit;
+publication SHA/remote/actual CI recorded in the final task receipt. Canonical branch
+unchanged. Roadmap, CRM/access contracts and leads-deals/capabilities passports
+reconciled with evidence; historical audit source preserved. README, integrations,
+AI, frontend and operations contracts unchanged: no setup, provider, AI, UI, schema
+or deployment change. No new document/backlog. No code/evidence/owner-decision
+remainder in accepted scope. Environment remainder: deployment and examination of
+old working data separate; no automatic cleanup or working DB migration.
+Diff hygiene and changed-doc link/anchor/registry/AUD-ID mapping checked. Entire
+intended source/tests/docs reviewed, synthetic fixture data only, no secrets or
+unrelated WIP. All owned test processes finished. Next AUD-06 not started.
+
 ## AUD-14-20261017 — immutable message history and parent scope
 
 Owner continuation authorizes AUD-14 only. Mode fix confirmed message PATCH/delivery

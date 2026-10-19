@@ -3,9 +3,19 @@ from rest_framework import serializers
 from apps.businesses.access import Resources, can_view_sensitive_field
 from apps.core.work_queues import deal_risk, deal_sla_overdue
 from apps.crm.models import Deal, Pipeline, PipelineStage, StageTransition
+from apps.crm.services import validate_pipeline_links
 
 
 class PipelineStageSerializer(serializers.ModelSerializer):
+    def validate(self, attrs):
+        business = attrs.get("business", getattr(self.instance, "business", None))
+        pipeline = attrs.get("pipeline", getattr(self.instance, "pipeline", None))
+        validate_pipeline_links(business=business, pipeline=pipeline)
+        if self.instance is not None and pipeline.pk != self.instance.pipeline_id:
+            # Reparenting would silently invalidate deals, history and graph edges.
+            raise serializers.ValidationError({"pipeline": "An existing stage cannot be moved to another pipeline."})
+        return attrs
+
     class Meta:
         model = PipelineStage
         fields = [
@@ -267,6 +277,15 @@ class DealListSerializer(DealSerializer):
 
 
 class StageTransitionSerializer(serializers.ModelSerializer):
+    def validate(self, attrs):
+        validate_pipeline_links(
+            business=attrs.get("business", getattr(self.instance, "business", None)),
+            pipeline=attrs.get("pipeline", getattr(self.instance, "pipeline", None)),
+            stages={field: attrs.get(field, getattr(self.instance, field, None))
+                    for field in ("from_stage", "to_stage")},
+        )
+        return attrs
+
     class Meta:
         model = StageTransition
         fields = [

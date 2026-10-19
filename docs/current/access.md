@@ -19,6 +19,12 @@ CRM-MB01, решение владельца 12.10.2026: клиентская б�
 Generic update не меняет владельца Business, включая ownership через parent.
 Same-business связь сама по себе ещё не даёт актёру права на связанный объект.
 
+AUD-15, 19.10: PipelineStage API не принимает чужой pipeline и не переносит
+существующую стадию; StageTransition API сверяет Business/pipeline обоих концов
+при создании и редактировании, включая поля, отсутствующие в PATCH. Проверки
+существующих ролей, shared configuration scope и неизменяемого Business сохранены.
+Версия/проверки — checkpoint AUD-15-20261019; рабочие старые связи не мигрировались.
+
 AUD-02, 17.10: POST/PATCH notes и activity-events проверяют client и текстовую
 ссылку entity_type/entity_id в том же Business, а также VIEW/UPDATE связанной
 CRM-сущности. При relink проверяется и прежняя связь; неподдержанные типы/неполные

@@ -6,6 +6,13 @@
 
 # PlatformaCRM — текущий статус
 
+19.10.2026. Сверка AUD-01/02/03/13/14: закрытие соответствует коду и evidence,
+все пять опубликованы в main, CI success. Сводка roadmap актуализирована.
+AUD-15 закрыт локально: Business/pipeline связи стадий и переходов защищены;
+перенос существующей стадии через generic API запрещён. Focused12/affected158,
+system/migration drift PASS. Scope/команды — checkpoint AUD-15-20261019;
+commit/push/CI — итог задачи. Deployment не выполнялся. Следующий AUD-06 не начат.
+
 17.10.2026. AUD-14 закрыт в локальном scope: история сообщений неизменяема,
 входящий текст ограничен parent permissions; delivery поля управляются сервером.
 Focused15 PASS; affected288: 286 PASS, 2 PG-only skip; новый concurrent intake на

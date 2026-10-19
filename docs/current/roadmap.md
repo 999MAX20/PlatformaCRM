@@ -30,7 +30,7 @@ R02: 14.10 получены решения владельца; Meta и PS Cloud 
 
 Срез 17.10 на `56dd124`: **20 подтверждённых пунктов (12 исходных + 8 новых),
 2 риска на проверку**. [Доказательства и ограничения](../testing/project-audit-20261017.md).
-Аудит/планирование завершены; AUD-01/02/03/13 закрыты в локальном scope, AUD-10 частично
+Аудит/планирование завершены; AUD-01/02/03/13/14/15 закрыты в локальном scope, AUD-10 частично
 получил изоляцию очереди. Это единственная очередь
 исправлений данного аудита. Существующие этапы/acceptance IDs ниже сохраняются.
 
@@ -59,7 +59,7 @@ deployment записываются отдельно. Для каждого из
 | AUD-12 / P2 | **Импорт и экспорт не имеют полного рабочего интерфейса.** 12a mapping→preview→полные ошибки→повтор; 12b история импортов с правильным entity и пагинацией; 12c сохраняемая история export jobs/download после reload. Закрывать подпункты отдельно, весь пункт только после всех трёх. | AUD-16, AUD-18, AUD-20; AUD-21/22 проверить | Открыт. Сделано: дефект и evidence зафиксированы; остаток: код и проверки указанного результата. |
 | AUD-13 / P1 | **PATCH переназначает чужую заявку в обход scope.** Проверять UPDATE исходного объекта; assignment через сервис, с историей/уведомлениями. Тест generic PATCH против assign, own/team/business, null/self/чужой member; проверить затронутые общие consumers. | Нет | Закрыт в локальном scope 17.10. Исходный UPDATE перед PATCH/PUT, assignment через сервис, atomic history/notifications; focused13 PASS, affected324: 323 PASS / 1 PG-only skip, system/migration drift PASS. Код/доказательства/решение: остатка нет в scope. Среда: deployment/live отдельно; PostgreSQL concurrency не пересертифицирована, существующие locks сохранены. Версия/точные проверки — [AUD-13 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-13-20261017--original-object-update-and-lead-assignment). |
 | AUD-14 / P1 | **Обычный PATCH сообщения обходит отправку через Inbox.** Серверное управление delivery metadata и право на родительский диалог; send/retry только через сервис. Проверить подмену sender/payload, requeue, редактирование истории и legacy Message API. | AUD-13 — проверить общий guard | Закрыт в локальном scope 17.10. Generic история неизменяема, inbound allowlist и parent scope, server-only delivery metadata; send/retry сохранены. Focused15 PASS; affected288: 286 PASS, 2 PG-only skip; новый concurrent intake PostgreSQL17 PASS; system/migration drift PASS. Код/доказательства/решение: остатка нет. Среда: deployment/live provider отдельно; неизменённый handoff PG-only test не запускался. Версия/команды — [AUD-14 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-14-20261017--immutable-message-history-and-parent-scope). |
-| AUD-15 / P1 | **Стадии и переходы принимают чужие воронки.** Проверить Business и pipeline у всех концов перехода; отрицательные POST/PATCH с foreign и same-business wrong pipeline, отсутствие изменения чужой доски. | Нет | Открыт. Сделано: дефект и evidence зафиксированы; остаток: код и проверки указанного результата. |
+| AUD-15 / P1 | **Стадии и переходы принимают чужие воронки.** Проверить Business и pipeline у всех концов перехода; отрицательные POST/PATCH с foreign и same-business wrong pipeline, отсутствие изменения чужой доски. | Нет | Закрыт в локальном scope 19.10. Business/pipeline и оба конца перехода проверяются при POST/PUT/PATCH; pipeline существующей стадии неизменяем. Focused12 и affected158 PASS, system/migration drift PASS. Код/доказательства/решение: остатка нет в scope. Среда: deployment и проверка старых рабочих данных отдельно, автоматической миграции нет. Версия/команды — [AUD-15 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-15-20261019--pipeline-configuration-relationship-boundaries). |
 | AUD-16 / P2 | **ImportJob разрешает подменять серверные поля.** Allowlist входов, immutable actor/status/counters/preview; mapping только через повторный preview, locked confirmation с повторной валидацией. AV/лимит исходных байтов уже проверяются при confirm и должны сохраниться. | Нет | Открыт. Сделано: дефект и evidence зафиксированы; остаток: код и проверки указанного результата. |
 | AUD-17 / P2 | **Массовое прочтение уведомлений не проверяет UPDATE.** Проверка UPDATE и scope всех обновляемых строк; owner/marketer/VIEW-only/другой Business, персональные и общие уведомления. Inbox имеет дополнительный фильтр, дефект не означает чтение всех его уведомлений. | Нет | Открыт. Сделано: дефект и evidence зафиксированы; остаток: код и проверки указанного результата. |
 | AUD-18 / P2 | **Старый экспорт доступен после сужения прав.** Проверять актуальность permission/scope snapshot или безопасно пересобирать экспорт. Проверить narrowing, отзыв роли/филиала и разрешённое скачивание; уже скачанную копию отозвать нельзя. | Нет | Открыт. Сделано: дефект и evidence зафиксированы; остаток: код и проверки указанного результата. |
@@ -74,7 +74,9 @@ AUD-15**, затем **AUD-06 → AUD-04 → AUD-05 → AUD-16 → AUD-20 → AU
 AUD-18 → AUD-17 → AUD-11 → AUD-19**, затем **AUD-10 → AUD-08 → AUD-09 →
 AUD-07 → AUD-12**; AUD-V01 закрывается по выбранным границам проверки.
 Это порядок результатов, а не поручение выполнить все этапы одним сообщением.
-AUD-01/02/03/13/14 завершены; следующий незакрытый пункт — **AUD-15**. Он не начат.
+AUD-01/02/03/13/14/15 завершены; следующий незакрытый пункт — **AUD-06**. Он не начат.
+Сверка на `68c6bf0b`: пять исправлений опубликованы в main, CI каждого — success;
+квитанции и scope — checkpoint AUD-15-20261019.
 
 Общие checks для backend: focused regression после связного изменения, allowed/denied,
 tenant/role/invalid input и rollback; в конце affected/dependent suites, system/migration
