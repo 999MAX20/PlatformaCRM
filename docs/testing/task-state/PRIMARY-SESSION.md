@@ -192,6 +192,16 @@ record compatibility fix without unpausing CRM-D01; roadmap notes CI correction.
 Scope code/evidence complete locally. Exact base9054fd07; publication/CI still to
 verify on the new candidate. Earlier CI failure and initial harness errors retained.
 
+CI remediation publication: 893619fdfb3552cf21d9a7117f5b5312ad91f970, normal push
+origin HEAD:main; remote SHA matched. `git diff --check 9054fd07..HEAD` PASS;
+clean tree before this publication receipt. CI39588974006 was in_progress at first
+readback; authoritative result: https://github.com/999MAX20/PlatformaCRM/actions/runs/39588974006.
+This receipt is docs-only, no runtime/input change; working/index/committed-range
+hygiene and links checked. Final response records actual latest CI after completion;
+no full/live certification is inferred from local PASS or an initial queued CI state.
+No owned server/browser/test process remains. Scope has no local code/evidence
+remainder; CI is assessed separately at its exact commit. No AUD-21/22 scope added.
+
 ## DOCS-PILOT-PRODUCTION-20261021 — status reconciliation and product description
 
 Owner requested verification of stopped Deep Scan, current technical documentation

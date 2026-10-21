@@ -6,15 +6,14 @@
 
 # PlatformaCRM — текущий статус
 
-21.10.2026. AUD-20: по «продолжай» исправляются блокеры CI9054fd07.
-Полный backend CI2026 выявил один пропущенный consumer: подтверждённый AI create
-передавал stage_entered_at после перехода на доменный сервис. Вызов исправлен,
-дубли create activity/audit устранены; focused AI19 PASS. Vite8.1.6 и
-follow-redirects1.16.1 установлены из нового lock; npm audit без уязвимостей.
-Affected backend214, system/drift, frontend build/bundle/audit, policy6 и браузер PASS.
-Исправления готовы к публикации; итоговый CI новой версии ещё не получен.
-Исходные AUD-20 проверки307+1 сохранены, полный CI ещё не PASS. Подробности —
-AUD-20-20261021 checkpoint; AUD-21/22 и deployment не начинались.
+21.10.2026. AUD-20 и исправление выявленного CI consumer опубликованы в main:
+код 893619fd. Начальное состояние API/import заявок/сделок и подтверждённый
+AI create используют доменные правила без дублирования истории. Vite8.1.6,
+follow-redirects1.16.1; npm audit: 0 уязвимостей. AI19/affected214, system/drift,
+frontend build/bundle, policy6 и браузер PASS; исходные AUD-20 проверки сохранены.
+[Результат полного CI кода](https://github.com/999MAX20/PlatformaCRM/actions/runs/39588974006)
+фиксируется отдельно от локальных проверок; версия/среда/команды — AUD-20-20261021
+checkpoint. AUD-21/22, CRM-D01 и deployment не начинались.
 
 21.10.2026. PROJECT-DEEP-AUDIT-20261020 остановлен владельцем. Остановка ожидания
 в чате не сняла running в плагине; отмена подтверждена через плагин 21.10,
