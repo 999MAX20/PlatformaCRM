@@ -107,6 +107,16 @@ publication possible. CI workflow contains tests/build/audits, no deployment ste
 System/drift PASS reused for unchanged runtime; actual committed-range diff and
 publication readback follow after commit.
 
+Publication: runtime/docs commit 1d95d1dec0a50992319c86ab9c6dd7b7c0e981d9,
+normal push origin HEAD:main succeeded; remote SHA readback matched. Branch remains
+codex/ui-testing-toolkit, canonical root unchanged. `git diff --check
+ a9c8498d4be44c260154acbd0a91d436237c2341..HEAD` and index hygiene PASS; clean after commit.
+CI run39585017029 queued at first readback, not a green claim. This final documentation
+receipt changes no runtime inputs; local verification reused. Final publication/CI
+readback is reported to the owner without modifying earlier historical evidence.
+No active owned servers/browser processes remain. Next only by owner instruction:
+AUD-21 concurrent rollback/recovery criterion, then AUD-22 resource-bounds evidence.
+
 ## DOCS-PILOT-PRODUCTION-20261021 — status reconciliation and product description
 
 Owner requested verification of stopped Deep Scan, current technical documentation
