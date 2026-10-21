@@ -159,14 +159,17 @@ class CRMCommandTests(TestCase):
         self.assertIsNotNone(task.completed_at)
 
     def test_lead_and_deal_creation_update_and_terminal_reason(self):
+        from apps.activities.models import ActivityEvent
         from apps.crm.services import ensure_default_pipeline
-        from apps.crm.models import Deal
+        from apps.crm.models import Deal, DealStageHistory
         from apps.leads.models import Lead
         lead_log = self.proposal("crm_create", entity="leads", values={"client": self.person.pk, "message": "Consultation"})
         response = self.execute(lead_log)
         self.assertEqual(response.status_code, 200, response.data)
         lead = Lead.objects.get(pk=response.data["output_json"]["entity_id"])
         self.assertEqual(lead.responsible_user, self.owner)
+        self.assertEqual(ActivityEvent.objects.get(entity_type="Lead", entity_id=str(lead.pk)).metadata["initial_status"], "new")
+        self.assertEqual(AuditLog.objects.filter(entity_type="Lead", entity_id=str(lead.pk), action="create").count(), 1)
         pipeline = ensure_default_pipeline(self.business)
         stage = pipeline.stages.filter(is_won=False, is_lost=False).first()
         deal_log = self.proposal("crm_create", entity="deals", values={"client": self.person.pk, "lead": lead.pk,
@@ -174,6 +177,14 @@ class CRMCommandTests(TestCase):
         response = self.execute(deal_log)
         self.assertEqual(response.status_code, 200, response.data)
         deal = Deal.objects.get(pk=response.data["output_json"]["entity_id"])
+        self.assertIsNotNone(deal.stage_entered_at)
+        self.assertEqual(deal.probability, stage.probability)
+        self.assertEqual(self.execute(deal_log).status_code, 200)
+        self.assertEqual(Deal.objects.count(), 1)
+        self.assertEqual(DealStageHistory.objects.get(deal=deal).to_status, "open")
+        self.assertEqual(ActivityEvent.objects.get(entity_type="Deal", entity_id=str(deal.pk)).metadata["initial_status"], "open")
+        self.assertEqual(AuditLog.objects.filter(entity_type="Deal", entity_id=str(deal.pk), action="create").count(), 1)
+        self.assertEqual(AuditLog.objects.filter(metadata__kind="ai_crm_command", metadata__tool_call_id=deal_log.pk).count(), 1)
         update = self.proposal("crm_update", entity="deals", entity_id=deal.pk, values={"title": "Reviewed deal", "amount": "110.50"})
         self.assertEqual(self.execute(update).status_code, 200)
         deal.refresh_from_db()

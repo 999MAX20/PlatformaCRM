@@ -1,6 +1,5 @@
 """Entity-specific side effects for approved staff AI detail commands."""
 from django.db import transaction
-from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from apps.activities.services import write_activity_event
@@ -25,8 +24,6 @@ def save_details(serializer, *, entity, actor, request):
             serializer.validated_data["created_by"] = actor
         elif serializer.instance.status not in {"open", "in_progress"}:
             raise ValidationError("Reopen the task before editing its details.")
-    if entity == "deals" and creating:
-        serializer.validated_data["stage_entered_at"] = timezone.now()
     if entity == "appointments" and creating:
         from apps.businesses.models import Business
         from apps.scheduling.services import validate_appointment_availability
@@ -53,9 +50,12 @@ def save_details(serializer, *, entity, actor, request):
     if entity == "deals" and not creating:
         from apps.crm.services import record_deal_value_change
         record_deal_value_change(deal=target, previous_amount=previous_amount, previous_currency=previous_currency, actor=actor, request=request, metadata={"reason": "ai_confirmed_update"})
-    action = AuditLog.Actions.CREATE if creating else AuditLog.Actions.UPDATE
-    write_audit_log(request, action, target, metadata={"source": "ai_confirmed"})
-    write_activity_event(request, f"{target.__class__.__name__.lower()}.{'created' if creating else 'updated'}", target)
+    # Lead/deal serializers initialize state and creation history in the domain.
+    # The command audit still records the exact approved tool call separately.
+    if not (creating and entity in {"leads", "deals"}):
+        action = AuditLog.Actions.CREATE if creating else AuditLog.Actions.UPDATE
+        write_audit_log(request, action, target, metadata={"source": "ai_confirmed"})
+        write_activity_event(request, f"{target.__class__.__name__.lower()}.{'created' if creating else 'updated'}", target)
     if creating and entity == "leads":
         from apps.automations.engine import run_automations_for_event
         from apps.automations.models import AutomationRule

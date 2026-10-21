@@ -117,6 +117,81 @@ readback is reported to the owner without modifying earlier historical evidence.
 No active owned servers/browser processes remain. Next only by owner instruction:
 AUD-21 concurrent rollback/recovery criterion, then AUD-22 resource-bounds evidence.
 
+Final readback: documentation commit9054fd07eef31727ac870f5c463cd54893e84f7f
+normal-pushed to origin main, remote SHA matched, tree clean before this blocker receipt.
+CI39585106684 (and runtime CI39585017029) frontend install/build/bundle PASS;
+`npm audit --audit-level=moderate` FAIL. Local reproduction `npm audit
+--audit-level=moderate --json` exit1, output/aud20-20261021/npm-audit.json:
+2 high package findings: follow-redirects1.16.0 (GHSA-q3jh-wrc6-jgq8,
+GHSA-8r9p-f939-6h3c), vite8.0.16 (GHSA-698v-4r3x-3vcv,
+GHSA-r825-w8mm-5pxw, GHSA-587h-7wmj-h5pm). `npm ls vite follow-redirects --depth=2`
+confirms versions. `git diff a9c8498d..HEAD -- frontend/package.json
+frontend/package-lock.json` empty: dependency inputs predate this change.
+Backend CI still running Backend tests at readback. No full CI PASS or release
+acceptance claimed. Runtime AUD-20 local criteria remain verified; broader dependency
+remediation is outside this phase. Under failed-gate rule further publication stopped;
+this STATUS/checkpoint blocker receipt remains local/uncommitted, no code WIP.
+
+### AUD-20 CI continuation — owner continue 21.10
+
+Owner authorized continuing the reported CI blocker. Base9054fd07, same canonical
+root/branch; starting WIP only this task's STATUS/checkpoint blocker receipt.
+Result: repair approved AI create consumer regression and targeted dependency audit
+failures; no AUD-21/22, new scan, provider call, working DB or deployment.
+CI39585106684 backend2026 tests: 1 failure, 35 skips; crm_create deal receives
+unexpected stage_entered_at from ai_core.crm_writes. Caller also duplicates the
+new domain creation audit/activity. Reuse shared serializers/domain initialization;
+retain exact ApprovalRequest/permission/tenant/replay guards and lead-created effects.
+Verification plan: reproduce existing failing AI test in isolated_runtime; assert
+single initial activity/audit + server stage time/history and replay; focused AI
+command/approval/domain/dependent suites then system/drift. Dependency scope:
+vite8.0.16 to patched8.1.6, follow-redirects1.16.0 to patched1.16.1; inspect lock delta,
+no broad audit-fix. Risk is dev/build compatibility and shared AI serializer consumer.
+Run npm ci once for changed lock, audit, build/types/i18n/widget/bundle, existing
+Vite environment/bundle tests and isolated browser create flow. Keep full CI gate
+visible and inspect the published candidate's actual results. Docs/checkpoint/status
+reconcile prior failed receipt; commit/push only after required local checks pass.
+
+Continuation progress: existing failing AI test reproduced unchanged (1 FAIL).
+crm_writes no longer supplies domain-owned stage_entered_at or duplicates initial
+Lead/Deal activity/audit. Extended existing regression proves one initial event,
+CREATE audit, stage history, server date/probability and replay with one command audit.
+All19 tests in apps.ai_core.tests_crm_tools PASS (17.715s). Broader AI/domain suite
+running. Approval, role, Business and lead-created automation paths retained.
+Dependencies: Vite minimum/lock8.1.6, follow-redirects lock1.16.1. Initial ranged
+install selected8.3.5; discarded only that task-owned lock attempt and installed
+explicit8.1.6. Reviewed lock delta limited to Vite/rolldown1.1.5 and required
+bindings/oxc/wasm/picomatch deduplication, plus follow-redirects. No broad audit fix.
+Maintainer advisories: https://github.com/advisories/GHSA-587h-7wmj-h5pm and
+https://github.com/advisories/GHSA-q3jh-wrc6-jgq8 list patched versions; npm registry
+metadata verified versions/engines. Node24.18.0 satisfies project minimum.
+`npm ci`, `npm run build`, `npm run check:bundle`, `npm audit --audit-level=moderate`
+PASS (zero vulnerabilities). npm's existing install-script policy blocked optional
+postinstall scripts for core-js/esbuild; policy not relaxed, builds successful.
+Initial `npm run test:gate-env` omitted required quality profile and failed assertion
+ZANI_QUALITY_GATE=1; corrected `frontend_policy.py` uses isolated_runtime and runs
+node --test scripts/tests/gate-environment-policy.test.mjs scripts/tests/bundle-budget.test.mjs:
+6 PASS. This was a harness failure, no product/policy edit.
+Browser CLI aud20ci, canonical source Vite8.1.6, disposable DB ports64901/64902:
+real login, stage options exclude terminal, create201 OPEN and reload persistence
+PASS; screenshot output/aud20-ci-20261021/created.png inspected. Initial no-session
+refresh400/favicon404 only. Owned servers/browser stopped, DB disposed.
+
+Continuation completion gate: `.venv/Scripts/python.exe
+output/aud20-20261021/check.py apps.ai_core apps.leads.tests_creation
+apps.crm.tests_creation apps.core.tests_import_lifecycle
+apps.automations.tests_dispatch_commit` — 214 PASS (148.955s), zero skips.
+Then isolated system_check.py: check PASS, makemigrations --check --dry-run PASS.
+Logs ci-affected.log/ci-system.log; unchanged non-AI AUD-20 checks reused.
+Documentation links/anchors/registry and diff hygiene PASS. Runtime diff limited
+to AI consumer and regression assertions; package lock contains only reviewed
+Vite dependency closure and follow-redirects. No secrets/private data in outgoing diff.
+README/access/AI permission/operations contracts unchanged: no new configuration,
+rights, provider behavior or working DB. CRM contract and paused CRM-agent passport
+record compatibility fix without unpausing CRM-D01; roadmap notes CI correction.
+Scope code/evidence complete locally. Exact base9054fd07; publication/CI still to
+verify on the new candidate. Earlier CI failure and initial harness errors retained.
+
 ## DOCS-PILOT-PRODUCTION-20261021 — status reconciliation and product description
 
 Owner requested verification of stopped Deep Scan, current technical documentation

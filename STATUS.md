@@ -6,13 +6,15 @@
 
 # PlatformaCRM — текущий статус
 
-21.10.2026. AUD-20 выполнен в локальном scope: доменное начальное состояние
-API/import заявок и сделок, обязательная причина потери, серверные metadata и
-атомарная история; UI/import/Inbox выбирают активные открытые стадии. Backend307
-+ Inbox rollback/retry1, system/drift, frontend build/bundle и браузер PASS.
-Документы обновлены; код 1d95d1de опубликован в main, remote SHA совпал.
-CI 39585017029 запущен, на момент записи queued (не PASS). Команды/границы — AUD-20-20261021
-в checkpoint. AUD-21/22 и новый security scan не начаты; deployment не выполнялся.
+21.10.2026. AUD-20: по «продолжай» исправляются блокеры CI9054fd07.
+Полный backend CI2026 выявил один пропущенный consumer: подтверждённый AI create
+передавал stage_entered_at после перехода на доменный сервис. Вызов исправлен,
+дубли create activity/audit устранены; focused AI19 PASS. Vite8.1.6 и
+follow-redirects1.16.1 установлены из нового lock; npm audit без уязвимостей.
+Affected backend214, system/drift, frontend build/bundle/audit, policy6 и браузер PASS.
+Исправления готовы к публикации; итоговый CI новой версии ещё не получен.
+Исходные AUD-20 проверки307+1 сохранены, полный CI ещё не PASS. Подробности —
+AUD-20-20261021 checkpoint; AUD-21/22 и deployment не начинались.
 
 21.10.2026. PROJECT-DEEP-AUDIT-20261020 остановлен владельцем. Остановка ожидания
 в чате не сняла running в плагине; отмена подтверждена через плагин 21.10,
