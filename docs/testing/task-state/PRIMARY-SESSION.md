@@ -6,6 +6,89 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## DOCS-PILOT-PRODUCTION-20261021 — status reconciliation and product description
+
+Owner requested verification of stopped Deep Scan, current technical documentation
+and roadmap, and two descriptions: closed pilot for several dental businesses and
+production. Canonical root C:/Users/user/Desktop/PlatformaCRM; branch
+codex/ui-testing-toolkit, base ce2c290d3d4be4874e55339bd6bde225098b8683. Starting WIP:
+only this task's previous scan-start notes in STATUS and this checkpoint; no runtime diff.
+Mode docs/evidence reconciliation. Reuse current contracts, module passports,
+platform specification, AUD register, source maps and existing verification receipts.
+No new product scope, runtime fixes, provider connection, database migration or scan.
+Risk: confusing local implementation with live readiness or deferred ideas with V1.
+Checks: reconcile statuses/source references, current document links/anchors/registry,
+working/index/actual committed-range diff hygiene and outgoing secret/scope review.
+No app build/install/test suite for documentation-only changes. Commit/normal push
+under standing authorization; report actual CI separately.
+
+Scan diagnostic: stored run 090dff1a-9b2c-456c-aa7b-f0c0487d0179 still reported running
+after the chat waiter was stopped. Owner explicitly confirmed stopping the scan;
+cancel_codex_security_scan completed 21.10 at 07:10:46 UTC. Readback: canceled,
+active 0, completed independent reviews 0, retained findings 18, partial report present.
+This is not a completed audit or 18 new deduplicated defects. Original artifacts remain
+in C:/Users/user/.codex/state/plugins/codex-security/scans/PlatformaCRM/
+ce2c290d3d4be4874e55339bd6bde225098b8683_20261019T201920Z_ozw4rs8k/.
+No completion/restart/worker review performed. The earlier 19.10 report remains
+preserved in Git with 36 raw records. Fresh Daybreak advisory 21.10: not_granted;
+account approval via https://chatgpt.com/cyber is separate from local permissions.
+No configuration changes or application submission performed.
+
+Reconciliation result: product/CRM/access/AI/frontend/integrations/operations and
+acceptance contracts, engineering/testing procedures, roadmap, module passports,
+platform specification section15 and current AUD/risk evidence were compared by
+workflow and readiness boundary. Registry/link validation covers 35 current/changed
+documents, 86 registered paths, 812 local links and 93 anchors: PASS, no missing targets.
+Commands: `.venv/Scripts/python.exe output/docs-pilot-production-20261021/verify.py`;
+`git diff --check`. Local JSON receipt is in the same output directory.
+Source spot checks: frontend router and IntegrationsPage/ProviderCard; provider
+registry FINANCIAL_SOURCE_READERS remains empty; config/settings.py commerce false
+and adapter None; referenced domain/API/tests/evidence remain the source map.
+This is a documentation reconciliation, not a new source-wide security review or
+runtime certification. Prior PASS is retained only at its named historical boundary.
+
+Corrected current scan/publication state, stale AUD-15-open claim, data-lifecycle
+audit boundaries, overall project snapshot and pre-foundation billing description.
+Added two product descriptions in existing product.md; no new competing roadmap.
+Owner's several-clinic pilot clarification preserves 3–5 users as the earlier
+participant estimate, not a clinic count/per-clinic quota. Instagram/site-form V1
+requirements remain beyond two-channel pilot R03; deferred D01–D06 are not promises
+for the first paid release. Three money domains are explicitly separated.
+Other contracts/passports need no behavioral edits: code, API, rights, notifications,
+BusinessEvents, AI, configuration and migrations are unchanged. Historical reports
+and original security artifacts were not rewritten. Root README needs no setup change.
+Remaining: full security evidence/deduplication; open AUD and R02–R07; external
+environment/provider acceptance and commercial/operational owner decisions.
+These remain in existing registers and are not newly authorized implementation.
+Documentation scope has no remaining product-code work; Daybreak approval requires
+the account holder's application/approval, not a local config edit. No scan process
+owned by this task remains active. Final publication/CI receipt is in task response.
+
+## PROJECT-DEEP-AUDIT-20261020 — full scan explicitly resumed
+
+Current outcome 21.10: canceled at the owner's request, partial coverage only;
+see DOCS-PILOT-PRODUCTION above. The following records the original launch scope,
+not an active instruction to continue scanning.
+
+Owner: «Приступай к deep scan». Canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, clean initial HEAD ce2c290d3d4be4874e55339bd6bde225098b8683.
+Mode comprehensive security analysis/docs, not remediation. Previous canceled scan
+220130aa-3d20-4bcf-9415-8d794f1087e3 remains closed; preserved artifacts under
+docs/testing/security-audit-20261019-partial are prior evidence, not a fresh PASS.
+Scope whole repository, especially SQL injection, HTTP/API/auth/CSRF/SSRF, file and
+avatar upload/processing/resource limits/storage/delivery/permissions, plus all
+relevant trust boundaries. Plugin coordinator owns independent read-only scans,
+validation/aggregation and canonical draft; parent completes once after success.
+No working DB changes, source fixes, live attacks, real provider calls or messages.
+Multi-pass run may take hours; do not infer deadlock from unchanged parent counters,
+restart duplicate scans, or spam uninformative waiting updates. Do not change scan
+limits/model/permissions without cause. Managed filesystem profile is now active.
+Completion checks: canonical report/coverage and source snapshot, reconcile new
+root causes with AUD without rewriting historical artifacts; docs links/registry/
+diff/secret review; commit/push/actual CI under standing rules. No app build/install
+merely for docs; runtime probes only if separately justified and isolated.
+No complete-coverage or production-safety claim before actual results.
+
 ## PROJECT-RISK-REVIEW-20261019 — consolidation and comprehensive audit
 
 Follow-up owner scope: preserve current audit records; full Deep Scan explicitly

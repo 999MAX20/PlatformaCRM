@@ -10,9 +10,10 @@
 | Вопрос | Действующий источник |
 | --- | --- |
 | Что строим и что отложено | [Продукт](current/product.md) |
+| Закрытый пилот и production: два описания | [Состав, UI, AI, каналы и три денежных контура](current/product.md#два-описания-продукта--сверка-21102026); сверка 21.10, требования отдельно от реализации |
 | В какой последовательности идём к production | [Единый roadmap](current/roadmap.md) |
 | Все известные дефекты, риски и пробелы готовности | [Сводный анализ 19.10](testing/project-risk-register-20261019.md): AUD, CI, архитектура, эксплуатация и бизнес-вопросы; статусы/очередь — roadmap, новый полный аудит отдельно отмечает покрытие |
-| Сохранённые записи остановленного Deep Scan | [Снимок 19.10](testing/security-audit-20261019-partial/README.md): полный набор artifacts, canceled/partial, 36 записей с повторами; полный аудит отложен |
+| Сохранённые записи остановленного Deep Scan | [Снимок 19.10](testing/security-audit-20261019-partial/README.md): canceled/partial, 36 записей с повторами; второй запуск 20.10 также отменён, partial с 18 записями и путь — [checkpoint 21.10](testing/task-state/PRIMARY-SESSION.md#docs-pilot-production-20261021--status-reconciliation-and-product-description). Полный аудит не завершён |
 | Найденные проблемы 17.10 и их исправление | [Evidence аудита](testing/project-audit-20261017.md), статусы только в [AUD roadmap](current/roadmap.md#project-audit-20261017); подтверждённые дефекты отделены от рисков |
 | Что реализовано и где код | [Паспорта](pre-production/README.md), [карта модулей](pre-production/capabilities.md) |
 | Сверка техдокументов с кодом 16.10 | [Покрытие, исправленные статусы и остатки](testing/docs-reconciliation-20261016.md) — evidence на dc1eedf, не новая сертификация |
