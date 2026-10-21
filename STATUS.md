@@ -6,11 +6,17 @@
 
 # PlatformaCRM — текущий статус
 
+21.10.2026. AUD-22 выполнен в локальном scope: ZIP/XML bounds до openpyxl,
+потоковое XLSX чтение без обрезания по заниженным dimensions и finally cleanup.
+Focused10/affected68 без skip, system/drift и probe256МБ/12сек PASS. Лимиты всех
+листов — operations; версия/публикация/evidence — AUD-22-20261021 checkpoint.
+Рабочая БД/deployment не затронуты; следующий AUD-18 не начат.
+
 21.10.2026. AUD-21: конкурентный confirm/rollback/recovery проверен в изолированном
 PostgreSQL17: 48 import-проверок без skip, system/drift PASS. После сбоя строки
 или финального audit ожидающий confirm создаёт один результат, повтор отклоняется.
 Код AUD-16 достаточен; добавлены regression tests. Основа3834922c; команды,
-версия и публикация — AUD-21-20261021 checkpoint. AUD-22 не начат.
+версия и публикация — AUD-21-20261021 checkpoint; опубликован66b3f64a, CI39596573384 success. AUD-22 — отдельный этап выше.
 
 21.10.2026. AUD-20: начальное состояние API/import заявок/сделок и подтверждённый
 AI create исправлены, история не дублируется. Объединённый код/lock 4056a471
@@ -19,7 +25,7 @@ Pillow13/certifi2026.10.19; npm/pip audits чистые. AI19/affected214,
 accounts/API128 (3 PG-only skip), system/drift, frontend build/bundle, policy6
 и браузер PASS. [Полный CI кода](https://github.com/999MAX20/PlatformaCRM/actions/runs/39590140960)
 — отдельный результат на точной версии. Подробности/ограничения — AUD-20-20261021
-checkpoint. AUD-21 проверен отдельным этапом выше; AUD-22, CRM-D01 и deployment не начинались.
+checkpoint. AUD-21/22 проверены отдельными этапами выше; CRM-D01 и deployment не начинались.
 
 21.10.2026. PROJECT-DEEP-AUDIT-20261020 остановлен владельцем. Остановка ожидания
 в чате не сняла running в плагине; отмена подтверждена через плагин 21.10,

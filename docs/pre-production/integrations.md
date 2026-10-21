@@ -4,7 +4,8 @@
 jobs не образуют полного рабочего цикла; download не учитывает последующее
 сужение scope. AUD-12/18 не выполнены; AUD-20 закрыт в локальном scope ниже. Защита ImportJob реализована в AUD-16
 ниже. AUD-21 проверен в локальном PostgreSQL17: конкурентный rollback/recovery
-и отсутствие двойного результата подтверждены; XLSX resource bounds AUD-22 не проверен.
+и отсутствие двойного результата подтверждены; XLSX resource bounds AUD-22
+реализованы и локально проверены, ограничения ниже.
 [Roadmap](../current/roadmap.md#project-audit-20261017),
 [evidence](../testing/project-audit-20261017.md). AV на confirm сохранён.
 
@@ -44,6 +45,20 @@ system/migration drift PASS. Команды/окончательная верс�
 [checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-21-20261021--concurrent-import-rollback-and-recovery).
 Остатка кода, доказательств и решений в принятом scope нет. Рабочая БД,
 deployment/live не затронуты; CI SQLite не заменяет локальную PG-проверку.
+
+## Ресурсы XLSX — AUD-22
+
+21.10: выполнено полностью в локальном scope на основе66b3f64a. Изолированный
+probe с жёсткими пределами256МБ/12сек подтвердил зависание на завышенных
+dimensions и молчаливый пропуск строк при заниженных. ZIP/XML preflight теперь
+ограничивает разжатый объём, compression ratio, entries и координаты/число
+строк/столбцов до openpyxl. Потоковый reader читает реальные строки и закрывает
+ресурсы при успехе/ошибке. Все листы проходят bounds; импортируется активный.
+Настройки и ограничения — [operations](../current/operations.md#лимиты-xlsx-импорта).
+Focused10, affected68 без skip, system/drift и повторный bounded probe PASS.
+Версия/команды/публикация — [checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-22-20261021--bounded-xlsx-parsing).
+Остатка кода/доказательств/решений в scope нет. Live/deployment не выполнялись;
+проверка одного файла не является общей нагрузочной сертификацией сервиса.
 
 ## Начальное состояние импорта — AUD-20
 

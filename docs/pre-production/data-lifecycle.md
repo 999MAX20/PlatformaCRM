@@ -5,8 +5,10 @@
 [AUD-20 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants). AUD-16 защищает ImportJob и сериализует
 preview/confirm; его локальные проверки завершены, подробности —
 [паспорт интеграций](integrations.md#importjob--aud-16). Полный UI mapping/errors/history
-(AUD-12), сужение scope готового экспорта (AUD-18),
-полный concurrent rollback/recovery (AUD-21) и XLSX bounds (AUD-22) не закрыты.
+(AUD-12) и сужение scope готового экспорта (AUD-18) остаются открытыми;
+concurrent rollback/recovery (AUD-21) проверен в PostgreSQL17; XLSX bounds
+(AUD-22) реализованы и локально проверены. Ограничения и evidence —
+[паспорт интеграций](integrations.md#ресурсы-xlsx--aud-22).
 Поэтому описание реализованных сценариев ниже не является полным PASS импорта/экспорта.
 
 Исходная основа `768b2675`, 09.10.2026; актуальные дельты 16.10 описаны ниже.

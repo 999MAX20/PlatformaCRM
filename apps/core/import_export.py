@@ -13,11 +13,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
-try:
-    from openpyxl import load_workbook
-except ImportError:  # pragma: no cover - local env may install requirements after code checkout.
-    load_workbook = None
-
+from apps.core.xlsx_reader import read_xlsx_rows
 from apps.clients.models import Client
 from apps.clients.services import duplicate_payload, find_duplicate_clients
 from apps.businesses.access import Actions, Resources, assert_can, can_view_sensitive_field, scope_queryset
@@ -636,19 +632,11 @@ def read_tabular_file(path):
                 raise ValidationError("Import file is empty.")
             return normalize_tabular_rows(rows)
     if extension == ".xlsx":
-        if load_workbook is None:
-            raise ValidationError("XLSX import requires openpyxl. Install requirements.txt and retry.")
-        workbook = load_workbook(BytesIO(content), read_only=True, data_only=True)
-        sheet = workbook.active
-        rows = list(sheet.iter_rows(values_only=True))
-        if not rows:
-            raise ValidationError("Import file is empty.")
-        headers = [str(value or "").strip() for value in rows[0]]
-        result = []
-        for values in rows[1:]:
-            result.append({headers[index]: cell_to_string(value) for index, value in enumerate(values) if index < len(headers)})
-        workbook.close()
-        return normalize_tabular_rows(result)
+        rows = read_xlsx_rows(content)
+        try:
+            return normalize_tabular_rows(rows)
+        finally:
+            rows.close()
     raise ValidationError("Only CSV and XLSX files are supported.")
 
 
@@ -660,10 +648,10 @@ def normalize_tabular_rows(rows):
         clean_row = {str(key or "").strip(): cell_to_string(value) for key, value in (row or {}).items() if str(key or "").strip()}
         if any(value for value in clean_row.values()):
             normalized_rows.append(clean_row)
+            if len(normalized_rows) > settings.IMPORT_MAX_ROWS:
+                raise ValidationError(f"Import file has too many rows. Maximum is {settings.IMPORT_MAX_ROWS}.")
     if not normalized_rows:
         raise ValidationError("Import file has headers but no data rows.")
-    if len(normalized_rows) > settings.IMPORT_MAX_ROWS:
-        raise ValidationError(f"Import file has too many rows. Maximum is {settings.IMPORT_MAX_ROWS}.")
     return normalized_rows
 
 

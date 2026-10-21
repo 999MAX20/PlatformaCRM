@@ -32,7 +32,10 @@ AUD-10 выполнен частично: готова изоляция очер
 durable command keys, replay/конфликты и recovery UX. Остальные пункты аудита
 не выполнены, кроме AUD-21: полный локальный критерий concurrent rollback/recovery
 проверен в PostgreSQL17, 48 import-проверок PASS без skip; код AUD-16 сохранён.
-Версия/evidence — AUD-21-20261021 checkpoint. AUD-22 требует доказательства. Публикация и CI — отдельные
+Версия/evidence — AUD-21-20261021 checkpoint. AUD-22 также выполнен полностью
+локально: ZIP/XML bounds, потоковый XLSX reader и cleanup; focused10/affected68,
+bounded subprocess и system/drift PASS. Лимиты всех листов и env — operations,
+версия/evidence — AUD-22-20261021 checkpoint. Публикация и CI — отдельные
 состояния; deployment/live приёмка не заявлены локальным PASS.
 Остальные исправления не закрыты; это не новая
 общая сертификация проекта.

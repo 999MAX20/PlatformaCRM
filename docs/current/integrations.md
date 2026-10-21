@@ -104,7 +104,13 @@ confirm, откат после записи строки и финального
 sync, audit или on_commit callbacks; ожидающий запрос перечитывает PREVIEWED.
 Runtime-изменений сверх AUD-16 не потребовалось. Evidence и версия —
 [AUD-21 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-21-20261021--concurrent-import-rollback-and-recovery).
-Полный UI (AUD-12) и XLSX bounds (AUD-22) открыты.
+AUD-22: XLSX проходит ZIP/XML preflight до openpyxl: размер разжатого архива,
+compression ratio, число записей, dimensions и фактические координаты/число
+строк/столбцов ограничены. Заниженные dimensions не обрезают данные. Превышение
+даёт400 без частичного импорта; после исправления файла возможен новый upload.
+Reader/iterator/workbook закрываются и при ошибке. Лимиты всех листов, включая
+пустые строки, и значения env — [operations](operations.md#лимиты-xlsx-импорта).
+Обычные роли/tenant/AV и доменные транзакции сохранены. Полный UI (AUD-12) открыт.
 Версия и граница проверок — [AUD-16 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-16-20261019--import-job-write-boundaries).
 
 Public lead/widget ingress привязан к разрешённому business/form/channel,

@@ -6,6 +6,89 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-22-20261021 — bounded XLSX parsing
+
+Owner «продолжай» authorizes next AUD-22 only. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+clean base66b3f64a019135f0b78f1f6b907fa421a91cf72f. Evidence/code gap: XLSX
+materialized before row limit; workbook lacks finally cleanup. Reuse import reader,
+AV/bounded source bytes, preview/confirm and existing domain/permission services.
+First reproduce dimensions/rows/columns/compression cases in an isolated subprocess
+with hard memory/time limits; then smallest bounded reader fix if confirmed.
+Risk: memory/CPU amplification, partial imports, malformed-file errors and leaked
+workbooks. Technical resource bounds may reject oversized workbooks explicitly;
+no silent truncation. Scope: parser/tests, relevant config and docs, no new UI,
+provider calls, working DB, migrations, AUD-18 or other phase.
+Focused checks after parser change: valid CSV/XLSX, bounds and malformed inputs,
+stream early stop and cleanup, AV preserved. Completion: import boundaries,
+lifecycle/import-export/samples/file-scanning suites plus system/migration drift,
+controlled subprocess rerun and reachable upload/preview/confirm API tests.
+No frontend build/browser/full local suite for backend parser-only changes.
+Update contracts/passports/roadmap/status; review commit, normal push, actual CI.
+
+Result: fully completed in agreed local scope. Controlled synthetic XLSX probe
+uses Windows Job Object PROCESS_MEMORY hard limit256MiB before Django startup,
+parent subprocess timeout12s with owned child kill/wait. Same isolated_runtime
+environment, scanner mocked, no DB/server/provider. Base66b3f64a: valid4843bytes
+accepted; forged A1:XFD1048576 dimensions4866bytes hit12s timeout; understated
+dimensions silently hid6000 appended rows; out-of-range column and compressed
+padding accepted. These are synthetic resource/data-loss evidence, not live attack.
+Logs/results: output/aud22-20261021/{probe.py,baseline.json,fixed.json}; helpers and
+synthetic files ignored, not distributed as user data. Fixed probe: normal file
+accepted; dimensions/rows/columns/compression rejected as ValidationError in
+0.312–0.500s parser time, full child2.5–3.266s, within same hard caps.
+
+Implementation: apps/core/xlsx_reader.py does bounded ZIP metadata checks and
+streaming Expat XML preflight without building a tree; denies DTD/encrypted or
+duplicate entries, excessive expansion/ratio/entries and worksheet dimensions,
+actual coordinates/counts before openpyxl allocation. Validate all XML/sheets,
+read active sheet, reset inaccurate dimensions, iterate and normalize bounded
+rows; generator and workbook close in finally even on conversion/error/early exit.
+IMPORT_MAX_ROWS remains5000 data rows; XLSX includes physical blanks/coordinates
+plus one header. New defaults: columns256, entries256, expanded20MiB, ratio200;
+config and .env.example documented, working env unchanged. Existing source byte
+limit and AV before parsing retained; no permission/tenant/domain/event change.
+Malformed/over-limit files return400; confirm rolls back and allows retry when
+valid again. No partial acceptance/truncation. No new dependency or schema.
+
+Verification via `.venv/Scripts/python.exe`, isolated_runtime subprocess:
+`manage.py test apps.core.tests_xlsx_reader -v 1`: 9 PASS0.737s.
+After final unsupported-compression error handling, completion:
+`manage.py test apps.core.tests_xlsx_reader apps.core.tests_import_job_boundaries
+apps.core.tests_import_lifecycle apps.core.tests_import_export
+apps.core.tests_import_samples apps.core.tests_file_scanning -v 1`:
+67 PASS22.120s, no skips. Covers real upload/preview/confirm/replay, confirm-time
+limit/recovery without entities/events, invalid upload, exact bounds, forged
+dimensions and actual cells, XML/archive limits, malformed/empty files, cleanup,
+AV, tenant/permission and domain import regressions. `check` PASS;
+`makemigrations --check --dry-run` PASS. Logs focused.log/affected.log/system.log
+under same ignored output directory. No failed test attempts; baseline timeout
+is expected reproduced risk, not hidden PASS. No owned processes remain.
+No frontend/build/browser/full local suite: backend parser only, actual API flow
+covered. PG concurrency not rerun: locking/transaction code unchanged, CSV inputs
+of AUD-21 unaffected; scoped SQLite and bounded process evidence only for AUD-22.
+
+Final review tightened non-.xml relationship targets (XML is parsed regardless
+of filename; opaque binary media remains allowed), implicit row/cell coordinates
+and malformed row children. Focused tests_xlsx_reader10 PASS0.655s; affected same
+six labels68 PASS19.974s (affected-final.log). Last coordinate/structure delta:
+`test apps.core.tests_xlsx_reader.XlsxReaderTests -v 1` 7 PASS0.454s
+(parser-final.log); prior unaffected API/domain tests reused. Final bounded probe
+fixed-final.json: valid accepted0.375s, all four adversarial cases rejected
+0.281–0.328s; total child2.5–2.687s under256MiB/12s. No remaining owned processes.
+Final docs registry86/docs33/links744/anchors104 PASS.
+
+Docs: roadmap, integrations/operations contracts, integrations/data-lifecycle/
+capabilities passports, README/env, current risk-register summary and STATUS
+reconciled; original historical AUD evidence retained. CRM/access/AI/frontend/
+product contracts need no change: policy/domain/UI scope unchanged. Docs registry/
+links and working/index/committed-range hygiene checked before publication.
+No remaining code/evidence/environment/owner-decision gap in local scope.
+Full service load, live/deployment and production capacity are outside scope.
+Final commit/remote SHA/actual CI reported in final response; not assumed green.
+Previous AUD-21 commit66b3f64a CI39596573384 completed success. Next AUD-18
+not started; no automation, handoff or new task.
+
 ## AUD-21-20261021 — concurrent import rollback and recovery
 
 Owner requested next roadmap item. Evidence gap after AUD-16 row-lock fix;
