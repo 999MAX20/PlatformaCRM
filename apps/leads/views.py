@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.db.models import Count, Q
+from django.db import transaction
 
 from apps.crm.serializers import DealSerializer
 from apps.crm.models import Deal
@@ -184,10 +185,12 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
             }
         )
 
+    @transaction.atomic
     def perform_create(self, serializer):
         if serializer.validated_data.get("responsible_user") is None:
             serializer.validated_data["responsible_user"] = self.request.user
-        super().perform_create(serializer)
+        self._enforce_business_access(serializer)
+        serializer.save()
         lead = serializer.instance
         run_automations_for_event(
             business=lead.business,

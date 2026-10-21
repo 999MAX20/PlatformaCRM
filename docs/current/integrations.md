@@ -91,8 +91,14 @@ confirm разрешён только из PREVIEWED. Проверяются а�
 preview/errors. Ошибка до commit откатывает CRM-записи, события, sync и audit,
 сохраняя предыдущее состояние job для повтора. Scanner unavailable возвращает
 503 temporary_service_failure с retryable=true, без импорта. Последовательный
-повтор confirm завершённого job отклоняется400. Семантика импортируемых lead/deal
-lifecycle (AUD-20), полный UI (AUD-12) и XLSX resource bounds (AUD-22) отдельно.
+повтор confirm завершённого job отклоняется400. Начальное состояние lead/deal
+проверяется доменными creation services (AUD-20). Импорт заявки поддерживает колонку
+`lost_reason`: LOST без причины, причина при другом статусе и неизвестный непустой
+status дают row/field errors в preview и повторно на confirm. Пустой status — NEW.
+Сервер создаёт время/автора потери и начальную историю атомарно с импортом.
+Импорт сделки выбирает только активную открытую стадию; если её нет, ошибка
+откатывает импорт и позволяет повтор после исправления конфигурации.
+Полный UI (AUD-12), concurrent rollback/recovery (AUD-21) и XLSX bounds (AUD-22) открыты.
 Версия и граница проверок — [AUD-16 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-16-20261019--import-job-write-boundaries).
 
 Public lead/widget ingress привязан к разрешённому business/form/channel,

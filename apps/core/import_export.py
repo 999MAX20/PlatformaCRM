@@ -28,10 +28,12 @@ from apps.core.models import AuditLog, ImportJob
 from apps.core.sanitization import sanitize_error_text
 from apps.crm.models import Deal
 from apps.crm.services import ensure_default_pipeline
+from apps.crm.creation import create_deal
 from apps.integrations.crm_mapping import CLIENT_IMPORTED_EVENT, DEAL_IMPORTED_EVENT, LEAD_IMPORTED_EVENT, record_import_event
 from apps.integrations.connectors import normalize_business_event
 from apps.integrations.models import BusinessConnector, BusinessEvent, ConnectorSyncRun
 from apps.leads.models import Lead
+from apps.leads.creation import create_lead, validate_initial_lead_state
 from apps.services.models import Service
 
 
@@ -53,6 +55,7 @@ LEAD_FIELD_ALIASES = {
     "source": ["source", "источник", "channel", "канал"],
     "message": ["message", "сообщение", "запрос", "comment", "комментарий"],
     "status": ["status", "статус"],
+    "lost_reason": ["lost_reason", "loss_reason", "причина_отказа", "причина потери"],
 }
 
 SALES_FIELD_ALIASES = {
@@ -114,7 +117,7 @@ IMPORT_TEMPLATES = {
     },
     ImportJob.EntityTypes.LEADS: {
         "headers": list(LEAD_FIELD_ALIASES.keys()),
-        "row": ["Алия Иванова", "+77015550101", "aliya@example.com", "Консультация", "landing", "Хочу записаться", "new"],
+        "row": ["Алия Иванова", "+77015550101", "aliya@example.com", "Консультация", "landing", "Хочу записаться", "new", ""],
     },
     ImportJob.EntityTypes.DEALS: {
         "headers": list(DEAL_FIELD_ALIASES.keys()),
@@ -240,9 +243,9 @@ def confirm_import(job: ImportJob, request):
             if job.entity_type == ImportJob.EntityTypes.CLIENTS:
                 result = import_client_row(job, payload, connector=connector)
             elif job.entity_type == ImportJob.EntityTypes.LEADS:
-                result = import_lead_row(job, payload, connector=connector)
+                result = import_lead_row(job, payload, connector=connector, request=request)
             elif job.entity_type == ImportJob.EntityTypes.DEALS:
-                result = import_deal_row(job, payload, connector=connector)
+                result = import_deal_row(job, payload, connector=connector, request=request)
             elif job.entity_type == ImportJob.EntityTypes.SALES:
                 result = import_sale_row(job, payload, connector=connector)
             elif job.entity_type == ImportJob.EntityTypes.CATALOG:
@@ -402,7 +405,11 @@ def import_client_row(job, payload, connector=None):
     return "created"
 
 
-def import_lead_row(job, payload, connector=None):
+@transaction.atomic
+def import_lead_row(job, payload, connector=None, request=None):
+    state = validate_initial_lead_state(
+        status=payload.get("status") or Lead.Statuses.NEW, lost_reason=payload.get("lost_reason", ""),
+    )
     if not payload.get("full_name") and not payload.get("phone") and not payload.get("email") and not payload.get("message"):
         return "skipped"
     client = find_import_client(job.business, payload)
@@ -413,18 +420,20 @@ def import_lead_row(job, payload, connector=None):
     service = None
     if payload.get("service_name"):
         service = Service.objects.filter(business=job.business, name__iexact=payload["service_name"]).first()
-    status = payload.get("status") if payload.get("status") in dict(Lead.Statuses.choices) else Lead.Statuses.NEW
     source = payload.get("source") if payload.get("source") in dict(Lead.Sources.choices) else Lead.Sources.OTHER
     message = payload.get("message") or "Imported lead"
     if Lead.objects.filter(business=job.business, client=client, service=service, source=source, message=message).exists():
         return "skipped"
-    lead = Lead.objects.create(
+    lead = create_lead(
         business=job.business,
         client=client,
         service=service,
         source=source,
         message=message,
-        status=status,
+        actor=request.user if request is not None else job.actor,
+        request=request,
+        activity_source="import",
+        **state,
     )
     record_import_event(
         business=job.business,
@@ -436,7 +445,8 @@ def import_lead_row(job, payload, connector=None):
     return "created"
 
 
-def import_deal_row(job, payload, connector=None):
+@transaction.atomic
+def import_deal_row(job, payload, connector=None, request=None):
     assert_resource_enabled(job.business, Resources.DEALS)
     if not payload.get("title") and not payload.get("client_name") and not payload.get("phone") and not payload.get("email"):
         return "skipped"
@@ -481,7 +491,7 @@ def import_deal_row(job, payload, connector=None):
     if duplicate:
         return "skipped"
     owner = job.actor if job.actor_id and job.business.members.filter(user=job.actor, is_active=True).exists() else None
-    deal = Deal.objects.create(
+    deal = create_deal(
         business=job.business,
         client=client,
         pipeline=pipeline,
@@ -489,11 +499,12 @@ def import_deal_row(job, payload, connector=None):
         title=title,
         amount=deal_payload["amount"],
         currency=deal_payload["currency"],
-        probability=stage.probability,
         owner=owner,
         source=deal_payload.get("source", ""),
         notes=deal_payload.get("notes", ""),
-        stage_entered_at=timezone.now(),
+        actor=request.user if request is not None else job.actor,
+        request=request,
+        activity_source="import",
     )
     event_payload = {**deal_payload, "amount": str(deal_payload["amount"])}
     record_import_event(
@@ -718,6 +729,15 @@ def validate_import_rows(entity_type, rows, mapping):
             errors.append({"row": 0, "field": field, "message": f"Required column for {field} is missing."})
     for index, row in enumerate(rows, start=1):
         payload = mapped_payload(row, mapping, entity_type)
+        if entity_type == ImportJob.EntityTypes.LEADS:
+            try:
+                validate_initial_lead_state(
+                    status=payload.get("status") or Lead.Statuses.NEW,
+                    lost_reason=payload.get("lost_reason", ""),
+                )
+            except ValidationError as exc:
+                for field, message in exc.detail.items():
+                    errors.append({"row": index, "field": field, "message": str(message)})
         if entity_type == ImportJob.EntityTypes.SALES:
             if payload.get("amount") and parse_decimal(payload["amount"]) is None:
                 errors.append({"row": index, "field": "amount", "message": "Amount must be a number."})
@@ -789,12 +809,15 @@ def normalize_deal_payload(payload):
 
 
 def default_deal_import_stage(pipeline, stage_name=""):
-    stages = pipeline.stages.filter(business=pipeline.business)
+    stages = pipeline.stages.filter(business=pipeline.business, is_active=True, is_won=False, is_lost=False)
     if stage_name:
         matched = stages.filter(name__iexact=stage_name, is_won=False, is_lost=False).order_by("order", "id").first()
         if matched:
             return matched
-    return stages.filter(is_won=False, is_lost=False).order_by("order", "id").first() or stages.order_by("order", "id").first()
+    stage = stages.order_by("order", "id").first()
+    if stage is None:
+        raise ValidationError({"stage": "An active open stage is required to import deals."})
+    return stage
 
 
 def normalize_catalog_payload(payload):

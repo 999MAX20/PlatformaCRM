@@ -120,7 +120,8 @@ export function DealsPage() {
     data.pipelines[0];
   const stagesForForm = data.stages.filter(
     (stage) =>
-      stage.pipeline === Number(actions.form.pipeline || defaultPipeline?.id),
+      stage.pipeline === Number(actions.form.pipeline || defaultPipeline?.id) &&
+      stage.is_active && !stage.is_won && !stage.is_lost,
   );
 
   const archiveMutation = useMutation({

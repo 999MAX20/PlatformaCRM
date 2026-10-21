@@ -6,6 +6,107 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-20-20261021 — initial lead and deal lifecycle invariants
+
+Owner authorized AUD-20 after the roadmap status review. Implementation/code gap;
+one bounded phase, no AUD-21/22 or new security scan. Canonical root
+C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit; starting
+HEAD/base a9c8498d4be44c260154acbd0a91d436237c2341; tracked/untracked Git snapshot clean.
+The standalone Word report remains an ignored output artifact, not source WIP.
+
+Result: API creation and lead import cannot persist invalid terminal state;
+lost reason, server timestamps/actor and initial history agree. Reuse Lead/Deal,
+their state/requirement validators, tenant/access layer, activity/audit and import
+preview/locked confirm. Inspect analogous deal API/import creation and fix the
+same demonstrated initial-state gap. Preserve existing lifecycle commands and
+historical data; no migration, working DB, provider configuration or deployment.
+
+Acceptance/check plan: isolated API/domain regressions for normal creation,
+LOST without/with reason, initial history/server metadata, import preview and
+confirm revalidation, rollback/retry, denied role and cross-Business input;
+deal stage/status agreement and required fields. Run focused tests after each
+coherent backend slice; completion affected lead/CRM/import and dependent
+permission/lifecycle/API suites plus system and migration-drift checks. Use
+scripts.codex_verify.isolated_runtime, no external calls or ordinary db.sqlite3.
+Frontend inspected for callers; no UI redesign/new terminal-create form intended.
+No full-project gate without demonstrated cross-cutting impact.
+
+Impacts: preserve create/import permissions and tenant scope; server owns initial
+loss/win metadata. Initial history describes creation, not a fabricated transition
+through NEW/OPEN, so no new status/stage-change notifications or automations.
+Existing API lead-created automation and import BusinessEvent remain. AI/provider
+actions unchanged. Update roadmap, relevant contracts/passports and evidence after
+checks; verified commit and normal push to origin main, actual CI separately.
+Next: final reviewed commit/normal push and actual CI readback; no next AUD authorized.
+
+Progress: baseline 11 tests reproduced missing initial loss validation/metadata and
+non-atomic API creation; 13 failed assertions and 1 metadata error included an
+incorrect role fixture (no explicit denial) and exception-handler expectation,
+corrected without relaxing acceptance. First API iteration also exposed a misplaced
+serializer create override; corrected before dependent work. API8 then PASS.
+Lead import + existing import/export22 PASS. Deal baseline6: 5 failures; API6 PASS
+after domain initialization. Expanded focused25 PASS (2.509s); system/drift PASS.
+Logs: output/aud20-20261021. Affected suite307 PASS (216.591s); later-added Inbox
+rollback/retry test1 PASS (0.111s). No skipped tests in that affected run.
+
+Source review found two analogous default-stage holes: deal import could fall back
+to a terminal stage; Inbox selected the first stage regardless of terminal/active.
+Both now require an active open stage, with atomic error/retry. Lead conversion and
+AI tool creation already filter nonterminal stages; their other behavior stays scoped
+to existing contracts. No synthetic transition events are emitted during creation.
+Frontend caller review found the ordinary create form offered terminal stages but
+omits loss/status inputs by design. Minimal necessary UI correction: list active
+open stages only; retain existing actions for completion. Add focused real-browser
+form checks and one frontend build/types/i18n/bundle check at completion. Use existing
+copy/components, no new labels/redesign, no full-browser suite or app reinstall.
+
+
+Completion evidence (21.10, base a9c8498d + reviewed task diff):
+- `.venv/Scripts/python.exe output/aud20-20261021/check.py apps.leads.tests_creation`
+  API8 PASS after the first coherent slice; baseline and correction logs retained.
+- Same isolated helper with `apps.core.tests_import_lifecycle apps.core.tests_import_export`:
+  lead import22 PASS at that slice. Expanded focused lead/deal/import25 PASS.
+- Affected command: `.venv/Scripts/python.exe output/aud20-20261021/check.py apps.leads
+  apps.crm apps.core.tests_import_lifecycle apps.core.tests_import_export
+  apps.core.tests_import_job_boundaries apps.core.tests_import_samples
+  apps.core.tests_crm_server_scenarios apps.core.tests_api_contracts
+  apps.core.tests_tenant_isolation apps.core.tests_business_flows_e2e
+  apps.core.tests_crm_projection_access apps.automations.tests_dispatch_commit
+  apps.bots.tests apps.conversations.tests_ai_confirmation` — 307 PASS.
+- Later Inbox test: same helper with
+  `apps.crm.tests_creation.DealCreationTests.test_inbox_creation_without_open_stage_rolls_back_and_can_retry`
+  — 1 PASS. It was added after the affected suite collected tests; runtime unchanged.
+- `.venv/Scripts/python.exe output/aud20-20261021/system_check.py` runs `manage.py check`
+  and `manage.py makemigrations --check --dry-run` inside isolated_runtime: PASS.
+- `npm run build` (includes i18n, tsc, main/widget) and `npm run check:bundle` in frontend:
+  PASS. Existing dependencies reused, no installation or lock changes.
+- Playwright CLI session aud20 against canonical source, dedicated ports52657/52658,
+  disposable DB, mock/eager profile: real login, create OPEN201, reload persistence,
+  keyboard stage selection, terminal/inactive exclusion, RU desktop and EN/KK390x844,
+  no-open-stage Save disabled PASS. Screenshots inspected. Initial empty-auth refresh400
+  and favicon404 only; no flow error. Initial harness used Escape before boundingBox;
+  Escape closed the modal as implemented, so corrected harness selected the option
+  and repeated the viewport checks successfully. No application change for harness.
+- Servers/browser owned by this task stopped; isolated DB disposed. No real providers,
+  shared servers, working DB, migration application or deployment affected.
+
+Docs: CRM/integrations/product contracts, roadmap, leads-deals/integrations/inbox/
+data-lifecycle/capabilities passports, current risk status and STATUS reconciled.
+Historical 17.10 audit and earlier closure bodies preserved. README/platform spec,
+access/AI/frontend contracts need no update: setup, architecture, permission policy,
+AI behavior and shared UI contract unchanged; affected behavior documented above.
+Scope complete: no code/evidence/owner-decision remainder. Environment: only local
+acceptance claimed; live/deployment requires its own scope. No PG concurrency claim;
+AUD-21/22 and full security certification not performed. No full-project local suite
+because behavior-selected affected tests suffice; CI runs its configured full suite.
+Documentation validator PASS: 86 registry paths, 32 current/changed documents,
+717 local links and 95 anchors. Working diff hygiene PASS. All 5 new source/test
+files and complete outgoing diff reviewed for scope/private data/secrets; only
+synthetic test identities. Origin main fetched at a9c8498d; normal fast-forward
+publication possible. CI workflow contains tests/build/audits, no deployment step.
+System/drift PASS reused for unchanged runtime; actual committed-range diff and
+publication readback follow after commit.
+
 ## DOCS-PILOT-PRODUCTION-20261021 — status reconciliation and product description
 
 Owner requested verification of stopped Deep Scan, current technical documentation

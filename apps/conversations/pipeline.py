@@ -227,8 +227,12 @@ def default_pipeline_and_stage(business):
     pipeline = Pipeline.objects.filter(business=business, is_default=True).first() or Pipeline.objects.filter(business=business).first()
     if pipeline is None:
         pipeline = Pipeline.objects.create(business=business, name="Sales Pipeline", slug="sales", is_default=True)
-    stage = PipelineStage.objects.filter(business=business, pipeline=pipeline).order_by("order", "id").first()
+    stage = PipelineStage.objects.filter(
+        business=business, pipeline=pipeline, is_active=True, is_won=False, is_lost=False,
+    ).order_by("order", "id").first()
     if stage is None:
+        if pipeline.stages.exists():
+            raise ValidationError({"stage": "An active open stage is required to create a deal."})
         stage = PipelineStage.objects.create(business=business, pipeline=pipeline, name="New", order=1, probability=10)
     return pipeline, stage
 

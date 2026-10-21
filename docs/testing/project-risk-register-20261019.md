@@ -32,10 +32,10 @@
 
 ## 1. AUD-01–22: текущий срез и исходные доказательства
 
-Выполнено полностью в согласованном локальном scope: **AUD-01/02/03/04/05/06/13/14/15/16**.
+Выполнено полностью в согласованном локальном scope: **AUD-01/02/03/04/05/06/13/14/15/16/20**.
 Выполнено частично: **AUD-10** (изоляция готова, остаются capacity/durable keys/recovery),
 **AUD-21** (lock и узкие PG-проверки готовы; полный concurrent rollback/recovery остаётся).
-Не выполнено: **AUD-07/08/09/11/12/17/18/19/20/22**, **AUD-V01**.
+Не выполнено: **AUD-07/08/09/11/12/17/18/19/22**, **AUD-V01**.
 Это 20 исходных подтверждённых пунктов и два риска, а не 22 открытые уязвимости.
 Полные актуальные результаты и ссылки на regression evidence — в AUD-строках roadmap.
 
@@ -254,7 +254,12 @@ LeadFormFieldViewSet использует form__business; IsTenantMember/get_obj
 
 ### AUD-20 — Создание и импорт заявки обходят terminal invariants
 
-Статус на 19.10: **Не выполнено**. Описание ниже — исходное evidence 17.10.
+Статус на 21.10: **Выполнено полностью в локальном scope**. Доменные create services,
+причина/серверные metadata/initial history, API/import и аналогичные deal paths
+проверены; код/доказательства/решения без остатка. Среда disposable SQLite/mock,
+deployment/live не выполнялись. Версия/307 backend + Inbox1/build/browser checks —
+[AUD-20 checkpoint](task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants).
+Описание ниже — сохранённое исходное evidence 17.10.
 
 Приоритет: **P2**. Метод: **source**.
 Источник: [apps/core/import_export.py](../../apps/core/import_export.py).

@@ -2,7 +2,7 @@
 
 Граница аудита 17.10 (`56dd124`): UI mapping/errors/history и сохранённые export
 jobs не образуют полного рабочего цикла; download не учитывает последующее
-сужение scope. AUD-12/18/20 не выполнены; защита ImportJob реализована в AUD-16
+сужение scope. AUD-12/18 не выполнены; AUD-20 закрыт в локальном scope ниже. Защита ImportJob реализована в AUD-16
 ниже. AUD-21 получил узкие concurrency-проверки AUD-16, отдельный риск ещё не
 закрыт; XLSX resource bounds AUD-22 не проверен.
 [Roadmap](../current/roadmap.md#project-audit-20261017),
@@ -30,8 +30,21 @@ Confirm перечитывает состояние, права, capability, ф�
 доказательств и решений владельца нет. Scoped проверки: 112 SQLite PASS, 2 PG-only
 skip выполнены в PostgreSQL17 PASS; system/migration drift PASS. Публикация/CI —
 итог задачи. Рабочая БД, миграции и deployment не затронуты.
-Полный интерфейс mapping/errors/history (AUD-12), lifecycle imports (AUD-20),
-экспорт scope (AUD-18) и XLSX resource limits (AUD-22) этим не закрываются.
+Полный интерфейс mapping/errors/history (AUD-12), экспорт scope (AUD-18)
+и XLSX resource limits (AUD-22) этим не закрываются.
+
+## Начальное состояние импорта — AUD-20
+
+21.10: preview/confirm проверяют статус и lost_reason заявки через общий доменный
+валидатор; confirm создаёт запись, начальную историю и серверные lost metadata
+атомарно с существующим BusinessEvent. Невалидная строка не оставляет CRM-записей.
+Импорт сделки использует доменный create_deal и только активную открытую стадию;
+исправление конфигурации позволяет повтор после атомарной ошибки. API create
+проверен теми же регрессиями, новая терминальная форма импорта не добавлялась.
+Локальный scope выполнен полностью; код/доказательства/решения без остатка.
+Среда — disposable SQLite, mock/eager; deployment/live не выполнялись.
+307 affected backend tests + отдельный Inbox rollback/retry PASS; system/drift,
+frontend build/bundle и достижимая форма PASS. Версия и команды — [AUD-20 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants).
 
 ## Реализованная основа
 

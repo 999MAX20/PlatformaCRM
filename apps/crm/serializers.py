@@ -4,6 +4,7 @@ from apps.businesses.access import Resources, can_view_sensitive_field
 from apps.core.work_queues import deal_risk, deal_sla_overdue
 from apps.crm.models import Deal, Pipeline, PipelineStage, StageTransition
 from apps.crm.services import validate_pipeline_links
+from apps.crm.creation import create_deal, validate_initial_deal_state
 
 
 class PipelineStageSerializer(serializers.ModelSerializer):
@@ -127,6 +128,15 @@ class DealSerializer(serializers.ModelSerializer):
         return data
 
     def validate(self, attrs):
+        if self.instance is None:
+            server_fields = self.lifecycle_update_fields - {"stage", "status", "lost_reason"}
+            attempted = sorted(server_fields.intersection((self.initial_data or {}).keys()))
+            if attempted:
+                raise serializers.ValidationError({"detail": "Initial lifecycle metadata is managed by the server.", "fields": attempted})
+            if attrs.get("stage") is not None:
+                attrs.update(validate_initial_deal_state(
+                    stage=attrs["stage"], status=attrs.get("status"), lost_reason=attrs.get("lost_reason", ""),
+                ))
         attempted_archive_fields = sorted(self.archive_update_fields.intersection((self.initial_data or {}).keys()))
         if attempted_archive_fields:
             raise serializers.ValidationError(
@@ -165,6 +175,11 @@ class DealSerializer(serializers.ModelSerializer):
         if owner and business and not business.members.filter(user=owner, is_active=True).exists():
             raise serializers.ValidationError({"owner": "Owner must be an active business member."})
         return attrs
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        actor = getattr(request, "user", None) or self.context.get("actor")
+        return create_deal(actor=actor, request=request, **validated_data)
 
 
 class DealListSerializer(DealSerializer):

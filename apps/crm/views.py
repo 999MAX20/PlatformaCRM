@@ -220,8 +220,8 @@ class DealViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
         }
 
     def perform_create(self, serializer):
-        serializer.validated_data.setdefault("stage_entered_at", timezone.now())
-        super().perform_create(serializer)
+        self._enforce_business_access(serializer)
+        serializer.save()
 
     def perform_update(self, serializer):
         previous_amount = serializer.instance.amount

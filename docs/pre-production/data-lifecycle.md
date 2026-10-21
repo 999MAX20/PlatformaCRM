@@ -1,9 +1,11 @@
 # Импорт, экспорт, дубли, архив и восстановление
 
-Текущая граница 21.10 на `ce2c290d`: AUD-16 защищает ImportJob и сериализует
+Текущая граница 21.10: AUD-20 проверяет начальное состояние API/import заявок
+и сделок, обязательную причину потери и серверную историю; версия и checks —
+[AUD-20 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants). AUD-16 защищает ImportJob и сериализует
 preview/confirm; его локальные проверки завершены, подробности —
 [паспорт интеграций](integrations.md#importjob--aud-16). Полный UI mapping/errors/history
-(AUD-12), terminal create/import (AUD-20), сужение scope готового экспорта (AUD-18),
+(AUD-12), сужение scope готового экспорта (AUD-18),
 полный concurrent rollback/recovery (AUD-21) и XLSX bounds (AUD-22) не закрыты.
 Поэтому описание реализованных сценариев ниже не является полным PASS импорта/экспорта.
 

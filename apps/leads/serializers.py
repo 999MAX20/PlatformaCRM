@@ -6,6 +6,7 @@ from apps.core.permissions import accessible_businesses
 from apps.integrations.sanitization import sanitize_config
 from apps.leads.models import Lead, LeadForm, LeadFormField, LeadFormSubmission, LeadFormSubmissionError
 from apps.leads.form_assignment import FORM_ASSIGNEE_ERROR, validate_form_assignee
+from apps.leads.creation import create_lead, validate_initial_lead_state
 from apps.scheduling.models import Resource
 from apps.services.models import Service
 from apps.tasks.models import Task
@@ -46,6 +47,14 @@ class LeadSerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "updated_at", "lost_at", "lost_by", "previous_status", "archived_at", "archived_by"]
 
     def validate(self, attrs):
+        if self.instance is None:
+            server_fields = self.lifecycle_update_fields - {"status", "lost_reason"}
+            attempted = sorted(server_fields.intersection((self.initial_data or {}).keys()))
+            if attempted:
+                raise serializers.ValidationError({"detail": "Initial lifecycle metadata is managed by the server.", "fields": attempted})
+            attrs.update(validate_initial_lead_state(
+                status=attrs.get("status", Lead.Statuses.NEW), lost_reason=attrs.get("lost_reason", ""),
+            ))
         attempted_archive_fields = sorted(self.archive_update_fields.intersection((self.initial_data or {}).keys()))
         if attempted_archive_fields:
             raise serializers.ValidationError(
@@ -86,6 +95,11 @@ class LeadSerializer(serializers.ModelSerializer):
         if self.instance is None and responsible_user and business and not business.members.filter(user=responsible_user, is_active=True).exists():
             raise serializers.ValidationError({"responsible_user": "Responsible user must be an active business member."})
         return attrs
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        actor = getattr(request, "user", None) or self.context.get("actor")
+        return create_lead(actor=actor, request=request, **validated_data)
 
 
 class LeadListSerializer(serializers.ModelSerializer):
