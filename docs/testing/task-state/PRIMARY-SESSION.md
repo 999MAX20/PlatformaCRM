@@ -248,6 +248,15 @@ README/operations/avatar contract need no behavior/setup changes: existing Pytho
 supported, no format/permission/API/AV policy changed. Lock tooling work-around is
 recorded above; no pip policy changed in the shared environment.
 
+Combined remediation publication:4056a4717ec97a1196a5fa61c616bab59f1061b5,
+normal push origin HEAD:main; remote SHA matched. Committed range2a168e4f..HEAD
+hygiene PASS. CI39590140960 started on combined AI/frontend/Python correction:
+https://github.com/999MAX20/PlatformaCRM/actions/runs/39590140960.
+This final publication receipt changes documentation only; local checks retained,
+links/registry/hygiene checked. Authoritative latest CI completion is read separately
+and reported to the owner. No active owned app servers/browser/tests. Disposable
+lock tooling remains ignored output, shared pip tooling version not altered.
+
 ## DOCS-PILOT-PRODUCTION-20261021 — status reconciliation and product description
 
 Owner requested verification of stopped Deep Scan, current technical documentation

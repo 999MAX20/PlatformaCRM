@@ -6,17 +6,13 @@
 
 # PlatformaCRM — текущий статус
 
-21.10.2026. AUD-20 и исправление выявленного CI consumer опубликованы в main:
-код 893619fd. Начальное состояние API/import заявок/сделок и подтверждённый
-AI create используют доменные правила без дублирования истории. Vite8.1.6,
-follow-redirects1.16.1; npm audit: 0 уязвимостей. AI19/affected214, system/drift,
-frontend build/bundle, policy6 и браузер PASS; исходные AUD-20 проверки сохранены.
-[Результат полного CI кода](https://github.com/999MAX20/PlatformaCRM/actions/runs/39588974006)
-фиксируется отдельно от локальных проверок. Дополнительный pip-audit выявил
-Pillow/certifi: lock обновлён до13.0.0/2026.10.19, hash install/pip check/audit PASS;
-accounts/API128 без ошибок (3 PG-only skip), system/drift PASS. Python-lock готов
-к публикации; полный CI объединённой версии проверяется отдельно.
-Версия/среда/команды — AUD-20-20261021
+21.10.2026. AUD-20: начальное состояние API/import заявок/сделок и подтверждённый
+AI create исправлены, история не дублируется. Объединённый код/lock 4056a471
+опубликован в main; remote SHA подтверждён. Vite8.1.6/follow-redirects1.16.1,
+Pillow13/certifi2026.10.19; npm/pip audits чистые. AI19/affected214,
+accounts/API128 (3 PG-only skip), system/drift, frontend build/bundle, policy6
+и браузер PASS. [Полный CI кода](https://github.com/999MAX20/PlatformaCRM/actions/runs/39590140960)
+— отдельный результат на точной версии. Подробности/ограничения — AUD-20-20261021
 checkpoint. AUD-21/22, CRM-D01 и deployment не начинались.
 
 21.10.2026. PROJECT-DEEP-AUDIT-20261020 остановлен владельцем. Остановка ожидания
