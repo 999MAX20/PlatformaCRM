@@ -202,6 +202,52 @@ no full/live certification is inferred from local PASS or an initial queued CI s
 No owned server/browser/test process remains. Scope has no local code/evidence
 remainder; CI is assessed separately at its exact commit. No AUD-21/22 scope added.
 
+Additional CI-stage diagnostic before waiting for full backend: local
+`python -m pip_audit -r requirements.txt` FAIL, 9 advisories in certifi2026.7.22
+and Pillow12.3.0; old CI did not reach pip-audit after its failed test step.
+Continuation scope remains restoring this CI, now also Python dependency audit.
+Update only Pillow13.0.0 (required security major) and certifi2026.10.19 using
+pip-tools hashes; inspect all transitive differences, retain other pins. Production
+and dev locks both carry certifi. Pillow usage source search: accounts.avatars only;
+existing JPG/PNG/WebP limits, normalization, AV and own-account access remain.
+Checks: hashed install/pip check/audit, isolated accounts avatar/related API tests,
+system/drift, certifi CA-load smoke; Python3.11 CI authoritative install/full test.
+Local pip26.2.1 and pip-tools7.6.0 have stdlib_pkgs ImportError before compilation;
+use disposable lock tooling venv with compatible pip25.3, not a product/tooling policy
+rewrite. No app/source copy, no data migration, no provider calls or deployment.
+Maintainer release https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html
+and https://github.com/certifi/python-certifi/security/advisories/GHSA-6q48-6c7w-9gw2
+reviewed for patched versions/compatibility. Existing frontend PASS remains valid.
+
+Python lock remediation progress: disposable lock-env pip25.3/pip-tools7.6.0
+compiled both locks with --generate-hashes --strip-extras --allow-unsafe --resolver
+backtracking and targeted --upgrade-package certifi==2026.10.19 / pillow==13.0.0.
+Pillow input range13..<14. verify_python_lock.py proves only those two version
+changes (dev lock only certifi). compile_locks.py supplies exact CUSTOM_COMPILE_COMMAND
+for reproducible header; no manual hash edits. Local .venv hash install of both
+locks changed only certifi/Pillow, pip check PASS, pip-audit production lock PASS.
+Pillow13 drops Python3.10, compatible with repository Python3.11 CI and local3.12.
+CA smoke initial default SSL context mixed system trust and failed G3-absence check;
+revised test parses exact certifi bundle, then loads it:120 bundle certificates,
+compromised emSign ECC Root CA - G3 absent, PASS. OS trust-store configuration was
+not changed or certified. No live provider requests. Account/avatar/API suite running.
+
+Python dependency completion: isolated check.py apps.accounts
+apps.core.tests_api_contracts apps.core.tests_b0_security —128 tests OK (125 passed,
+3 PostgreSQL row-lock skips in accounts.tests_recovery),125.714s. The eight avatar
+tests cover normalization/replacement/metadata stripping, own-account access,
+authentication, AV failure, invalid/oversized/disallowed images and crop bounds.
+System/drift PASS after new installed lock. Logs output/aud20-ci-20261021.
+No product code changed for Pillow/certifi; no migration or working DB. Profile
+Python3.12.14, disposable SQLite/mock. PG account races unaffected, no repeat PG
+certification claimed. Unchanged frontend results reused; final combined Python3.11
+CI remains authoritative. Earlier CI39588974006/39589110991 used old Python lock,
+so their eventual dependency audit does not certify this correction.
+Reviewed generated hashes/version delta, working/index diff hygiene and docs links.
+README/operations/avatar contract need no behavior/setup changes: existing Python3.11
+supported, no format/permission/API/AV policy changed. Lock tooling work-around is
+recorded above; no pip policy changed in the shared environment.
+
 ## DOCS-PILOT-PRODUCTION-20261021 — status reconciliation and product description
 
 Owner requested verification of stopped Deep Scan, current technical documentation

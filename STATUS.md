@@ -12,7 +12,11 @@ AI create используют доменные правила без дубли
 follow-redirects1.16.1; npm audit: 0 уязвимостей. AI19/affected214, system/drift,
 frontend build/bundle, policy6 и браузер PASS; исходные AUD-20 проверки сохранены.
 [Результат полного CI кода](https://github.com/999MAX20/PlatformaCRM/actions/runs/39588974006)
-фиксируется отдельно от локальных проверок; версия/среда/команды — AUD-20-20261021
+фиксируется отдельно от локальных проверок. Дополнительный pip-audit выявил
+Pillow/certifi: lock обновлён до13.0.0/2026.10.19, hash install/pip check/audit PASS;
+accounts/API128 без ошибок (3 PG-only skip), system/drift PASS. Python-lock готов
+к публикации; полный CI объединённой версии проверяется отдельно.
+Версия/среда/команды — AUD-20-20261021
 checkpoint. AUD-21/22, CRM-D01 и deployment не начинались.
 
 21.10.2026. PROJECT-DEEP-AUDIT-20261020 остановлен владельцем. Остановка ожидания
