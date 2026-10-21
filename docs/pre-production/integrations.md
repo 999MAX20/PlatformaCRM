@@ -3,8 +3,8 @@
 Граница аудита 17.10 (`56dd124`): UI mapping/errors/history и сохранённые export
 jobs не образуют полного рабочего цикла; download не учитывает последующее
 сужение scope. AUD-12/18 не выполнены; AUD-20 закрыт в локальном scope ниже. Защита ImportJob реализована в AUD-16
-ниже. AUD-21 получил узкие concurrency-проверки AUD-16, отдельный риск ещё не
-закрыт; XLSX resource bounds AUD-22 не проверен.
+ниже. AUD-21 проверен в локальном PostgreSQL17: конкурентный rollback/recovery
+и отсутствие двойного результата подтверждены; XLSX resource bounds AUD-22 не проверен.
 [Roadmap](../current/roadmap.md#project-audit-20261017),
 [evidence](../testing/project-audit-20261017.md). AV на confirm сохранён.
 
@@ -32,6 +32,18 @@ skip выполнены в PostgreSQL17 PASS; system/migration drift PASS. Пу�
 итог задачи. Рабочая БД, миграции и deployment не затронуты.
 Полный интерфейс mapping/errors/history (AUD-12), экспорт scope (AUD-18)
 и XLSX resource limits (AUD-22) этим не закрываются.
+
+## Конкурентный rollback/recovery — AUD-21
+
+21.10: выполнено полностью в локальном scope на основе3834922c. PostgreSQL17
+проверяет фактическое ожидание row lock: первая попытка падает после записи
+строки либо финального audit, вторая видит чистое PREVIEWED и завершает импорт.
+Остаётся один набор данных/events/sync/audit; повтор400, callbacks первой
+транзакции не выполняются. Runtime не изменён; 48 import-проверок PASS без skip,
+system/migration drift PASS. Команды/окончательная версия и публикация —
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-21-20261021--concurrent-import-rollback-and-recovery).
+Остатка кода, доказательств и решений в принятом scope нет. Рабочая БД,
+deployment/live не затронуты; CI SQLite не заменяет локальную PG-проверку.
 
 ## Начальное состояние импорта — AUD-20
 

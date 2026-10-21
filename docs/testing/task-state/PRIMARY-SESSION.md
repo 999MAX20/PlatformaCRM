@@ -6,6 +6,60 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-21-20261021 — concurrent import rollback and recovery
+
+Owner requested next roadmap item. Evidence gap after AUD-16 row-lock fix;
+reuse confirm/preview services and PostgreSQL concurrency tests. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+clean base3834922c26e90d8d5c09c6dca64e0c3cd3fe1943, no unrelated WIP.
+Scope: prove waiting confirm recovers after the first transaction fails during
+row processing or after final audit, with no partial entities/events/sync/audit,
+one committed result and rejected replay. Change runtime only for a proven defect.
+Risk: duplicate/partial writes and stale state after lock wait. Focused gate:
+owned disposable PostgreSQL17 concurrency tests; completion: import boundaries,
+lifecycle, import/export and sample suites plus system/migration drift in isolation.
+No working DB, external sends, provider setup, UI, AI or schema changes intended;
+existing permission/tenant checks retained. No frontend build or full local gate
+for evidence-only changes. Update roadmap/contract/passport/status, reviewed commit,
+normal push and actual CI. AUD-22 and other phases excluded.
+
+Completion: full local criterion proven; no runtime defect on current AUD-16
+implementation, no additional lock/idempotency code needed. Added two regression
+tests to existing concurrency suite: fail after real client/event/sync writes,
+or after final job state and audit write. Observe pg_blocking_pids for actual
+waiting request (not timing alone), then release failing transaction. Waiting
+request reads original preview with no entities/events/sync/confirmation audit,
+commits once; replay400. Failed on_commit callback discarded, successful one runs.
+Existing confirm/confirm and preview/confirm tests also pass.
+
+Exact environment/commands: `.venv/Scripts/python.exe` with
+`scripts.codex_verify.isolated_runtime`; owned temporary PostgreSQL17 via initdb
+`-U support_gate -A trust --encoding=UTF8 --locale=C`, loopback random port,
+DATABASE_URL overridden only to disposable cluster. No shared DB or server touched.
+`python manage.py check` PASS; `makemigrations --check --dry-run` PASS.
+`python manage.py test apps.core.tests_import_job_concurrency
+apps.core.tests_import_job_boundaries apps.core.tests_import_lifecycle
+apps.core.tests_import_export apps.core.tests_import_samples -v 2`:
+48 PASS, no skips, 29.759s. After strengthening final-audit assertion, reran
+`test apps.core.tests_import_job_concurrency.ImportJobConcurrencyTests.test_waiting_confirm_recovers_after_row_failure
+apps.core.tests_import_job_concurrency.ImportJobConcurrencyTests.test_waiting_confirm_recovers_after_final_audit_failure
+-v 2`: 2 PASS2.864s. System/drift also passed again in this harness.
+Unchanged affected tests reused; no failed attempts. Logs/harnesses under ignored
+output/aud21-20261021/{postgres,focused-final}.{py,log}; both clusters stopped
+and removed in finally, no active owned processes. Scanner mocked, no provider calls.
+No frontend/build/browser/full local suite: tests/docs only, reachable confirm API
+exercised directly. CI uses SQLite and skips row-lock tests; PG proof is above.
+Docs registry86, changed/current/passport docs31, links680/anchors95 PASS;
+working/index/committed-range hygiene and full intended diff reviewed for publication.
+
+Roadmap, integrations contract/passport, capabilities and STATUS synchronized.
+CRM/access/AI/frontend/product contracts and README need no changes: behavior,
+permissions, schema, setup, UI and scope unchanged. Historical audit retained.
+No remaining code/evidence/environment/owner-decision gap in accepted local scope;
+deployment/live excluded. Base3834922c plus task-owned diff; final commit, remote
+readback and actual CI reported in final response, not assumed green. AUD-22 next,
+not started. No handoff, automation or independent task created.
+
 ## AUD-20-20261021 — initial lead and deal lifecycle invariants
 
 Owner authorized AUD-20 after the roadmap status review. Implementation/code gap;

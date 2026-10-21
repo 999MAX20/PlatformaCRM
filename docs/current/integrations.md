@@ -98,7 +98,13 @@ status дают row/field errors в preview и повторно на confirm. П
 Сервер создаёт время/автора потери и начальную историю атомарно с импортом.
 Импорт сделки выбирает только активную открытую стадию; если её нет, ошибка
 откатывает импорт и позволяет повтор после исправления конфигурации.
-Полный UI (AUD-12), concurrent rollback/recovery (AUD-21) и XLSX bounds (AUD-22) открыты.
+AUD-21: в изолированном PostgreSQL17 подтверждены ожидание блокировки вторым
+confirm, откат после записи строки и финального audit, затем один успешный
+импорт и отказ повтору. Откатившаяся попытка не оставляет CRM-записей, событий,
+sync, audit или on_commit callbacks; ожидающий запрос перечитывает PREVIEWED.
+Runtime-изменений сверх AUD-16 не потребовалось. Evidence и версия —
+[AUD-21 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-21-20261021--concurrent-import-rollback-and-recovery).
+Полный UI (AUD-12) и XLSX bounds (AUD-22) открыты.
 Версия и граница проверок — [AUD-16 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-16-20261019--import-job-write-boundaries).
 
 Public lead/widget ingress привязан к разрешённому business/form/channel,
