@@ -1,3 +1,4 @@
+import "../src/lib/focusModality";
 import { useEffect, type ReactNode } from "react";
 import type { Preview } from "@storybook/react-vite";
 import { catalogModes } from "./modes";

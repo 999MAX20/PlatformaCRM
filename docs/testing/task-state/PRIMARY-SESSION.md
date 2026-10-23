@@ -6,6 +6,68 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## UI-FOCUS-20261023 — pointer versus keyboard focus
+
+Owner requests project-wide focus UX analysis and correction, including /login.
+Implementation/code gap; canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, clean starting HEAD67014f575a0b089f061a4c5065d08b003db4b084.
+Reuse shared controls, Tailwind variants, auth styles and existing browser fixtures.
+Observable result: mouse/touch interaction and subsequent text entry do not show
+keyboard rings; keyboard navigation and programmatic keyboard flows retain them.
+Preserve actual DOM focus, caret, validation, selection and focus traps.
+Risk: shared accessibility behavior, portals, widget and non-main entry points.
+Focused checks: real login plus shared controls, pointer/keyboard transitions,
+typing, error borders, native controls and programmatic focus; desktop and mobile.
+Completion: focused browser regression, existing action-color checks, frontend
+build/bundle, diff hygiene and contract/evidence consistency. No backend, working
+DB, external providers, permissions, notifications, BusinessEvent or AI changes.
+No unrelated layout redesign or release certification. Review explicit files,
+commit and normal push to origin main; inspect actual CI.
+
+Result: shared document modality tracks pointerdown and keyboard navigation in
+capture phase without moving focus/preventing input. Default native focus-visible
+is retained; clicked text entry/caret movement stays pointer. Tab/Escape and
+keyboard controls restore rings. Tailwind focus-visible, custom CSS, auth legacy/
+serenity and widget use the same guard; language wrapper uses keyboard-focus-within.
+Unconditional focus utilities in tables/client rows, deal/lead notes, Inbox search
+and outreach converted. Contextual task-row backgrounds/tooltips and selected/error
+styles remain intentional. Main, catalog and widget entry points install the policy.
+
+Evidence on base67014f57 + task diff, Windows/Node24.18.0, existing dependencies:
+- Baseline focused shared-input test reproduced pointer outline solid (expected
+  none). Initial login mock accidentally intercepted source imports, then returned
+  invalid session shape; fixed harness to intercept fetch/xhr only with401. No
+  product auth logic changed. Exact invalid-field label included validation text;
+  locator corrected. Ring4+offset2 computes6px; assertion corrected accordingly.
+- `cd frontend; npx playwright test e2e/focus-modality.spec.ts e2e/action-color-roles.spec.ts --config playwright.action-colors.config.ts`
+  final12 PASS (29.2s): real login RU/KK/EN on desktop Chromium/Pixel7, typing,
+  click-after-keyboard, touch, shared input/textarea/error/checkbox/radio, modal
+  return focus, search, language selector, widget and action-color/axe/overflow.
+  Frontend-only owned Vite127.0.0.1:5193 from canonical checkout; no Django/DB;
+  auth requests mocked401 and no form submitted. Servers exited after checks.
+- Existing color test had obsolete255,245,232 expectation; unchanged HEAD palette
+  warning.soft=#F0F4F2 and styles warning-bold references it. Test now reads the
+  committed semantic palette. Tailwind hover is capability-gated, so hover assertion
+  applies to desktop; mobile retains color, focus, disabled, overflow and axe checks.
+  Initial failures preserved here rather than represented as baseline PASS.
+- `npm run build` PASS (i18n6440 keys, tsc, app and widget); advisory chunk warning,
+  `npm run check:bundle` PASS (largest kk495.8KiB, app-shell331.8KiB).
+- `node --test scripts/tests/login-page-policy.test.mjs`15 PASS.
+- Desktop/mobile RU screenshots visually inspected; locale screenshots in ignored
+  frontend/test-results/focus-modality-login-* directories. Existing hover border
+  remains; keyboard halo is absent after click. No layout/copy redesign.
+- Source inventory covers frontend/src CSS/TSX and widget; no unguarded decorative
+  focus ring remains in authored CSS or focus utilities. Browser evidence samples
+  shared consumers, not every authenticated route or Firefox/WebKit/physical AT.
+
+Docs: frontend contract, capability passport and STATUS updated. No roadmap phase
+changed, no new backlog; product/API/access/AI/operations and README need no change
+because domain/setup/public delivery unchanged. No remaining code/evidence work in
+the agreed focus correction; external environment acceptance/deployment out of scope.
+No dependency reinstall, backend/database/full release suites: frontend-only change,
+existing locks unchanged, focused isolated browser config plus build used.
+Publication pending final diff review; actual CI recorded after push.
+
 ## AUD-22-20261021 — bounded XLSX parsing
 
 Owner «продолжай» authorizes next AUD-22 only. Canonical root

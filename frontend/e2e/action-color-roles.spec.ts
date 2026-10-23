@@ -1,8 +1,13 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
+
+const palette = JSON.parse(readFileSync(new URL("../src/theme/semantic-tokens.json", import.meta.url), "utf8"));
+
+const rgb = (hex: string) => `rgb(${[1, 3, 5].map(offset => parseInt(hex.slice(offset, offset + 2), 16)).join(", ")})`;
 
 test.describe("semantic action color matrix", () => {
-  test("roles remain distinct, focusable and responsive", async ({ page }) => {
+  test("roles remain distinct, focusable and responsive", async ({ page, isMobile }) => {
     await page.goto("/e2e/fixtures/action-color-roles.html");
 
     const matrix = page.getByTestId("action-color-matrix");
@@ -17,9 +22,11 @@ test.describe("semantic action color matrix", () => {
     expect(new Set(backgrounds).size).toBe(5);
 
     const warning = page.getByTestId("tone-warning");
-    await expect(warning).toHaveCSS("background-color", "rgb(255, 245, 232)");
-    await warning.hover();
-    await expect(warning).not.toHaveCSS("background-color", "rgb(255, 245, 232)");
+    await expect(warning).toHaveCSS("background-color", rgb(palette.tokens["warning.soft"]));
+    if (!isMobile) {
+      await warning.hover();
+      await expect(warning).not.toHaveCSS("background-color", rgb(palette.tokens["warning.soft"]));
+    }
     await warning.focus();
     await page.keyboard.press("Tab");
     await page.keyboard.press("Shift+Tab");

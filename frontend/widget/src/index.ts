@@ -1,3 +1,4 @@
+import "../../src/lib/focusModality";
 import palette from "../../src/theme/semantic-tokens.json";
 
 type PlatformaCRMWidgetOptions = {
@@ -25,6 +26,7 @@ declare global {
 const colorVariables = Object.entries(palette.tokens).map(([name, value]) => `--color-${name.replaceAll(".", "-")}:${value}`).join(";");
 
 const styles = `
+:where(html[data-platforma-focus="pointer"] .platforma-widget-root :focus){outline:none}
 .platforma-widget-root{${colorVariables};position:fixed;z-index:2147483000;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--color-text-primary)}
 .platforma-widget-root[data-position="right"]{right:22px;bottom:22px}
 .platforma-widget-root[data-position="left"]{left:22px;bottom:22px}
@@ -45,13 +47,13 @@ const styles = `
 .platforma-input{min-height:42px;border:1px solid var(--color-border-control);border-radius:16px;padding:0 12px;font:inherit;font-size:14px;background:var(--color-surface-default);color:var(--color-text-primary);outline:none}
 .platforma-input::placeholder{color:var(--color-text-muted)}
 .platforma-input:hover{border-color:var(--color-brand-default)}
-.platforma-input:focus{border-color:var(--color-focus-ring);box-shadow:0 0 0 4px var(--color-focus-halo)}
+.platforma-input:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)){border-color:var(--color-focus-ring);box-shadow:0 0 0 4px var(--color-focus-halo)}
 .platforma-actions{display:flex;gap:8px}
 .platforma-actions .platforma-input{flex:1}
 .platforma-send{min-width:92px;border:0;border-radius:16px;background:var(--color-brand-default);color:var(--color-text-inverse);font-weight:800;cursor:pointer}
 .platforma-send:hover{background:var(--color-brand-hover)}
 .platforma-send:active,.platforma-bubble:active{background:var(--color-brand-pressed)}
-.platforma-send:focus-visible,.platforma-bubble:focus-visible,.platforma-input:focus-visible{outline:2px solid var(--color-focus-ring);outline-offset:2px}
+.platforma-send:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)),.platforma-bubble:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)),.platforma-input:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)){outline:2px solid var(--color-focus-ring);outline-offset:2px}
 .platforma-send:disabled{background:var(--color-disabled-surface);color:var(--color-disabled-content);box-shadow:inset 0 0 0 1px var(--color-disabled-border);opacity:1;cursor:not-allowed}
 `;
 

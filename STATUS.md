@@ -6,6 +6,12 @@
 
 # PlatformaCRM — текущий статус
 
+23.10.2026. UI-FOCUS-20261023: общая подсветка фокуса различает мышь/касание
+и клавиатурную навигацию, включая /login, формы, таблицы и виджет. DOM focus,
+ввод и ошибки сохранены. Browser12 (RU/KK/EN, desktop/mobile, axe), login-policy15,
+build/widget/bundle PASS. Команды, ограничения и публикация — UI-FOCUS-20261023
+в checkpoint. Рабочая БД и deployment не затронуты.
+
 21.10.2026. AUD-22 выполнен в локальном scope: ZIP/XML bounds до openpyxl,
 потоковое XLSX чтение без обрезания по заниженным dimensions и finally cleanup.
 Focused10/affected68 без skip, system/drift и probe256МБ/12сек PASS. Лимиты всех

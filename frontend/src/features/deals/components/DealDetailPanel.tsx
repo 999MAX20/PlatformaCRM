@@ -245,7 +245,7 @@ export function DealDetailPanel({
         {tab === "history" ? (
           <PanelBlock title={t("deals.timeline")} icon={CalendarClock}>
             <DealTimeline events={timeline} emptyText={t("deals.emptyDealHistory")} />
-            <textarea className="mt-4 min-h-24 w-full rounded-lg border border-platforma-border bg-white p-3 text-sm outline-hidden focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20" placeholder={t("deals.commentPlaceholder")} />
+            <textarea className="mt-4 min-h-24 w-full rounded-lg border border-platforma-border bg-white p-3 text-sm outline-hidden focus-visible:border-brand-500 focus-visible:ring-4 focus-visible:ring-brand-500/20" placeholder={t("deals.commentPlaceholder")} />
             <p className="mt-3 text-sm text-platforma-faint">{selectedLead ? t("deals.leadLine", { value: `#${selectedLead.id} · ${selectedLead.status}` }) : t("deals.notLinked")}</p>
           </PanelBlock>
         ) : null}

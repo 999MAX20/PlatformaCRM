@@ -542,8 +542,8 @@
   color: rgba(226, 232, 240, 0.46);
 }
 
-.platforma-auth-card input:focus,
-.platforma-auth-card button[class*="rounded-control"]:focus {
+.platforma-auth-card input:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)),
+.platforma-auth-card button[class*="rounded-control"]:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
   border-color: rgba(139, 92, 246, 0.74) !important;
   box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.18) !important;
 }

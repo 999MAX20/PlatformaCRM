@@ -1,5 +1,11 @@
 # Карта реализации и оставшихся границ
 
+23.10: общая UI-политика фокуса разделяет pointer и keyboard, включая auth,
+CRM primitives, диалоги и виджет. Scoped browser/build PASS; это не полная
+сертификация всех экранов или live deployment. Контракт —
+[frontend](../current/frontend.md), evidence — UI-FOCUS-20261023 в
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md).
+
 Дельта аудита 17.10 на `56dd124`: прежние scoped PASS не закрывают обнаруженные
 обходы generic CRUD/изоляции, offline storage, автоматизации и неполные UI-сценарии.
 [Результаты по областям](../testing/project-audit-20261017.md) и

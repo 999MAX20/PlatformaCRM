@@ -1,3 +1,4 @@
+import "../../src/lib/focusModality";
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import { Archive, Trash2 } from "lucide-react";

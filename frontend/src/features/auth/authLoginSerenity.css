@@ -387,9 +387,9 @@
   color: var(--color-brand-content);
 }
 
-.serenity-login__brand:focus-visible,
-.serenity-login__signup-link:focus-visible,
-.serenity-login__links a:focus-visible {
+.serenity-login__brand:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)),
+.serenity-login__signup-link:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)),
+.serenity-login__links a:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
   border-radius: 8px;
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 4px;
@@ -695,8 +695,8 @@
   border-color: var(--color-brand-default);
 }
 
-.serenity-login__card input:focus-visible,
-.serenity-login__card [role="combobox"]:focus-visible {
+.serenity-login__card input:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)),
+.serenity-login__card [role="combobox"]:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
   border-color: var(--serenity-orange);
   box-shadow: 0 0 0 4px var(--color-focus-halo);
 }
@@ -748,7 +748,7 @@
   color: var(--color-brand-content);
 }
 
-.serenity-login__password-toggle:focus-visible {
+.serenity-login__password-toggle:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
@@ -784,8 +784,8 @@
   transform: scale(0.99);
 }
 
-.serenity-login__primary:focus-visible,
-.serenity-login__social:focus-visible {
+.serenity-login__primary:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)),
+.serenity-login__social:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 3px;
 }

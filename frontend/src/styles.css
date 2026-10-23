@@ -2,6 +2,12 @@
 
 @config '../tailwind.config.ts';
 
+/* Native focus-visible also matches pointer-focused text inputs. */
+@custom-variant focus-visible (&:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)));
+@custom-variant keyboard-focus-within (&:has(:focus-visible:not(:where(html[data-platforma-focus="pointer"] *))));
+
+:where(html[data-platforma-focus="pointer"] :focus) { outline: none; }
+
 /* Keep the established v3 text rhythm when descendants change only font size. */
 @theme {
   --text-xs--line-height: 1rem;
@@ -110,7 +116,7 @@
     box-shadow 160ms ease,
     transform 160ms ease;
 
-  &:focus-visible {
+  &:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
     outline: 2px solid var(--platforma-focus-ring);
     outline-offset: 2px;
     box-shadow: 0 0 0 4px var(--color-focus-halo);
@@ -314,8 +320,8 @@
     accent-color: var(--color-brand-default);
   }
 
-  input[type="checkbox"]:focus-visible,
-  input[type="radio"]:focus-visible {
+  input[type="checkbox"]:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)),
+  input[type="radio"]:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
     outline: 2px solid var(--color-focus-ring);
     outline-offset: 2px;
   }
@@ -411,7 +417,7 @@
   background: var(--platforma-muted);
 }
 
-.focus-visible-ring:focus-visible {
+.focus-visible-ring:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
   outline: 2px solid var(--platforma-focus-ring);
   outline-offset: 2px;
 }
