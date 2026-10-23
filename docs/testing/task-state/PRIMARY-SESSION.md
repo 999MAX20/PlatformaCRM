@@ -66,7 +66,14 @@ because domain/setup/public delivery unchanged. No remaining code/evidence work 
 the agreed focus correction; external environment acceptance/deployment out of scope.
 No dependency reinstall, backend/database/full release suites: frontend-only change,
 existing locks unchanged, focused isolated browser config plus build used.
-Publication pending final diff review; actual CI recorded after push.
+Publication: code/evidence commit e5bca576cfcb237d43ef3f73a648df417bed3ba2,
+normal-pushed to origin/main; remote SHA read back identical. Canonical branch
+codex/ui-testing-toolkit retained, working tree clean after commit. Reviewed all24
+intended files/new fixtures, working/index/committed67014f57..e5bca576 diff hygiene
+PASS; added relative links resolve to existing registered documents. No secret or
+unrelated payload. Push workflow inspection: CI only, no deployment workflow.
+Immediate GitHub API read had not yet registered this commit's run; prior commit's
+success is not this commit's CI PASS. Final task response records latest observed CI.
 
 ## AUD-22-20261021 — bounded XLSX parsing
 
