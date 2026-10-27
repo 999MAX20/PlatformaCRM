@@ -22,6 +22,7 @@ from apps.core.import_export import (
 )
 from apps.core.file_validation import validate_file_upload
 from apps.core.export_jobs import request_entity_export
+from apps.core.export_access import assert_export_download_access
 from apps.core.models import AuditLog, ExportJob, ImportJob
 from apps.core.permissions import accessible_businesses
 from apps.core.sanitization import sanitize_error_text
@@ -102,6 +103,7 @@ class ExportJobViewSet(ReadOnlyModelViewSet):
         if job.status != ExportJob.Statuses.SUCCEEDED or not job.result_file:
             raise ValidationError({"export": "Export file is not ready."})
         assert_can(request.user, job.business, _resource_for_export_key(job.export_key), Actions.VIEW)
+        assert_export_download_access(job, request.user)
         write_audit_log(
             request,
             AuditLog.Actions.CREATE,
@@ -110,7 +112,7 @@ class ExportJobViewSet(ReadOnlyModelViewSet):
             metadata={"kind": "file_download", "entity_type": "export_job", "export_key": job.export_key},
         )
         if job.kind == ExportJob.Kinds.ENTITY and job.export_key == "clients" and not can_view_sensitive_field(
-            request.user, job.business, Resources.CLIENTS, "notes"
+            job.actor, job.business, Resources.CLIENTS, "notes"
         ):
             return private_notes_redacted_csv(job.result_file)
         return FileResponse(job.result_file.open("rb"), as_attachment=True, filename=f"{job.export_key}.csv")

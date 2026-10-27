@@ -6,6 +6,70 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-18-20261027 — current export download authorization
+
+Owner continuation authorizes AUD-18 only. Canonical root C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, clean base f2c8e371f60c96cc06b3c704f07abed41303137b.
+Code/evidence gap: ready export download checks VIEW but serves an older broader file.
+Reuse ExportJob parameters, existing can/scope/capability/branch access and notes redaction.
+Store a versioned access fingerprint at generation; require matching current access at download.
+Fail closed for legacy files without a fingerprint; request a new export. No schema migration.
+Risk: sensitive cross-scope disclosure and invalidating formerly available downloads.
+Focused API tests: allowed download, BUSINESS to OWN/TEAM, team/branch/role revocation,
+related analytics permissions, legacy files, capabilities, tenant/actor isolation, generation race.
+Completion: export/import, sensitive-note, analytics and existing performance suites;
+isolated system/migration drift, docs links and diff hygiene. No UI change/build/browser,
+working DB, provider calls, deployment, new permission framework or next AUD phase.
+Preserve stored files and existing notes redaction; no notification/BusinessEvent/AI impact.
+Review explicit paths, commit and normal push origin main, inspect actual CI.
+
+
+Result: completed in local scope. export_access.py computes a versioned SHA256
+fingerprint using fresh DB actor/Business, effective VIEW/capability, accessible
+branches, team IDs and streamed visible-record IDs for OWN/TEAM. Analytics also
+captures underlying resources and performance-team visibility. Worker compares
+before/after generation, stores fingerprint with completed job; download rejects
+missing/different fingerprint before file access and success audit. Legacy files
+require regeneration. Original bytes retained, AUD-03 notes redaction preserved.
+No new model/migration/dependency. Conservative equality may reject expanded
+access or new/deleted visible records; fingerprint tied to original actor.
+Branch changes invalidate files, not the CRM-MB01 shared-base read contract.
+Already downloaded/streaming copies cannot be revoked; no global authorization
+lock or full concurrent role-change/ABA certification. Restricted ID hashing is
+streamed with chunk_size2000; large target load remains operational acceptance.
+
+Verification uses existing .venv Python and scripts.codex_verify.isolated_runtime,
+disposable SQLite/media/config, no provider/server/working DB or installs.
+Runner: output/aud18-20261027/verify.py executes `manage.py test <labels> -v 1`,
+then `manage.py check` and `manage.py makemigrations --check --dry-run`.
+Initial apps.core.tests_export_access: 10 errors from duplicate blank fixture emails
+before test behavior; fixed explicit unique synthetic emails. Repeat: 10 PASS1.127s,
+system/drift PASS (focused-fixed.log). Final additional actor/team-lead cases and
+fresh-identity handling included in affected gate, six labels:
+apps.core.tests_export_access apps.core.tests_import_export
+apps.core.tests_b5_performance apps.clients.tests_sensitive_notes
+apps.analytics.tests_workspace apps.analytics.tests
+71 PASS40.974s, no skips; system check no issues, migration drift no changes
+(affected.log). Includes 12 new tests: unchanged/fresh allowed, BUSINESS→OWN/TEAM,
+team/branch/VIEW/membership/capability revocation, reassignment, tenant/actor denial,
+legacy fail-closed, analytics resource/team-lead narrowing, worker freshness and
+change during generation. Existing queued notes redaction and private files PASS.
+No frontend build/browser: no UI/API shape change, real endpoint flow exercised.
+No PostgreSQL/full local suite: no new transaction/lock/schema; scoped test result,
+not broad concurrency or live-worker certification. No owned processes remain.
+
+Roadmap, access/integrations contracts, integration/data-lifecycle/capabilities
+passports and STATUS reconciled. README/product/CRM/AI/frontend/operations need
+no change: setup, domain policy, UI, config and deployment unchanged. No new docs
+registry entry needed. Original historical evidence preserved. Current roadmap
+header clarified as historical snapshot; AUD-12 dependencies no longer imply
+AUD-21/22 untested. Next AUD-17 not started. Code/evidence/owner-decision remainder
+none in local scope; target live storage/worker and rollout separate.
+Publication: reviewed task paths only; normal push to origin main under standing
+authorization. Final SHA, remote readback and actual CI reported to owner; CI
+not assumed green. Documentation links/registry and work/index/range hygiene
+verified at publication. No deployment/release or working-DB migration.
+
 ## UI-FOCUS-20261023 — pointer versus keyboard focus
 
 Owner requests project-wide focus UX analysis and correction, including /login.

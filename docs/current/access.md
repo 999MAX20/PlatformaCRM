@@ -266,6 +266,9 @@ platform_admin + exact active grant + recent MFA. CORS разрешает заг
 серверную проверку токена и прав.
 
 Загрузка/скачивание проверяют entity/Business и соответствующие права.
+AUD-18: готовый ExportJob требует совпадения сохранённого и актуального
+контекста доступа; legacy файл без fingerprint и изменённый scope требуют
+нового экспорта. Подробная граница — [интеграционный контракт](integrations.md#скачивание-сохранённого-экспорта--aud-18).
 Quarantine/clean fingerprint обязательны даже для platform_admin; публичный
 bucket или прямой storage URL не заменяют download permission. Нет ручного
 merchant-override «считать чистым». CSV/XLSX сканируются до parsing; экспорт

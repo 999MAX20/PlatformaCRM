@@ -113,6 +113,9 @@ def process_export_job(job_id):
         return ExportJob.objects.filter(id=job_id).first()
     job = ExportJob.objects.select_related("business", "actor").get(id=job_id)
     try:
+        from apps.core.export_access import export_access_fingerprint
+
+        fingerprint = export_access_fingerprint(job, job.actor)
         resource = export_resource(job.export_key)
         if (
             job.actor is None
@@ -136,13 +139,16 @@ def process_export_job(job_id):
         else:
             raise ValidationError("Unsupported export job kind.")
         content = bytes(response.content)
+        if export_access_fingerprint(job, job.actor) != fingerprint:
+            raise PermissionDenied("Export access changed during generation. Request a new export.")
+        job.parameters_json = {**job.parameters_json, "access_fingerprint_v1": fingerprint}
         filename = f"{job.export_key}-{job.id}.csv"
         job.result_file.save(filename, ContentFile(content), save=False)
         job.row_count = max(content.count(b"\n") - 1, 0)
         job.status = ExportJob.Statuses.SUCCEEDED
         job.completed_at = timezone.now()
         job.error = ""
-        job.save(update_fields=["result_file", "row_count", "status", "completed_at", "error", "updated_at"])
+        job.save(update_fields=["result_file", "parameters_json", "row_count", "status", "completed_at", "error", "updated_at"])
     except Exception as exc:
         logger.exception("exports.job_failed", extra={"export_job_id": job.id})
         job.status = ExportJob.Statuses.FAILED

@@ -5,7 +5,8 @@
 [AUD-20 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants). AUD-16 защищает ImportJob и сериализует
 preview/confirm; его локальные проверки завершены, подробности —
 [паспорт интеграций](integrations.md#importjob--aud-16). Полный UI mapping/errors/history
-(AUD-12) и сужение scope готового экспорта (AUD-18) остаются открытыми;
+(AUD-12) остаётся открытым. AUD-18 реализует повторную проверку fingerprint
+готового экспорта; legacy/изменённый контекст требует нового экспорта;
 concurrent rollback/recovery (AUD-21) проверен в PostgreSQL17; XLSX bounds
 (AUD-22) реализованы и локально проверены. Ограничения и evidence —
 [паспорт интеграций](integrations.md#ресурсы-xlsx--aud-22).
@@ -29,7 +30,8 @@ duplicate review → подтверждение → результат created/u
 всех импортов и внешних побочных эффектов.
 
 Малый экспорт возвращает CSV; большой создаёт ExportJob/202, polling и private download.
-Worker повторно проверяет текущие права/capabilities. Поддержаны entity/report exports
+Worker повторно проверяет текущие права/capabilities и сохраняет fingerprint
+контекста; download сверяет его с текущим доступом (AUD-18). Поддержаны entity/report exports
 с ограничениями строк/периода. Отключённый модуль или отозванный доступ не обходится
 старым заданием. Формульные значения CSV не должны становиться исполняемыми формулами.
 
