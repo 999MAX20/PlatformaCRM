@@ -393,8 +393,8 @@ FB009 отложен и исключён из условий закрытия э
 29.10, YCLOUD-TPLITE-20261028: по поручению 28.10 локально реализован первый этап
 YCloud TP Lite — серверное подключение одного API-номера и текстовый обмен через
 существующий Inbox, включая подписанные статусы и безопасное восстановление.
-Версия HEAD98925b67 + прежний WIP + YCloud patch; изолированные проверки и точная
-граница публикации — [checkpoint](../testing/task-state/PRIMARY-SESSION.md#ycloud-tplite-20261028--tp-lite-and-inbox-text-in-progress),
+Опубликованная версия b6de2956 включает YCloud и OFFICIAL-03; выделенный кандидат
+проверен без прочего WIP. CI выполняется; изолированные проверки и граница — [checkpoint](../testing/task-state/PRIMARY-SESSION.md#ycloud-tplite-20261028--tp-lite-and-inbox-text-local-scope-complete),
 [паспорт](../pre-production/integrations.md#ycloud-tp-lite--локальный-первый-этап-29102026).
 Среда/решение владельца: активация TP Lite у YCloud, серверные ключи, целевой HTTPS
 webhook, доступ к номеру/аккаунту и разрешение реального теста остаются открытыми.

@@ -6,12 +6,15 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
-## YCLOUD-PUBLICATION-20261029 — combined publication verification (in progress)
+## YCLOUD-PUBLICATION-20261029 — combined publication verification (published)
 
 Owner explicitly authorizes review and normal publication of OFFICIAL-03, YCloud
 and the three outgoing commits e5bca576/f2c8e371/98925b67 to origin/main if required
 checks pass. This supersedes the earlier publication exclusion for this packet only.
-Canonical root/branch unchanged; HEAD98925b67, fetched main67014f57; index empty.
+Canonical root/branch unchanged; starting HEAD98925b67 and index empty. Local
+origin/main67014f57 was stale: fetch origin main updated FETCH_HEAD, not that ref.
+Pre-push FETCH_HEAD was98925b67, so the three reviewed ancestors were already remote.
+Explicit fetch refs/heads/main:refs/remotes/origin/main now synchronizes the ref.
 Starting diff/status saved in Temp/ycloud-publication-20261029. Other security and
 notification WIP stays outside publication, including concurrent receipt refresh.
 Mode review/verification/publication; no live rollout or working DB migration.
@@ -32,7 +35,7 @@ Ten documentation files include only the relevant YCloud/OFFICIAL-03/publication
 sections. No notification/security-neighbor/dependency-lock/Vite-proxy edits included.
 No secrets/private data found in the reviewed additions; provider examples are empty
 or synthetic. Existing CI workflow runs backend/frontend checks only, no deployment.
-Fetched origin/main67014f57 has successful push CI run39599481089; this is baseline
+Historical main67014f57 has successful push CI run39599481089; this is baseline
 evidence only. No real target/account/send/working migration was authorized or used.
 
 Exact verification evidence: output/ycloud-publication-20261029 (generated local
@@ -79,10 +82,20 @@ snapshot harness omitted ModuleNotFoundError.name, causing migration-loader erro
 corrected harness, complete repeated gate above PASS, original log retained.
 GitHub CLI unavailable; connected GitHub GET used for CI. Unsupported workflows-list
 GET rejected; supported actions/runs GET works. These did not change product code.
-Publication follows only after final reviewed index and ancestor check; outcome below.
+Publication completed29.10: code commit b6de2956ecd1be566f61247f9a8cec641bd72344,
+branch codex/ui-testing-toolkit, normal `git push origin HEAD:main` successful.
+Remote `git ls-remote origin refs/heads/main` matched the full commit SHA; all three
+authorized ancestors remain in main. No force/reset/rebase or unrelated WIP staged.
+Published code tree01697fdfbc00fa07fa732a96c335b8f0829764d4 matches reviewed index.
+CI push run40767943683 is in progress: backend install/static/drift/system/readiness
+steps passed; backend tests and frontend build still running at inspection. No green
+CI or deployment claim. Link: https://github.com/999MAX20/PlatformaCRM/actions/runs/40767943683
+Publication docs follow-up records this result; it changes no application code.
+Code/review/local-check/publication remainder: none. CI outcome and live/environment
+acceptance remain separate. Existing other-task WIP and working services preserved.
 
 
-## YCLOUD-TPLITE-20261028 — TP Lite and Inbox text (in progress)
+## YCLOUD-TPLITE-20261028 — TP Lite and Inbox text (local scope complete)
 
 Explicit owner request in this chat: implement first stage, reuse existing WhatsApp/
 Inbox, no real sends or account connections; list owner access requirements separately.
@@ -277,7 +290,9 @@ artifacts-5c104f7eb8ffeb335f0ca5772aabb0cf2c88c0a722d9ac17d6bb18e0f3934604/artif
 Includes exact commands/logs/results, baseline hashes and three original source files,
 task.patch, review, integrity and fix-report.md. Canonical scan findings unchanged.
 Root/branch/HEAD unchanged; previous dirty work including provider_rollout.py retained.
-No staged files/commit/push/deploy; publication remains excluded by current security scope.
+At original closure no staged files/commit/push/deploy; publication was excluded.
+Owner29.10 superseded that exclusion for this packet; publication result is recorded
+in YCLOUD-PUBLICATION-20261029 above. Original102-test evidence remains unchanged.
 
 No remaining bounded code/evidence/owner-policy blocker. Environment limitations: local
 synthetic SQLite only, no real provider/credential/account changes, working DB, PostgreSQL

@@ -42,7 +42,7 @@ Inbox/CRM/AI pipeline. Один API-номер на подключение; medi
 старые статусы не откатывают доставку и не меняют новую попытку. Обычные Meta-пути
 не принимают YCloud-канал. Пауза блокирует новый обмен, сохраняя приём статусов.
 
-Версия и проверки: [YCLOUD-TPLITE-20261028](../testing/task-state/PRIMARY-SESSION.md#ycloud-tplite-20261028--tp-lite-and-inbox-text-in-progress).
+Версия и проверки: [YCLOUD-TPLITE-20261028](../testing/task-state/PRIMARY-SESSION.md#ycloud-tplite-20261028--tp-lite-and-inbox-text-local-scope-complete).
 Это локальная реализация; TP Lite eligibility, целевой HTTPS webhook, доступ к номеру,
 финансирование, рабочая миграция и live delivery остаются отдельной приёмкой R02/R03.
 
