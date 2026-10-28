@@ -314,7 +314,9 @@ def _openai_check(order):
 
 
 def _whatsapp_check(order):
-    enabled = bool(getattr(settings, "WHATSAPP_ENABLED", False))
+    meta_enabled = bool(getattr(settings, "WHATSAPP_ENABLED", False))
+    ycloud_enabled = bool(getattr(settings, "YCLOUD_ENABLED", False))
+    enabled = meta_enabled or ycloud_enabled
     gates = [
         _adapter_gate(BusinessConnector.Providers.WHATSAPP),
         _connector_catalog_gate(BusinessConnector.Providers.WHATSAPP),
@@ -325,22 +327,32 @@ def _whatsapp_check(order):
         _gate(
             "whatsapp.meta_cloud_security",
             "Meta Cloud webhook security configured before real mode",
-            (not enabled)
+            (not meta_enabled)
             or (
                 _configured(getattr(settings, "WHATSAPP_VERIFY_TOKEN", ""))
                 and _configured(getattr(settings, "WHATSAPP_APP_SECRET", ""))
             ),
             (
-                f"WHATSAPP_ENABLED={enabled}; "
+                f"WHATSAPP_ENABLED={meta_enabled}; "
                 f"WHATSAPP_VERIFY_TOKEN configured={bool(getattr(settings, 'WHATSAPP_VERIFY_TOKEN', ''))}; "
                 f"WHATSAPP_APP_SECRET configured={bool(getattr(settings, 'WHATSAPP_APP_SECRET', ''))}"
             ),
             "Set WHATSAPP_VERIFY_TOKEN and WHATSAPP_APP_SECRET before enabling Meta Cloud webhook traffic.",
         ),
+        _gate(
+            "whatsapp.ycloud_security",
+            "YCloud server credentials configured before real mode",
+            (not ycloud_enabled) or (
+                _configured(getattr(settings, "YCLOUD_API_KEY", ""))
+                and has_strong_shared_secret(getattr(settings, "YCLOUD_WEBHOOK_SECRET", ""))
+            ),
+            f"YCLOUD_ENABLED={ycloud_enabled}; server credentials required",
+            "Configure the server API key and strong webhook signing secret; verify TP Lite access and signed callbacks on the authorized target.",
+        ),
         _queue_gate("whatsapp", enabled),
         _observability_gate("whatsapp", enabled),
     ]
-    return _provider_check("whatsapp", "WhatsApp Meta Cloud provider", order, enabled, gates)
+    return _provider_check("whatsapp", "WhatsApp providers", order, enabled, gates)
 
 
 def _instagram_check(order):

@@ -4,6 +4,7 @@ from apps.accounts.session_views import AccountSessionsView, RevokeAccountSessio
 from apps.accounts.email_change_views import EmailChangeRequestView, EmailChangeConfirmView
 from django.contrib import admin
 from django.urls import include, path
+from apps.integrations.ycloud.api import YCloudSetupView, YCloudWebhookView
 from rest_framework.routers import DefaultRouter
 
 from apps.accounts.auth_views import LogoutView, ThrottledTokenObtainPairView, ThrottledTokenRefreshView
@@ -314,6 +315,8 @@ urlpatterns = [
         name="public_website_chat_message_create",
     ),
     path("api/integrations/telegram/webhook/", TelegramWebhookView.as_view(), name="telegram_webhook"),
+    path("api/integrations/ycloud/channels/<int:pk>/", YCloudSetupView.as_view(), name="ycloud_setup"),
+    path("api/integrations/ycloud/webhook/", YCloudWebhookView.as_view(), name="ycloud_webhook"),
     path("api/integrations/whatsapp/webhook/", WhatsAppWebhookView.as_view(), name="whatsapp_webhook"),
     path("api/integrations/instagram/webhook/", InstagramWebhookView.as_view(), name="instagram_webhook"),
     path("api/public-api/clients/", PublicApiClientsView.as_view(), name="public_api_clients"),

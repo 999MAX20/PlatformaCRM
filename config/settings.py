@@ -411,7 +411,13 @@ KASPI_PRICE_WRITE_API_KEY = env("KASPI_PRICE_WRITE_API_KEY", default="")
 KASPI_COMPETITOR_MONITOR_PROVIDER = env("KASPI_COMPETITOR_MONITOR_PROVIDER", default="mock")
 KASPI_COMPETITOR_MONITOR_API_URL = env("KASPI_COMPETITOR_MONITOR_API_URL", default="")
 KASPI_COMPETITOR_MONITOR_API_KEY = env("KASPI_COMPETITOR_MONITOR_API_KEY", default="")
-CELERY_BEAT_SCHEDULE = {}
+YCLOUD_ENABLED = env.bool("YCLOUD_ENABLED", default=False)
+YCLOUD_API_KEY = env("YCLOUD_API_KEY", default="")
+YCLOUD_WEBHOOK_SECRET = env("YCLOUD_WEBHOOK_SECRET", default="")
+
+CELERY_BEAT_SCHEDULE = {
+    "ycloud-events": {"task": "integrations.process_ycloud_events", "schedule": 30.0},
+}
 CELERY_BEAT_SCHEDULE.update(
     {
         "service-status-observations": {

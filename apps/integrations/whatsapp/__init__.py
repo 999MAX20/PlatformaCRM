@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.utils import timezone
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 
 from apps.automations.engine import run_automations_for_event
 from apps.automations.models import AutomationRule
@@ -16,10 +16,10 @@ from apps.integrations.sanitization import sanitize_config
 from apps.integrations.whatsapp_credentials import (
     get_whatsapp_access_token,
     get_whatsapp_connector,
-    find_whatsapp_channel_by_webhook_secret,
     has_whatsapp_access_token,
     store_whatsapp_access_token,
 )
+from apps.integrations.whatsapp_routing import verified_whatsapp_routes
 from apps.notifications.delivery import handle_appointment_followup_reply
 from apps.outreach.consent import record_inbound_consent
 
@@ -28,29 +28,6 @@ def verify_whatsapp_secret(request):
     from apps.integrations.providers.whatsapp import WhatsAppProvider
 
     return WhatsAppProvider().verify_webhook(request)
-
-
-def resolve_whatsapp_channel(provided_secret="", phone_number_id=""):
-    candidates = (
-        BotChannel.objects.select_related("bot", "bot__business")
-        .filter(
-            channel=BotChannel.Channels.WHATSAPP,
-            status=BotChannel.Statuses.ACTIVE,
-        )
-    )
-    if phone_number_id:
-        channel = candidates.filter(config_json__phone_number_id=phone_number_id).first() or candidates.filter(external_id=phone_number_id).first()
-        if channel:
-            return channel
-
-    channel = find_whatsapp_channel_by_webhook_secret(provided_secret)
-    if channel:
-        return channel
-
-    if not provided_secret and not phone_number_id:
-        raise PermissionDenied("WhatsApp webhook secret or phone number id is required.")
-
-    raise ValidationError("WhatsApp channel was not resolved.")
 
 
 def parse_inbound_message(payload, headers=None):
@@ -64,19 +41,18 @@ def parse_inbound_message(payload, headers=None):
     return parsed
 
 
-def process_whatsapp_statuses(payload, provided_secret=""):
-    statuses = []
-    phone_number_id = ""
-    for entry in payload.get("entry") or []:
-        for change in entry.get("changes") or []:
-            value = change.get("value") or {}
-            metadata = value.get("metadata") or {}
-            phone_number_id = phone_number_id or str(metadata.get("phone_number_id") or "")
-            statuses.extend(value.get("statuses") or [])
-    if not statuses:
+def process_whatsapp_statuses(payload, auth_context=None):
+    routes = verified_whatsapp_routes(payload, auth_context)
+    batches = [(channel, value.get("statuses") or [], portion) for channel, value, portion in routes if value.get("statuses")]
+    if not batches:
         return None
+    processed = 0
+    for channel, statuses, portion in batches:
+        processed += _process_whatsapp_status_batch(channel, statuses, portion)
+    return {"processed": processed, "statuses": sum(len(statuses) for _, statuses, _ in batches)}
 
-    channel = resolve_whatsapp_channel(provided_secret, phone_number_id=phone_number_id)
+
+def _process_whatsapp_status_batch(channel, statuses, payload):
     business = channel.bot.business
     safe_payload = sanitize_config(payload)
     processed = 0
@@ -87,6 +63,7 @@ def process_whatsapp_statuses(payload, provided_secret=""):
             continue
         message = BotMessage.objects.filter(
             conversation__business=business,
+            conversation__bot=channel.bot,
             conversation__channel=BotConversation.Channels.WHATSAPP,
             direction=BotMessage.Directions.OUTBOUND,
             external_message_id=message_id,
@@ -126,7 +103,7 @@ def process_whatsapp_statuses(payload, provided_secret=""):
         payload_json={"payload": safe_payload, "statuses": len(statuses), "processed": processed},
         status=IntegrationEventLog.Statuses.PROCESSED,
     )
-    return {"processed": processed, "statuses": len(statuses)}
+    return processed
 
 
 def _whatsapp_timestamp(value):
@@ -146,10 +123,11 @@ def _whatsapp_status_error(item):
     return str(error.get("title") or error.get("message") or error.get("code") or "WhatsApp delivery failed.")
 
 
-def save_whatsapp_inbound_message(payload, provided_secret="", headers=None):
+def save_whatsapp_inbound_message(payload, auth_context=None, headers=None):
+    routes = verified_whatsapp_routes(payload, auth_context)
+    channel, _, payload = next((route for route in routes if route[1].get("messages")), routes[0])
     parsed = parse_inbound_message(payload, headers=headers)
     safe_payload = sanitize_config(payload)
-    channel = resolve_whatsapp_channel(provided_secret, phone_number_id=parsed.get("phone_number_id", ""))
     business = channel.bot.business
 
     conversation, created = BotConversation.objects.get_or_create(

@@ -14,6 +14,7 @@ import type { BotChannel, Id } from "../../../../types";
 import { merchantSafeIntegrationError } from "../../utils";
 import { MessengerSetupShell } from "./IntegrationSetupUi";
 import { loadFacebookSdk, parseWhatsAppEmbeddedSignupMessage, type WhatsAppEmbeddedSignupCallback } from "./metaCallbacks";
+import { YCloudSetup } from "./YCloudSetup";
 
 export function WhatsAppInlineSetup({
   businessId,
@@ -27,6 +28,7 @@ export function WhatsAppInlineSetup({
   const { t } = useI18n();
   const showNotification = useNotification();
   const queryClient = useQueryClient();
+  const [preferYCloud, setPreferYCloud] = useState(false);
   const [phoneNumberId, setPhoneNumberId] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [businessAccountId, setBusinessAccountId] = useState("");
@@ -193,6 +195,10 @@ export function WhatsAppInlineSetup({
     return <ErrorState message={t("aiAgents.channelSetupUnavailable")} />;
   }
 
+  if (preferYCloud || channel.config_json?.provider_mode === "ycloud") {
+    return <YCloudSetup channel={channel} canManage={canManage} onBack={channel.config_json?.provider_mode === "ycloud" ? undefined : () => setPreferYCloud(false)} />;
+  }
+
   return (
     <MessengerSetupShell
       logo="/integrations_logos/whatsapp.png"
@@ -228,6 +234,7 @@ export function WhatsAppInlineSetup({
         </div>
       }
     >
+      {channel.status !== "active" && channel.status !== "paused" && !credentialsConfigured ? <Button variant="secondary" className="mb-4" disabled={!canManage} onClick={() => setPreferYCloud(true)}>{t("integrations.ycloud.connect")}</Button> : null}
       {!credentialsConfigured ? (
         <div className="space-y-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

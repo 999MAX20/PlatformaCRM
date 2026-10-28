@@ -5,9 +5,14 @@ import { Button } from "../../../components/ui/Button";
 import type { Translate } from "../conversationTypes";
 import { Pill } from "./ConversationPrimitives";
 
-export type DeliveryStatus = "queued" | "sending" | "delivered" | "delayed" | "retrying" | "failed";
+export type DeliveryStatus = "queued" | "sending" | "delivered" | "delayed" | "retrying" | "failed" | "accepted" | "unknown" | "confirmedSent" | "confirmedDelivered" | "confirmedRead";
 
 export function getDeliveryStatus(message: InboxMessage): DeliveryStatus {
+  if (message.status === "accepted") return "accepted";
+  if (message.status === "delivery_unknown") return "unknown";
+  if (message.status === "sent" && message.payload_json?.ycloud_status) {
+    return message.read_at ? "confirmedRead" : message.delivered_at ? "confirmedDelivered" : "confirmedSent";
+  }
   if (message.status === "delivering") return "sending";
   if (message.status === "retry_scheduled") {
     return message.delivery_next_retry_at ? "delayed" : "retrying";
@@ -18,6 +23,11 @@ export function getDeliveryStatus(message: InboxMessage): DeliveryStatus {
 }
 
 const statusCopy: Record<DeliveryStatus, string> = {
+  accepted: "conversations.deliveryYCloudAccepted",
+  unknown: "conversations.deliveryYCloudUnknown",
+  confirmedSent: "conversations.deliveryYCloudSent",
+  confirmedDelivered: "conversations.deliveryYCloudDelivered",
+  confirmedRead: "conversations.deliveryYCloudRead",
   queued: "conversations.deliveryStatusQueued",
   sending: "conversations.deliveryStatusSending",
   delivered: "conversations.deliveryStatusDelivered",
@@ -27,6 +37,11 @@ const statusCopy: Record<DeliveryStatus, string> = {
 };
 
 const statusHelp: Record<DeliveryStatus, string> = {
+  accepted: "conversations.deliveryYCloudAcceptedHelp",
+  unknown: "conversations.deliveryYCloudUnknownHelp",
+  confirmedSent: "conversations.deliveryYCloudSent",
+  confirmedDelivered: "conversations.deliveryYCloudDelivered",
+  confirmedRead: "conversations.deliveryYCloudRead",
   queued: "conversations.deliveryHelpQueued",
   sending: "conversations.deliveryHelpSending",
   delivered: "conversations.deliveryHelpDelivered",
@@ -36,6 +51,9 @@ const statusHelp: Record<DeliveryStatus, string> = {
 };
 
 function statusIcon(status: DeliveryStatus) {
+  if (status.startsWith("confirmed")) return CheckCircle2;
+  if (status === "unknown") return AlertTriangle;
+  if (status === "accepted") return Clock3;
   if (status === "sending" || status === "retrying") return LoaderCircle;
   if (status === "delivered") return CheckCircle2;
   if (status === "delayed") return Clock3;
@@ -45,6 +63,7 @@ function statusIcon(status: DeliveryStatus) {
 }
 
 function statusClass(status: DeliveryStatus) {
+  if (status === "unknown") return "bg-platforma-warning-soft text-platforma-text ring-platforma-warning/[0.22]";
   if (status === "delivered") return "bg-[var(--platforma-success-soft)] text-platforma-text ring-platforma-success/[0.18]";
   if (status === "failed") return "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/[0.18]";
   if (status === "delayed" || status === "retrying") return "bg-platforma-warning-soft text-platforma-text ring-platforma-warning/[0.22]";
@@ -68,6 +87,7 @@ export function MessageDeliveryDetails({
   const Icon = statusIcon(status);
   const attempts = message.delivery_attempts || 0;
   const maxAttempts = message.delivery_max_attempts || attempts;
+  const complete = status === "delivered" || status.startsWith("confirmed");
 
   return (
     <section
@@ -79,7 +99,7 @@ export function MessageDeliveryDetails({
           <Icon aria-hidden="true" className={status === "sending" || status === "retrying" ? "animate-spin motion-reduce:animate-none" : ""} size={15} />
         </p>
         <Pill className={statusClass(status)}>{t(statusCopy[status])}</Pill>
-      {attempts > 0 && status !== "delivered" ? (
+      {attempts > 0 && !complete ? (
         <p className="text-[11px] text-platforma-muted">
           {t("conversations.deliveryAttempts", { attempts, max: maxAttempts })}
         </p>
@@ -98,7 +118,7 @@ export function MessageDeliveryDetails({
         </Button>
       ) : null}
       </div>
-      {status !== "delivered" ? <p className="mt-1 text-xs text-platforma-muted">{t(statusHelp[status])}</p> : null}
+      {!complete ? <p className="mt-1 text-xs text-platforma-muted">{t(statusHelp[status])}</p> : null}
       {status === "failed" && !canRetry ? (
         <p className="mt-3 text-xs font-semibold text-platforma-muted">
           {t("conversations.deliveryRetryNotAllowed")}

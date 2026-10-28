@@ -149,6 +149,10 @@ def schedule_outbound_delivery(message):
     if message.status not in CLAIMABLE_STATUSES:
         return message
     if getattr(settings, "OUTBOUND_MESSAGES_RUN_INLINE", True):
+        if BotChannel.objects.filter(bot_id=message.conversation.bot_id, channel="whatsapp", config_json__provider_mode="ycloud").exists():
+            # Persist the outbox before making a non-idempotent provider request.
+            transaction.on_commit(lambda: deliver_outbound_message(message.id))
+            return message
         return deliver_outbound_message(message.id)
 
     from apps.bots.tasks import process_outbound_message_task
@@ -254,6 +258,11 @@ def deliver_outbound_message(message_id):
 
 @transaction.atomic
 def _finish_delivery(message, *, result):
+    if result.get("transport") == "ycloud":
+        # The adapter persists a durable attempt and monotonic provider state itself.
+        # Never overwrite a status webhook which arrived before the HTTP response.
+        message.refresh_from_db()
+        return message
     if message.sender_type == BotMessage.SenderTypes.MANAGER:
         from apps.bots.safety_state import _locked
         message.conversation = _locked(message.conversation)
@@ -339,6 +348,8 @@ def retry_outbound_message(message, *, actor=None, idempotency_key=""):
         raise ValidationError({"message_id": "Message delivery is already scheduled."})
     if message.status == BotMessage.Statuses.SENT:
         raise ValidationError({"message_id": "Sent messages do not need retry."})
+    if message.status in {BotMessage.Statuses.ACCEPTED, BotMessage.Statuses.DELIVERY_UNKNOWN}:
+        raise ValidationError({"message_id": "Wait for provider confirmation before sending again."})
     if message.direction != BotMessage.Directions.OUTBOUND:
         raise ValidationError({"message_id": "Only outbound messages can be retried."})
     if message.sender_type == BotMessage.SenderTypes.SYSTEM:

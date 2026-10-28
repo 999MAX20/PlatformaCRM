@@ -6,6 +6,288 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## YCLOUD-PUBLICATION-20261029 — combined publication verification (in progress)
+
+Owner explicitly authorizes review and normal publication of OFFICIAL-03, YCloud
+and the three outgoing commits e5bca576/f2c8e371/98925b67 to origin/main if required
+checks pass. This supersedes the earlier publication exclusion for this packet only.
+Canonical root/branch unchanged; HEAD98925b67, fetched main67014f57; index empty.
+Starting diff/status saved in Temp/ycloud-publication-20261029. Other security and
+notification WIP stays outside publication, including concurrent receipt refresh.
+Mode review/verification/publication; no live rollout or working DB migration.
+Risk: authenticated tenant routing, outbound retries, stored export authorization,
+shared focus accessibility, and accidental inclusion of unrelated WIP.
+Plan: compose/review only authorized hunks against HEAD; check dependencies and
+secrets; run focused/affected WhatsApp/YCloud/export tests in isolated runtime,
+PostgreSQL concurrency, system/drift and shared focus browser/build checks as needed.
+Reuse unchanged reachable YCloud UI evidence with source hash proof. Review exact
+outgoing range and CI/deployment effects; commit only reviewed paths/hunks, fetch,
+normal-push HEAD:main, read remote SHA and inspect actual CI. No force/merge/rebase.
+This is scoped integration publication, not release or live-provider certification.
+
+Combined review result: no confirmed actionable defect in the authorized changes.
+OFFICIAL-03 and YCloud compose as38 code files against HEAD without unrelated WIP;
+the three existing commits remain intact. No new implementation change was needed.
+Ten documentation files include only the relevant YCloud/OFFICIAL-03/publication
+sections. No notification/security-neighbor/dependency-lock/Vite-proxy edits included.
+No secrets/private data found in the reviewed additions; provider examples are empty
+or synthetic. Existing CI workflow runs backend/frontend checks only, no deployment.
+Fetched origin/main67014f57 has successful push CI run39599481089; this is baseline
+evidence only. No real target/account/send/working migration was authorized or used.
+
+Exact verification evidence: output/ycloud-publication-20261029 (generated local
+artifacts, not another source tree). Existing Python/Node dependencies reused.
+Read-only Python import and Node fs adapters load reviewed Git-index source blobs
+in memory under canonical file paths; unrelated untracked modules/migrations are
+excluded. No worktree/clone/stash/source replacement and no shared server stopped.
+Backend wrapper run_candidate.py reuses scripts/verify_ycloud.py and
+scripts.codex_verify.isolated_runtime, disposable SQLite/media or PostgreSQL17.
+Command prefix: `.venv/Scripts/python.exe <artifact-dir>/run_candidate.py`.
+- `apps.integrations.tests_whatsapp_binding apps.integrations.tests_ycloud
+  apps.integrations.tests_ycloud_dispatch
+  apps.integrations.tests.WhatsAppIntegrationFoundationTests
+  apps.integrations.tests_credential_encryption apps.integrations.tests_channel_ownership
+  apps.integrations.tests_channel_setup_consistency apps.integrations.tests_provider_rollout
+  apps.bots.tests.InboxBackendTests apps.bots.tests_handoff_recovery
+  apps.core.tests_export_access`:216 tests OK,214 PASS/two PG-only skips;
+  backend-candidate-2.log. System check and migration drift PASS.
+- `--postgres-bin "C:/Program Files/PostgreSQL/17/bin"
+  apps.integrations.tests_ycloud_dispatch apps.integrations.tests_ycloud_concurrency
+  apps.bots.tests_handoff_recovery.HandoffRecoveryConcurrencyTests`:16 PASS/no skips,
+  including both previously skipped tests; pg-candidate.log. Disposable cluster stopped.
+- `apps.core.tests_import_export apps.core.tests_b5_performance
+  apps.clients.tests_sensitive_notes apps.analytics.tests_workspace apps.analytics.tests`:
+  59 PASS/no skips; export-dependent.log, system/drift PASS.
+- Frontend with `NODE_OPTIONS=--require=<artifact-dir>/frontend-snapshot.cjs`:
+  `npm.cmd run build` PASS (i18n6456, types, app/widget);
+  `npx.cmd tsc -b --force` PASS independently of incremental cache;
+  `npm.cmd run check:bundle` PASS. Advisory chunk/plugin timings retained.
+- Same frontend source adapter, ACTION_COLOR_PORT5293:
+  `npx.cmd playwright test e2e/focus-modality.spec.ts e2e/action-color-roles.spec.ts
+  --config playwright.action-colors.config.ts`:12 PASS, desktop/mobile RU/KK/EN,
+  login/shared controls/modal/search/widget; auth mocked401, no working DB.
+- Existing YCloud setup/Inbox UI evidence retained for unchanged task UI/API source.
+  Original35-file manifest differs only in .env.example/config/settings.py due to
+  unrelated notification additions excluded from candidate; no YCloud delta drift.
+  Shared focus was reverified above. No repeat full-project/live acceptance suite.
+- Candidate Python compile, new-file review, seven added local link targets,
+  candidate/index/outgoing diff hygiene PASS; exact blobs and patch in artifacts.
+
+Retained tooling failures: initial git apply check rejected CRLF patch representation;
+LF-normalized composition matches full context without inferred changes. Initial
+snapshot harness omitted ModuleNotFoundError.name, causing migration-loader error;
+corrected harness, complete repeated gate above PASS, original log retained.
+GitHub CLI unavailable; connected GitHub GET used for CI. Unsupported workflows-list
+GET rejected; supported actions/runs GET works. These did not change product code.
+Publication follows only after final reviewed index and ancestor check; outcome below.
+
+
+## YCLOUD-TPLITE-20261028 — TP Lite and Inbox text (in progress)
+
+Explicit owner request in this chat: implement first stage, reuse existing WhatsApp/
+Inbox, no real sends or account connections; list owner access requirements separately.
+Mode implementation; provider/model/UI gap. Root canonical PlatformaCRM; branch
+codex/ui-testing-toolkit, HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348.
+Prior security and personal-notification WIP is unrelated and preserved. Starting
+status/patch: C:/Users/user/AppData/Local/Temp/ycloud-tplite-20261028.
+Scope: server-owned TP Lite attempt, signed durable webhook intake, one API number,
+text inbound/outbound through existing Inbox/AI pipeline, delivery states and recovery,
+reachable setup UI. No templates/reminders/media/history/Coexistence or live rollout.
+Reuse BotChannel/BusinessConnector/provider/Inbox/BusinessEvent/outbox permissions.
+Risk high: tenant binding, stale callbacks, signatures, duplicate/ambiguous sends.
+Checks: focused isolated tests after each backend slice; affected integration/outbox
+suites, clean migration/system/drift, PostgreSQL races, targeted UI/API states and
+RU/KK/EN, frontend types/build at completion. No working DB or provider calls.
+
+Local implementation and verification completed 29.10. Original publication blocker
+was the unpublished OFFICIAL-03 route dependency and three outgoing commits against
+origin/main67014f57 (e5bca576, f2c8e371,98925b67). Owner29.10 explicitly authorized
+checking and publishing this combined set if required checks pass. Current outcome
+is recorded in YCLOUD-PUBLICATION-20261029 above; other WIP remains excluded.
+
+Implementation: YCloudConnection/Event/Dispatch, integrations0007/0008 and bots0013;
+disabled-by-default server client, setup start/status/cancel/retry, signed durable
+ingress and beat worker, reuse WhatsApp Inbox/CRM/AI pipeline. One API number, text
+only. Server-owned customer/setup revision, fresh actor rights and WABA/number
+binding prevent foreign/stale setup; no browser callback activates the channel.
+POST intent is committed before network, unknown outcome forbids blind resend,
+429 gets bounded retry; signed receipts correlate to attempt and do not regress.
+Current manager rights and source-time24h window checked at send. Existing Meta
+auth cannot route into YCloud. Events redact unknown fields; no API key/signup URL
+is persisted or logged. Signup URL remains in browser memory and expires.
+Existing UI shell/API used for setup and statuses, RU/KK/EN. Error reset corrected
+after browser test; send toast now distinguishes queue/accepted/unknown/failure.
+Readiness includes separate YCloud secret and shared runtime gates, not live proof.
+
+Verification from canonical root, existing .venv and frontend dependencies; no
+working DB/env/migration or provider call. scripts/verify_ycloud.py uses
+scripts.codex_verify.isolated_runtime, disposable SQLite or owned PostgreSQL17,
+synthetic credentials and mocked client. Every invocation runs system check and
+makemigrations --check --dry-run first; these pass. Commands/logs in
+C:/Users/user/AppData/Local/Temp/ycloud-tplite-20261028, reviewed durable copies in
+output/ycloud-tplite-20261028 (no ui-env/password file copied).
+
+- First onboarding slice8 PASS; signed ingress23 PASS; dispatch55 and permission55
+  PASS; backend-focused60 PASS. Earlier counts included an imported foundation
+  TestCase, later replaced by module import to avoid duplicated collection.
+- `.venv/Scripts/python.exe scripts/verify_ycloud.py apps.integrations.tests_ycloud
+  apps.integrations.tests_ycloud_dispatch apps.integrations.tests_whatsapp_binding
+  apps.integrations.tests_channel_setup_consistency apps.integrations.tests_channel_ownership
+  apps.integrations.tests.WhatsAppIntegrationFoundationTests
+  apps.bots.tests.InboxBackendTests apps.bots.tests_handoff_recovery`:
+  completion-backend.log171 OK,169 PASS/two PG-only skips. Latest receipt-order
+  regression added during that run; final PG dispatch run below covers it.
+- `.venv/Scripts/python.exe scripts/verify_ycloud.py --postgres-bin
+  "C:/Program Files/PostgreSQL/17/bin" apps.integrations.tests_ycloud_dispatch
+  apps.integrations.tests_ycloud_concurrency`: postgres-final.log14 PASS/no skips,
+  including duplicate ingress, dispatch race and competing WABA binding. Prior PG13
+  PASS retained. Disposable cluster shut down by runner.
+- Same PG runner with `apps.bots.tests_handoff_recovery.HandoffRecoveryConcurrencyTests`:
+  handoff-pg.log2 PASS, resolves the two SQLite skips; no changed handoff policy.
+- Same isolated runner with `apps.integrations.tests_provider_rollout`:
+  readiness-final.log16 PASS, including two new YCloud readiness regressions.
+- `npm.cmd run build` in frontend: frontend-final.log PASS (i18n6494 RU/KK/EN,
+  tsc -b, app and widget). Chunk-size advisory retained; no dependency install.
+  After final send-toast refinement, frontend-completion.log PASS again; no later
+  frontend source changes. Final accepted toast confirmed in browser screenshot.
+- Browser CUA, canonical Vite/Django, disposable fixture DB only: setup unavailable,
+  provider error/reset, pending link, cancel and new attempt, signed bind, incoming
+  text, manual accepted reply and signed read; pause/resume. RU desktop, KK/EN390px,
+  keyboard Tab/Escape and focus restoration. Screenshots retained. No real signup
+  link opened. Two test-session refresh401 interruptions retained; repeat login
+  recovered and completed the flow; authentication product code not changed.
+  Alternate localhost address was unreachable; canonical127.0.0.1 test ports used.
+  Fixture first start failed on nonexistent User.email_verified; corrected fixture,
+  no source/model change. Failed log ui-server-attempt1.log retained.
+
+Final review found two additional in-scope regressions, now fixed:
+- Cached/deactivated initiator could start/confirm. current-authority-before.log
+  has one reproduced failure and one test-mock response error (link mock corrected);
+  third role-denial control passed. Service now reloads active account at start,
+  confirm and recovery; does not change shared access policy. Isolated
+  `apps.integrations.tests_ycloud.YCloudCurrentAuthorityTests
+  apps.integrations.tests_ycloud.YCloudOnboardingTests`: current-authority-after.log11
+  PASS, including same-business specialist403 for every setup write action.
+- Message preceding number binding was acknowledged204 and discarded.
+  `apps.integrations.tests_ycloud.YCloudIngressOrderingTests.test_message_before_binding_is_retried_instead_of_acknowledged_and_lost`:
+  ingress-order-before.log reproduced204 vs expected503. Unknown signed message
+  route now raises retryable503; provider resend after binding persists/processes
+  one inbound message. Foreign routes still create no effects. First integration
+  run (`apps.integrations.tests_ycloud apps.integrations.tests_ycloud_dispatch`)
+  final-authority-ingress.log41:40 PASS/one failure because global exception handler
+  normalizes generic APIException503 to500. Reused existing TemporaryServiceFailure
+  domain exception; no global-handler change. Smallest affected class rerun
+  `apps.integrations.tests_ycloud.YCloudIngressOrderingTests`: ingress-order-after.log1
+  PASS (503, then204 and one Inbox message), system/drift PASS. Other40 unchanged
+  paths reused; initial failed41 run is retained, not relabelled as green.
+- PG runner with `apps.integrations.tests_ycloud_concurrency` after current-account
+  guard: concurrency-completion.log3 PASS/no skips. Dispatch14/handoff2/readiness16
+  results remain applicable to unchanged paths. Counts are executed tests, not
+  a deduplicated project total (webhook class also inherits onboarding controls).
+
+Final source/doc delta and SHA256 manifests: output/ycloud-tplite-20261028.
+Code patch is against recorded pre-existing WIP (routing baseline reconstructed
+from preserved OFFICIAL-03 artifact), not an independently deployable HEAD patch.
+Doc patch includes only this task's sections, preserving concurrent notification
+documentation. Code syntax, new/untracked-file review, diff hygiene, reverse patch
+checks and changed local links checked at completion. No full-project/E2E gate:
+bounded provider/Inbox scope, not release certification; base remains HEAD so the
+documented isolated focused path was used instead of inventing a committed range.
+Owned UI backend/frontend processes stopped; temporary viewport override reset.
+Final integrity:25 Python files compile,35 task-code files hashed,6 added local
+links/anchors valid; ordinary `git diff --check`, cached check and both reverse
+patch checks PASS. One diagnostic mistakenly overrode core.autocrlf=False and
+reported CRLF as trailing whitespace across existing files; no source rewrite was
+made. Repository-configured checks (core.autocrlf=True) pass. Artifact packaging
+initially used an obsolete notification heading, then preserved its current section
+with a corrected boundary. These tooling attempts did not change application code.
+
+Docs: integrations/operations/frontend contracts, integration+Inbox passports,
+capabilities, roadmap R02, README and STATUS updated. Access/CRM/AI contracts need no
+policy rewrite: existing actions, lifecycle, optional AI and safety reused; technical
+permission details recorded in integration contract. No new roadmap phase opened.
+Remainder: code/evidence in authorized local text/setup scope none; publication
+authorization granted29.10, combined verification recorded above; environment needs target/migration/
+worker/beat/HTTPS, owner access needs enabled TP Lite and number/account permissions,
+server secrets and authorization of a real test. Media/templates/reminders/history/
+Coexistence outside this stage. R02/R03 live acceptance explicitly open.
+
+
+## OFFICIAL-03-20261028 — WhatsApp authenticated tenant binding (fixed locally)
+
+Owner explicitly proceeds with OFFICIAL03. Root/branch canonical unchanged, HEAD98925b67
+plus previous security WIP. User also reported Daybreak unavailable
+for Astra; answered that no restriction should be bypassed. Ordinary allowed static source
+review continues; no blocked tool action retried and no real provider/credential access.
+
+Confirmed: BaseWhatsAppAdapter.verify_webhook collapses per-channel credential lookup to
+bool/string; resolve_whatsapp_channel prioritizes arbitrary payload phone_number_id. Both
+inbound and status paths can cross tenant. Status batches flatten all changes under first
+nonempty route. Independent read-only whatsapp_boundary confirms this and recommends explicit
+verified auth context (Meta/global internal/channel binding), all-route preflight before
+effects and per-change status association. Preserve invalid-signature precedence, live HMAC
+requirements, configured global internal mode only non-live, generic channel-secret payloads,
+dedup and existing status-first behavior for mixed payloads. No owner policy gap identified.
+
+Implemented boundary: carry typed verified context without raw secret into services; require
+current active bound channel and supplied IDs matching configured/external aliases; global
+verified modes route by unambiguous metadata. Preflight every metadata route before any
+business effects, including ignored message changes. Keep status batches tenant/channel
+scoped and log only corresponding payload portions; preserve response summary. Do not turn
+this into full multi-message ingestion. Existing legacy credential lookup lazily migrates
+legacy synthetic config; do not change shared Telegram/Instagram credential rules. Rejection
+proof concerns business effects, documenting existing credential migration separately.
+
+Result: baseline and scoped patch saved through plugin-managed artifacts/whatsapp-binding.
+BEFORE12:9 security/route failures and3 controls PASS. AFTER36: new12 PASS, one existing
+compatibility error because selected payload dropped a masked top-level api_key field.
+Preserved the non-entry envelope while isolating changes; no assertion weakened.
+Added8 controls; after-compat44 PASS. Final completion102 PASS, no skips; system/drift/
+syntax PASS. Independent fresh candidate reviewer reported no findings. Full failed logs
+remain; no baseline claim or hidden failed gate. Source hashes match the tested candidate.
+
+Files: integrations/providers/whatsapp.py returns immutable VerifiedWhatsAppWebhook;
+new whatsapp_routing.py revalidates active channel/Bot/Business and aliases, resolves
+global routes uniquely and preflights all changes; whatsapp/__init__.py retains per-change
+status/log portions and adds conversation Bot filtering. views.py only forwards context.
+New tests_whatsapp_binding.py covers HTTP paths and direct stale-context defensive checks.
+Same-Bot channel uniqueness supplies the channel boundary for message status lookup.
+No new model/permission/role, migration, AI behavior, notification send or UI contract.
+Existing BusinessEvent/usage/consent/inbox side effects run only after route validation;
+valid idempotency and status-first/first-message ingestion preserved, not full batch ingestion.
+
+Commands (canonical root; Python .venv/Scripts/python.exe): temporary artifact directory
+C:/Users/user/AppData/Local/Temp/codex-security-artifacts-1d95dca3a3a214defe40ef89cc9676be3b5622a5abafcb39d5da4e18155bd64b/artifacts/whatsapp-binding.
+run_checks.py before apps.integrations.tests_whatsapp_binding => expected FAIL9/12.
+run_checks.py after apps.integrations.tests_whatsapp_binding
+apps.integrations.tests.WhatsAppIntegrationFoundationTests =>35 PASS/1 compatibility error.
+Same labels with after-compat =>44 PASS after envelope repair and8 additional controls.
+run_checks.py completion apps.integrations.tests_whatsapp_binding
+apps.integrations.tests.WhatsAppIntegrationFoundationTests apps.integrations.tests_credential_encryption
+apps.integrations.tests_channel_ownership apps.integrations.tests_channel_setup_consistency
+apps.integrations.tests_provider_rollout =>102 PASS. Completion runs manage.py check and
+makemigrations --check --dry-run first, both PASS. All use scripts.codex_verify.isolated_runtime,
+disposable SQLite/media, synthetic credential keys, no .env loading and denied network.
+candidate.py compiles five changed/new Python files and records patch/source hashes.
+Diff/reverse/integrity results retained with final report; strict reverse is line-ending
+sensitive, --ignore-space-change verifies the actual task delta. Index remains empty.
+
+Persistent record: C:/Users/user/.codex/state/plugins/codex-security/scans/PlatformaCRM/
+artifacts-5c104f7eb8ffeb335f0ca5772aabb0cf2c88c0a722d9ac17d6bb18e0f3934604/artifacts/whatsapp-binding.
+Includes exact commands/logs/results, baseline hashes and three original source files,
+task.patch, review, integrity and fix-report.md. Canonical scan findings unchanged.
+Root/branch/HEAD unchanged; previous dirty work including provider_rollout.py retained.
+No staged files/commit/push/deploy; publication remains excluded by current security scope.
+
+No remaining bounded code/evidence/owner-policy blocker. Environment limitations: local
+synthetic SQLite only, no real provider/credential/account changes, working DB, PostgreSQL
+concurrency or live/R02 certification. Frontend/build/browser skipped: no changed merchant
+flow/DTO, and reachable webhook happy/denial behavior proven by synthetic HTTP tests.
+No full-project gate: provider-specific boundary only. STATUS/roadmap/integrations contract/
+capabilities/integrations passport updated; README/frontend/access/AI/operations contracts
+need no change to setup, UI, role policy or operational settings. Next finding not started.
+
+
 ## AUD-18-20261027 — current export download authorization
 
 Owner continuation authorizes AUD-18 only. Canonical root C:/Users/user/Desktop/PlatformaCRM,

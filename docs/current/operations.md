@@ -1,5 +1,23 @@
 # Среда, эксплуатация и файлы
 
+YCloud TP Lite: `YCLOUD_ENABLED=False` по умолчанию; `YCLOUD_API_KEY` и
+`YCLOUD_WEBHOOK_SECRET` задаются только на сервере. Новые миграции integrations0007/
+0008 и bots0013 проверены в одноразовых SQLite/PostgreSQL, к рабочей БД не применялись.
+Webhook `/api/integrations/ycloud/webhook/` требует подпись YCloud и свежий timestamp;
+внешняя среда требует HTTPS. Подписки: `whatsapp.business_account.updated`,
+`whatsapp.inbound_message.received`, `whatsapp.message.updated`. Celery beat вызывает
+`integrations.process_ycloud_events` каждые 30 секунд; исходящие используют обычную
+очередь bots. Production требует worker/beat/Redis; локальный eager PASS этого не доказывает.
+Readiness WhatsApp учитывает включение YCloud и отдельно проверяет его секреты,
+очередь и мониторинг. Успешный readiness не подтверждает доступ TP Lite или доставку.
+Повтор failed ingress доступен через настройку; неопределённую внешнюю отправку
+нельзя слепо повторять. Пауза канала — оперативная остановка новых сообщений.
+Подписанный message webhook без готовой привязки возвращает retryable503: провайдер
+должен повторить его после подтверждения номера; ответ204 выдаётся после сохранения.
+Ни аккаунты, ни secrets, ни настройки провайдера в этой задаче не менялись.
+Подробности и остаток — YCLOUD-TPLITE-20261028 в PRIMARY-SESSION.
+
+
 Действующие ограничения и недоказанный допуск, 07.10.2026.
 Публикация Git и локальная приёмка не означают deployment/production readiness.
 Решение владельца 14.10: выбрать инфраструктуру на территории Казахстана,

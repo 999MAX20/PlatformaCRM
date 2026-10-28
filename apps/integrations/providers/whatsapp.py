@@ -15,6 +15,7 @@ from apps.integrations.models import IntegrationEventLog
 from apps.integrations.providers.base import BaseChannelProvider, ProviderConfigurationError
 from apps.integrations.sanitization import SAFE_PROVIDER_FAILURE_DETAIL
 from apps.integrations.whatsapp_credentials import find_whatsapp_channel_by_webhook_secret, get_whatsapp_access_token
+from apps.integrations.whatsapp_routing import VerifiedWhatsAppWebhook
 
 
 WHATSAPP_SECRET_HEADER = "HTTP_X_ZANI_WHATSAPP_SECRET"
@@ -45,7 +46,7 @@ class BaseWhatsAppAdapter(BaseChannelProvider):
             ).hexdigest()
             if not hmac.compare_digest(signature, expected_signature):
                 raise PermissionDenied("Invalid WhatsApp webhook signature.")
-            return ""
+            return VerifiedWhatsAppWebhook(mode="meta")
 
         if live_mode:
             raise PermissionDenied("Missing WhatsApp webhook signature.")
@@ -54,14 +55,15 @@ class BaseWhatsAppAdapter(BaseChannelProvider):
             provided_secret,
             expected_secret,
         )
-        if not internal_secret_valid and provided_secret:
-            internal_secret_valid = self._is_channel_secret(provided_secret)
-        if not internal_secret_valid:
-            raise PermissionDenied("Invalid WhatsApp webhook authentication.")
-        return provided_secret
-
-    def _is_channel_secret(self, provided_secret):
-        return find_whatsapp_channel_by_webhook_secret(provided_secret) is not None
+        if internal_secret_valid:
+            return VerifiedWhatsAppWebhook(mode="internal")
+        channel = find_whatsapp_channel_by_webhook_secret(provided_secret) if provided_secret else None
+        if channel is not None:
+            return VerifiedWhatsAppWebhook(
+                mode="channel", channel_id=channel.pk, bot_id=channel.bot_id,
+                business_id=channel.bot.business_id,
+            )
+        raise PermissionDenied("Invalid WhatsApp webhook authentication.")
 
     def parse_webhook(self, payload, headers=None):
         meta_message = self._parse_meta_cloud_payload(payload)
@@ -158,6 +160,9 @@ class WhatsAppProvider(BaseWhatsAppAdapter):
         business = channel.bot.business
         config = channel.config_json or {}
         mode = config.get("provider_mode") or "mock"
+        if mode == "ycloud":
+            from apps.integrations.ycloud.dispatch import send_text
+            return send_text(channel, recipient_id, text, payload or {})
         event_payload = {
             "recipient_id": recipient_id,
             "text": text,

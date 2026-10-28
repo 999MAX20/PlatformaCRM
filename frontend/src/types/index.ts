@@ -592,7 +592,7 @@ export type BotConversation = {
     direction: "inbound" | "outbound";
     sender_type: "client" | "bot" | "manager" | "system" | "ai";
     text: string;
-    status: "received" | "queued" | "delivering" | "retry_scheduled" | "sent" | "failed";
+    status: "received" | "queued" | "delivering" | "accepted" | "delivery_unknown" | "retry_scheduled" | "sent" | "failed";
     created_at: string;
   } | null;
   attachments?: FileAttachment[];
@@ -609,7 +609,7 @@ export type BotMessage = {
   external_message_id?: string;
   payload_json: Record<string, unknown>;
   error_text?: string;
-  status: "received" | "queued" | "delivering" | "retry_scheduled" | "sent" | "failed";
+  status: "received" | "queued" | "delivering" | "accepted" | "delivery_unknown" | "retry_scheduled" | "sent" | "failed";
   delivery_attempts?: number;
   delivery_max_attempts?: number;
   delivery_next_retry_at?: string | null;

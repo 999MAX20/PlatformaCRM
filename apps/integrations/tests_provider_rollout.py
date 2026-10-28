@@ -8,6 +8,21 @@ from apps.integrations.provider_rollout import run_provider_rollout_readiness_ch
 
 
 class ProviderRolloutReadinessTests(SimpleTestCase):
+    @override_settings(WHATSAPP_ENABLED=False, YCLOUD_ENABLED=True, YCLOUD_API_KEY="", YCLOUD_WEBHOOK_SECRET="", AUTOMATIONS_RUN_INLINE=True)
+    def test_ycloud_requires_own_security_and_queue(self):
+        result = run_provider_rollout_readiness_check(provider="whatsapp")["providers"][0]
+        failed = {gate["key"] for gate in result["gates"] if gate["status"] == "fail"}
+        self.assertTrue(result["enabled"])
+        self.assertIn("whatsapp.ycloud_security", failed)
+        self.assertIn("whatsapp.queue_runtime", failed)
+        self.assertNotIn("whatsapp.meta_cloud_security", failed)
+
+    @override_settings(WHATSAPP_ENABLED=False, YCLOUD_ENABLED=True, YCLOUD_API_KEY="synthetic-key", YCLOUD_WEBHOOK_SECRET="weak")
+    def test_ycloud_rejects_weak_signing_secret_without_exposing_key(self):
+        result = run_provider_rollout_readiness_check(provider="whatsapp")["providers"][0]
+        self.assertIn("whatsapp.ycloud_security", {gate["key"] for gate in result["gates"] if gate["status"] == "fail"})
+        self.assertNotIn("synthetic-key", str(result))
+
     def test_disabled_real_providers_do_not_block_local_readiness(self):
         result = run_provider_rollout_readiness_check()
 

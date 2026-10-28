@@ -7,6 +7,7 @@ import secrets
 
 from apps.businesses.models import Business
 from apps.core.sanitization import SanitizedErrorFieldsMixin
+from apps.integrations.ycloud.models import YCloudConnection, YCloudEvent, YCloudDispatch  # noqa: F401
 
 
 class IntegrationEventLog(SanitizedErrorFieldsMixin, models.Model):

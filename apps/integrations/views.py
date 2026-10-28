@@ -569,13 +569,13 @@ class WhatsAppWebhookView(APIView):
         return Response({"detail": "Invalid WhatsApp verification token."}, status=status.HTTP_403_FORBIDDEN)
 
     def post(self, request):
-        provided_secret = verify_whatsapp_secret(request)
-        status_result = process_whatsapp_statuses(request.data, provided_secret=provided_secret)
+        auth_context = verify_whatsapp_secret(request)
+        status_result = process_whatsapp_statuses(request.data, auth_context=auth_context)
         if status_result is not None:
             return Response({"ok": True, **status_result}, status=200)
         conversation, message = save_whatsapp_inbound_message(
             request.data,
-            provided_secret,
+            auth_context,
             headers={key: value for key, value in request.META.items() if key.startswith("HTTP_")},
         )
         return Response(

@@ -151,6 +151,8 @@ class BotMessage(SanitizedErrorFieldsMixin, models.Model):
         RECEIVED = "received", "Received"
         QUEUED = "queued", "Queued"
         DELIVERING = "delivering", "Delivering"
+        ACCEPTED = "accepted", "Accepted by provider"
+        DELIVERY_UNKNOWN = "delivery_unknown", "Delivery outcome unknown"
         RETRY_SCHEDULED = "retry_scheduled", "Retry scheduled"
         SENT = "sent", "Sent"
         FAILED = "failed", "Failed"

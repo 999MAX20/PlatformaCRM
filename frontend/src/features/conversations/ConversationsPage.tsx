@@ -906,11 +906,16 @@ export function ConversationsPage() {
 
   const sendMutation = useMutation({
     mutationFn: (payload: Parameters<typeof inboxApi.sendMessage>[0] & { draftKey: string | null }) => inboxApi.sendMessage(payload),
-    onSuccess: async (_result, variables) => {
+    onSuccess: async (result, variables) => {
       sendIdempotencyRef.current = null;
       clearSentDraft(variables.draftKey, variables.text);
       if (currentConversationRef.current === Number(variables.conversationId)) setSuggestedReply("");
-      setNotice(t("conversations.replySent"), "success");
+      const noticeKey = result.status === "sent" ? "conversations.replySent"
+        : result.status === "accepted" ? "conversations.deliveryYCloudAccepted"
+        : result.status === "delivery_unknown" ? "conversations.deliveryYCloudUnknown"
+        : result.status === "failed" ? "conversations.deliveryStatusFailed"
+        : "conversations.deliveryStatusQueued";
+      setNotice(t(noticeKey), result.status === "failed" || result.status === "delivery_unknown" ? "warning" : "success");
       await invalidateInbox();
     },
     onError: (error) =>

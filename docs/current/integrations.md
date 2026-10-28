@@ -1,8 +1,9 @@
 # Интеграции, импорт и экспорт
 
 Действующие ограничения; уточнение 14.10.2026: Telegram и WhatsApp включены
-в подготовку пилота R02, клиники подключают собственные аккаунты; WhatsApp-провайдер
-ещё выбирается. Реальная отправка/подключение не выполнены. Прочие внешние подключения,
+в подготовку пилота R02, клиники подключают собственные аккаунты. Для первого этапа
+28.10 выбран YCloud TP Lite; локально реализованы подключение и текстовый Inbox.
+Реальная отправка/подключение не выполнены. Прочие внешние подключения,
 marketplace write-back, 1С/МойСклад и платёжный gateway остаются отложенными. Код сохраняется,
 но наличие adapter/endpoint не доказывает live-ready статус. Новые подключения
 требуют конкретного target и согласованного объёма. Пилот финансирует владелец;
@@ -11,6 +12,53 @@ marketplace write-back, 1С/МойСклад и платёжный gateway ос�
 [CRM-R02](../testing/task-state/PRIMARY-SESSION.md#crm-r02-20261014--pilot-decisions-and-provider-research).
 
 ## Connector boundary
+
+### YCloud TP Lite — первый этап
+
+Существующие BotChannel/BusinessConnector и WhatsApp Inbox переиспользуются.
+Сервер создаёт временную ссылку, связывает попытку с каналом и подтверждает номер
+только по подписанному webhook и серверному API YCloud. Redirect/состояние браузера
+не подтверждают подключение. Ссылка не сохраняется в БД или browser storage;
+ключ API и signing secret находятся только в серверном окружении. Доступ к setup:
+INTEGRATIONS VIEW для чтения, MANAGE для начала, отмены и повторной обработки.
+Фоновая привязка повторно проверяет права инициатора и ревизию настройки.
+Сервисы перечитывают активность аккаунта; отключённый инициатор не завершает
+ожидающее подключение, даже если передан ранее загруженный объект пользователя.
+
+Приём сохраняет подписанное событие до ответа 204; worker/beat обрабатывает его
+с дедупликацией, транзакцией и ограниченными повторами. Business определяется
+серверной связью WABA/номера, а не переданным CRM ID. Текст идёт через существующий
+Inbox/CRM/AI pipeline. Один API-номер на подключение; media, templates, напоминания,
+история и Business App Coexistence в этот этап не входят.
+Подписанное сообщение без готовой привязки получает retryable503, а не успешный
+ответ: callback может опередить подтверждение номера. После привязки повтор
+сохраняется и обрабатывается один раз; чужой маршрут не создаёт CRM-эффектов.
+
+Отправка фиксирует отдельную попытку до HTTP, повторно проверяет канал, текущие
+права сотрудника и 24-часовое окно. `accepted` означает только приём провайдером;
+`sent`/доставлено/прочитано подтверждаются его результатом или подписанным статусом.
+Неопределённый POST получает `delivery_unknown` и не повторяется автоматически
+или вручную до разрешающего события. Явный rate limit повторяется ограниченно;
+старые статусы не откатывают доставку и не меняют новую попытку. Обычные Meta-пути
+не принимают YCloud-канал. Пауза блокирует новый обмен, сохраняя приём статусов.
+
+Версия и проверки: [YCLOUD-TPLITE-20261028](../testing/task-state/PRIMARY-SESSION.md#ycloud-tplite-20261028--tp-lite-and-inbox-text-in-progress).
+Это локальная реализация; TP Lite eligibility, целевой HTTPS webhook, доступ к номеру,
+финансирование, рабочая миграция и live delivery остаются отдельной приёмкой R02/R03.
+
+### Общие правила и подтверждённые исправления
+
+OFFICIAL-03: WhatsApp verification carries an explicit Meta/global-internal/channel
+identity into routing. Channel mode revalidates its active channel, Bot and Business;
+supplied phone IDs must match that channel's configured/external aliases. Global
+verified modes require an unambiguous active route. Every Meta change is resolved
+before business writes, including changes ignored by the existing status-first /
+first-message behavior. Status lookup also binds the Bot, and stored payload/log
+copies contain only their associated change. HMAC precedence/live requirements,
+generic channel messages, deduplication and existing credential storage remain.
+Local102-test evidence: OFFICIAL-03-20261028 in PRIMARY-SESSION. No provider rollout,
+real delivery, working credentials or live readiness is implied.
+
 
 Provider-specific поведение живёт за service/provider adapter, не в views/UI.
 Существующие слои: [integrations](../../apps/integrations),
