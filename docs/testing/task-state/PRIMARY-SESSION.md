@@ -7517,5 +7517,16 @@ container image execution and real HTTPS/cloud/provider acceptance unproven.
 No full-project or production readiness claim. Deployment remains separate:
 operator must supply domain/unique passwords, include compose.stand.yaml, keep
 origin ports private and storage private, verify target TLS and real callbacks.
-Publication: scoped staging/normal push pending; preserve foreign WIP. No roadmap
+Publication: code and CI isolation fix 70d5d2e0 normal-pushed to origin/main;
+remote SHA matched. Stand access boundary run40894680725 completed success.
+General application CI still running at this evidence snapshot. Preserve foreign WIP. No roadmap
 phase reopened/closed; operations and README document this bounded prerequisite.
+
+Publication detail29.10: initial boundary CI failed because Compose still checked
+service env_file existence in clean CI. verify-compose now clears only env_file
+in a disposable test overlay; production networking/assertions stay unchanged.
+Fixed local check and remote boundary CI PASS. Added upstream-public-cache
+regression: actual edge still returns no-store; both local edge checks PASS.
+All owned preview Node/Caddy processes stopped. No live password/deployment.
+CRM stale empty index.lock (>3h, no git.exe on two inspections) was removed
+from the canonical .git to unblock normal scoped staging; no history rewritten.

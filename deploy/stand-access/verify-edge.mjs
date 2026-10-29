@@ -16,6 +16,7 @@ const product = process.env.STAND_TEST_PRODUCT || 'CRM';
 const password = 'isolated-preview-password';
 const app = createServer(async (req, res) => {
   let body = ''; for await (const chunk of req) body += chunk;
+  res.setHeader('Cache-Control', 'public, max-age=3600');
   res.setHeader('Content-Type', 'text/plain'); res.end(`private-upstream:${req.url}:${body}`);
 });
 app.listen(0, '127.0.0.1'); await once(app, 'listening');

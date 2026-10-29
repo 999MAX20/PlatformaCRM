@@ -702,4 +702,4 @@ Generation 4 primary, transition idle — [.codex/project-session.json](.codex/p
 История перенесена в архив; не продолжать старые задания по прежним записям.
 
 ## STAND-ACCESS-20261029
-Password-only entry implemented for the dedicated stand overlay; RU/KK/EN style, server-side gate, persistent throttling, CSRF and cookie rotation.10 HTTP tests, actual Caddy edge/fail-closed, Compose port boundary and browser flows PASS. No live password/deployment; scoped publication pending. Details: STAND-ACCESS in PRIMARY and operations.
+Password-only entry implemented for the dedicated stand overlay; RU/KK/EN style, server-side gate, persistent throttling, CSRF and cookie rotation.10 HTTP tests, actual Caddy edge/fail-closed, Compose port boundary and browser flows PASS. Code70d5d2e0 pushed to main; stand CI40894680725 PASS, general CI running. No live password/deployment. Details: STAND-ACCESS in PRIMARY and operations.
