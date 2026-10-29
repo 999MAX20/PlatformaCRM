@@ -9,7 +9,8 @@
 AUD-08-20261030: paged server Client search and async Deal/Lead/Task selection
 verified locally; optional business filter prevents mixing accessible businesses.
 Exact candidate36 backend/14 Node/system/drift/build/forced types and targeted
-browser RU/KK/EN PASS. Publication/CI pending; no deployment/working DB changes.
+browser RU/KK/EN PASS. Published d22cd337, origin/main SHA confirmed;
+CI40962432948 in progress. No deployment/working DB changes.
 Details and retained failures — AUD08 in PRIMARY. Next AUD09 not started.
 
 AUD-10-20261030: offline queue/replay/recovery locally verified and published

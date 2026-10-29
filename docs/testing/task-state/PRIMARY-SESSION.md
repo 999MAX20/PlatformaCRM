@@ -6,14 +6,23 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
-## AUD-08-20261030 — Client search and selection verified locally
+## AUD-08-20261030 — Client search and selection published
+
+Publication30.10: d22cd337d126f2982e484b6c742f1633caab3d63 normal-pushed to
+origin/main; remote SHA confirmed.23 reviewed task files, code/test blobs match the
+verified candidate; unrelated WIP excluded and preserved. Working/index/committed-range
+diff hygiene PASS; docs links/consistency reviewed. All four owned test listeners absent.
+CI40962432948 in progress, no green claim:
+https://github.com/999MAX20/PlatformaCRM/actions/runs/40962432948
+Canonical PlatformaCRM, codex/ui-testing-toolkit. No deployment/working migration.
+Code/evidence/decision/publication remainder: none; CI result pending, AUD09 not started.
 
 Owner continued after AUD10 publication; only next bounded AUD08 accepted, AUD09
 not started. Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
 base878f97434863fb12b54b2e044f8a2088e23ab9b1. Starting dirty files/hashes in
 output/aud08-20261030/manifest.json and before/. Unrelated WIP preserved; final
 outside-delta.json empty. Candidate index reads Git blobs in canonical module paths,
-no source copy/worktree. Real index empty during verification. Publication pending.
+no source copy/worktree. Real index empty during verification. Publication receipt below.
 
 GlobalSearch/CommandPalette use existing Client q API with20-row pages and explicit
 load more. ClientPicker wraps existing SearchableSelect for Deal/Lead/actual TaskEditor;
@@ -75,7 +84,7 @@ Docs: roadmap/current frontend+CRM and Client/Lead-Deal/task passports updated f
 bounded search behavior. README, product, access, AI, integration, operations,
 capabilities and acceptance need no change: no setup/module/permission requirement,
 lifecycle/schema/provider/new acceptance-ID change. Historical risk report retained.
-Remaining code/evidence/owner decisions in AUD08: none. Publication/actual CI pending;
+Remaining code/evidence/owner decisions in AUD08: none. Publication complete; actual CI pending;
 deployment/live outside scope. Next AUD09 requires next instruction.
 Prior AUD10 CI40957243699 and OFFICIAL18 CI40956811723 both completed success30.10.
 
