@@ -1,0 +1,44 @@
+# Overlay docker-compose.yml; Docker Compose >=2.24 required for !reset.
+# Local compose stays unchanged. Only Caddy may publish ports in this stand.
+services:
+  web:
+    ports: !reset []
+  db:
+    ports: !reset []
+  redis:
+    ports: !reset []
+  stand-access:
+    build: ./deploy/stand-access
+    restart: unless-stopped
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      STAND_ORIGIN: ${STAND_ORIGIN:?Set HTTPS stand origin}
+      STAND_PASSWORD_HASH: ${STAND_PASSWORD_HASH:?Generate stand credentials}
+      STAND_SIGNING_KEY: ${STAND_SIGNING_KEY:?Generate stand credentials}
+      STAND_WEBHOOK_PATHS: ${STAND_WEBHOOK_PATHS:-[]}
+      STAND_PRODUCT: CRM
+      STAND_STATE_FILE: /state/attempts.json
+    volumes: [stand-access-state:/state]
+    mem_limit: 192m
+    cpus: 0.5
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    environment:
+      WEB_DOMAIN: ${WEB_DOMAIN:?Set stand domain}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    command: ["/bin/sh", "-c", "test -f /srv/index.html && exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
+    volumes:
+      - ./deploy/stand-access/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./frontend/dist:/srv:ro
+      - static_data:/static:ro
+      - stand-caddy-data:/data
+      - stand-caddy-config:/config
+    depends_on: [web, stand-access]
+volumes:
+  stand-access-state:
+  stand-caddy-data:
+  stand-caddy-config:

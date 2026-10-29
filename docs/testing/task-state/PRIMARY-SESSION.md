@@ -7464,3 +7464,58 @@ source archived native readback. Latest safety CI 37653976762 / 37654213713 и
 21 real-model continuity cases не сертифицируют последующее изменение защиты.
 CRM/Analytics development paused; существующий runtime не удалён/не выключен.
 HookActivationStatus REQUIRES_REVIEW_AND_TRUST; новой проверки runtime hook нет.
+
+## STAND-ACCESS-20261029 — implementation in progress
+User requests password-only access pages for CRM and Market in each product style.
+Scope: isolated Node entry authentication service + Caddy/Compose stand integration;
+no domain API, identity/tenant policy, DB migrations, live credentials or deployment.
+Risk: bypass through assets/API/direct ports, forged/expired cookies, CSRF, guessing,
+webhook exceptions and accidental exposure of pre-existing WIP.
+Checks: focused node HTTP security tests after service implementation, actual Caddy
+route integration with isolated dummy upstream, responsive RU/KK/EN browser flows,
+config validation and diff hygiene. No unrelated app rebuild/DB suite: application
+sources remain unchanged; gate modules have their own syntax/runtime/browser checks.
+Acceptance: one password field, server-enforced deny before content/API/static,
+HTTPS HttpOnly cookie, expiry/rotation/logout, persistent bounded rate limiter,
+exact POST webhook opt-ins preserving provider signature checks; fail closed.
+Sources reused: existing semantic tokens and auth style; Caddy forward_auth.
+Practice checklists read: Backend Architect (defense in depth, simple boundary),
+Frontend Developer (accessible responsive form and error/recovery).
+Starting Git evidence: output/stand-access-20261029/before-{head,status}.txt.
+CRM base7b9543d4 on codex/ui-testing-toolkit with foreign WIP; Market base5f51536
+on main with foreign output directory. Preserve all unrelated work.
+Local implementation/verification and scoped publication only; no live activation.
+
+### STAND-ACCESS-20261029 — local verification complete
+Implemented password-only RU/KK/EN entry pages using each project's semantic
+palette; shared dependency-free Node boundary + product-specific Caddy/Compose.
+No application domain/auth/tenant changes; no migrations, notifications, AI or
+BusinessEvent impact. Protected default deny covers API/assets/pages; exact POST
+webhook exceptions opt-in only. Persistent single-instance limits, CSRF/Origin,
+scrypt, signed8h cookies, rotation and device logout; no live secrets set.
+PASS in both canonical roots on Node24.18.0:
+- node --test deploy/stand-access/gate.test.mjs:10 tests each,0 failures/skips.
+- node deploy/stand-access/verify-edge.mjs with CADDY_BIN=Caddy2.10.2:
+  actual Caddy + isolated upstream, denied content, header forgery, preserved POST,
+  successful auth, exact webhook boundary and auth-service outage fail-closed.
+- node deploy/stand-access/verify-compose.mjs with COMPOSE_BIN=Compose5.6.1:
+  merged config selects protected Caddyfile; only Caddy publishes ports; state persists.
+- node --check all gate .mjs modules.
+- Chrome desktop1280x800/mobile390x844: RU/KK/EN rendering across both products,
+  wrong password recovery, Enter login, keyboard show/hide, device logout. No
+  horizontal overflow on inspected mobile page. Screenshots in output/playwright/stand-access.
+Evidence logs: output/stand-access-20261029/{tests,edge,compose}.txt.
+Retained failures: initial JS missing parenthesis fixed before tests; edge harness
+first global-block regex incorrectly matched env placeholder brace, fixed and
+actual routing rerun; browser caught no-referrer stripping Origin, changed to
+strict-origin-when-cross-origin and tested browser forms successfully. Initial
+README trailing blank line fixed. No failures hidden as baseline.
+Skip rationale: app TS/Python/Nest builds and DB suites not applicable: no app
+source/dependencies/schema changed; independent gateway module/runtime/UI gates
+run instead. Docker engine absent: Compose schema/merge and native Caddy proven,
+container image execution and real HTTPS/cloud/provider acceptance unproven.
+No full-project or production readiness claim. Deployment remains separate:
+operator must supply domain/unique passwords, include compose.stand.yaml, keep
+origin ports private and storage private, verify target TLS and real callbacks.
+Publication: scoped staging/normal push pending; preserve foreign WIP. No roadmap
+phase reopened/closed; operations and README document this bounded prerequisite.

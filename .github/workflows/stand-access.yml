@@ -1,0 +1,28 @@
+name: Stand access boundary
+on:
+  push:
+    paths: ['deploy/stand-access/**', 'compose.stand.yaml', '.github/workflows/stand-access.yml']
+  pull_request:
+    paths: ['deploy/stand-access/**', 'compose.stand.yaml', '.github/workflows/stand-access.yml']
+permissions:
+  contents: read
+jobs:
+  boundary:
+    runs-on: ubuntu-latest
+    env:
+      STAND_TEST_PRODUCT: CRM
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test deploy/stand-access/gate.test.mjs
+      - run: node deploy/stand-access/verify-compose.mjs
+      - name: Download pinned Caddy from official release
+        run: |
+          mkdir -p "$RUNNER_TEMP/stand-caddy"
+          cd "$RUNNER_TEMP/stand-caddy"
+          curl -fsSL -o caddy.tar.gz https://github.com/caddyserver/caddy/releases/download/v2.10.2/caddy_2.10.2_linux_amd64.tar.gz
+          tar -xzf caddy.tar.gz caddy
+          echo "CADDY_BIN=$RUNNER_TEMP/stand-caddy/caddy" >> "$GITHUB_ENV"
+      - run: node deploy/stand-access/verify-edge.mjs

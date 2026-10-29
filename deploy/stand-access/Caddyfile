@@ -1,0 +1,44 @@
+{
+  email ops@{$WEB_DOMAIN}
+}
+
+{$WEB_DOMAIN} {
+  encode zstd gzip
+  header {
+    X-Robots-Tag "noindex, nofollow, noarchive"
+    Cache-Control "no-store, private"
+    X-Content-Type-Options nosniff
+    X-Frame-Options DENY
+    Referrer-Policy strict-origin-when-cross-origin
+    Strict-Transport-Security "max-age=31536000"
+    -Server
+  }
+  route {
+    @gate path /_stand/access /_stand/logout
+    handle @gate {
+      reverse_proxy stand-access:8080 {
+        header_up X-Stand-Client {remote_host}
+      }
+    }
+    forward_auth stand-access:8080 {
+      uri /verify
+    }
+    @backend path /api /api/* /admin /admin/* /health/ /ready/
+    handle @backend {
+      reverse_proxy web:8000
+    }
+    handle_path /static/* {
+      root * /static
+      file_server
+    }
+    # Private uploads are available only through application authorization.
+    handle /media/* {
+      respond 404
+    }
+    handle {
+      root * /srv
+      try_files {path} /index.html
+      file_server
+    }
+  }
+}

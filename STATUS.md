@@ -700,3 +700,6 @@ PASS; итоговый commit определяется Git history, SHA/CI фи�
 Canonical root `C:/Users/user/Desktop/PlatformaCRM`; branch `codex/ui-testing-toolkit`.
 Generation 4 primary, transition idle — [.codex/project-session.json](.codex/project-session.json).
 История перенесена в архив; не продолжать старые задания по прежним записям.
+
+## STAND-ACCESS-20261029
+Password-only entry implemented for the dedicated stand overlay; RU/KK/EN style, server-side gate, persistent throttling, CSRF and cookie rotation.10 HTTP tests, actual Caddy edge/fail-closed, Compose port boundary and browser flows PASS. No live password/deployment; scoped publication pending. Details: STAND-ACCESS in PRIMARY and operations.
