@@ -8,6 +8,18 @@
 
 ## AUD-10-20261030 — reliable offline Lead commands (in progress)
 
+Publication30.10: OFFICIAL18 bae967bd9cba12f4226211a6c45dca2d449adb4a and AUD10
+8d710f0318d6bd9b4281e54c420d5e2cf0fd0a72 normal-pushed to origin/main; both remote
+SHA readbacks matched. All five approved prior commits are ancestors. Code/test blobs
+exactly match verified candidate;25-file AUD10 commit includes19 code/tests and6
+scoped documents, no unrelated WIP. CI40956811723 and CI40957243699 in progress;
+AUD10 backend migration/system/readiness steps pass, tests running; frontend build
+running. No CI-success claim. CI link: https://github.com/999MAX20/PlatformaCRM/actions/runs/40957243699
+Docs-only publication receipt follows; no application inputs changed or gate rerun
+required. Current code/evidence/decision/publication scope complete; actual CI remains
+pending, deployment/live outside scope. No background monitor or next task created.
+
+
 Final local result30.10: combined minimal OFFICIAL18 + AUD10 candidate65 tests PASS,
 zero skips; prerequisite-only28 PASS. AUD10-only36 PASS is explicitly superseded by
 its additional failing OWN-assignment gate (1 FAIL), not called releasable. Final
@@ -38,8 +50,7 @@ returned WinError32 on its disposable gate.sqlite3. Preserved for recovery, no m
 recursive removal/working DB touched; this cleanup issue does not change passed tests.
 Working/index diff hygiene and task links/anchors PASS; real index empty.
 Remaining code/evidence in local combined scope: none.
-Remaining publication: reviewed AUD10 commit/normal push, remote SHA and actual CI;
-owner authorization complete and prerequisite already published.
+Publication/remote verification complete; CI pending as recorded above. Owner authorization complete.
 Scope of deployment/working DB remains excluded. Next roadmap item after completion
 is AUD08/09, requiring its own instruction; current pending publication is same task.
 

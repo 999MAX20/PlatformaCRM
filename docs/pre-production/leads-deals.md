@@ -44,7 +44,8 @@ build/types/options2 и targeted browser PASS; рабочие миграции/d
 [AUD-19 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified). Поиск/выбор остаётся AUD-08. AUD-10 добавляет durable keys для заметок/задач,
 отказ без потери ввода при storage error, видимый conflict/retry/discard и достижимые
 формы в карточке. Replay/окно1ч и текущие права — [контракт](../current/frontend.md#offline-данные-заявок--aud-01-17102026);
-проверки точного кандидата и публикация — AUD-10-20261030 в PRIMARY. AUD-01 реализует изоляцию offline-кэша и очереди
+опубликовано8d710f03 после OFFICIAL18 bae967bd; remote SHA подтверждён, CI40957243699 выполняется.
+Проверки точного кандидата и ограничения — AUD-10-20261030 в PRIMARY. AUD-01 реализует изоляцию offline-кэша и очереди
 по пользователю/Business/правам, очистку при logout/expiry, замену пустым ответом
 и fallback только при временной/сетевой ошибке. Это до 50 ранее загруженных строк,
 не полная offline-база; pending queue очищается вместе с сессией.
