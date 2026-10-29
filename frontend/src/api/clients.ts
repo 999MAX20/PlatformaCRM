@@ -23,6 +23,7 @@ export type ClientListFacets = {
 };
 
 type ClientListFilterParams = {
+  business?: Id;
   q?: string;
   ordering?: string;
   source?: string;

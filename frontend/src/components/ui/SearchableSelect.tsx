@@ -1,8 +1,10 @@
 import { Check, ChevronDown, Search, X } from "lucide-react";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
+import { Button } from "./Button";
+import { ErrorState } from "./StateViews";
 import { PopoverSurface } from "./Overlay";
 
 export type SearchableSelectOption = {
@@ -18,9 +20,22 @@ type SearchableSelectProps = {
   options: SearchableSelectOption[];
   placeholder?: string;
   emptyLabel?: string;
+  emptyAction?: ReactNode;
+  error?: string;
   disabled?: boolean;
   className?: string;
   onChange: (value: string) => void;
+  selectedOption?: SearchableSelectOption;
+  remote?: {
+    onSearch: (query: string) => void;
+    onOpen: (open: boolean) => void;
+    loading: boolean;
+    error: unknown;
+    retry: () => void;
+    hasMore: boolean;
+    loadMore: () => void;
+    loadingMore: boolean;
+  };
 };
 
 export function SearchableSelect({
@@ -29,28 +44,37 @@ export function SearchableSelect({
   options,
   placeholder,
   emptyLabel,
+  emptyAction,
+  error,
   disabled,
   className,
   onChange,
+  remote,
+  selectedOption: providedSelection,
 }: SearchableSelectProps) {
   const { t } = useI18n();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const labelId = useId();
+  const errorId = useId();
   const valueId = useId();
   const listboxId = useId();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const selectedOption = options.find((option) => option.value === value);
+  const selectedOption = providedSelection || options.find((option) => option.value === value);
   const displayPlaceholder = placeholder || t("common.select");
   const normalizedQuery = query.trim().toLowerCase();
   const filteredOptions = useMemo(() => {
+    if (remote) return options;
     if (!normalizedQuery) return options.slice(0, 80);
     return options
       .filter((option) => `${option.label} ${option.description || ""} ${option.searchText || ""}`.toLowerCase().includes(normalizedQuery))
       .slice(0, 80);
-  }, [normalizedQuery, options]);
+  }, [normalizedQuery, options, remote]);
+
+  useEffect(() => { remote?.onSearch(query); }, [query, remote?.onSearch]);
+  useEffect(() => { remote?.onOpen(open); }, [open, remote?.onOpen]);
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {
@@ -75,7 +99,15 @@ export function SearchableSelect({
   }
 
   return (
-    <div ref={wrapperRef} className={cn("relative block", className)}>
+    <div ref={wrapperRef} className={cn("relative block", className)} onKeyDown={(event) => {
+      if (open && event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        setOpen(false);
+        setQuery("");
+        requestAnimationFrame(() => triggerRef.current?.focus());
+      }
+    }}>
       {label ? <span id={labelId} className="mb-2 block text-sm font-semibold text-platforma-subtle">{label}</span> : null}
       <button
         ref={triggerRef}
@@ -86,6 +118,8 @@ export function SearchableSelect({
           value && "pr-16",
         )}
         aria-labelledby={label ? `${labelId} ${valueId}` : valueId}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
         aria-controls={open ? listboxId : undefined}
         aria-expanded={open}
         aria-haspopup="listbox"
@@ -121,6 +155,7 @@ export function SearchableSelect({
         </button>
       ) : null}
 
+      {error ? <p id={errorId} role="alert" className="mt-1 text-sm text-platforma-danger">{error}</p> : null}
       {open ? (
         <PopoverSurface id={listboxId} role="listbox" className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden">
           <div className="border-b border-platforma-border p-2">
@@ -136,9 +171,9 @@ export function SearchableSelect({
                     setQuery("");
                     requestAnimationFrame(() => triggerRef.current?.focus());
                   }
-                  if (event.key === "Enter" && filteredOptions[0]) {
+                  if (event.key === "Enter") {
                     event.preventDefault();
-                    selectValue(filteredOptions[0].value);
+                    if (filteredOptions[0] && !remote?.loading) selectValue(filteredOptions[0].value);
                   }
                 }}
                 className="platforma-focus-ring h-10 w-full rounded-control border border-platforma-control bg-surface-card pl-9 pr-3 text-sm font-semibold text-platforma-text placeholder:text-platforma-faint"
@@ -184,7 +219,10 @@ export function SearchableSelect({
                 </button>
               );
             })}
-            {!filteredOptions.length ? <p className="px-3 py-4 text-sm font-semibold text-platforma-faint">{t("common.noResults")}</p> : null}
+            {remote?.loading ? <p role="status" className="px-3 py-4 text-sm">{t("common.loading")}</p> : null}
+            {remote?.error ? <ErrorState error={remote.error} action={<Button type="button" onClick={remote.retry}>{t("common.retry")}</Button>} /> : null}
+            {remote?.hasMore && !remote.error ? <Button type="button" className="w-full" disabled={remote.loading || remote.loadingMore} onClick={remote.loadMore}>{t("common.showMore")}</Button> : null}
+            {!filteredOptions.length && !remote?.loading && !remote?.error ? <div className="px-3 py-4"><p className="text-sm font-semibold text-platforma-faint">{t("common.noResults")}</p>{emptyAction}</div> : null}
           </div>
         </PopoverSurface>
       ) : null}

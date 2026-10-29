@@ -1,3 +1,5 @@
+import { useClientSearch } from "../../hooks/useClientSearch";
+import { ErrorState } from "../ui/StateViews";
 import { CalendarCheck, Inbox, KanbanSquare, ListChecks, MessageCircle, Search, User, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router";
@@ -63,9 +65,9 @@ export function GlobalSearch() {
   const activeContext = useMemo(() => getSearchContext(location.pathname), [location.pathname]);
   const rendersPageSearchInline = scope === "page" && activeContext.id === "tasks";
   const shouldLoadSearchData = open || mobileExpanded;
-  const { clients, leads, appointments, services, deals, tasks, botConversations } = useEntityData({
+  const { leads, appointments, services, deals, tasks, botConversations } = useEntityData({
     enabled: shouldLoadSearchData,
-    clients: true,
+    clients: false,
     leads: true,
     appointments: true,
     services: true,
@@ -73,6 +75,10 @@ export function GlobalSearch() {
     tasks: true,
     botConversations: true,
   });
+
+  const clientSearchEnabled = shouldLoadSearchData && (scope === "global" || activeContext.id === "clients" || activeContext.id === "default");
+  const clientSearch = useClientSearch(query, clientSearchEnabled);
+  const clients = { data: clientSearchEnabled ? clientSearch.clients : [] };
 
   const items = useMemo<SearchItem[]>(() => {
     const clientList = (clients.data || []) as Client[];
@@ -141,8 +147,9 @@ export function GlobalSearch() {
   const results = useMemo(() => {
     const value = query.trim().toLowerCase();
     const scopedItems = scope === "page" && activeContext.id !== "default" ? items.filter((item) => activeContext.types.includes(item.type)) : items;
-    if (!value) return scopedItems.slice(0, 8);
-    return scopedItems.filter((item) => item.haystack.toLowerCase().includes(value)).slice(0, 12);
+    const clientResults = scopedItems.filter(item => item.type === "client");
+    const otherResults = scopedItems.filter(item => item.type !== "client" && (!value || item.haystack.toLowerCase().includes(value))).slice(0, value ? 12 : 8);
+    return [...clientResults, ...otherResults];
   }, [activeContext.types, items, query, scope]);
 
   useEffect(() => {
@@ -289,7 +296,10 @@ export function GlobalSearch() {
                 </Link>
               );
             })}
-            {!results.length ? <p className="px-3 py-6 text-center text-sm text-platforma-faint">{t("search.empty")}</p> : null}
+            {clientSearchEnabled && clientSearch.loading ? <p role="status" className="p-3">{t("common.loading")}</p> : null}
+            {clientSearchEnabled && clientSearch.error ? <ErrorState error={clientSearch.error} action={<Button onClick={() => void clientSearch.refetch()}>{t("common.retry")}</Button>} /> : null}
+            {clientSearchEnabled && clientSearch.hasNextPage && !clientSearch.error ? <Button className="w-full" disabled={clientSearch.loading || clientSearch.isFetchingNextPage} onClick={() => void clientSearch.fetchNextPage()}>{t("common.showMore")}</Button> : null}
+            {!results.length && !clientSearch.loading && !clientSearch.error ? <p className="px-3 py-6 text-center text-sm text-platforma-faint">{t("search.empty")}</p> : null}
           </div>
         </div>
       ) : null}

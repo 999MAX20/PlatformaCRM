@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from django.db import models
 from django.db.models import BooleanField, Case, CharField, Count, DateTimeField, Exists, F, IntegerField, OuterRef, Q, Subquery, Value, When
 from django.db.models.functions import Cast, Coalesce, Greatest, NullIf
@@ -44,6 +45,15 @@ def client_queryset_for_request(queryset, request, *, client_ids=None, apply_qui
 
 
 def filter_client_queryset(queryset, request, *, client_ids=None):
+    if "business" in request.query_params:
+        try:
+            business_id = serializers.IntegerField(min_value=1, max_value=2**63 - 1).run_validation(
+                request.query_params["business"]
+            )
+        except serializers.ValidationError as error:
+            raise serializers.ValidationError({"business": error.detail}) from error
+        # The incoming queryset already enforces current membership and VIEW scope.
+        queryset = queryset.filter(business_id=business_id)
     search = request.query_params.get("q") or request.query_params.get("search")
     source = request.query_params.get("source")
     tag_id = request.query_params.get("tag")

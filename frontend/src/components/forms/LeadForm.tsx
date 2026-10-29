@@ -1,3 +1,4 @@
+import { ClientPicker } from "./ClientPicker";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -50,7 +51,6 @@ export function LeadForm({
   const selectableServices = services.filter(
     (service) => (service.is_active && !service.is_archived) || service.id === initial?.service,
   );
-  const hasClients = clients.length > 0;
   const hasServices = selectableServices.length > 0;
   const form = useForm<InputValues, unknown, Values>({
     resolver: zodResolver(createSchema(t)),
@@ -93,23 +93,10 @@ export function LeadForm({
         // The owning mutation renders localized, recoverable action feedback.
       }
     })}>
-      {!hasClients ? (
-        <StatusNotice
-          tone="warning"
-          title={t("leadForm.needClientTitle")}
-          description={t("leadForm.needClientText")}
-          action={<Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-platforma-warning underline-offset-4 hover:underline" to="/app/clients?create=1">
-            {t("clients.create")}
-          </Link>}
-        />
-      ) : null}
-      <Select
-        label={t("appointment.client")}
+      <ClientPicker businessId={businessId} value={clientId ? String(clientId) : ""}
+        onChange={(value) => form.setValue("client", Number(value), { shouldValidate: true })}
         error={form.formState.errors.client?.message}
-        options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: `${client.full_name} ${client.phone || ""}` }))]}
-        {...form.register("client")}
-        value={clientId}
-      />
+        createAction={<Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-brand-700 underline-offset-4 hover:underline" to="/app/clients?create=1">{t("clients.create")}</Link>} />
       {duplicates.length || relatedLeadsCount ? (
         <StatusNotice
           tone="warning"
@@ -166,7 +153,7 @@ export function LeadForm({
       </div>
       <Textarea label={t("leadForm.message")} rows={3} {...form.register("message")} />
       <div className="sticky bottom-0 flex justify-end border-t border-platforma-border bg-surface-card py-3">
-        <Button data-testid="lead-action-submit" type="submit" className="w-full sm:w-auto" isLoading={form.formState.isSubmitting} disabled={!hasClients}>{duplicates.length || relatedLeadsCount ? t("clients.createAnyway") : t("clients.save")}</Button>
+        <Button data-testid="lead-action-submit" type="submit" className="w-full sm:w-auto" isLoading={form.formState.isSubmitting} disabled={!clientId}>{duplicates.length || relatedLeadsCount ? t("clients.createAnyway") : t("clients.save")}</Button>
       </div>
     </form>
   );

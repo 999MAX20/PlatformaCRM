@@ -6,6 +6,79 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-08-20261030 — Client search and selection verified locally
+
+Owner continued after AUD10 publication; only next bounded AUD08 accepted, AUD09
+not started. Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+base878f97434863fb12b54b2e044f8a2088e23ab9b1. Starting dirty files/hashes in
+output/aud08-20261030/manifest.json and before/. Unrelated WIP preserved; final
+outside-delta.json empty. Candidate index reads Git blobs in canonical module paths,
+no source copy/worktree. Real index empty during verification. Publication pending.
+
+GlobalSearch/CommandPalette use existing Client q API with20-row pages and explicit
+load more. ClientPicker wraps existing SearchableSelect for Deal/Lead/actual TaskEditor;
+selected ID hydrated independently, query/business/user cache scoped, stale debounce
+results hidden. Loading/error/empty/retry and empty-result create action retained.
+Escape consumes dropdown close, retains form and restores focus; empty Enter cannot
+submit. Existing local Select consumers keep local filtering; representative local
+SearchableSelect behavior covered. Old TaskFormModal was found unused; own change
+there reverted. Calendar catalog and unrelated entity searches remain outside this
+bounded correction; no listAll introduced. No clinical terminology or mock UI added.
+
+Existing Client selector ignored business query: two accessible Businesses mixed.
+Reproduced2 methods/4 failures, then optional positive bigint business filter added
+after existing membership/VIEW scope, invalid values400. No business param preserves
+existing cross-accessible list contract. No access grants/state transitions/schema,
+notification/BusinessEvent/AI/env/working DB/provider/deployment changes.
+
+PASS exact final candidate:36 tests/no skips (search_pagination8, owning clients13,
+workspace and sensitive-note dependents), system and migration drift.14 Node checks
+exercise actual hook config/handlers and existing form resolver schemas. Full app+
+widget build/i18n and forced TypeScript build PASS. No dependency reinstall/full
+local E2E/production/PG concurrency certification; read filters introduce no locking.
+Exact commands (canonical root unless stated):
+- .venv/Scripts/python.exe output/aud08-20261030/run_candidate.py candidate-final test
+  apps.clients.tests_search_pagination apps.clients.tests
+  apps.clients.tests_workspace_filters apps.clients.tests_sensitive_notes --noinput
+- same runner candidate-system check; candidate-drift makemigrations --check --dry-run
+- frontend cwd, NODE_OPTIONS=--require=C:/Users/user/Desktop/PlatformaCRM/output/aud08-20261030/frontend-snapshot.cjs:
+  npm run build; node node_modules/typescript/bin/tsc -b --force;
+  node --test scripts/tests/client-search.test.mjs scripts/tests/form-resolver-compatibility.test.mjs
+Logs/json: candidate-final/system/drift, candidate-build-final.log,
+candidate-types-force.log, candidate-node.log. Earlier candidate18/build PASS predates
+business filter/actual TaskEditor, superseded by final checks. Source hashes and
+candidate.patch/task-paths.json identify tested boundaries, not full working WIP.
+
+Browser synthetic106 clients: old Client beyond first50 found/opened via global
+search and command palette; selector6 pages/105 matches, >80 options accessible;
+empty/loading/network-block/retry, Enter selection/no duplicate, Escape/focus PASS.
+Deal and Lead created with old Client; Task old-ID label hydrates, real create and
+client change succeed. RU1280x800 and RU/KK/EN390x844 screenshots PASS/no horizontal
+overflow. Exact candidate browser on53208/53207 repeats search->Client->Task with
+persisted changed Client and account switch: restricted role sees no cached Client,
+Deal Client picker disabled. Working browser51700/51699 used disposable DB. Screenshot
+files and browser-evidence.json in output/aud08-20261030. External network denied,
+no real credentials/provider calls/merchant DB. Temporary test tabs closed except
+initial failed attachment may remain for automatic tab cleanup. Owned runtimes stopped via stop/stop-candidate; all four listeners confirmed absent30.10.
+
+Retained failures: initial API denial test expected403; current code returns200 with
+empty scoped results/count/summary and detail404. Corrected to actual policy,5 PASS.
+Initial Node harness recursively revisited root on undefined; fixed walker,14 PASS.
+Python edit lacked UTF8 for KK/RU, stopped before those edits; rerun UTF8 and repaired
+new file separator, types/i18n/build PASS. Initial i18n command used root instead of
+frontend cwd, corrected. Browser selectors occasionally targeted stale label/viewport;
+observed state and corrected, no app failure masked. Escape parent-close reproduced
+and fixed with regression. Multibusiness failures retained in business-before.log;
+focused8 business-after.log PASS before final dependent tests.
+
+Docs: roadmap/current frontend+CRM and Client/Lead-Deal/task passports updated for
+bounded search behavior. README, product, access, AI, integration, operations,
+capabilities and acceptance need no change: no setup/module/permission requirement,
+lifecycle/schema/provider/new acceptance-ID change. Historical risk report retained.
+Remaining code/evidence/owner decisions in AUD08: none. Publication/actual CI pending;
+deployment/live outside scope. Next AUD09 requires next instruction.
+Prior AUD10 CI40957243699 and OFFICIAL18 CI40956811723 both completed success30.10.
+
 ## AUD-10-20261030 — reliable offline Lead commands (in progress)
 
 Publication30.10: OFFICIAL18 bae967bd9cba12f4226211a6c45dca2d449adb4a and AUD10

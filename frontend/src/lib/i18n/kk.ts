@@ -2004,6 +2004,7 @@ export const kk: Record<string, string> = {
   "common.client": "Клиент",
   "common.service": "қызмет",
   "common.today": "бүгін",
+  "common.showMore": "Тағы көрсету",
   "common.loading": "Жүктелуде...",
   "common.loadingData": "Деректер жүктелуде...",
   "common.loadingAccess": "Қолжетім жүктелуде...",

@@ -1,3 +1,4 @@
+import { ClientPicker } from "../../../components/forms/ClientPicker";
 import { Modal } from "../../../components/ui/Modal";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
@@ -51,8 +52,6 @@ export function CreateDealModal({
           onSubmit();
         }}
       >
-        {!clients.length ? <StatusNotice tone="warning" title={t("deals.needClientFirst")}
-          action={onCreateClient ? <Button type="button" size="sm" variant="secondary" onClick={onCreateClient}>{t("clients.create")}</Button> : undefined} /> : null}
         <Input
           placeholder={t("deals.titlePlaceholder")}
           value={form.title}
@@ -61,19 +60,8 @@ export function CreateDealModal({
           }
           required
         />
-        <Select
-          value={form.client}
-          onChange={(event) =>
-            onFormChange({ ...form, client: event.target.value })
-          }
-          options={[
-            { value: "", label: t("deals.selectClient") },
-            ...clients.map((client) => ({
-              value: String(client.id),
-              label: client.full_name,
-            })),
-          ]}
-        />
+        <ClientPicker value={form.client} onChange={(client) => onFormChange({ ...form, client })}
+          createAction={onCreateClient ? <Button type="button" size="sm" variant="secondary" onClick={onCreateClient}>{t("clients.create")}</Button> : undefined} />
         <Select
           value={form.pipeline || String(defaultPipeline?.id || "")}
           onChange={(event) =>
@@ -122,7 +110,7 @@ export function CreateDealModal({
           data-testid="deal-action-submit"
           type="submit"
           isLoading={isPending}
-          disabled={!clients.length || !stages.length}
+          disabled={!form.client || !stages.length}
         >
           {t("common.save")}
         </Button>

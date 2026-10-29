@@ -460,3 +460,10 @@ resource IDs. Общая цепочка история → обращение �
 проверяется в platform-details, включая RU/KK/EN и mobile; evidence и границы
 общей приёмки — PLATFORM-ADMIN-ACCEPTANCE-20261016 в
 [checkpoint](../testing/task-state/PRIMARY-SESSION.md).
+
+AUD-08: глобальный поиск и командная палитра ищут клиентов на сервере и подгружают
+страницы по20. Формы сделки, заявки и TaskEditor используют общий ClientPicker;
+выбранный клиент загружается по ID независимо от страницы. Кэш разделён по Business,
+пользователю и запросу; loading/error/empty/retry различаются. Escape закрывает список,
+сохраняя форму; Enter при пустом результате не отправляет её. RU/KK/EN, desktop/mobile
+и scoped candidate проверки PASS; версия/публикация — AUD-08-20261030 в PRIMARY.

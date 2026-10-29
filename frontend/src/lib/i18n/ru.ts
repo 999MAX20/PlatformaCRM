@@ -1999,6 +1999,7 @@ export const ru: Record<string, string> = {
   "common.client": "Клиент",
   "common.service": "услугу",
   "common.today": "сегодня",
+  "common.showMore": "Показать ещё",
   "common.loading": "Загрузка...",
   "common.loadingData": "Загружаем данные...",
   "common.loadingAccess": "Загружаем доступ...",

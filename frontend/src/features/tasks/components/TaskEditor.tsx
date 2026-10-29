@@ -1,3 +1,4 @@
+import { ClientPicker } from "../../../components/forms/ClientPicker";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { tasksApi, type TaskCreatePayload } from "../../../api/tasks";
@@ -92,7 +93,7 @@ export function TaskEditor({ task, business, zone, initialClient, parentDirty = 
         {allowedLinks.length ? <fieldset className="space-y-3">
           <legend className="mb-2 text-sm font-semibold">{t("taskWorkspace.links")}</legend>
           <Select aria-label={t("taskWorkspace.links")} value={relation} onChange={e => setRelation(e.target.value as TaskRelationType)} options={allowedLinks.map(value => ({ value, label: t(`taskWorkspace.link.${value}`) }))} />
-          {allowedLinks.includes(relation) ? <TaskRelationPicker key={relation} type={relation} business={business} taskId={task?.id} value={draft[relation]} label={task?.relations?.find(v => v.type === relation)?.title} onChange={value => change(relation, value)} /> : null}
+          {allowedLinks.includes(relation) ? relation === "client" ? <ClientPicker businessId={business} value={draft.client} onChange={value => change("client", value)} placeholder={t("taskWorkspace.none")} /> : <TaskRelationPicker key={relation} type={relation} business={business} taskId={task?.id} value={draft[relation]} label={task?.relations?.find(v => v.type === relation)?.title} onChange={value => change(relation, value)} /> : null}
           <div className="flex flex-wrap gap-2">{links.filter(field => draft[field]).map(field => <span key={field} className="rounded-control bg-surface-muted px-2 py-1 text-xs">{t(`taskWorkspace.link.${field}`)} #{draft[field]}</span>)}</div>
         </fieldset> : null}
       </div> : null}

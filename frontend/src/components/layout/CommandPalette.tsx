@@ -1,3 +1,6 @@
+import { useClientSearch } from "../../hooks/useClientSearch";
+import { ErrorState } from "../ui/StateViews";
+import { Button } from "../ui/Button";
 import { Plus, Search, Settings, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
@@ -50,11 +53,14 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
   const canViewClients = hasPermission(user, businessId, "clients");
   const canViewLeads = hasPermission(user, businessId, "leads");
   const canViewServices = hasPermission(user, businessId, "settings");
-  const { clients, leads, services } = useEntityData({
-    clients: canViewClients,
+  const { leads, services } = useEntityData({
+    clients: false,
     leads: canViewLeads,
     services: canViewServices,
   });
+
+  const clientSearch = useClientSearch(query);
+  const clients = { data: clientSearch.clients };
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -107,12 +113,13 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     }));
     return [...staticCommands, ...leadCommands, ...clientCommands, ...serviceCommands];
   }, [businessId, canViewClients, canViewLeads, canViewServices, clients.data, leads.data, services.data, t, user]);
-  const filtered = commands
-    .map((command) => ({ command, score: commandScore(`${command.label} ${command.hint}`, query) + command.priority }))
+  const ranked = commands
+    .map((command) => ({ command, score: (command.id.startsWith("client-") ? (query.trim() ? 800 : 1) : commandScore(`${command.label} ${command.hint}`, query)) + command.priority }))
     .filter((item) => !query.trim() || item.score > item.command.priority)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 10)
     .map((item) => item.command);
+  const otherCommands = new Set(ranked.filter(item => !item.id.startsWith("client-")).slice(0, 10));
+  const filtered = ranked.filter(item => item.id.startsWith("client-") || otherCommands.has(item));
 
   return (
     <div className="fixed inset-0 z-[80] bg-platforma-ink/[0.35] p-4 backdrop-blur-xs" onClick={onClose}>
@@ -155,9 +162,12 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                 <span className="shrink-0 rounded-control bg-surface-muted px-2 py-1 text-[11px] font-semibold text-platforma-faint">Cmd K</span>
               </button>
             );
-          }) : (
+          }) : !clientSearch.loading && !clientSearch.error ? (
             <p className="px-3 py-8 text-center text-sm font-semibold text-platforma-faint">{t("command.empty")}</p>
-          )}
+          ) : null}
+          {clientSearch.loading ? <p role="status">{t("common.loading")}</p> : null}
+          {clientSearch.error ? <ErrorState error={clientSearch.error} action={<Button onClick={() => void clientSearch.refetch()}>{t("common.retry")}</Button>} /> : null}
+          {clientSearch.hasNextPage && !clientSearch.error ? <Button disabled={clientSearch.loading || clientSearch.isFetchingNextPage} onClick={() => void clientSearch.fetchNextPage()}>{t("common.showMore")}</Button> : null}
         </div>
       </div>
     </div>

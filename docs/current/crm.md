@@ -517,3 +517,10 @@ Same-client правила всех комбинаций связей, ранн�
 [scheduling](../../archive_docs/2026-10-07/docs/crm/specialist-scheduling.md),
 [payments](../../archive_docs/2026-10-07/docs/crm/client-payments.md).
 Они сохранены для проверки происхождения, не для выдачи задач или старых правил.
+
+AUD-08: `/api/clients/?business=<id>&q=<query>&page=<n>&page_size=<n>` ограничивает
+поиск выбранным Business внутри текущей области VIEW. Необязательный business —
+положительный bigint; неверный ID даёт400, чужой недоступный бизнес — пустую выборку.
+Без business прежний контракт доступной совокупности сохраняется. Архив/field policy
+не меняются. ClientPicker использует list/detail, не новый endpoint; проверки и граница
+публикации — AUD-08-20261030 в PRIMARY.

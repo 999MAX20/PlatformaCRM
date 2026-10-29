@@ -6,6 +6,12 @@
 
 # PlatformaCRM — текущий статус
 
+AUD-08-20261030: paged server Client search and async Deal/Lead/Task selection
+verified locally; optional business filter prevents mixing accessible businesses.
+Exact candidate36 backend/14 Node/system/drift/build/forced types and targeted
+browser RU/KK/EN PASS. Publication/CI pending; no deployment/working DB changes.
+Details and retained failures — AUD08 in PRIMARY. Next AUD09 not started.
+
 AUD-10-20261030: offline queue/replay/recovery locally verified and published
 8d710f03; prerequisite OFFICIAL18 bae967bd. Both normal pushes/remote SHAs confirmed.
 Combined65 backend, Node18, build/types/system/drift and targeted browser PASS.

@@ -2001,6 +2001,7 @@ export const en: Record<string, string> = {
   "common.client": "Client",
   "common.service": "service",
   "common.today": "today",
+  "common.showMore": "Show more",
   "common.loading": "Loading...",
   "common.loadingData": "Loading data...",
   "common.loadingAccess": "Loading access...",
