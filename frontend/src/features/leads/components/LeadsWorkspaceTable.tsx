@@ -62,6 +62,7 @@ export function LeadsWorkspaceTable({
   onExportExcel,
   onShareView,
   onOpenImport,
+  onOpenForms,
   onSelectLead,
   onOpenLead,
   onToggleBulkLead,
@@ -104,6 +105,7 @@ export function LeadsWorkspaceTable({
   onExportExcel: () => void;
   onShareView: () => void;
   onOpenImport: () => void;
+  onOpenForms?: () => void;
   onOpenCreate: () => void;
   onSelectLead: (lead: Lead) => void;
   onOpenLead: (lead: Lead) => void;
@@ -172,6 +174,7 @@ export function LeadsWorkspaceTable({
           onExportExcel={onExportExcel}
           onShareView={onShareView}
           onOpenImport={onOpenImport}
+          onOpenForms={onOpenForms}
         />
       }
     >

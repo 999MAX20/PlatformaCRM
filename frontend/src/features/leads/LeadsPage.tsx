@@ -27,6 +27,7 @@ import { useLeadsPageHeader } from "./hooks/useLeadsPageHeader";
 import { useLeadsTableState } from "./hooks/useLeadsTableState";
 import { useLeadsWorkspaceData } from "./hooks/useLeadsWorkspaceData";
 import { toDateTimeLocal } from "./utils/leadStorage";
+import { LeadCaptureFormsModal } from "./components/LeadCaptureFormsModal";
 import { ImportPanel } from "../integrations/components/ImportPanel";
 
 export function LeadsPage() {
@@ -40,6 +41,8 @@ export function LeadsPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [createClientId, setCreateClientId] = useState<Id | undefined>();
   const [importOpen, setImportOpen] = useState(false);
+  const [formsOpen, setFormsOpen] = useState(false);
+  const openForms = useCallback(() => setFormsOpen(true), []);
   const [appointmentOpen, setAppointmentOpen] = useState(false);
   const [drawerEntity, setDrawerEntity] = useState<CrmDrawerEntity | null>(
     null,
@@ -100,10 +103,6 @@ export function LeadsPage() {
   } = useLeadsTableState({ searchParams, t, onNotice: setNotice });
   const { pushHistory } = useLeadActionHistory({ t, onNotice: setNotice });
 
-  useLeadsPageHeader({
-    t,
-    onCreateLead: openCreateLead,
-  });
 
   const {
     business,
@@ -211,6 +210,7 @@ export function LeadsPage() {
     if (page > pageCount) setPage(pageCount);
   }, [page, pageCount]);
 
+  useLeadsPageHeader({ t, onCreateLead: openCreateLead });
   const createContext = useClientCreateIntent({ businessId: business?.id, allowed: hasPermission(user, business?.id, "leads", "create"), onOpen: openLinkedLead });
   const legacyLeadId = Number(searchParams.get("lead") || "");
   if (Number.isFinite(legacyLeadId) && legacyLeadId > 0) {
@@ -265,6 +265,7 @@ export function LeadsPage() {
           onExportExcel={() => exportRows("excel")}
           onShareView={shareView}
           onOpenImport={() => setImportOpen(true)}
+          onOpenForms={hasPermission(user, business.id, "leads", "view") ? openForms : undefined}
           onOpenCreate={openCreateLead}
           onSelectLead={openLead}
           onOpenLead={openLead}
@@ -288,6 +289,8 @@ export function LeadsPage() {
             setPage(1);
           }}
         />
+
+      {formsOpen && <LeadCaptureFormsModal key={`${business.id}:${user?.id}`} business={business.id} onClose={() => setFormsOpen(false)} />}
 
       <LeadsActionOverlays
         contextMenu={contextMenu}

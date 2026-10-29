@@ -7,7 +7,184 @@
 # PRIMARY-SESSION — PlatformaCRM
 
 
-## CI-REPAIR-20261029 — migration isolation and dependency advisories (in progress)
+
+## AUD-19-20261029 — lead form field tenant resolution and editor (verified)
+
+Final publication candidate29.10 supersedes the earlier blocked-build boundary.
+CI-repair acb8687ed99f6a1882b1b74f1708f340debd1559 was published separately;
+[CI40832440547](https://github.com/999MAX20/PlatformaCRM/actions/runs/40832440547)
+is complete success for backend/frontend and dependency audits. AUD19 is17 source/
+test files on that exact base, plus scoped docs, excluding other security/notification
+WIP. No working migrations, deployment/provider action or new phase.
+
+Artifacts: Temp/aud19-publication-20261029/aud19. Isolated candidate imports Git blobs
+at canonical paths. `.venv/Scripts/python.exe <artifact>/run_candidate.py affected
+ test apps.leads.tests_form_field_access apps.leads.tests_forms
+ apps.core.tests_tenant_isolation apps.automations.tests
+ apps.bots.tests.BotsFoundationTests apps.clients.tests_merge_atomicity -v1 --noinput`:
+80 PASS/no skips on DRF3.18.3. Same runner `system check` and
+`drift makemigrations --check --dry-run` PASS. Backend unchanged after these runs.
+Frontend with NODE_OPTIONS=--require=<artifact>/frontend-snapshot.cjs in frontend/:
+`npm run build` PASS (6466 keys/types/app/widget); final log build-pattern-fixed.log.
+`node --test scripts/tests/capture-field-options.test.mjs`:2 PASS. No reinstall.
+
+Candidate browser uses runtime.py, isolated SQLite/fixtures, canonical backend59405/
+frontend59406, reviewed Python/JS index overlays. Real mouse/keyboard CRUD, duplicate
+key400 with retained input/recovery, persisted edit/reopen, confirmed delete, empty
+form and role reader without create/edit/delete PASS. RU desktop1036x703, KK/EN and
+reader mobile390x844, Escape/focus return to More PASS. Earlier unchanged detailed
+field-select metadata evidence retained. Screenshots output/playwright/aud19-pub-*.png.
+Publication review found1036px header search intercepting new entry: moved entry to
+existing Leads More ActionMenu (same translated label/current VIEW policy), without
+shared header changes. Modern browser pattern rejected an unescaped hyphen: fixed
+HTML pattern, real browser proves bad-space key invalid and valid-key_1 accepted.
+No new architectural/state/API policy. React hooks/types/shared-menu review PASS.
+
+Retained failures: original overlap screenshot and invalid-pattern console evidence;
+Windows temporary SQLite cleanup file lock after stopping runtime (no recursive
+manual cleanup attempted); one refresh-token500 from SQLite database-is-locked,
+subsequent requests recovered. No SQLite concurrency repair claimed; auth tests and
+full CI-repair backend PASS. Task-owned browser closed; backend/frontend listeners
+59405/59406 and first52227/52228 absent after shutdown; disposable folders retained.
+Code/evidence/owner decision remainder: none in this scope. Publication pending at
+this snapshot; remote SHA/CI follows below. Environment deployment/live separate.
+Roadmap/CRM/access/frontend/leads-deals passport aligned to More-menu flow and evidence.
+README/AI/integrations/operations unchanged: no new setup/provider/config contract.
+AUD-10 unstarted and needs a new instruction. Unrelated WIP preserved; real index
+empty before explicit task-only staging. Historical attempts below are retained.
+
+
+Owner authorizes repair, required checks and roadmap update. Root canonical
+PlatformaCRM, branch codex/ui-testing-toolkit, base8ee55d756b79c391e3de4a2f93fb2bfbe211aaf2.
+Mode implementation/code+reachable-UI gap. Starting status/copies in Temp/aud19-20261029.
+Prior security/notification/CI WIP preserved; no other phase authorized. Use declared
+business_lookup consistently for permission, stored/candidate writes, delete and
+history tenant. Reuse TenantModelViewSet/IsTenantMember/tenant ownership guard,
+LeadFormFieldSerializer, current LEADS action/scope policy and existing API client.
+Current form fields API list works, owner detail/write cannot resolve form business.
+No current editor consumer exists; add bounded reachable field editor in Leads using
+shared modal/form components and RU/KK/EN. No public submission policy/AI/notification/
+BusinessEvent changes, no migrations/working DB/provider/deployment. Audit/activity
+must carry derived Business. No new role grants or parent-transfer policy.
+Risk high shared tenant infrastructure. Focused before/after CRUD owner, role denial,
+foreign form, multi-business reparent rejection, partial payload and audit tenant;
+representative bot/message/automation child consumers and direct Business controls.
+Backend slice gate before UI; completion affected/dependent tests, system/drift,
+frontend interaction/browser flow including error/empty/denied and desktop/mobile,
+build/types/i18n. Publication only task-owned candidate; explicit hunks preserve WIP.
+
+
+Resume29.10, owner asks to continue: repair the remaining resolver type blocker only.
+Plan: distinguish raw schema input from parsed output in four forms; preserve schema
+and submission policy. Risk: numeric coercion/form watcher types. Focused checks: real
+resolver valid string-number inputs, invalid input, optional values and output shape;
+completion forced types/build and unchanged AUD19 evidence hash check. Preserve existing
+LeadForm WIP and dependency updates; publication includes only reviewed task changes.
+Starting4 form copies in Temp/aud19-20261029/resume-before; HEAD unchanged8ee55d75.
+
+
+
+Owner decision29.10: keep CI-repair and AUD19 as separate reviewed publications.
+CI-repair must complete its checks/publication first; then validate AUD19 on the
+new main and publish independently. No authorization to stage another writer's
+WIP or message/manage another chat is inferred. Readback `git ls-remote origin
+refs/heads/main` still8ee55d756b79c391e3de4a2f93fb2bfbe211aaf2; local HEAD same,
+dependency/four-form fixes remain uncommitted. No unresolved publication-choice
+question remains; current prerequisite is completion of separate CI-repair.
+Task-only AUD19 candidate retained. No process/monitor started, no commit/push.
+
+Resume evidence: initial read still showed old form types, but the immediate before-
+edit copies already contain another writer's four-form InputValues/output fixes and
+Zod4 coerce<string|number> annotations. Comparing all four copies proves no own
+change to those type fixes. The only own delta was Number(resourceId) in an existing
+query; removed as redundant, restoring the captured external code exactly. This is
+a concrete overlapping publication boundary; user was asked whether to preserve
+CI-repair as a separate publication or authorize a jointly reviewed dependency/type
+packet. Do not stage or publish that other writer's packet until resolved.
+
+Forced tsc passed; build-fixed.log passed app/widget after the shared fixes (before
+removing the redundant conversion). New form-resolver-coercion.test.mjs executes
+production schema declarations with installed zodResolver:8 PASS for numeric string
+coercion, optional omission, unchanged strings/booleans and invalid-input no-payload.
+With capture-field-options:10 PASS. Test is task-owned; four form/type and dependency
+changes remain external WIP. Follow-up build-shared-fixed.log PASS verifies the restored
+shared snapshot (app/widget, types, i18n). These are working-snapshot checks, not a standalone AUD19 dependency
+certification. Existing final-hashes match every recorded non-doc AUD19/dependency
+input, allowing backend/browser/options evidence reuse.
+
+Separate Temp candidate.index now composes16 AUD19 source/test files only; reviewed
+candidate-code.patch excludes package/lock, four existing forms and all security/
+notification WIP. Real index remains empty. No new phase or publication performed.
+
+Implementation29.10: resolve_tenant_business follows declared business_lookup;
+IsTenantMember and shared object/write/delete/history paths use it. Existing
+ownership guard still rejects cross-Business reparent. Activity writer accepts the
+explicit derived Business, same as audit. LeadForm list accepts validated optional
+business filter. New leadFormsApi.listPage and reachable modal/editor use shared UI,
+LEADS action controls, user/business query keys, pagination and RU/KK/EN. Option
+editing preserves surviving option labels/custom metadata. No schema/env change.
+
+Backend: initial fixture attempts failed on username/email setup and assumed missing
+role denial (existing role fallback is intentional); corrected explicit deny fixture.
+Before implementation7 regressions failed. After focused18 PASS; affected80 PASS.
+Exact completion: `.venv/Scripts/python.exe <Temp/aud19-20261029>/run_checks.py
+ affected test apps.leads.tests_form_field_access apps.leads.tests_forms
+ apps.core.tests_tenant_isolation apps.automations.tests
+ apps.bots.tests.BotsFoundationTests apps.clients.tests_merge_atomicity
+ -v1 --noinput --keepdb`. Same wrapper `system check` and
+ `drift makemigrations --check --dry-run` PASS. Includes8 new API tests, full CRUD,
+partial payload, foreign parent/read, role denial/current permission revocation,
+multi-business ownership guard, invalid input, selected-business list, audit/activity.
+
+Task-only candidate uses separate Temp candidate.index based on HEAD8ee55d75 and
+reviewed5-file backend delta plus new test; real index untouched. snapshot_loader.py
+imports reviewed Git blobs while all source stays canonical. First patch preparation
+failed on Windows CRLF; normalized patch applied cleanly. First candidate run reused
+a disposable DB with unrelated notification schema, producing19 failures/1 error;
+retained candidate-affected.log. Clean candidate rerun without --keepdb:80 PASS/no
+skips. Exact command: same labels above via run_candidate.py candidate-clean,
+`-v1 --noinput`. Candidate-system check and candidate-drift makemigrations
+--check --dry-run also PASS. No .env load/external network/working DB; isolated_runtime.
+
+Frontend `node --test scripts/tests/capture-field-options.test.mjs`:2 PASS,
+unchanged metadata omission and surviving labels/custom metadata on choice changes.
+`npm run build`: check:i18n PASS6504 keys, TypeScript FAIL in existing
+AppointmentForm.tsx:120, LeadForm.tsx:56, ServiceForm.tsx:56, WorkingHoursForm.tsx:47
+(Zod4/resolver input unknown versus number). build.log preserves all four errors;
+Vite app/widget stages not reached. Initial syntax and editing-ID errors in own
+components were fixed; final build has no AUD-19 component errors. package/lock
+changes belong to pre-existing CI-repair WIP and were not modified. This is a real
+required gate blocker, not a waived/baseline PASS. No dependency reinstall.
+
+Targeted real browser uses runtime.py with isolated SQLite, canonical source roots,
+backend64828/frontend64829 (fixture-only owner/reader; no real records). CRUD persisted,
+duplicate key error then recovery, delete confirmation/removal, new/empty form,
+select duplicate choices rejected then corrected/reopened, read-only role has no
+create/edit/delete controls; API denial is proven separately above. RU/KK/EN checked,
+mobile390x844 and desktop1366x900, Tab trap and Escape/focus return. Screenshots in
+output/playwright/aud19/{kk-mobile,en-mobile,ru-reader-mobile,ru-desktop}.png.
+No new full E2E suite: focused flow matches functional frontend/shared tenant scope.
+No PostgreSQL concurrency run: no locking/transaction/money algorithm changed.
+
+Docs aligned: roadmap remains open at required build/publication, CRM/access/frontend
+contracts and leads-deals passport describe actual local behavior. README/capabilities/
+AI/operations/integrations need no update: no existing lead-form detail contradicted,
+setup/AI/provider/runtime contract unchanged. Historical audit evidence untouched.
+Remainder: code AUD-19 none known; evidence required frontend build/types on corrected
+dependency/type boundary; environment commit/push/CI and deployment not performed;
+owner policy none unresolved. After correcting the existing type/dependency boundary,
+rerun affected frontend gate and candidate review before publication. AUD-10 unstarted.
+
+Final hygiene: working diff --check and selected AUD-19 links/anchor PASS; new
+files reviewed. Task delta and SHA256 manifest in Temp/aud19-20261029. Real index
+empty; branch/HEAD unchanged. Browser tab closed and viewport reset. Runtime
+parents exited; no listeners on64828/64829 and no AUD19 Python process remain.
+Initial automatic temp cleanup hit Windows file lock; explicit cleanup was rejected
+by automatic policy review (no more specific reason supplied). Disposable runtime
+folder retained; no retry/bypass. No task-owned processes left running.
+
+
+## CI-REPAIR-20261029 — migration isolation and dependency advisories (verified)
 
 Owner requests fixing backend failures/dependency vulnerabilities, preserving all
 other local work, verifying, publishing to main and waiting for green CI.
@@ -59,9 +236,10 @@ and `npx playwright test --config playwright.storybook.config.ts --grep
 valid/invalid fields/reset/error recovery. Failed stale-ID attempts retained.
 No full browser/live provider tests; no schema/env/API policy change. README/domain
 passports need no change because behavior/setup contracts remain the same. Full
-backend CI is required for shared DRF and migration-order compatibility, pending.
+backend CI40832440547 for acb8687e completed success, including both audits.
 Candidate diff hygiene/new-file/dependency review PASS; no secrets. Main push runs
-only ci.yml checks, no deployment job. Publication pending; other WIP preserved.
+only ci.yml checks, no deployment job. Published acb8687e; remote SHA confirmed;
+full CI40832440547 success. Other WIP preserved.
 
 
 ## AUD-11-20261029 — atomic client merge and request audit (verified)

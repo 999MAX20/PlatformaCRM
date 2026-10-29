@@ -82,7 +82,13 @@ assignment policy — активный аккаунт и участник тог
 сервис. Их API разрешает только GET/HEAD/OPTIONS; Django admin оставляет просмотр,
 но запрещает добавление, изменение и удаление. Связи и provenance нельзя записать
 через generic CRUD. Старые данные автоматически не переписываются; рабочая миграция
-не выполнялась. Поля самих форм (LeadFormField) остаются отдельным AUD-19.
+не выполнялась. AUD-19: поля LeadFormField разрешают Business через `form__business`
+единым resolver в permission, stored/candidate write guards, delete и истории.
+Текущие LEADS VIEW/CREATE/UPDATE/DELETE и scope сохраняются; перенос между Business
+запрещён даже владельцу обоих. Частичный PATCH использует сохранённую форму.
+В Заявках через «Ещё → Формы заявок» доступен редактор полей существующих/новых форм; публичная отправка этим
+не меняется. Отдельный кандидат поверх CI-repair acb8687e проверен:
+backend80, system/drift, frontend build и browser PASS; публикация — [AUD-19 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified).
 
 Решение владельца 13.10, CRM-TOOLBARS-20261013: workspace-списки используют
 `workspace=true` и только сужают существующую permission-scoped выборку. По умолчанию

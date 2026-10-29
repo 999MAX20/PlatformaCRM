@@ -2,6 +2,16 @@ import { ru } from "./ru";
 
 export const en: Record<string, string> = {
   ...ru,
+  "captureFields.label": "Field label",
+  "captureFields.placeholder": "Placeholder",
+  "captureFields.required": "Required field",
+  "captureFields.pages": "Form pages",
+  "captureFields.previous": "Previous",
+  "captureFields.next": "Next",
+  "captureFields.formName": "Form name",
+  "captureFields.deleteConfirm": "Delete the “{label}” field from this form?",
+  "captureFields.empty": "This form has no fields yet",
+  "captureFields.optionsHint": "One option per line",
   "clinicCrm.tab.billing": "Subscription payments",
   "commerce.order": "Order",
   "commerce.period": "Service period",

@@ -1,5 +1,12 @@
 # Доступ, приватность и границы аккаунта
 
+AUD-19: TenantModelViewSet и IsTenantMember используют объявленный `business_lookup`
+для определения Business дочерней сущности, включая `form__business`. Проверки
+текущего объекта, кандидата записи, удаления и tenant истории согласованы.
+Для LeadFormField действуют существующие LEADS action/scope; VIEW не даёт write.
+Подмена формы другим Business запрещена даже при доступе к обоим. Новых grants нет.
+Проверки отдельного кандидата и публикация — [AUD-19 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified).
+
 Статус: **действующий контракт**. Срез 07.10.2026, `f01d226`.
 Сохраняет принятые ограничения; не вводит роли, grants или новую permission-модель.
 

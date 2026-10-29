@@ -22,6 +22,20 @@ def _business_identity(business):
     return getattr(business, "pk", business)
 
 
+def resolve_tenant_business(instance, *, business_lookup="business"):
+    """Resolve the same declared relation used to filter the tenant queryset."""
+    if business_lookup != "business":
+        return _resolve_lookup(instance, business_lookup.split("__"))
+    if instance is not None and instance.__class__.__name__ == "Business":
+        return instance
+    # Preserve callers without an explicit lookup while sharing one resolver.
+    for lookup in ("business", "conversation__business", "bot__business", "rule__business"):
+        business = _resolve_lookup(instance, lookup.split("__"))
+        if business is not None:
+            return business
+    return None
+
+
 def assert_tenant_ownership_unchanged(serializer, *, business_lookup: str) -> None:
     """Reject generic API updates that move an object between businesses."""
     if serializer.instance is None:

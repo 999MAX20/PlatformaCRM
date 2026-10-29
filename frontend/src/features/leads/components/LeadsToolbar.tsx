@@ -2,11 +2,11 @@ import { useI18n } from "../../../lib/i18n";
 import { ActionMenu } from "../../../components/ui/ActionMenu";
 import { CrmWorkspacePopover } from "../../../components/crm/CrmWorkspacePopover";
 import { CrmFilterControls } from "../../../components/crm/CrmFilterControls";
-import { Columns3, Download, ArrowDownWideNarrow, Share2, Upload } from "lucide-react";
+import { Columns3, Download, ArrowDownWideNarrow, Share2, Upload, ClipboardList } from "lucide-react";
 import type { TeamMember } from "../../../types";
 import type { LeadColumnKey, LeadFilter } from "../types";
 type LeadFilterTab = { value: LeadFilter; label: string; count?: number };
-export function LeadsToolbar({ filters, sourceOptions, teamList, moreMenuOpen, columnOrder, visibleColumns, labels, onToggleMoreMenu, onToggleColumn, onToggleSortByAi, onExportCsv, onExportExcel, onShareView, onOpenImport }: {
+export function LeadsToolbar({ filters, sourceOptions, teamList, moreMenuOpen, columnOrder, visibleColumns, labels, onToggleMoreMenu, onToggleColumn, onToggleSortByAi, onExportCsv, onExportExcel, onShareView, onOpenImport, onOpenForms }: {
   filters: LeadFilterTab[];
   teamList: TeamMember[];
   sourceOptions: { value: string; label: string }[];
@@ -29,6 +29,7 @@ export function LeadsToolbar({ filters, sourceOptions, teamList, moreMenuOpen, c
   onExportExcel: () => void;
   onShareView: () => void;
   onOpenImport: () => void;
+  onOpenForms?: () => void;
 }) {
   const { t } = useI18n();
   return <div data-testid="leads-filter-toolbar"><CrmFilterControls kind="leads" searchLabel={labels.search}
@@ -39,6 +40,7 @@ export function LeadsToolbar({ filters, sourceOptions, teamList, moreMenuOpen, c
         {columnOrder.map(column => <label key={column} className="flex min-h-11 items-center gap-3 rounded-control px-2 text-sm hover:bg-surface-hover"><input type="checkbox" checked={visibleColumns[column]} disabled={column === "lead"} onChange={() => onToggleColumn(column)} />{labels.column(column)}</label>)}
       </CrmWorkspacePopover>
       <ActionMenu label={t("leads.moreActions")} items={[
+        ...(onOpenForms ? [{ key: "forms", label: t("settings.leadFormsTitle"), icon: ClipboardList, onSelect: onOpenForms }] : []),
         { key: "import", label: labels.import, icon: Upload, onSelect: onOpenImport },
         { key: "csv", label: labels.exportCsv, icon: Download, onSelect: onExportCsv },
         { key: "excel", label: labels.exportExcel, icon: Download, onSelect: onExportExcel },

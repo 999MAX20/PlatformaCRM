@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.serializers import IntegerField
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from django.utils import timezone
@@ -445,6 +446,14 @@ class LeadFormViewSet(TenantModelViewSet):
     queryset = LeadForm.objects.select_related("business", "default_responsible_user").prefetch_related("fields")
     serializer_class = LeadFormSerializer
     access_resource = "leads"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        business_id = self.request.query_params.get("business")
+        if business_id is not None:
+            business_id = IntegerField(min_value=1).run_validation(business_id)
+            queryset = queryset.filter(business_id=business_id)
+        return queryset
 
     @action(detail=False, methods=["post"], url_path="create-template")
     def create_template(self, request):

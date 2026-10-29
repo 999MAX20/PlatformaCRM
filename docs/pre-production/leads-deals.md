@@ -36,7 +36,12 @@ AUD-02 проверяет default_responsible_user через assignment policy 
 Недопустимый default даёт контролируемую ошибку без частичного Client/Lead;
 submissions/error журналы доступны через API/admin только для чтения.
 Версия и проверки — checkpoint AUD-02-20261017; старые записи не мигрировались.
-CRUD полей форм не разрешает Business через form (AUD-19). Поиск/выбор и
+AUD-19 исправляет разрешение Business через form для CRUD полей и истории.
+Редактор доступен из «Заявки → Ещё → Формы заявок», с текущими правами LEADS и
+RU/KK/EN. Отдельный кандидат поверх acb8687e: backend80/system/drift, frontend
+build/types/options2 и targeted browser PASS; рабочие миграции/deployment не выполнялись.
+Версия, публикация и CI —
+[AUD-19 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified). Поиск/выбор и
 надёжность replay — AUD-08/10. AUD-01 реализует изоляцию offline-кэша и очереди
 по пользователю/Business/правам, очистку при logout/expiry, замену пустым ответом
 и fallback только при временной/сетевой ошибке. Это до 50 ранее загруженных строк,

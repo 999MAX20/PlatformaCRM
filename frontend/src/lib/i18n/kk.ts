@@ -2,6 +2,16 @@ import { ru } from "./ru";
 
 export const kk: Record<string, string> = {
   ...ru,
+  "captureFields.label": "Өріс атауы",
+  "captureFields.placeholder": "Өрістегі нұсқау",
+  "captureFields.required": "Міндетті өріс",
+  "captureFields.pages": "Форма беттері",
+  "captureFields.previous": "Алдыңғы",
+  "captureFields.next": "Келесі",
+  "captureFields.formName": "Форма атауы",
+  "captureFields.deleteConfirm": "«{label}» өрісін формадан жою керек пе?",
+  "captureFields.empty": "Бұл формада әзірге өрістер жоқ",
+  "captureFields.optionsHint": "Әр жолға бір нұсқа",
   "clinicCrm.tab.billing": "Жазылым төлемдері",
   "commerce.order": "Тапсырыс",
   "commerce.period": "Төленетін кезең",

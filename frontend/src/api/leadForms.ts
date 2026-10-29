@@ -1,9 +1,14 @@
 import { apiClient, unwrapList } from "./client";
+import type { PaginatedResponse } from "./client";
 import { createCrudApi } from "./crud";
 import type { Id, LeadCaptureForm, LeadFormField, LeadFormSubmission } from "../types";
 
 export const leadFormsApi = {
   ...createCrudApi<LeadCaptureForm>("/api/lead-forms/"),
+  listPage: async (business: Id, page = 1) => {
+    const { data } = await apiClient.get<PaginatedResponse<LeadCaptureForm>>("/api/lead-forms/", { params: { business, page } });
+    return data;
+  },
   list: async () => {
     const { data } = await apiClient.get<LeadCaptureForm[] | { results: LeadCaptureForm[] }>("/api/lead-forms/");
     return unwrapList(data);

@@ -6,9 +6,17 @@
 
 # PlatformaCRM — текущий статус
 
+AUD-19-20261029: separate candidate on published CI-repair acb8687e verified.
+Business resolution/field CRUD and More-menu editor: candidate80/system/drift,
+build/types/i18n/options2 and RU/KK/EN desktop/mobile browser PASS. Reader role,
+error recovery, keyboard/focus and key-pattern checks PASS; details in PRIMARY.
+Code/evidence scope complete; publication pending. No working migration/deployment.
+AUD-10 unstarted; other WIP preserved. CI-repair40832440547 complete success.
+
 CI-REPAIR-20261029: candidate73/system/drift, frontend build/types/budget, resolver8
 and npm/Python audits PASS. DRF3.18.3 closes three remaining advisories; unrelated
-WIP excluded. Publication and complete CI pending; AUD19 follows separately.
+WIP excluded. Published acb8687e; remote SHA confirmed; complete CI40832440547
+success. AUD19 follows separately.
 Evidence: CI-REPAIR and AUD19-PUBLICATION in PRIMARY.
 
 

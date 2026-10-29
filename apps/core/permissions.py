@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.utils import timezone
 from rest_framework.permissions import BasePermission
+from apps.core.tenant_ownership import resolve_tenant_business
 
 
 def is_platform_admin(user):
@@ -56,15 +57,7 @@ class IsTenantMember(BasePermission):
         return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        business = getattr(obj, "business", None)
-
-        if business is None and obj.__class__.__name__ == "Business":
-            business = obj
-        if business is None and hasattr(obj, "conversation"):
-            business = obj.conversation.business
-        if business is None and hasattr(obj, "bot"):
-            business = obj.bot.business
-
+        business = resolve_tenant_business(obj, business_lookup=getattr(view, "business_lookup", "business"))
         return user_can_access_business(request.user, business)
 
 

@@ -24,11 +24,11 @@ def create_activity_event(*, business, event_type, instance=None, client=None, a
     )
 
 
-def write_activity_event(request, event_type, instance, text="", metadata=None):
+def write_activity_event(request, event_type, instance, text="", metadata=None, *, business=None):
     if isinstance(instance, ActivityEvent):
         return
 
-    business = getattr(instance, "business", None)
+    business = business or getattr(instance, "business", None)
     client = _client_for(instance)
     if business is None and hasattr(instance, "conversation"):
         business = instance.conversation.business

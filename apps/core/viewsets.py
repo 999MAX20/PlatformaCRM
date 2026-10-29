@@ -10,7 +10,7 @@ from apps.core.archive import archive_instance, can_hard_delete, restore_instanc
 from apps.core.audit import write_audit_log
 from apps.core.models import AuditLog
 from apps.core.permissions import IsTenantMember, accessible_businesses, platform_admin_has_global_access, user_can_access_business
-from apps.core.tenant_ownership import assert_tenant_ownership_unchanged
+from apps.core.tenant_ownership import assert_tenant_ownership_unchanged, resolve_tenant_business
 
 
 def _parse_query_id_list(query_params, key: str) -> list[int]:
@@ -162,33 +162,14 @@ class TenantModelViewSet(ModelViewSet):
         return scoped_queryset.distinct().order_by(*ordering)
 
     def _business_from_serializer(self, serializer):
-        business = serializer.validated_data.get("business")
-        if business is None and "conversation" in serializer.validated_data:
-            business = serializer.validated_data["conversation"].business
-        if business is None and "bot" in serializer.validated_data:
-            business = serializer.validated_data["bot"].business
-        if business is None and "rule" in serializer.validated_data:
-            business = serializer.validated_data["rule"].business
-        if business is None and serializer.instance is not None:
-            business = getattr(serializer.instance, "business", None)
-            if business is None and hasattr(serializer.instance, "conversation"):
-                business = serializer.instance.conversation.business
-            if business is None and hasattr(serializer.instance, "bot"):
-                business = serializer.instance.bot.business
-            if business is None and hasattr(serializer.instance, "rule"):
-                business = serializer.instance.rule.business
-        return business
+        return resolve_tenant_business(
+            self._scope_candidate_from_serializer(serializer), business_lookup=self.business_lookup,
+        )
 
     def get_object(self):
         instance = super().get_object()
         resource = self.get_access_resource()
-        business = getattr(instance, "business", None)
-        if business is None and hasattr(instance, "conversation"):
-            business = instance.conversation.business
-        if business is None and hasattr(instance, "bot"):
-            business = instance.bot.business
-        if business is None and hasattr(instance, "rule"):
-            business = instance.rule.business
+        business = resolve_tenant_business(instance, business_lookup=self.business_lookup)
         if resource is not None:
             assert_can(self.request.user, business, resource, Actions.VIEW, obj=instance)
             if getattr(self, "action", "") in {"update", "partial_update"}:
@@ -202,7 +183,7 @@ class TenantModelViewSet(ModelViewSet):
         instance = self.queryset.filter(**{self.lookup_field: lookup_value}).first()
         if instance is None:
             return self.get_object()
-        business = getattr(instance, "business", None)
+        business = resolve_tenant_business(instance, business_lookup=self.business_lookup)
         resource = self.get_access_resource()
         if not user_can_access_business(self.request.user, business):
             return self.get_object()
@@ -253,25 +234,21 @@ class TenantModelViewSet(ModelViewSet):
     def perform_create(self, serializer):
         self._enforce_business_access(serializer)
         instance = serializer.save()
-        write_audit_log(self.request, AuditLog.Actions.CREATE, instance)
-        write_activity_event(self.request, f"{instance.__class__.__name__.lower()}.created", instance)
+        business = self._business_from_instance(instance)
+        write_audit_log(self.request, AuditLog.Actions.CREATE, instance, business=business)
+        write_activity_event(self.request, f"{instance.__class__.__name__.lower()}.created", instance, business=business)
 
     def perform_update(self, serializer):
         self._enforce_business_access(serializer)
         instance = serializer.save()
-        write_audit_log(self.request, AuditLog.Actions.UPDATE, instance)
-        write_activity_event(self.request, f"{instance.__class__.__name__.lower()}.updated", instance)
+        business = self._business_from_instance(instance)
+        write_audit_log(self.request, AuditLog.Actions.UPDATE, instance, business=business)
+        write_activity_event(self.request, f"{instance.__class__.__name__.lower()}.updated", instance, business=business)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         resource = self.get_access_resource()
-        business = getattr(instance, "business", None)
-        if business is None and hasattr(instance, "conversation"):
-            business = instance.conversation.business
-        if business is None and hasattr(instance, "bot"):
-            business = instance.bot.business
-        if business is None and hasattr(instance, "rule"):
-            business = instance.rule.business
+        business = resolve_tenant_business(instance, business_lookup=self.business_lookup)
         if supports_archive(instance) and request.query_params.get("hard_delete") != "true":
             if resource is not None:
                 assert_can(request.user, business, resource, Actions.UPDATE, obj=instance)
@@ -281,8 +258,8 @@ class TenantModelViewSet(ModelViewSet):
             assert_can(request.user, business, resource, Actions.DELETE, obj=instance)
         if supports_archive(instance) and not can_hard_delete(request.user, business, resource):
             raise PermissionDenied("Only owner/admin can hard-delete critical CRM records.")
-        write_audit_log(request, AuditLog.Actions.DELETE, instance, metadata={"repr": str(instance)})
-        write_activity_event(request, f"{instance.__class__.__name__.lower()}.deleted", instance)
+        write_audit_log(request, AuditLog.Actions.DELETE, instance, business=business, metadata={"repr": str(instance)})
+        write_activity_event(request, f"{instance.__class__.__name__.lower()}.deleted", instance, business=business)
         self.perform_destroy(instance)
         return Response(status=204)
 
@@ -307,13 +284,7 @@ class TenantModelViewSet(ModelViewSet):
         return Response(self.get_serializer(instance).data)
 
     def _business_from_instance(self, instance):
-        business = getattr(instance, "business", None)
-        if business is None and hasattr(instance, "conversation"):
-            business = instance.conversation.business
-        if business is None and hasattr(instance, "bot"):
-            business = instance.bot.business
-        if business is None and hasattr(instance, "rule"):
-            business = instance.rule.business
+        business = resolve_tenant_business(instance, business_lookup=self.business_lookup)
         if business is None:
             raise ValidationError("Business is required.")
         return business
