@@ -14,7 +14,9 @@ Publication29.10: cd7a2598a9ca62444341f6fb7a2f49f1ee62b566 normal-pushed to
 origin/main, remote SHA matched. Canonical PlatformaCRM, codex/ui-testing-toolkit;
 24-file commit contains17 reviewed source/test files and7 documentation files.
 [CI40835060335](https://github.com/999MAX20/PlatformaCRM/actions/runs/40835060335)
-in progress at final documentation snapshot; no green CI claim. CI-repair parent
+complete success, verified29.10 via GitHub Actions API; backend/frontend jobs both
+success. Documentation HEAD e9c1681b has CI40835282538 complete success as well.
+Remote main SHA readback matched e9c1681b. CI-repair parent
 acb8687e remains complete success. No deployment/working migration. Outgoing
 range/index hygiene and scoped docs links/anchor PASS. Other WIP preserved.
 First stage/commit attempt failed on stale empty .git/index.lock (no commit created,
