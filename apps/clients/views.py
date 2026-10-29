@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
@@ -83,7 +84,9 @@ class ClientViewSet(TenantModelViewSet):
         return Response({"duplicates": serializer.duplicates()})
 
     @action(detail=True, methods=["post"])
+    @transaction.atomic
     def merge(self, request, pk=None):
+        # Keep the domain transfer and mandatory request audit in one commit.
         target_client = self.get_object()
         assert_can(request.user, target_client.business, self.get_access_resource(), Actions.DELETE, obj=target_client)
         serializer = ClientMergeSerializer(data=request.data, context={"request": request, "target_client": target_client})

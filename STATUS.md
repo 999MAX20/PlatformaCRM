@@ -6,6 +6,13 @@
 
 # PlatformaCRM — текущий статус
 
+AUD-11-20261029: merge API now commits transfers, ledger/archive, history and request
+audit together. Audit failure before/after insert rolls everything back; retry creates
+one merge/audit/activity. Final isolated candidate54 tests/no skips, system/drift PASS.
+Base692e46f0, canonical root, branch codex/ui-testing-toolkit; prior WIP preserved.
+No schema/env/UI/deployment change. Scope complete; next AUD-19 not started.
+Exact commands, failed reproductions and candidate boundary in PRIMARY.
+
 YCLOUD-TPLITE-20261028,29.10: первый локальный этап реализован: серверное подключение
 одного WhatsApp API-номера и текстовый обмен в существующем Inbox, подписанный durable
 ingress, безопасные повторы и статусы accepted/unknown/sent/delivered/read. Проверки

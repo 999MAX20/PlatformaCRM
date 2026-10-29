@@ -6,6 +6,56 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-11-20261029 — atomic client merge and request audit (verified)
+
+Owner authorized merge rollback repair and roadmap update. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+base692e46f01934a946233a01181f24f6589bccea43. Prior WIP preserved; starting status
+and file copies in Temp/aud11-20261029. No concurrent affected source edits observed.
+Mode implementation/code gap. Existing merge service committed before request audit.
+Minimal fix: outer transaction.atomic around merge action, retaining nested domain
+service, request audit metadata/IP/actor, permissions, response and error contracts.
+Business lock now remains held until audit completes. No new lifecycle policy,
+permissions, notification, BusinessEvent/AI/provider behavior, schema or env changes.
+
+Plan/checks: reproduce HTTP failure and persisted rows; prove atomic rollback of
+ledger/client/archive/history/relations and retry, then owning clients/payment and
+archive-dependent suites plus isolated system/drift. Existing merge API/UI reused.
+Before: fixture failed on missing Payment.submission_id (UUID added); second attempt
+wrongly expected propagated exception, but established handler returns sanitized500.
+After inspecting handler corrected tests to assert500 plus database snapshot; before-http
+then reproduced two rollback failures, activity failure control PASS. Logs retained.
+No acceptance weakened: required rollback assertions remained unchanged.
+After patch focused3 PASS. Added self-merge/no-writes and single activity assertions.
+Final candidate54 PASS/no skips: apps.clients.tests, apps.clients.tests_merge_atomicity,
+apps.clients.tests_archive_dependencies, apps.payments.tests. Includes4 new true
+TransactionTestCase tests (no outer TestCase transaction), audit before/after insert,
+activity failure, full row snapshot equality including conflicting deleted tags/custom
+fields, payment125KZT, successful retry with one merge log/audit/activity; existing
+happy path, foreign duplicate, permission denial, preview and ledger/refund controls.
+
+Exact command: `.venv/Scripts/python.exe <Temp/aud11-20261029>/run_candidate.py
+ candidate-affected test apps.clients.tests apps.clients.tests_merge_atomicity
+ apps.clients.tests_archive_dependencies apps.payments.tests -v1 --noinput --keepdb`.
+Same runner `system check` and `drift makemigrations --check --dry-run`: PASS.
+First3 focused tests ran via run_checks.py after test ...ClientMergeAtomicityTests.
+Runner reuses scripts.codex_verify.isolated_runtime, disposable SQLite, synthetic
+fixtures, no .env load/external network. Candidate imports reviewed Python blobs
+from a separate Git index based on HEAD, not another source checkout; excludes
+unrelated WIP. All source remains in canonical folder. Tested source hashes and
+candidate logs/manifests retained in task temp. No dependency installation.
+
+Frontend inspection: clientsApi.merge rejects failed request; ClientsPage clears
+preview and invalidates cache only onSuccess, existing pageError surfaces failure.
+No UI/API shape change: browser/build/i18n/full E2E skipped as disproportionate.
+PostgreSQL concurrency not rerun: no lock-order/ledger algorithm change; only commit
+boundary extended. Live readiness/working data/deployment excluded. Historical audit
+report untouched; clients passport and CRM contract correct the old failure assertion.
+README/access/AI/operations unchanged: no setup, rights or policy change.
+Code/evidence/owner decision remainder: none in scope. Roadmap AUD-11 closed;
+next local audit item AUD-19 remains unstarted. Normal task-only publication selected;
+prior notification/security/CI WIP excluded. Actual publication/CI reported separately.
+
 ## YCLOUD-PUBLICATION-20261029 — combined publication verification (published)
 
 Owner explicitly authorizes review and normal publication of OFFICIAL-03, YCloud
