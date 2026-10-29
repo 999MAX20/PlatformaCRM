@@ -60,7 +60,8 @@ export function writeLeadOfflineData(scope: LeadOfflineScope, data: LeadOfflineD
       leads: data.leads.filter(lead => lead.business === scope.businessId).slice(0, 50),
       queue: data.queue,
     }));
+    return true;
   } catch {
-    // Offline persistence is best-effort; the current workspace still works.
+    return false;
   }
 }

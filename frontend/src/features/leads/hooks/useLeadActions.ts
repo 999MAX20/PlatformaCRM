@@ -35,7 +35,7 @@ export function useLeadActions({
   selected: Lead | null;
   nextActionDraft: NextActionDraft;
   t: Translate;
-  enqueueOfflineAction: (action: OfflineLeadAction) => void;
+  enqueueOfflineAction: (action: OfflineLeadAction) => Promise<void>;
   pushHistory: (item: UndoToast) => void;
   setNotice: (message: string | null, tone?: "success" | "info" | "warning" | "danger") => void;
   setSelectedId: (id: Id) => void;
@@ -175,10 +175,11 @@ export function useLeadActions({
   });
 
   const noteMutation = useMutation({
+    networkMode: "always",
     mutationFn: async ({ lead, text, files }: { lead: Lead; text: string; files: File[] }) => {
       if (!navigator.onLine) {
-        enqueueOfflineAction({
-          id: `note-${lead.id}-${Date.now()}`,
+        await enqueueOfflineAction({
+          id: crypto.randomUUID(),
           type: "note",
           leadId: lead.id,
           text: `${text.trim() || t("leads.filesAttachedNote")}${files.length ? `\n\n${t("leads.offlineFilesSkipped")}` : ""}`,
@@ -218,14 +219,15 @@ export function useLeadActions({
   });
 
   const nextActionMutation = useMutation<Task | { offline: true }, Error, Lead>({
-    mutationFn: (lead: Lead) => {
+    networkMode: "always",
+    mutationFn: async (lead: Lead) => {
       if (!navigator.onLine) {
-        enqueueOfflineAction({
-          id: `task-${lead.id}-${Date.now()}`,
+        await enqueueOfflineAction({
+          id: crypto.randomUUID(),
           type: "task",
           leadId: lead.id,
           title: nextActionDraft.title,
-          due_at: nextActionDraft.due_at,
+          due_at: nextActionDraft.due_at ? new Date(nextActionDraft.due_at).toISOString() : "",
           assignee: nextActionDraft.assignee,
           priority: nextActionDraft.priority,
           createdAt: new Date().toISOString(),

@@ -84,7 +84,7 @@ export function useLeadsWorkspaceData({
   const accessDenied = errorCategory === "authentication" || errorCategory === "permission";
   const onlineLeads = useMemo(() => accessDenied ? [] : leads.data?.results || [], [accessDenied, leads.data]);
   const offlineScope = useMemo(() => leadOfflineScope(user, business?.id), [user, business?.id]);
-  const { isOnline, offlineQueue, cachedLeads, enqueueOfflineAction } = useLeadOfflineQueue({
+  const { isOnline, offlineQueue, cachedLeads, enqueueOfflineAction, recoverOfflineAction, storageError, syncing } = useLeadOfflineQueue({
     scope: offlineScope,
     onlineLeads,
     hasFreshData: leads.isSuccess && !leads.isPlaceholderData,
@@ -181,6 +181,7 @@ export function useLeadsWorkspaceData({
     safePage,
     offlineQueue,
     enqueueOfflineAction,
+    recoverOfflineAction, storageError, syncing, isOnline,
     clientList,
     serviceList,
     resourceList,

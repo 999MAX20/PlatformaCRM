@@ -5499,6 +5499,14 @@ export const en: Record<string, string> = {
   "leads.templateBookingText":
     "Hello, {{name}}! I can offer the nearest time for {{service}}. Which day works for you?",
   "leads.mobileSwipeHint": "Swipe: left archive, right take",
+  "leads.queueStorageError": "Could not save the browser queue. Input was not accepted; free storage or allow browser storage and try again.",
+  "leads.offlineQueueTitle": "Pending actions",
+  "leads.queueEmpty": "All actions processed.",
+  "leads.queueWaiting": "Waiting to send.",
+  "leads.queueLegacy": "The old command result is unknown. Check the lead history before creating it again.",
+  "leads.queueExpired": "The safe retry window has expired. Check the lead notes and tasks before creating another action.",
+  "leads.queueDiscard": "Remove from queue",
+  "leads.queueDiscardConfirm": "Remove this saved command? This does not undo any action already completed on the server. If the result is unknown, check the lead history first.",
   "leads.offlineMode": "Offline mode: showing the last saved leads.",
   "leads.offlinePending": "Pending sync: {count}",
   "leads.offlineQueued":

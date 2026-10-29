@@ -6,6 +6,109 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-10-20261030 — reliable offline Lead commands (in progress)
+
+Final local result30.10: combined minimal OFFICIAL18 + AUD10 candidate65 tests PASS,
+zero skips; prerequisite-only28 PASS. AUD10-only36 PASS is explicitly superseded by
+its additional failing OWN-assignment gate (1 FAIL), not called releasable. Final
+candidate build/i18n (app+widget), forced tsc and Node18 PASS; system/drift PASS on
+unchanged model/config inputs, same-candidate tests run system checks again. Browser
+exact combined candidate confirms offline note/task, lost response→reload→same key
+(two HTTP attempts/one note); unchanged frontend RU/KK/EN desktop/mobile, quota/input,
+conflict/Escape/focus/discard evidence reused. browser-evidence.json and screenshots
+are in output/aud10-20261030. No reinstall/full-project local gate/new migration/live
+provider/deployment; no PostgreSQL concurrency recertification (existing receipt locks,
+new browser inter-tab lock exercised in Node tests). Real Git index remains empty.
+
+Owner approved both questions30.10, including full outgoing range and separate
+OFFICIAL18 then AUD10 publication. OFFICIAL18 published bae967bd9cba12f4226211a6c45dca2d449adb4a;
+remote SHA readback matched. Initial origin/main e9c1681b; subsequent pre-push fetch
+already contained dcd5b141 (all five authorized prior commits). Normal push advanced
+dcd5b141→bae967bd. CI40956811723 in progress, not yet green. Only reviewed service,
+source guard/tests and2 scoped receipts committed; other WIP preserved.
+First real-index operation failed on empty stale index.lock (last write29.10 15:12UTC,
+no active git.exe); no commit/staging resulted. Saved it as stale-index.lock in task
+artifacts after verifying unchanged/old/zero length, then preparation succeeded.
+No rewrite/rebase/worktree/deployment; AUD10 follows as separate reviewed commit.
+Prepared prerequisite-reviewed.patch (3 paths) and combined code candidate; unaffected
+starting dirty hashes all preserved. No other chat contacted or next AUD started.
+Own browser closed; four owned listeners49932/49933/60757/60758 confirmed stopped.
+First runtime exited0; candidate shutdown stopped both children but tempfile cleanup
+returned WinError32 on its disposable gate.sqlite3. Preserved for recovery, no manual
+recursive removal/working DB touched; this cleanup issue does not change passed tests.
+Working/index diff hygiene and task links/anchors PASS; real index empty.
+Remaining code/evidence in local combined scope: none.
+Remaining publication: reviewed AUD10 commit/normal push, remote SHA and actual CI;
+owner authorization complete and prerequisite already published.
+Scope of deployment/working DB remains excluded. Next roadmap item after completion
+is AUD08/09, requiring its own instruction; current pending publication is same task.
+
+
+Publication boundary found: AUD10-only candidate passes36 tests, system/drift and
+build/i18n/types (forced tsc also0); additional OWN Task assignment reproducer FAILS:
+201 instead403 for selecting peer. This is existing OFFICIAL18 absent from HEAD,
+not a new permission decision. Same new test on working source PASS. Required existing
+prerequisite is only apps/leads/services.py OFFICIAL18 delta + create-task source-guard
+line in views.py + apps/leads/tests_task_assignment.py (28 controls). Other projection/
+privacy/security/notification WIP remains excluded. Prepared combined candidate index
+for review/verification; real Git index empty, no source overwrite or publication.
+AUD10-only.index retains failing snapshot; candidate-assignment.log/json retains failure.
+Dependency-candidate65 tests and browser are being checked before asking permission
+for publication of that previously prepared task's code. AGENTS section6 task-owned
+staging boundary applies; this task has not silently adopted other packets.
+
+
+Implementation progress: note receipt + audit/activity atomic, keyed task replay
+uses current Task VIEW/serialization; stable key persisted before send. Offline
+prefix first-attempt window1h is checked server/client (receipt minimum1day remains).
+Legacy unknown-key/expired work retained for reconciliation, no blind replay; logout/
+access clearing unchanged. Queue41 retained; Web Locks serializes tabs and writes;
+quota error rejects new input. Lead workspace now opens existing note/task drawers
+from action metadata; quick Lead task uses ordinary create-task online/offline.
+Recovery UI shows error/payload, same-key retry or confirmed discard, RU/KK/EN.
+
+Checks so far: Node18 PASS. Backend initial7 had5 failed methods, including one
+incorrect test expectation (normalized500, not raised RuntimeError). After repair,
+33-run had only that expectation failure; corrected focused7 PASS, expanded61 PASS
+(7+26 existing CRM-light+28 prior assignment tests). Added foreign actor/update denial/
+task replay controls: focused10 PASS. Exact commands/logs output/aud10-20261030.
+First scratch runner used runtime.env, corrected to documented runtime.environment;
+no tests ran on that setup error. Build first failed duplicate pre-existing queueTitle
+key, renamed; next failed narrowed nullable lead typing, fixed; next build PASS.
+Subsequent reachable UI fixes require final candidate build (running).
+Browser working-source isolated localhost fixture: offline save, quota refusal/input
+retention, lost committed response→reload→same-key retry yields1 note, task creation1,
+conflict retention, Escape/focus, RU1280 and RU/KK/EN390 screenshots/confirm discard PASS.
+Initial browser attempt found TanStack online-only mutation pause; networkMode always
+now only for queued Lead actions. Second issue: empty queue modal reopened on next
+storage error; close-on-empty fixed and recovery rechecked. No production data used.
+Candidate exact code index created from task-only delta vs before snapshot,19 files;
+pre-existing OFFICIAL/security/notifications and roadmap-spec WIP excluded. Candidate
+backend/build/system/drift and final same-candidate browser verification pending.
+README/access/AI/integrations/operations/product/acceptance need no change: no setup,
+schema, permission policy, AI/provider or acceptance-ID change. Frontend/CRM/passport/
+roadmap/status/checkpoint require task-only notes; historic audit report unchanged.
+
+
+Owner says proceed after roadmap summary; first bounded item AUD-10, not all phases.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, base dcd5b141474d11c50969dadea336361d2253d9f2.
+Starting dirty hashes and before snapshots: output/aud10-20261030; preserve other WIP.
+Mode implementation; code/evidence gap. Note/task queue must not evict accepted work,
+report persistence failure, retain stable command identity across reload/lost response,
+use ordinary Lead task endpoint and expose pending/failure/conflict/manual recovery.
+Reuse scoped storage/session invalidation, CRM command receipts, Lead services and UI.
+Risk: duplicate effects, lost input, stale permission/tenant exposure and expired receipt
+replay. Logout/revocation clearing stays per AUD01; no new offline money/attachments.
+Checks: focused Node storage/replay/41-command/session/error tests; isolated backend
+note receipt/rollback/current access/task regression before dependent UI; completion
+system/drift/affected suites, build/types/i18n and targeted RU/KK/EN desktop/mobile
+browser offline→reload→reconnect/lost response/conflict/recovery. No app reinstall,
+working DB/migration/provider calls/deployment or full-project local gate.
+Only reviewed task delta may be committed/pushed; other dirty source/docs excluded.
+No permission model, notification policy, AI or BusinessEvent redesign.
+
+
+
 ## OFFICIAL18-PUBLICATION-20261030 — approved prerequisite for AUD10
 
 Owner explicitly approves minimal OFFICIAL18 then AUD10 publication and all five

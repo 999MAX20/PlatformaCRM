@@ -1,6 +1,7 @@
+import { CrmEntityDrawer, type CrmDrawerEntity } from "../../components/crm/CrmEntityDrawer";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageCircle, Phone } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { EntityCustomFieldsPanel } from "../../components/crm/drawers/panels";
 
@@ -46,6 +47,8 @@ import {
 
 const RELATED_PAGE_SIZE = 8;
 const supportedLeadActionIds = new Set([
+  "add_note",
+  "create_task",
   "take",
   "contacted",
   "create_deal",
@@ -61,6 +64,7 @@ function asNumericId(value: string | undefined): number | null {
 
 export function LeadWorkspacePage() {
   const { t } = useI18n();
+  const [drawer, setDrawer] = useState<CrmDrawerEntity | null>(null);
   const showNotification = useNotification();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -208,7 +212,7 @@ export function LeadWorkspacePage() {
   );
   const executableActions = (card?.available_action_details || []).filter(
     (action) => supportedLeadActionIds.has(action.id),
-  );
+  ).map(action => action.id === "add_note" ? { ...action, label_key: "crmCard.addComment" } : action);
 
   return (
     <EntityWorkspaceRoot testId="lead-workspace-ready">
@@ -321,9 +325,11 @@ export function LeadWorkspacePage() {
             <CrmActionBar
               actions={executableActions}
               isPending={lifecycleMutation.isPending}
-              onExecute={(action, reason) =>
-                lifecycleMutation.mutate({ actionId: action.id, reason })
-              }
+              onExecute={(action, reason) => {
+                if (action.id === "add_note" || action.id === "create_task") {
+                  setDrawer({ type: "lead", id: lead.id, initialTab: action.id === "add_note" ? "notes" : "tasks" });
+                } else lifecycleMutation.mutate({ actionId: action.id, reason });
+              }}
             />
           </LeadWorkspaceSection>
         </EntityWorkspaceAside>
@@ -363,6 +369,7 @@ export function LeadWorkspacePage() {
           </LeadWorkspaceSection>
         </EntityWorkspaceMain>
       </EntityWorkspaceBody>
+      <CrmEntityDrawer entity={drawer} onClose={() => setDrawer(null)} />
     </EntityWorkspaceRoot>
   );
 }

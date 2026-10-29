@@ -53,11 +53,13 @@ export const leadsApi = {
   createTask: async ({
     leadId,
     payload,
+    commandKey,
   }: {
     leadId: Id;
+    commandKey?: string;
     payload: { title: string; description?: string; priority?: string; due_at?: string | null; assignee?: Id | null };
   }) => {
-    const { data } = await apiClient.post<Task>(`/api/leads/${leadId}/create-task/`, payload);
+    const { data } = await apiClient.post<Task>(`/api/leads/${leadId}/create-task/`, payload, { headers: commandKey ? { "Idempotency-Key": commandKey } : undefined });
     return data;
   },
   checkDuplicates: async (payload: { business: Id; client?: Id; phone?: string; email?: string }) => {
@@ -68,8 +70,8 @@ export const leadsApi = {
     const { data } = await apiClient.post<Lead>(`/api/leads/${id}/assign/`, user_id ? { user_id } : {});
     return data;
   },
-  addNote: async ({ id, text }: { id: Id; text: string }) => {
-    const { data } = await apiClient.post<Note>(`/api/leads/${id}/add-note/`, { text });
+  addNote: async ({ id, text, commandKey }: { id: Id; text: string; commandKey?: string }) => {
+    const { data } = await apiClient.post<Note>(`/api/leads/${id}/add-note/`, { text }, { headers: commandKey ? { "Idempotency-Key": commandKey } : undefined });
     return data;
   },
 

@@ -19,7 +19,11 @@ export type Translate = (
   params?: Record<string, string | number>,
 ) => string;
 
-export type OfflineLeadAction =
+export type OfflineLeadAction = {
+  version?: 2;
+  commandKey?: string;
+  errorKey?: string;
+} & (
   | { id: string; type: "note"; leadId: Id; text: string; createdAt: string }
   | {
       id: string;
@@ -30,7 +34,7 @@ export type OfflineLeadAction =
       assignee: string;
       priority: Task["priority"];
       createdAt: string;
-    };
+    });
 
 export type FilterPreset = {
   id: string;

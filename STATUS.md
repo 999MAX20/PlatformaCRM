@@ -6,6 +6,14 @@
 
 # PlatformaCRM — текущий статус
 
+AUD-10-20261030: reliable offline Lead note/task queue and reachable recovery verified.
+Combined65 backend/no skips, Node18, build/types, system/drift and targeted browser
+PASS. Required OFFICIAL18 published bae967bd (remote SHA confirmed); CI40956811723
+in progress. Owner approved full outgoing range; AUD10 prepared as separate commit.
+Canonical root, codex/ui-testing-toolkit; no working DB/provider/deployment changes.
+Exact checks, retained failures and publication receipts — AUD-10-20261030 in PRIMARY.
+
+
 OFFICIAL18-PUBLICATION-20261030: owner authorized minimal prerequisite and five existing
 outgoing commits, then AUD10. Prerequisite-only28 and combined65 isolated tests PASS.
 Only task-assignment service/API guard/tests included; unrelated WIP preserved.
@@ -19,7 +27,7 @@ error recovery, keyboard/focus and key-pattern checks PASS; details in PRIMARY.
 Published cd7a2598 to origin/main; remote SHA confirmed.
 CI40835060335 complete success (backend/frontend); docs HEAD e9c1681b CI40835282538
 also complete success. Verified29.10. No working migration/deployment.
-AUD-10 unstarted; other WIP preserved. CI-repair40832440547 complete success.
+AUD-10 proceeds separately above; other WIP preserved. CI-repair40832440547 complete success.
 
 CI-REPAIR-20261029: candidate73/system/drift, frontend build/types/budget, resolver8
 and npm/Python audits PASS. DRF3.18.3 closes three remaining advisories; unrelated

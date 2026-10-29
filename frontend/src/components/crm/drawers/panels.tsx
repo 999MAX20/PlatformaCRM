@@ -1,3 +1,5 @@
+import { useLeadCardQueue } from "../../../features/leads/hooks/useLeadCardQueue";
+import { LeadOfflineQueueStatus } from "../../../features/leads/components/LeadOfflineQueueStatus";
 ﻿import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Download, ExternalLink, FilePenLine, FileText, Image, MoreHorizontal, Paperclip, Share2, StickyNote, Upload, X, ZoomIn, ZoomOut } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -462,14 +464,22 @@ export function EntityTasksPanel({ data }: { data: CrmCardPayload }) {
   const queryClient = useQueryClient();
   const [taskTitle, setTaskTitle] = useState("");
   const businessId = data.client?.business || data.lead?.business || data.deal?.business || data.appointment?.business;
+  const offline = useLeadCardQueue(data.lead?.business);
   const mutation = useMutation({
-    mutationFn: () => {
+    networkMode: data.lead ? "always" : "online",
+    mutationFn: async () => {
       if (!businessId || !taskTitle.trim()) throw new Error("Task title is required.");
+      if (data.lead && !navigator.onLine) {
+        await offline.enqueueOfflineAction({ id: crypto.randomUUID(), type: "task", leadId: data.lead.id,
+          title: taskTitle.trim(), due_at: "", assignee: "", priority: "normal", createdAt: new Date().toISOString() });
+        return;
+      }
+      if (data.lead) return leadsApi.createTask({ leadId: data.lead.id, payload: { title: taskTitle.trim(), priority: "normal", assignee: null, due_at: null } });
       return tasksApi.create({
         business: businessId,
         title: taskTitle.trim(),
         client: data.client?.id || null,
-        lead: data.lead?.id || null,
+        lead: null,
         deal: data.deal?.id || null,
         appointment: data.appointment?.id || null,
         priority: "normal",
@@ -484,6 +494,7 @@ export function EntityTasksPanel({ data }: { data: CrmCardPayload }) {
 
   return (
     <div className="space-y-3">
+      <LeadOfflineQueueStatus queue={offline.offlineQueue} recover={offline.recoverOfflineAction} storageError={offline.storageError} syncing={offline.syncing} online={offline.isOnline} />
       <div className={drawerSurfaceClass}>
         <h3 className="font-semibold text-platforma-ink">{t("crmCard.quickTask")}</h3>
         <p className="mt-1 text-sm leading-6 text-platforma-muted">{t("crmCard.quickTaskText")}</p>
@@ -563,11 +574,18 @@ export function EntityNotesPanel({ data, entity }: { data: CrmCardPayload; entit
   const [text, setText] = useState("");
   const businessId = data.client?.business || data.lead?.business || data.deal?.business || data.appointment?.business;
   const entityType = entity.type.charAt(0).toUpperCase() + entity.type.slice(1);
+  const offline = useLeadCardQueue(entity.type === "lead" ? data.lead?.business : undefined);
   const mutation = useMutation({
-    mutationFn: () => {
+    networkMode: entity.type === "lead" ? "always" : "online",
+    mutationFn: async () => {
       const noteText = text.trim();
       if (!noteText) throw new Error("Note text is required.");
       if (entity.type === "lead" && data.lead) {
+        if (!navigator.onLine) {
+          await offline.enqueueOfflineAction({ id: crypto.randomUUID(), type: "note", leadId: data.lead.id,
+            text: noteText, createdAt: new Date().toISOString() });
+          return;
+        }
         return leadsApi.addNote({ id: data.lead.id, text: noteText });
       }
       if (entity.type === "appointment" && data.appointment) {
@@ -591,6 +609,7 @@ export function EntityNotesPanel({ data, entity }: { data: CrmCardPayload; entit
 
   return (
     <div className="space-y-3">
+      <LeadOfflineQueueStatus queue={offline.offlineQueue} recover={offline.recoverOfflineAction} storageError={offline.storageError} syncing={offline.syncing} online={offline.isOnline} />
       <div className={drawerSurfaceClass}>
         <h3 className="font-semibold text-platforma-ink">{t("crmCard.comment")}</h3>
         <p className="mt-1 text-sm leading-6 text-platforma-muted">{t("crmCard.commentText")}</p>

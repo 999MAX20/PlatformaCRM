@@ -1,3 +1,4 @@
+import { LeadOfflineQueueStatus } from "./components/LeadOfflineQueueStatus";
 import { useCallback, useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router";
 
@@ -120,6 +121,7 @@ export function LeadsPage() {
     pageCount,
     safePage,
     offlineQueue,
+    recoverOfflineAction, storageError, syncing, isOnline,
     enqueueOfflineAction,
     clientList,
     serviceList,
@@ -230,6 +232,7 @@ export function LeadsPage() {
       maxWidthClassName="max-w-none"
       testId="leads-workspace-ready"
     >
+      <LeadOfflineQueueStatus queue={offlineQueue} recover={recoverOfflineAction} storageError={storageError} syncing={syncing} online={isOnline} />
       <LeadsWorkspaceTable
           filters={filters}
           error={pageError ? <ErrorState message={pageErrorMessage} action={<Button variant="secondary" onClick={retryWorkspace}>{t("common.retry")}</Button>} /> : undefined}

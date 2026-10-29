@@ -41,8 +41,10 @@ AUD-19 исправляет разрешение Business через form для
 RU/KK/EN. Отдельный кандидат поверх acb8687e: backend80/system/drift, frontend
 build/types/options2 и targeted browser PASS; рабочие миграции/deployment не выполнялись.
 Версия, публикация и CI —
-[AUD-19 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified). Поиск/выбор и
-надёжность replay — AUD-08/10. AUD-01 реализует изоляцию offline-кэша и очереди
+[AUD-19 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified). Поиск/выбор остаётся AUD-08. AUD-10 добавляет durable keys для заметок/задач,
+отказ без потери ввода при storage error, видимый conflict/retry/discard и достижимые
+формы в карточке. Replay/окно1ч и текущие права — [контракт](../current/frontend.md#offline-данные-заявок--aud-01-17102026);
+проверки точного кандидата и публикация — AUD-10-20261030 в PRIMARY. AUD-01 реализует изоляцию offline-кэша и очереди
 по пользователю/Business/правам, очистку при logout/expiry, замену пустым ответом
 и fallback только при временной/сетевой ошибке. Это до 50 ранее загруженных строк,
 не полная offline-база; pending queue очищается вместе с сессией.

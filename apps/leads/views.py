@@ -32,6 +32,7 @@ from apps.core.work_queues import stale_leads_queryset
 from apps.leads.forms_service import log_lead_form_submission_error, submit_lead_form
 from apps.leads.form_assignment import validate_form_assignee
 from apps.leads.models import Lead, LeadForm, LeadFormField, LeadFormSubmission, LeadFormSubmissionError
+from apps.leads.offline_commands import validate_offline_command_key
 from apps.leads.selectors import annotate_lead_next_task
 from apps.leads.workspace import lead_workspace_queryset, lead_workspace_summary
 from apps.leads.serializers import (
@@ -335,25 +336,39 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
         text = (request.data.get("text") or "").strip()
         if not text:
             raise ValidationError({"text": "This field is required."})
-        note = Note.objects.create(
-            business=lead.business,
-            client=lead.client,
-            author=request.user,
-            entity_type="Lead",
-            entity_id=str(lead.id),
-            text=text,
+        key = request.headers.get("Idempotency-Key", "")
+        validate_offline_command_key(key)
+
+        @transaction.atomic
+        def operation():
+            note = Note.objects.create(
+                business=lead.business,
+                client=lead.client,
+                author=request.user,
+                entity_type="Lead",
+                entity_id=str(lead.id),
+                text=text,
+            )
+            write_audit_log(request, AuditLog.Actions.CREATE, note)
+            create_activity_event(
+                business=lead.business,
+                client=lead.client,
+                actor=request.user,
+                event_type=ActivityEvents.LEAD_NOTE_ADDED,
+                instance=lead,
+                text=f"Комментарий к заявке: {text[:120]}",
+                metadata={"note_id": note.id},
+            )
+            return CRMCommandResult(data=NoteSerializer(note, context={"request": request}).data, status_code=201, resource=note)
+
+        command = run_idempotent_crm_command(
+            business=lead.business, actor=request.user, action="lead.add_note",
+            idempotency_key=key, payload={"lead_id": lead.id, "text": text}, operation=operation,
         )
-        write_audit_log(request, AuditLog.Actions.CREATE, note)
-        create_activity_event(
-            business=lead.business,
-            client=lead.client,
-            actor=request.user,
-            event_type=ActivityEvents.LEAD_NOTE_ADDED,
-            instance=lead,
-            text=f"Комментарий к заявке: {text[:120]}",
-            metadata={"note_id": note.id},
-        )
-        return Response(NoteSerializer(note).data, status=201)
+        if command.replayed:
+            note = get_object_or_404(Note, pk=command.data["id"], business=lead.business)
+            return Response(NoteSerializer(note, context={"request": request}).data, status=command.status_code)
+        return Response(command.data, status=command.status_code)
 
     @action(detail=True, methods=["post"], url_path="create-appointment")
     def create_appointment(self, request, pk=None):
@@ -400,6 +415,7 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
     @action(detail=True, methods=["post"], url_path="create-task")
     def create_task(self, request, pk=None):
         lead = self.get_object()
+        validate_offline_command_key(request.headers.get("Idempotency-Key", ""))
         assert_can(request.user, lead.business, Resources.TASKS, Actions.CREATE)
         serializer = CreateTaskFromLeadSerializer(data=request.data, context={"lead": lead})
         serializer.is_valid(raise_exception=True)
@@ -428,6 +444,11 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
             payload={"lead_id": lead.id, **serializer.validated_data},
             operation=operation,
         )
+        if command.replayed:
+            from apps.tasks.models import Task
+            task = get_object_or_404(Task, pk=command.data["id"], business=lead.business)
+            assert_can(request.user, lead.business, Resources.TASKS, Actions.VIEW, obj=task)
+            return Response(TaskSerializer(task, context={"request": request}).data, status=command.status_code)
         return Response(command.data, status=command.status_code)
 
     @action(detail=True, methods=["get"], url_path="crm-card")
