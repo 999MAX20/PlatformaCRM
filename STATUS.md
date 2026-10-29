@@ -10,7 +10,8 @@ AUD-19-20261029: separate candidate on published CI-repair acb8687e verified.
 Business resolution/field CRUD and More-menu editor: candidate80/system/drift,
 build/types/i18n/options2 and RU/KK/EN desktop/mobile browser PASS. Reader role,
 error recovery, keyboard/focus and key-pattern checks PASS; details in PRIMARY.
-Code/evidence scope complete; publication pending. No working migration/deployment.
+Published cd7a2598 to origin/main; remote SHA confirmed.
+CI40835060335 in progress; no green AUD19 CI claim. No working migration/deployment.
 AUD-10 unstarted; other WIP preserved. CI-repair40832440547 complete success.
 
 CI-REPAIR-20261029: candidate73/system/drift, frontend build/types/budget, resolver8

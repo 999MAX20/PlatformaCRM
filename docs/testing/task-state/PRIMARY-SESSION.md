@@ -10,6 +10,19 @@
 
 ## AUD-19-20261029 — lead form field tenant resolution and editor (verified)
 
+Publication29.10: cd7a2598a9ca62444341f6fb7a2f49f1ee62b566 normal-pushed to
+origin/main, remote SHA matched. Canonical PlatformaCRM, codex/ui-testing-toolkit;
+24-file commit contains17 reviewed source/test files and7 documentation files.
+[CI40835060335](https://github.com/999MAX20/PlatformaCRM/actions/runs/40835060335)
+in progress at final documentation snapshot; no green CI claim. CI-repair parent
+acb8687e remains complete success. No deployment/working migration. Outgoing
+range/index hygiene and scoped docs links/anchor PASS. Other WIP preserved.
+First stage/commit attempt failed on stale empty .git/index.lock (no commit created,
+no-op push); no git.exe process on repeat inspection, lock unchanged over5min.
+Moved empty lock to task artifact for recovery, then staged reviewed patch and
+committed/pushed normally. No other work was staged or reset.
+
+
 Final publication candidate29.10 supersedes the earlier blocked-build boundary.
 CI-repair acb8687ed99f6a1882b1b74f1708f340debd1559 was published separately;
 [CI40832440547](https://github.com/999MAX20/PlatformaCRM/actions/runs/40832440547)
@@ -46,8 +59,8 @@ manual cleanup attempted); one refresh-token500 from SQLite database-is-locked,
 subsequent requests recovered. No SQLite concurrency repair claimed; auth tests and
 full CI-repair backend PASS. Task-owned browser closed; backend/frontend listeners
 59405/59406 and first52227/52228 absent after shutdown; disposable folders retained.
-Code/evidence/owner decision remainder: none in this scope. Publication pending at
-this snapshot; remote SHA/CI follows below. Environment deployment/live separate.
+Code/evidence/owner decision remainder: none in this scope. Published code/remote SHA
+are recorded above; CI completion is pending. Environment deployment/live separate.
 Roadmap/CRM/access/frontend/leads-deals passport aligned to More-menu flow and evidence.
 README/AI/integrations/operations unchanged: no new setup/provider/config contract.
 AUD-10 unstarted and needs a new instruction. Unrelated WIP preserved; real index
