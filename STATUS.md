@@ -12,6 +12,7 @@ one merge/audit/activity. Final isolated candidate54 tests/no skips, system/drif
 Base692e46f0, canonical root, branch codex/ui-testing-toolkit; prior WIP preserved.
 No schema/env/UI/deployment change. Scope complete; next AUD-19 not started.
 Exact commands, failed reproductions and candidate boundary in PRIMARY.
+Published db0a4d9c to origin/main, remote SHA confirmed; CI40822054259 in progress.
 
 YCLOUD-TPLITE-20261028,29.10: первый локальный этап реализован: серверное подключение
 одного WhatsApp API-номера и текстовый обмен в существующем Inbox, подписанный durable

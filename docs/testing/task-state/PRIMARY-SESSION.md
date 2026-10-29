@@ -56,6 +56,10 @@ Code/evidence/owner decision remainder: none in scope. Roadmap AUD-11 closed;
 next local audit item AUD-19 remains unstarted. Normal task-only publication selected;
 prior notification/security/CI WIP excluded. Actual publication/CI reported separately.
 
+Publication29.10: db0a4d9c normal-pushed to origin/main; remote SHA readback matches.
+CI40822054259 in_progress when checked, no green-CI claim. Real index empty after
+source commit; unrelated WIP preserved. Committed-range diff hygiene PASS.
+
 ## YCLOUD-PUBLICATION-20261029 — combined publication verification (published)
 
 Owner explicitly authorizes review and normal publication of OFFICIAL-03, YCloud
