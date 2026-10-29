@@ -6,6 +6,64 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+
+## CI-REPAIR-20261029 — migration isolation and dependency advisories (in progress)
+
+Owner requests fixing backend failures/dependency vulnerabilities, preserving all
+other local work, verifying, publishing to main and waiting for green CI.
+Canonical root/branch unchanged, base HEAD/main692e46f0, real index empty. Starting
+diff/status in Temp/ci-repair-20261029. No other security/notification/SSE WIP included.
+Confirmed CI40768322341:2116 tests,11 errors from missing YCloudConnection table,
+40 skips; frontend build/budget PASS, npm audit fails on DOMPurify/Storybook/Zod.
+Gap: test isolation and dependency security. Reuse current migration test/runner,
+package manager lockfile, React Hook Form and existing form/browser/catalog checks.
+Risk: migration test rollback leaks into later tests; Zod major-version validation
+and coercion compatibility. No CRM/permission/notification/AI policy or production
+schema/env changes intended. Working DB/migrations/provider actions excluded.
+Checks before changes: ordered safety-migration→YCloud dispatch reproducer in
+isolated Git-index Python source; audit/official advisories and dependency callers.
+After backend fix: same order and owning tests, system/drift. Dependencies: npm audit,
+forced types/build/bundle, form validation happy/error/coercion flows and Storybook
+build/representative browser. Review exact index/outgoing range, normal commit/push,
+read remote SHA and wait for complete green GitHub backend/frontend CI. Full backend
+in CI required for this reproduced test-order interaction; no unrelated broad E2E.
+
+Completion29.10: reviewed11 code/test/lock files, excluding AUD19 and unrelated WIP.
+Migration test restores all graph leaf nodes in finally, even after failed downgrade.
+Frontend updates DOMPurify/Storybook/Zod/resolver, separates raw/parsed form types,
+and repairs stale Storybook IDs. Additional Python audit found DRF3.17.2 advisories
+CVE-2026-114136/114137/114138. Scoped update to3.18.3 includes security fixes and
+3.18.2 regression correction (official DRF release notes). Only DRF lower bound,
+pin and distribution hashes changed; unrelated uvicorn/SSE excluded from candidate.
+
+Artifacts: Temp/aud19-publication-20261029. Candidate loader reads reviewed Git blobs
+in memory at canonical paths, using isolated_runtime; no .env/working DB/provider.
+`.venv/Scripts/python.exe <artifact>/run_candidate.py
+ apps.bots.tests_safety_migration apps.integrations.tests_ycloud_dispatch
+ apps.accounts.tests apps.core.tests_tenant_isolation apps.leads.tests_forms
+ apps.clients.tests`:73 PASS/no skips, system check and migration drift PASS.
+`python -m pip_audit -r <artifact>/requirements-candidate.txt --no-deps --disable-pip`:
+no known vulnerabilities. DRF3.18.3 installed in existing .venv using
+`pip install --require-hashes --no-deps -r <artifact>/drf-install.txt`; verified PyPI
+hashes, no other reinstall. Initial piptools compile failed: installed pip removed
+stdlib_pkgs; retained lock-compile.log. Updated scoped pin/hashes from official PyPI
+metadata instead, preserving other pins. Old-DRF audit failure remains in ci-repair.
+
+Frontend commands in frontend/ with NODE_OPTIONS=--require=<artifact>/frontend-snapshot.cjs:
+`npm run build`, `npx tsc -b --force`, `npm run check:bundle`, `npm audit --json`
+PASS (6456 translation keys, zero audit findings). Existing large KK chunk warning
+remains; app-shell budget PASS. `node --test scripts/tests/form-resolver-compatibility.test.mjs`:
+8 PASS. Unchanged frontend candidate retains preceding `npm run build-storybook`
+and `npx playwright test --config playwright.storybook.config.ts --grep
+'fresh Storybook index|service modal validates'`:8 PASS desktop/mobile RU/KK/EN,
+valid/invalid fields/reset/error recovery. Failed stale-ID attempts retained.
+No full browser/live provider tests; no schema/env/API policy change. README/domain
+passports need no change because behavior/setup contracts remain the same. Full
+backend CI is required for shared DRF and migration-order compatibility, pending.
+Candidate diff hygiene/new-file/dependency review PASS; no secrets. Main push runs
+only ci.yml checks, no deployment job. Publication pending; other WIP preserved.
+
+
 ## AUD-11-20261029 — atomic client merge and request audit (verified)
 
 Owner authorized merge rollback repair and roadmap update. Canonical root

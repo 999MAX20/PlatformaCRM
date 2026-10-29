@@ -12,14 +12,15 @@ import { Select } from "../ui/Select";
 import { ErrorState } from "../ui/StateViews";
 
 const schema = z.object({
-  resource: z.coerce.number().optional(),
-  weekday: z.coerce.number().min(0).max(6),
+  resource: z.coerce.number<string | number>().optional(),
+  weekday: z.coerce.number<string | number>().min(0).max(6),
   start_time: z.string(),
   end_time: z.string(),
   is_day_off: z.boolean(),
 });
 
-type Values = z.infer<typeof schema>;
+type InputValues = z.input<typeof schema>;
+type Values = z.output<typeof schema>;
 
 const weekdays = [
   { value: 0, shortKey: "weekday.monShort", labelKey: "weekday.mon" },
@@ -43,7 +44,7 @@ export function WorkingHoursForm({
   onSubmit: (payload: Partial<WorkingHours>) => Promise<unknown>;
 }) {
   const { t } = useI18n();
-  const form = useForm<Values>({
+  const form = useForm<InputValues, unknown, Values>({
     resolver: zodResolver(schema),
     defaultValues: {
       resource: initial?.resource || undefined,

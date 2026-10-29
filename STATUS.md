@@ -6,6 +6,12 @@
 
 # PlatformaCRM — текущий статус
 
+CI-REPAIR-20261029: candidate73/system/drift, frontend build/types/budget, resolver8
+and npm/Python audits PASS. DRF3.18.3 closes three remaining advisories; unrelated
+WIP excluded. Publication and complete CI pending; AUD19 follows separately.
+Evidence: CI-REPAIR and AUD19-PUBLICATION in PRIMARY.
+
+
 AUD-11-20261029: merge API now commits transfers, ledger/archive, history and request
 audit together. Audit failure before/after insert rolls everything back; retry creates
 one merge/audit/activity. Final isolated candidate54 tests/no skips, system/drift PASS.

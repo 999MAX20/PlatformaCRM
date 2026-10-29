@@ -8,8 +8,9 @@ class CustomerSafetyMigrationTests(TransactionTestCase):
         before = [("ai_core", "0007_agent_conversations"), ("bots", "0010_botmessage_delivery_attempts_and_more")]
         after = [("ai_core", "0008_customer_knowledge_visibility")]
         executor = MigrationExecutor(connection)
-        executor.migrate(before)
+        restore_targets = executor.loader.graph.leaf_nodes()
         try:
+            executor.migrate(before)
             executor = MigrationExecutor(connection)
             apps = executor.loader.project_state(list(executor.loader.applied_migrations)).apps
             owner = apps.get_model("accounts", "User").objects.create(username="safety-migration", email="migration@example.test")
@@ -40,4 +41,6 @@ class CustomerSafetyMigrationTests(TransactionTestCase):
             self.assertFalse(saved.bot_enabled)
             self.assertEqual(current.get_model("bots", "BotMessage").objects.get(pk=message.pk).text, "Preserved synthetic message")
         finally:
-            MigrationExecutor(connection).migrate(after)
+            # Rolling bots back also unapplies dependent apps (including YCloud).
+            # Restore the complete current schema before the next transaction test.
+            MigrationExecutor(connection).migrate(restore_targets)

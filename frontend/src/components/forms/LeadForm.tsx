@@ -14,15 +14,16 @@ import { Textarea } from "../ui/Textarea";
 
 function createSchema(t: (key: string) => string) {
   return z.object({
-    client: z.coerce.number().min(1, t("leadForm.selectClientError")),
-    service: z.coerce.number().optional(),
+    client: z.coerce.number<string | number>().min(1, t("leadForm.selectClientError")),
+    service: z.coerce.number<string | number>().optional(),
     source: z.string(),
     message: z.string().optional(),
-    responsible_user: z.coerce.number().optional(),
+    responsible_user: z.coerce.number<string | number>().optional(),
   });
 }
 
-type Values = z.infer<ReturnType<typeof createSchema>>;
+type InputValues = z.input<ReturnType<typeof createSchema>>;
+type Values = z.output<ReturnType<typeof createSchema>>;
 
 export function LeadForm({
   businessId,
@@ -51,7 +52,7 @@ export function LeadForm({
   );
   const hasClients = clients.length > 0;
   const hasServices = selectableServices.length > 0;
-  const form = useForm<Values>({
+  const form = useForm<InputValues, unknown, Values>({
     resolver: zodResolver(createSchema(t)),
     defaultValues: {
       client: initial?.client || initialClientId || 0,

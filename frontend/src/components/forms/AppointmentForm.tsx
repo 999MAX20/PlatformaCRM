@@ -21,10 +21,10 @@ import { Textarea } from "../ui/Textarea";
 
 function createSchema(t: (key: string) => string) {
   return z.object({
-    client: z.coerce.number().min(1, t("appointment.selectClient")),
-    service: z.coerce.number().min(1, t("appointment.selectService")),
-    resource: z.coerce.number().min(1, t("appointment.selectSpecialist")),
-    lead: z.coerce.number().optional(),
+    client: z.coerce.number<string | number>().min(1, t("appointment.selectClient")),
+    service: z.coerce.number<string | number>().min(1, t("appointment.selectService")),
+    resource: z.coerce.number<string | number>().min(1, t("appointment.selectSpecialist")),
+    lead: z.coerce.number<string | number>().optional(),
     date: z.string().min(1, t("appointment.dateRequired")),
     slot: z.string().optional(),
     source: z.string(),
@@ -32,7 +32,8 @@ function createSchema(t: (key: string) => string) {
   });
 }
 
-type Values = z.infer<ReturnType<typeof createSchema>>;
+type InputValues = z.input<ReturnType<typeof createSchema>>;
+type Values = z.output<ReturnType<typeof createSchema>>;
 
 function SetupNotice({
   title,
@@ -116,7 +117,7 @@ export function AppointmentForm({
     const offer = branch.catalog?.offers.find((item) => item.service === service.id);
     return offer ? { ...service, duration_minutes: offer.duration_minutes, price_from: offer.price_from } : service;
   });
-  const form = useForm<Values>({
+  const form = useForm<InputValues, unknown, Values>({
     resolver: zodResolver(createSchema(t)),
     defaultValues: {
       client: initial?.client || prefill?.client || clients[0]?.id || 0,

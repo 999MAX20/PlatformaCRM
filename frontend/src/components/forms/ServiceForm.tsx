@@ -13,11 +13,12 @@ const createSchema = (t: (key: string) => string) =>
   z.object({
     name: z.string().min(2, t("services.nameRequired")),
     description: z.string().optional(),
-    duration_minutes: z.coerce.number().min(15),
+    duration_minutes: z.coerce.number<string | number>().min(15),
     price_from: z.string().optional(),
   });
 
-type Values = z.infer<ReturnType<typeof createSchema>>;
+type InputValues = z.input<ReturnType<typeof createSchema>>;
+type Values = z.output<ReturnType<typeof createSchema>>;
 
 type ServiceTemplate = {
   key: string;
@@ -52,7 +53,7 @@ export function ServiceForm({
   onDirtyChange?: (isDirty: boolean) => void;
 }) {
   const { t } = useI18n();
-  const form = useForm<Values>({
+  const form = useForm<InputValues, unknown, Values>({
     resolver: zodResolver(createSchema(t)),
     defaultValues: {
       name: initial?.name || "",
