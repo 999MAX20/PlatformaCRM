@@ -400,7 +400,7 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
     @action(detail=True, methods=["post"], url_path="create-task")
     def create_task(self, request, pk=None):
         lead = self.get_object()
-        assert_can(request.user, lead.business, Resources.TASKS, Actions.CREATE, obj=lead)
+        assert_can(request.user, lead.business, Resources.TASKS, Actions.CREATE)
         serializer = CreateTaskFromLeadSerializer(data=request.data, context={"lead": lead})
         serializer.is_valid(raise_exception=True)
         def operation():

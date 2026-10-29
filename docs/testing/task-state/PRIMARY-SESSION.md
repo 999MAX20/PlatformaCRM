@@ -6,6 +6,27 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## OFFICIAL18-PUBLICATION-20261030 — approved prerequisite for AUD10
+
+Owner explicitly approves minimal OFFICIAL18 then AUD10 publication and all five
+existing outgoing commits7b9543d4/3de47b53/70d5d2e0/caa0eed4/dcd5b141.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, base dcd5b141; origin/main e9c1681b.
+Reviewed3 paths: apps/leads/services.py, create-task source guard in apps/leads/views.py,
+apps/leads/tests_task_assignment.py. Ordinary assignment validation/current CREATE on
+final Task replace Lead-based ownership checks; current Lead VIEW, tenant/archive/lock,
+audit/activity/notification behavior retained. No new permission policy, AI effect,
+BusinessEvent, schema/env/deployment/working migration or external provider operation.
+Exact prerequisite-only28 PASS/no skips and combined AUD10+OFFICIAL18 candidate65 PASS;
+Git-blob import overlays at canonical paths, disposable SQLite, external network denied.
+Commands/results: output/aud10-20261030/prerequisite-only.json, dependency-candidate.json.
+System checks pass on exact candidate; drift reused for unchanged schema/config.
+No new PostgreSQL concurrency certification. AUD10-only OWN-assignment failure retained.
+Real index empty before explicit staging; no unrelated projection/security/notification
+WIP included. Initial index operation failed on stale empty index.lock; no git process,
+file unchanged for hours. Empty lock moved to task artifact, then preparation retried.
+Remote SHA/CI will be recorded in following publication receipt; no deployment implied.
+
+
 
 
 ## AUD-19-20261029 — lead form field tenant resolution and editor (verified)

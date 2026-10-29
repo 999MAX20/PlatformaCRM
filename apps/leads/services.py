@@ -8,7 +8,7 @@ from apps.activities.services import create_activity_event
 from apps.activities.taxonomy import ActivityEvents
 from apps.businesses.assignment_notifications import create_assignment_notifications
 from apps.businesses.assignment_policy import assert_assignment_allowed
-from apps.businesses.access import Actions, Resources
+from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.capabilities import assert_resource_enabled
 from apps.core.audit import write_actor_audit_log, write_audit_log
 from apps.core.domain_errors import InvalidTransition, ScheduleConflict
@@ -18,6 +18,7 @@ from apps.crm.models import Deal, Pipeline, PipelineStage
 from apps.leads.models import Lead
 from apps.notifications.models import Notification
 from apps.tasks.models import Task
+from apps.tasks.policy import validate_assignment
 from apps.tasks.services import create_task_notification
 
 
@@ -479,13 +480,17 @@ def create_appointment_from_lead_contract(*, lead: Lead, actor, service, start_a
     return appointment
 
 
-@locked_crm_change("lead", resource=Resources.TASKS, action=Actions.CREATE)
+@locked_crm_change("lead")
 def create_follow_up_task_from_lead(*, lead: Lead, actor, title: str, description: str = "", priority: str = Task.Priorities.NORMAL, due_at=None, assignee_id=None, request=None) -> Task:
     title = (title or "").strip()
     if not title:
         raise ValidationError({"title": "This field is required."})
     if priority not in Task.Priorities.values:
         raise ValidationError({"priority": "Invalid priority."})
+
+    assert_resource_enabled(lead.business, Resources.LEADS)
+    assert_can(actor, lead.business, Resources.LEADS, Actions.VIEW, obj=lead)
+    assert_resource_enabled(lead.business, Resources.TASKS)
 
     assignee = None
     if assignee_id:
@@ -499,7 +504,8 @@ def create_follow_up_task_from_lead(*, lead: Lead, actor, title: str, descriptio
         if assignee and not lead.business.members.filter(user=assignee, is_active=True).exists():
             assignee = None
 
-    task = Task.objects.create(
+    validate_assignment(business=lead.business, actor=actor, assignee=assignee, creating=True)
+    task = Task(
         business=lead.business,
         title=title,
         description=description or "",
@@ -510,6 +516,8 @@ def create_follow_up_task_from_lead(*, lead: Lead, actor, title: str, descriptio
         due_at=due_at,
         priority=priority,
     )
+    assert_can(actor, lead.business, Resources.TASKS, Actions.CREATE, obj=task)
+    task.save()
     if request is not None:
         write_audit_log(request, AuditLog.Actions.CREATE, task, metadata={"kind": "lead_follow_up", "lead_id": lead.id})
     create_activity_event(

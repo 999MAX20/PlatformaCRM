@@ -6,6 +6,12 @@
 
 # PlatformaCRM — текущий статус
 
+OFFICIAL18-PUBLICATION-20261030: owner authorized minimal prerequisite and five existing
+outgoing commits, then AUD10. Prerequisite-only28 and combined65 isolated tests PASS.
+Only task-assignment service/API guard/tests included; unrelated WIP preserved.
+No schema/env/working DB/deployment change. Receipt: OFFICIAL18-PUBLICATION in PRIMARY.
+
+
 AUD-19-20261029: separate candidate on published CI-repair acb8687e verified.
 Business resolution/field CRUD and More-menu editor: candidate80/system/drift,
 build/types/i18n/options2 and RU/KK/EN desktop/mobile browser PASS. Reader role,
