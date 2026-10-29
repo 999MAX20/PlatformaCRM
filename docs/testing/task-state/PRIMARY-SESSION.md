@@ -7530,3 +7530,24 @@ regression: actual edge still returns no-store; both local edge checks PASS.
 All owned preview Node/Caddy processes stopped. No live password/deployment.
 CRM stale empty index.lock (>3h, no git.exe on two inspections) was removed
 from the canonical .git to unblock normal scoped staging; no history rewritten.
+
+
+### STAND-ACCESS-20261029 — local activation follow-up
+User authorized test passwords, local preview and Market dev restart. Separate
+ignored .env.stand.local files now hold hashes/keys; no secrets are committed.
+Observed browser CSRF collision across localhost ports fixed with product-specific
+cookie names. Added same-host concurrent forms/sessions regression. Added dev.mjs
+for repeatable Caddy preview before existing dev servers; no working DB migrations.
+Both node --test deploy/stand-access/gate.test.mjs:11/11 PASS; node --check dev.mjs
+PASS. Actual Caddy verify-edge.mjs PASS in both product profiles including outage
+fail-closed; logs output/stand-access-20261029/local-{tests,edge}.txt.
+Chrome: CRM gate reaches existing account login; Market gate reaches loaded catalog.
+Market old dev tree restarted with user approval; direct launcher rejected non-npm
+invocation, then npm run dev built API and prepared web successfully. No reset/seed.
+Active local gateways: CRM5174 ->5173; Market3080 ->3000. Process IDs/source roots
+are recorded in output/stand-access-live/runtime.json; Market npm launcher16548.
+Dev processes intentionally remain running for owner review. Original app ports
+remain loopback-only; use gate entry URLs for preview. No public deployment.
+Changed gate-only checks replace unrelated full-project suites; existing Compose
+checks reused unchanged. Server still needs real HTTPS domain and secret provisioning
+with compose.stand.yaml. No roadmap acceptance or production readiness implied.

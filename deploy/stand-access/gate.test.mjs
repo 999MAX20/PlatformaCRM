@@ -58,7 +58,7 @@ test('password-only form, wrong-password recovery, valid session and protected c
   const result = await f.post(form);
   assert.equal(result.status, 303); assert.equal(result.headers.get('location'), '/clients');
   const cookie = result.headers.get('set-cookie');
-  assert.match(cookie, /^__Host-stand_access=/); assert.match(cookie, /HttpOnly; SameSite=Lax; Max-Age=28800; Secure/);
+  assert.match(cookie, /^__Host-stand_crm_access=/); assert.match(cookie, /HttpOnly; SameSite=Lax; Max-Age=28800; Secure/);
   assert.equal((await f.verify(cookie.split(';')[0])).status, 204);
   assert.equal((await f.verify(cookie.split(';')[0] + 'tampered')).status, 401);
   assert.equal(result.headers.get('cache-control'), 'no-store, private');
@@ -121,3 +121,15 @@ test('redirects cannot escape origin or inject markup; locales render', async t 
   }
 });
 process.on('exit', () => rmSync(directory, { recursive: true, force: true }));
+test('CRM and Market forms and sessions coexist on the same hostname', async t => {
+  const crm = await fixture(t), market = await fixture(t, { config: config({ STAND_PRODUCT: 'Market' }) });
+  const a = await crm.form(), b = await market.form();
+  assert.notEqual(a.cookie.split('=')[0], b.cookie.split('=')[0]);
+  const jar = a.cookie + '; ' + b.cookie;
+  const first = await crm.post({ ...a, cookie: jar });
+  const second = await market.post({ ...b, cookie: jar });
+  assert.equal(first.status, 303); assert.equal(second.status, 303);
+  const sessions = first.headers.get('set-cookie').split(';')[0] + '; ' + second.headers.get('set-cookie').split(';')[0];
+  assert.equal((await crm.verify(sessions)).status, 204);
+  assert.equal((await market.verify(sessions)).status, 204);
+});

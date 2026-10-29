@@ -33,7 +33,9 @@ export function configuration(env = process.env) {
 }
 export function createGate(config, clock = Date.now) {
   const prefix = config.secure ? '__Host-' : '';
-  const sessionName = `${prefix}stand_access`, csrfName = `${prefix}stand_csrf`;
+  // Cookies are shared across ports on localhost: isolate the two product gates.
+  const productId = config.product === 'Market' ? 'market' : 'crm';
+  const sessionName = `${prefix}stand_${productId}_access`, csrfName = `${prefix}stand_${productId}_csrf`;
   const key = createHmac('sha256', config.secret).update(config.hash).digest();
   let attempts = {};
   try { attempts = JSON.parse(readFileSync(config.stateFile, 'utf8')); }
