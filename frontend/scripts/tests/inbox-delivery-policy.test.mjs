@@ -12,7 +12,7 @@ function read(relativePath) {
 }
 
 const inboxApi = read("src/api/inbox.ts");
-const conversationsPage = read("src/features/conversations/ConversationsPage.tsx");
+const sendingModel = read("src/features/conversations/useInboxSending.ts");
 const deliveryDetails = read("src/features/conversations/components/MessageDeliveryDetails.tsx");
 const messageBubble = read("src/features/conversations/components/MessageBubble.tsx");
 
@@ -21,8 +21,8 @@ test("outbound inbox requests carry idempotency keys", () => {
   assert.match(inboxApi, /"Idempotency-Key": normalizedKey/);
   assert.match(inboxApi, /sendMessage:[\s\S]*idempotencyKey\?/);
   assert.match(inboxApi, /retryMessage:[\s\S]*idempotencyKey\?/);
-  assert.match(conversationsPage, /sendIdempotencyRef/);
-  assert.match(conversationsPage, /createIdempotencyKey\(`inbox:retry:/);
+  assert.match(sendingModel, /sendIdempotencyRef/);
+  assert.match(sendingModel, /createIdempotencyKey\(`inbox:retry:/);
 });
 
 test("delivery details normalize provider states and keep recovery out of the primary bubble", () => {

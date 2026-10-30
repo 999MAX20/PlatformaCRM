@@ -1,45 +1,18 @@
-import {
-  InfiniteData,
-  keepPreviousData,
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import {
-  BellDot,
-  CheckSquare,
-  Link2,
-  PauseCircle,
-  Sparkles,
-  UserRound,
-  X,
-} from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Navigate,
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router";
+import { useInboxLinking } from "./useInboxLinking";
+import { InboxTaskDialog } from "./InboxTaskDialog";
+import { InboxQuickRepliesDialog } from "./InboxQuickRepliesDialog";
+import { useInboxQueries } from "./useInboxQueries";
+import { useInboxFilterOptions } from "./useInboxFilterOptions";
+import { useInboxSending } from "./useInboxSending";
+import { createIdempotencyKey } from "./inboxIdempotency";
+import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
+import { BellDot, CheckSquare, Link2, PauseCircle, Sparkles, UserRound, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Navigate, Link, useNavigate, useParams, useSearchParams } from "react-router";
 
 import { getApiErrorMessage, getApiFieldErrors } from "../../api/client";
-import { botsApi } from "../../api/bots";
-import { businessConnectorsApi } from "../../api/connectors";
-import { quickRepliesApi } from "../../api/quickReplies";
-import {
-  INBOX_MESSAGES_PAGE_SIZE,
-  inboxApi,
-  inboxQueryKeys,
-  type InboxConversation,
-  type InboxClientLinkPreview,
-  type InboxFilters,
-  type InboxMessage,
-  type PaginatedInboxMessageResponse,
-  type PipelineAction,
-  type PipelineConfirmation,
-} from "../../api/inbox";
+
+import { inboxApi, inboxQueryKeys, type InboxConversation, type InboxFilters, type InboxMessage, type PaginatedInboxMessageResponse, type PipelineAction, type PipelineConfirmation } from "../../api/inbox";
 import { ClientLinkConfirmation } from "./components/ClientLinkConfirmation";
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
@@ -48,18 +21,14 @@ import { useNotification } from "../../components/notifications/NotificationProv
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Dialog, Drawer } from "../../components/ui/Overlay";
-import { Select } from "../../components/ui/Select";
+
 import { StatusBadge } from "../../components/ui/StatusBadge";
-import {
-  EmptyState,
-  ErrorState,
-  LoadingState,
-} from "../../components/ui/StateViews";
-import { Textarea } from "../../components/ui/Textarea";
+import { EmptyState, ErrorState, LoadingState } from "../../components/ui/StateViews";
+
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
-import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
+
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useAuth } from "../auth/AuthProvider";
 import { ConversationListPane } from "./components/ConversationListPane";
@@ -71,16 +40,8 @@ import { ConversationThreadPane } from "./components/ConversationThreadPane";
 import { Tooltip } from "./components/ConversationPrimitives";
 import { MessageDeliveryDetails } from "./components/MessageDeliveryDetails";
 import { PipelineConfirmationDialog, type PipelineReview } from "./components/PipelineConfirmationDialog";
-import {
-  channelOptions,
-  priorityOptions,
-} from "./conversationConstants";
-import {
-  channelLabel,
-  conversationTitle,
-  getAutoPipelineInsight,
-  getConversationTimestamp,
-} from "./conversationUtils";
+import { channelOptions, priorityOptions } from "./conversationConstants";
+import { conversationTitle, getAutoPipelineInsight } from "./conversationUtils";
 import { useConversationFilters } from "./hooks/useConversationFilters";
 import { taskDateISO } from "../tasks/workspaceUtils";
 
@@ -99,13 +60,6 @@ function searchWithoutLegacyConversation(searchParams: URLSearchParams) {
 function isIntegrationsAction(href: string) {
   const path = href.split(/[?#]/, 1)[0].replace(/\/+$/, "");
   return path === "/app/integrations" || path.startsWith("/app/integrations/");
-}
-
-function createIdempotencyKey(scope: string) {
-  const random = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  return `${scope}:${random}`;
 }
 
 export function ConversationsPage() {
@@ -143,21 +97,19 @@ export function ConversationsPage() {
   const readSelectionRef = useRef<string | null>(null);
   const contextTriggerRef = useRef<HTMLButtonElement>(null);
   const aiTriggerRef = useRef<HTMLButtonElement>(null);
-  const retryKeys = useRef(new Map<number, string>());
+
   const [suggestedReply, setSuggestedReply] = useState("");
 
-  const sendIdempotencyRef = useRef<{ conversationId: number; text: string; key: string } | null>(null);
   const [quickRepliesOpen, setQuickRepliesOpen] = useState(false);
-  const [pipelineReview, setPipelineReview] = useState<PipelineReview | null>(null);
+  const [pipelineReview, setPipelineReview] = useState<PipelineReview | null>(
+    null,
+  );
   const [quickReplySearch, setQuickReplySearch] = useState("");
-  const [clientLinkPreview, setClientLinkPreview] = useState<InboxClientLinkPreview | null>(null);
-  const [clientLinkRefreshed, setClientLinkRefreshed] = useState(false);
-  const [crmLinkModal, setCrmLinkModal] = useState<
-    "client" | "lead" | "deal" | null
-  >(null);
-  const [crmLinkSearch, setCrmLinkSearch] = useState("");
+
   const [taskModalOpen, setTaskModalOpen] = useState(false);
-  const taskIdempotencyRef = useRef<{ signature: string; key: string } | null>(null);
+  const taskIdempotencyRef = useRef<{ signature: string; key: string } | null>(
+    null,
+  );
   const [taskDraft, setTaskDraft] = useState({
     title: "",
     description: "",
@@ -187,7 +139,10 @@ export function ConversationsPage() {
     if (!composer) return;
     const maxHeight = Math.min(
       window.matchMedia("(max-width: 640px)").matches ? 110 : 132,
-      Math.max(44, (window.visualViewport?.height ?? window.innerHeight) * 0.25),
+      Math.max(
+        44,
+        (window.visualViewport?.height ?? window.innerHeight) * 0.25,
+      ),
     );
     composer.style.height = "auto";
     composer.style.height = `${Math.max(44, Math.min(composer.scrollHeight, maxHeight))}px`;
@@ -203,81 +158,27 @@ export function ConversationsPage() {
     showNotification({ message, tone });
   }
 
-  const summary = useQuery({
-    queryKey: ["inbox-summary", businessId],
-    queryFn: inboxApi.getSummary,
-    refetchInterval: realtimeIntervals.inboxConversationsMs,
-    ...realtimeQueryOptions,
+  const {
+    summary,
+    communicationConnectors,
+    conversations,
+    bots,
+    items,
+    sortedItems,
+    selectedConversation,
+    selected,
+    context,
+    quickReplies,
+    messages,
+    messageList,
+  } = useInboxQueries({
+    businessId,
+    canViewIntegrations,
+    normalizedFilters,
+    sortBy,
+    selectedId,
+    userId: user?.id,
   });
-  const communicationConnectors = useQuery({
-    queryKey: ["business-connectors", "inbox-readiness", businessId],
-    queryFn: () => businessConnectorsApi.list({ business: businessId! }),
-    enabled: Boolean(businessId && canViewIntegrations),
-    retry: false,
-  });
-
-  const conversations = useQuery({
-    queryKey: inboxQueryKeys.conversations(normalizedFilters),
-    queryFn: () => inboxApi.listConversations(normalizedFilters),
-    refetchInterval: realtimeIntervals.inboxConversationsMs,
-    ...realtimeQueryOptions,
-    placeholderData: keepPreviousData,
-  });
-
-  const bots = useQuery({
-    queryKey: ["bots"],
-    queryFn: botsApi.list,
-  });
-
-  const items = conversations.data?.results || [];
-
-  const sortedItems = useMemo(() => {
-    const source = [...items];
-    if (sortBy === "unread") {
-      source.sort((left, right) => {
-        const unreadDiff = (right.unread_count || 0) - (left.unread_count || 0);
-        if (unreadDiff !== 0) return unreadDiff;
-        const leftDate = getConversationTimestamp(left.last_message_at);
-        const rightDate = getConversationTimestamp(right.last_message_at);
-        return rightDate - leftDate;
-      });
-      return source;
-    }
-
-    if (sortBy === "first_response") {
-      source.sort((left, right) => {
-        const leftDate = getConversationTimestamp(left.last_inbound_at);
-        const rightDate = getConversationTimestamp(right.last_inbound_at);
-        return leftDate - rightDate;
-      });
-      return source;
-    }
-
-    source.sort(
-      (left, right) =>
-        getConversationTimestamp(right.last_message_at) -
-        getConversationTimestamp(left.last_message_at),
-    );
-    return source;
-  }, [items, sortBy]);
-
-  const selectedFromList = useMemo(
-    () => sortedItems.find((item) => item.id === selectedId) || null,
-    [sortedItems, selectedId],
-  );
-
-  const selectedConversation = useQuery({
-    queryKey: ["inbox-conversation", selectedId],
-    queryFn: () => inboxApi.getConversation(selectedId!),
-    enabled: Boolean(selectedId && !selectedFromList),
-    refetchInterval:
-      selectedId && !selectedFromList
-        ? realtimeIntervals.inboxConversationsMs
-        : false,
-    ...realtimeQueryOptions,
-  });
-
-  const selected = selectedFromList || selectedConversation.data || null;
 
   const canSuggestAi = hasPermission(
     user,
@@ -297,16 +198,17 @@ export function ConversationsPage() {
     "ai_pipeline",
     "execute",
   );
-  const { draft, draftKey, setDraft, clearSentDraft } = useInboxDraft(user?.id, selected?.business, selected?.id);
+  const { draft, draftKey, setDraft, clearSentDraft } = useInboxDraft(
+    user?.id,
+    selected?.business,
+    selected?.id,
+  );
   const currentConversationRef = useRef(selected?.id);
   currentConversationRef.current = selected?.id;
-  const context = useQuery({
-    queryKey: ["inbox-context", user?.id, selected?.business, selected?.id],
-    queryFn: () => inboxApi.getContext(selected!.id),
-    enabled: Boolean(selected), retry: false,
-    refetchInterval: realtimeIntervals.inboxConversationsMs,
-  });
-  const canUpdate = context.data?.actions.update ?? hasPermission(user, selected?.business, "conversations", "update");
+
+  const canUpdate =
+    context.data?.actions.update ??
+    hasPermission(user, selected?.business, "conversations", "update");
   useEffect(() => {
     setSuggestedReply("");
     setMobileInspectorOpen(false);
@@ -320,24 +222,6 @@ export function ConversationsPage() {
     setQuickRepliesOpen(false);
   }, [user?.id, selected?.business, selected?.id]);
 
-  const quickReplies = useQuery({
-    queryKey: ["quick-replies", businessId, selected?.channel],
-    queryFn: () =>
-      quickRepliesApi.listAll({
-        business: selected?.business || businessId,
-        channel: selected?.channel || "all",
-        is_active: true,
-      }),
-    enabled: Boolean(businessId && selected?.channel),
-  });
-
-  const linkCandidates = useQuery({
-    queryKey: ["inbox-link-candidates", user?.id, selected?.business, selected?.id, crmLinkModal, crmLinkSearch],
-    queryFn: () => inboxApi.linkCandidates(selected!.id, crmLinkModal!, crmLinkSearch),
-    enabled: Boolean(selected && crmLinkModal && context.data?.actions[`link_${crmLinkModal}`]),
-    retry: false,
-  });
-
   useEffect(() => {
     setPageHeader({ title: t("nav.conversations") });
     return () => setPageHeader(null);
@@ -350,11 +234,7 @@ export function ConversationsPage() {
     );
     const handoff = sortedItems.find((item) => item.handoff_required);
     const unread = sortedItems.find((item) => (item.unread_count || 0) > 0);
-    const priority =
-      slaOverdue ||
-      handoff ||
-      unread ||
-      sortedItems[0];
+    const priority = slaOverdue || handoff || unread || sortedItems[0];
     if (!priority) return;
     setSelectedId(priority.id);
     const params = new URLSearchParams(searchParams);
@@ -371,211 +251,27 @@ export function ConversationsPage() {
     selectedId,
   ]);
 
-  const messages = useInfiniteQuery<
-    PaginatedInboxMessageResponse,
-    Error,
-    InfiniteData<PaginatedInboxMessageResponse>,
-    ReturnType<typeof inboxQueryKeys.messages>,
-    number | null
-  >({
-    queryKey: inboxQueryKeys.messages(selected?.id),
-    queryFn: ({ pageParam }) =>
-      inboxApi.listMessages(selected!.id, {
-        limit: INBOX_MESSAGES_PAGE_SIZE,
-        beforeId: pageParam ?? undefined,
-      }),
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => lastPage.next_before_id || undefined,
-    enabled: Boolean(selected?.id),
-    refetchInterval: selected?.id ? realtimeIntervals.inboxMessagesMs : false,
-    ...realtimeQueryOptions,
+  const {
+    hasActiveFilters,
+    activeFilterSummary,
+    queueFilterOptions,
+    ownerFilterOptions,
+    agentFilterOptions,
+    localizedChannelOptions,
+    localizedPriorityOptions,
+    quickReplyTemplates,
+    localizedSortOptions,
+    localizedStatusOptions,
+  } = useInboxFilterOptions({
+    items,
+    conversations,
+    summary,
+    bots,
+    quickReplies,
+    filters,
+    quickReplySearch,
+    t,
   });
-
-  const conversationCounts = useMemo(() => {
-    const myTurn = items.filter((item) => item.assigned_to !== null).length;
-    return {
-      all: conversations.data?.count ?? summary.data?.total ?? items.length,
-      unread: items.filter((item) => (item.unread_count || 0) > 0).length,
-      attention: items.filter((item) => item.handoff_required).length,
-      botDisabled: items.filter((item) => !item.bot_enabled).length,
-      myTurn,
-      unassigned: items.filter((item) => !item.assigned_to).length,
-      closed: items.filter((item) => item.status === "closed").length,
-      active: items.filter((item) => item.status !== "closed").length,
-    };
-  }, [items, conversations.data?.count, summary.data?.total]);
-
-  const hasActiveFilters = useMemo(
-    () =>
-      Boolean(
-        filters.bot ||
-        filters.channel ||
-        filters.priority ||
-        filters.assigned_to ||
-        filters.status ||
-        filters.unread ||
-        filters.handoff_required ||
-        filters.bot_enabled,
-      ),
-    [filters],
-  );
-
-  const activeFilterSummary = useMemo(() => {
-    const parts: string[] = [];
-    if (filters.bot) parts.push(t("conversations.agent"));
-    if (filters.channel) parts.push(channelLabel(filters.channel, t));
-    if (filters.priority)
-      parts.push(`${t("conversations.priority")}: ${t(`status.${filters.priority}`)}`);
-    if (filters.unread === "true")
-      parts.push(t("conversations.unreadMessages"));
-    if (filters.handoff_required === "true")
-      parts.push(t("conversations.needsOperator"));
-    if (filters.bot_enabled === "false")
-      parts.push(t("conversations.botPaused"));
-    if (filters.bot_enabled === "true")
-      parts.push(t("conversations.botActive"));
-    if (filters.assigned_to === "me")
-      parts.push(t("conversations.assignedToMeFilter"));
-    if (filters.assigned_to === "unassigned")
-      parts.push(t("conversations.unassigned"));
-    if (filters.status === "open") parts.push(t("conversations.active"));
-    if (filters.status === "closed") parts.push(t("status.closed"));
-    return parts;
-  }, [filters, t]);
-
-  const queueFilterOptions = useMemo(
-    () => [
-      {
-        value: "all",
-        label: `${t("conversations.queueAll")} (${conversationCounts.all})`,
-      },
-      {
-        value: "new",
-        label: `${t("conversations.unreadMessages")} (${summary.data?.unread ?? conversationCounts.unread})`,
-      },
-      {
-        value: "attention",
-        label: `${t("conversations.attention")} (${summary.data?.handoff_required ?? conversationCounts.attention})`,
-      },
-      {
-        value: "paused",
-        label: `${t("conversations.botPaused")} (${summary.data?.bot_paused ?? conversationCounts.botDisabled})`,
-      },
-      {
-        value: "closed",
-        label: `${t("status.closed")} (${conversationCounts.closed})`,
-      },
-    ],
-    [
-      conversationCounts.all,
-      conversationCounts.attention,
-      conversationCounts.botDisabled,
-      conversationCounts.closed,
-      conversationCounts.unread,
-      summary.data?.bot_paused,
-      summary.data?.handoff_required,
-      summary.data?.unread,
-      t,
-    ],
-  );
-
-  const ownerFilterOptions = useMemo(
-    () => [
-      {
-        value: "all",
-        label: `${t("conversations.allManagers")} (${conversationCounts.all})`,
-      },
-      {
-        value: "me",
-        label: `${t("conversations.assignedToMeFilter")} (${summary.data?.assigned_to_me ?? 0})`,
-      },
-      {
-        value: "unassigned",
-        label: `${t("conversations.unassigned")} (${summary.data?.unassigned ?? conversationCounts.unassigned})`,
-      },
-    ],
-    [
-      conversationCounts.all,
-      conversationCounts.unassigned,
-      summary.data?.assigned_to_me,
-      summary.data?.unassigned,
-      t,
-    ],
-  );
-
-  const agentFilterOptions = useMemo(
-    () => [
-      { value: "", label: t("conversations.allAgents") },
-      ...(bots.data || []).map((bot) => ({ value: bot.id, label: bot.name })),
-    ],
-    [bots.data, t],
-  );
-
-  const localizedChannelOptions = useMemo(
-    () =>
-      channelOptions.map((option) => ({
-        value: option.value,
-        label: "labelKey" in option ? t(option.labelKey) : option.label,
-      })),
-    [t],
-  );
-
-  const localizedPriorityOptions = useMemo(
-    () =>
-      priorityOptions.map((option) => ({
-        value: option.value,
-        label: t(option.labelKey),
-      })),
-    [t],
-  );
-
-  const priorityActionOptions = useMemo(
-    () => localizedPriorityOptions.filter((option) => option.value),
-    [localizedPriorityOptions],
-  );
-
-  const quickReplyTemplates = useMemo(() => {
-    const source = quickReplies.data || [];
-    const search = quickReplySearch.trim().toLowerCase();
-    if (!search) return source;
-    return source.filter((template) =>
-      `${template.title} ${template.text} ${template.category}`
-        .toLowerCase()
-        .includes(search),
-    );
-  }, [quickReplies.data, quickReplySearch]);
-
-  const localizedSortOptions = useMemo(
-    () => [
-      { value: "latest", label: t("conversations.sortLatest") },
-      { value: "unread", label: t("conversations.sortUnread") },
-      { value: "first_response", label: t("conversations.sortFirstResponse") },
-    ],
-    [t],
-  );
-
-  const localizedStatusOptions = useMemo(
-    () => [
-      {
-        value: "all",
-        label: `${t("conversations.noFilter")} (${conversationCounts.all})`,
-      },
-      {
-        value: "open",
-        label: `${t("conversations.active")} (${conversationCounts.active})`,
-      },
-      {
-        value: "closed",
-        label: `${t("status.closed")} (${conversationCounts.closed})`,
-      },
-    ],
-    [
-      conversationCounts.active,
-      conversationCounts.all,
-      conversationCounts.closed,
-      t,
-    ],
-  );
 
   function handleSortChange(sort: string) {
     const nextSort =
@@ -656,7 +352,11 @@ export function ConversationsPage() {
     const query = params.toString();
     navigate(`/app/conversations/${id}${query ? `?${query}` : ""}`);
     const conversation = items.find((item) => item.id === id);
-    if (id === selected?.id && context.data?.actions.update && (conversation?.unread_count || 0) > 0) {
+    if (
+      id === selected?.id &&
+      context.data?.actions.update &&
+      (conversation?.unread_count || 0) > 0
+    ) {
       readSelectionRef.current = `${user?.id}:${selected.business}:${selected.id}`;
       markReadMutation.mutate(id);
     }
@@ -806,7 +506,15 @@ export function ConversationsPage() {
     // Only mark on opening: an explicit "unread" action must survive polling.
     readSelectionRef.current = key;
     if ((selected.unread_count || 0) > 0) markReadMutation.mutate(selected.id);
-  }, [selected, user?.id, desktopThread, mobileThreadOpen, messages.isSuccess, context.data?.actions.update, markReadMutation.mutate]);
+  }, [
+    selected,
+    user?.id,
+    desktopThread,
+    mobileThreadOpen,
+    messages.isSuccess,
+    context.data?.actions.update,
+    markReadMutation.mutate,
+  ]);
 
   const markUnreadMutation = useMutation({
     mutationFn: inboxApi.markUnread,
@@ -904,33 +612,21 @@ export function ConversationsPage() {
       }),
   });
 
-  const sendMutation = useMutation({
-    mutationFn: (payload: Parameters<typeof inboxApi.sendMessage>[0] & { draftKey: string | null }) => inboxApi.sendMessage(payload),
-    onSuccess: async (result, variables) => {
-      sendIdempotencyRef.current = null;
-      clearSentDraft(variables.draftKey, variables.text);
-      if (currentConversationRef.current === Number(variables.conversationId)) setSuggestedReply("");
-      const noticeKey = result.status === "sent" ? "conversations.replySent"
-        : result.status === "accepted" ? "conversations.deliveryYCloudAccepted"
-        : result.status === "delivery_unknown" ? "conversations.deliveryYCloudUnknown"
-        : result.status === "failed" ? "conversations.deliveryStatusFailed"
-        : "conversations.deliveryStatusQueued";
-      setNotice(t(noticeKey), result.status === "failed" || result.status === "delivery_unknown" ? "warning" : "success");
-      await invalidateInbox();
-    },
-    onError: (error) =>
-      notifyError(error, { focusTarget: composerRef }),
-  });
-
-  const retryMessageMutation = useMutation({
-    mutationFn: inboxApi.retryMessage,
-    onSuccess: async (_result, variables) => {
-      retryKeys.current.delete(Number(variables.messageId));
-      setNotice(t("conversations.messageRetried"), "success");
-      await invalidateInbox();
-    },
-    onError: (error) => notifyError(error),
-  });
+  const { retryMessage, sendMutation, retryMessageMutation, sendReply } =
+    useInboxSending({
+      selected,
+      draft,
+      draftKey,
+      canUpdate,
+      clearSentDraft,
+      currentConversationRef,
+      setSuggestedReply,
+      setNotice,
+      t,
+      invalidateInbox,
+      notifyError,
+      composerRef,
+    });
 
   const createClientMutation = useMutation({
     mutationFn: inboxApi.createClient,
@@ -959,22 +655,7 @@ export function ConversationsPage() {
     onError: (error) => notifyError(error),
   });
 
-  const linkClientMutation = useMutation({
-    mutationFn: inboxApi.linkClient,
-    onSuccess: async (result, variables) => {
-      if (currentConversationRef.current !== variables.conversationId) return;
-      if ("requires_confirmation" in result) {
-        setClientLinkPreview(result);
-        setClientLinkRefreshed(Boolean(variables.confirmationToken));
-        return;
-      }
-      setClientLinkPreview(null);
-      setPipelineReview(null);
-      setNotice(t("conversations.clientLinkedShort"));
-      setCrmLinkModal(null);
-      await invalidateInbox();
-    },
-  });
+  const {clientLinkPreview, setClientLinkPreview, clientLinkRefreshed, setClientLinkRefreshed, crmLinkModal, setCrmLinkModal, crmLinkSearch, setCrmLinkSearch, linkCandidates, linkClientMutation, linkLeadMutation, linkDealMutation, linkClientToConversation, linkLeadToConversation, linkDealToConversation} = useInboxLinking({user, selected, context, currentConversationRef, setPipelineReview, t, setNotice, invalidateInbox, notifyError});
 
   const createLeadMutation = useMutation({
     mutationFn: inboxApi.createLead,
@@ -989,16 +670,6 @@ export function ConversationsPage() {
     onError: (error) => notifyError(error),
   });
 
-  const linkLeadMutation = useMutation({
-    mutationFn: inboxApi.linkLead,
-    onSuccess: async () => {
-      setNotice(t("conversations.leadLinkedShort"));
-      setCrmLinkModal(null);
-      await invalidateInbox();
-    },
-    onError: (error) => notifyError(error),
-  });
-
   const createDealMutation = useMutation({
     mutationFn: inboxApi.createDeal,
     onSuccess: async () => {
@@ -1008,16 +679,6 @@ export function ConversationsPage() {
         invalidateInbox(),
         queryClient.invalidateQueries({ queryKey: ["deals"] }),
       ]);
-    },
-    onError: (error) => notifyError(error),
-  });
-
-  const linkDealMutation = useMutation({
-    mutationFn: inboxApi.linkDeal,
-    onSuccess: async () => {
-      setNotice(t("conversations.dealLinkedShort"));
-      setCrmLinkModal(null);
-      await invalidateInbox();
     },
     onError: (error) => notifyError(error),
   });
@@ -1137,30 +798,30 @@ export function ConversationsPage() {
       ),
   ).length;
   const priorityActions = (summary.data?.next_actions || []).filter(
-    (action) => action.code !== "connect_channel" && (canViewIntegrations || !isIntegrationsAction(action.href)),
+    (action) =>
+      action.code !== "connect_channel" &&
+      (canViewIntegrations || !isIntegrationsAction(action.href)),
   );
-  const channelAgent = (bots.data || []).find((bot) => bot.business === businessId && bot.scenario !== "crm");
-  const connectChannelAction = canViewIntegrations && hasPermission(user, businessId, "ai_automation", "view") ? (
-    <Link
-      to={channelAgent ? `/app/ai-agents/${channelAgent.id}/channels` : "/app/ai-agents"}
-      className="platforma-focus-ring inline-flex min-h-10 items-center justify-center rounded-control bg-brand-500 px-4 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-600"
-    >
-      {t("conversations.nextAction.connect_channel")}
-    </Link>
-  ) : undefined;
-  function sendReply() {
-    const text = draft.trim();
-    if (!selected || !text || !canUpdate || selected.status !== "open" || sendMutation.isPending) return;
-    const previousRequest = sendIdempotencyRef.current;
-    const idempotencyKey = previousRequest?.conversationId === selected.id && previousRequest.text === text
-      ? previousRequest.key
-      : createIdempotencyKey(`inbox:send:${selected.id}`);
-    sendIdempotencyRef.current = { conversationId: selected.id, text, key: idempotencyKey };
-    sendMutation.mutate({ conversationId: selected.id, text, idempotencyKey, draftKey });
-  }
+  const channelAgent = (bots.data || []).find(
+    (bot) => bot.business === businessId && bot.scenario !== "crm",
+  );
+  const connectChannelAction =
+    canViewIntegrations &&
+    hasPermission(user, businessId, "ai_automation", "view") ? (
+      <Link
+        to={
+          channelAgent
+            ? `/app/ai-agents/${channelAgent.id}/channels`
+            : "/app/ai-agents"
+        }
+        className="platforma-focus-ring inline-flex min-h-10 items-center justify-center rounded-control bg-brand-500 px-4 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-600"
+      >
+        {t("conversations.nextAction.connect_channel")}
+      </Link>
+    ) : undefined;
 
   function insertQuickReply(text: string) {
-    setDraft(current => appendReplyDraft(current, text));
+    setDraft((current) => appendReplyDraft(current, text));
     setQuickRepliesOpen(false);
     window.requestAnimationFrame(() => composerRef.current?.focus());
   }
@@ -1214,8 +875,10 @@ export function ConversationsPage() {
     };
     const signature = JSON.stringify([user?.id, selected.business, payload]);
     const previous = taskIdempotencyRef.current;
-    const idempotencyKey = previous?.signature === signature
-      ? previous.key : createIdempotencyKey(`inbox:task:${selected.id}`);
+    const idempotencyKey =
+      previous?.signature === signature
+        ? previous.key
+        : createIdempotencyKey(`inbox:task:${selected.id}`);
     taskIdempotencyRef.current = { signature, key: idempotencyKey };
     createTaskMutation.mutate({ ...payload, idempotencyKey });
   }
@@ -1229,21 +892,6 @@ export function ConversationsPage() {
     createClientMutation.reset();
     setCrmLinkSearch("");
     setCrmLinkModal(target);
-  }
-
-  function linkClientToConversation(clientId: number) {
-    if (!selected) return;
-    linkClientMutation.mutate({ conversationId: selected.id, clientId });
-  }
-
-  function linkLeadToConversation(leadId: number) {
-    if (!selected) return;
-    linkLeadMutation.mutate({ conversationId: selected.id, leadId });
-  }
-
-  function linkDealToConversation(dealId: number) {
-    if (!selected) return;
-    linkDealMutation.mutate({ conversationId: selected.id, dealId });
   }
 
   function previewSelectedPipeline() {
@@ -1268,19 +916,28 @@ export function ConversationsPage() {
 
   const selectedInsight = selected ? getAutoPipelineInsight(selected) : null;
   const canApplyPipeline = canRunAiPipeline && Boolean(selectedInsight);
-  const pipelineAllowedActions: PipelineAction[] = ([
-    ["create_lead", "leads"], ["create_task", "tasks"], ["create_deal", "deals"],
-  ] as const).filter(([, resource]) => hasPermission(user, selected?.business, resource, "create"))
+  const pipelineAllowedActions: PipelineAction[] = (
+    [
+      ["create_lead", "leads"],
+      ["create_task", "tasks"],
+      ["create_deal", "deals"],
+    ] as const
+  )
+    .filter(([, resource]) =>
+      hasPermission(user, selected?.business, resource, "create"),
+    )
     .map(([action]) => action);
-  const messageList = useMemo(() => {
-    if (!messages.data) return [];
-    return [...messages.data.pages].reverse().flatMap((page) => page.results);
-  }, [messages.data]);
+
   const canLoadMoreMessages = Boolean(messages.hasNextPage);
   const lastMessage = messageList[messageList.length - 1];
-  const lastCustomerMessage = [...messageList].reverse().find(message =>
-    message.direction === "inbound" && message.sender_type !== "system" && message.text?.trim(),
-  );
+  const lastCustomerMessage = [...messageList]
+    .reverse()
+    .find(
+      (message) =>
+        message.direction === "inbound" &&
+        message.sender_type !== "system" &&
+        message.text?.trim(),
+    );
   const lastMessageSignature = lastMessage
     ? `${lastMessage.id}:${lastMessage.created_at || lastMessage.sent_at || ""}:${lastMessage.text || ""}`
     : "";
@@ -1330,7 +987,8 @@ export function ConversationsPage() {
     return (
       <div data-testid="inbox-error-state">
         <ErrorState
-          error={pageError} message={getApiErrorMessage(pageError)}
+          error={pageError}
+          message={getApiErrorMessage(pageError)}
           action={
             <Button
               type="button"
@@ -1355,28 +1013,122 @@ export function ConversationsPage() {
 
   function closeContext() {
     setMobileInspectorOpen(false);
-    if (desktopInspector) { setInspectorOpen(false); contextTriggerRef.current?.focus(); }
+    if (desktopInspector) {
+      setInspectorOpen(false);
+      contextTriggerRef.current?.focus();
+    }
   }
   const contextMenu: ActionMenuItem[] = (["client", "lead", "deal"] as const)
-    .filter(kind => context.data?.[kind].state === "available" && context.data.actions[`link_${kind}`])
-    .map(kind => ({ key: kind, label: t(`conversations.changeLink.${kind}`), icon: Link2, onSelect: () => openCrmLinkModal(kind) }));
+    .filter(
+      (kind) =>
+        context.data?.[kind].state === "available" &&
+        context.data.actions[`link_${kind}`],
+    )
+    .map((kind) => ({
+      key: kind,
+      label: t(`conversations.changeLink.${kind}`),
+      icon: Link2,
+      onSelect: () => openCrmLinkModal(kind),
+    }));
   const threadMenu: ActionMenuItem[] = [
-    ...(canUpdate && selected?.status === "open" && selected.bot_enabled ? [{
-      key: "handoff", label: t("conversations.handoffToManager"), icon: UserRound,
-      disabled: handoffMutation.isPending,
-      onSelect: () => handoffMutation.mutate({ conversationId: selected.id, reason: "" }),
-    }] : []),
-    ...(canUpdate && canSuggestAi && selected?.status === "open" && selected.handoff_resume_started_at ? [{
-      key: "keep-ai-paused", label: t("conversations.keepAiPaused"), icon: PauseCircle,
-      disabled: toggleBotMutation.isPending,
-      onSelect: () => toggleBotMutation.mutate({ conversationId: selected.id, botEnabled: false }),
-    }] : []),
-    ...(canUpdate ? [{ key: "unread", label: t("conversations.markUnreadAction"), icon: BellDot, onSelect: () => selected && markUnreadMutation.mutate(selected.id) },
-      ...localizedPriorityOptions.map(option => ({ key: `priority-${option.value}`, label: `${t("conversations.priority")}: ${option.label}`, icon: BellDot, disabled: setPriorityMutation.isPending || selected?.priority === option.value, onSelect: () => selected && setPriorityMutation.mutate({ conversationId: selected.id, priority: option.value as NonNullable<InboxConversation["priority"]> }) }))] : []),
-    ...(context.data?.actions.create_task ? [{ key: "task", label: t("conversations.createTask"), icon: CheckSquare, onSelect: createLinkedTask }] : []),
-    ...(canSuggestAiPipeline || canRunAiPipeline ? [{ key: "automation", label: t("conversations.crmAutomation"), icon: Sparkles, onSelect: () => setAutomationOpen(true) }] : []),
+    ...(canUpdate && selected?.status === "open" && selected.bot_enabled
+      ? [
+          {
+            key: "handoff",
+            label: t("conversations.handoffToManager"),
+            icon: UserRound,
+            disabled: handoffMutation.isPending,
+            onSelect: () =>
+              handoffMutation.mutate({
+                conversationId: selected.id,
+                reason: "",
+              }),
+          },
+        ]
+      : []),
+    ...(canUpdate &&
+    canSuggestAi &&
+    selected?.status === "open" &&
+    selected.handoff_resume_started_at
+      ? [
+          {
+            key: "keep-ai-paused",
+            label: t("conversations.keepAiPaused"),
+            icon: PauseCircle,
+            disabled: toggleBotMutation.isPending,
+            onSelect: () =>
+              toggleBotMutation.mutate({
+                conversationId: selected.id,
+                botEnabled: false,
+              }),
+          },
+        ]
+      : []),
+    ...(canUpdate
+      ? [
+          {
+            key: "unread",
+            label: t("conversations.markUnreadAction"),
+            icon: BellDot,
+            onSelect: () => selected && markUnreadMutation.mutate(selected.id),
+          },
+          ...localizedPriorityOptions.map((option) => ({
+            key: `priority-${option.value}`,
+            label: `${t("conversations.priority")}: ${option.label}`,
+            icon: BellDot,
+            disabled:
+              setPriorityMutation.isPending ||
+              selected?.priority === option.value,
+            onSelect: () =>
+              selected &&
+              setPriorityMutation.mutate({
+                conversationId: selected.id,
+                priority: option.value as NonNullable<
+                  InboxConversation["priority"]
+                >,
+              }),
+          })),
+        ]
+      : []),
+    ...(context.data?.actions.create_task
+      ? [
+          {
+            key: "task",
+            label: t("conversations.createTask"),
+            icon: CheckSquare,
+            onSelect: createLinkedTask,
+          },
+        ]
+      : []),
+    ...(canSuggestAiPipeline || canRunAiPipeline
+      ? [
+          {
+            key: "automation",
+            label: t("conversations.crmAutomation"),
+            icon: Sparkles,
+            onSelect: () => setAutomationOpen(true),
+          },
+        ]
+      : []),
   ];
-  const customerContext = <InboxCustomerContext data={context.data} loading={context.isLoading} error={context.error} retrying={context.isFetching} menuItems={contextMenu} inDrawer={!desktopInspector} onRetry={() => void context.refetch()} onClose={closeContext} onNavigate={href => { setMobileInspectorOpen(false); navigate(href); }} onLinkClient={() => openCrmLinkModal("client")} onAddLink={() => setAddLinkOpen(true)} />;
+  const customerContext = (
+    <InboxCustomerContext
+      data={context.data}
+      loading={context.isLoading}
+      error={context.error}
+      retrying={context.isFetching}
+      menuItems={contextMenu}
+      inDrawer={!desktopInspector}
+      onRetry={() => void context.refetch()}
+      onClose={closeContext}
+      onNavigate={(href) => {
+        setMobileInspectorOpen(false);
+        navigate(href);
+      }}
+      onLinkClient={() => openCrmLinkModal("client")}
+      onAddLink={() => setAddLinkOpen(true)}
+    />
+  );
 
   return (
     <div
@@ -1441,28 +1193,116 @@ export function ConversationsPage() {
           connectChannelAction={connectChannelAction}
           canUpdate={canUpdate}
           threadMenu={threadMenu}
-          headerActions={<Button ref={contextTriggerRef} variant="ghost" size="icon" className="h-11 w-11 shrink-0 lg:h-10 lg:w-10" title={t("conversations.aboutClient")} aria-label={t("conversations.aboutClient")} onClick={() => desktopInspector ? setInspectorOpen(state => !state) : setMobileInspectorOpen(true)} aria-expanded={desktopInspector ? inspectorOpen : mobileInspectorOpen}>
-            <UserRound size={18} />
-          </Button>}
-          aiActions={canSuggestAi ? <Tooltip label={t("conversations.prepareReply")} side="top"><Button ref={aiTriggerRef} variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label={t("conversations.prepareReply")} aria-busy={suggestMutation.isPending} onClick={() => selected && suggestMutation.mutate(selected.id)} disabled={!canUpdate || selected?.status !== "open" || suggestMutation.isPending}>
-            <Sparkles size={18} className={suggestMutation.isPending ? "animate-pulse" : undefined} />
-          </Button></Tooltip> : null}
-          aiPreview={suggestedReply || (suggestMutation.isError && suggestMutation.variables === selected?.id) ? <div data-testid="inbox-ai-preview" className="mb-3 rounded-card border border-platforma-border bg-surface-muted p-3">
-            {suggestMutation.isError && suggestMutation.variables === selected?.id ? <p role="alert" className="text-xs text-platforma-danger">{getApiErrorMessage(suggestMutation.error)}</p> : null}
-            {suggestedReply ? <>
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <Button variant="secondary" size="sm" disabled={!canUpdate || selected?.status !== "open"} onClick={() => { insertQuickReply(suggestedReply); setSuggestedReply(""); }}>{t("conversations.useSuggestedReply")}</Button>
-                <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={t("common.close")} onClick={() => { setSuggestedReply(""); aiTriggerRef.current?.focus(); }}><X size={16} /></Button>
+          headerActions={
+            <Button
+              ref={contextTriggerRef}
+              variant="ghost"
+              size="icon"
+              className="h-11 w-11 shrink-0 lg:h-10 lg:w-10"
+              title={t("conversations.aboutClient")}
+              aria-label={t("conversations.aboutClient")}
+              onClick={() =>
+                desktopInspector
+                  ? setInspectorOpen((state) => !state)
+                  : setMobileInspectorOpen(true)
+              }
+              aria-expanded={
+                desktopInspector ? inspectorOpen : mobileInspectorOpen
+              }
+            >
+              <UserRound size={18} />
+            </Button>
+          }
+          aiActions={
+            canSuggestAi ? (
+              <Tooltip label={t("conversations.prepareReply")} side="top">
+                <Button
+                  ref={aiTriggerRef}
+                  variant="ghost"
+                  size="icon"
+                  className="h-11 w-11 shrink-0"
+                  aria-label={t("conversations.prepareReply")}
+                  aria-busy={suggestMutation.isPending}
+                  onClick={() =>
+                    selected && suggestMutation.mutate(selected.id)
+                  }
+                  disabled={
+                    !canUpdate ||
+                    selected?.status !== "open" ||
+                    suggestMutation.isPending
+                  }
+                >
+                  <Sparkles
+                    size={18}
+                    className={
+                      suggestMutation.isPending ? "animate-pulse" : undefined
+                    }
+                  />
+                </Button>
+              </Tooltip>
+            ) : null
+          }
+          aiPreview={
+            suggestedReply ||
+            (suggestMutation.isError &&
+              suggestMutation.variables === selected?.id) ? (
+              <div
+                data-testid="inbox-ai-preview"
+                className="mb-3 rounded-card border border-platforma-border bg-surface-muted p-3"
+              >
+                {suggestMutation.isError &&
+                suggestMutation.variables === selected?.id ? (
+                  <p role="alert" className="text-xs text-platforma-danger">
+                    {getApiErrorMessage(suggestMutation.error)}
+                  </p>
+                ) : null}
+                {suggestedReply ? (
+                  <>
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        disabled={!canUpdate || selected?.status !== "open"}
+                        onClick={() => {
+                          insertQuickReply(suggestedReply);
+                          setSuggestedReply("");
+                        }}
+                      >
+                        {t("conversations.useSuggestedReply")}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-11 w-11"
+                        aria-label={t("common.close")}
+                        onClick={() => {
+                          setSuggestedReply("");
+                          aiTriggerRef.current?.focus();
+                        }}
+                      >
+                        <X size={16} />
+                      </Button>
+                    </div>
+                    <p className="max-h-[min(132px,20dvh)] overflow-y-auto whitespace-pre-wrap break-words text-sm leading-[22px] text-platforma-text">
+                      {suggestedReply}
+                    </p>
+                  </>
+                ) : null}
               </div>
-              <p className="max-h-[min(132px,20dvh)] overflow-y-auto whitespace-pre-wrap break-words text-sm leading-[22px] text-platforma-text">{suggestedReply}</p>
-            </> : null}
-          </div> : null}
-          renderDelivery={message => <MessageDeliveryDetails message={message} canRetry={canUpdate} retryPending={retryMessageMutation.isPending && retryMessageMutation.variables?.messageId === message.id} onRetry={() => {
-            if (!selected || retryMessageMutation.isPending) return;
-            let key = retryKeys.current.get(message.id);
-            if (!key) { key = createIdempotencyKey(`inbox:retry:${message.id}`); retryKeys.current.set(message.id, key); }
-            retryMessageMutation.mutate({ conversationId: selected.id, messageId: message.id, idempotencyKey: key });
-          }} t={t} />}
+            ) : null
+          }
+          renderDelivery={(message) => (
+            <MessageDeliveryDetails
+              message={message}
+              canRetry={canUpdate}
+              retryPending={
+                retryMessageMutation.isPending &&
+                retryMessageMutation.variables?.messageId === message.id
+              }
+              onRetry={() => retryMessage(message.id)}
+              t={t}
+            />
+          )}
           selected={selected}
           mobileThreadOpen={mobileThreadOpen}
           onMobileClose={() => setMobileThreadOpen(false)}
@@ -1495,7 +1335,10 @@ export function ConversationsPage() {
             })
           }
           toggleBotPending={toggleBotMutation.isPending}
-          canToggleBot={canSuggestAi && hasPermission(user, selected?.business, "conversations", "update")}
+          canToggleBot={
+            canSuggestAi &&
+            hasPermission(user, selected?.business, "conversations", "update")
+          }
           onCloseConversation={() =>
             selected &&
             closeMutation.mutate({
@@ -1511,229 +1354,305 @@ export function ConversationsPage() {
           t={t}
         />
 
-        <aside className={cn("hidden min-h-0 flex-col border-l border-platforma-border min-[90rem]:flex", !inspectorOpen && "min-[90rem]:hidden")}>
-          {selected ? customerContext : <div className="grid flex-1 place-items-center bg-surface-muted p-3 text-center text-sm font-bold text-platforma-muted">{t("conversations.selectContext")}</div>}
+        <aside
+          className={cn(
+            "hidden min-h-0 flex-col border-l border-platforma-border min-[90rem]:flex",
+            !inspectorOpen && "min-[90rem]:hidden",
+          )}
+        >
+          {selected ? (
+            customerContext
+          ) : (
+            <div className="grid flex-1 place-items-center bg-surface-muted p-3 text-center text-sm font-bold text-platforma-muted">
+              {t("conversations.selectContext")}
+            </div>
+          )}
         </aside>
       </WorkQueueLayout>
 
-      <Drawer open={Boolean(selected && !desktopInspector && mobileInspectorOpen)} onClose={closeContext} ariaLabel={t("conversations.aboutClient")} size="custom" className="max-w-[340px]">
+      <Drawer
+        open={Boolean(selected && !desktopInspector && mobileInspectorOpen)}
+        onClose={closeContext}
+        ariaLabel={t("conversations.aboutClient")}
+        size="custom"
+        className="max-w-[340px]"
+      >
         {customerContext}
       </Drawer>
-      <Dialog open={automationOpen} onClose={() => setAutomationOpen(false)} title={t("conversations.crmAutomation")} size="md">
-        {selectedInsight?.summary ? <p className="mb-4 text-sm text-platforma-text">{selectedInsight.summary}</p> : null}
-        {qualifyMutation.isError ? <ErrorState error={qualifyMutation.error} /> : null}
-        <div className="flex flex-wrap gap-2">
-          <Button variant="ai" onClick={previewSelectedPipeline} disabled={!canSuggestAiPipeline} isLoading={qualifyMutation.isPending}>{t("conversations.previewQualification")}</Button>
-          <Button variant="secondary" onClick={() => { setAutomationOpen(false); runSelectedPipeline(); }} disabled={!canApplyPipeline} isLoading={runPipelineMutation.isPending}>{t("conversations.confirmPipelineTitle")}</Button>
-        </div>
-      </Dialog>
-      <Dialog open={addLinkOpen} onClose={() => setAddLinkOpen(false)} title={t("conversations.addLink")} size="sm">
-        {createLeadMutation.error || createDealMutation.error ? <ErrorState error={createLeadMutation.error || createDealMutation.error} /> : null}
-        <div className="space-y-3">{(["lead", "deal"] as const).filter(kind => context.data?.[kind].state === "empty").map(kind => <div key={kind} className="flex flex-wrap gap-2">
-          {context.data?.actions[`link_${kind}`] ? <Button variant="secondary" onClick={() => { setAddLinkOpen(false); openCrmLinkModal(kind); }}>{t(kind === "lead" ? "conversations.linkLeadTitle" : "conversations.linkDealTitle")}</Button> : null}
-          {context.data?.actions[`create_${kind}`] ? <Button variant="ghost" onClick={kind === "lead" ? createLinkedLead : createLinkedDeal} isLoading={kind === "lead" ? createLeadMutation.isPending : createDealMutation.isPending}>{t(kind === "lead" ? "conversations.createLead" : "conversations.createDeal")}</Button> : null}
-        </div>)}</div>
-      </Dialog>
-
-      {pipelineReview ? <PipelineConfirmationDialog key={`${pipelineReview.conversationId}:${pipelineReview.previewId}`}
-        review={pipelineReview} allowedActions={pipelineAllowedActions} pending={runPipelineMutation.isPending}
-        error={runPipelineMutation.error ? (getApiFieldErrors(runPipelineMutation.error).preview_id
-          ? t("conversations.pipelinePreviewExpired") : getApiErrorMessage(runPipelineMutation.error)) : null}
-        onClose={() => setPipelineReview(null)} onConfirm={(confirmation) => runPipelineMutation.mutate(confirmation)} /> : null}
-
       <Dialog
-        title={t("conversations.quickRepliesTitle")}
-        open={quickRepliesOpen}
-        focusReturnId="inbox-quick-replies"
-        onClose={() => setQuickRepliesOpen(false)}
+        open={automationOpen}
+        onClose={() => setAutomationOpen(false)}
+        title={t("conversations.crmAutomation")}
         size="md"
-        bodyClassName="bg-platforma-card p-0"
       >
-        <div className="border-b border-platforma-border p-4">
-          <input
-            type="search"
-            className="h-11 w-full rounded-control border border-platforma-border bg-platforma-card px-3 text-sm font-semibold text-platforma-text outline-hidden transition placeholder:text-platforma-muted focus-visible:border-brand-400 focus-visible:ring-4 focus-visible:ring-brand-100"
-            placeholder={t("conversations.quickRepliesSearch")}
-            value={quickReplySearch}
-            onChange={(event) => setQuickReplySearch(event.target.value)}
-            autoFocus
-          />
-        </div>
-        <div className="max-h-[56vh] overflow-y-auto p-3">
-          {quickReplies.isError ? <ErrorState error={quickReplies.error} action={<Button variant="secondary" onClick={() => void quickReplies.refetch()}>{t("common.retry")}</Button>} /> : null}
-          {quickReplies.isLoading ? (
-            <LoadingState />
-          ) : null}
-          {!quickReplies.isLoading && !quickReplies.isError && !quickReplyTemplates.length ? (
-            <EmptyState
-              title={t("conversations.noTemplates")}
-              description={t(quickReplySearch.trim() ? "settings.redesign.noMatches" : "conversations.noQuickRepliesText")}
-              action={!quickReplySearch.trim() && String(selected?.business || businessId) === String(businessId) && hasPermission(user, businessId, "conversations", "manage") ? <Link
-                to="/app/settings#quick-replies" className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control px-3 text-sm font-semibold text-brand-700 underline underline-offset-4">
-                {t("settings.workflow.createQuickReply")}
-              </Link> : undefined}
-            />
-          ) : null}
-          <div className="space-y-2">
-            {quickReplyTemplates.map((template) => (
-              <button
-                key={template.id}
-                type="button"
-                className="w-full rounded-card border border-platforma-border bg-platforma-card p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/40"
-                onClick={() => insertQuickReply(template.text)}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-platforma-text">
-                      {template.title}
-                    </p>
-                    <p className="mt-1 line-clamp-3 text-sm font-semibold leading-6 text-platforma-muted">
-                      {template.text}
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-surface-muted px-2 py-1 text-[11px] font-bold text-platforma-muted">
-                    {template.channel === "all"
-                      ? t("conversations.allChannels")
-                      : channelLabel(template.channel, t)}
-                  </span>
-                </div>
-                {template.category ? (
-                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-platforma-muted">
-                    {template.category}
-                  </p>
-                ) : null}
-              </button>
-            ))}
-          </div>
+        {selectedInsight?.summary ? (
+          <p className="mb-4 text-sm text-platforma-text">
+            {selectedInsight.summary}
+          </p>
+        ) : null}
+        {qualifyMutation.isError ? (
+          <ErrorState error={qualifyMutation.error} />
+        ) : null}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="ai"
+            onClick={previewSelectedPipeline}
+            disabled={!canSuggestAiPipeline}
+            isLoading={qualifyMutation.isPending}
+          >
+            {t("conversations.previewQualification")}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setAutomationOpen(false);
+              runSelectedPipeline();
+            }}
+            disabled={!canApplyPipeline}
+            isLoading={runPipelineMutation.isPending}
+          >
+            {t("conversations.confirmPipelineTitle")}
+          </Button>
         </div>
       </Dialog>
+      <Dialog
+        open={addLinkOpen}
+        onClose={() => setAddLinkOpen(false)}
+        title={t("conversations.addLink")}
+        size="sm"
+      >
+        {createLeadMutation.error || createDealMutation.error ? (
+          <ErrorState
+            error={createLeadMutation.error || createDealMutation.error}
+          />
+        ) : null}
+        <div className="space-y-3">
+          {(["lead", "deal"] as const)
+            .filter((kind) => context.data?.[kind].state === "empty")
+            .map((kind) => (
+              <div key={kind} className="flex flex-wrap gap-2">
+                {context.data?.actions[`link_${kind}`] ? (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setAddLinkOpen(false);
+                      openCrmLinkModal(kind);
+                    }}
+                  >
+                    {t(
+                      kind === "lead"
+                        ? "conversations.linkLeadTitle"
+                        : "conversations.linkDealTitle",
+                    )}
+                  </Button>
+                ) : null}
+                {context.data?.actions[`create_${kind}`] ? (
+                  <Button
+                    variant="ghost"
+                    onClick={
+                      kind === "lead" ? createLinkedLead : createLinkedDeal
+                    }
+                    isLoading={
+                      kind === "lead"
+                        ? createLeadMutation.isPending
+                        : createDealMutation.isPending
+                    }
+                  >
+                    {t(
+                      kind === "lead"
+                        ? "conversations.createLead"
+                        : "conversations.createDeal",
+                    )}
+                  </Button>
+                ) : null}
+              </div>
+            ))}
+        </div>
+      </Dialog>
+
+      {pipelineReview ? (
+        <PipelineConfirmationDialog
+          key={`${pipelineReview.conversationId}:${pipelineReview.previewId}`}
+          review={pipelineReview}
+          allowedActions={pipelineAllowedActions}
+          pending={runPipelineMutation.isPending}
+          error={
+            runPipelineMutation.error
+              ? getApiFieldErrors(runPipelineMutation.error).preview_id
+                ? t("conversations.pipelinePreviewExpired")
+                : getApiErrorMessage(runPipelineMutation.error)
+              : null
+          }
+          onClose={() => setPipelineReview(null)}
+          onConfirm={(confirmation) => runPipelineMutation.mutate(confirmation)}
+        />
+      ) : null}
+
+      <InboxQuickRepliesDialog
+        t={t}
+        quickRepliesOpen={quickRepliesOpen}
+        setQuickRepliesOpen={setQuickRepliesOpen}
+        quickReplySearch={quickReplySearch}
+        setQuickReplySearch={setQuickReplySearch}
+        quickReplies={quickReplies}
+        quickReplyTemplates={quickReplyTemplates}
+        selected={selected}
+        businessId={businessId}
+        user={user}
+        insertQuickReply={insertQuickReply}
+      />
 
       <Dialog
         title={
-          clientLinkPreview ? t("conversations.clientReplacement.title") : crmLinkModal === "client"
-            ? t("conversations.linkClientTitle")
-            : crmLinkModal === "lead"
-              ? t("conversations.linkLeadTitle")
-              : t("conversations.linkDealTitle")
+          clientLinkPreview
+            ? t("conversations.clientReplacement.title")
+            : crmLinkModal === "client"
+              ? t("conversations.linkClientTitle")
+              : crmLinkModal === "lead"
+                ? t("conversations.linkLeadTitle")
+                : t("conversations.linkDealTitle")
         }
         open={Boolean(crmLinkModal)}
-        onClose={() => { if (!linkClientMutation.isPending) { setCrmLinkModal(null); setClientLinkPreview(null); } }}
+        onClose={() => {
+          if (!linkClientMutation.isPending) {
+            setCrmLinkModal(null);
+            setClientLinkPreview(null);
+          }
+        }}
         size="md"
         bodyClassName="bg-platforma-card p-0"
       >
-        {clientLinkPreview ? <ClientLinkConfirmation
-          preview={clientLinkPreview}
-          refreshed={clientLinkRefreshed}
-          pending={linkClientMutation.isPending}
-          error={linkClientMutation.error}
-          onCancel={() => { setClientLinkPreview(null); linkClientMutation.reset(); }}
-          onConfirm={() => selected && linkClientMutation.mutate({
-            conversationId: selected.id, clientId: clientLinkPreview.next_client.id,
-            confirmationToken: clientLinkPreview.confirmation_token,
-          })}
-        /> : <>
-        <div className="border-b border-platforma-border p-4">
-          <Input
-            value={crmLinkSearch}
-            onChange={(event) => setCrmLinkSearch(event.target.value)}
-            placeholder={t("conversations.linkSearchPlaceholder")}
-            autoFocus
+        {clientLinkPreview ? (
+          <ClientLinkConfirmation
+            preview={clientLinkPreview}
+            refreshed={clientLinkRefreshed}
+            pending={linkClientMutation.isPending}
+            error={linkClientMutation.error}
+            onCancel={() => {
+              setClientLinkPreview(null);
+              linkClientMutation.reset();
+            }}
+            onConfirm={() =>
+              selected &&
+              linkClientMutation.mutate({
+                conversationId: selected.id,
+                clientId: clientLinkPreview.next_client.id,
+                confirmationToken: clientLinkPreview.confirmation_token,
+              })
+            }
           />
-        </div>
-        <div className="max-h-[56vh] overflow-y-auto p-3">
-          {linkCandidates.isLoading ? <LoadingState /> : null}
-          {linkCandidates.isError ? <ErrorState error={linkCandidates.error} action={<Button variant="secondary" onClick={() => void linkCandidates.refetch()} isLoading={linkCandidates.isFetching}>{t("common.retry")}</Button>} /> : null}
-          {!linkCandidates.isLoading && !linkCandidates.isError && !linkCandidates.data?.length && crmLinkModal && context.data?.actions[`link_${crmLinkModal}`] ? <EmptyState title={t("conversations.noLinkCandidates")} description={t("conversations.noLinkCandidatesText")} /> : null}
-          <div className="space-y-2">{(linkCandidates.data || []).map(candidate => <Button key={candidate.id} variant="ghost" className="w-full justify-start text-left" disabled={linkClientMutation.isPending || linkLeadMutation.isPending || linkDealMutation.isPending} onClick={() => {
-            if (crmLinkModal === "client") linkClientToConversation(candidate.id);
-            if (crmLinkModal === "lead") linkLeadToConversation(candidate.id);
-            if (crmLinkModal === "deal") linkDealToConversation(candidate.id);
-          }}><span className="min-w-0"><span className="block break-words">{candidate.title || `#${candidate.id}`}</span>{crmLinkModal === "client" ? <span className="block text-xs text-platforma-muted">{candidate.detail}</span> : <StatusBadge status={candidate.detail} size="sm" />}</span></Button>)}</div>
-          {crmLinkModal === "client" && context.data?.actions.create_client ? <Button variant="secondary" className="mt-3" onClick={() => selected && createClientMutation.mutate({ conversationId: selected.id })} isLoading={createClientMutation.isPending}>{t("conversations.createClient")}</Button> : null}
-          {linkClientMutation.error || linkLeadMutation.error || linkDealMutation.error || createClientMutation.error ? <ErrorState error={linkClientMutation.error || linkLeadMutation.error || linkDealMutation.error || createClientMutation.error} /> : null}
-        </div>
-        </>}
+        ) : (
+          <>
+            <div className="border-b border-platforma-border p-4">
+              <Input
+                value={crmLinkSearch}
+                onChange={(event) => setCrmLinkSearch(event.target.value)}
+                placeholder={t("conversations.linkSearchPlaceholder")}
+                autoFocus
+              />
+            </div>
+            <div className="max-h-[56vh] overflow-y-auto p-3">
+              {linkCandidates.isLoading ? <LoadingState /> : null}
+              {linkCandidates.isError ? (
+                <ErrorState
+                  error={linkCandidates.error}
+                  action={
+                    <Button
+                      variant="secondary"
+                      onClick={() => void linkCandidates.refetch()}
+                      isLoading={linkCandidates.isFetching}
+                    >
+                      {t("common.retry")}
+                    </Button>
+                  }
+                />
+              ) : null}
+              {!linkCandidates.isLoading &&
+              !linkCandidates.isError &&
+              !linkCandidates.data?.length &&
+              crmLinkModal &&
+              context.data?.actions[`link_${crmLinkModal}`] ? (
+                <EmptyState
+                  title={t("conversations.noLinkCandidates")}
+                  description={t("conversations.noLinkCandidatesText")}
+                />
+              ) : null}
+              <div className="space-y-2">
+                {(linkCandidates.data || []).map((candidate) => (
+                  <Button
+                    key={candidate.id}
+                    variant="ghost"
+                    className="w-full justify-start text-left"
+                    disabled={
+                      linkClientMutation.isPending ||
+                      linkLeadMutation.isPending ||
+                      linkDealMutation.isPending
+                    }
+                    onClick={() => {
+                      if (crmLinkModal === "client")
+                        linkClientToConversation(candidate.id);
+                      if (crmLinkModal === "lead")
+                        linkLeadToConversation(candidate.id);
+                      if (crmLinkModal === "deal")
+                        linkDealToConversation(candidate.id);
+                    }}
+                  >
+                    <span className="min-w-0">
+                      <span className="block break-words">
+                        {candidate.title || `#${candidate.id}`}
+                      </span>
+                      {crmLinkModal === "client" ? (
+                        <span className="block text-xs text-platforma-muted">
+                          {candidate.detail}
+                        </span>
+                      ) : (
+                        <StatusBadge status={candidate.detail} size="sm" />
+                      )}
+                    </span>
+                  </Button>
+                ))}
+              </div>
+              {crmLinkModal === "client" &&
+              context.data?.actions.create_client ? (
+                <Button
+                  variant="secondary"
+                  className="mt-3"
+                  onClick={() =>
+                    selected &&
+                    createClientMutation.mutate({ conversationId: selected.id })
+                  }
+                  isLoading={createClientMutation.isPending}
+                >
+                  {t("conversations.createClient")}
+                </Button>
+              ) : null}
+              {linkClientMutation.error ||
+              linkLeadMutation.error ||
+              linkDealMutation.error ||
+              createClientMutation.error ? (
+                <ErrorState
+                  error={
+                    linkClientMutation.error ||
+                    linkLeadMutation.error ||
+                    linkDealMutation.error ||
+                    createClientMutation.error
+                  }
+                />
+              ) : null}
+            </div>
+          </>
+        )}
       </Dialog>
 
-      <Dialog
-        title={t("conversations.createTaskTitle")}
-        focusReturnId="inbox-dialog-actions"
-        open={taskModalOpen}
-        onClose={() => setTaskModalOpen(false)}
-        size="md"
-        bodyClassName="space-y-4 bg-platforma-card"
-      >
-        <Input
-          label={t("taskWorkspace.name")}
-          value={taskDraft.title}
-          onChange={(event) =>
-            setTaskDraft((current) => ({
-              ...current,
-              title: event.target.value,
-            }))
-          }
-          placeholder={t("tasks.titlePlaceholder")}
-          autoFocus
-        />
-        <Textarea
-          label={t("taskWorkspace.description")}
-          value={taskDraft.description}
-          onChange={(event) =>
-            setTaskDraft((current) => ({
-              ...current,
-              description: event.target.value,
-            }))
-          }
-          placeholder={t("tasks.descriptionPlaceholder")}
-          rows={4}
-        />
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Select
-            label={t("tasks.priority")}
-            value={taskDraft.priority}
-            options={[
-              { value: "low", label: t("tasks.priorityLow") },
-              { value: "normal", label: t("tasks.priorityNormal") },
-              { value: "high", label: t("tasks.priorityHigh") },
-              { value: "urgent", label: t("tasks.priorityUrgent") },
-            ]}
-            onChange={(event) =>
-              setTaskDraft((current) => ({
-                ...current,
-                priority: event.target.value as typeof taskDraft.priority,
-              }))
-            }
-          />
-          <Input
-            label={t("tasks.dueAt")}
-            type="datetime-local"
-            value={taskDraft.due_at}
-            onChange={(event) =>
-              setTaskDraft((current) => ({
-                ...current,
-                due_at: event.target.value,
-              }))
-            }
-          />
-        </div>
-        <div className="flex justify-end gap-2 border-t border-platforma-border pt-4">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => setTaskModalOpen(false)}
-          >
-            {t("common.cancel")}
-          </Button>
-          <Button
-            type="button"
-            onClick={submitTaskFromInspector}
-            disabled={!taskDraft.title.trim()}
-            isLoading={createTaskMutation.isPending}
-          >
-            {t("tasks.create")}
-          </Button>
-        </div>
-      </Dialog>
+      <InboxTaskDialog
+        t={t}
+        taskModalOpen={taskModalOpen}
+        setTaskModalOpen={setTaskModalOpen}
+        taskDraft={taskDraft}
+        setTaskDraft={setTaskDraft}
+        submitTaskFromInspector={submitTaskFromInspector}
+        createTaskMutation={createTaskMutation}
+      />
     </div>
   );
 }

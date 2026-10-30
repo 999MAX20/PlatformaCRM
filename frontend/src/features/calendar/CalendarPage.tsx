@@ -1,40 +1,42 @@
+import { CalendarArchiveDialog } from "./CalendarArchiveDialog";
+import { CalendarStatusDialog } from "./CalendarStatusDialog";
+import { CalendarRescheduleDialog } from "./CalendarRescheduleDialog";
+import { CalendarBookingDialog } from "./CalendarBookingDialog";
+import { useCalendarUrlState } from "./useCalendarUrlState";
+import { useCalendarQueries } from "./useCalendarQueries";
+import { useCalendarCommands } from "./useCalendarCommands";
 import { Plus } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 
-import {
-  appointmentsApi,
-  type AppointmentCreatePayload,
-} from "../../api/appointments";
 import { getApiErrorMessage } from "../../api/client";
-import { branchesApi } from "../../api/branches";
+
 import { Select } from "../../components/ui/Select";
 import { branchIntervals } from "./branchHours";
-import { scheduleExceptionsApi } from "../../api/workingHours";
+
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
-import { AppointmentForm } from "../../components/forms/AppointmentForm";
-import { AppointmentRescheduleForm } from "../../components/forms/AppointmentRescheduleForm";
+
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { useNotification } from "../../components/notifications/NotificationProvider";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
-import { Modal } from "../../components/ui/Modal";
+
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { dateInTimeZone, todayInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useCalendarCatalog } from "./useCalendarCatalog";
-import { tasksApi } from "../../api/tasks";
-import { taskDateISO } from "../tasks/workspaceUtils";
+
 import { useClientCreateIntent } from "../../hooks/useClientCreateIntent";
 import type { Appointment, Client, Task } from "../../types";
 import { localeByLanguage } from "./calendarConstants";
-import type { CalendarViewMode } from "./calendarTypes";
+
 import {
-  formatTimeZoneLabel, getCalendarRange, getQueryDate, getQueryView,
-  getWeekday, getWorkingHoursFor, isDateValue, normalizeTimeZone, shiftCalendarPeriod,
+  formatTimeZoneLabel,
+  getWeekday,
+  getWorkingHoursFor,
+  shiftCalendarPeriod,
 } from "./calendarUtils";
 import { AppointmentDrawerPanel } from "./components/AppointmentDrawerPanel";
 import { CalendarBoard } from "./components/CalendarBoard";
@@ -70,20 +72,30 @@ export function CalendarPage() {
   const canViewTasks = hasPermission(user, business?.id, "tasks", "view");
   const canViewClients = hasPermission(user, business?.id, "clients", "view");
   const canViewLeads = hasPermission(user, business?.id, "leads", "view");
-  const { clients, services, resources, leads, workingHours } = useCalendarCatalog(business?.id, user?.id, canViewClients, canViewLeads);
-  const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const branchFilter = searchParams.get("branch") || "";
-  const branchesQuery = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
-  const hasBranches = !!branchesQuery.data?.length;
-  const branchCatalog = useQuery({ queryKey: ["branch-catalog", Number(branchFilter)], queryFn: () => branchesApi.catalog(Number(branchFilter)), enabled: !!branchFilter });
-  const fallbackToday = todayInTimeZone(normalizeTimeZone(business?.timezone || "Asia/Almaty"));
-  const [date, setDate] = useState(() =>
-    getQueryDate(searchParams.get("date"), fallbackToday),
-  );
-  const [viewMode, setViewMode] = useState<CalendarViewMode>(() =>
-    getQueryView(searchParams.get("view")),
-  );
+  const { clients, services, resources, leads, workingHours } =
+    useCalendarCatalog(business?.id, user?.id, canViewClients, canViewLeads);
+
+  const {
+    searchParams,
+    setSearchParams,
+    branchFilter,
+    date,
+    setDate,
+    viewMode,
+    setViewMode,
+    serviceFilter,
+    setServiceFilter,
+    resourceFilter,
+    setResourceFilter,
+    statusFilter,
+    setStatusFilter,
+    search,
+    setSearch,
+    appointmentIdFromUrl,
+    calendarRange,
+    businessTimeZone,
+  } = useCalendarUrlState({ business });
+
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingPrefill, setBookingPrefill] = useState<{
     branch?: number | null;
@@ -100,21 +112,18 @@ export function CalendarPage() {
     setBookingPrefill({ client: client?.id, source: "manual" });
     setBookingOpen(true);
   }, []);
-  const createContext = useClientCreateIntent({ businessId: business?.id, allowed: canCreateAppointment, onOpen: openLinkedAppointment });
-  const [serviceFilter, setServiceFilter] = useState(
-    searchParams.get("service") || "",
-  );
-  const [resourceFilter, setResourceFilter] = useState(
-    searchParams.get("resource") || "",
-  );
-  const [statusFilter, setStatusFilter] = useState(
-    searchParams.get("status") || "",
-  );
-  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const createContext = useClientCreateIntent({
+    businessId: business?.id,
+    allowed: canCreateAppointment,
+    onOpen: openLinkedAppointment,
+  });
+
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<
     number | null
   >(null);
-  const [inspectorOpen, setInspectorOpen] = useState(() => ["day", "list"].includes(searchParams.get("view") || ""));
+  const [inspectorOpen, setInspectorOpen] = useState(() =>
+    ["day", "list"].includes(searchParams.get("view") || ""),
+  );
   const [rescheduleTarget, setRescheduleTarget] = useState<Appointment | null>(
     null,
   );
@@ -125,137 +134,61 @@ export function CalendarPage() {
   const [statusReason, setStatusReason] = useState("");
   const [archiveTarget, setArchiveTarget] = useState<Appointment | null>(null);
   const [archiveReason, setArchiveReason] = useState("");
-  const appointmentIdFromUrl = Number(searchParams.get("appointment")) || null;
-  const searchParamsKey = searchParams.toString();
-  const calendarRange = useMemo(
-    () => getCalendarRange(date, viewMode),
-    [date, viewMode],
-  );
 
-  const businessTimeZone = normalizeTimeZone(business?.timezone || "Asia/Almaty");
-  const tasks = useQuery({
-    queryKey: ["tasks", "calendar", business?.id, user?.id, calendarRange.start, calendarRange.end, businessTimeZone],
-    queryFn: () => tasksApi.listAll({
-      business: business!.id, status: "active",
-      due_from: taskDateISO(`${calendarRange.start}T00:00`, businessTimeZone),
-      due_to: new Date(Date.parse(taskDateISO(`${calendarRange.end}T00:00`, businessTimeZone)!) - 1).toISOString(),
-    }),
-    enabled: !!business?.id && canViewTasks,
+  const {
+    branchesQuery,
+    hasBranches,
+    branchCatalog,
+    tasks,
+    appointments,
+    deepLinkedAppointment,
+    dayAvailableSlots,
+    dateExceptions,
+  } = useCalendarQueries({
+    business,
+    userId: user?.id,
+    canViewTasks,
+    calendarRange,
+    businessTimeZone,
+    branchFilter,
+    serviceFilter,
+    resourceFilter,
+    statusFilter,
+    date,
+    appointmentIdFromUrl,
   });
   const previousBusiness = useRef(business?.id);
   useEffect(() => {
     if (previousBusiness.current !== business?.id) {
-      setInspectorOpen(false); setSelectedAppointmentId(null); setBookingOpen(false);
-      setRescheduleTarget(null); setStatusReasonTarget(null); setArchiveTarget(null);
-      setServiceFilter(""); setResourceFilter(""); setStatusFilter(""); setSearch("");
-      setSearchParams(current => { const next = new URLSearchParams(current); for (const key of ["branch", "appointment", "service", "resource", "status", "search"]) next.delete(key); return next; }, { replace: true });
+      setInspectorOpen(false);
+      setSelectedAppointmentId(null);
+      setBookingOpen(false);
+      setRescheduleTarget(null);
+      setStatusReasonTarget(null);
+      setArchiveTarget(null);
+      setServiceFilter("");
+      setResourceFilter("");
+      setStatusFilter("");
+      setSearch("");
+      setSearchParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          for (const key of [
+            "branch",
+            "appointment",
+            "service",
+            "resource",
+            "status",
+            "search",
+          ])
+            next.delete(key);
+          return next;
+        },
+        { replace: true },
+      );
     }
     previousBusiness.current = business?.id;
   }, [business?.id, setSearchParams]);
-
-  const appointments = useQuery({
-    queryKey: [
-      "appointments",
-      "calendar",
-      business?.id,
-      user?.id,
-      calendarRange.start,
-      calendarRange.end,
-      serviceFilter,
-      resourceFilter,
-      statusFilter,
-      branchFilter,
-    ],
-    queryFn: () =>
-      appointmentsApi.listAll({
-        business: business!.id,
-        start_from: calendarRange.start,
-        start_to: calendarRange.end,
-        service: serviceFilter ? Number(serviceFilter) : "",
-        resource: resourceFilter ? Number(resourceFilter) : "",
-        status: statusFilter as Appointment["status"] | "",
-        branch: branchFilter ? Number(branchFilter) : "",
-      }),
-    enabled: Boolean(business?.id),
-  });
-
-  const deepLinkedAppointment = useQuery({
-    queryKey: ["appointments", "detail", business?.id, user?.id, appointmentIdFromUrl],
-    queryFn: () => appointmentsApi.get(appointmentIdFromUrl!),
-    enabled: Boolean(business?.id && appointmentIdFromUrl),
-  });
-
-  const dayAvailableSlots = useQuery({
-    queryKey: [
-      "available-slots",
-      "calendar-day",
-      branchFilter,
-      business?.id,
-      serviceFilter,
-      resourceFilter,
-      date,
-    ],
-    queryFn: () =>
-      appointmentsApi.availableSlots({
-        business_id: business!.id,
-        service_id: Number(serviceFilter),
-        branch_id: branchFilter ? Number(branchFilter) : "",
-        resource_id: resourceFilter ? Number(resourceFilter) : "",
-        date,
-      }),
-    enabled: Boolean(!branchesQuery.isLoading && (!hasBranches || branchFilter) && business?.id && serviceFilter && resourceFilter && date),
-  });
-  const dateExceptions = useQuery({
-    queryKey: ["schedule-exceptions", business?.id, resourceFilter, date],
-    queryFn: () => scheduleExceptionsApi.list({ business: business!.id, resource: resourceFilter, date }),
-    enabled: Boolean(!hasBranches && business?.id && resourceFilter && date),
-  });
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParamsKey);
-    const nextDate = params.get("date");
-    const nextView = params.get("view");
-    const nextService = params.get("service") || "";
-    const nextResource = params.get("resource") || "";
-    const nextStatus = params.get("status") || "";
-    const nextSearch = params.get("search") || "";
-
-    if (isDateValue(nextDate)) setDate(nextDate!);
-    if (nextView) setViewMode(getQueryView(nextView));
-    setServiceFilter(nextService);
-    setResourceFilter(nextResource);
-    setStatusFilter(nextStatus);
-    setSearch(nextSearch);
-  }, [searchParamsKey]);
-
-  useEffect(() => {
-    setSearchParams(
-      (current) => {
-        const next = new URLSearchParams(current);
-        next.set("date", date);
-        next.set("view", viewMode);
-        if (serviceFilter) next.set("service", serviceFilter);
-        else next.delete("service");
-        if (resourceFilter) next.set("resource", resourceFilter);
-        else next.delete("resource");
-        if (statusFilter) next.set("status", statusFilter);
-        else next.delete("status");
-        if (search.trim()) next.set("search", search.trim());
-        else next.delete("search");
-        if (next.toString() === current.toString()) return current;
-        return next;
-      },
-      { replace: true },
-    );
-  }, [
-    date,
-    resourceFilter,
-    search,
-    serviceFilter,
-    setSearchParams,
-    statusFilter,
-    viewMode,
-  ]);
 
   useEffect(() => {
     const appointment = deepLinkedAppointment.data;
@@ -267,18 +200,6 @@ export function CalendarPage() {
     setInspectorOpen(true);
   }, [business?.id, business?.timezone, deepLinkedAppointment.data]);
 
-  function refreshAppointmentData(appointment?: Appointment) {
-    queryClient.invalidateQueries({ queryKey: ["appointments"] });
-    queryClient.invalidateQueries({ queryKey: ["tasks"] });
-    queryClient.invalidateQueries({ queryKey: ["available-slots"] });
-    queryClient.invalidateQueries({ queryKey: ["activity-events"] });
-    queryClient.invalidateQueries({ queryKey: ["crm-card"] });
-    if (appointment)
-      queryClient.invalidateQueries({
-        queryKey: ["crm-card", "appointment", appointment.id],
-      });
-  }
-
   function setNotice(
     message: string | null,
     tone: "success" | "info" | "warning" | "danger" = "success",
@@ -287,87 +208,22 @@ export function CalendarPage() {
     showNotification({ message, tone });
   }
 
-  const mutation = useMutation({
-    mutationFn: (payload: AppointmentCreatePayload) =>
-      appointmentsApi.create(payload),
-    onSuccess: (appointment) => {
-      refreshAppointmentData(appointment);
-      setBookingOpen(false);
-      if (appointment.start_at)
-        setDate(
-          dateInTimeZone(
-            appointment.start_at,
-            business?.timezone || "Asia/Almaty",
-          ),
-        );
-      setSelectedAppointmentId(appointment.id);
-      setInspectorOpen(true);
-      setNotice(t("calendar.createdNotice"));
-    },
-    onError: (error) => notifyError(error),
-  });
-
-  const statusMutation = useMutation({
-    mutationFn: ({
-      id,
-      status,
-      reason,
-    }: {
-      id: number;
-      status: Appointment["status"];
-      reason?: string;
-    }) => {
-      if (status === "confirmed") return appointmentsApi.confirm(id);
-      if (status === "cancelled")
-        return appointmentsApi.cancel(id, { reason: reason || "" });
-      if (status === "completed") return appointmentsApi.complete(id);
-      if (status === "no_show")
-        return appointmentsApi.noShow(id, { reason: reason || "" });
-      return appointmentsApi.get(id);
-    },
-    onSuccess: (appointment) => {
-      refreshAppointmentData(appointment);
-      setStatusReasonTarget(null);
-      setStatusReason("");
-      setNotice(t("appointments.actionDone"));
-    },
-    onError: (error) => notifyError(error),
-  });
-
-  const rescheduleMutation = useMutation({
-    mutationFn: appointmentsApi.reschedule,
-    onSuccess: (appointment) => {
-      refreshAppointmentData(appointment);
-      setDate(
-        dateInTimeZone(
-          appointment.start_at,
-          business?.timezone || "Asia/Almaty",
-        ),
-      );
-      setSelectedAppointmentId(appointment.id);
-      setInspectorOpen(true);
-      setRescheduleTarget(null);
-      setNotice(t("appointments.rescheduledNotice"));
-    },
-    onError: (error) =>
-      notifyError(error, {
-        actionLabel: t("common.refresh"),
-        retry: () => refreshAppointmentData(),
-      }),
-  });
-
-  const archiveMutation = useMutation({
-    mutationFn: ({ id, reason }: { id: number; reason: string }) =>
-      appointmentsApi.archive({ id, reason }),
-    onSuccess: (appointment) => {
-      refreshAppointmentData(appointment);
-      setArchiveTarget(null);
-      setArchiveReason("");
-      setSelectedAppointmentId(null);
-      setNotice(t("appointments.archive"));
-    },
-    onError: (error) => notifyError(error),
-  });
+  const { mutation, statusMutation, rescheduleMutation, archiveMutation } =
+    useCalendarCommands({
+      business,
+      setBookingOpen,
+      setDate,
+      setSelectedAppointmentId,
+      setInspectorOpen,
+      setStatusReasonTarget,
+      setStatusReason,
+      setRescheduleTarget,
+      setArchiveTarget,
+      setArchiveReason,
+      setNotice,
+      notifyError,
+      t,
+    });
 
   useEffect(() => {
     setPageHeader({
@@ -395,7 +251,8 @@ export function CalendarPage() {
   const workingHourItems = workingHours.data || [];
   const taskItems = (tasks.data || []) as Task[];
   const isCalendarDataLoading =
-    branchesQuery.isLoading || branchCatalog.isLoading ||
+    branchesQuery.isLoading ||
+    branchCatalog.isLoading ||
     appointments.isLoading ||
     clients.isLoading ||
     services.isLoading ||
@@ -404,7 +261,8 @@ export function CalendarPage() {
     workingHours.isLoading ||
     tasks.isLoading;
   const calendarDataError =
-    branchesQuery.error || branchCatalog.error ||
+    branchesQuery.error ||
+    branchCatalog.error ||
     appointments.error ||
     deepLinkedAppointment.error ||
     clients.error ||
@@ -417,14 +275,30 @@ export function CalendarPage() {
     return (
       <div data-testid="calendar-error-state">
         <ErrorState
-          error={calendarDataError} message={getApiErrorMessage(calendarDataError)}
+          error={calendarDataError}
+          message={getApiErrorMessage(calendarDataError)}
           action={
             <Button
               type="button"
               variant="secondary"
               size="sm"
               onClick={() => {
-                void Promise.all([appointments, deepLinkedAppointment, branchesQuery, branchCatalog, clients, services, resources, leads, workingHours, tasks].filter(query => query.isError).map(query => query.refetch()));
+                void Promise.all(
+                  [
+                    appointments,
+                    deepLinkedAppointment,
+                    branchesQuery,
+                    branchCatalog,
+                    clients,
+                    services,
+                    resources,
+                    leads,
+                    workingHours,
+                    tasks,
+                  ]
+                    .filter((query) => query.isError)
+                    .map((query) => query.refetch()),
+                );
               }}
             >
               {t("common.retry")}
@@ -472,27 +346,47 @@ export function CalendarPage() {
     .sort(
       (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
     );
-  const dayTasks = taskItems.filter(
-    (task) =>
-      !task.is_archived && task.due_at &&
-      dateInTimeZone(task.due_at, businessTimeZone) === date &&
-      !["done", "cancelled"].includes(task.status),
-  ).sort((a, b) => Date.parse(a.due_at!) - Date.parse(b.due_at!));
+  const dayTasks = taskItems
+    .filter(
+      (task) =>
+        !task.is_archived &&
+        task.due_at &&
+        dateInTimeZone(task.due_at, businessTimeZone) === date &&
+        !["done", "cancelled"].includes(task.status),
+    )
+    .sort((a, b) => Date.parse(a.due_at!) - Date.parse(b.due_at!));
   const selectedAppointment =
     appointmentItems.find(
       (appointment) =>
         appointment.id === selectedAppointmentId && !appointment.is_archived,
-    ) || (deepLinkedAppointment.data?.id === selectedAppointmentId && deepLinkedAppointment.data.business === business.id && !deepLinkedAppointment.data.is_archived ? deepLinkedAppointment.data : null);
+    ) ||
+    (deepLinkedAppointment.data?.id === selectedAppointmentId &&
+    deepLinkedAppointment.data.business === business.id &&
+    !deepLinkedAppointment.data.is_archived
+      ? deepLinkedAppointment.data
+      : null);
   const selectedResourceId = resourceFilter ? Number(resourceFilter) : null;
-  const selectedDayHours = dateExceptions.data?.[0] ? { ...dateExceptions.data[0], weekday: getWeekday(date) } : getWorkingHoursFor(
-    workingHourItems,
-    getWeekday(date),
-    selectedResourceId,
-  );
-  const branchDayLabel = branchFilter ? branchIntervals(branchCatalog.data, date, selectedResourceId).map((item) => `${item.start}–${item.end}`).join(", ") || t("calendar.freeDay") : t("branches.choose");
-  const hoursLabel = hasBranches ? branchDayLabel : selectedDayHours && !selectedDayHours.is_day_off
-    ? `${selectedDayHours.start_time.slice(0, 5)}–${selectedDayHours.end_time.slice(0, 5)}` : t("calendar.freeDay");
-  const availableSlots = serviceFilter && resourceFilter && !dayAvailableSlots.isError ? dayAvailableSlots.data?.length : undefined;
+  const selectedDayHours = dateExceptions.data?.[0]
+    ? { ...dateExceptions.data[0], weekday: getWeekday(date) }
+    : getWorkingHoursFor(
+        workingHourItems,
+        getWeekday(date),
+        selectedResourceId,
+      );
+  const branchDayLabel = branchFilter
+    ? branchIntervals(branchCatalog.data, date, selectedResourceId)
+        .map((item) => `${item.start}–${item.end}`)
+        .join(", ") || t("calendar.freeDay")
+    : t("branches.choose");
+  const hoursLabel = hasBranches
+    ? branchDayLabel
+    : selectedDayHours && !selectedDayHours.is_day_off
+      ? `${selectedDayHours.start_time.slice(0, 5)}–${selectedDayHours.end_time.slice(0, 5)}`
+      : t("calendar.freeDay");
+  const availableSlots =
+    serviceFilter && resourceFilter && !dayAvailableSlots.isError
+      ? dayAvailableSlots.data?.length
+      : undefined;
   const timeZoneLabel = formatTimeZoneLabel(businessTimeZone);
 
   function shiftDate(days: number) {
@@ -517,14 +411,25 @@ export function CalendarPage() {
   }
 
   function clearDeepLink() {
-    setSearchParams(current => { const next = new URLSearchParams(current); next.delete("appointment"); return next; }, { replace: true });
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.delete("appointment");
+        return next;
+      },
+      { replace: true },
+    );
   }
 
   function closeInspector() {
     setInspectorOpen(false);
     setSelectedAppointmentId(null);
     clearDeepLink();
-    requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(`[data-calendar-day="${date}"]`)?.focus());
+    requestAnimationFrame(() =>
+      document
+        .querySelector<HTMLButtonElement>(`[data-calendar-day="${date}"]`)
+        ?.focus(),
+    );
   }
 
   function openBookingForDate(
@@ -580,8 +485,7 @@ export function CalendarPage() {
         branches: branchesQuery.data,
         user,
         businessId: business?.id,
-      }) &&
-      !["completed", "cancelled", "no_show"].includes(appointment.status)
+      }) && !["completed", "cancelled", "no_show"].includes(appointment.status)
     );
   }
 
@@ -664,7 +568,6 @@ export function CalendarPage() {
 
   return (
     <>
-
       <CalendarToolbar
         date={date}
         viewMode={viewMode}
@@ -685,22 +588,102 @@ export function CalendarPage() {
         onStatusChange={setStatusFilter}
         t={t}
       >
-        <div className="w-full min-w-0 sm:min-w-64 sm:flex-1"><Input aria-label={t("calendar.searchPlaceholder")} placeholder={t("calendar.searchPlaceholder")} value={search} onChange={event => setSearch(event.target.value)} /></div>
-      {hasBranches && <div className="min-w-0 flex-1 sm:w-64 sm:flex-none"><Select aria-label={t("branches.branch")} value={branchFilter} onChange={(event) => setSearchParams((current) => { const next = new URLSearchParams(current); if (event.target.value) next.set("branch", event.target.value); else next.delete("branch"); return next; })} options={[{ value: "", label: t("branches.all") }, ...(branchesQuery.data || []).map((branch) => ({ value: branch.id, label: branch.name }))]} /></div>}
+        <div className="w-full min-w-0 sm:min-w-64 sm:flex-1">
+          <Input
+            aria-label={t("calendar.searchPlaceholder")}
+            placeholder={t("calendar.searchPlaceholder")}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </div>
+        {hasBranches && (
+          <div className="min-w-0 flex-1 sm:w-64 sm:flex-none">
+            <Select
+              aria-label={t("branches.branch")}
+              value={branchFilter}
+              onChange={(event) =>
+                setSearchParams((current) => {
+                  const next = new URLSearchParams(current);
+                  if (event.target.value)
+                    next.set("branch", event.target.value);
+                  else next.delete("branch");
+                  return next;
+                })
+              }
+              options={[
+                { value: "", label: t("branches.all") },
+                ...(branchesQuery.data || []).map((branch) => ({
+                  value: branch.id,
+                  label: branch.name,
+                })),
+              ]}
+            />
+          </div>
+        )}
       </CalendarToolbar>
-      <p className="mb-2 text-right text-xs text-platforma-muted">{businessTimeZone} · {timeZoneLabel}</p>
-      <ActiveCalendarFilters chips={activeFilterChips} onClearAll={clearAllFilters} t={t} />
+      <p className="mb-2 text-right text-xs text-platforma-muted">
+        {businessTimeZone} · {timeZoneLabel}
+      </p>
+      <ActiveCalendarFilters
+        chips={activeFilterChips}
+        onClearAll={clearAllFilters}
+        t={t}
+      />
       {isCalendarDataLoading && <LoadingState />}
-      <section data-testid={isCalendarDataLoading ? undefined : "calendar-workspace-ready"}>
-        <CalendarBoard loading={isCalendarDataLoading} canViewTasks={canViewTasks} date={date} viewMode={viewMode} today={todayValue} locale={locale} timeZone={businessTimeZone}
-          appointments={appointmentList} tasks={canViewTasks ? taskItems : []} onSelectDay={selectMonthDay} onNavigate={setDate} t={t} />
+      <section
+        data-testid={
+          isCalendarDataLoading ? undefined : "calendar-workspace-ready"
+        }
+      >
+        <CalendarBoard
+          loading={isCalendarDataLoading}
+          canViewTasks={canViewTasks}
+          date={date}
+          viewMode={viewMode}
+          today={todayValue}
+          locale={locale}
+          timeZone={businessTimeZone}
+          appointments={appointmentList}
+          tasks={canViewTasks ? taskItems : []}
+          onSelectDay={selectMonthDay}
+          onNavigate={setDate}
+          t={t}
+        />
       </section>
-      <CalendarDayInspector open={inspectorOpen} loading={isCalendarDataLoading} canViewTasks={canViewTasks} date={date} locale={locale} timeZone={businessTimeZone}
-        dayAppointments={dayAppointments} dayTasks={canViewTasks ? dayTasks : []} clientById={clientById} serviceById={serviceById} resourceById={resourceById}
-        selectedAppointmentId={selectedAppointment?.id || null} canCreate={canCreateAppointment} hoursLabel={hoursLabel} availableSlots={availableSlots}
-        hoursUrl={canManageWorkingHours ? (hasBranches ? `/app/business/branches?branch=${branchFilter}&section=schedule` : "/app/business/working-hours") : undefined}
+      <CalendarDayInspector
+        open={inspectorOpen}
+        loading={isCalendarDataLoading}
+        canViewTasks={canViewTasks}
+        date={date}
+        locale={locale}
+        timeZone={businessTimeZone}
+        dayAppointments={dayAppointments}
+        dayTasks={canViewTasks ? dayTasks : []}
+        clientById={clientById}
+        serviceById={serviceById}
+        resourceById={resourceById}
+        selectedAppointmentId={selectedAppointment?.id || null}
+        canCreate={canCreateAppointment}
+        hoursLabel={hoursLabel}
+        availableSlots={availableSlots}
+        hoursUrl={
+          canManageWorkingHours
+            ? hasBranches
+              ? `/app/business/branches?branch=${branchFilter}&section=schedule`
+              : "/app/business/working-hours"
+            : undefined
+        }
         onClose={closeInspector}
-        onBack={() => { setSelectedAppointmentId(null); clearDeepLink(); }} onDayChange={selectMonthDay} onBooking={openBookingForDate} onSelectAppointment={selectAppointment} onOpenCard={openAppointmentWorkspace} t={t}>
+        onBack={() => {
+          setSelectedAppointmentId(null);
+          clearDeepLink();
+        }}
+        onDayChange={selectMonthDay}
+        onBooking={openBookingForDate}
+        onSelectAppointment={selectAppointment}
+        onOpenCard={openAppointmentWorkspace}
+        t={t}
+      >
         {selectedAppointment ? (
           <AppointmentDrawerPanel
             appointment={selectedAppointment}
@@ -733,139 +716,48 @@ export function CalendarPage() {
         ) : null}
       </CalendarDayInspector>
 
-      <Modal
-        title={t("calendar.newBooking")}
-        open={bookingOpen}
-        onClose={() => {
-          setBookingOpen(false);
-          setBookingPrefill(null);
-        }}
-      >
-        <AppointmentForm
-          businessId={business.id}
-          clients={clientItems}
-          services={serviceItems}
-          resources={resourceItems}
-          leads={leadItems}
-          prefill={{ ...(bookingPrefill || { date }), branch: bookingPrefill?.branch || (branchFilter ? Number(branchFilter) : undefined) }}
-          onSubmit={(payload) => mutation.mutateAsync(payload)}
-          timeZone={businessTimeZone}
-        />
-      </Modal>
-      <Modal
-        title={t("appointments.rescheduleTitle")}
-        open={Boolean(rescheduleTarget)}
-        onClose={() => setRescheduleTarget(null)}
-      >
-        {rescheduleTarget ? (
-          <AppointmentRescheduleForm
-            appointment={rescheduleTarget}
-            businessId={business.id}
-            resources={resourceItems}
-            onCancel={() => setRescheduleTarget(null)}
-            onSubmit={(payload) =>
-              rescheduleMutation.mutateAsync({
-                id: rescheduleTarget.id,
-                payload,
-              })
-            }
-            isSubmitting={rescheduleMutation.isPending}
-            timeZone={businessTimeZone}
-          />
-        ) : null}
-      </Modal>
-      <Modal
-        title={t("appointments.statusReasonTitle")}
-        open={Boolean(statusReasonTarget)}
-        onClose={() => {
-          setStatusReasonTarget(null);
-          setStatusReason("");
-        }}
-      >
-        <div className="space-y-4">
-          <Input
-            label={t("appointments.statusReason")}
-            value={statusReason}
-            onChange={(event) => setStatusReason(event.target.value)}
-            placeholder={t("appointments.statusReasonPlaceholder")}
-          />
-          <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => {
-                setStatusReasonTarget(null);
-                setStatusReason("");
-              }}
-            >
-              {t("common.back")}
-            </Button>
-            <Button
-              type="button"
-              variant="warning"
-              isLoading={statusMutation.isPending}
-              disabled={!statusReason.trim()}
-              onClick={() => {
-                if (!statusReasonTarget) return;
-                statusMutation.mutate({
-                  id: statusReasonTarget.appointment.id,
-                  status: statusReasonTarget.status,
-                  reason: statusReason.trim(),
-                });
-              }}
-            >
-              {statusReasonTarget
-                ? getAppointmentActionLabel(statusReasonTarget.status)
-                : t("appointments.actions")}
-            </Button>
-          </div>
-        </div>
-      </Modal>
-      <Modal
-        title={t("appointments.archive")}
-        open={Boolean(archiveTarget)}
-        onClose={() => {
-          setArchiveTarget(null);
-          setArchiveReason("");
-        }}
-      >
-        <div className="space-y-4">
-          <Input
-            label={t("appointments.archiveReason")}
-            value={archiveReason}
-            onChange={(event) => setArchiveReason(event.target.value)}
-            placeholder={t("appointments.archiveReasonPlaceholder")}
-          />
-          <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => {
-                setArchiveTarget(null);
-                setArchiveReason("");
-              }}
-            >
-              {t("common.cancel")}
-            </Button>
-            <Button
-              type="button"
-              variant="warning"
-              isLoading={archiveMutation.isPending}
-              onClick={() => {
-                if (!archiveTarget) return;
-                archiveMutation.mutate({
-                  id: archiveTarget.id,
-                  reason:
-                    archiveReason.trim() ||
-                    t("appointments.archiveReasonDefault"),
-                });
-              }}
-            >
-              {t("appointments.archive")}
-            </Button>
-          </div>
-        </div>
-      </Modal>
+      <CalendarBookingDialog
+        t={t}
+        bookingOpen={bookingOpen}
+        setBookingOpen={setBookingOpen}
+        setBookingPrefill={setBookingPrefill}
+        business={business}
+        clientItems={clientItems}
+        serviceItems={serviceItems}
+        resourceItems={resourceItems}
+        leadItems={leadItems}
+        bookingPrefill={bookingPrefill}
+        date={date}
+        branchFilter={branchFilter}
+        mutation={mutation}
+        businessTimeZone={businessTimeZone}
+      />
+      <CalendarRescheduleDialog
+        t={t}
+        rescheduleTarget={rescheduleTarget}
+        setRescheduleTarget={setRescheduleTarget}
+        business={business}
+        resourceItems={resourceItems}
+        rescheduleMutation={rescheduleMutation}
+        businessTimeZone={businessTimeZone}
+      />
+      <CalendarStatusDialog
+        t={t}
+        statusReasonTarget={statusReasonTarget}
+        setStatusReasonTarget={setStatusReasonTarget}
+        setStatusReason={setStatusReason}
+        statusReason={statusReason}
+        statusMutation={statusMutation}
+        getAppointmentActionLabel={getAppointmentActionLabel}
+      />
+      <CalendarArchiveDialog
+        t={t}
+        archiveTarget={archiveTarget}
+        setArchiveTarget={setArchiveTarget}
+        setArchiveReason={setArchiveReason}
+        archiveReason={archiveReason}
+        archiveMutation={archiveMutation}
+      />
     </>
   );
 }

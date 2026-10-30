@@ -17,13 +17,19 @@ test("capability-aware permissions hide disabled daily modules before role grant
 
 test("command palette reuses permission and capability policy for commands and entity queries", async () => {
   const palette = await source("components/layout/CommandPalette.tsx");
+  const clientSearch = await source("hooks/useClientSearch.ts");
 
   assert.match(palette, /hasPermission\(user, businessId, command\.resource, command\.action\)/);
   assert.match(palette, /id: "create-lead"[^\n]+resource: "leads", action: "create"/);
   assert.match(palette, /id: "open-settings"[^\n]+resource: "settings", action: "update"/);
   assert.match(palette, /id: "open-deals"[^\n]+resource: "deals"/);
   assert.match(palette, /id: "open-ai-agents"[^\n]+resource: "ai_automation"/);
-  assert.match(palette, /clients: canViewClients/);
+  assert.match(palette, /clients: false/);
+  assert.match(palette, /useClientSearch\(query\)/);
+  assert.match(palette, /data: clientSearch\.clients/);
+  assert.match(clientSearch, /hasPermission\(user, businessId, "clients", "view"\)/);
+  assert.match(clientSearch, /enabled: enabled && allowed/);
+  assert.match(clientSearch, /clients: allowed && !waiting && !result\.isError/);
   assert.match(palette, /leads: canViewLeads/);
   assert.match(palette, /services: canViewServices/);
   assert.match(palette, /canViewLeads \? leads\.data \|\| \[\] : \[\]/);
@@ -32,12 +38,13 @@ test("command palette reuses permission and capability policy for commands and e
 });
 
 test("daily workspaces preserve recoverable and role-valid actions", async () => {
-  const [tasks, calendar, appointmentAccess, conversations, conversationList] = await Promise.all([
+  const [tasks, calendar, appointmentAccess, conversations, conversationList, inboxQueries] = await Promise.all([
     source("features/tasks/TasksPage.tsx"),
     source("features/calendar/CalendarPage.tsx"),
     source("features/calendar/appointmentAccess.ts"),
     source("features/conversations/ConversationsPage.tsx"),
     source("features/conversations/components/ConversationListPane.tsx"),
+    source("features/conversations/useInboxQueries.ts"),
   ]);
 
   assert.match(tasks, /primaryAction:\s*canCreate/);
@@ -48,8 +55,10 @@ test("daily workspaces preserve recoverable and role-valid actions", async () =>
   assert.match(appointmentAccess, /resource\?\.linked_user/);
   assert.match(appointmentAccess, /scope !== "own"/);
   assert.match(conversations, /data-testid="inbox-error-state"/);
-  assert.match(conversations, /businessConnectorsApi\.list/);
-  assert.match(conversations, /retry:\s*false/);
+  assert.match(conversations, /useInboxQueries\(/);
+  assert.match(inboxQueries, /businessConnectorsApi\.list/);
+  assert.match(inboxQueries, /enabled: Boolean\(businessId && canViewIntegrations\)/);
+  assert.match(inboxQueries, /retry:\s*false/);
   assert.match(conversations, /connector\.capability === "communications"/);
   assert.match(conversations, /communicationConnectors\.isError/);
   assert.match(conversations, /communicationConnectors\.refetch\(\)/);
@@ -63,12 +72,14 @@ test("daily workspaces preserve recoverable and role-valid actions", async () =>
 });
 
 test("owner dashboard fetches and renders capability-scoped daily modules", async () => {
-  const [page, dashboard] = await Promise.all([
+  const [page, dashboard, queries] = await Promise.all([
     source("features/dashboard/DashboardPage.tsx"),
     source("features/dashboard/OperationalDashboard.tsx"),
+    source("features/dashboard/dashboardQueries.ts"),
   ]);
 
-  assert.match(page, /workQueuesApi\.get/);
+  assert.match(page, /useQuery\(workQueuesQuery\(business\?\.id, limit\)\)/);
+  assert.match(queries, /workQueuesApi\.get\(\{ business: business!, limit \}\)/);
   assert.doesNotMatch(page, /useCrmEntities|appointmentsApi\.list|tasksApi\.list/);
   for (const resource of ["leads", "deals", "appointments", "tasks", "conversations"]) {
     assert.ok(page.includes(`${resource}: permitted("${resource}")`));
