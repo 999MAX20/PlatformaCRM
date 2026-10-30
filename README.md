@@ -1,5 +1,11 @@
 # PlatformaCRM
 
+Owner signup starts with the neutral `other` business type; industry selection
+is explicit. Invitation bearer links require current TEAM MANAGE, existing role
+restrictions survive onboarding, and generic Business DELETE is unavailable.
+Invalid MFA codes display correction guidance without claiming session expiry.
+Isolated two-business checks and delivery status: [PILOT-ACCESS evidence](docs/testing/task-state/PRIMARY-SESSION.md#pilot-access-20261031--two-business-onboarding-and-access).
+
 Authentication API clients: first GET `/api/auth/csrf/`, retaining cookies;
 then send the returned `csrf_token` as `X-CSRFToken` with the same cookie jar for
 login, refresh, logout, social login, owner signup, MFA confirm/verify and password

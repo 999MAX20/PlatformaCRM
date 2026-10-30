@@ -24,6 +24,16 @@ function axiosError(status, data) {
   };
 }
 
+test("invalid MFA factor allows corrected input without claiming the session expired", () => {
+  const error = normalizeAppError(axiosError(401, { code: "mfa_code_invalid", detail: "private detail" }));
+  assert.equal(error.messageKey, "mfa.codeInvalid");
+  assert.equal(error.category, "authentication");
+  assert.equal(error.retryable, false);
+  assert.equal(JSON.stringify(error).includes("private detail"), false);
+  assert.equal(normalizeAppError(axiosError(401, { code: "token_not_valid" })).messageKey, "actions.errorUnauthenticated");
+  assert.equal(normalizeAppError(axiosError(401, { code: "mfa_challenge_invalid" })).messageKey, "actions.errorUnauthenticated");
+});
+
 test("stable backend code takes priority over conflicting HTTP status", () => {
   const normalized = normalizeAppError(axiosError(403, {
     category: "permission",

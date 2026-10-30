@@ -151,7 +151,7 @@ class BotsFoundationTests(TestCase):
 
         self.assertEqual(response.status_code, 201)
         self.assertIsNotNone(response.data["conversation_id"])
-        self.assertIsNotNone(response.data["client_id"])
+        self.assertIsNone(response.data["client_id"])
         self.assertIsNone(response.data["lead_id"])
         self.assertEqual(BotConversation.objects.count(), 1)
         self.assertEqual(BotMessage.objects.count(), 1)

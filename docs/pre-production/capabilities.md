@@ -1,5 +1,11 @@
 # Карта реализации и оставшихся границ
 
+PILOT-ACCESS-20261031 adds isolated two-Business onboarding/access acceptance:
+public signup, invited correct account, current role/tenant denial, revocation and
+restoration preserving specialist/history, auth/MFA/session/reset and races.
+Existing security fixes are integrated, not a new permission model. No live pilot
+or production readiness claim. [Evidence](../testing/task-state/PRIMARY-SESSION.md#pilot-access-20261031--two-business-onboarding-and-access).
+
 YCloud TP Lite, 29.10: локально реализованы подключение одного WhatsApp API-номера,
 подписанный приём, текстовый обмен через существующий Inbox и статусы доставки.
 Изолированные backend/PG/readiness и frontend build/browser результаты —

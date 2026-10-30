@@ -1,5 +1,14 @@
 # Доступ, приватность и границы аккаунта
 
+PILOT-ACCESS-20261031: integrated access candidate preserves existing role grants
+on repeated initialization, masks invitation token/invite_path without current
+TEAM MANAGE, rejects generic Business DELETE, and removes private matching/CRM IDs
+from anonymous form/widget receipts. Signup defaults to neutral other. Existing
+auth/MFA/session/reset and employee services remain; disabling Business membership
+does not disable specialist/history or another Business membership. Two-business
+and PostgreSQL race evidence: [checkpoint](../testing/task-state/PRIMARY-SESSION.md#pilot-access-20261031--two-business-onboarding-and-access).
+This is isolated acceptance, not live admission.
+
 AUD-V01,31.10: anonymous cookie-auth защищён Django csrf_protect внутри DRF
 dispatch. GET /api/auth/csrf/ возвращает masked csrf_token, устанавливает CSRF cookie
 и запрещает кэширование. POST token, refresh, logout, social, signup/owner,

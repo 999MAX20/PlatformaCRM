@@ -605,9 +605,10 @@ def effective_permissions_for(user, business: Business | None):
     return permissions
 
 
+@transaction.atomic
 def ensure_default_roles(business: Business):
     for role, permissions in ROLE_PRESETS.items():
-        business_role, _ = BusinessRole.objects.get_or_create(
+        business_role, created = BusinessRole.objects.get_or_create(
             business=business,
             preset_key=role,
             defaults={
@@ -618,10 +619,9 @@ def ensure_default_roles(business: Business):
                 "is_active": True,
             },
         )
-        business_role.permissions_json = permissions
-        business_role.is_system = True
-        business_role.is_active = True
-        business_role.save(update_fields=["permissions_json", "is_system", "is_active", "updated_at"])
+        # Initialization must not reset an existing role's intentional restrictions.
+        if not created:
+            continue
         for resource, actions in permissions.items():
             if resource == "*":
                 for catalog_resource in PERMISSION_CATALOG:

@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from apps.accounts.models import User
 from apps.accounts.passwords import enforce_password_policy
-from apps.businesses.access import PERMISSION_CATALOG
+from apps.businesses.access import Actions, PERMISSION_CATALOG, Resources, can
 from apps.businesses.models import (
     Business,
     BusinessCapability,
@@ -336,6 +336,16 @@ class BusinessInvitationSerializer(serializers.ModelSerializer):
 
     def get_invite_path(self, obj):
         return f"/invite/{obj.token}"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        if not (user and user.is_authenticated and can(user, instance.business, Resources.TEAM, Actions.MANAGE).allowed):
+            # Both fields carry the same invitation bearer secret.
+            data["token"] = ""
+            data["invite_path"] = ""
+        return data
 
     def validate(self, attrs):
         business = attrs.get("business") or getattr(self.instance, "business", None)

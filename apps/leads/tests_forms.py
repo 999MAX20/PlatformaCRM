@@ -260,6 +260,7 @@ class LeadFormCaptureTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 201)
-        self.assertTrue(response.data["duplicate_warning"])
+        self.assertFalse(response.data["duplicate_warning"])
+        self.assertTrue(LeadFormSubmission.objects.get().duplicate_json["duplicates"])
         self.assertEqual(Client.objects.filter(business=self.business).count(), 1)
         self.assertEqual(Lead.objects.get().client, existing)

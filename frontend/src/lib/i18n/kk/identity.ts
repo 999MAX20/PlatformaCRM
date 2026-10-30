@@ -189,6 +189,7 @@ export const identity: Record<string, string> = {
   "mfa.manualFallback": "Сканерлей алмайсыз ба?",
   "mfa.openAuthenticator": "Аутентификатор қолданбасында ашу",
   "mfa.codeLabel": "Растау коды",
+  "mfa.codeInvalid": "Код қате немесе бұрын қолданылған. Қолданбадан жаңа кодты немесе қолданылмаған резервтік кодты енгізіңіз.",
   "mfa.codePlaceholder": "000000 немесе резервтік код",
   "mfa.recoveryHint": "Әр резервтік код алты таңбалы кодтың орнына бір рет қана қолданылады.",
   "mfa.enable": "Қорғанысты қосу",

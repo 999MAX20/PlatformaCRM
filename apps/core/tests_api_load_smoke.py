@@ -17,8 +17,11 @@ class ApiLoadSmokeScriptTests(SimpleTestCase):
     def test_main_writes_json_baseline_without_secret_values(self):
         calls = []
 
-        def fake_request_json(method, url, token=None, payload=None, timeout=15):
-            calls.append({"method": method, "url": url, "token": token, "payload": payload, "timeout": timeout})
+        def fake_request_json(method, url, token=None, payload=None, timeout=15, *, opener=None, csrf_token=None):
+            calls.append({"method": method, "url": url, "token": token, "payload": payload,
+                          "timeout": timeout, "opener": opener, "csrf_token": csrf_token})
+            if url.endswith("/api/auth/csrf/"):
+                return 5.0, {"csrf_token": "synthetic-csrf-token"}
             if url.endswith("/api/auth/token/"):
                 return 10.0, {"access": "access-token"}
             return 20.0, {"results": []}
@@ -50,4 +53,11 @@ class ApiLoadSmokeScriptTests(SimpleTestCase):
             self.assertEqual(payload["iterations"], 1)
             self.assertFalse(payload["errors"])
             self.assertNotIn("secret-password", output_file.read_text(encoding="utf-8"))
+            self.assertNotIn("access-token", output_file.read_text(encoding="utf-8"))
+            self.assertNotIn("synthetic-csrf-token", output_file.read_text(encoding="utf-8"))
+            self.assertEqual(calls[0]["method"], "GET")
+            self.assertTrue(calls[0]["url"].endswith("/api/auth/csrf/"))
+            self.assertIsNotNone(calls[0]["opener"])
+            self.assertIs(calls[0]["opener"], calls[1]["opener"])
+            self.assertEqual(calls[1]["csrf_token"], "synthetic-csrf-token")
             self.assertTrue(any(call["url"].endswith("/api/business-connectors/?business=3") for call in calls))

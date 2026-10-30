@@ -5,7 +5,7 @@ from unittest.mock import patch
 import uuid
 import pyotp
 
-from django.db import connection, close_old_connections, transaction
+from django.db import connection, connections, close_old_connections, transaction
 from django.test import TransactionTestCase
 from rest_framework.test import APIClient
 from django.utils import timezone
@@ -44,7 +44,7 @@ class EmployeeAccessConcurrencyTests(EmployeeAccessFixture, TransactionTestCase)
                 barrier.wait(timeout=10)
                 return client.post(f"{root}{response.data['id']}/", {"action": "execute"}, HTTP_X_ZANI_MFA_STEP_UP=step).status_code
             finally:
-                close_old_connections()
+                connections.close_all()
         def first():
             barrier.wait(timeout=10)
             return self.worker_execute(id)
@@ -61,7 +61,7 @@ class EmployeeAccessConcurrencyTests(EmployeeAccessFixture, TransactionTestCase)
             response = client.post(f"{self.root}{id}/", {"action": "execute"}, format="json", HTTP_X_ZANI_MFA_STEP_UP=self.step)
             return response.status_code
         finally:
-            close_old_connections()
+            connections.close_all()
 
     def test_concurrent_execute_has_one_effect_and_one_audit(self):
         id = self.prepare().data["id"]
@@ -92,7 +92,7 @@ class EmployeeAccessConcurrencyTests(EmployeeAccessFixture, TransactionTestCase)
                 accepting.set()
                 return APIClient().post("/api/team/invitations/accept/", {"token": old, "password": "SafePassword123!"}).status_code
             finally:
-                close_old_connections()
+                connections.close_all()
         with patch("apps.businesses.employee_access.write_audit_log", side_effect=audit), ThreadPoolExecutor(max_workers=2) as executor:
             repair = executor.submit(self.worker_execute, id)
             try:
@@ -123,7 +123,7 @@ class EmployeeAccessConcurrencyTests(EmployeeAccessFixture, TransactionTestCase)
                     if not release.wait(timeout=10):
                         raise RuntimeError("test release timeout")
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(max_workers=2) as executor:
             edit_future = executor.submit(edit)
             try:

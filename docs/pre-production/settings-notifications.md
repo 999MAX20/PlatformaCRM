@@ -1,5 +1,13 @@
 # Настройки и уведомления
 
+PILOT-ACCESS-20261031: signup/auth/MFA/session/reset, complete invitation lifecycle,
+current roles, disable/restore and two-Business isolation verified on an isolated
+candidate. Existing access/security patches integrated; neutral signup default and
+specific invalid-MFA-code recovery copy added. Team UI and corrected MFA retry
+checked; backend suites and PostgreSQL races prove authorization/preservation.
+Real delivery, legal texts and deployed pilot acceptance remain open.
+[Checks and publication](../testing/task-state/PRIMARY-SESSION.md#pilot-access-20261031--two-business-onboarding-and-access).
+
 AUD-V01,31.10: cookie-auth получил CSRF bootstrap и guard для восьми операций,
 включая вход/MFA/refresh/logout/reset. Enforced-CSRF tests доказывают отказ чужому
 Origin/форме/отсутствующему токену и валидный same-cookie flow. Browser: bootstrap503,

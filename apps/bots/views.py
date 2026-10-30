@@ -342,8 +342,6 @@ class PublicWebsiteChatConversationCreateView(APIView):
         result = serializer.save()
         conversation = result["conversation"]
         message = result["message"]
-        lead = result["lead"]
-        client = result["client"]
         run_automations_for_event(
             business=conversation.business,
             trigger_type=AutomationRule.TriggerTypes.BOT_MESSAGE_RECEIVED,
@@ -359,8 +357,9 @@ class PublicWebsiteChatConversationCreateView(APIView):
             {
                 "conversation_id": str(conversation.public_id),
                 "message_id": message.id,
-                "lead_id": lead.id if lead else None,
-                "client_id": client.id if client else None,
+                # Keep the legacy shape without revealing internal CRM associations.
+                "lead_id": None,
+                "client_id": None,
                 "status": conversation.status,
             },
             status=201,

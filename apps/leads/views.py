@@ -570,7 +570,8 @@ class PublicLeadFormSubmitView(APIView):
                 "success_message": form.success_message,
                 "submission_id": submission.id,
                 "lead_id": submission.lead_id,
-                "duplicate_warning": bool(submission.duplicate_json.get("duplicates")),
+                # Compatibility placeholder; matching evidence is private staff data.
+                "duplicate_warning": False,
             },
             status=201,
         )

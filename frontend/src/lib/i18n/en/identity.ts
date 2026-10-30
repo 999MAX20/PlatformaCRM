@@ -189,6 +189,7 @@ export const identity: Record<string, string> = {
   "mfa.manualFallback": "Unable to scan?",
   "mfa.openAuthenticator": "Open in authenticator app",
   "mfa.codeLabel": "Verification code",
+  "mfa.codeInvalid": "The code is invalid or has already been used. Enter a new authenticator code or an unused recovery code.",
   "mfa.codePlaceholder": "000000 or recovery code",
   "mfa.recoveryHint": "Each recovery code can replace the six-digit code once.",
   "mfa.enable": "Enable protection",

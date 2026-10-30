@@ -97,8 +97,12 @@ class ControlledCreationTests(TestCase):
             response = APIClient().post(f"/api/public/website-chat/{self.channel.public_token}/conversations/",
                 {"message": "Book cleaning", "phone": "+77015550002", "full_name": "Visitor", "whatsapp_consent": True}, format="json")
         self.assertEqual(response.status_code, 201, response.data)
-        self.assertIsNotNone(response.data["client_id"])
-        self.assertIsNotNone(response.data["lead_id"])
+        self.assertIsNone(response.data["client_id"])
+        self.assertIsNone(response.data["lead_id"])
+        from apps.bots.models import BotConversation
+        conversation = BotConversation.objects.get(public_id=response.data["conversation_id"])
+        self.assertIsNotNone(conversation.client_id)
+        self.assertIsNotNone(conversation.lead_id)
         self.assertEqual(Client.objects.count(), 1)
         from apps.outreach.models import OutreachConsent
-        self.assertTrue(OutreachConsent.objects.filter(client_id=response.data["client_id"]).exists())
+        self.assertTrue(OutreachConsent.objects.filter(client_id=conversation.client_id).exists())

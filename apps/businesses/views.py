@@ -47,6 +47,8 @@ from apps.bots.models import BotConversation
 class BusinessViewSet(ModelViewSet):
     serializer_class = BusinessSerializer
     permission_classes = [IsTenantMember]
+    # Tenant-root deletion requires a dedicated lifecycle, not generic CRUD.
+    http_method_names = ["get", "post", "put", "patch", "head", "options"]
 
     def get_queryset(self):
         return Business.objects.all() if platform_admin_has_global_access(self.request.user) else accessible_businesses(self.request.user)

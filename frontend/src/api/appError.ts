@@ -147,7 +147,7 @@ function normalizeApiError(error: unknown): AppError | null {
     category,
     code: codePolicy?.code || fallbackCode(category),
     fieldErrors: normalizeFieldErrors(payload.errors),
-    messageKey: categoryMessageKeys[category],
+    messageKey: codePolicy?.code === "mfa_code_invalid" ? "mfa.codeInvalid" : categoryMessageKeys[category],
     requestId: normalizeRequestId(payload.request_id),
     retryable,
     retryAfterSeconds,

@@ -6,6 +6,103 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## PILOT-ACCESS-20261031 — two-business onboarding and access
+
+Local scoped acceptance31.10: reviewed candidate on04b0d87e,22 code/test paths.
+Reconciled pre-existing OFFICIAL-02 generic Business DELETE denial, OFFICIAL-03
+invitation bearer masking, OFFICIAL-07 preset preservation and FU-HIST-02 public
+intake privacy fixes with their tests; these fixes are not newly authored here.
+Added two-business public-signup/invitation/current-role/revocation acceptance.
+Signup now defaults to neutral other and the Select displays its actual form value.
+Browser-reproduced MFA invalid-code copy incorrectly said session expired; only
+mfa_code_invalid now uses safe RU/KK/EN correction guidance. Authentication category,
+server denial and no automatic retry are unchanged; token/challenge expiry unchanged.
+PG test threads now close their own connections, allowing isolated DB teardown.
+The API load-smoke fixture implements the existing CSRF bootstrap contract.
+
+Verification from canonical root, using .venv/Scripts/python.exe and installed Node:
+all commands below use the reviewed candidate.index read-only source overlay;
+sources remain in the canonical checkout. Logs/JSON: output/pilot-access-20261031.
+run_candidate.py uses scripts.codex_verify.isolated_runtime, disposable SQLite,
+external network denied, no working DB/env reads. Exact test labels are retained:
+- run_candidate.py access-fixes-focused test apps.businesses.tests_invitation_token
+  apps.businesses.tests_business_delete apps.onboarding.tests_preset_preservation
+  apps.leads.tests_public_intake_privacy --noinput:43 PASS.
+- run_candidate.py onboarding-flow-focused test apps.businesses.tests_pilot_onboarding
+  --noinput:3 PASS; enforced-CSRF signup,2 owners, invitation acceptance/replay,
+  existing/wrong account, expiry/revoke, foreign role, current role and tenant denial,
+  disable/restore preserving another Business, specialist and task assignment.
+- run_candidate.py auth-dependent test apps.accounts.tests.AuthSecurityBaselineTests
+  apps.accounts.tests_login_csrf apps.accounts.tests_mfa apps.accounts.tests_device_sessions
+  apps.accounts.tests_session_policy apps.accounts.tests_email_changes
+  apps.accounts.tests_recovery apps.accounts.tests_legal_documents
+  apps.core.tests_api_load_smoke --noinput:106,103 PASS/3 PG-only skips.
+- run_candidate.py team-dependent test apps.businesses.tests_access
+  apps.businesses.tests_settings_team apps.businesses.tests_role_visibility
+  apps.businesses.tests_member_deactivation apps.businesses.tests_employee_access
+  apps.branches.tests_access apps.branches.tests_staff apps.leads.tests_forms
+  apps.bots.tests apps.bots.tests_controlled_creation --noinput:162 PASS.
+- postgres.py:disposable loopback PostgreSQL17,12 PASS/no skips: invitation race,
+  employee-access race,2-business acceptance and3 recovery races skipped on SQLite.
+  Initial harness/teardown FAIL retained in postgres-harness-first.log and
+  postgres-teardown-first.log: worker connections remained open. Corrected test
+  finally blocks use connections.close_all(); complete final12 + teardown PASS.
+- run_candidate.py system check; run_candidate.py drift makemigrations --check
+  --dry-run:PASS, no system issues or migration drift. Backend inputs unchanged
+  after these checks; frontend-only MFA copy does not invalidate backend evidence.
+- frontend_final.py verify: npm run build (including i18n), tsc -b --force,
+  node --test scripts/tests/app-error-normalization.test.mjs
+  scripts/tests/auth-request.test.mjs scripts/tests/auth-return-path.test.mjs:
+  PASS,12 Node tests. Shared error mapping preserves token/challenge handling.
+
+Targeted Chrome UI against candidate backend57856/frontend57857, synthetic only:
+owner A login/settings; employee active→disabled→active with confirmation/status;
+manual invitation creation→revoked; account session and logout. Signup shows
+Other/Другое/Басқа in EN/RU/KK and selectable industries; Escape closes selector.
+Owner B enrolled through isolated API fixture; browser password→MFA, invalid code
+denied, corrected localized message, valid TOTP→dashboard. No real SMTP/provider
+delivery or legal acceptance asserted. Browser evidence is complementary; backend
+tests prove cross-tenant/current-token denial, races and preserved relationships.
+No full-project/E2E gate: bounded access package, existing server rules reused.
+Global dirty-tree hygiene has a pre-existing blank EOF in foreign route-prefetch
+test; excluded from candidate. Scoped index/range hygiene required before publish.
+
+Acceptance boundary: registration/login/MFA/session/reset and invitation/employee/
+two-Business isolation verified in isolated synthetic environments. No remaining
+code/owner decision in this package; publication receipt follows separately.
+R02/R04 are only prepared, not closed: real named users/business manifest, legal
+texts, SMTP/provider/live delivery, target deployment/operations/restore and pilot
+staff admission remain outside this package. No working-DB migration or deployment.
+Contracts/passport/README/roadmap updated; product/CRM/AI/integration/operations
+requirements unchanged, no new permission framework, AI/BusinessEvent/notification
+semantics, schema or environment variables. Existing audit remains mandatory.
+
+
+Owner explicitly authorized the six-part package31.10: reconcile required local
+access fixes; owner signup/login/MFA/session/reset; full invitations lifecycle;
+employee role/disable/restore preserving specialist/history; two synthetic Business
+isolation; checks/docs/commit/normal push/CI. Source R02/R04 preparation, not whole
+R01-R05 or live admission. Canonical root/current branch retained, base04b0d87e;
+snapshot output/pilot-access-20261031/manifest.json,before/,starting.patch.
+Mode implementation/integration/evidence. Reuse existing auth/team/roles/branches/
+employee-access, CSRF/session helpers and existing tests. No new email verification
+policy, permission framework, provider/SMTP delivery, working DB, real personal data,
+deployment, legal content, new Appointment/plan/money or unrelated WIP publication.
+Necessary existing patches are integrated with provenance, not claimed as new work.
+Risk high: invitation bearer secrets, repeat onboarding restoring permissions,
+cross-tenant membership/role writes, revoked sessions, public private-data inference.
+Focused isolated regressions per coherent fix before dependent additions; final
+affected auth/team/tenant/branch/privacy suites, system/drift, frontend build/types
+and targeted reachable two-business browser flow including negative/recovery/MFA.
+PG concurrency required where invitation consumption/employee lifecycle proofs are
+affected. Preserve unchanged prior scoped evidence; no full project E2E by default.
+Acceptance: owner creates Business, invites correct account, rights limited to that
+Business/current role, access revokes/restores without deleting specialist/history;
+expired/revoked/replayed/wrong-account invitations fail, secrets restricted, roles
+not reset by repeated initialization. Remaining live/legal/R01/R03/R04/R05 criteria
+stay open. Audit remains mandatory, no new BusinessEvent/notification/AI semantics;
+schema/env changes not planned. Publish only explicit verified paths/hunks.
+
 ## AUD-REMAINING-20261031 — AUD-12c and AUD-V01
 
 Publication31.10: code+contracts commit0db46068c786dd8d3eeaec64142093307c1f1855

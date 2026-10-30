@@ -8,7 +8,7 @@ from unittest import skipUnless
 import pyotp
 from django.core import mail
 from django.core.cache import cache
-from django.db import DatabaseError, connection, close_old_connections, transaction
+from django.db import DatabaseError, connection, connections, close_old_connections, transaction
 from django.test import TestCase, TransactionTestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
@@ -283,7 +283,7 @@ class RecoveryConcurrencyTests(TransactionTestCase):
                 except ValidationError:
                     return "rejected"
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(max_workers=2) as pool:
             results = list(pool.map(lambda _: worker(), range(2)))
         self.assertCountEqual(results, ["completed", "rejected"])
@@ -310,7 +310,7 @@ class RecoveryConcurrencyTests(TransactionTestCase):
                 except OwnershipConflict:
                     return "rejected"
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(max_workers=2) as pool:
             results = list(pool.map(worker, [(self.business.pk, self.case.pk), (other.pk, case.pk)]))
         self.assertCountEqual(results, ["prepared", "rejected"])
@@ -334,7 +334,7 @@ class RecoveryConcurrencyTests(TransactionTestCase):
                 except OwnershipConflict:
                     return "rejected"
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(max_workers=1) as pool:
             with transaction.atomic():
                 owner = User.objects.select_for_update().get(pk=self.owner.pk)

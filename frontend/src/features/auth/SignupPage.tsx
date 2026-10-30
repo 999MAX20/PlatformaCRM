@@ -67,7 +67,7 @@ export function SignupPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { business_type: "beauty", accepted_documents: [] },
+    defaultValues: { business_type: "other", accepted_documents: [] },
   });
   const acceptedDocuments = watch("accepted_documents");
   const allDocumentsAccepted = legalDocuments.every(document => acceptedDocuments.includes(document.id));
@@ -189,7 +189,7 @@ export function SignupPage() {
                   {...register("password_confirm")}
                 />
               </div>
-              <Select label={t("signup.businessType")} placement="top" options={businessTypeOptions} error={errors.business_type?.message} {...register("business_type")} />
+              <Select label={t("signup.businessType")} placement="top" options={businessTypeOptions} value={watch("business_type")} error={errors.business_type?.message} {...register("business_type")} />
               <fieldset className="serenity-login__documents" data-testid="signup-documents">
                 <legend className="text-sm font-semibold">{t("documents.title")}</legend>
                 {legalDocuments.map(document => <div key={document.id} className="flex items-start gap-3 text-sm leading-5">
