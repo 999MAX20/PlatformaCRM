@@ -1,8 +1,8 @@
-PILOT-ACCESS-20261031: isolated two-Business onboarding/access verified locally.
+PILOT-ACCESS-20261031: two-Business onboarding/access verified and published43aab2fe.
 Existing security fixes integrated; neutral signup and MFA error recovery corrected.
-Focused/dependent auth/team/privacy suites, PostgreSQL12, build/types/i18n/Node12
-and targeted browser PASS. Publication pending; no working DB/deployment.
-R02/R04/live/legal acceptance remains open. Evidence in PRIMARY.
+Focused/dependent suites, PostgreSQL12, build/types/i18n/Node12 and browser PASS.
+Remote SHA confirmed; CI41134080952 success. Task servers stopped.
+R02/R04/live/legal acceptance remains open; no working DB/deployment. Evidence in PRIMARY.
 
 ## REFACTOR-20261030 — итоговая проверка и публикация
 

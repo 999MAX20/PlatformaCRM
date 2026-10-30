@@ -8,6 +8,27 @@
 
 ## PILOT-ACCESS-20261031 — two-business onboarding and access
 
+Publication31.10: code43aab2fefc3d20de05a41f47cf05699477c013af normal-pushed
+to origin/main, ls-remote SHA matched. Branch codex/ui-testing-toolkit, canonical
+PlatformaCRM retained.29 reviewed paths; tree4fb97ea31f7a145af0c31e61d0d8ad3483d2cd02
+matched verified candidate;156 unrelated baseline files preserved byte-for-byte.
+Candidate/staged/real04b0d87e..43aab2fe hygiene, added links and secret review PASS.
+Pre-existing foreign route-prefetch EOF warning excluded. Empty stale index.lock
+from01:58 moved to task output after no Git process/foreign staged work confirmed.
+Actual push-triggered CI41134080952: success; inspected via GitHub API.
+https://github.com/999MAX20/PlatformaCRM/actions/runs/41134080952
+Backend2267 tests,2227 PASS/40 environment-specific skips; frontend build/budget
+and Python/npm dependency audits PASS. Separate local PG12 covers the invitation,
+employee and recovery races in this package, not all40 CI skips.
+Prior CI41127057520 failed one test: ApiLoadSmokeScriptTests fake_request_json
+did not accept the CSRF client's opener argument (2221 tests,40 skips). The current
+package already corrects this fixture and proves its bootstrap assertions; the
+previous run remains historical FAIL, not retroactively relabeled.
+Temporary task backend/frontend/PostgreSQL stopped; ports57856/57857 no listeners.
+Browser owner B MFA recovery reached dashboard and Clients showed only Pilot B.
+No working DB/deployment or real external delivery. Other WIP remains uncommitted.
+
+
 Local scoped acceptance31.10: reviewed candidate on04b0d87e,22 code/test paths.
 Reconciled pre-existing OFFICIAL-02 generic Business DELETE denial, OFFICIAL-03
 invitation bearer masking, OFFICIAL-07 preset preservation and FU-HIST-02 public
@@ -69,7 +90,7 @@ test; excluded from candidate. Scoped index/range hygiene required before publis
 
 Acceptance boundary: registration/login/MFA/session/reset and invitation/employee/
 two-Business isolation verified in isolated synthetic environments. No remaining
-code/owner decision in this package; publication receipt follows separately.
+code/owner decision in this package; publication receipt is recorded above.
 R02/R04 are only prepared, not closed: real named users/business manifest, legal
 texts, SMTP/provider/live delivery, target deployment/operations/restore and pilot
 staff admission remain outside this package. No working-DB migration or deployment.
