@@ -3,7 +3,7 @@ import { CalendarClock, Check, RotateCcw, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { EntityCustomFieldsPanel } from "../../components/crm/drawers/panels";
+import { EntityCustomFieldsPanel } from "../../components/crm/drawers/EntityCustomFieldsPanel";
 
 import {
   appointmentsApi,

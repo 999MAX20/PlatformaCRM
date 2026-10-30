@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageCircle, Phone } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
-import { EntityCustomFieldsPanel } from "../../components/crm/drawers/panels";
+import { EntityCustomFieldsPanel } from "../../components/crm/drawers/EntityCustomFieldsPanel";
 
 import { getApiErrorMessage } from "../../api/client";
 import { crmCardsApi } from "../../api/crmCards";

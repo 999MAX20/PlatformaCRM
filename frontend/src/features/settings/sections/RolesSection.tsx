@@ -21,7 +21,7 @@ export function RolesSection({ model }: { model: SettingsModel; }) {
   const [search, setSearch] = useState("");
   const [drafts, setDrafts] = useState<Record<string, PermissionDraft>>({});
   const cache = useQueryClient();
-  const catalog = useQuery({ queryKey: ["team-permission-catalog"], queryFn: teamApi.catalog, staleTime: 300_000 });
+  const catalog = useQuery({ queryKey: ["team-permission-catalog"], queryFn: teamApi.catalog, staleTime: 300_000, enabled: activeSettingsSection === "roles" && canManageTeam });
   const save = useMutation({
     mutationFn: (value: SavePermission) => value.permissionId
       ? teamApi.updatePermission({ id: value.permissionId, payload: value.draft })

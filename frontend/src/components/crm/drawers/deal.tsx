@@ -12,7 +12,8 @@ import { Modal } from "../../ui/Modal";
 import { ErrorState } from "../../ui/StateViews";
 import { StatusBadge } from "../../ui/StatusBadge";
 import { Textarea } from "../../ui/Textarea";
-import { EntityAttachmentsPanel, EntityCustomFieldsPanel } from "./panels";
+import { EntityAttachmentsPanel } from "./EntityAttachmentsPanel";
+import { EntityCustomFieldsPanel } from "./EntityCustomFieldsPanel";
 import { drawerSurfaceClass, EmptyBlock, SummaryItem } from "./shared";
 import type { CrmCardTab, CrmDrawerEntity } from "./types";
 

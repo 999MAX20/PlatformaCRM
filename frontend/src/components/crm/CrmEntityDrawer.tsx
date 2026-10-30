@@ -9,15 +9,13 @@ import { ClientDrawerContent } from "./drawers/client";
 import { DealDrawerContent } from "./drawers/deal";
 import { GenericDrawerContent } from "./drawers/fallback";
 import { LeadDrawerContent } from "./drawers/lead";
-import {
-  EntityAttachmentsPanel,
-  EntityAppointmentsPanel,
-  EntityConversationsPanel,
-  EntityDealsPanel,
-  EntityNotesPanel,
-  EntityTasksPanel,
-  EntityTimeline,
-} from "./drawers/panels";
+import { EntityAttachmentsPanel } from "./drawers/EntityAttachmentsPanel";
+import { EntityAppointmentsPanel } from "./drawers/EntityAppointmentsPanel";
+import { EntityConversationsPanel } from "./drawers/EntityConversationsPanel";
+import { EntityDealsPanel } from "./drawers/EntityDealsPanel";
+import { EntityNotesPanel } from "./drawers/EntityNotesPanel";
+import { EntityTasksPanel } from "./drawers/EntityTasksPanel";
+import { EntityTimeline } from "./drawers/EntityTimeline";
 import { CrmEntityHeader, CrmEntityTabs } from "./drawers/shell";
 import type { CrmCardTab, CrmDrawerEntity } from "./drawers/types";
 import { Drawer } from "../ui/Overlay";

@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from "react-router";
 import { ForbiddenState, LoadingState } from "../../components/ui/StateViews";
 import { useActiveBusiness } from "../../hooks/useBusiness";
+import { useAuth } from "../auth/AuthProvider";
 import { SettingsNavigation } from "./components/SettingsNavigation";
 import { SettingsQueryState } from "./components/SettingsQueryState";
 import { AppointmentMessagesSection } from "./sections/AppointmentMessagesSection";
@@ -28,11 +29,12 @@ const sections = [
 
 export function SettingsPage() {
   const { hash } = useLocation();
+  const { user } = useAuth();
   const businessQuery = useActiveBusiness();
   const { business } = businessQuery;
   if (hash === "#notification-preferences") return <Navigate to="/app/account#notifications" replace />;
   if (!business && businessQuery.isError) return <SettingsQueryState queries={[businessQuery]} />;
-  return <BusinessSettingsPage key={business?.id ?? "no-business"} />;
+  return <BusinessSettingsPage key={`${user?.id ?? "no-user"}:${business?.id ?? "no-business"}`} />;
 }
 function BusinessSettingsPage() {
   const model = useSettingsModel();

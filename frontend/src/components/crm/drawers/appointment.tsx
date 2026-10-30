@@ -15,7 +15,8 @@ import { Button } from "../../ui/Button";
 import { ErrorState } from "../../ui/StateViews";
 import { StatusBadge } from "../../ui/StatusBadge";
 import { Textarea } from "../../ui/Textarea";
-import { EntityAttachmentsPanel, EntityCustomFieldsPanel } from "./panels";
+import { EntityAttachmentsPanel } from "./EntityAttachmentsPanel";
+import { EntityCustomFieldsPanel } from "./EntityCustomFieldsPanel";
 import { drawerPrimarySurfaceClass, drawerSurfaceClass, EmptyBlock, SummaryItem, getChannelLabel } from "./shared";
 import type { CrmDrawerEntity } from "./types";
 
