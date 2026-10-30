@@ -3,7 +3,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from django.conf import settings
 from django.http import FileResponse
@@ -32,10 +32,15 @@ from apps.core.viewsets import TenantModelViewSet
 from apps.integrations.serializers import BusinessEventSerializer
 
 
-class ImportErrorPagination(PageNumberPagination):
+class ImportPagination(PageNumberPagination):
     page_size = 20
     page_size_query_param = "page_size"
     max_page_size = 100
+
+
+class ImportHistoryQuerySerializer(serializers.Serializer):
+    business = serializers.IntegerField(required=False, min_value=1)
+    entity_type = serializers.ChoiceField(required=False, choices=ImportJob.EntityTypes.choices)
 
 
 class ImportJobViewSet(TenantModelViewSet):
@@ -43,12 +48,16 @@ class ImportJobViewSet(TenantModelViewSet):
     serializer_class = ImportJobSerializer
     queryset = ImportJob.objects.select_related("business", "actor")
     access_resource = Resources.CLIENTS
+    pagination_class = ImportPagination
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        business_id = self.request.query_params.get("business")
-        if business_id:
-            queryset = queryset.filter(business_id=business_id)
+        query = ImportHistoryQuerySerializer(data=self.request.query_params.dict())
+        query.is_valid(raise_exception=True)
+        queryset = super().get_queryset().order_by("-created_at", "-pk")
+        if "business" in query.validated_data:
+            queryset = queryset.filter(business_id=query.validated_data["business"])
+        if "entity_type" in query.validated_data:
+            queryset = queryset.filter(entity_type=query.validated_data["entity_type"])
         return queryset.filter(actor=self.request.user) if not self.request.user.is_platform_user else queryset
 
     def perform_create(self, serializer):
@@ -93,7 +102,7 @@ class ImportJobViewSet(TenantModelViewSet):
     @action(detail=True, methods=["get"])
     def errors(self, request, pk=None):
         job = self.get_object()
-        paginator = ImportErrorPagination()
+        paginator = ImportPagination()
         rows = (job.errors_json or {}).get("rows") or []
         page = paginator.paginate_queryset(rows, request, view=self)
         return paginator.get_paginated_response(page)

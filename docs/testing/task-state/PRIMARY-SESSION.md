@@ -6,6 +6,105 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-12b-20261031 — complete import history verified
+
+Owner said Продолжай after12a closure;12b only,12c export history not started.
+Canonical root, codex/ui-testing-toolkit, base72dda96708c6bcb3cb41afd0ecfb84e501628cb2.
+Snapshot output/aud12b-20261031/manifest.json,before/,starting.patch; preserve WIP.
+Mode implementation/code gap: API has pagination but no entity filter and unstable
+same-time ordering; API client discards page metadata; panel filters only firstpage
+and slices8. Result: complete server-filtered Business/entity/actor history, count,
+page/size navigation, original filename/type/status/count and selected job details.
+Reuse ImportJob/TenantModelViewSet/current CLIENTS VIEW + actor isolation, existing
+serializer/detail endpoint/import lifecycle, API client/query cache/CrmPagination.
+No new permission/model/migration/provider entry points, imports policy, AI/events/
+notification/env/working DB/deployment.12a mapping/error flow retained. Detail read
+must refetch current job and never display a previous business/entity/actor result.
+Risk: filtering after pagination hides history; stale selected DTO, async old-context
+responses, role denial and accidental confirm from another entity. Plan validate
+optional business/entity_type query before pagination, stable-created_at/-pk order,
+default20/max100; preserve absent-filter API contract. UI page reset on context,
+no first8 truncation, selection and detail error/retry separate from history state.
+Focused backend >onepage mixed entities/tied timestamps, invalid filters/page cap,
+actor/tenant/permission denial and own detail first; before dependent frontend.
+Completion owning history +12a mapping/boundaries, system/drift; Node pagination/
+selection/recovery and old mapping regression; build/types/i18n; isolated browser
+>onepage/oldest detail/reload/503/retry/currententity and RU/KK/EN narrow/keyboard.
+No full release/PG lock gate for read-only projection; reuse unchanged12a lifecycle
+proof. Update roadmap/integration/frontend/passport/checkpoint. Commit/push only
+owned verified delta; no publication of other WIP. Other task statuses preserved.
+
+Backend slice31.10 PASS: import history query validates optional Business/entity,
+filters before pagination, order -created_at/-pk,20 default/max100. Existing actor/
+VIEW scope and error pagination retained. New6 history +6 mapping +15 boundary=27
+isolated tests PASS; output/aud12b-20261031/backend-focused-final.log. Baseline6tests
+had7failures (ignored filters/context,500 invalidbusiness, pagecap); firstfix left
+emptyentity accepted due QueryDict HTML empty semantics. Dict input fixed; full27
+rerun PASS. No schema/lifecycle change. Frontend completion is recorded below.
+
+Closure31.10: scoped code/evidence complete; publication pending. API list/detail
+accept optional validated Business/entity filters before pagination; default20,
+max100, -created_at/-pk order. Existing CLIENTS VIEW + current actor/tenant scope
+retained. UI preserves count/results, page/size and full filenames/status/counts;
+no first8 truncation. Selected job is fetched separately with current context,
+errors/retry separate from list. User/Business/entity keyed remounts reset paging
+and selection; late mutation responses cannot change a new context. Upload returns
+to page1/selects new job; preview/confirm update cached detail and history. Focus
+refresh does not discard mapping edits. Current detail failure hides stale review.
+Cancelled status translated RU/KK/EN. CrmPagination adds optional pageSizePortal
+(default true unchanged); import history uses local menu with minimum width so
+options remain above its modal and selected three-digit sizes fit. Existing callers
+retain portal behavior; representative default and modal callbacks tested.
+
+Exact verification from canonical root, frozen Git-index candidate at base72dda967;
+Python/JS overlays read candidate blobs at canonical paths, no source copy/worktree.
+Initial backend27 PASS reused: relevant Python/dependency/config fixtures unchanged.
+Commands (`.venv/Scripts/python.exe`):
+- output/aud12b-20261031/run_candidate.py backend-focused-final test
+  apps.core.tests_import_history apps.core.tests_import_mapping_ui
+  apps.core.tests_import_job_boundaries --noinput:27 PASS, no skips.
+- output/aud12b-20261031/run_candidate.py system check:PASS.
+- output/aud12b-20261031/run_candidate.py drift makemigrations --check --dry-run:
+  PASS, no changes. JSON receipts and logs in the same output directory.
+Frontend cwd, NODE_OPTIONS=--require=C:/Users/user/Desktop/PlatformaCRM/output/aud12b-20261031/frontend-snapshot.cjs:
+- node --test scripts/tests/import-history.test.mjs scripts/tests/import-review.test.mjs:
+  12 PASS, node-closure.log (7 history/API/pagination +5 existing mapping guards).
+- npm run build:PASS, build-closure.log (i18n6532 keys, types, app+widget build).
+- node node_modules/typescript/bin/tsc -b --force:PASS, types-closure.log.
+Repeated frontend checks only after detail-refresh/modal-menu fixes; prior passing
+logs retained. Existing bundle-size warning remains; no full release-budget claim.
+
+Browser: isolated runtime, canonical candidate backend53412/frontend53413, no .env
+backend, disposable DB, AV mock only in browser fixture.43 tied-time lead jobs plus
+24 newer client jobs: correct43 count,20/20/3 pages, oldest job detail and Enter PASS.
+Page size10 reset; list503 hides stale jobs (not empty), explicit retry restores
+page2; detail503 preserves list/hides old review, retry restores selected detail.
+RU/KK/EN and390x844: pagination/localized filenames/status/count, keyboard/Escape,
+responsive list checked. New corrected.csv upload from later page selects new job,
+resets page1/count44; confirm -> imported1/1, reload preserves history. Size50 shows
+all44 buttons/total44. Different reader user sees only own1 job and no confirm;
+upload remains disabled. Backend proves denied VIEW/inactive member/wrong tenant
+and wrong detail context; no frontend-only authorization claim.
+Screenshots: history-ru.png, history-kk-mobile.png, history-en.png,
+page-size-final-en.png in output/aud12b-20261031. Browser/server logs retained.
+
+Retained attempts: fixture seed initially used serializer-only summary_json on model;
+TypeError in setup-candidate-failed-seed.log, removed fixture argument and rebuilt
+isolated DB. Pointer test reproduced compact portal behind modal (page-size-before.png),
+fixed only new history usage; first nonportal menu wrapped selected10, min-width fix
+confirmed screenshot and pointer50. CDP expired interception and Vite generated-config
+restart caused test-tab timeouts; fresh owned tab after final build completed checks.
+One temporary log rename failed while open; no source/data effect. Owned servers
+stopped (runtime exit0), final replacement frontend stopped; no other processes stopped.
+
+No schema, working DB/config, live provider, notification/BusinessEvent/AI changes.
+Full E2E/release/PG concurrency not run: read-only projection scope, lifecycle/locks
+unchanged and focused import boundaries plus prior12a proofs retained. Roadmap,
+integrations/frontend contracts and integrations passport updated; README and other
+passports need no change (no setup/new entry point/domain mutation).12a closure retained.
+No code/evidence/owner-decision remainder within12b.12c export-history remains open
+and unstarted; new navigation/live/deployment outside scope. Publication receipt follows.
+
 ## AUD-12a-20261030 — import mapping and error recovery verified
 
 Publication31.10: f9a7a6c89be452f0d9a2697488ffcd99749900f1 normal-pushed to

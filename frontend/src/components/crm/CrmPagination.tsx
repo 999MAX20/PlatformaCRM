@@ -23,6 +23,7 @@ export function CrmPagination({
   variant = "footer",
   numbered = false,
   compact = false,
+  pageSizePortal = true,
 }: {
   shown: number;
   total: number;
@@ -39,6 +40,7 @@ export function CrmPagination({
   variant?: "footer" | "toolbar";
   numbered?: boolean;
   compact?: boolean;
+  pageSizePortal?: boolean;
 }) {
   const { t } = useI18n();
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -60,7 +62,7 @@ export function CrmPagination({
   if (compact) return <footer data-testid="crm-pagination" data-pagination-variant="compact" className={cn("flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-platforma-border px-3 py-1.5 text-xs text-platforma-subtle", className)}>
     <p aria-live="polite" className="tabular-nums">{totalPages === 1 ? t("pagination.total", { total }) : t("pagination.visibleRange", { from, to: Math.min(total, from + shown - 1), total })}</p>
     <div className="flex items-center gap-3">
-      <div className="flex items-center gap-2"><span>{t("pagination.perPage")}</span><Select density="compact" portal placement="top" aria-label={t("pagination.pageSizeAriaLabel")} value={String(pageSize)} onChange={event => { onPageChange(1); onPageSizeChange(Number(event.target.value)); }} options={PAGE_SIZE_OPTIONS.map(size => ({ value: String(size), label: String(size) }))} className="h-11 w-20 px-2 py-1 sm:h-8 sm:min-h-8" /></div>
+      <div className="flex items-center gap-2 [&_[role=listbox]]:min-w-32"><span>{t("pagination.perPage")}</span><Select density="compact" portal={pageSizePortal} placement="top" aria-label={t("pagination.pageSizeAriaLabel")} value={String(pageSize)} onChange={event => { onPageChange(1); onPageSizeChange(Number(event.target.value)); }} options={PAGE_SIZE_OPTIONS.map(size => ({ value: String(size), label: String(size) }))} className="h-11 w-20 px-2 py-1 sm:h-8 sm:min-h-8" /></div>
       {totalPages > 1 ? <nav aria-label={t("pagination.navigation")} className="flex items-center gap-1">
         <button type="button" onClick={onPrev} disabled={page <= 1} aria-label={previousLabel} className="platforma-focus-ring grid h-11 w-11 place-items-center rounded-control hover:bg-surface-hover disabled:text-disabled-content sm:h-8 sm:w-8"><ChevronLeft size={17} /></button>
         <span aria-current="page" className="whitespace-nowrap px-1 tabular-nums">{t("pagination.currentPage", { page, pages: totalPages })}</span>

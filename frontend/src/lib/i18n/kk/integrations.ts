@@ -299,6 +299,7 @@ export const integrations: Record<string, string> = {
   "integrations.import.status.previewed": "Тексерілді",
   "integrations.import.status.imported": "Импортталды",
   "integrations.import.status.failed": "Қате",
+  "integrations.import.status.cancelled": "Бас тартылды",
   "integrations.import.status.none": "Дерек жоқ",
   "integrations.website.previewName": "Тест келуші",
   "integrations.website.previewMessage":

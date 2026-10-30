@@ -294,6 +294,7 @@ export const integrations: Record<string, string> = {
   "integrations.import.status.previewed": "Проверен",
   "integrations.import.status.imported": "Импортирован",
   "integrations.import.status.failed": "Ошибка",
+  "integrations.import.status.cancelled": "Отменён",
   "integrations.import.status.none": "Нет данных",
   "integrations.website.previewName": "Тестовый посетитель",
   "integrations.website.previewMessage":

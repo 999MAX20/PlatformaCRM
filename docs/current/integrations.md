@@ -132,7 +132,18 @@ preview, все страницы ошибок с полем/причиной и 
 После изменения mapping, неуспешного preview или выбора нового файла подтверждение
 недоступно до проверки. Preview не запускает import автоматически. CREATE остаётся
 обязательным; новый источник/тип не меняют существующее задание. Полная история
-импортов/экспортов остаётся AUD-12b/12c. Проверки — [AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
+импортов реализована в AUD-12b ниже; история экспортов остаётся AUD-12c. Проверки — [AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
+
+AUD-12b,31.10: `GET /api/import-jobs/?business=<id>&entity_type=leads&page=1&page_size=20`
+валидирует необязательные фильтры до пагинации, возвращает count/next/previous/results
+со стабильным порядком `-created_at,-pk`,20 по умолчанию и максимум100. Без фильтров
+сохранён список доступных заданий текущего actor; Business/CLIENTS VIEW проверяются
+как прежде. Detail принимает тот же контекст, неверный Business/entity даёт404.
+Общий ImportPanel использует серверные страницы/счётчики и отдельно читает выбранное
+задание. Ошибки списка/деталей имеют повтор без показа старого задания; смена actor/
+Business/entity сбрасывает состояние. Загрузка выбирает новое задание на странице1.
+Проверен существующий вход через Заявки; новые входы/каналы не добавлялись.
+[Evidence AUD12b](../testing/task-state/PRIMARY-SESSION.md#aud-12b-20261031--complete-import-history-verified).
 
 AUD-16: `POST /api/import-jobs/` принимает только `business`, `entity_type` и
 `source_file`; остальные входные поля отклоняются400. Actor и имя файла берутся

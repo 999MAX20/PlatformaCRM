@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileSpreadsheet, Upload } from "lucide-react";
 
 import { getApiErrorMessage } from "../../../api/client";
@@ -16,6 +16,8 @@ import type { Id, ImportJob } from "../../../types";
 import { hasPermission } from "../../../lib/permissions";
 import { useAuth } from "../../auth/AuthProvider";
 import { ImportJobReview } from "./ImportJobReview";
+import { useImportHistory } from "./useImportHistory";
+import { CrmPagination } from "../../../components/crm/CrmPagination";
 
 type Translate = ReturnType<typeof useI18n>["t"];
 
@@ -25,6 +27,7 @@ function importStatusLabel(status: string | undefined, t: Translate) {
     previewed: "integrations.import.status.previewed",
     imported: "integrations.import.status.imported",
     failed: "integrations.import.status.failed",
+    cancelled: "integrations.import.status.cancelled",
   };
   return status ? t(labels[status] || status) : t("integrations.import.status.none");
 }
@@ -73,13 +76,8 @@ function ImportPanelBody({ businessId, userId, normalizedEntities, entity, setEn
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [fileKey, setFileKey] = useState(0);
   const [file, setFile] = useState<File | null>(null);
-  const [activeJob, setActiveJob] = useState<ImportJob | null>(null);
-
-  const jobsQuery = useQuery({
-    queryKey: ["import-jobs", userId, businessId],
-    queryFn: () => importExportApi.importJobs(businessId),
-    retry: false,
-  });
+  const history = useImportHistory(userId, businessId, entity);
+  const { query: jobsQuery, jobs, selected } = history;
 
   const upload = useMutation({
     mutationFn: () => {
@@ -88,17 +86,15 @@ function ImportPanelBody({ businessId, userId, normalizedEntities, entity, setEn
     },
     onSuccess: (job) => {
       if (!mounted.current) return;
-      setActiveJob(job);
+      history.accept(job, true);
       setFile(null);
       setFileKey(value => value + 1);
-      queryClient.invalidateQueries({ queryKey: ["import-jobs"] });
     },
   });
 
   function updateJob(job: ImportJob) {
     if (!mounted.current) return;
-    setActiveJob(job);
-    queryClient.invalidateQueries({ queryKey: ["import-jobs"] });
+    history.accept(job);
   }
   function imported(job: ImportJob) {
     if (!mounted.current) return;
@@ -113,8 +109,6 @@ function ImportPanelBody({ businessId, userId, normalizedEntities, entity, setEn
     mutationFn: importExportApi.downloadTemplate,
   });
 
-  const jobs = (jobsQuery.isError ? [] : jobsQuery.data || []).filter(job => String(job.business) === String(businessId) && job.entity_type === entity);
-  const selected = jobsQuery.isError ? undefined : activeJob || jobs[0];
   const errors = selected?.errors_json?.rows || [];
   const duplicates = selected?.duplicates_json?.rows || [];
   const summary = selected?.summary_json || selected?.preview_json?.import_summary;
@@ -141,6 +135,8 @@ function ImportPanelBody({ businessId, userId, normalizedEntities, entity, setEn
 
       {importError ? <ErrorState error={importError} message={getApiErrorMessage(importError)} action={jobsQuery.isError ? <Button variant="secondary" onClick={() => jobsQuery.refetch()}>{t("common.retry")}</Button> : undefined} /> : null}
       {jobsQuery.isPending ? <LoadingState /> : null}
+      {history.detail.isFetching ? <LoadingState /> : null}
+      {history.detail.isError && !jobsQuery.isError ? <ErrorState error={history.detail.error} action={<Button variant="secondary" onClick={() => history.detail.refetch()}>{t("common.retry")}</Button>} /> : null}
 
       <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
         <div className="grid gap-3 lg:grid-cols-[180px_1fr_auto_auto]">
@@ -219,19 +215,25 @@ function ImportPanelBody({ businessId, userId, normalizedEntities, entity, setEn
       <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
         <p className="font-semibold text-platforma-ink">{t("integrations.import.history")}</p>
         <div className="mt-3 space-y-2">
-          {jobs.slice(0, 8).map((job) => (
+          {jobs.map((job) => (
             <button
               key={job.id}
               type="button"
-              onClick={() => setActiveJob(job)}
-              className="w-full rounded-control bg-surface-muted px-3 py-2 text-left text-sm transition hover:bg-surface-hover"
+              onClick={() => history.select(job.id)}
+              aria-pressed={String(history.selectedId) === String(job.id)}
+              className="platforma-focus-ring w-full rounded-control bg-surface-muted px-3 py-2 text-left text-sm transition hover:bg-surface-hover"
             >
+              <span className="block break-words font-semibold text-platforma-ink">{job.original_filename}</span>
               <span className="font-semibold text-platforma-ink">#{job.id} {entityOptions.find(option => option.value === job.entity_type)?.label}</span>
               <span className="ml-2 text-platforma-muted">{importStatusLabel(job.status, t)} · {job.imported_count}/{job.total_rows}</span>
             </button>
           ))}
           {!jobsQuery.isLoading && !jobsQuery.isError && !jobs.length ? <p className="text-sm text-platforma-muted">{t("integrations.import.noImports")}</p> : null}
         </div>
+        {!jobsQuery.isPending && !jobsQuery.isError ? <CrmPagination compact pageSizePortal={false}
+          shown={jobs.length} total={jobsQuery.data?.count ?? 0} page={history.page} pageSize={history.pageSize}
+          onPageChange={history.changePage} onPageSizeChange={history.changePageSize}
+          previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")} /> : null}
       </div>
     </div>
   );

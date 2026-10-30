@@ -16,6 +16,12 @@ CRM-C21/live/release acceptance открыты. Чужой WIP сохранён.
 
 # PlatformaCRM — текущий статус
 
+AUD-12b-20261031: full server-filtered import history/page/size/current detail verified.
+Backend27, Node12, system/drift/build/types/i18n and RU/KK/EN browser PASS.
+Actor isolation/reload/503 retry/new import and modal page-size menu checked.
+Scoped code/evidence complete; publication pending.12c export history remains open.
+No working DB/deployment; unrelated WIP preserved. Evidence in PRIMARY.
+
 AUD-12a-20261030: mapping/re-preview/full row errors/correction and retry verified.
 Backend50 union, Node5, system/drift/build/types/i18n and RU/KK/EN browser PASS.
 Published f9a7a6c8, remote SHA confirmed; CI41112355081 in progress.12b/12c open.

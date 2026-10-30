@@ -38,9 +38,13 @@ AUD-12a локально закрыт31.10: ручной mapping, повторн
 Общий ImportPanel переиспользован; API metadata проверены для всех5 entity.
 Backend50/Node5/system/drift/build/types/i18n и RU/KK/EN browser PASS на кандидате
 от4c6587c6; опубликовано f9a7a6c8, remote SHA подтверждён, CI выполняется; [evidence AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
-Остатка кода/доказательств/решений в12a нет. **AUD-12 остаётся открыт:**12b история
-импортов/entity/pagination и12c сохраняемая история export jobs. Новые точки входа,
-live-приёмка и deployment не выполнялись. AUD-18 исправлен
+Остатка кода/доказательств/решений в12a нет. AUD-12b локально закрыт31.10: полная
+история импортов с серверной фильтрацией Business/entity/actor, страницами/размером,
+общим итогом и актуальными деталями. Backend27/Node12/system/drift/build/types/i18n
+и RU/KK/EN browser PASS на кандидате от72dda967; публикация ожидается.
+[Evidence AUD12b](../testing/task-state/PRIMARY-SESSION.md#aud-12b-20261031--complete-import-history-verified).
+Остатка кода/доказательств/решений в12b нет. **AUD-12 остаётся открыт:**12c сохраняемая
+история export jobs. Новые точки входа, live-приёмка и deployment не выполнялись. AUD-18 исправлен
 27.10: download проверяет fingerprint текущего доступа; legacy/изменённый
 контекст требует нового экспорта. AUD-20 закрыт в локальном scope ниже. Защита ImportJob реализована в AUD-16
 ниже. AUD-21 проверен в локальном PostgreSQL17: конкурентный rollback/recovery

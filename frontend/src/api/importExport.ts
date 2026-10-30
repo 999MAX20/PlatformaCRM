@@ -1,4 +1,4 @@
-import { apiClient, unwrapList } from "./client";
+import { apiClient } from "./client";
 import type { Id, ImportJob } from "../types";
 
 export type ImportEntity = "clients" | "leads" | "deals" | "sales" | "catalog";
@@ -15,11 +15,15 @@ export const importExportApi = {
     });
     return data;
   },
-  importJobs: async (business?: Id) => {
-    const { data } = await apiClient.get<ImportJob[] | { results: ImportJob[] }>("/api/import-jobs/", {
-      params: business ? { business } : undefined,
+  importJobs: async (params: { business: Id; entity_type: ImportEntity; page: number; page_size: number }) => {
+    const { data } = await apiClient.get<{ count: number; results: ImportJob[] }>("/api/import-jobs/", {
+      params,
     });
-    return unwrapList(data);
+    return data;
+  },
+  getImportJob: async (id: Id, params: { business: Id; entity_type: ImportEntity }) => {
+    const { data } = await apiClient.get<ImportJob>(`/api/import-jobs/${id}/`, { params });
+    return data;
   },
   upload: async ({ business, entity, file }: { business: Id; entity: ImportEntity; file: File }) => {
     const formData = new FormData();
