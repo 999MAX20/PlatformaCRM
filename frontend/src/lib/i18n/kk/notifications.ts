@@ -1,0 +1,18 @@
+export const notifications: Record<string, string> = {
+  "notification.category.sales": "Сату",
+  "notification.category.finance": "Қаржы",
+  "notification.category.system": "Жүйе",
+  "notification.category.aiAlerts": "ЖИ сигналдары",
+  "notification.category.outreach": "Коммуникациялар",
+  "notification.category.tasks": "Тапсырмалар",
+  "notification.allBusiness": "Бүкіл бизнес",
+  "notification.toMe": "Маған жеке",
+  "notification.toTeam": "Бүкіл команда",
+  "notification.toUser": "{name} үшін",
+  "notification.priority.low": "Төмен",
+  "notification.priority.normal": "Қалыпты",
+  "notification.priority.high": "Жоғары",
+  "notification.priority.urgent": "Шұғыл",
+  "notification.read": "Оқылды",
+  "notification.sent": "Жіберілді",
+};

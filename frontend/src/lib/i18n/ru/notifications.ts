@@ -1,0 +1,18 @@
+export const notifications: Record<string, string> = {
+  "notification.category.sales": "Продажи",
+  "notification.category.finance": "Финансы",
+  "notification.category.system": "Система",
+  "notification.category.aiAlerts": "ИИ-сигналы",
+  "notification.category.outreach": "Коммуникации",
+  "notification.category.tasks": "Задачи",
+  "notification.allBusiness": "Весь бизнес",
+  "notification.toMe": "Лично мне",
+  "notification.toTeam": "Вся команда",
+  "notification.toUser": "Для {name}",
+  "notification.priority.low": "Низкая",
+  "notification.priority.normal": "Обычная",
+  "notification.priority.high": "Высокая",
+  "notification.priority.urgent": "Срочная",
+  "notification.read": "Прочитано",
+  "notification.sent": "Отправлено",
+};

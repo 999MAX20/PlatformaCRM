@@ -2,14 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { industryTermViolations } from "./industry-terms.mjs";
 
-function dictionaryBlock(name) {
-  const source = fs.readFileSync(path.resolve(`src/lib/i18n/${name}.ts`), "utf8");
-  const start = source.indexOf(`export const ${name}: Record<string, string> = {`);
-  if (start === -1) throw new Error(`Dictionary ${name} not found.`);
-  const end = source.lastIndexOf("};");
-  if (end === -1) throw new Error(`Dictionary ${name} end not found.`);
-  return source.slice(start, end);
-}
+import { dictionaryBlock } from "./i18n-dictionary-source.mjs";
 
 function parseDictionary(block) {
   return Object.fromEntries(
