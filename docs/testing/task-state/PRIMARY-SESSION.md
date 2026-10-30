@@ -6,7 +6,17 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
-## AUD-07-20261030 — automation history verified locally
+## AUD-07-20261030 — automation history published
+
+Publication30.10: 2a710d3283143e315e101c603351ef24c18529e8 normal-pushed to
+origin/main; remote SHA confirmed.21 scoped files, staged code/test blobs matched
+verified candidate. Added relative doc links, index and real committed-range
+hygiene PASS. Outside-delta empty, unrelated WIP preserved. No deployment.
+CI41107592332 in progress, not yet green:
+https://github.com/999MAX20/PlatformaCRM/actions/runs/41107592332
+Code/evidence/owner-decision/publication remainder: none in scope. CI pending;
+disposable temp-directory cleanup blocked as recorded below; servers stopped.
+No next phase or background monitor created. AUD12 remains unstarted.
 
 Owner authorized next roadmap phase, AUD07 only; AUD12 not started.
 Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
@@ -72,8 +82,8 @@ historical audit retained. README/product/access/AI/integrations/operations/capa
 acceptance need no change: no new module/setup/permission policy/env/provider or
 acceptance-ID changes. Older AUD10 passport wording points to its own receipt,
 without recertifying that task. No new authority document or duplicate backlog.
-Code/evidence/owner-decision remainder: none in AUD07. Publication pending;
-CI result not yet known, deployment/live outside scope. Next AUD12 not started.
+Code/evidence/owner-decision/publication remainder: none in AUD07.
+CI in progress; deployment/live outside scope. Next AUD12 not started.
 
 
 ## AUD-09-20261030 — complete service metrics published

@@ -18,7 +18,8 @@ CRM-C21/live/release acceptance открыты. Чужой WIP сохранён.
 
 AUD-07-20261030: complete paginated automation history, status/trigger filters
 and full server metrics verified. Backend40 union, Node10, system/drift,
-build/types/i18n and RU/KK/EN browser503/retry/roles PASS. Publication pending.
+build/types/i18n and RU/KK/EN browser503/retry/roles PASS. Published2a710d32,
+origin/main SHA confirmed; CI41107592332 in progress.
 Temporary servers stopped; cleanup of disposable DB directory blocked by policy.
 No working DB/deployment; unrelated WIP preserved. Evidence in PRIMARY; AUD12 not started.
 
