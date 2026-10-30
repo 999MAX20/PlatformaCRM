@@ -17,6 +17,7 @@ function evaluate(source, bindings = {}) {
 }
 
 const { hasPermission } = evaluate(await read("lib/permissions.ts"));
+const { merchantNavigationItem } = evaluate(await read("app/routeMetadata.ts"));
 const sidebarSource = await read("components/layout/Sidebar.tsx");
 const syntax = ts.createSourceFile("Sidebar.tsx", sidebarSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 const names = new Set(["desktopSections", "mobileDrawerSections", "isItemActive", "isSidebarItemVisible", "filterSidebarItem"]);
@@ -31,7 +32,7 @@ const icons = Object.fromEntries(iconImport.importClause.namedBindings.elements.
 const navigation = evaluate(
   declarations.map((node) => node.getText(syntax)).join("\n") +
     "\nexport { desktopSections, mobileDrawerSections, filterSidebarItem, isItemActive };",
-  { hasPermission, ...icons },
+  { hasPermission, merchantNavigationItem, ...icons },
 );
 
 function member({ grants = true, enabled = true } = {}) {
@@ -67,7 +68,7 @@ for (const layout of ["desktopSections", "mobileDrawerSections"]) {
 }
 
 test("old assistant routes redirect into unified agents", async () => {
-  const router = await read("app/router.tsx");
+  const router = await read("app/merchantRoutes.tsx");
   assert.doesNotMatch(router, /AIAssistantPage/);
   assert.match(router, /path: "ai-assistant",[\s\S]*?<Navigate to="\/app\/ai-agents" replace/);
   assert.equal(navigation.isItemActive("/app/ai-agents/12/work", "/app/ai-agents"), true);
