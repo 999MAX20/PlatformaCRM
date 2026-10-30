@@ -256,7 +256,7 @@ export const business: Record<string, string> = {
   "services.openDetails": "Open settings for service {name}",
   "services.inspectorSubtitle": "Service settings and appointment usage",
   "services.usageTitle": "Appointment usage",
-  "services.usageText": "This service is used in {count} appointments in the loaded history.",
+  "services.usageText": "This service is used in {count} accessible appointments.",
   "services.readOnlyTitle": "View-only mode",
   "services.readOnlyText": "Your role cannot change service settings.",
   "services.discardChanges": "Discard unsaved service changes?",

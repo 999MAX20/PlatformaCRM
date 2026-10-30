@@ -257,7 +257,7 @@ export const business: Record<string, string> = {
   "services.openDetails": "Открыть параметры услуги «{name}»",
   "services.inspectorSubtitle": "Параметры услуги и использование в записях",
   "services.usageTitle": "Использование в записях",
-  "services.usageText": "Услуга используется в {count} записях из загруженной истории.",
+  "services.usageText": "Услуга используется в {count} доступных записях.",
   "services.readOnlyTitle": "Режим просмотра",
   "services.readOnlyText": "У вашей роли нет права изменять настройки услуг.",
   "services.discardChanges": "Отменить несохранённые изменения услуги?",

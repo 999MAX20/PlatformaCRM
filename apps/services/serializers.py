@@ -4,6 +4,7 @@ from apps.services.models import Service
 
 
 class ServiceSerializer(serializers.ModelSerializer):
+    appointment_count = serializers.IntegerField(read_only=True)
     lifecycle_update_fields = {"is_active"}
     archive_update_fields = {"is_archived", "archive_reason", "archived_at", "archived_by"}
 

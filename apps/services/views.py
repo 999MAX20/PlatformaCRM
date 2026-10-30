@@ -8,6 +8,7 @@ from apps.core.permissions import accessible_businesses
 from apps.core.viewsets import TenantModelViewSet
 from apps.services.models import Service
 from apps.services.serializers import ServiceSerializer
+from apps.services.selectors import service_summary, with_appointment_counts
 from apps.services.services import archive_service, restore_service, set_service_active
 
 
@@ -46,7 +47,16 @@ class ServiceViewSet(TenantModelViewSet):
                 business_id__in=manageable_business_ids,
                 is_archived=True,
             )
+        if self.action in {"list", "retrieve"}:
+            queryset = with_appointment_counts(queryset, actor=self.request.user)
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        response = self.get_paginated_response(self.get_serializer(page, many=True).data)
+        response.data["summary"] = service_summary(queryset)
+        return response
 
     def get_access_resource(self):
         if self.action in {"list", "retrieve"}:

@@ -10,15 +10,23 @@ export type ServiceListParams = {
   page_size?: number;
 };
 
+export type ServiceSummary = {
+  active: number;
+  average_duration_minutes: number | null;
+  used_in_bookings: number;
+};
+
+export type ServicePage = PaginatedResponse<Service> & { summary?: ServiceSummary };
+
 const serviceCrudApi = createCrudApi<Service>("/api/services/");
 
 export const servicesApi = {
   ...serviceCrudApi,
-  listPage: async (params?: ServiceListParams) => {
+  listPage: async (params?: ServiceListParams): Promise<ServicePage> => {
     const requestParams = params?.status === "archived"
       ? { ...params, include_archived: true }
       : params;
-    const { data } = await apiClient.get<Service[] | PaginatedResponse<Service>>("/api/services/", { params: requestParams });
+    const { data } = await apiClient.get<Service[] | ServicePage>("/api/services/", { params: requestParams });
     if (Array.isArray(data)) {
       return {
         count: data.length,

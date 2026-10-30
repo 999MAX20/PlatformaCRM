@@ -1,9 +1,8 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarClock, Clock3, Plus, Search, Scissors, WalletCards } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
-import { appointmentsApi } from "../../api/appointments";
 import { getApiErrorMessage } from "../../api/client";
 import { servicesApi } from "../../api/services";
 import { useActionConfirm } from "../../components/actions/ActionConfirmProvider";
@@ -85,18 +84,8 @@ export function ServicesPage() {
     return () => window.clearTimeout(timeoutId);
   }, [search, searchDraft, updateSearchParams]);
 
-  const overviewQuery = useQuery({
-    queryKey: ["services", "overview", business?.id],
-    queryFn: () => servicesApi.listPage({ business: business!.id, page_size: 100 }),
-    enabled: Boolean(business?.id),
-  });
-  const appointmentsQuery = useQuery({
-    queryKey: ["appointments", "services-workspace", business?.id],
-    queryFn: () => appointmentsApi.list({ business: business!.id, page_size: 100 }),
-    enabled: Boolean(business?.id),
-  });
   const servicesQuery = useQuery({
-    queryKey: ["services", "workspace", business?.id, search, status, page, pageSize],
+    queryKey: ["services", "workspace", business?.id, user?.id, search, status, page, pageSize],
     queryFn: () => servicesApi.listPage({
       business: business!.id,
       search: search || undefined,
@@ -105,7 +94,7 @@ export function ServicesPage() {
       page_size: pageSize,
     }),
     enabled: Boolean(business?.id),
-    placeholderData: keepPreviousData,
+    placeholderData: (previous, query) => query?.queryKey[2] === business?.id && query?.queryKey[3] === user?.id ? previous : undefined,
   });
 
   const mutation = useMutation({
@@ -171,7 +160,7 @@ export function ServicesPage() {
   const totalPages = Math.max(1, Math.ceil(totalServices / pageSize));
   const selectedServiceOnPage = serviceRows.find((service) => service.id === selectedServiceId && service.business === business?.id) || null;
   const selectedServiceQuery = useQuery({
-    queryKey: ["services", "selected", business?.id, selectedServiceId],
+    queryKey: ["services", "selected", business?.id, user?.id, selectedServiceId],
     queryFn: async () => {
       const service = await servicesApi.get(selectedServiceId!);
       if (service.business !== business?.id) throw new Error(t("actions.errorForbidden"));
@@ -189,19 +178,7 @@ export function ServicesPage() {
     }
   }, [page, servicesQuery.isFetching, servicesQuery.isLoading, totalPages, updateSearchParams]);
 
-  const overviewServices = overviewQuery.data?.results || [];
-  const activeServices = overviewServices.filter((service) => service.is_active);
-  const avgDuration = activeServices.length
-    ? Math.round(activeServices.reduce((sum, service) => sum + service.duration_minutes, 0) / activeServices.length)
-    : 0;
-  const appointmentUsage = useMemo(() => {
-    const usage = new Map<Id, number>();
-    (appointmentsQuery.data || []).forEach((appointment) => {
-      usage.set(appointment.service, (usage.get(appointment.service) || 0) + 1);
-    });
-    return usage;
-  }, [appointmentsQuery.data]);
-  const usedServiceIds = new Set(appointmentUsage.keys());
+  const summary = servicesQuery.isError || servicesQuery.isPlaceholderData ? undefined : servicesQuery.data?.summary;
   const permissionMessage = permissionForbiddenMessage("settings", "update", t);
 
   useEffect(() => {
@@ -292,9 +269,9 @@ export function ServicesPage() {
   }, [confirmAction, lifecycleMutation, t]);
 
   if (!business) return <ErrorState message={t("services.noBusiness")} />;
-  if (overviewQuery.isLoading || appointmentsQuery.isLoading || servicesQuery.isLoading) return <LoadingState scope="page" />;
+  if (servicesQuery.isLoading) return <LoadingState scope="page" />;
 
-  const pageError = overviewQuery.error || appointmentsQuery.error || servicesQuery.error || (!selectedServiceOnPage && selectedServiceQuery.error);
+  const pageError = servicesQuery.error || (!selectedServiceOnPage && selectedServiceQuery.error);
   const hasFilters = Boolean(search || status);
   const pageFrom = totalServices === 0 ? 0 : (page - 1) * pageSize + 1;
   const pageTo = Math.min(totalServices, page * pageSize);
@@ -308,9 +285,9 @@ export function ServicesPage() {
           aria-label={t("services.metricsLabel")}
           className="platforma-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
         >
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.active")} value={activeServices.length} hint={t("services.activeHint")} icon={Scissors} />
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.avgDuration")} value={avgDuration ? `${avgDuration} ${t("appointment.minutes")}` : "-"} hint={t("services.avgDurationHint")} icon={Clock3} />
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.usedInBookings")} value={usedServiceIds.size} hint={t("services.usedInBookingsHint")} icon={WalletCards} />
+          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.active")} value={summary?.active ?? "—"} hint={t("services.activeHint")} icon={Scissors} />
+          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.avgDuration")} value={summary?.average_duration_minutes != null ? `${summary.average_duration_minutes} ${t("appointment.minutes")}` : "—"} hint={t("services.avgDurationHint")} icon={Clock3} />
+          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.usedInBookings")} value={summary?.used_in_bookings ?? "—"} hint={t("services.usedInBookingsHint")} icon={WalletCards} />
         </section>
 
         {selectedServiceQuery.isLoading ? <LoadingState /> : null}
@@ -318,13 +295,14 @@ export function ServicesPage() {
           <div className="mb-3 shrink-0">
             <ErrorState
               error={pageError} message={getApiErrorMessage(pageError)}
-              action={<Button type="button" variant="secondary" onClick={() => void Promise.all([overviewQuery.refetch(), appointmentsQuery.refetch(), servicesQuery.refetch(), ...(selectedServiceId && !selectedServiceOnPage ? [selectedServiceQuery.refetch()] : [])])}>{t("common.retry")}</Button>}
+              action={<Button type="button" variant="secondary" onClick={() => void Promise.all([servicesQuery.refetch(), ...(selectedServiceId && !selectedServiceOnPage ? [selectedServiceQuery.refetch()] : [])])}>{t("common.retry")}</Button>}
             />
           </div>
         ) : null}
 
-        <div data-testid="services-operational-workspace" className="min-h-[420px] flex-1">
-          <DataTable
+        <div data-testid="services-operational-workspace" aria-busy={servicesQuery.isFetching} className="min-h-[420px] flex-1">
+          {!servicesQuery.isError ? <DataTable
+              isLoading={servicesQuery.isPlaceholderData}
               className="h-full"
               contentClassName="overscroll-contain"
               rows={serviceRows}
@@ -400,7 +378,7 @@ export function ServicesPage() {
                 { header: t("services.name"), className: "max-w-[320px]", cell: (service) => <span data-testid="service-name" className="block truncate font-semibold text-platforma-ink">{service.name}</span> },
                 { header: t("services.duration"), cell: (service) => `${service.duration_minutes} ${t("appointment.minutes")}` },
                 { header: t("services.priceFrom"), cell: (service) => formatMoney(service.price_from) },
-                { header: t("services.bookings"), cell: (service) => appointmentUsage.get(service.id) || 0 },
+                { header: t("services.bookings"), cell: (service) => servicesQuery.isError ? "—" : service.appointment_count ?? "—" },
                 { header: t("appointment.status"), cell: (service) => <ServiceStatusBadge service={service} /> },
                 {
                   header: t("appointments.actions"),
@@ -419,14 +397,14 @@ export function ServicesPage() {
                   ),
                 },
               ]}
-          />
+          /> : null}
         </div>
       </CrmWorkspacePage>
 
       <ServiceEditModal
         service={selectedService}
         businessId={business.id}
-        appointmentCount={selectedService ? appointmentUsage.get(selectedService.id) || 0 : 0}
+        appointmentCount={servicesQuery.isError || selectedServiceQuery.isError ? undefined : selectedService?.appointment_count}
         canManage={canManage}
         isSaving={mutation.isPending || lifecycleMutation.isPending}
         error={mutation.error}

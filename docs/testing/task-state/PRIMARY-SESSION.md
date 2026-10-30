@@ -6,6 +6,57 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-09-20261030 — complete service metrics verified locally
+
+Owner authorized next roadmap phase only; AUD07/AUD12 not started.
+Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit;
+base a45b0d80de283141e2f0aceafc61862431f35d32. Starting ownership snapshot,
+before/ and manifest.json: output/aud09-20261030. Unrelated WIP preserved.
+Candidate.index reads Git blobs at canonical paths; no source copy/worktree.
+
+Service list summary covers all permitted filtered services before pagination:
+active, average_duration_minutes (rounded, null without active rows), used_in_bookings.
+List/detail appointment_count counts all current readable, nonarchived appointments,
+correlated by both service and Business. Existing Service read permissions retained;
+no new grants, lifecycle writes, schema, env, notification, BusinessEvent or AI effects.
+Frontend consumes summary/counts, removes first100 overview/appointment requests,
+scopes cache by business/user, retains search focus and hides stale totals while
+changing filters. Error/retry is distinct from empty; RU/KK/EN usage copy corrected.
+
+Verification on exact candidate: final owning16 and dependent3 tests PASS/no skips;
+system/drift PASS, frontend app+widget build/i18n and forced types PASS.
+Focused reproduction before-valid:5 expected failures; initial fixture self.client
+collided with Django client, renamed crm_client. Final candidate regression fixture
+had one remaining self.client reference: candidate-test16 had1 error; fixed and
+candidate-corrected8 PASS, then candidate-final16 PASS supersedes that failure.
+Earlier working13 PASS is not used as publication proof. Browser exposed search
+focus loss and false empty state on error; both fixed and retested before final build.
+Commands (canonical cwd unless noted):
+- .venv/Scripts/python.exe output/aud09-20261030/run_candidate.py candidate-final test apps.services.tests_metrics apps.services.tests --noinput
+- same runner candidate-dependent test apps.scheduling.tests.CorePlatformTests.test_create_service apps.scheduling.tests.CorePlatformTests.test_doctor_can_mutate_only_appointment_for_linked_resource apps.core.tests_tenant_isolation.TenantPermissionMapCoverageTests --noinput
+- same runner candidate-system check; candidate-drift makemigrations --check --dry-run
+- frontend cwd, NODE_OPTIONS=--require=C:/Users/user/Desktop/PlatformaCRM/output/aud09-20261030/frontend-snapshot.cjs: npm run build; node node_modules/typescript/bin/tsc -b --force
+Logs/results in candidate-*.json/log, build-verified.log and types-verified.log.
+No dependency reinstall/full local release gate/PG concurrency certification:
+read-only aggregates introduce no locking or state transition. No working DB changed.
+
+Exact-candidate browser on disposable DB52169/frontend52170:105 active services,
+33-minute average,105 services in bookings; Service104 list/card111 appointments.
+Search/status/pagination, empty, loading, blocked API error/retry verified. Search
+retains focus; modal Escape returns focus to row. RU desktop1280x800, RU/KK/EN
+mobile390x844 screenshots retained; EN no document horizontal overflow. No provider
+calls or real account data. Owned runtime stopped; both listeners absent. Browser test tab closed.
+Initial staging blocked by stale empty index.lock (no Git process); moved to task
+artifacts before retry. Unrelated route-prefetch test trailing blank line remains
+outside this task; scoped index diff hygiene passes.
+
+Roadmap, CRM/frontend contracts and settings passport updated. README, access,
+product, AI, integrations, operations, capabilities and acceptance need no change:
+no setup/module/permission/lifecycle/schema/provider or acceptance-ID change.
+Historical audit unchanged. Code/evidence/owner-decision remainder in scope: none.
+Publication pending; live/deployment outside scope. Next unresolved AUD07 not started.
+
+
 ## AUD-08-20261030 — Client search and selection published
 
 Publication30.10: d22cd337d126f2982e484b6c742f1633caab3d63 normal-pushed to

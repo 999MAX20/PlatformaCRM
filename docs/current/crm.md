@@ -524,3 +524,12 @@ AUD-08: `/api/clients/?business=<id>&q=<query>&page=<n>&page_size=<n>` огра�
 Без business прежний контракт доступной совокупности сохраняется. Архив/field policy
 не меняются. ClientPicker использует list/detail, не новый endpoint; проверки и граница
 публикации — AUD-08-20261030 в PRIMARY.
+
+### AUD-09 — показатели услуг, 30.10.2026
+
+`GET /api/services/` возвращает `summary` по всей отфильтрованной доступной
+выборке до пагинации: `active`, `average_duration_minutes` (null без активных
+услуг), `used_in_bookings`. List/detail содержат read-only `appointment_count`: все
+неархивные записи услуги в том же Business, доступные текущему пользователю.
+Архивные услуги не входят в active/среднюю; search/status/archive применяются
+и к списку, и к сводке. Права и жизненный цикл не меняются.

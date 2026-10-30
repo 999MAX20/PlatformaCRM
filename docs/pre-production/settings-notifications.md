@@ -3,8 +3,11 @@
 Граница 17.10 (`56dd124`): индивидуальное mark-read проверяет UPDATE,
 массовое mark-all-read использует VIEW scope. AUD-17 открыт в
 [roadmap](../current/roadmap.md#project-audit-20261017);
-[evidence](../testing/project-audit-20261017.md). Показатели услуг по ограниченным
-страницам — AUD-09; прежняя приёмка настроек не доказывает эти сценарии.
+[evidence](../testing/project-audit-20261017.md). AUD-09 закрыт локально30.10: полная серверная сводка и счётчики записей услуг,
+фильтры/архив/роли, загрузка/ошибка/повтор и RU/KK/EN проверены отдельным
+кандидатом на base a45b0d80. Команды и публикация — AUD09 в
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md). В принятом scope остатка
+нет; deployment/live отдельно. Прежняя приёмка настроек не заменяет эти проверки.
 
 09.10.2026. Текущая структура после обратной связи владельца описана в
 [SETTINGS-WORKFLOW](../testing/settings-workflow-20261009.md), основа `3026debb`.

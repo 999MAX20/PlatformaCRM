@@ -16,6 +16,12 @@ CRM-C21/live/release acceptance открыты. Чужой WIP сохранён.
 
 # PlatformaCRM — текущий статус
 
+AUD-09-20261030: complete permitted service summary and appointment counts verified
+locally on exact candidate. Owning16/dependent3, system/drift, build/types and
+RU/KK/EN browser PASS; filters/error/retry/keyboard checked. Publication pending.
+No working DB/deployment; unrelated WIP preserved. Scope/evidence in PRIMARY.
+Next AUD07 not started.
+
 AUD-08-20261030: paged server Client search and async Deal/Lead/Task selection
 verified locally; optional business filter prevents mixing accessible businesses.
 Exact candidate36 backend/14 Node/system/drift/build/forced types and targeted

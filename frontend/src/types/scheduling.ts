@@ -1,6 +1,7 @@
 import type { Id } from "./core";
 
 export type Service = {
+  appointment_count?: number;
   id: Id;
   business: Id;
   name: string;

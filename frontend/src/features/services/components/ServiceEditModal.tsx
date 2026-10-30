@@ -26,7 +26,7 @@ export function ServiceEditModal({
 }: {
   service: Service | null;
   businessId: Id;
-  appointmentCount: number;
+  appointmentCount?: number;
   canManage: boolean;
   isSaving: boolean;
   errorMessage?: string;
@@ -104,7 +104,7 @@ export function ServiceEditModal({
             <div>
               <h3 className="text-sm font-semibold text-platforma-ink">{t("services.usageTitle")}</h3>
               <p className="mt-1 text-sm leading-5 text-platforma-subtle">
-                {t("services.usageText", { count: appointmentCount })}
+                {t("services.usageText", { count: appointmentCount ?? "—" })}
               </p>
             </div>
           </div>
