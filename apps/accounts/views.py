@@ -13,6 +13,7 @@ from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from apps.accounts.auth_views import clear_refresh_cookie, record_login, record_security_event, set_refresh_cookie
+from apps.accounts.csrf import AuthCookieCsrfMixin
 from apps.accounts.mfa import has_confirmed_mfa, issue_session, requires_mfa, start_auth_challenge, verify_user_factor
 from apps.accounts.passwords import enforce_password_policy
 from apps.accounts.serializers import (
@@ -102,7 +103,7 @@ class CurrentUserLoginHistoryView(APIView):
         )
 
 
-class SocialAuthView(APIView):
+class SocialAuthView(AuthCookieCsrfMixin, APIView):
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "auth_social"
@@ -177,7 +178,7 @@ class PasswordResetRequestView(APIView):
         return request.build_absolute_uri(reset_path)
 
 
-class PasswordResetConfirmView(APIView):
+class PasswordResetConfirmView(AuthCookieCsrfMixin, APIView):
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "auth_password_reset"
@@ -209,7 +210,7 @@ class PasswordResetConfirmView(APIView):
         return clear_refresh_cookie(Response({"ok": True}))
 
 
-class OwnerSignupView(APIView):
+class OwnerSignupView(AuthCookieCsrfMixin, APIView):
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "auth_signup"

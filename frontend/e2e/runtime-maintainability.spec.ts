@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test, type Page, type Request } from "@playwright/test";
 
 const password = process.env.E2E_PASSWORD || "ZaniTest123!";
@@ -236,8 +237,7 @@ async function login(page: Page) {
 }
 
 async function enableDealsForMeasurement(page: Page) {
-  const tokenResponse = await page.request.post(
-    `${apiBaseURL}/api/auth/token/`,
+  const tokenResponse = await authPost(page.request, `${apiBaseURL}/api/auth/token/`,
     { data: { email: ownerEmail, password } },
   );
   expect(tokenResponse.ok()).toBeTruthy();

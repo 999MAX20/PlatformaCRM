@@ -1,5 +1,17 @@
 # Интеграции, импорт и экспорт
 
+AUD-12c,31.10: история фоновых экспортов в Аналитике читает сохранённые ExportJob.
+GET /api/export-jobs/ принимает business/kind/status до пагинации,20 записей по
+умолчанию, максимум100, порядок -created_at/-pk. Список и detail ограничены текущим
+actor/Business и действующим VIEW/capability соответствующего ресурса. В параметрах
+истории выдаются только start/end/expected_rows, без внутреннего fingerprint.
+Скачивание повторно проверяет текущие права и исходный permission fingerprint.
+Синхронный небольшой CSV не создаёт ExportJob и в эту историю не попадает.
+Страницы/размер, фильтры, reload/download, polling и503/retry проверены локально.
+Новые каналы экспорта, worker/storage целевой среды и deployment не заявлены.
+[Evidence AUD-REMAINING](../testing/task-state/PRIMARY-SESSION.md#aud-remaining-20261031--aud-12c-and-aud-v01).
+
+
 Действующие ограничения; уточнение 14.10.2026: Telegram и WhatsApp включены
 в подготовку пилота R02, клиники подключают собственные аккаунты. Для первого этапа
 28.10 выбран YCloud TP Lite; локально реализованы подключение и текстовый Inbox.
@@ -132,7 +144,7 @@ preview, все страницы ошибок с полем/причиной и 
 После изменения mapping, неуспешного preview или выбора нового файла подтверждение
 недоступно до проверки. Preview не запускает import автоматически. CREATE остаётся
 обязательным; новый источник/тип не меняют существующее задание. Полная история
-импортов реализована в AUD-12b ниже; история экспортов остаётся AUD-12c. Проверки — [AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
+импортов реализована в AUD-12b ниже; история фоновых экспортов реализована в AUD-12c ниже. Проверки — [AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
 
 AUD-12b,31.10: `GET /api/import-jobs/?business=<id>&entity_type=leads&page=1&page_size=20`
 валидирует необязательные фильтры до пагинации, возвращает count/next/previous/results

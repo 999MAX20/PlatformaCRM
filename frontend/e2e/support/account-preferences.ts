@@ -1,9 +1,10 @@
+import { authPost } from "./auth-request";
 import { expect, type APIRequestContext } from "@playwright/test";
 
 // Restore only the preferences these isolated tests own, even after an assertion
 // fails, so another viewport does not inherit a changed language/start page.
 export async function resetAccountPreferences(request: APIRequestContext) {
-  const login = await request.post("/api/auth/token/", {
+  const login = await authPost(request, "/api/auth/token/", {
     data: { email: process.env.E2E_OWNER_EMAIL || "business_owner@example.com", password: process.env.E2E_PASSWORD || "ZaniTest123!" },
   });
   expect(login.ok()).toBeTruthy();

@@ -1,5 +1,13 @@
 # Настройки и уведомления
 
+AUD-V01,31.10: cookie-auth получил CSRF bootstrap и guard для восьми операций,
+включая вход/MFA/refresh/logout/reset. Enforced-CSRF tests доказывают отказ чужому
+Origin/форме/отсутствующему токену и валидный same-cookie flow. Browser: bootstrap503,
+повтор входа, dashboard, reload/refresh и logout PASS на изолированном кандидате.
+MFA/session-policy suites и frontend generation tests сохранены. Deployment не выполнен.
+[Evidence AUD-REMAINING](../testing/task-state/PRIMARY-SESSION.md#aud-remaining-20261031--aud-12c-and-aud-v01).
+
+
 Граница 17.10 (`56dd124`): индивидуальное mark-read проверяет UPDATE,
 массовое mark-all-read использует VIEW scope. AUD-17 открыт в
 [roadmap](../current/roadmap.md#project-audit-20261017);

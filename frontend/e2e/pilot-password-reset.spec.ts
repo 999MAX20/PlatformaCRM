@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test } from "@playwright/test";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
@@ -12,7 +13,7 @@ test("password reset link changes credentials once and rejects token replay", as
   const email = `pilot-reset-${Date.now()}@example.com`;
   const password = "PilotResetInitial928!";
   const replacement = "PilotResetChanged928!";
-  const created = await page.request.post(`${api}/api/auth/signup/owner/`, {
+  const created = await authPost(page.request, `${api}/api/auth/signup/owner/`, {
     data: { accepted_documents: ["terms", "privacy", "personal-data", "company-data"], email, password, full_name: "Pilot reset owner", business_name: "Reset fixture", phone: "+77770009944" },
   });
   expect(created.status()).toBe(201);
@@ -42,9 +43,9 @@ test("password reset link changes credentials once and rejects token replay", as
   await expect(page).toHaveURL(/\/login$/);
   const oldSession = await page.request.get(`${api}/api/auth/me/`, { headers: { Authorization: `Bearer ${account.access}` } });
   expect(oldSession.status()).toBe(401);
-  const oldPassword = await page.request.post(`${api}/api/auth/token/`, { data: { email, password } });
+  const oldPassword = await authPost(page.request, `${api}/api/auth/token/`, { data: { email, password } });
   expect(oldPassword.status()).toBe(401);
-  const replay = await page.request.post(`${api}/api/auth/password-reset/confirm/`, { data: { ...reset, password: "PilotReplayForbidden928!" } });
+  const replay = await authPost(page.request, `${api}/api/auth/password-reset/confirm/`, { data: { ...reset, password: "PilotReplayForbidden928!" } });
   expect(replay.status()).toBe(400);
   await page.locator('form input[type="email"]').fill(email);
   await page.locator('form input[type="password"]').fill(replacement);

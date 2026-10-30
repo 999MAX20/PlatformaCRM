@@ -16,6 +16,7 @@ import type { Business, Id } from "../../types";
 import type { WorkspaceReport } from "../../types/analyticsWorkspace";
 import { useAuth } from "../auth/AuthProvider";
 import { FinancialSummary } from "./FinancialSummary";
+import { ExportHistory } from "./ExportHistory";
 import { Overview, ServicesTable, SourcesTable, TeamTable } from "./WorkspaceSections";
 
 const tabs = ["overview", "sources", "services", "team", "finance"] as const;
@@ -50,6 +51,7 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
   const context = `${userId}:${business.id}:${start}:${end}:${active}`;
   const [draft, setDraft] = useState<DateRangeValue>({ from: start, to: end });
   const [help, setHelp] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [periodOpen, setPeriodOpen] = useState(false);
   useEffect(() => { setPageHeader({ title: t("analytics.title") }); return () => setPageHeader(null); }, [setPageHeader, t]);
   const metrics = useQuery({
@@ -87,6 +89,7 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
       <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto">
         <Button variant="secondary" onClick={openPeriod} className="min-h-11" aria-label={t("analyticsWorkspace.period")}>{dateLabel(start)} — {dateLabel(end)}</Button>
         <Button variant="secondary" disabled={!canExport} isLoading={exportMutation.isPending} onClick={() => exportMutation.mutate()}><Download size={16} />CSV</Button>
+        <Button variant="secondary" onClick={() => setHistoryOpen(true)}>{t("exportHistory.title")}</Button>
         <Button variant="ghost" aria-label={t("analyticsWorkspace.refresh")} disabled={metrics.isFetching} onClick={() => void metrics.refetch()}><RefreshCw size={16} /></Button>
         <Button variant="ghost" aria-label={t("analyticsWorkspace.method")} onClick={() => setHelp(true)}><HelpCircle size={17} /></Button>
       </div>
@@ -104,6 +107,9 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
       </div>
       <p className="text-xs text-platforma-subtle">{t("analyticsWorkspace.updated", { time: new Intl.DateTimeFormat(language, { dateStyle: "short", timeStyle: "short", timeZone: business.timezone }).format(new Date(metrics.data.generated_at)) })} · {metrics.data.period.timezone}</p>
     </> : null}
+    <Dialog title={t("exportHistory.title")} open={historyOpen} onClose={() => setHistoryOpen(false)} size="lg">
+      {historyOpen ? <ExportHistory business={business} userId={userId} /> : null}
+    </Dialog>
     <Dialog title={t("analyticsWorkspace.period")} open={periodOpen} onClose={() => setPeriodOpen(false)} size="sm">
       <div className="space-y-4">
         <DateRangePicker label={t("analyticsWorkspace.period")} value={draft} onChange={setDraft} today={today} />

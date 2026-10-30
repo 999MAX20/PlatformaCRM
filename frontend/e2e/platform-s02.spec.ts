@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { createHmac } from "node:crypto";
 import { expect, test, type Page } from "@playwright/test";
 import { ru } from "../src/lib/i18n/ru";
@@ -73,7 +74,7 @@ test("support note uses real grant and MFA, preserves failed draft, then appears
   const start = await page.request.post(`${api}/api/auth/mfa/enrollment/start/`, { headers, data: {} });
   expect(start.ok()).toBeTruthy();
   const enrollment = await start.json();
-  const confirmed = await page.request.post(`${api}/api/auth/mfa/enrollment/confirm/`, { data: { challenge_token: enrollment.challenge_token, code: totp(enrollment.manual_key) } });
+  const confirmed = await authPost(page.request, `${api}/api/auth/mfa/enrollment/confirm/`, { data: { challenge_token: enrollment.challenge_token, code: totp(enrollment.manual_key) } });
   expect(confirmed.ok()).toBeTruthy();
   const codes = (await confirmed.json()).recovery_codes as string[];
   // Enrollment rotates the authenticated session. Restore the new cookie-backed

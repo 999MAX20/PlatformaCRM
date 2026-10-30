@@ -6,6 +6,7 @@ from rest_framework.test import APIClient
 from apps.accounts.models import User
 from apps.automations.engine import run_automations_for_event
 from apps.automations.models import AutomationRule, AutomationRun
+from apps.branches.models import BranchAccess
 from apps.businesses.models import Business, BusinessMember, BusinessRole, RolePermission
 from apps.clients.models import Client
 from apps.leads.models import Lead
@@ -43,7 +44,8 @@ class AutomationRuleEditorTests(TestCase):
         for resource, action in (("automations", "view"), ("automations", "update"), ("tasks", "create")):
             RolePermission.objects.create(business_role=role, resource=resource, action=action, scope="business")
         RolePermission.objects.create(business_role=role, resource="automations", action="create", is_allowed=False, scope="business")
-        BusinessMember.objects.create(business=self.business, user=user, role="operator", business_role=role)
+        member = BusinessMember.objects.create(business=self.business, user=user, role="operator", business_role=role)
+        BranchAccess.objects.create(member=member, all_branches=True)
         self.api.force_authenticate(user)
         with patch("apps.automations.views.assert_entitlement_allows", side_effect=RuntimeError("Creation quota is not an edit gate")):
             response = self.api.post(f"/api/automation-rules/{self.rule.pk}/preview/", self.payload(), format="json")

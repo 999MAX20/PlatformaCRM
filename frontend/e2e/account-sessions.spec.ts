@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test } from "@playwright/test";
 
 test("security layout and selective device logout preserve the current session", async ({ page, browser }) => {
@@ -9,7 +10,7 @@ test("security layout and selective device logout preserve the current session",
   const origin = new URL(page.url()).origin;
   const other = await browser.newContext({ baseURL: origin, userAgent: "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0" });
   try {
-    const login = await other.request.post("/api/auth/token/", { data: { email: process.env.E2E_OWNER_EMAIL || "business_owner@example.com", password: process.env.E2E_PASSWORD || "ZaniTest123!" } });
+    const login = await authPost(other.request, "/api/auth/token/", { data: { email: process.env.E2E_OWNER_EMAIL || "business_owner@example.com", password: process.env.E2E_PASSWORD || "ZaniTest123!" } });
     expect(login.ok()).toBeTruthy();
     const { access } = await login.json();
     await page.goto("/app/account");
@@ -27,7 +28,7 @@ test("security layout and selective device logout preserve the current session",
     await expect(dialog).toHaveCount(0);
     await expect(remote).toHaveCount(0);
     expect((await other.request.get("/api/auth/me/", { headers: { Authorization: `Bearer ${access}` } })).status()).toBe(401);
-    expect((await other.request.post("/api/auth/token/refresh/", { data: {} })).status()).toBe(401);
+    expect((await authPost(other.request, "/api/auth/token/refresh/", { data: {} })).status()).toBe(401);
     await page.reload();
     await expect(page.locator("#security").getByText("Это устройство", { exact: true })).toHaveCount(1);
     await page.locator("#security").getByText("Последние входы", { exact: true }).click();

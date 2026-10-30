@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { createHmac } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
 import { ru } from '../src/lib/i18n/ru';
@@ -50,7 +51,7 @@ async function operator(page: Page, project: string, scenario: string) {
   const cases=await page.request.get(`${api}/api/platform/support-cases/?business=${id}`,{headers});const caseId=(await cases.json()).results[0].id;
   await page.goto('about:blank');
   const start=await page.request.post(`${api}/api/auth/mfa/enrollment/start/`,{headers,data:{}});const enrollment=await start.json();
-  const confirmed=await page.request.post(`${api}/api/auth/mfa/enrollment/confirm/`,{data:{challenge_token:enrollment.challenge_token,code:totp(enrollment.manual_key)}});
+  const confirmed=await authPost(page.request, `${api}/api/auth/mfa/enrollment/confirm/`,{data:{challenge_token:enrollment.challenge_token,code:totp(enrollment.manual_key)}});
   expect(confirmed.ok()).toBeTruthy();const codes:string[]=(await confirmed.json()).recovery_codes;
   await page.goto(`/platform/merchants/${id}?section=billing`);
   await expect(page.getByTestId('platform-billing')).toBeVisible();return {id,caseId,codes};

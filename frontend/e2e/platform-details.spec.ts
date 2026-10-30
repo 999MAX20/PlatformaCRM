@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { createHmac } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
 import { ru } from '../src/lib/i18n/ru';
@@ -32,7 +33,7 @@ async function open(page: Page, project: string, role: string, enroll = false) {
     await page.goto('about:blank');
     const started = await page.request.post(`${api}/api/auth/mfa/enrollment/start/`, { headers, data: {} });
     const enrollment = await started.json();
-    const confirmed = await page.request.post(`${api}/api/auth/mfa/enrollment/confirm/`, { data: { challenge_token: enrollment.challenge_token, code: totp(enrollment.manual_key) } });
+    const confirmed = await authPost(page.request, `${api}/api/auth/mfa/enrollment/confirm/`, { data: { challenge_token: enrollment.challenge_token, code: totp(enrollment.manual_key) } });
     expect(confirmed.ok()).toBeTruthy(); codes = (await confirmed.json()).recovery_codes;
   }
   const root = `/platform/merchants/${id}?section=details`;

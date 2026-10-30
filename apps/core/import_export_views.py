@@ -24,6 +24,7 @@ from apps.core.import_export import (
 from apps.core.file_validation import validate_file_upload
 from apps.core.export_jobs import request_entity_export
 from apps.core.export_access import assert_export_download_access
+from apps.core.export_history import ExportHistoryPagination, ExportHistoryQuery, ExportHistorySerializer, readable_export_history
 from apps.core.models import AuditLog, ExportJob, ImportJob
 from apps.core.permissions import accessible_businesses
 from apps.core.sanitization import sanitize_error_text
@@ -109,17 +110,22 @@ class ImportJobViewSet(TenantModelViewSet):
 
 
 class ExportJobViewSet(ReadOnlyModelViewSet):
-    serializer_class = ExportJobSerializer
+    serializer_class = ExportHistorySerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = ExportHistoryPagination
 
     def get_queryset(self):
+        query = ExportHistoryQuery(data=self.request.query_params.dict())
+        query.is_valid(raise_exception=True)
         queryset = ExportJob.objects.select_related("business", "actor").filter(
             business__in=accessible_businesses(self.request.user)
         )
         if not self.request.user.is_platform_user:
             queryset = queryset.filter(actor=self.request.user)
-        business_id = self.request.query_params.get("business")
-        return queryset.filter(business_id=business_id) if business_id else queryset
+        queryset = queryset.filter(**query.validated_data)
+        if self.action != "download":
+            queryset = readable_export_history(queryset, self.request.user)
+        return queryset.order_by("-created_at", "-pk")
 
     @action(detail=True, methods=["get"])
     def download(self, request, pk=None):

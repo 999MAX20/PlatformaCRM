@@ -1,5 +1,15 @@
 # Доступ, приватность и границы аккаунта
 
+AUD-V01,31.10: anonymous cookie-auth защищён Django csrf_protect внутри DRF
+dispatch. GET /api/auth/csrf/ возвращает masked csrf_token, устанавливает CSRF cookie
+и запрещает кэширование. POST token, refresh, logout, social, signup/owner,
+mfa/enrollment/confirm, mfa/verify и password-reset/confirm требуют эту cookie и
+X-CSRFToken; Origin/HTTPS Referer проверяет Django. Нет обхода для form-urlencoded.
+Bearer-only операции сохраняют прежнюю авторизацию. Существующие direct API clients
+должны выполнить bootstrap тем же cookie jar. CORS не заменяет CSRF-проверку.
+[Evidence AUD-REMAINING](../testing/task-state/PRIMARY-SESSION.md#aud-remaining-20261031--aud-12c-and-aud-v01).
+
+
 AUD-19: TenantModelViewSet и IsTenantMember используют объявленный `business_lookup`
 для определения Business дочерней сущности, включая `form__business`. Проверки
 текущего объекта, кандидата записи, удаления и tenant истории согласованы.

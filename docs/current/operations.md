@@ -1,5 +1,16 @@
 # Среда, эксплуатация и файлы
 
+AUD-V01,31.10: cookie-auth требует GET /api/auth/csrf/ и последующий POST с
+X-CSRFToken в том же cookie jar. Для отдельного frontend origin нужны точные
+CSRF_TRUSTED_ORIGINS, CORS_ALLOWED_ORIGINS и credentialed requests; для HTTPS —
+корректный proxy scheme и secure cookies. Не отключать CSRF для smoke/автотестов:
+scripts/api_load_smoke.py и Playwright authPost используют штатный bootstrap.
+Read-only review: compose.stand скрывает backend/DB/Redis порты и выставляет Caddy
+80/443, HTTPS/HSTS и запрет private media; обычный compose публикует backend8000.
+Это проверка конфигурации, не доказательство работающего сервера/backup/delivery.
+[Evidence AUD-REMAINING](../testing/task-state/PRIMARY-SESSION.md#aud-remaining-20261031--aud-12c-and-aud-v01).
+
+
 YCloud TP Lite: `YCLOUD_ENABLED=False` по умолчанию; `YCLOUD_API_KEY` и
 `YCLOUD_WEBHOOK_SECRET` задаются только на сервере. Новые миграции integrations0007/
 0008 и bots0013 проверены в одноразовых SQLite/PostgreSQL, к рабочей БД не применялись.

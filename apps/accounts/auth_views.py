@@ -12,6 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.models import User
+from apps.accounts.csrf import AuthCookieCsrfMixin
 from apps.accounts.device_sessions import refresh_browser_session
 from apps.accounts.mfa import issue_session, requires_mfa, start_auth_challenge
 from apps.accounts.session_security import blacklist_refresh_token
@@ -85,7 +86,7 @@ def record_security_event(
     )
 
 
-class ThrottledTokenObtainPairView(TokenObtainPairView):
+class ThrottledTokenObtainPairView(AuthCookieCsrfMixin, TokenObtainPairView):
     throttle_scope = "auth_login"
 
     def post(self, request, *args, **kwargs):
@@ -103,7 +104,7 @@ class ThrottledTokenObtainPairView(TokenObtainPairView):
         return set_refresh_cookie(Response({"access": str(refresh.access_token)}), str(refresh))
 
 
-class ThrottledTokenRefreshView(TokenRefreshView):
+class ThrottledTokenRefreshView(AuthCookieCsrfMixin, TokenRefreshView):
     throttle_scope = "auth_refresh"
 
     def post(self, request, *args, **kwargs):
@@ -128,7 +129,7 @@ class ThrottledTokenRefreshView(TokenRefreshView):
         return response
 
 
-class LogoutView(APIView):
+class LogoutView(AuthCookieCsrfMixin, APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):

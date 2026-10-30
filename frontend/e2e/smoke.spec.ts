@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { ru } from "../src/lib/i18n/ru";
 ﻿import { expect, test, type Page } from "@playwright/test";
 import { createHmac } from "node:crypto";
@@ -238,7 +239,7 @@ async function apiLogin(page: Page, email: string) {
   const cached = tokenCache.get(email);
   if (cached) return cached;
 
-  let response = await page.request.post(`${apiBaseURL}/api/auth/token/`, {
+  let response = await authPost(page.request, `${apiBaseURL}/api/auth/token/`, {
     data: { email, password },
   });
   for (
@@ -247,7 +248,7 @@ async function apiLogin(page: Page, email: string) {
     attempt += 1
   ) {
     await page.waitForTimeout(10_000);
-    response = await page.request.post(`${apiBaseURL}/api/auth/token/`, {
+    response = await authPost(page.request, `${apiBaseURL}/api/auth/token/`, {
       data: { email, password },
     });
   }
@@ -303,8 +304,7 @@ async function createPlatformStepUp(page: Page, tokens: TokenPayload) {
     challenge_token: string;
     manual_key: string;
   };
-  const enrollmentConfirm = await page.request.post(
-    `${apiBaseURL}/api/auth/mfa/enrollment/confirm/`,
+  const enrollmentConfirm = await authPost(page.request, `${apiBaseURL}/api/auth/mfa/enrollment/confirm/`,
     {
       data: {
         challenge_token: enrollment.challenge_token,

@@ -16,6 +16,14 @@ CRM-C21/live/release acceptance открыты. Чужой WIP сохранён.
 
 # PlatformaCRM — текущий статус
 
+AUD-REMAINING-20261031: AUD12c history and bounded AUDV01 review verified locally.
+Login-CSRF and automation authority fixed; owner-run policy retained. Build/types/
+i18n, focused/dependent backend and RU/KK/EN browser PASS. Publication pending.
+Public-intake privacy fix is other local WIP, excluded from publication; live/release
+acceptance remains open. No working DB/deployment. Evidence in PRIMARY.
+
+
+
 AUD-12b-20261031: full server-filtered import history/page/size/current detail verified.
 Backend27, Node12, system/drift/build/types/i18n and RU/KK/EN browser PASS.
 Actor isolation/reload/503 retry/new import and modal page-size menu checked.

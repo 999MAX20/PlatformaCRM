@@ -6,6 +6,124 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-REMAINING-20261031 — AUD-12c and AUD-V01
+
+Owner authorized both remaining AUD items in one cycle31.10. Mode implementation
+plus bounded independent verification. Canonical C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit, base83974049a3077c5d071beffd5140fe5cf30c045c.
+Starting WIP snapshot: output/aud-remaining-20261031/manifest.json,before/,starting.patch.
+Only task-owned code and projected documentation are publication candidates.
+Publication pending; this section records local verification, not release readiness.
+
+Plan/acceptance: reuse persisted ExportJob/worker/fingerprint and shared pagination;
+complete history/current download after reload, server filters before pages, current
+actor/tenant/resource checks and safe parameter projection. Risk: stale files after
+permission revocation, metadata leakage, pagination truncation and async stale UI.
+Focused backend first; dependent exports/analytics, frontend interaction, browser
+RU/KK/EN/narrow/keyboard/retry, build/types/i18n and system/drift at completion.
+V01 bounded to automation actor, public duplicate_warning and login-CSRF, dependency
+audit and deployment configuration. No broad new audit, source copy, working DB,
+migration, live provider, backup exercise or deployment. No new AI/notification/event
+semantics; existing action/runtime effects preserved. Schema/dependencies unchanged.
+
+12c complete in scoped code/evidence: Analytics background-export history uses all
+server pages with business/kind/status filters,20 default/max100,stable-created_at/-pk.
+Own actor/tenant and current resource VIEW/capability filter before counts/pages;
+detail uses same boundary. Parameters expose only start/end/expected_rows; internal
+fingerprints remain private. Current download/fingerprint guard preserved. UI has
+page/size,dates/rows/status,polling and retry; stale rows hidden on errors. Small
+synchronous CSV creates no job and is honestly excluded from background history.
+
+V01 independent scan940ab8b1-2e07-4cc9-9a23-e62d1118225b completed on initial snapshot
+with two medium findings (high confidence): login-CSRF and scoped automation action
+configuration. Report under C:/Users/user/.codex/state/plugins/codex-security/scans/
+PlatformaCRM/83974049a3077c5d071beffd5140fe5cf30c045c_20261030T195632Z_i_374lxg/report.md.
+Two independent read-only reviewers plus preflight; three hypotheses only, not all
+apps coverage. No source/security rule modifications by reviewers.
+
+Login-CSRF reproduced with enforced checks before fix. csrf_protect inside DRF
+dispatch now protects eight cookie-auth operations. GET /api/auth/csrf/ is noncached
+cookie/token bootstrap. Frontend sends X-CSRFToken within serialized cookie operation
+and rechecks generation after await. Login/social/signup/MFA confirm+verify/refresh/
+logout/password-reset-confirm covered; direct Playwright/smoke clients use same flow.
+Origin/Referer uses standard Django checks; CORS/SameSite are not substitutes.
+
+Owner decision31.10: configuring owner-run actions requires full Business-wide rights
+for each corresponding action, not own/team/branch. Shared validation now requires
+BUSINESS scope and network grant for configuration; preview/save/action CRUD/activation
+covered. Runtime owner stays unchanged. Safe deactivation and transaction rollback
+preserved; no automatic migration/disabling of historical rules.
+
+Public duplicate_warning: current local FU-HIST-02 fix returns constant false and
+12 privacy tests PASS in a separate evidence index. It is other uncommitted work,
+not part of this candidate; published HEAD still lacks that fix. Source hashes in
+privacy-evidence-inputs.json. V01 disposition is locally mitigated, integration open;
+do not claim published public-intake privacy remediation or release acceptance.
+
+Verification uses canonical-path Git-index overlays and disposable isolated SQLite,
+external network denied, candidate.index/taskpaths.json and frontend-snapshot.cjs.
+Commands below from root with .venv/Scripts/python.exe; JSON receipts/logs in
+output/aud-remaining-20261031. Each run_candidate invocation is followed by Django
+command from its same-name JSON; those receipts contain exact labels and exit code.
+
+- run_candidate.py export-history-focused-final test apps.core.tests_export_history
+  apps.core.tests_export_access --noinput:17 PASS. First17 run failed an incorrect
+  operator default VIEW assumption; explicit deny fixture corrected, no policy relaxed.
+- run_candidate.py automation-authority-focused test apps.automations.tests_configuration_authority
+  apps.automations.tests_configuration --noinput:15 PASS at initial guard slice.
+- run_candidate.py csrf-focused test apps.accounts.tests_login_csrf
+  apps.accounts.tests.AuthSecurityBaselineTests apps.accounts.tests_mfa --noinput:47 PASS.
+- run_candidate.py csrf-closure test apps.accounts.tests_login_csrf --noinput:7 PASS
+  after adding reset-confirm protection; valid reset and replay included.
+- backend-dependent.json:63 tests,62 passed and one editor positive fixture failed
+  because it lacked the newly required all-branches grant. Fixture explicitly grants
+  full network access; existing assertions retained. Single failing case PASS in
+  editor-policy-fixture-final; full affected editor suite4 PASS in editor-closure.
+  Unchanged passing dependent cases reused: configuration authority7/action validation,
+  queue/dispatch, device sessions/session policy, export permission/formula and analytics.
+- run_candidate.py system check:PASS; drift makemigrations --check --dry-run:PASS,
+  no changes. No working DB migrations.
+- frontend cwd, NODE_OPTIONS=--require=C:/Users/user/Desktop/PlatformaCRM/output/aud-remaining-20261031/frontend-snapshot.cjs:
+  npm run build:PASS(build-final.log,includes app/widget/types/i18n); npx tsc -b --force:
+  PASS(types-final.log). Existing chunk-size warning retained.
+- node --test scripts/tests/export-history.test.mjs scripts/tests/token-csrf.test.mjs
+  scripts/tests/auth-request.test.mjs:10 PASS(node-final.log). Python unittest
+  scripts.tests.test_api_load_smoke:3 PASS. Playwright --list:1113 tests/97 files
+  discovered(e2e-discovery.log); discovery is not E2E execution.
+- npm audit --json:0 known vulnerabilities/425 dependencies(npm-audit.json).
+  pip-audit against published candidate requirements with --no-deps --disable-pip:
+  0 known vulnerabilities/50 dependencies(pip-audit.json). No dependency installation.
+- Privacy only: build_privacy_evidence.py + run_candidate.py privacy-current-local
+  test apps.leads.tests_public_intake_privacy --noinput:12 PASS using separate
+  privacy-evidence.index; excluded from publication code and other PASS claims.
+
+Browser on own isolated candidate servers (first59207/59208, then50483/50484):
+43 entity jobs pages20/20/3,67 all jobs; oldest download via Enter200,empty filter0,
+reload retains history,503 hides stale rows/retry restores, long-period CSV creates
+new job70 ready10 rows, reader sees only its own job1. RU/KK/EN390px screenshots
+history-{ru,kk,en}-mobile.png. Auth bootstrap503/retry/login200/dashboard/reload refresh/
+logout200 PASS. Temporary servers stopped; no other processes touched. Enforced
+backend CSRF checks prove rejection; no live attack claim.
+
+Deployment read-only review: normal compose publishes backend8000; stand overlay
+resets backend/DB/Redis ports, Caddy80/443/HTTPS/HSTS, forward auth/private-media404,
+required origins/hash/keys. Existing CSRF trusted origins/CORS/secure proxy/cookies
+must match target. Configuration review is not deployed runtime/worker/storage/backup
+proof. Full release/E2E/PG-lock suites skipped: no release certification, new money,
+stock or concurrent write algorithm in scope; existing lifecycle tests reused.
+
+Roadmap/current integration/frontend/access/CRM/operations contracts, affected passports
+and README updated; existing acceptance IDs and other WIP preserved. Product/AI contract
+changes unnecessary: no product-scope/AI change. No new parallel backlog/document authority.
+Working-wide diff hygiene retains one unrelated pre-existing trailing blank line in
+frontend/scripts/tests/route-prefetch.test.mjs; task candidate hygiene passes and that
+foreign file is excluded. No unrelated formatting correction or stage performed.
+12c code/evidence/owner decisions have no remainder. V01 bounded verification complete;
+public privacy integration remains another task's WIP, target/live/release evidence
+remains open. Owned publication and actual CI receipt recorded after push below.
+
+
+
 ## AUD-12b-20261031 — complete import history verified
 
 Publication31.10: 1b25694a4b266191491493935b0d181ab7431bad normal-pushed to

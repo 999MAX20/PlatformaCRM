@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test, type Page } from '@playwright/test';
 import { ru } from '../src/lib/i18n/ru';
 import { kk } from '../src/lib/i18n/kk';
@@ -7,7 +8,7 @@ test.beforeEach(() => test.skip(process.env.E2E_PLATFORM_OVERVIEW !== '1', 'Use 
 test.use({ actionTimeout: 10_000 });
 test.afterEach(async ({ request }, info) => {
   if (process.env.E2E_PLATFORM_OVERVIEW !== '1' || !info.title.includes('self account')) return;
-  const response = await request.post('/api/auth/token/', { data: { email: 'platform_manager@example.com', password: process.env.E2E_PASSWORD || 'ZaniTest123!' } });
+  const response = await authPost(request, '/api/auth/token/', { data: { email: 'platform_manager@example.com', password: process.env.E2E_PASSWORD || 'ZaniTest123!' } });
   expect(response.ok()).toBeTruthy();
   const { access } = await response.json();
   const reset = await request.patch('/api/auth/me/', { headers: { Authorization: `Bearer ${access}` }, data: { full_name: 'Shell manager', preferences: { language: 'ru' } } });

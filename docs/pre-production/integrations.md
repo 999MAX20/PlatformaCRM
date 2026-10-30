@@ -44,8 +44,11 @@ Backend50/Node5/system/drift/build/types/i18n и RU/KK/EN browser PASS на ка
 и RU/KK/EN browser PASS на кандидате от72dda967; опубликовано1b25694a,
 remote SHA подтверждён, CI41118186023 выполняется.
 [Evidence AUD12b](../testing/task-state/PRIMARY-SESSION.md#aud-12b-20261031--complete-import-history-verified).
-Остатка кода/доказательств/решений в12b нет. **AUD-12 остаётся открыт:**12c сохраняемая
-история export jobs. Новые точки входа, live-приёмка и deployment не выполнялись. AUD-18 исправлен
+Остатка кода/доказательств/решений в12b нет. **AUD-12 закрыт в принятом UI scope31.10:**12c добавляет полную историю фоновых
+export jobs, фильтры/страницы/размер/скачивание после reload с текущими правами.
+Backend17 и зависимые проверки, Node4, build/types/i18n и RU/KK/EN browser PASS.
+Малый синхронный CSV не создаёт job. Остатка кода/доказательств/решений в12c нет;
+публикация ожидается. Evidence AUD-REMAINING в PRIMARY. Worker/storage целевой среды отдельно. Новые точки входа, live-приёмка и deployment не выполнялись. AUD-18 исправлен
 27.10: download проверяет fingerprint текущего доступа; legacy/изменённый
 контекст требует нового экспорта. AUD-20 закрыт в локальном scope ниже. Защита ImportJob реализована в AUD-16
 ниже. AUD-21 проверен в локальном PostgreSQL17: конкурентный rollback/recovery

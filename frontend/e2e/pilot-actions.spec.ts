@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test, type Page } from "@playwright/test";
 
 const api = process.env.E2E_API_BASE_URL || "http://127.0.0.1:8000";
@@ -295,7 +296,7 @@ for (const kind of ["resources", "services"] as const) {
 
 test("setup editor deep links reject another company's resource and service", async ({ page, request }) => {
   await ownerSession(page);
-  const login = await request.post(`${api}/api/auth/token/`, { data: {
+  const login = await authPost(request, `${api}/api/auth/token/`, { data: {
     email: process.env.E2E_FOREIGN_OWNER_EMAIL || "foreign_owner@example.com",
     password: process.env.E2E_PASSWORD || "ZaniTest123!",
   } });

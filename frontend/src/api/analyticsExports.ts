@@ -14,6 +14,10 @@ function saveCsv(data: Blob, filename: string) {
 }
 
 export const analyticsExports = {
+  history: async (params: { business: Id; page: number; page_size: number; kind?: string; status?: string }) => {
+    const { data } = await apiClient.get<{ count: number; results: AnalyticsExportJob[] }>("/api/export-jobs/", { params });
+    return data;
+  },
   request: async (business: Id, period: AnalyticsPeriod, report: WorkspaceReport): Promise<AnalyticsExportJob | null> => {
     const response = await apiClient.get<Blob>("/api/analytics/reports/export/", {
       params: { business, ...period, report }, responseType: "blob",

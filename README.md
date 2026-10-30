@@ -1,5 +1,14 @@
 # PlatformaCRM
 
+Authentication API clients: first GET `/api/auth/csrf/`, retaining cookies;
+then send the returned `csrf_token` as `X-CSRFToken` with the same cookie jar for
+login, refresh, logout, social login, owner signup, MFA confirm/verify and password
+reset confirmation. HTTPS clients must also send their valid Origin/Referer.
+Separate frontend origins must be explicitly allowed by CORS and CSRF settings.
+The frontend, Playwright `authPost` helper and `scripts/api_load_smoke.py` implement
+this flow. Ordinary bearer API authorization is unchanged.
+
+
 CRM для малого бизнеса с AI-слоем. Первый целевой пользователь — администратор
 стоматологии. Система ведёт обращения, клиентов, сделки, задачи, запись к
 специалистам и переписку; клиентский AI помогает обрабатывать обращения поверх

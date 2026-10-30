@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test, type Page } from "@playwright/test";
 
 const api = process.env.E2E_API_BASE_URL || "http://127.0.0.1:8000";
@@ -268,7 +269,7 @@ for (const action of ["create_lead", "create_deal", "create_appointment", "creat
 test("client creation intent rejects foreign clients in all four workspaces", async ({ page, request }) => {
   const fixture = await leadFixture(page);
   // A second account must not replace the browser's refresh cookie.
-  const foreignLogin = await request.post(`${api}/api/auth/token/`, { data: {
+  const foreignLogin = await authPost(request, `${api}/api/auth/token/`, { data: {
     email: process.env.E2E_FOREIGN_OWNER_EMAIL || "foreign_owner@example.com",
     password: process.env.E2E_PASSWORD || "ZaniTest123!",
   } });

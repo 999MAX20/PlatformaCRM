@@ -5,6 +5,11 @@ export type WorkspaceReport = "workspace_overview" | "workspace_sources" | "work
 export type AnalyticsExportJob = {
   id: Id; status: "pending" | "running" | "succeeded" | "failed";
   download_url: string | null;
+  kind: "entity" | "analytics_report";
+  export_key: string;
+  created_at: string;
+  row_count: number;
+  parameters_json: { start?: string; end?: string; expected_rows?: number };
 };
 export type AnalyticsWorkspace = {
   business: Id;

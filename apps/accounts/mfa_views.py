@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 
 from apps.accounts.auth_views import clear_refresh_cookie, record_login, record_security_event, set_refresh_cookie
+from apps.accounts.csrf import AuthCookieCsrfMixin
 from apps.accounts.mfa import (
     begin_authenticated_enrollment,
     challenge_user,
@@ -52,7 +53,7 @@ class MfaEnrollmentStartView(APIView):
         return Response(payload)
 
 
-class MfaEnrollmentConfirmView(APIView):
+class MfaEnrollmentConfirmView(AuthCookieCsrfMixin, APIView):
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "auth_mfa"
@@ -80,7 +81,7 @@ class MfaEnrollmentConfirmView(APIView):
         )
         return _session_response(refresh, extra={"recovery_codes": recovery_codes})
 
-class MfaVerifyView(APIView):
+class MfaVerifyView(AuthCookieCsrfMixin, APIView):
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "auth_mfa"

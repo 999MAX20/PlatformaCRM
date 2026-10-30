@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test, type Page } from "@playwright/test";
 
 const password = process.env.E2E_PASSWORD || "ZaniTest123!";
@@ -15,7 +16,7 @@ type OwnerDashboardMetricsPayload = {
 };
 
 async function apiLogin(page: Page) {
-  let response = await page.request.post(`${apiBaseURL}/api/auth/token/`, {
+  let response = await authPost(page.request, `${apiBaseURL}/api/auth/token/`, {
     data: { email: ownerEmail, password },
   });
   for (
@@ -24,7 +25,7 @@ async function apiLogin(page: Page) {
     attempt += 1
   ) {
     await page.waitForTimeout(10_000);
-    response = await page.request.post(`${apiBaseURL}/api/auth/token/`, {
+    response = await authPost(page.request, `${apiBaseURL}/api/auth/token/`, {
       data: { email: ownerEmail, password },
     });
   }

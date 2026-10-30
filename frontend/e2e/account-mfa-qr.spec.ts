@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { createHmac } from "node:crypto";
 import { expect, test } from "@playwright/test";
 import jsQR from "jsqr";
@@ -87,9 +88,9 @@ test("scan QR, reject bad code, enroll and sign in with TOTP", async ({ page }) 
     await expect(page).toHaveURL(/\/app/);
     expect(external).toEqual([]);
   } finally {
-    const login = await page.request.post("/api/auth/token/", { data: { email, password } });
+    const login = await authPost(page.request, "/api/auth/token/", { data: { email, password } });
     const pending = await login.json();
-    const verified = await page.request.post("/api/auth/mfa/verify/", { data: { challenge_token: pending.challenge_token, code: confirmed.recovery_codes[0] } });
+    const verified = await authPost(page.request, "/api/auth/mfa/verify/", { data: { challenge_token: pending.challenge_token, code: confirmed.recovery_codes[0] } });
     const session = await verified.json();
     const disabled = await page.request.post("/api/auth/mfa/disable/", { headers: { Authorization: `Bearer ${session.access}` }, data: { password, code: confirmed.recovery_codes[1], reason: "Isolated QR test cleanup" } });
     expect(disabled.ok()).toBeTruthy();

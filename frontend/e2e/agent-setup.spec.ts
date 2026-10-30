@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test } from "@playwright/test";
 
 test("untouched agent draft permits navigation but actual edits require discard", async ({ page }, testInfo) => {
@@ -5,7 +6,7 @@ test("untouched agent draft permits navigation but actual edits require discard"
   const email = process.env.E2E_OWNER_EMAIL || "business_owner@example.com";
   const password = process.env.E2E_PASSWORD || "ZaniTest123!";
   const api = process.env.E2E_API_BASE_URL || "http://127.0.0.1:8000";
-  const tokenResponse = await page.request.post(`${api}/api/auth/token/`, { data: { email, password } });
+  const tokenResponse = await authPost(page.request, `${api}/api/auth/token/`, { data: { email, password } });
   expect(tokenResponse.ok()).toBeTruthy();
   const { access } = await tokenResponse.json();
   const headers = { Authorization: `Bearer ${access}` };

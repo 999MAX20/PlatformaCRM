@@ -1,9 +1,10 @@
+import { authPost } from "./support/auth-request";
 import { expect, test } from "@playwright/test";
 
 const api = process.env.E2E_API_BASE_URL || "http://127.0.0.1:8000";
 
 test("new employee accepts a manual invitation and logs into only the invited business", async ({ page }) => {
-  const ownerLogin = await page.request.post(`${api}/api/auth/token/`, {
+  const ownerLogin = await authPost(page.request, `${api}/api/auth/token/`, {
     data: { email: process.env.E2E_OWNER_EMAIL || "business_owner@example.com", password: process.env.E2E_PASSWORD || "ZaniTest123!" },
   });
   expect(ownerLogin.ok()).toBeTruthy();

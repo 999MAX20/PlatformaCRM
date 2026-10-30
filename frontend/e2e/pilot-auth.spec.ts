@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test } from "@playwright/test";
 
 const api = process.env.E2E_API_BASE_URL || "http://127.0.0.1:8000";
@@ -46,9 +47,9 @@ test("owner signup and password change persist and invalidate old credentials", 
   const changed = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/auth/change-password/"));
   await dialog.getByRole("button", { name: "Изменить пароль", exact: true }).click();
   expect((await changed).ok()).toBeTruthy();
-  const rejected = await page.request.post(`${api}/api/auth/token/`, { data: { email, password } });
+  const rejected = await authPost(page.request, `${api}/api/auth/token/`, { data: { email, password } });
   expect(rejected.status()).toBe(401);
-  const accepted = await page.request.post(`${api}/api/auth/token/`, { data: { email, password: replacement } });
+  const accepted = await authPost(page.request, `${api}/api/auth/token/`, { data: { email, password: replacement } });
   expect(accepted.ok()).toBeTruthy();
   const me = await page.request.get(`${api}/api/auth/me/`, { headers: { Authorization: `Bearer ${(await accepted.json()).access}` } });
   expect(me.ok()).toBeTruthy();

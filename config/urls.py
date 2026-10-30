@@ -8,6 +8,7 @@ from apps.integrations.ycloud.api import YCloudSetupView, YCloudWebhookView
 from rest_framework.routers import DefaultRouter
 
 from apps.accounts.auth_views import LogoutView, ThrottledTokenObtainPairView, ThrottledTokenRefreshView
+from apps.accounts.csrf import auth_csrf
 from apps.accounts.mfa_views import (
     MfaDisableView,
     MfaEnrollmentConfirmView,
@@ -231,6 +232,7 @@ urlpatterns = [
     path("health/db/", health_db, name="health_db"),
     path("ready/", readiness, name="readiness"),
     path("admin/", admin.site.urls),
+    path("api/auth/csrf/", auth_csrf, name="auth_csrf"),
     path("api/auth/token/", ThrottledTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/token/refresh/", ThrottledTokenRefreshView.as_view(), name="token_refresh"),
     path("api/auth/logout/", LogoutView.as_view(), name="auth_logout"),

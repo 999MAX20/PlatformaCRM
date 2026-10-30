@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { createHmac } from "node:crypto";
 import { expect, test } from "@playwright/test";
 
@@ -19,7 +20,7 @@ test("MFA enrollment, recovery-code login and authorized disable persist through
   test.setTimeout(90_000);
   const email = `pilot-mfa-${Date.now()}@example.com`;
   const password = "PilotMfaAccount928!";
-  const registered = await page.request.post(`${api}/api/auth/signup/owner/`, {
+  const registered = await authPost(page.request, `${api}/api/auth/signup/owner/`, {
     data: { accepted_documents: ["terms", "privacy", "personal-data", "company-data"], email, password, full_name: "Pilot MFA owner", business_name: `Pilot MFA ${Date.now()}`, phone: "+77770009911" },
   });
   expect(registered.status()).toBe(201);
@@ -76,7 +77,7 @@ test("existing MFA account returns to its invitation and accepts the intended bu
   const email = `pilot-invite-mfa-${stamp}@example.com`;
   const password = "PilotInviteMfa928!";
   const signup = async (address: string) => {
-    const response = await page.request.post(`${api}/api/auth/signup/owner/`, {
+    const response = await authPost(page.request, `${api}/api/auth/signup/owner/`, {
       data: { accepted_documents: ["terms", "privacy", "personal-data", "company-data"], email: address, password, full_name: "Pilot invited owner", business_name: address, phone: "+77770009922" },
     });
     expect(response.status()).toBe(201);
@@ -86,7 +87,7 @@ test("existing MFA account returns to its invitation and accepts the intended bu
   const start = await page.request.post(`${api}/api/auth/mfa/enrollment/start/`, { headers: { Authorization: `Bearer ${invitee.access}` }, data: {} });
   expect(start.ok()).toBeTruthy();
   const enrollment = await start.json();
-  const confirmation = await page.request.post(`${api}/api/auth/mfa/enrollment/confirm/`, { data: { challenge_token: enrollment.challenge_token, code: currentTotp(enrollment.manual_key) } });
+  const confirmation = await authPost(page.request, `${api}/api/auth/mfa/enrollment/confirm/`, { data: { challenge_token: enrollment.challenge_token, code: currentTotp(enrollment.manual_key) } });
   expect(confirmation.ok()).toBeTruthy();
   const codes = (await confirmation.json()).recovery_codes;
   const inviter = await signup(`pilot-inviter-${stamp}@example.com`);

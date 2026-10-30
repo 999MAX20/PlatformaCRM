@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 import argparse
+from http.cookiejar import CookieJar
 from datetime import datetime, timezone
 import json
 from pathlib import Path
 import statistics
 import sys
 import time
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 import urllib.error
 import urllib.request
 
 
-def request_json(method, url, token=None, payload=None, timeout=15):
+def request_json(method, url, token=None, payload=None, timeout=15, *, opener=None, csrf_token=None):
     data = None
     headers = {"Accept": "application/json"}
     if payload is not None:
@@ -19,9 +20,14 @@ def request_json(method, url, token=None, payload=None, timeout=15):
         headers["Content-Type"] = "application/json"
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    if csrf_token:
+        origin = urlsplit(url)
+        headers["Origin"] = f"{origin.scheme}://{origin.netloc}"
+        headers["X-CSRFToken"] = csrf_token
     request = urllib.request.Request(url, data=data, headers=headers, method=method)
     started = time.perf_counter()
-    with urllib.request.urlopen(request, timeout=timeout) as response:
+    open_request = opener.open if opener else urllib.request.urlopen
+    with open_request(request, timeout=timeout) as response:
         body = response.read()
     elapsed_ms = (time.perf_counter() - started) * 1000
     return elapsed_ms, json.loads(body.decode("utf-8") or "{}")
@@ -68,11 +74,18 @@ def main():
 
     base_url = args.api_base_url.rstrip("/")
     started_at = datetime.now(timezone.utc).isoformat()
+    auth_opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(CookieJar()))
+    _, csrf_payload = request_json("GET", f"{base_url}/api/auth/csrf/", timeout=args.timeout, opener=auth_opener)
+    csrf_token = csrf_payload.get("csrf_token")
+    if not csrf_token:
+        raise SystemExit("Authentication bootstrap did not return a CSRF token.")
     login_ms, token_payload = request_json(
         "POST",
         f"{base_url}/api/auth/token/",
         payload={"email": args.email, "password": args.password},
         timeout=args.timeout,
+        opener=auth_opener,
+        csrf_token=csrf_token,
     )
     token = token_payload.get("access")
     if not token:

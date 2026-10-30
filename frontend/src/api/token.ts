@@ -7,6 +7,15 @@ import { readSessionIdentity, SessionIdentityChangedError } from "./sessionIdent
 const baseURL = import.meta.env.VITE_API_URL || "";
 const cookieRequestOptions = { withCredentials: true, timeout: 20_000 };
 
+async function csrfCookieOptions(generation?: number) {
+  // Fetch inside the serialized cookie operation: sibling tabs and expired
+  // CSRF cookies must not leave this request using a stale cached token.
+  const { data } = await axios.get<{ csrf_token: string }>(`${baseURL}/api/auth/csrf/`, cookieRequestOptions);
+  if (generation !== undefined) assertCurrentSession(generation);
+  if (!data.csrf_token) throw new Error("Missing authentication CSRF token");
+  return { ...cookieRequestOptions, headers: { "X-CSRFToken": data.csrf_token } };
+}
+
 export function assertCurrentSession(generation: number | undefined) {
   if (generation !== tokenStorage.getGeneration()) {
     throw new axios.CanceledError("Authentication session changed");
@@ -135,7 +144,7 @@ export type PasswordResetConfirmPayload = {
 
 export async function loginWithCredentials(payload: LoginPayload) {
   const generation = beginLogin();
-  const { data } = await sessionCookieRequest(generation, () => axios.post<TokenPair | MfaPendingResponse>(`${baseURL}/api/auth/token/`, payload, cookieRequestOptions));
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<TokenPair | MfaPendingResponse>(`${baseURL}/api/auth/token/`, payload, await csrfCookieOptions(generation)));
   assertCurrentSession(generation);
   if (isMfaPendingResponse(data)) return data;
   tokenStorage.setAccess(data.access);
@@ -145,10 +154,10 @@ export async function loginWithCredentials(payload: LoginPayload) {
 
 export async function loginWithSocial(payload: SocialLoginPayload) {
   const generation = beginLogin();
-  const { data } = await sessionCookieRequest(generation, () => axios.post<SocialLoginResponse | MfaPendingResponse>(`${baseURL}/api/auth/social/`, {
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<SocialLoginResponse | MfaPendingResponse>(`${baseURL}/api/auth/social/`, {
     provider: payload.provider,
     id_token: payload.idToken,
-  }, cookieRequestOptions));
+  }, await csrfCookieOptions(generation)));
   assertCurrentSession(generation);
   if (isMfaPendingResponse(data)) return data;
   tokenStorage.setAccess(data.access);
@@ -157,7 +166,7 @@ export async function loginWithSocial(payload: SocialLoginPayload) {
 
 export async function signupOwner(payload: OwnerSignupPayload) {
   const generation = beginLogin();
-  const { data } = await sessionCookieRequest(generation, () => axios.post<SignupOwnerResponse | MfaPendingResponse>(`${baseURL}/api/auth/signup/owner/`, payload, cookieRequestOptions));
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<SignupOwnerResponse | MfaPendingResponse>(`${baseURL}/api/auth/signup/owner/`, payload, await csrfCookieOptions(generation)));
   assertCurrentSession(generation);
   if (isMfaPendingResponse(data)) return data;
   tokenStorage.setAccess(data.access);
@@ -172,10 +181,10 @@ export async function requestPasswordReset(payload: PasswordResetRequestPayload)
 
 export async function confirmPasswordReset(payload: PasswordResetConfirmPayload) {
   const generation = tokenStorage.getGeneration();
-  const { data } = await sessionCookieRequest(generation, () => axios.post<{ ok: boolean }>(
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<{ ok: boolean }>(
     `${baseURL}/api/auth/password-reset/confirm/`,
     payload,
-    cookieRequestOptions,
+    await csrfCookieOptions(generation),
   ));
   return data;
 }
@@ -202,7 +211,7 @@ export function refreshToken({ activity = false }: { activity?: boolean } = {}):
       .post<{ access: string }>(
         `${baseURL}/api/auth/token/refresh/`,
         activity ? { activity: true } : {},
-        cookieRequestOptions,
+        await csrfCookieOptions(generation),
       );
   })
       .then(({ data }) => {
@@ -219,7 +228,7 @@ export function refreshToken({ activity = false }: { activity?: boolean } = {}):
 }
 
 export async function clearRefreshCookie() {
-  await sessionCookieRequest(undefined, () => axios.post(`${baseURL}/api/auth/logout/`, {}, cookieRequestOptions));
+  await sessionCookieRequest(undefined, async () => axios.post(`${baseURL}/api/auth/logout/`, {}, await csrfCookieOptions()));
 }
 
 export function isMfaPendingResponse(value: unknown): value is MfaPendingResponse {
@@ -252,10 +261,10 @@ export function startMfaEnrollment(challengeToken?: string) {
 export async function confirmMfaEnrollment(challengeToken: string, code: string) {
   const generation = tokenStorage.getGeneration();
   try {
-    const { data } = await sessionCookieRequest(generation, () => axios.post<MfaSessionResponse>(
+    const { data } = await sessionCookieRequest(generation, async () => axios.post<MfaSessionResponse>(
       `${baseURL}/api/auth/mfa/enrollment/confirm/`,
       { challenge_token: challengeToken, code },
-      cookieRequestOptions,
+      await csrfCookieOptions(generation),
     ));
     assertCurrentSession(generation);
     tokenStorage.setAccess(data.access);
@@ -267,10 +276,10 @@ export async function confirmMfaEnrollment(challengeToken: string, code: string)
 
 export async function verifyMfaLogin(challengeToken: string, code: string) {
   const generation = tokenStorage.getGeneration();
-  const { data } = await sessionCookieRequest(generation, () => axios.post<MfaSessionResponse>(
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<MfaSessionResponse>(
     `${baseURL}/api/auth/mfa/verify/`,
     { challenge_token: challengeToken, code },
-    cookieRequestOptions,
+    await csrfCookieOptions(generation),
   ));
   assertCurrentSession(generation);
   tokenStorage.setAccess(data.access);

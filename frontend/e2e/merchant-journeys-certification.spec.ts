@@ -1,3 +1,4 @@
+import { authPost } from "./support/auth-request";
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
@@ -115,7 +116,7 @@ test.describe("FC-006 pilot merchant journeys", () => {
     const manager = members.find(member => member.role === "manager")!;
     const owner = members.find(member => member.role === "owner")!;
     expect(operator && manager && owner).toBeTruthy();
-    const oldSession = await request.post(`${apiBaseURL}/api/auth/token/`, { data: { email: operatorEmail, password } });
+    const oldSession = await authPost(request, `${apiBaseURL}/api/auth/token/`, { data: { email: operatorEmail, password } });
     expect(oldSession.ok()).toBeTruthy();
     const oldHeaders = authHeaders(await oldSession.json());
     const taskResponse = await page.request.post(`${apiBaseURL}/api/tasks/`, {

@@ -4,12 +4,14 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.automations.condition_fields import ENTITY_TYPE_BY_TRIGGER
 from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.assignment_policy import assert_assignment_allowed
 from apps.businesses.capabilities import assert_resource_enabled
+from apps.businesses.models import RolePermission
+from apps.branches.access import assert_network_grant
 from apps.notifications.models import Notification
 from apps.tasks.models import Task
 
@@ -35,6 +37,16 @@ def _integer(value, field, *, minimum=1):
     if number < minimum or number > 2147483647:
         raise ValidationError({field: "Value is outside the supported range."})
     return number
+
+
+def _assert_action_authority(actor, business, resource, action, *, entity=None):
+    permission = assert_can(actor, business, resource, action, obj=entity if action == Actions.UPDATE else None)
+    if entity is None:
+        # A persisted rule runs as owner on future events, not only on entities
+        # currently assigned to its configurator or in their selected branches.
+        if permission.scope != RolePermission.Scopes.BUSINESS:
+            raise PermissionDenied("Configuring this automation action requires business-wide permission.")
+        assert_network_grant(actor, business)
 
 
 def validate_action_config(*, action_type, config, delay_seconds=0, business, trigger_type,
@@ -106,17 +118,17 @@ def validate_action_config(*, action_type, config, delay_seconds=0, business, tr
             raise ValidationError({"action_type": "Assignment is not supported for this trigger."})
         assignment_resource = resource
         assert_resource_enabled(business, resource)
-        assert_can(actor, business, resource, Actions.UPDATE, obj=entity)
+        _assert_action_authority(actor, business, resource, Actions.UPDATE, entity=entity)
     elif action_type in {"create_task", "create_follow_up"}:
         assignment_resource = Resources.TASKS
         assert_resource_enabled(business, Resources.TASKS)
-        assert_can(actor, business, Resources.TASKS, Actions.CREATE)
+        _assert_action_authority(actor, business, Resources.TASKS, Actions.CREATE, entity=entity)
     elif action_type == "create_notification":
-        assert_can(actor, business, Resources.NOTIFICATIONS, Actions.MANAGE)
+        _assert_action_authority(actor, business, Resources.NOTIFICATIONS, Actions.MANAGE, entity=entity)
     elif action_type == "add_note":
-        assert_can(actor, business, Resources.CLIENTS, Actions.CREATE)
+        _assert_action_authority(actor, business, Resources.CLIENTS, Actions.CREATE, entity=entity)
         if resource:
-            assert_can(actor, business, resource, Actions.UPDATE, obj=entity)
+            _assert_action_authority(actor, business, resource, Actions.UPDATE, entity=entity)
     for field in user_fields:
         user = get_user_model().objects.filter(pk=result[field], is_active=True).first()
         if user is None or (user.pk != business.owner_id and not business.members.filter(user=user, is_active=True).exists()):
