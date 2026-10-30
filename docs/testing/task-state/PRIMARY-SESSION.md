@@ -8,12 +8,23 @@
 
 ## AUD-REMAINING-20261031 — AUD-12c and AUD-V01
 
+Publication31.10: code+contracts commit0db46068c786dd8d3eeaec64142093307c1f1855
+normal-pushed to origin/main; remote SHA matched.60 reviewed paths, exact staged
+tree d8cb45fb7181a1dcaeaa54e959f283643013cc97 matched verified candidate.161 unrelated
+baseline files unchanged; foreign docs hunks preserved through HEAD projections.
+Candidate/real83974049..0db46068 hygiene and added links PASS. Empty stale index.lock
+from00:52 moved to task output after verifying no Git process; no foreign stage.
+CI41127057520 in_progress at receipt, no green claim:
+https://github.com/999MAX20/PlatformaCRM/actions/runs/41127057520
+Canonical root/current branch retained. No owned code/evidence/publication remainder;
+privacy fix integration belongs to separate WIP; live/release acceptance still open.
+
 Owner authorized both remaining AUD items in one cycle31.10. Mode implementation
 plus bounded independent verification. Canonical C:/Users/user/Desktop/PlatformaCRM,
 branch codex/ui-testing-toolkit, base83974049a3077c5d071beffd5140fe5cf30c045c.
 Starting WIP snapshot: output/aud-remaining-20261031/manifest.json,before/,starting.patch.
 Only task-owned code and projected documentation are publication candidates.
-Publication pending; this section records local verification, not release readiness.
+Published0db46068; this section records scoped verification/publication, not release readiness.
 
 Plan/acceptance: reuse persisted ExportJob/worker/fingerprint and shared pagination;
 complete history/current download after reload, server filters before pages, current

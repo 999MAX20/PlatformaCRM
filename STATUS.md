@@ -18,7 +18,8 @@ CRM-C21/live/release acceptance открыты. Чужой WIP сохранён.
 
 AUD-REMAINING-20261031: AUD12c history and bounded AUDV01 review verified locally.
 Login-CSRF and automation authority fixed; owner-run policy retained. Build/types/
-i18n, focused/dependent backend and RU/KK/EN browser PASS. Publication pending.
+i18n, focused/dependent backend and RU/KK/EN browser PASS. Published0db46068;
+remote SHA confirmed, CI41127057520 in progress.
 Public-intake privacy fix is other local WIP, excluded from publication; live/release
 acceptance remains open. No working DB/deployment. Evidence in PRIMARY.
 

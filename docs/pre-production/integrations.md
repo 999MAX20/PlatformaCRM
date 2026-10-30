@@ -48,7 +48,7 @@ remote SHA подтверждён, CI41118186023 выполняется.
 export jobs, фильтры/страницы/размер/скачивание после reload с текущими правами.
 Backend17 и зависимые проверки, Node4, build/types/i18n и RU/KK/EN browser PASS.
 Малый синхронный CSV не создаёт job. Остатка кода/доказательств/решений в12c нет;
-публикация ожидается. Evidence AUD-REMAINING в PRIMARY. Worker/storage целевой среды отдельно. Новые точки входа, live-приёмка и deployment не выполнялись. AUD-18 исправлен
+опубликовано0db46068, remote SHA подтверждён, CI41127057520 выполняется. Evidence AUD-REMAINING в PRIMARY. Worker/storage целевой среды отдельно. Новые точки входа, live-приёмка и deployment не выполнялись. AUD-18 исправлен
 27.10: download проверяет fingerprint текущего доступа; legacy/изменённый
 контекст требует нового экспорта. AUD-20 закрыт в локальном scope ниже. Защита ImportJob реализована в AUD-16
 ниже. AUD-21 проверен в локальном PostgreSQL17: конкурентный rollback/recovery
