@@ -124,6 +124,18 @@ class ImportJobSerializer(serializers.ModelSerializer):
     source_file = serializers.FileField(write_only=True)
     actor_email = serializers.EmailField(source="actor.email", read_only=True)
     summary_json = serializers.SerializerMethodField()
+    mapping_fields = serializers.SerializerMethodField()
+    errors_json = serializers.SerializerMethodField()
+
+    def get_mapping_fields(self, obj):
+        from apps.core.import_export import FIELDS_BY_ENTITY
+
+        return FIELDS_BY_ENTITY.get(obj.entity_type, [])
+
+    def get_errors_json(self, obj):
+        rows = (obj.errors_json or {}).get("rows") or []
+        return {"rows": rows[:50], "count": len(rows)}
+
 
     def to_internal_value(self, data):
         if not isinstance(data, dict):
@@ -145,6 +157,7 @@ class ImportJobSerializer(serializers.ModelSerializer):
             "original_filename",
             "status",
             "mapping_json",
+            "mapping_fields",
             "preview_json",
             "duplicates_json",
             "errors_json",

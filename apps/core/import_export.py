@@ -745,7 +745,7 @@ def validate_import_rows(entity_type, rows, mapping):
                 errors.append({"row": index, "field": "duration_minutes", "message": "Duration must be a positive integer."})
             if payload.get("stock_quantity") and parse_decimal(payload["stock_quantity"]) is None:
                 errors.append({"row": index, "field": "stock_quantity", "message": "Stock quantity must be a number."})
-    return errors[:50]
+    return errors
 
 
 def readable_import_error(row_errors):

@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, FileSpreadsheet, Upload } from "lucide-react";
+import { FileSpreadsheet, Upload } from "lucide-react";
 
 import { getApiErrorMessage } from "../../../api/client";
 import { importExportApi, type ImportEntity } from "../../../api/importExport";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
-import { ErrorState } from "../../../components/ui/StateViews";
+import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import { StatusNotice } from "../../../components/ui/StatusNotice";
 import { cn } from "../../../lib/cn";
 import { useI18n } from "../../../lib/i18n";
 import type { Id, ImportJob } from "../../../types";
+
+import { hasPermission } from "../../../lib/permissions";
+import { useAuth } from "../../auth/AuthProvider";
+import { ImportJobReview } from "./ImportJobReview";
 
 type Translate = ReturnType<typeof useI18n>["t"];
 
@@ -39,31 +43,42 @@ function ImportMetric({ label, value, tone = "default" }: { label: string; value
 
 const importEntities: ImportEntity[] = ["clients", "leads", "deals", "sales", "catalog"];
 
-export function ImportPanel({
-  businessId,
-  allowedEntities = importEntities,
-  initialEntity,
-  onImported,
-}: {
+type ImportPanelProps = {
   businessId: Id;
   allowedEntities?: ImportEntity[];
   initialEntity?: ImportEntity;
   onImported?: (job: ImportJob) => void;
+};
+
+export function ImportPanel(props: ImportPanelProps) {
+  const { user } = useAuth();
+  if (!user) return null;
+  return <ScopedImportPanel key={`${user.id}:${props.businessId}:${props.allowedEntities?.join(",")}:${props.initialEntity}`} {...props} userId={user.id} />;
+}
+
+function ScopedImportPanel(props: ImportPanelProps & { userId: Id }) {
+  const allowed = props.allowedEntities?.length ? props.allowedEntities : importEntities;
+  const [entity, setEntity] = useState<ImportEntity>(props.initialEntity && allowed.includes(props.initialEntity) ? props.initialEntity : allowed[0]);
+  return <ImportPanelBody key={entity} {...props} normalizedEntities={allowed} entity={entity} setEntity={setEntity} />;
+}
+
+function ImportPanelBody({ businessId, userId, normalizedEntities, entity, setEntity, onImported }: ImportPanelProps & {
+  userId: Id; normalizedEntities: ImportEntity[]; entity: ImportEntity; setEntity: (entity: ImportEntity) => void;
 }) {
   const { t } = useI18n();
+  const { user } = useAuth();
+  const canCreate = hasPermission(user, businessId, entity === "sales" || entity === "catalog" ? "integrations" : entity, "create");
   const queryClient = useQueryClient();
-  const normalizedEntities = allowedEntities.length ? allowedEntities : importEntities;
-  const [entity, setEntity] = useState<ImportEntity>(
-    initialEntity && normalizedEntities.includes(initialEntity)
-      ? initialEntity
-      : normalizedEntities[0],
-  );
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const [fileKey, setFileKey] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [activeJob, setActiveJob] = useState<ImportJob | null>(null);
 
   const jobsQuery = useQuery({
-    queryKey: ["import-jobs", businessId],
+    queryKey: ["import-jobs", userId, businessId],
     queryFn: () => importExportApi.importJobs(businessId),
+    retry: false,
   });
 
   const upload = useMutation({
@@ -72,37 +87,38 @@ export function ImportPanel({
       return importExportApi.upload({ business: businessId, entity, file });
     },
     onSuccess: (job) => {
+      if (!mounted.current) return;
       setActiveJob(job);
       setFile(null);
+      setFileKey(value => value + 1);
       queryClient.invalidateQueries({ queryKey: ["import-jobs"] });
     },
   });
 
-  const confirm = useMutation({
-    mutationFn: (jobId: Id) => importExportApi.confirm(jobId),
-    onSuccess: (job) => {
-      setActiveJob(job);
-      queryClient.invalidateQueries({ queryKey: ["import-jobs"] });
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      queryClient.invalidateQueries({ queryKey: ["leads"] });
-      queryClient.invalidateQueries({ queryKey: ["deals"] });
-      queryClient.invalidateQueries({ queryKey: ["services"] });
-      queryClient.invalidateQueries({ queryKey: ["connector-sync-runs"] });
-      onImported?.(job);
-    },
-  });
+  function updateJob(job: ImportJob) {
+    if (!mounted.current) return;
+    setActiveJob(job);
+    queryClient.invalidateQueries({ queryKey: ["import-jobs"] });
+  }
+  function imported(job: ImportJob) {
+    if (!mounted.current) return;
+    updateJob(job);
+    for (const key of ["clients", "leads", "deals", "services", "connector-sync-runs"]) {
+      queryClient.invalidateQueries({ queryKey: [key] });
+    }
+    onImported?.(job);
+  }
 
   const template = useMutation({
     mutationFn: importExportApi.downloadTemplate,
   });
 
-  const jobs = jobsQuery.data || [];
-  const selected = activeJob || jobs[0];
+  const jobs = (jobsQuery.isError ? [] : jobsQuery.data || []).filter(job => String(job.business) === String(businessId) && job.entity_type === entity);
+  const selected = jobsQuery.isError ? undefined : activeJob || jobs[0];
   const errors = selected?.errors_json?.rows || [];
   const duplicates = selected?.duplicates_json?.rows || [];
-  const previewRows = selected?.preview_json?.rows || [];
   const summary = selected?.summary_json || selected?.preview_json?.import_summary;
-  const importError = jobsQuery.error || upload.error || confirm.error || template.error;
+  const importError = jobsQuery.error || upload.error || template.error;
   const entityOptions = [
     { value: "clients", label: t("integrations.import.clients") },
     { value: "leads", label: t("integrations.import.leads") },
@@ -112,7 +128,10 @@ export function ImportPanel({
   ].filter((option) => normalizedEntities.includes(option.value as ImportEntity));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" onKeyDown={event => {
+      // Select handles Escape first; keep that key from closing the import dialog.
+      if (event.key === "Escape" && event.defaultPrevented) event.stopPropagation();
+    }}>
       <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
         <p className="text-sm font-semibold text-platforma-ink">Excel / CSV</p>
         <p className="mt-1 text-sm font-medium leading-6 text-platforma-muted">
@@ -120,19 +139,23 @@ export function ImportPanel({
         </p>
       </div>
 
-      {importError ? <ErrorState error={importError} message={getApiErrorMessage(importError)} /> : null}
+      {importError ? <ErrorState error={importError} message={getApiErrorMessage(importError)} action={jobsQuery.isError ? <Button variant="secondary" onClick={() => jobsQuery.refetch()}>{t("common.retry")}</Button> : undefined} /> : null}
+      {jobsQuery.isPending ? <LoadingState /> : null}
 
       <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
         <div className="grid gap-3 lg:grid-cols-[180px_1fr_auto_auto]">
           <Select
             data-testid="import-entity"
+            aria-label={t("integrations.import.entity")}
             value={entity}
             disabled={entityOptions.length === 1}
             onChange={(event) => setEntity(event.target.value as ImportEntity)}
             options={entityOptions}
           />
           <Input
+            key={fileKey}
             data-testid="import-file"
+            aria-label={t("integrations.import.chooseFile")}
             type="file"
             accept=".csv,.xlsx"
             onChange={(event) => setFile(event.target.files?.[0] || null)}
@@ -143,7 +166,7 @@ export function ImportPanel({
           <Button
             data-testid="import-preview"
             type="button"
-            disabled={!file}
+            disabled={!canCreate || !file || upload.isPending}
             isLoading={upload.isPending}
             onClick={() => upload.mutate()}
           >
@@ -159,23 +182,14 @@ export function ImportPanel({
             <p className="mt-1 text-sm text-platforma-muted">
               {selected
                 ? t("integrations.import.fileMeta", {
-                    entity: selected.entity_type,
+                    entity: entityOptions.find(option => option.value === selected.entity_type)?.label || selected.entity_type,
                     rows: selected.total_rows,
                     status: importStatusLabel(selected.status, t),
                   })
                 : t("integrations.import.noFileSelectedText")}
             </p>
           </div>
-          {selected?.status === "previewed" && !errors.length ? (
-            <Button
-              data-testid="import-confirm"
-              type="button"
-              isLoading={confirm.isPending}
-              onClick={() => confirm.mutate(selected.id)}
-            >
-              <CheckCircle2 size={16} /> {t("integrations.import.import")}
-            </Button>
-          ) : null}
+
         </div>
 
         {selected ? (
@@ -185,25 +199,6 @@ export function ImportPanel({
             <ImportMetric label={t("integrations.import.summaryDuplicates")} value={summary?.duplicates ?? duplicates.length} />
             <ImportMetric label={t("integrations.import.summaryImported")} value={summary?.imported ?? selected.imported_count} tone={selected.status === "imported" ? "success" : "default"} />
           </div>
-        ) : null}
-
-        {errors.length ? (
-          <StatusNotice
-            className="mt-4"
-            tone="danger"
-            title={t("integrations.import.fixFileShort")}
-            details={(
-              <ul className="space-y-1 text-xs font-semibold text-platforma-danger">
-                {errors.slice(0, 5).map((item, index) => (
-                  <li key={`${item.row}-${item.field}-${index}`}>
-                    {item.row > 0
-                      ? t("integrations.import.rowNeedsReview", { row: item.row })
-                      : t("integrations.import.columnsNeedReview")}
-                  </li>
-                ))}
-              </ul>
-            )}
-          />
         ) : null}
 
         {duplicates.length ? (
@@ -217,14 +212,8 @@ export function ImportPanel({
           />
         ) : null}
 
-        <div className="mt-4 overflow-hidden rounded-card border border-platforma-border bg-surface-card">
-          {previewRows.slice(0, 5).map((row, index) => (
-            <div key={index} className="border-b border-platforma-border px-3 py-2 text-xs text-platforma-subtle last:border-b-0">
-              {Object.entries(row).slice(0, 6).map(([key, value]) => `${key}: ${value || "-"}`).join(" · ")}
-            </div>
-          ))}
-          {!previewRows.length ? <p className="px-3 py-4 text-sm text-platforma-muted">{t("integrations.import.previewAfterCheck")}</p> : null}
-        </div>
+        {selected ? <ImportJobReview key={`${selected.id}:${selected.updated_at}`} job={selected} userId={userId} canCreate={canCreate && !upload.isPending && !file} onChange={updateJob} onImported={imported} /> : null}
+
       </div>
 
       <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">
@@ -237,11 +226,11 @@ export function ImportPanel({
               onClick={() => setActiveJob(job)}
               className="w-full rounded-control bg-surface-muted px-3 py-2 text-left text-sm transition hover:bg-surface-hover"
             >
-              <span className="font-semibold text-platforma-ink">#{job.id} {job.entity_type}</span>
+              <span className="font-semibold text-platforma-ink">#{job.id} {entityOptions.find(option => option.value === job.entity_type)?.label}</span>
               <span className="ml-2 text-platforma-muted">{importStatusLabel(job.status, t)} · {job.imported_count}/{job.total_rows}</span>
             </button>
           ))}
-          {!jobsQuery.isLoading && !jobs.length ? <p className="text-sm text-platforma-muted">{t("integrations.import.noImports")}</p> : null}
+          {!jobsQuery.isLoading && !jobsQuery.isError && !jobs.length ? <p className="text-sm text-platforma-muted">{t("integrations.import.noImports")}</p> : null}
         </div>
       </div>
     </div>

@@ -6,6 +6,84 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-12a-20261030 — import mapping and error recovery verified
+
+Owner said next after AUD07. Roadmap explicitly splits AUD12 into12a/12b/12c;
+current authorized phase12a only: mapping -> preview -> complete errors -> correction
+and retry.12b history/entity/pagination and12c persistent export history not started.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, base4c6587c603b703aaf881669ce66a2dd627285fda.
+Snapshot output/aud12a-20261030/manifest.json, before/, starting.patch. Preserve WIP;
+no alternative source checkout. Code gap: ImportPanel has no mapping/preview call,
+shows only first5 generic errors; validate_import_rows truncates all errors to50.
+Reuse existing create/preview/confirm services, file/AV/max5000-row bounds, current
+actor/Business/access guards, API layer, Select/CrmPagination/StateViews/i18n.
+Planned result: supported mapping fields from server; editable header association,
+explicit re-preview and dirty-preview confirmation guard, full paged row/field/error
+list, retry without blind confirmation and corrected-file upload. Minimal read API
+metadata/error pages; store full bounded errors while regular job DTO retains first50.
+Risk: lifecycle bypass from stale preview/mapping, response growth, file/tenant/role
+leakage and async cross-context responses. No new import policy, CRM state engine,
+permission grants, provider/network, notification/BusinessEvent/AI/schema/env or
+working DB/deployment changes; existing confirmed import effects are reused.
+Backend focused reproduction >50 errors, metadata/immutable input and errors paging
+with current actor/tenant denial before UI work. Completion affected/import boundaries
+and dependent validation/rollback suites, system/drift; node interaction tests and
+isolated browser mapping->preview->import/retry, >page errors, RU/KK/EN desktop/mobile,
+role/dirty-preview/503/keyboard. Build/types once after final UI change. Full release/
+PG concurrency gate not implied: no locks/transaction changes; preserve earlier proof.
+Docs roadmap/contracts/passport/checkpoint reconciled at closure. Publish only owned
+verified hunks; shared serializer/import_export WIP is unrelated and excluded.
+
+
+Closure31.10 (local timezone; task started30.10): scoped code/evidence complete.
+No publication yet; commit/remote/CI receipt follows. No12b/12c work authorized here.
+Server persists all bounded row errors; regular DTO keeps first50 plus count.
+GET import-jobs/{id}/errors uses current actor/Business/VIEW queryset, page20/max100.
+Read-only mapping_fields enumerates supported entity fields; input injection rejected.
+Legacy truncated jobs require new preview to recompute errors. No schema change.
+UI uses existing Leads > More > Import entry and shared ImportPanel; explicit mapping,
+re-preview, field/row/error pages, source sample10rows, corrected-file reupload and
+CREATE-aware confirmation. Changed mapping, pending/failed preview and a replacement
+file block confirmation. Completed/cancelled jobs stay immutable. User/Business/entity
+keys and unmount guards discard late results; current list errors hide stale jobs.
+Escape consumed by a mapping Select no longer closes the import modal. RU/KK/EN labels
+come from entity fields; native file chooser follows browser language. No new provider
+catalogue entry. Other entity metadata/API covered; new navigation is not claimed.
+
+Verification on Git-index candidate from HEAD4c6587c6, Python/Node blobs read at
+canonical paths (no source checkout/copy), temp SQLite/media, external network blocked:
+- .venv/Scripts/python.exe output/aud12a-20261030/run_candidate.py backend-focused-final test apps.core.tests_import_mapping_ui apps.core.tests_import_job_boundaries --noinput:20 PASS.
+- same runner backend-owning-closure test apps.core.tests_import_mapping_ui --noinput:6 PASS after added author/read-revocation case; union owning21.
+- same runner backend-dependent test apps.core.tests_import_lifecycle apps.core.tests_import_export apps.core.tests_import_samples --noinput:29 PASS; total50, zero skips.
+- same runner system check; drift makemigrations --check --dry-run:PASS.
+- frontend cwd with NODE_OPTIONS=--require=C:/Users/user/Desktop/PlatformaCRM/output/aud12a-20261030/frontend-snapshot.cjs: node --test scripts/tests/import-review.test.mjs:5 PASS; npm run build (build-closure.log):app/widget+i18n6531 PASS; node node_modules/typescript/bin/tsc -b --force (types-closure.log):PASS.
+Browser52439/backend52438 exact candidate, mocked scanner only in disposable runtime:
+unknown headers -> map -> preview -> import1;61 invalid statuses paged20/20/20/1,
+row61 present; error-page503 then retry restores30; preview503 blocks confirm until
+successful explicit retry; corrected status mapping clears errors and imports61;
+corrected-file replacement imports1. RU/KK/EN errors inspected; desktop1536x695 and
+390x844 mobile screenshots inspected. Enter/Escape retains modal/focus after local
+fix. VIEW-without-CREATE cannot upload selected file or see owner's jobs. Browser
+signals/interceptions/metrics cleared; tab closed; own listeners absent; runtime
+exit0 cleaned tempDB. Evidence output/aud12a-20261030/browser-evidence.json and PNGs.
+
+Retained failures: before.log proved50/61 truncation/missing metadata/pages; test
+fixture first lacked unique email, then identical sales collided with existing
+deduplication. Fixed synthetic fixtures using unique emails/external IDs; no product
+dedup rule changed. Candidate builder needed explicit serializer-only projection
+because unrelated WIP lacks HEAD context; candidate.patch confirms exclusion.
+Browser exposed missing service_name translation and Escape bubbling; both fixed
+and affected build/browser checks rerun. Earlier successful app evidence otherwise
+reused for unchanged inputs. Runtime frontend restart first hit occupied log file;
+new log resolved it. No outstanding required failed gate. No dependency reinstall,
+full release/PG concurrency/live gate: locks/transactions unchanged, prior AUD21
+boundary retained. No working DB/provider/deployment/notification/AI changes.
+Roadmap, integration contract, frontend contract and integration passport updated.
+README/operations/access/CRM/AI unchanged: setup, limits and authorization/domain
+semantics unchanged. Existing document roles reused; no competing backlog added.
+Remainder in12a code/evidence/owner decision:none; publication pending.12b history
+and12c export history remain open. Release/live and broad provider acceptance remain.
+
 ## AUD-07-20261030 — automation history published
 
 Publication30.10: 2a710d3283143e315e101c603351ef24c18529e8 normal-pushed to

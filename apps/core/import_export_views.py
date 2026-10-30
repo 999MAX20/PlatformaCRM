@@ -2,6 +2,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from django.conf import settings
@@ -29,6 +30,12 @@ from apps.core.sanitization import sanitize_error_text
 from apps.core.serializers import ExportJobSerializer, ImportJobSerializer
 from apps.core.viewsets import TenantModelViewSet
 from apps.integrations.serializers import BusinessEventSerializer
+
+
+class ImportErrorPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 class ImportJobViewSet(TenantModelViewSet):
@@ -82,6 +89,14 @@ class ImportJobViewSet(TenantModelViewSet):
         job = self.get_object()
         job = confirm_import(job, request)
         return Response(self.get_serializer(job).data)
+
+    @action(detail=True, methods=["get"])
+    def errors(self, request, pk=None):
+        job = self.get_object()
+        paginator = ImportErrorPagination()
+        rows = (job.errors_json or {}).get("rows") or []
+        page = paginator.paginate_queryset(rows, request, view=self)
+        return paginator.get_paginated_response(page)
 
 
 class ExportJobViewSet(ReadOnlyModelViewSet):

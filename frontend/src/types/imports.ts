@@ -10,6 +10,7 @@ export type ImportJob = {
   original_filename: string;
   status: "uploaded" | "previewed" | "imported" | "failed" | "cancelled";
   mapping_json: Record<string, string>;
+  mapping_fields?: string[];
   preview_json: {
     headers?: string[];
     rows?: Array<Record<string, string>>;
@@ -23,6 +24,7 @@ export type ImportJob = {
     }>;
   };
   errors_json?: {
+    count?: number;
     rows?: Array<{
       row: number;
       field: string;

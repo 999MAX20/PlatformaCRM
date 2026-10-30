@@ -33,8 +33,14 @@ payload и логи содержат только свою часть пакет
 каналы и R02/live приёмка остаются открытыми границами; этот PASS их не закрывает.
 
 
-Граница аудита 17.10 (`56dd124`): UI mapping/errors/history и сохранённые export
-jobs не образуют полного рабочего цикла (AUD-12 открыт). AUD-18 исправлен
+AUD-12a локально закрыт31.10: ручной mapping, повторный preview, полный список
+ошибок с пагинацией и исправление/повтор доступны в существующем импорте заявок.
+Общий ImportPanel переиспользован; API metadata проверены для всех5 entity.
+Backend50/Node5/system/drift/build/types/i18n и RU/KK/EN browser PASS на кандидате
+от4c6587c6. Публикация ожидается; [evidence AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
+Остатка кода/доказательств/решений в12a нет. **AUD-12 остаётся открыт:**12b история
+импортов/entity/pagination и12c сохраняемая история export jobs. Новые точки входа,
+live-приёмка и deployment не выполнялись. AUD-18 исправлен
 27.10: download проверяет fingerprint текущего доступа; legacy/изменённый
 контекст требует нового экспорта. AUD-20 закрыт в локальном scope ниже. Защита ImportJob реализована в AUD-16
 ниже. AUD-21 проверен в локальном PostgreSQL17: конкурентный rollback/recovery

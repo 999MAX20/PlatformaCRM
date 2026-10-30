@@ -2,8 +2,19 @@ import { apiClient, unwrapList } from "./client";
 import type { Id, ImportJob } from "../types";
 
 export type ImportEntity = "clients" | "leads" | "deals" | "sales" | "catalog";
+export type ImportRowError = { row: number; field: string; message: string };
 
 export const importExportApi = {
+  preview: async (id: Id, mapping: Record<string, string>) => {
+    const { data } = await apiClient.post<ImportJob>(`/api/import-jobs/${id}/preview/`, { mapping });
+    return data;
+  },
+  errors: async (id: Id, page: number, pageSize: number) => {
+    const { data } = await apiClient.get<{ count: number; results: ImportRowError[] }>(`/api/import-jobs/${id}/errors/`, {
+      params: { page, page_size: pageSize },
+    });
+    return data;
+  },
   importJobs: async (business?: Id) => {
     const { data } = await apiClient.get<ImportJob[] | { results: ImportJob[] }>("/api/import-jobs/", {
       params: business ? { business } : undefined,
