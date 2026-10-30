@@ -6,7 +6,17 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
-## AUD-09-20261030 — complete service metrics verified locally
+## AUD-09-20261030 — complete service metrics published
+
+Publication30.10: 1ac7702300f8ea1436ffe75687eeb07ba0c53031 normal-pushed to
+origin/main; remote SHA matched.17 task files; code/test blobs exactly from verified
+candidate, unrelated WIP preserved (outside-delta empty). Index/real committed-range
+diff hygiene PASS; working-tree unrelated route-prefetch EOF warning retained.
+Existing documentation links checked, no new document/registry entry required.
+CI41103878148 queued at inspection, no green claim:
+https://github.com/999MAX20/PlatformaCRM/actions/runs/41103878148
+Code/evidence/owner decision/publication remainder: none. CI result pending;
+deployment/live outside scope. No background monitor or next phase started.
 
 Owner authorized next roadmap phase only; AUD07/AUD12 not started.
 Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit;
@@ -54,7 +64,7 @@ Roadmap, CRM/frontend contracts and settings passport updated. README, access,
 product, AI, integrations, operations, capabilities and acceptance need no change:
 no setup/module/permission/lifecycle/schema/provider or acceptance-ID change.
 Historical audit unchanged. Code/evidence/owner-decision remainder in scope: none.
-Publication pending; live/deployment outside scope. Next unresolved AUD07 not started.
+Publication complete; CI queued; live/deployment outside scope. Next unresolved AUD07 not started.
 
 
 ## AUD-08-20261030 — Client search and selection published
