@@ -1,13 +1,19 @@
 # Задачи, напоминания и автоматизации
 
-Граница аудита 17.10 (`56dd124`): наличие engine/leases не закрывает создание
-частичного активного правила, пустой состав, неполную проверку конфигурации и
-ошибки истории UI. После исправлений AUD-06/04/05 пункт AUD-07 и offline task replay AUD-10 открыты в
-[roadmap](../current/roadmap.md#project-audit-20261017);
-[методы проверки](../testing/project-audit-20261017.md). Task command idempotency
-не доказывает её использование offline-клиентом. В AUD-01 изолированы локальная
-очередь и callbacks сессии; capacity/drop, durable idempotency и recovery UX
-AUD-10 этим не закрыты. Logout/expiry удаляют pending queue.
+Исторический аудит17.10 (`56dd124`) выявил неполную конфигурацию и историю UI;
+[методы проверки](../testing/project-audit-20261017.md) сохранены. AUD-06/04/05
+закрыты в своих границах; AUD-10 опубликован8d710f03, его offline-проверки и
+ограничения находятся в собственном checkpoint, а не следуют из наличия engine.
+
+AUD-07,30.10: история всех доступных запусков имеет серверную пагинацию, фильтры
+статуса/события, полные показатели и отдельные loading/error/empty/retry.
+Details доступны для старых запусков; VIEW без MANAGE не показывает retry/cancel.
+Backend40 union/Node10/system/drift/build/types и RU/KK/EN browser503/multiple pages/
+roles PASS на отдельном кандидате base68cf93d7. В принятом scope код/доказательства/
+решение владельца: остатка нет. Публикация и команды — AUD-07-20261030 в
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md); deployment/live отдельно.
+Следующий AUD12 не начат; [roadmap](../current/roadmap.md#project-audit-20261017).
+Каталог правил не объявляется новым полным браузером правил. Logout/expiry удаляют pending queue.
 
 Исходная основа `768b2675`, 09.10.2026; актуальные дельты 16.10 описаны ниже.
 Результат для сотрудника — видимый следующий шаг,

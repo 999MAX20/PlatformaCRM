@@ -3,29 +3,48 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { automationRunsApi } from "../../api/automations";
 
-import type { AutomationRun } from "../../types";
+import type { AutomationRun, Id } from "../../types";
 
-export function useAutomationRuns() {
+type HistoryFilters = { page: number; pageSize: number; status: string; triggerType: string };
+const defaults: HistoryFilters = { page: 1, pageSize: 20, status: "", triggerType: "" };
+
+export function useAutomationRuns(businessId?: Id, userId?: Id) {
   const queryClient = useQueryClient();
+  const scope = `${businessId}:${userId}`;
+  const [state, setState] = useState({ scope, ...defaults });
+  const filters = state.scope === scope ? state : defaults;
+  const [selection, setSelection] = useState<{ scope: string; run: AutomationRun | null }>({ scope, run: null });
+  const setSelectedRun = (run: AutomationRun | null) => setSelection({ scope, run });
+  const updateFilters = (patch: Partial<HistoryFilters>) => {
+    setState({ scope, ...filters, page: 1, ...patch });
+    setSelectedRun(null);
+  };
   const runs = useQuery({
-    queryKey: ["automation-runs"],
-    queryFn: automationRunsApi.list,
+    queryKey: ["automation-runs", businessId, userId, filters.status, filters.triggerType, filters.page, filters.pageSize],
+    queryFn: () => automationRunsApi.listPage({
+      business: businessId!, page: filters.page, page_size: filters.pageSize,
+      status: filters.status || undefined, trigger_type: filters.triggerType || undefined,
+    }),
+    enabled: Boolean(businessId && userId),
+    retry: false,
   });
-  const [selectedRun, setSelectedRun] = useState<AutomationRun | null>(null);
+  const selectedRun = selection.scope === scope && !runs.isError ? selection.run : null;
+  const onRunChanged = (run: AutomationRun) => {
+    void queryClient.invalidateQueries({ queryKey: ["automation-runs"] });
+    setSelection(previous => previous.scope === scope && previous.run?.id === run.id ? { scope, run } : previous);
+  };
   const retryRunMutation = useMutation({
     mutationFn: (runId: number) => automationRunsApi.retry(runId),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["automation-runs"] }),
+    onSuccess: onRunChanged,
   });
   const cancelRunMutation = useMutation({
     mutationFn: (runId: number) => automationRunsApi.cancel(runId),
-    onSuccess: (run) => {
-      queryClient.invalidateQueries({ queryKey: ["automation-runs"] });
-      setSelectedRun(run);
-    },
+    onSuccess: onRunChanged,
   });
   return {
     runs,
+    filters,
+    updateFilters,
     selectedRun,
     setSelectedRun,
     retryRunMutation,

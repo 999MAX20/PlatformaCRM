@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { automationRulesApi } from "../../api/automations";
 
 import { useActiveBusiness } from "../../hooks/useBusiness";
-import { useEntityData } from "../../hooks/useEntityData";
+import { useAuth } from "../auth/AuthProvider";
 
 import type { AutomationRule } from "../../types";
 
@@ -11,7 +11,12 @@ export function useAutomationRules(
   business: ReturnType<typeof useActiveBusiness>["business"],
 ) {
   const queryClient = useQueryClient();
-  const { automationRules } = useEntityData({ automationRules: true });
+  const { user } = useAuth();
+  const automationRules = useQuery({
+    queryKey: ["automation-rules", "workspace", business?.id, user?.id],
+    queryFn: () => automationRulesApi.listPage(business!.id),
+    enabled: Boolean(business?.id && user?.id),
+  });
   const templates = useQuery({
     queryKey: ["automation-templates"],
     queryFn: automationRulesApi.templates,

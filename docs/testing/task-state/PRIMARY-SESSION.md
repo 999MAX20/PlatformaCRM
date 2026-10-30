@@ -6,6 +6,76 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## AUD-07-20261030 — automation history verified locally
+
+Owner authorized next roadmap phase, AUD07 only; AUD12 not started.
+Canonical C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+base68cf93d725c35abb26ff71c259b1e9c803fe22d6. Snapshot manifest.json/before/
+and starting.patch in output/aud07-20261030; all unrelated WIP preserved.
+Mode implementation, confirmed code gap: slice8 + first page, no history error
+state and first-page metrics. Reuse existing AutomationRun/Rule API, tenant/VIEW
+scopes, API client/hooks and shared Select/CrmPagination/StateViews.
+
+Run list supports optional validated business/status/trigger_type, page/page_size
+(default50, max100), stable -created_at/-pk order and pre-pagination summary:
+total, failed (existing failed/error/cancelled/blocked presentation), retryable
+(failed/cancelled). No-filter cross-accessible contract preserved. Rule list adds
+optional business filter and full total/active summary. Existing rule catalogue
+display is not claimed as a new full rule-browser delivery; this task is run history.
+No lifecycle/engine/permission grants, notification/BusinessEvent/AI/provider,
+schema/env/working-DB/deployment changes. Retry/cancel remain MANAGE-protected;
+UI now hides those actions without MANAGE and refreshes selected run after success.
+Query/selection state scoped to user/business; filters reset page. History fetch
+loading/error/empty separate, manual refetch, failed fetch shows dashes instead of
+zero; rows no longer sliced8. New filter/status copy RU/KK/EN is industry-neutral.
+
+Exact candidate verification PASS: owning34 (history6 + foundation28), final
+history7 after additional own-scope/page-cap test, dependent5 (editor4 + tenant-map1).
+Union40 backend tests, zero skips. System/drift PASS. Frontend app/widget build,
+i18n6489 and forced types PASS; Node10 history6/editor4 PASS. Relevant code/config
+unchanged after checks. Final test-only addition rechecked history7; owning28 reused.
+Commands (canonical cwd unless noted):
+- .venv/Scripts/python.exe output/aud07-20261030/check_backend.py test apps.automations.tests_history --noinput (before:6 methods/10 failures; after:6 PASS)
+- .venv/Scripts/python.exe output/aud07-20261030/run_candidate.py candidate-owning test apps.automations.tests_history apps.automations.tests --noinput
+- same runner candidate-history-final test apps.automations.tests_history --noinput
+- same runner candidate-dependent test apps.automations.tests_rule_editor apps.core.tests_tenant_isolation.TenantPermissionMapCoverageTests --noinput
+- same runner candidate-system check; candidate-drift makemigrations --check --dry-run
+- frontend cwd, NODE_OPTIONS=--require=C:/Users/user/Desktop/PlatformaCRM/output/aud07-20261030/frontend-snapshot.cjs: npm run build; node node_modules/typescript/bin/tsc -b --force; node --test scripts/tests/automation-history.test.mjs scripts/tests/automation-editor.test.mjs
+Results/logs: candidate-*.json/log, build.log, types.log, node.log. Git blob overlays
+at canonical paths, no source copy/worktree. External network denied, temporary DB.
+No dependency reinstall/full release/E2E/PG concurrency gate: read-only projections
+have no locking/state transition change. Existing run redaction and cancel denial
+covered in foundation28; backend authority is not inferred from UI hiding.
+
+Browser exact candidate52655/backend52654:107 distinct history rows across6 pages
+(20/20/20/20/20/7); oldest Lead#0 detail accessible. Failed filter5, failed+lead_created
+empty, page reset; initial loading has dashes, intercepted XHR503 shows error/no
+false empty/zero, refetch restores107/7. Escape restores Details focus. Owner and
+VIEW-without-MANAGE list/detail checked; denied role cannot reach history or cached
+rows. RU desktop1280x800 and RU/KK/EN narrow390x844 screenshots inspected. Evidence
+browser-evidence.json and *-mobile.png/ru-desktop.png. Test tab closed, interceptions
+and viewport override cleared; backend/frontend listeners absent, no matching own
+processes remain. Disposable runtime cleanup hit Windows file-lock on gate.sqlite3;
+later deletion of its exact temporary directory was rejected by automatic policy.
+Temp directory zani-quality-gate-cvn3jgwa remains; no ordinary DB touched.
+Initial staging found a stale empty Git index.lock with no Git process; the lock
+was preserved in task artifacts before retry. Unrelated route-prefetch EOF warning
+remains outside this change; scoped index/committed-range hygiene checked separately.
+Browser harness corrections retained: AX pagination spaces differ from DOM2/6;
+CDP required explicit XHR/Fetch patterns and empty patterns to clear interception;
+navigation/detached responses were followed by actual DOM verification, not PASS
+from attempted clicks. Emulation snapshot retried at explicit390 width when browser
+restored desktop metrics. No unresolved product failure found in this scope.
+
+Roadmap, CRM/frontend contracts and tasks/automations passport reconciled. Existing
+historical audit retained. README/product/access/AI/integrations/operations/capabilities/
+acceptance need no change: no new module/setup/permission policy/env/provider or
+acceptance-ID changes. Older AUD10 passport wording points to its own receipt,
+without recertifying that task. No new authority document or duplicate backlog.
+Code/evidence/owner-decision remainder: none in AUD07. Publication pending;
+CI result not yet known, deployment/live outside scope. Next AUD12 not started.
+
+
 ## AUD-09-20261030 — complete service metrics published
 
 Publication30.10: 1ac7702300f8ea1436ffe75687eeb07ba0c53031 normal-pushed to

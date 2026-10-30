@@ -95,6 +95,8 @@ export function canRetryRun(run: AutomationRun) {
   return run.status === "failed" || run.status === "cancelled";
 }
 
+export const runStatuses = ["pending", "running", "waiting", "retry_scheduled", "success", "failed", "skipped", "cancelled", "error", "blocked"];
+
 export function runStatusVariant(status?: string): BadgeVariant {
   if (["success", "succeeded", "completed", "processed"].includes(status || ""))
     return "success";
@@ -114,6 +116,7 @@ export function runStatusLabel(
   t: (key: string) => string,
 ) {
   if (!status) return "-";
+  if (runStatuses.includes(status)) return t(`automations.runStatus.${status}`);
   if (status === "waiting" || status === "retry_scheduled")
     return t("status.pending");
   if (status === "success" || status === "cancelled")

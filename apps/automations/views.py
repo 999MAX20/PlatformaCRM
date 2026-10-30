@@ -1,5 +1,6 @@
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from apps.automations.engine import cancel_automation_run, retry_automation_run
@@ -7,6 +8,7 @@ from apps.automations.configuration import save_configuration
 from apps.automations.configuration_views import AtomicConfigurationMixin
 from apps.automations.models import AutomationAction, AutomationCondition, AutomationRule, AutomationRun
 from apps.automations.permissions import IsAutomationRuleMember
+from apps.automations.history import filter_history, rule_summary, run_summary
 from apps.billing.entitlements import EntitlementMetrics, assert_entitlement_allows
 from apps.automations.serializers import (
     ApplyAutomationTemplateSerializer,
@@ -16,6 +18,8 @@ from apps.automations.serializers import (
     AutomationRunSerializer,
     AutomationTemplateSerializer,
     ManualAutomationRuleSerializer,
+    AutomationListQuerySerializer,
+    AutomationHistoryQuerySerializer,
 )
 from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.models import Business
@@ -68,10 +72,29 @@ AUTOMATION_TEMPLATES = [
 ]
 
 
+class AutomationPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
 class AutomationRuleViewSet(AtomicConfigurationMixin, TenantModelViewSet):
     queryset = AutomationRule.objects.prefetch_related("conditions", "actions").select_related("business")
     serializer_class = AutomationRuleSerializer
+    pagination_class = AutomationPagination
     action_permission_map = {**TenantModelViewSet.action_permission_map, "configuration": Actions.UPDATE}
+
+    def list(self, request, *args, **kwargs):
+        filters = AutomationListQuerySerializer(data=request.query_params)
+        filters.is_valid(raise_exception=True)
+        queryset = self.filter_queryset(self.get_queryset())
+        if 'business' in filters.validated_data:
+            queryset = queryset.filter(business_id=filters.validated_data['business'])
+        queryset = queryset.order_by('priority', 'name', 'pk')
+        page = self.paginate_queryset(queryset)
+        response = self.get_paginated_response(self.get_serializer(page, many=True).data)
+        response.data['summary'] = rule_summary(queryset)
+        return response
 
     def perform_create(self, serializer):
         business = serializer.validated_data["business"]
@@ -189,6 +212,16 @@ class AutomationActionViewSet(AtomicConfigurationMixin, TenantModelViewSet):
 class AutomationRunViewSet(TenantModelViewSet):
     queryset = AutomationRun.objects.select_related("business", "rule")
     serializer_class = AutomationRunSerializer
+    pagination_class = AutomationPagination
+
+    def list(self, request, *args, **kwargs):
+        filters = AutomationHistoryQuerySerializer(data=request.query_params)
+        filters.is_valid(raise_exception=True)
+        queryset = filter_history(self.filter_queryset(self.get_queryset()), filters.validated_data)
+        page = self.paginate_queryset(queryset)
+        response = self.get_paginated_response(self.get_serializer(page, many=True).data)
+        response.data['summary'] = run_summary(queryset)
+        return response
 
     @action(detail=True, methods=["post"])
     def retry(self, request, pk=None):

@@ -16,6 +16,12 @@ CRM-C21/live/release acceptance открыты. Чужой WIP сохранён.
 
 # PlatformaCRM — текущий статус
 
+AUD-07-20261030: complete paginated automation history, status/trigger filters
+and full server metrics verified. Backend40 union, Node10, system/drift,
+build/types/i18n and RU/KK/EN browser503/retry/roles PASS. Publication pending.
+Temporary servers stopped; cleanup of disposable DB directory blocked by policy.
+No working DB/deployment; unrelated WIP preserved. Evidence in PRIMARY; AUD12 not started.
+
 AUD-09-20261030: complete permitted service summary and appointment counts verified
 locally on exact candidate. Owning16/dependent3, system/drift, build/types and
 RU/KK/EN browser PASS; filters/error/retry/keyboard checked. Published1ac77023;

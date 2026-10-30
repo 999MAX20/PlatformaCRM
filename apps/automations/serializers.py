@@ -7,6 +7,17 @@ from apps.businesses.models import Business
 from apps.integrations.sanitization import sanitize_config, sanitize_error_payload, sanitize_error_text
 
 
+class AutomationListQuerySerializer(serializers.Serializer):
+    business = serializers.IntegerField(required=False, min_value=1, max_value=9223372036854775807)
+
+
+class AutomationHistoryQuerySerializer(AutomationListQuerySerializer):
+    status = serializers.ChoiceField(required=False, allow_blank=True,
+                                     choices=[*AutomationRun.Statuses.values, 'error', 'blocked'])
+    trigger_type = serializers.ChoiceField(required=False, allow_blank=True,
+                                           choices=AutomationRule.TriggerTypes.values)
+
+
 class AutomationConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AutomationCondition

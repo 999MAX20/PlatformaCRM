@@ -7,7 +7,6 @@ import {
   triggerKeys,
   actionOptionKeys,
   localeByLanguage,
-  canRetryRun,
 } from "./automationPresentation";
 import { useAutomationRules } from "./useAutomationRules";
 import { useAutomationRuns } from "./useAutomationRuns";
@@ -46,11 +45,13 @@ export function AutomationsPage() {
     useAutomationRules(business);
   const {
     runs,
+    filters,
+    updateFilters,
     selectedRun,
     setSelectedRun,
     retryRunMutation,
     cancelRunMutation,
-  } = useAutomationRuns();
+  } = useAutomationRuns(business?.id, user?.id);
   const {
     createOpen,
     setCreateOpen,
@@ -92,16 +93,12 @@ export function AutomationsPage() {
     label: t(item.labelKey),
   }));
   const locale = localeByLanguage[language];
-  const ruleList = automationRules.data || [];
-  const runList = runs.data || [];
-  const activeRuleCount = ruleList.filter((rule) => rule.is_active).length;
-  const failedRunCount = runList.filter((run) =>
-    ["failed", "error", "cancelled", "blocked"].includes(run.status),
-  ).length;
-  const retryableRunCount = runList.filter(canRetryRun).length;
+  const ruleList = automationRules.data?.results || [];
+  const ruleSummary = automationRules.isError ? undefined : automationRules.data?.summary;
+  const runSummary = runs.isError ? undefined : runs.data?.summary;
 
   if (!business) return <ErrorState message={t("automations.noBusiness")} />;
-  if (automationRules.isLoading || templates.isLoading || runs.isLoading)
+  if (automationRules.isLoading || templates.isLoading)
     return <LoadingState scope="page" />;
 
   return (
@@ -138,7 +135,7 @@ export function AutomationsPage() {
             {t("automations.rulesTitle")}
           </p>
           <p className="mt-1 text-2xl font-semibold tabular-nums text-platforma-text">
-            {activeRuleCount}/{ruleList.length}
+            {ruleSummary ? `${ruleSummary.active}/${ruleSummary.total}` : "—"}
           </p>
         </Surface>
         <Surface padding="sm" variant="muted">
@@ -146,18 +143,21 @@ export function AutomationsPage() {
             {t("automations.runsTitle")}
           </p>
           <p className="mt-1 text-2xl font-semibold tabular-nums text-platforma-text">
-            {runList.length}
+            {runSummary?.total ?? "—"}
           </p>
         </Surface>
-        <Surface padding="sm" variant={failedRunCount ? "danger" : "muted"}>
+        <Surface padding="sm" variant={runSummary?.failed ? "danger" : "muted"}>
           <p className="text-xs font-semibold text-platforma-faint">
             {t("automations.retry")}
           </p>
           <p className="mt-1 text-2xl font-semibold tabular-nums text-platforma-text">
-            {retryableRunCount}
+            {runSummary?.retryable ?? "—"}
           </p>
         </Surface>
       </section>
+
+      {automationRules.isError ? <ErrorState error={automationRules.error}
+        action={<Button variant="secondary" onClick={() => void automationRules.refetch()}>{t("common.retry")}</Button>} /> : null}
 
       <details className="mb-6 rounded-card border border-platforma-border bg-surface-card p-4 shadow-card">
         <summary className="cursor-pointer text-sm font-bold uppercase tracking-[0.14em] text-platforma-subtle">
@@ -244,7 +244,7 @@ export function AutomationsPage() {
             </CardBody>
           </Card>
         ))}
-        {!ruleList.length ? (
+        {!automationRules.isError && !ruleList.length ? (
           <EmptyState
             title={t("automations.emptyTitle")}
             description={t("automations.emptyDescription")}
@@ -262,8 +262,15 @@ export function AutomationsPage() {
 
       <AutomationRunList
         t={t}
-        runList={runList}
-        triggers={triggers}
+        runs={runs}
+        filters={filters}
+        updateFilters={updateFilters}
+        canManage={hasPermission(user, business?.id, "automations", "manage")}
+        triggers={[...triggers,
+          { value: "client_inactive", label: t("automations.trigger.clientInactive") },
+          { value: "tag_added", label: t("automations.trigger.tagAdded") },
+          { value: "tag_removed", label: t("automations.trigger.tagRemoved") },
+        ]}
         locale={locale}
         setSelectedRun={setSelectedRun}
         retryRunMutation={retryRunMutation}
@@ -277,6 +284,7 @@ export function AutomationsPage() {
         locale={locale}
         retryRunMutation={retryRunMutation}
         cancelRunMutation={cancelRunMutation}
+        canManage={hasPermission(user, business?.id, "automations", "manage")}
       />
 
       <AutomationCreateDialog

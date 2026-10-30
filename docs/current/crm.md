@@ -533,3 +533,15 @@ AUD-08: `/api/clients/?business=<id>&q=<query>&page=<n>&page_size=<n>` огра�
 неархивные записи услуги в том же Business, доступные текущему пользователю.
 Архивные услуги не входят в active/среднюю; search/status/archive применяются
 и к списку, и к сводке. Права и жизненный цикл не меняются.
+
+### AUD-07 — история автоматизаций, 30.10.2026
+
+`GET /api/automation-runs/` фильтрует текущую доступную выборку по `business`,
+`status`, `trigger_type`; сортирует по `-created_at,-id`. Пагинация: `page`,
+`page_size` (по умолчанию50, максимум100). `summary` до пагинации содержит `total`,
+`failed` (failed/error/cancelled/blocked) и `retryable` (failed/cancelled).
+`GET /api/automation-rules/` поддерживает фильтр `business` и полную сводку
+`total`/`active`. Без Business-фильтра сохраняется текущая доступная область.
+Сводки не расширяют VIEW, tenant/capability scope; некорректные фильтры дают400.
+Retry/cancel требуют прежний MANAGE; engine и lifecycle не меняются.
+Проверки и публикация — AUD-07-20261030 в PRIMARY-SESSION.

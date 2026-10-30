@@ -24,6 +24,7 @@ type Props = {
   selectedRun: ReturnType<typeof useAutomationRuns>["selectedRun"];
   setSelectedRun: ReturnType<typeof useAutomationRuns>["setSelectedRun"];
   locale: string;
+  canManage: boolean;
   retryRunMutation: ReturnType<typeof useAutomationRuns>["retryRunMutation"];
   cancelRunMutation: ReturnType<typeof useAutomationRuns>["cancelRunMutation"];
 };
@@ -32,6 +33,7 @@ export function AutomationRunDetails({
   selectedRun,
   setSelectedRun,
   locale,
+  canManage,
   retryRunMutation,
   cancelRunMutation,
 }: Props) {
@@ -132,7 +134,7 @@ export function AutomationRunDetails({
             </pre>
           </div>
           <div className="flex flex-wrap gap-2">
-            {canRetryRun(selectedRun) ? (
+            {canManage && canRetryRun(selectedRun) ? (
               <Button
                 type="button"
                 variant="secondary"
@@ -143,7 +145,7 @@ export function AutomationRunDetails({
                 {t("automations.retry")}
               </Button>
             ) : null}
-            {canCancelRun(selectedRun) ? (
+            {canManage && canCancelRun(selectedRun) ? (
               <Button
                 type="button"
                 variant="warning"

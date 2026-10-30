@@ -3,6 +3,7 @@ import {
   canRetryRun,
   runStatusVariant,
   runStatusLabel,
+  runStatuses,
 } from "./automationPresentation";
 
 import { useAutomationRuns } from "./useAutomationRuns";
@@ -11,12 +12,18 @@ import { Ban, Eye, RotateCcw } from "lucide-react";
 
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
+import { Select } from "../../components/ui/Select";
+import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { CrmPagination } from "../../components/crm/CrmPagination";
 
 import { useI18n } from "../../lib/i18n";
 
 type Props = {
   t: ReturnType<typeof useI18n>["t"];
-  runList: AutomationRun[];
+  runs: ReturnType<typeof useAutomationRuns>["runs"];
+  filters: ReturnType<typeof useAutomationRuns>["filters"];
+  updateFilters: ReturnType<typeof useAutomationRuns>["updateFilters"];
+  canManage: boolean;
   triggers: { value: string; label: string }[];
   locale: string;
   setSelectedRun: ReturnType<typeof useAutomationRuns>["setSelectedRun"];
@@ -25,22 +32,42 @@ type Props = {
 };
 export function AutomationRunList({
   t,
-  runList,
+  runs,
+  filters,
+  updateFilters,
+  canManage,
   triggers,
   locale,
   setSelectedRun,
   retryRunMutation,
   cancelRunMutation,
 }: Props) {
+  const runList = runs.data?.results || [];
+  const total = runs.data?.count ?? 0;
+  const hasFilters = Boolean(filters.status || filters.triggerType);
   return (
-    <div className="mt-6">
+    <section aria-label={t("automations.runsTitle")} className="mt-6" aria-busy={runs.isFetching}>
       <h2 className="text-xl font-bold text-platforma-text">
         {t("automations.runsTitle")}
       </h2>
+      <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+        <Select label={t("automations.status")} value={filters.status}
+          options={[{ value: "", label: t("common.all") }, ...runStatuses.map(value => ({ value, label: runStatusLabel(value, t) }))]}
+          onChange={event => updateFilters({ status: event.target.value })} />
+        <Select label={t("automations.trigger")} value={filters.triggerType}
+          options={[{ value: "", label: t("common.all") }, ...triggers]}
+          onChange={event => updateFilters({ triggerType: event.target.value })} />
+        {hasFilters || filters.page > 1 ? <Button variant="ghost" className="self-end"
+          onClick={() => updateFilters({ status: "", triggerType: "", page: 1 })}>{t("automations.resetHistory")}</Button> : null}
+      </div>
+      {retryRunMutation.error || cancelRunMutation.error ? <ErrorState error={retryRunMutation.error || cancelRunMutation.error} /> : null}
       <div className="mt-3 overflow-hidden rounded-card border border-platforma-border bg-surface-card shadow-card">
-        {runList.slice(0, 8).map((run) => (
+        {runs.isLoading ? <LoadingState /> : runs.isError ? <ErrorState error={runs.error}
+          action={<Button variant="secondary" onClick={() => void runs.refetch()}>{t("common.retry")}</Button>} /> : <>
+        {runList.map((run) => (
           <div
             key={run.id}
+            data-testid="automation-run-row"
             className="grid gap-2 border-b border-platforma-border px-4 py-3 text-sm last:border-b-0 md:grid-cols-[1fr_120px_160px_auto]"
           >
             <div>
@@ -76,7 +103,7 @@ export function AutomationRunList({
                 <Eye size={14} />
                 {t("automations.details")}
               </Button>
-              {canRetryRun(run) ? (
+              {canManage && canRetryRun(run) ? (
                 <Button
                   variant="secondary"
                   className="min-h-8 px-3 py-1 text-xs"
@@ -87,7 +114,7 @@ export function AutomationRunList({
                   {t("automations.retry")}
                 </Button>
               ) : null}
-              {canCancelRun(run) ? (
+              {canManage && canCancelRun(run) ? (
                 <Button
                   variant="warning"
                   className="min-h-8 px-3 py-1 text-xs"
@@ -103,11 +130,17 @@ export function AutomationRunList({
         ))}
         {!runList.length ? (
           <div className="px-4 py-5 text-sm font-semibold text-platforma-subtle">
-            {t("automations.noRuns")}
+            {t(hasFilters ? "common.noResults" : "automations.noRuns")}
           </div>
         ) : null}
+        <CrmPagination shown={runList.length} total={total} page={filters.page} pageSize={filters.pageSize}
+          onPageChange={page => updateFilters({ page })} onPageSizeChange={pageSize => updateFilters({ pageSize })}
+          previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")}
+          pageSizeAriaLabel={t("pagination.pageSizeAriaLabel")} pageSizeLabel={size => t("pagination.pageSize", { size })}
+          rangeLabel={t("pagination.range", { from: total ? (filters.page - 1) * filters.pageSize + 1 : 0,
+            to: Math.min(total, filters.page * filters.pageSize), total })} />
+        </>}
       </div>
-    </div>
+    </section>
   );
 }
-import type { AutomationRun } from "../../types";
