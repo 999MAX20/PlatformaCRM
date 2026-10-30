@@ -1,0 +1,489 @@
+{
+  "date": "2026-10-30",
+  "equivalence": {
+    "date": "2026-10-30T17:18:56.134Z",
+    "scope": "Published base-to-HEAD equivalence; excludes unrelated working WIP",
+    "heads": {
+      "crm": "368a3fa4ac8d062e7c438675487351ee29161a6a",
+      "market": "568f6c5996d270a95c7b2203953fefca31d706b0"
+    },
+    "bases": {
+      "crm": "d557fa703485a5c4b6f1adc8687f4ffb602b7c31",
+      "market": "5fe260268756ac16e545723120bb406bb9f0993b"
+    },
+    "crmTypes": {
+      "declarations": 127,
+      "newModules": 19,
+      "preservedInFacade": 11,
+      "moved": 116
+    },
+    "schemas": {
+      "commands": 291,
+      "core": 88
+    },
+    "dictionaries": {
+      "ru": 6475,
+      "kk": 6475,
+      "en": 6475
+    },
+    "sharedCSS": "PASS: all flattened rules, values and cascade order identical",
+    "parentSizes": [
+      {
+        "project": "crm",
+        "file": "frontend/src/app/router.tsx",
+        "before": 1045,
+        "after": 80
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/components/layout/Header.tsx",
+        "before": 506,
+        "after": 274
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/features/conversations/ConversationsPage.tsx",
+        "before": 1739,
+        "after": 1658
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/features/calendar/CalendarPage.tsx",
+        "before": 871,
+        "after": 763
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/components/crm/drawers/panels.tsx",
+        "before": 745,
+        "after": 8
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/features/settings/useSettingsModel.tsx",
+        "before": 630,
+        "after": 307
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/features/automations/AutomationsPage.tsx",
+        "before": 678,
+        "after": 324
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/features/pricing/PricingPage.tsx",
+        "before": 649,
+        "after": 218
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/types/index.ts",
+        "before": 2183,
+        "after": 311
+      },
+      {
+        "project": "crm",
+        "file": "frontend/src/lib/i18n/ru.ts",
+        "before": 7291,
+        "after": 50
+      },
+      {
+        "project": "market",
+        "file": "apps/admin-web/app/integration-operations.tsx",
+        "before": 958,
+        "after": 338
+      },
+      {
+        "project": "market",
+        "file": "apps/admin-web/app/page.tsx",
+        "before": 196,
+        "after": 1
+      },
+      {
+        "project": "market",
+        "file": "packages/api-client/src/index.ts",
+        "before": 817,
+        "after": 539
+      },
+      {
+        "project": "market",
+        "file": "packages/schemas/src/index.ts",
+        "before": 1476,
+        "after": 106
+      },
+      {
+        "project": "market",
+        "file": "packages/schemas/src/core-api.ts",
+        "before": 834,
+        "after": 12
+      },
+      {
+        "project": "market",
+        "file": "packages/ui/src/styles.css",
+        "before": 712,
+        "after": 10
+      }
+    ],
+    "apiClient": {
+      "methods": 192,
+      "cases": 236,
+      "result": "PASS identical facade calls, URLs/query, body, signal and return for actual published baseline"
+    },
+    "result": "PASS"
+  },
+  "requests": {
+    "result": "PASS",
+    "baseline": "d557fa703485a5c4b6f1adc8687f4ffb602b7c31",
+    "head": "368a3fa4ac8d062e7c438675487351ee29161a6a",
+    "measurement": "Deterministic API-request/cache harness using actual published prefetch/query functions and actual QueryClient with application staleTime; not a browser latency benchmark",
+    "settings": {
+      "queries": [
+        {
+          "section": "business-profile",
+          "before": 11,
+          "after": 0,
+          "afterKeys": []
+        },
+        {
+          "section": "team-access",
+          "before": 11,
+          "after": 4,
+          "afterKeys": [
+            "team-members",
+            "team-roles",
+            "team-invitations",
+            "team-departments"
+          ]
+        },
+        {
+          "section": "roles",
+          "before": 11,
+          "after": 4,
+          "afterKeys": [
+            "team-members",
+            "team-roles",
+            "team-invitations",
+            "team-departments"
+          ]
+        },
+        {
+          "section": "appointment-messages",
+          "before": 11,
+          "after": 1,
+          "afterKeys": [
+            "appointment-message-settings"
+          ]
+        },
+        {
+          "section": "quick-replies",
+          "before": 11,
+          "after": 1,
+          "afterKeys": [
+            "quick-replies"
+          ]
+        },
+        {
+          "section": "custom-fields",
+          "before": 11,
+          "after": 1,
+          "afterKeys": [
+            "custom-fields"
+          ]
+        },
+        {
+          "section": "security-center",
+          "before": 11,
+          "after": 3,
+          "afterKeys": [
+            "security-audit",
+            "security-login-history",
+            "security-support-grants"
+          ]
+        },
+        {
+          "section": "billing",
+          "before": 11,
+          "after": 0,
+          "afterKeys": []
+        },
+        {
+          "section": "usage",
+          "before": 11,
+          "after": 1,
+          "afterKeys": [
+            "billing-entitlements"
+          ]
+        }
+      ],
+      "permissionsAndBusiness": "denied/missing business: 0; business8 keys scoped to8"
+    },
+    "prefetch": [
+      {
+        "route": "/app/tasks",
+        "before": {
+          "hover": 1,
+          "secondHover": 0,
+          "navigation": 1,
+          "requests": [
+            {
+              "name": "tasks",
+              "method": "list",
+              "params": {
+                "tab": "my",
+                "status": "active"
+              }
+            },
+            {
+              "name": "tasks",
+              "method": "listPage",
+              "params": {
+                "business": 7,
+                "tab": "my",
+                "status": "active",
+                "ordering": "smart",
+                "page_size": 40,
+                "page": 1
+              }
+            }
+          ]
+        },
+        "after": {
+          "hover": 1,
+          "secondHover": 0,
+          "navigation": 0,
+          "requests": [
+            {
+              "name": "tasks",
+              "method": "listPage",
+              "params": {
+                "business": 7,
+                "tab": "my",
+                "status": "active",
+                "ordering": "smart",
+                "page_size": 40,
+                "page": 1
+              }
+            }
+          ]
+        }
+      },
+      {
+        "route": "/app/tasks?bucket=today&assignee=9",
+        "before": {
+          "hover": 1,
+          "secondHover": 0,
+          "navigation": 1,
+          "requests": [
+            {
+              "name": "tasks",
+              "method": "list",
+              "params": {
+                "tab": "my",
+                "status": "active"
+              }
+            },
+            {
+              "name": "tasks",
+              "method": "listPage",
+              "params": {
+                "business": 7,
+                "tab": "my",
+                "assignee": "9",
+                "status": "active",
+                "bucket": "today",
+                "ordering": "smart",
+                "page_size": 40,
+                "page": 1
+              }
+            }
+          ]
+        },
+        "after": {
+          "hover": 1,
+          "secondHover": 0,
+          "navigation": 0,
+          "requests": [
+            {
+              "name": "tasks",
+              "method": "listPage",
+              "params": {
+                "business": 7,
+                "tab": "my",
+                "assignee": "9",
+                "status": "active",
+                "bucket": "today",
+                "ordering": "smart",
+                "page_size": 40,
+                "page": 1
+              }
+            }
+          ]
+        }
+      },
+      {
+        "route": "/app/dashboard",
+        "before": {
+          "hover": 0,
+          "secondHover": 0,
+          "navigation": 1,
+          "requests": [
+            {
+              "name": "queues",
+              "method": "get",
+              "params": {
+                "business": 7,
+                "limit": 8
+              }
+            }
+          ]
+        },
+        "after": {
+          "hover": 1,
+          "secondHover": 0,
+          "navigation": 0,
+          "requests": [
+            {
+              "name": "queues",
+              "method": "get",
+              "params": {
+                "business": 7,
+                "limit": 8
+              }
+            }
+          ]
+        }
+      },
+      {
+        "route": "/app/leads",
+        "before": {
+          "hover": 3,
+          "secondHover": 0,
+          "navigation": null,
+          "requests": [
+            {
+              "name": "leads",
+              "method": "list",
+              "params": {
+                "client": {},
+                "queryKey": [
+                  "leads"
+                ],
+                "signal": {}
+              }
+            },
+            {
+              "name": "clients",
+              "method": "list",
+              "params": {
+                "client": {},
+                "queryKey": [
+                  "clients"
+                ],
+                "signal": {}
+              }
+            },
+            {
+              "name": "tasks",
+              "method": "list",
+              "params": {
+                "client": {},
+                "queryKey": [
+                  "tasks"
+                ],
+                "signal": {}
+              }
+            }
+          ]
+        },
+        "after": {
+          "hover": 2,
+          "secondHover": 0,
+          "navigation": null,
+          "requests": [
+            {
+              "name": "clients",
+              "method": "list",
+              "params": {
+                "client": {},
+                "queryKey": [
+                  "clients"
+                ],
+                "signal": {}
+              }
+            },
+            {
+              "name": "tasks",
+              "method": "list",
+              "params": {
+                "client": {},
+                "queryKey": [
+                  "tasks"
+                ],
+                "signal": {}
+              }
+            }
+          ]
+        }
+      },
+      {
+        "route": "/app",
+        "before": {
+          "hover": 3,
+          "secondHover": 0,
+          "navigation": null,
+          "requests": [
+            {
+              "name": "leads",
+              "method": "list",
+              "params": {
+                "client": {},
+                "queryKey": [
+                  "leads"
+                ],
+                "signal": {}
+              }
+            },
+            {
+              "name": "clients",
+              "method": "list",
+              "params": {
+                "client": {},
+                "queryKey": [
+                  "clients"
+                ],
+                "signal": {}
+              }
+            },
+            {
+              "name": "tasks",
+              "method": "list",
+              "params": {
+                "client": {},
+                "queryKey": [
+                  "tasks"
+                ],
+                "signal": {}
+              }
+            }
+          ]
+        },
+        "after": {
+          "hover": 0,
+          "secondHover": 0,
+          "navigation": null,
+          "requests": []
+        }
+      }
+    ],
+    "limits": "Counts cover the changed optional Settings reads and selected prefetch queries. They do not represent all app-shell traffic, HTTP latency or Core Web Vitals."
+  },
+  "header": {
+    "result": "PASS",
+    "originalDeclarationsPreserved": 22,
+    "originalEffectsPreserved": 3,
+    "bellJSX": "AST identical",
+    "routeTitleCases": 78,
+    "hookChecks": "closed/open query gating, markRead/markAll, cache invalidations, Escape/outside click and listener cleanup, legacy action route"
+  }
+}

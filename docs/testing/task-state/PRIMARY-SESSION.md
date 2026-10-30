@@ -7768,3 +7768,14 @@ remain loopback-only; use gate entry URLs for preview. No public deployment.
 Changed gate-only checks replace unrelated full-project suites; existing Compose
 checks reused unchanged. Server still needs real HTTPS domain and secret provisioning
 with compose.stand.yaml. No roadmap acceptance or production readiness implied.
+
+### REFACTOR-20261030 — итоговая проверка и публикация
+
+Supersedes earlier REFACTOR publication blockers. All owned P01–P18 product code
+is published; CRM368a3fa4 includes isolated Header and Market568f6c5 includes
+audit corrections (write selection/catalog); generated lint fixed89ec5f8.
+Additional base-to-HEAD equivalence and real QueryClient request-count audit PASS.
+Roadmap updated without closing live/product gates; P19 mapping only.
+Evidence: [final audit](../evidence/refactor-20261030.md).
+Foreign working source and documentation preserved; only own docs added to index.
+No deployment, production DB change or foreign WIP publication.
