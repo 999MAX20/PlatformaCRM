@@ -8,6 +8,17 @@
 
 ## AUD-12b-20261031 — complete import history verified
 
+Publication31.10: 1b25694a4b266191491493935b0d181ab7431bad normal-pushed to
+origin/main; ls-remote SHA matched.16 reviewed paths; exact staged tree
+4438c74b98d144343e83ea4d723f0c8d456a8e6e matched verified candidate code.
+Added-link/index/real72dda967..1b25694a hygiene PASS;169 outside-scope baseline
+files unchanged. Canonical PlatformaCRM, codex/ui-testing-toolkit retained.
+Fetch refspec excludes main: FETCH_HEAD/ls-remote used for fast-forward proof.
+Old empty index.lock moved to task output after verifying no Git process; no
+unrelated WIP staged. CI41118186023 in_progress, no green claim:
+https://github.com/999MAX20/PlatformaCRM/actions/runs/41118186023
+No12b code/evidence/owner-decision/publication remainder;12c unstarted.
+
 Owner said Продолжай after12a closure;12b only,12c export history not started.
 Canonical root, codex/ui-testing-toolkit, base72dda96708c6bcb3cb41afd0ecfb84e501628cb2.
 Snapshot output/aud12b-20261031/manifest.json,before/,starting.patch; preserve WIP.
@@ -42,7 +53,7 @@ had7failures (ignored filters/context,500 invalidbusiness, pagecap); firstfix le
 emptyentity accepted due QueryDict HTML empty semantics. Dict input fixed; full27
 rerun PASS. No schema/lifecycle change. Frontend completion is recorded below.
 
-Closure31.10: scoped code/evidence complete; publication pending. API list/detail
+Closure31.10: scoped code/evidence complete; published1b25694a, receipt above. API list/detail
 accept optional validated Business/entity filters before pagination; default20,
 max100, -created_at/-pk order. Existing CLIENTS VIEW + current actor/tenant scope
 retained. UI preserves count/results, page/size and full filenames/status/counts;
@@ -103,7 +114,7 @@ unchanged and focused import boundaries plus prior12a proofs retained. Roadmap,
 integrations/frontend contracts and integrations passport updated; README and other
 passports need no change (no setup/new entry point/domain mutation).12a closure retained.
 No code/evidence/owner-decision remainder within12b.12c export-history remains open
-and unstarted; new navigation/live/deployment outside scope. Publication receipt follows.
+and unstarted; new navigation/live/deployment outside scope. Publication receipt is above.
 
 ## AUD-12a-20261030 — import mapping and error recovery verified
 

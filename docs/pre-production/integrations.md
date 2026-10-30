@@ -41,7 +41,8 @@ Backend50/Node5/system/drift/build/types/i18n и RU/KK/EN browser PASS на ка
 Остатка кода/доказательств/решений в12a нет. AUD-12b локально закрыт31.10: полная
 история импортов с серверной фильтрацией Business/entity/actor, страницами/размером,
 общим итогом и актуальными деталями. Backend27/Node12/system/drift/build/types/i18n
-и RU/KK/EN browser PASS на кандидате от72dda967; публикация ожидается.
+и RU/KK/EN browser PASS на кандидате от72dda967; опубликовано1b25694a,
+remote SHA подтверждён, CI41118186023 выполняется.
 [Evidence AUD12b](../testing/task-state/PRIMARY-SESSION.md#aud-12b-20261031--complete-import-history-verified).
 Остатка кода/доказательств/решений в12b нет. **AUD-12 остаётся открыт:**12c сохраняемая
 история export jobs. Новые точки входа, live-приёмка и deployment не выполнялись. AUD-18 исправлен
