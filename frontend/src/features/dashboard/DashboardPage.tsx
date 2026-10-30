@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import { aiApi } from "../../api/ai";
 import { analyticsApi } from "../../api/analytics";
-import { workQueuesApi } from "../../api/workQueues";
+import { workQueuesQuery } from "./dashboardQueries";
 import { ErrorState, PageSkeleton } from "../../components/ui/StateViews";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useI18n } from "../../lib/i18n";
@@ -22,11 +22,7 @@ export function DashboardPage() {
   const permitted = (resource: string) => hasPermission(user, business?.id, resource, "view");
   const canViewAnalytics = permitted("analytics");
   const canViewAiAnalyst = permitted("ai_analyst");
-  const workQueues = useQuery({
-    queryKey: ["work-queues", business?.id, limit],
-    queryFn: () => workQueuesApi.get({ business: business!.id, limit }),
-    enabled: Boolean(business),
-  });
+  const workQueues = useQuery(workQueuesQuery(business?.id, limit));
   const metrics = useQuery({
     queryKey: ["owner-dashboard", business?.id],
     queryFn: () => analyticsApi.ownerDashboard(business!.id),

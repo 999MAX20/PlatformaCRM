@@ -2,7 +2,8 @@ import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-quer
 import { Check, List, MessageSquare, Plus, SlidersHorizontal, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { tasksApi, type TaskListParams } from "../../api/tasks";
+import { tasksApi } from "../../api/tasks";
+import { taskWorkspaceParams, taskWorkspaceQuery } from "./taskWorkspaceQueries";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -52,14 +53,8 @@ function TaskQueue({ business, zone }: { business: Id; zone: string }) {
     if (value) next.set(key, value); else next.delete(key);
     return next;
   }, { replace: true, preventScrollReset: true });
-  const base: TaskListParams = { business, tab: scope === "all" ? undefined : scope, search: debouncedSearch || undefined,
-    priority: params.get("priority") || undefined, assignee: params.get("assignee") || undefined };
-  const listParams: TaskListParams = { ...base, status: bucket === "done" || bucket === "cancelled" ? bucket : params.get("status") || "active",
-    bucket: ["overdue", "today", "noDue"].includes(bucket) ? bucket : undefined, ordering: "smart", page_size: 40 };
-  const list = useInfiniteQuery({ queryKey: ["tasks", "workspace", listParams], initialPageParam: 1,
-    queryFn: ({ pageParam }) => tasksApi.listPage({ ...listParams, page: pageParam }),
-    getNextPageParam: (last, pages) => last.next ? pages.length + 1 : undefined,
-  });
+  const { base, list: listParams } = taskWorkspaceParams(business, params, debouncedSearch);
+  const list = useInfiniteQuery(taskWorkspaceQuery(listParams));
   const summary = useQuery({ queryKey: ["task-summary", base], queryFn: () => tasksApi.summary(base) });
   const team = useQuery({ queryKey: ["task-workload", base], queryFn: () => tasksApi.workload({ ...base, business }), enabled: view === "team" && canTeam });
   const assignees = useQuery({ queryKey: ["task-assignees", business], queryFn: () => tasksApi.assignees(business), enabled: filters && canUpdate });
