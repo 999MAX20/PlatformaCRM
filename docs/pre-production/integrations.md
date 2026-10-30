@@ -37,7 +37,7 @@ AUD-12a локально закрыт31.10: ручной mapping, повторн
 ошибок с пагинацией и исправление/повтор доступны в существующем импорте заявок.
 Общий ImportPanel переиспользован; API metadata проверены для всех5 entity.
 Backend50/Node5/system/drift/build/types/i18n и RU/KK/EN browser PASS на кандидате
-от4c6587c6. Публикация ожидается; [evidence AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
+от4c6587c6; опубликовано f9a7a6c8, remote SHA подтверждён, CI выполняется; [evidence AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
 Остатка кода/доказательств/решений в12a нет. **AUD-12 остаётся открыт:**12b история
 импортов/entity/pagination и12c сохраняемая история export jobs. Новые точки входа,
 live-приёмка и deployment не выполнялись. AUD-18 исправлен

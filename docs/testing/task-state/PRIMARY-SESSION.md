@@ -8,6 +8,17 @@
 
 ## AUD-12a-20261030 — import mapping and error recovery verified
 
+Publication31.10: f9a7a6c89be452f0d9a2697488ffcd99749900f1 normal-pushed to
+origin/main; ls-remote SHA matched.20 reviewed paths; exact staged tree matched
+verified candidate5345b59bb2c76cf8ec3a0ebb253ffe3a78ba6a53. Added-link, index and
+real4c6587c6..f9a7a6c8 diff hygiene PASS; outside-baseline delta empty. Local branch
+codex/ui-testing-toolkit retained. Fetch refspec excludes main, so stale origin/main
+was not used as publication truth: FETCH_HEAD and ls-remote both proved current tip.
+Old empty index.lock moved to task output after verifying no Git process. No unrelated
+WIP staged. CI41112355081 in_progress, no green claim:
+https://github.com/999MAX20/PlatformaCRM/actions/runs/41112355081
+No12a code/evidence/owner-decision/publication remainder;12b/12c not started.
+
 Owner said next after AUD07. Roadmap explicitly splits AUD12 into12a/12b/12c;
 current authorized phase12a only: mapping -> preview -> complete errors -> correction
 and retry.12b history/entity/pagination and12c persistent export history not started.
@@ -36,7 +47,7 @@ verified hunks; shared serializer/import_export WIP is unrelated and excluded.
 
 
 Closure31.10 (local timezone; task started30.10): scoped code/evidence complete.
-No publication yet; commit/remote/CI receipt follows. No12b/12c work authorized here.
+Published f9a7a6c8; remote/CI receipt above. No12b/12c work authorized here.
 Server persists all bounded row errors; regular DTO keeps first50 plus count.
 GET import-jobs/{id}/errors uses current actor/Business/VIEW queryset, page20/max100.
 Read-only mapping_fields enumerates supported entity fields; input injection rejected.
@@ -81,7 +92,7 @@ boundary retained. No working DB/provider/deployment/notification/AI changes.
 Roadmap, integration contract, frontend contract and integration passport updated.
 README/operations/access/CRM/AI unchanged: setup, limits and authorization/domain
 semantics unchanged. Existing document roles reused; no competing backlog added.
-Remainder in12a code/evidence/owner decision:none; publication pending.12b history
+Remainder in12a code/evidence/owner decision:none; publication complete; CI pending.12b history
 and12c export history remain open. Release/live and broad provider acceptance remain.
 
 ## AUD-07-20261030 — automation history published
