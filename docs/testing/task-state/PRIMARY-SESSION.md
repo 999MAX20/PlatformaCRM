@@ -8,7 +8,21 @@
 
 ## CRM-R01-RECORD-FIRST-20261031 — single Appointment package
 
-Local scoped verification31.10 complete; publication receipt follows when confirmed.
+Publication31.10: code bc46d7c9c47ef0dc767928cc714b73618264d788 normal-pushed
+to origin/main, remote SHA confirmed. Actual staged tree784b0fc3 equals reviewed
+candidate; apps/frontend blobs equal browser tree d033000f.42 reviewed paths;
+all unrelated starting file bytes unchanged. Candidate/staged/actual924b33f6..HEAD
+diff hygiene,8 added links/anchor and secret/new-file review PASS. Empty stale
+index.lock from09:38 moved to task artifacts after two no-git-process inspections;
+narrow remote fetch refspec left origin/main stale, explicit main tracking fetch
+matched actual remote924b33f6 before publication. No merge/rebase/reset/force push.
+Actual push CI41178318197 in progress at receipt, no green claim:
+https://github.com/999MAX20/PlatformaCRM/actions/runs/41178318197
+Task servers stopped; ports51319/51320 have no listeners, PostgreSQL stopped.
+No code/evidence/owner-decision remainder inside this package. Full R01 and
+working migration/live/release acceptance remain separate as described below.
+
+Local scoped verification31.10 complete; publication receipt above is authoritative.
 Canonical PlatformaCRM, codex/ui-testing-toolkit, base924b33f6; own reviewed code
 projected into candidate.index, foreign privacy/notification/roadmap WIP excluded.
 Only minimal existing CRM-card actor context is integrated as prerequisite; no claim
