@@ -62,6 +62,7 @@ export function CalendarAppointmentPreview({
       </div>
       {!compact ? <p className="mt-2 truncate text-xs font-semibold text-platforma-muted">{resource?.name || appointment.resource_name || t("calendar.noResource")} · {t(`appointment.source.${appointment.source}`)}</p> : null}
       {appointment.branch_name && <p className="mt-1 truncate text-xs text-platforma-subtle">{appointment.branch_name} · {appointment.branch_address}</p>}
+      {appointment.responsible_user_name && <p className="mt-1 truncate text-xs text-platforma-subtle">{t("appointment.responsible")}: {appointment.responsible_user_name}</p>}
     </button>
   );
 }

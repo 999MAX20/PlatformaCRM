@@ -19,6 +19,7 @@ type Props = {
   setBookingOpen: Dispatch<SetStateAction<boolean>>;
   setBookingPrefill: Dispatch<
     SetStateAction<{
+      source_conversation?: number | null;
       branch?: number | null | undefined;
       client?: number | null | undefined;
       service?: number | null | undefined;
@@ -43,6 +44,7 @@ type Props = {
   resourceItems: Resource[];
   leadItems: Lead[];
   bookingPrefill: {
+    source_conversation?: number | null;
     branch?: number | null | undefined;
     client?: number | null | undefined;
     service?: number | null | undefined;
@@ -91,6 +93,8 @@ export function CalendarBookingDialog({
       }}
     >
       <AppointmentForm
+        recordFirst
+        currency={business.currency}
         businessId={business.id}
         clients={clientItems}
         services={serviceItems}

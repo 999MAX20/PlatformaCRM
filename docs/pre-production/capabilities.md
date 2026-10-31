@@ -1,3 +1,8 @@
+CRM-R01, первый пакет31.10: ручной Клиент/Inbox → один Appointment с отдельным
+ответственным, source provenance, актуальными guards и общим состоянием карточки/
+календаря/списка клиента реализован и локально проверен. Это частичный результат
+новой R01-дельты, не закрытие плана/денег/AI-default/live. [Evidence](../testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
+
 # Карта реализации и оставшихся границ
 
 PILOT-ACCESS-20261031 adds isolated two-Business onboarding/access acceptance:

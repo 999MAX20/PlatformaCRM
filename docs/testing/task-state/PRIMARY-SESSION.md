@@ -6,6 +6,118 @@
 
 # PRIMARY-SESSION — PlatformaCRM
 
+## CRM-R01-RECORD-FIRST-20261031 — single Appointment package
+
+Local scoped verification31.10 complete; publication receipt follows when confirmed.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, base924b33f6; own reviewed code
+projected into candidate.index, foreign privacy/notification/roadmap WIP excluded.
+Only minimal existing CRM-card actor context is integrated as prerequisite; no claim
+of authorship of that existing context fix. Current taskpaths/candidate.patch and
+starting bytes/manifest are in output/record-first-20261031.
+
+Implemented: additive responsible_user/source_conversation; create-record service
+and API, current permissions/tenant/client/source/branch/slot validation, manual actor
+default, explicit active assignment without granting OWN/TEAM access, idempotent
+current projection, price/duration and mutation-version checks, atomic audit/activity/
+followups. Legacy APIs/automatic booking retain their contracts. New calendar/client/
+Inbox UI uses this command and refreshes affected surfaces; separate coordinator
+shown. Existing client workspace entry retained; drawer entry added. Browser found
+Escape closed whole modal; Select now stops that handled event, verified in modal
+and standalone account selector. No new permission framework or AI execution.
+
+Exact environment: .venv/Scripts/python.exe, installed Node, scripts.codex_verify
+isolated_runtime, disposable SQLite and PostgreSQL17, denied external network,
+read-only imports from reviewed Git blobs, canonical source only. No dependency
+reinstall, working DB migration/configuration, provider send or deployment.
+Commands below run from canonical root; OUT=output/record-first-20261031:
+- run_candidate.py record-focused-fixed test apps.scheduling.tests_record_commands
+  --noinput:9 PASS after initial fixture role field/handled500 errors were fixed.
+- run_candidate.py record-lifecycle test apps.scheduling.tests_record_commands
+  apps.conversations.tests_inbox_tasks --noinput:24 PASS at that coherent slice.
+- run_candidate.py record-final-slice test apps.scheduling.tests_record_commands
+  --noinput:14 PASS at that slice. Later current prechecks: candidate-current-record
+  same label17 PASS, including denied Client VIEW on replay/read-restricted success.
+- run_candidate.py candidate-scheduling-final test apps.scheduling.tests_record_commands
+  apps.scheduling.tests apps.scheduling.tests_specialist_schedule
+  apps.scheduling.tests_settings_delivery apps.branches.tests_scheduling --noinput:
+  100 PASS. Earlier98 had2 failures: old-route source serialization and owner without
+  membership. New UI isolated from legacy endpoint; explicit owner authority retained;
+  final100 closes both. Historical failed log retained, not relabeled.
+- run_candidate.py candidate-dependent test apps.scheduling.tests_record_commands
+  apps.scheduling.tests_record_migration apps.branches.tests_scheduling
+  apps.branches.tests_access apps.businesses.tests_access
+  apps.conversations.tests_inbox_context apps.conversations.tests_inbox_tasks
+  apps.conversations.tests_ai_confirmation apps.core.tests_crm_cards --noinput:
+  119 PASS. Subsequent precheck tests17 and scheduling100 cover changed inputs;
+  unchanged dependent results reused. Migration preserves old nullable specialist,
+  IDs, timestamps, history and Lead links.
+- postgres.py:18 PASS, including3 actual races (last slot, same-key create/replay,
+  same-version actions) and15 record checks. Later prechecks do not alter locking;
+  no full-project concurrency claim. PostgreSQL stopped by runner.
+- run_candidate.py system check; run_candidate.py drift makemigrations --check
+  --dry-run:PASS. Backend/schema unchanged after these checks.
+- frontend_verify.py: forced tsc -b --force, npm run build (i18n included), node --test
+  scripts/tests/appointment-cache.test.mjs scripts/tests/client-search.test.mjs:
+  Final affected rerun after Select fix: types/build/i18n and7 Node tests PASS.
+  Initial Promise<void[]> typing error retained in frontend-types-first-fail.log.
+
+Chrome candidate backend51319/frontend51320, synthetic business/users only:
+RU Client60 drawer → form prefill → coordinator != specialist → Appointment1;
+confirm, reschedule10:00→11:00, card/reload, cancellation with mandatory reason and
+followup. Client workspace shows cancelled1/current2 and old lost Lead/Deal.
+Closed Inbox → Appointment2 at12:00; test harness-only503 preserved fields, retry
+succeeded, source website and context link/calendar/2 appeared, dialog remained closed.
+EN two forms selected13:00: first succeeded; second409 preserved fields, Refresh
+removed occupied13:00; choosing13:30 succeeded. KK/EN390px form/card inspected;
+RU desktop, keyboard entries, responsible dropdown/second Escape and account Select
+verified. Screenshots browser-inbox-ru.png, browser-form-kk-mobile.png,
+browser-form-en-mobile.png, browser-recovered-en.png in OUT. Initial CDP fault
+injection unavailable; replaced with marker-controlled503 in isolated harness,
+then marker removed. No browser network override left in place.
+
+Verification scope: affected flow only; no full E2E/release or live-provider claim.
+Role/tenant/denied source/current replay/rollback proven by automated backend tests,
+not screenshots. React review: existing hooks/API/cache/shared controls reused,
+unconditional hooks, no new raw network/component dependencies, independent invalidations
+batched. Service/branch terms projected from current catalog. Current input snapshots
+and publication hygiene retained separately. No known remaining code/owner decision
+inside the single-visit package; documentation/publication receipt follows below.
+Docs: CRM/API, frontend, scheduling/client/Inbox passports, capabilities, README and
+roadmap updated. Access/product/AI/integration/operations requirements unchanged:
+no new roles/provider/configuration or plan-money contract. Existing unpublished
+broader roadmap/contract edits remain excluded and preserved. This package does not
+close full CRM-R01 or AC-CRM-PILOT-01–14. Next unimplemented scope is plan/money,
+AI responsible default and legacy navigation; none is authorized by this checkpoint.
+
+Owner31.10 accepted the proposed first package: create from Client/Inbox without
+mandatory Lead/Deal screens; client/time/specialist/responsible/status; same persisted
+state in list/calendar/card after mutation/reload; role/tenant/slot/reschedule/cancel
+and error recovery; preserve Lead/Deal/history. Implementation+verification+normal
+publication on current codex/ui-testing-toolkit, base924b33f6. Canonical root retained;
+starting dirty bytes/patch/index: output/record-first-20261031/manifest.json,before/.
+Reuse Appointment and existing availability/lifecycle/branch/access/idempotency,
+Inbox command, client workspace, shared form/calendar/CRM card. Scope is one visit;
+plan/money/early-completion allocation, global legacy navigation removal, automatic
+AI booking changes, provider delivery, deployment and working-DB migrations excluded.
+No new permission framework; assignment never grants object access. Manual default
+responsible is actor, explicit choice validated as active current Business member.
+Source conversation/provenance retained without reopening terminal Lead/Deal.
+Existing audit/activity/BusinessEvent/notification behavior must remain atomic;
+the new manual path must not silently invoke Lead transition or AI execution.
+Risk high: current permissions, source links, concurrent last slot, stale mutation,
+request replay, compatibility and preserved history. Minimal additive schema may
+be needed for responsible/provenance; migration generated/tested only in isolation.
+Before dependent UI, focused service/API tests per coherent backend change. Close:
+affected/dependent scheduling/Inbox/Client/access suites, isolated system/drift/
+migration and PostgreSQL last-slot/replay where applicable; targeted frontend
+interaction tests, one final build/forced types/i18n, browser RU/KK/EN relevant
+viewport/keyboard including conflict/error/retry/reload and cross-surface identity.
+Full local project suite is not the default; actual push CI inspected separately.
+Existing foreign WIP (client projections/personal notifications etc.) preserved;
+only this task's reviewed hunks and explicit required dependencies may be published.
+Approved domain choices from CRM/OP-RECORD reused; unresolved business decisions,
+if found, block only their affected scenario. No unrelated module redesign.
+
 ## PILOT-ACCESS-20261031 — two-business onboarding and access
 
 Publication31.10: code43aab2fefc3d20de05a41f47cf05699477c013af normal-pushed

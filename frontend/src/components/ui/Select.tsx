@@ -187,6 +187,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           onKeyDown={(event) => {
             if (event.key === "Escape" && open) {
               event.preventDefault();
+              event.stopPropagation();
               setOpen(false);
               return;
             }

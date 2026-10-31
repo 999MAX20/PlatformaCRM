@@ -440,6 +440,7 @@ def _object_matches_scope(obj, user, business: Business | None, scope: str, acti
         getattr(obj, f"{field}_id", None)
         for field in OWNERSHIP_FIELDS
         if field in model_fields
+        and not (obj.__class__.__name__ == "Appointment" and field == "responsible_user")
     }
     appointment_linked_user_id = _appointment_linked_user_id(obj, business)
     if appointment_linked_user_id is not None:
@@ -559,6 +560,8 @@ def _filter_queryset_by_users(
     model_fields = {field.name for field in queryset.model._meta.get_fields()}
     query = Q()
     for field in OWNERSHIP_FIELDS:
+        if queryset.model.__name__ == "Appointment" and field == "responsible_user":
+            continue
         if field in model_fields:
             query |= Q(**{f"{field}_id__in": user_ids})
     if queryset.model.__name__ == "Appointment" and business is not None:

@@ -98,6 +98,7 @@ export function CalendarPage() {
 
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingPrefill, setBookingPrefill] = useState<{
+    source_conversation?: number | null;
     branch?: number | null;
     client?: number | null;
     service?: number | null;
@@ -109,9 +110,11 @@ export function CalendarPage() {
     source?: Appointment["source"];
   } | null>(null);
   const openLinkedAppointment = useCallback((client: Client | null) => {
-    setBookingPrefill({ client: client?.id, source: "manual" });
+    const sourceConversation = Number(searchParams.get("conversation"));
+    setBookingPrefill({ client: client?.id, source: "manual",
+      source_conversation: Number.isSafeInteger(sourceConversation) && sourceConversation > 0 ? sourceConversation : undefined });
     setBookingOpen(true);
-  }, []);
+  }, [searchParams]);
   const createContext = useClientCreateIntent({
     businessId: business?.id,
     allowed: canCreateAppointment,
@@ -502,7 +505,8 @@ export function CalendarPage() {
 
   function openRepeatBooking(appointment: Appointment) {
     setBookingPrefill({
-      date: dateInTimeZone(appointment.start_at, businessTimeZone),
+      date: todayInTimeZone(businessTimeZone),
+      source_conversation: appointment.source_conversation,
       branch: appointment.branch || undefined,
       client: appointment.client,
       service: appointment.service,
@@ -706,7 +710,7 @@ export function CalendarPage() {
                 setStatusReason("");
                 return;
               }
-              statusMutation.mutate({ id: appointment.id, status });
+              statusMutation.mutate({ id: appointment.id, status, expected_updated_at: appointment.updated_at });
             }}
             onReschedule={setRescheduleTarget}
             onOpenCard={openAppointmentWorkspace}

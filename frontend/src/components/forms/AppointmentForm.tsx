@@ -6,8 +6,12 @@ import { Link } from "react-router";
 import { z } from "zod";
 
 import { appointmentsApi, type AppointmentCreatePayload } from "../../api/appointments";
+import { teamApi } from "../../api/team";
+import { useAuth } from "../../features/auth/AuthProvider";
+import { hasPermission } from "../../lib/permissions";
+import { ClientPicker } from "./ClientPicker";
 import { scheduleExceptionsApi, workingHoursApi } from "../../api/workingHours";
-import { dateInTimeZone, hourInTimeZone, todayInTimeZone } from "../../lib/format";
+import { dateInTimeZone, formatMoney, hourInTimeZone, todayInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import { useBranchBooking } from "../../hooks/useBranchBooking";
 import type { Appointment, Client, Id, Lead, Resource, Service, WorkingHours } from "../../types";
@@ -25,6 +29,7 @@ function createSchema(t: (key: string) => string) {
     service: z.coerce.number<string | number>().min(1, t("appointment.selectService")),
     resource: z.coerce.number<string | number>().min(1, t("appointment.selectSpecialist")),
     lead: z.coerce.number<string | number>().optional(),
+    responsible_user: z.coerce.number<string | number>().optional(),
     date: z.string().min(1, t("appointment.dateRequired")),
     slot: z.string().optional(),
     source: z.string(),
@@ -86,6 +91,8 @@ export function AppointmentForm({
   initial,
   prefill,
   onSubmit,
+  recordFirst = false,
+  currency = "KZT",
   timeZone = "UTC",
 }: {
   businessId: Id;
@@ -94,7 +101,10 @@ export function AppointmentForm({
   resources: Resource[];
   leads: Lead[];
   initial?: Appointment;
+  recordFirst?: boolean;
+  currency?: string;
   prefill?: {
+    source_conversation?: Id | null;
     branch?: Id | null;
     client?: Id | null;
     service?: Id | null;
@@ -109,6 +119,12 @@ export function AppointmentForm({
   timeZone?: string;
 }) {
   const { t, language } = useI18n();
+  const { user } = useAuth();
+  const members = useQuery({
+    queryKey: ["team-members", "appointment", businessId, user?.id],
+    queryFn: () => teamApi.allMembers(businessId),
+    enabled: recordFirst && hasPermission(user, businessId, "team", "view"), retry: false,
+  });
   const { getRecoverableMessage } = useActionFeedback();
   const branch = useBranchBooking(businessId, initial?.branch || prefill?.branch);
   const selectableServices = services.filter(
@@ -120,10 +136,11 @@ export function AppointmentForm({
   const form = useForm<InputValues, unknown, Values>({
     resolver: zodResolver(createSchema(t)),
     defaultValues: {
-      client: initial?.client || prefill?.client || clients[0]?.id || 0,
+      client: initial?.client || prefill?.client || (recordFirst ? 0 : clients[0]?.id) || 0,
       service: initial?.service || prefill?.service || selectableServices[0]?.id || 0,
       resource: initial?.resource || prefill?.resource || undefined,
       lead: initial?.lead || prefill?.lead || undefined,
+      responsible_user: initial?.responsible_user || user?.id,
       date: initial?.start_at ? dateInTimeZone(initial.start_at, timeZone) : prefill?.date || todayInTimeZone(timeZone),
       slot: initial?.start_at || prefill?.slot || "",
       source: initial?.source || prefill?.source || "manual",
@@ -233,6 +250,12 @@ export function AppointmentForm({
             end_at: initial?.end_at || endAt.toISOString(),
             source: values.source as Appointment["source"],
             notes: values.notes || "",
+            ...(recordFirst ? {
+              responsible_user: values.responsible_user || user?.id,
+              source_conversation: prefill?.source_conversation || undefined,
+              expected_price: selectedService?.price_from ?? null,
+              expected_duration_minutes: selectedService?.duration_minutes,
+            } : {}),
           });
         } catch (error) {
           setSubmitError(getRecoverableMessage(error));
@@ -241,7 +264,7 @@ export function AppointmentForm({
     >
       {branch.error ? <ErrorState error={branch.error} /> : null}
       {branch.enabled && <Select label={t("branches.branch")} value={branch.branchId} disabled={!!initial} onChange={(event) => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map((item) => ({ value: item.id, label: `${item.name} · ${item.address}` }))]} />}
-      {!hasClients ? (
+      {!recordFirst && !hasClients ? (
         <SetupNotice
           title={t("appointment.needClientTitle")}
           description={t("appointment.needClientText")}
@@ -267,8 +290,14 @@ export function AppointmentForm({
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
-        <Select label={t("appointment.client")} error={form.formState.errors.client?.message} options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: client.full_name }))]} {...form.register("client")} value={form.watch("client")} />
-        <Select label={t("appointment.service")} error={form.formState.errors.service?.message} options={[{ value: 0, label: t("appointment.selectService") }, ...selectableServices.map((service) => ({ value: service.id, label: `${service.name} · ${service.duration_minutes} ${t("appointment.minutes")}` }))]} {...form.register("service")} />
+        {recordFirst ? prefill?.source_conversation ? (
+          <Input label={t("appointment.client")} value={clients.find(client => client.id === Number(form.watch("client")))?.full_name || t("common.client")} readOnly />
+        ) : (
+          <ClientPicker businessId={businessId} value={String(form.watch("client") || "")}
+            onChange={value => form.setValue("client", Number(value), { shouldValidate: true })}
+            error={form.formState.errors.client?.message} />
+        ) : <Select label={t("appointment.client")} error={form.formState.errors.client?.message} options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: client.full_name }))]} {...form.register("client")} value={form.watch("client")} />}
+        <Select label={t("appointment.service")} error={form.formState.errors.service?.message} options={[{ value: 0, label: t("appointment.selectService") }, ...selectableServices.map((service) => ({ value: service.id, label: `${service.name} · ${service.duration_minutes} ${t("appointment.minutes")}${recordFirst ? ` · ${formatMoney(service.price_from, currency)}` : ""}` }))]} {...form.register("service")} value={form.watch("service")} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Select
@@ -279,8 +308,14 @@ export function AppointmentForm({
             ...activeResources.map((resource) => ({ value: resource.id, label: resource.name })),
           ]}
           {...form.register("resource")}
+          value={form.watch("resource") || ""}
         />
-        <Select label={t("appointment.lead")} options={[{ value: "", label: t("appointment.noLead") }, ...leads.map((lead) => ({ value: lead.id, label: `${t("appointment.lead")} #${lead.id}` }))]} {...form.register("lead")} />
+        {recordFirst ? <Select label={t("appointment.responsible")} value={form.watch("responsible_user")}
+          options={[{ value: user?.id || "", label: user?.full_name || user?.email || t("appointment.responsible") },
+            ...(members.data || []).filter(member => member.is_active && member.user.id !== user?.id)
+              .map(member => ({ value: member.user.id, label: member.user.full_name || member.user.email }))]}
+          {...form.register("responsible_user")} /> :
+          <Select label={t("appointment.lead")} options={[{ value: "", label: t("appointment.noLead") }, ...leads.map((lead) => ({ value: lead.id, label: `${t("appointment.lead")} #${lead.id}` }))]} {...form.register("lead")} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("appointment.date")} type="date" error={form.formState.errors.date?.message} {...form.register("date")} disabled={Boolean(initial)} />
@@ -309,7 +344,7 @@ export function AppointmentForm({
         )}
       </div>
       {slots.error ? (
-        <ErrorState message={getRecoverableMessage(slots.error)} />
+        <ErrorState message={getRecoverableMessage(slots.error)} action={<Button type="button" onClick={() => void slots.refetch()}>{t("common.retry")}</Button>} />
       ) : null}
       {noSlots ? (
         <StatusNotice
@@ -336,18 +371,23 @@ export function AppointmentForm({
         />
       ) : null}
       {submitError ? (
-        <ErrorState message={submitError} />
+        <ErrorState message={submitError} action={recordFirst ? <Button type="button" onClick={() => {
+          form.setValue("slot", "");
+          void Promise.all(["services", "resources", "branch-catalog", "available-slots", "team-members"]
+            .map(key => queryClient.invalidateQueries({ queryKey: [key] })));
+        }}>{t("common.refresh")}</Button> : undefined} />
       ) : null}
-      <Select label={t("appointment.source")} options={[
+      {recordFirst && members.error ? <ErrorState error={members.error} action={<Button type="button" onClick={() => void members.refetch()}>{t("common.retry")}</Button>} /> : null}
+      {!recordFirst && <Select label={t("appointment.source")} options={[
         { value: "manual", label: t("appointment.sourceManual") },
         { value: "website", label: t("appointment.sourceWebsite") },
         { value: "telegram", label: "Telegram" },
         { value: "whatsapp", label: "WhatsApp" },
         { value: "instagram", label: "Instagram" },
         { value: "bot", label: "Bot" },
-      ]} {...form.register("source")} />
+      ]} {...form.register("source")} />}
       <Textarea label={t("appointment.notes")} {...form.register("notes")} />
-      <Button data-testid="appointment-submit" type="submit" isLoading={form.formState.isSubmitting} disabled={!initial && (!branch.ready || !hasClients || !hasServices || slots.isLoading || slots.data?.length === 0)}>
+      <Button data-testid="appointment-submit" type="submit" isLoading={form.formState.isSubmitting} disabled={!initial && (!branch.ready || (!recordFirst && !hasClients) || !hasServices || slots.isLoading || slots.data?.length === 0)}>
         {initial ? t("appointment.save") : t("appointment.create")}
       </Button>
     </form>

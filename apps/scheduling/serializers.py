@@ -1,6 +1,11 @@
 from rest_framework import serializers
 
 from apps.accounts.models import User
+from apps.bots.models import BotConversation
+from apps.clients.models import Client
+from apps.businesses.models import Business
+from apps.services.models import Service
+from apps.leads.models import Lead
 from apps.scheduling.models import Appointment, AppointmentMessageSetting, Resource, WorkingHours
 from apps.scheduling.services import validate_appointment_availability
 from apps.scheduling.resource_services import create_resource, validate_week, validate_staff_account
@@ -145,6 +150,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
     resource_name = serializers.CharField(source="resource.name", read_only=True, allow_null=True)
     resource_type = serializers.CharField(source="resource.resource_type", read_only=True, allow_null=True)
     lead_title = serializers.SerializerMethodField()
+    responsible_user_name = serializers.SerializerMethodField()
+    source_conversation = serializers.SerializerMethodField()
 
     lifecycle_update_fields = {"status"}
     schedule_update_fields = {"client", "lead", "service", "resource", "start_at", "end_at", "branch"}
@@ -160,6 +167,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
             "client_phone",
             "lead",
             "lead_title",
+            "responsible_user", "responsible_user_name", "source_conversation",
             "service",
             "service_name",
             "service_duration_minutes",
@@ -179,11 +187,24 @@ class AppointmentSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["created_at", "updated_at", "branch_name", "branch_address", "booked_price", "booked_duration_minutes"]
+        read_only_fields = ["created_at", "updated_at", "branch_name", "branch_address", "booked_price", "booked_duration_minutes", "responsible_user", "source_conversation"]
         extra_kwargs = {"end_at": {"required": False}}
 
     def get_service_duration_minutes(self, obj):
         return obj.booked_duration_minutes or obj.service.duration_minutes
+
+    def get_responsible_user_name(self, obj):
+        user = obj.responsible_user
+        return (user.full_name or user.email) if user else ""
+
+    def get_source_conversation(self, obj):
+        from apps.businesses.access import Actions, Resources, can
+        request = self.context.get("request")
+        actor = getattr(request, "user", None) or self.context.get("actor")
+        conversation = obj.source_conversation
+        if actor and conversation and can(actor, obj.business, Resources.CONVERSATIONS, Actions.VIEW, obj=conversation).allowed:
+            return conversation.pk
+        return None
 
     def get_lead_title(self, obj):
         if not obj.lead_id:
@@ -259,7 +280,26 @@ class AppointmentSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class AppointmentRescheduleSerializer(serializers.Serializer):
+class RecordCreateSerializer(serializers.Serializer):
+    business = serializers.PrimaryKeyRelatedField(queryset=Business.objects.all())
+    client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+    service = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all())
+    resource = serializers.PrimaryKeyRelatedField(queryset=Resource.objects.all())
+    branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), required=False, allow_null=True)
+    responsible_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
+    source_conversation = serializers.PrimaryKeyRelatedField(queryset=BotConversation.objects.all(), required=False, allow_null=True)
+    lead = serializers.PrimaryKeyRelatedField(queryset=Lead.objects.all(), required=False, allow_null=True)
+    start_at = serializers.DateTimeField()
+    notes = serializers.CharField(required=False, allow_blank=True)
+    expected_price = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, allow_null=True)
+    expected_duration_minutes = serializers.IntegerField(min_value=1, required=False)
+
+
+class AppointmentVersionSerializer(serializers.Serializer):
+    expected_updated_at = serializers.DateTimeField(required=False)
+
+
+class AppointmentRescheduleSerializer(AppointmentVersionSerializer):
     start_at = serializers.DateTimeField()
     resource = serializers.PrimaryKeyRelatedField(queryset=Resource.objects.all(), required=False, allow_null=True)
     branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), required=False)
@@ -275,7 +315,7 @@ class AppointmentRescheduleSerializer(serializers.Serializer):
         return attrs
 
 
-class AppointmentStatusReasonSerializer(serializers.Serializer):
+class AppointmentStatusReasonSerializer(AppointmentVersionSerializer):
     reason = serializers.CharField(max_length=500, trim_whitespace=True)
 
 

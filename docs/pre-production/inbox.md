@@ -1,3 +1,10 @@
+Одиночная запись31.10: «Записать клиента» открывает общую форму календаря,
+передавая разрешённый Client и source_conversation. Создать новый визит можно
+из закрытого диалога без reopen Lead/Deal; source связи и прежняя история сохраняются.
+Для команды нужны актуальные Conversation VIEW/UPDATE, Client VIEW и Appointment
+CREATE. Созданная запись появляется в контексте диалога. [Проверки](../testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package)
+изолированные; новая AI-логика или реальная отправка не включены.
+
 # Inbox и ручная работа с обращениями
 
 YCloud TP Lite, 29.10: текстовый канал использует этот же Inbox и существующий

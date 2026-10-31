@@ -1,3 +1,8 @@
+CRM-R01-RECORD-FIRST-20261031: single-Appointment Client/Inbox package implemented.
+Current guards/replay/rollback/migration, PostgreSQL races and browser flows verified;
+coordinator separate from specialist, old Lead/Deal preserved. Final frontend PASS;
+publication receipt pending in PRIMARY. Full R01 plans/money/live remain open; foreign WIP retained.
+
 PILOT-ACCESS-20261031: two-Business onboarding/access verified and published43aab2fe.
 Existing security fixes integrated; neutral signup and MFA error recovery corrected.
 Focused/dependent suites, PostgreSQL12, build/types/i18n/Node12 and browser PASS.

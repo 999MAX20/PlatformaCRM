@@ -11,10 +11,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from apps.activities.serializers import NoteSerializer
-from apps.businesses.access import Actions, Resources, assert_can
+from apps.businesses.access import Actions, Resources, assert_can, can
 from apps.core.crm_cards import appointment_crm_card
 from apps.core.domain_errors import InvalidTransition, ScheduleConflict
-from apps.core.idempotency import IdempotentCRMCreateMixin
+from apps.core.idempotency import IdempotentCRMCreateMixin, CRMCommandResult, run_idempotent_crm_command
 from apps.core.permissions import user_can_access_business
 from apps.core.viewsets import TenantModelViewSet
 from apps.businesses.models import Business
@@ -24,6 +24,8 @@ from apps.scheduling.serializers import (
     AppointmentRescheduleSerializer,
     AppointmentSerializer,
     AppointmentStatusReasonSerializer,
+    AppointmentVersionSerializer,
+    RecordCreateSerializer,
     AvailableSlotSerializer,
     ResourceSerializer,
     WorkingHoursSerializer,
@@ -317,8 +319,44 @@ class AppointmentMessageSettingViewSet(TenantModelViewSet):
 
 
 class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
-    queryset = Appointment.objects.select_related("business", "client", "lead", "lead__responsible_user", "service", "resource", "resource__linked_user")
+    queryset = Appointment.objects.select_related("business", "client", "lead", "lead__responsible_user", "service", "resource", "resource__linked_user", "responsible_user", "source_conversation")
     serializer_class = AppointmentSerializer
+
+    @action(detail=False, methods=["post"], url_path="create-record")
+    def create_record(self, request):
+        from apps.businesses.capabilities import assert_resource_enabled
+        from apps.scheduling.record_commands import create_record
+
+        serializer = RecordCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        values = serializer.validated_data
+        business = values["business"]
+        assert_resource_enabled(business, Resources.APPOINTMENTS)
+        assert_can(request.user, business, Resources.APPOINTMENTS, Actions.CREATE)
+        if values["client"].business_id != business.pk:
+            raise ValidationError("Client must belong to the selected business.")
+        assert_resource_enabled(business, Resources.CLIENTS)
+        assert_can(request.user, business, Resources.CLIENTS, Actions.VIEW, obj=values["client"])
+        conversation = values.get("source_conversation")
+        if conversation:
+            if conversation.business_id != business.pk or conversation.client_id != values["client"].pk:
+                raise ValidationError("Conversation must match the selected client and business.")
+            assert_resource_enabled(business, Resources.CONVERSATIONS)
+            assert_can(request.user, business, Resources.CONVERSATIONS, Actions.VIEW, obj=conversation)
+            assert_can(request.user, business, Resources.CONVERSATIONS, Actions.UPDATE, obj=conversation)
+
+        def operation():
+            appointment = create_record(actor=request.user, **values)
+            return CRMCommandResult(data={"id": appointment.pk}, status_code=201, resource=appointment)
+
+        command = run_idempotent_crm_command(business=business, actor=request.user,
+            action="appointment.create_record", idempotency_key=request.headers.get("Idempotency-Key", ""),
+            payload=request.data, operation=operation)
+        appointment = self.queryset.filter(business=business, pk=command.data["id"]).first()
+        data = (self.get_serializer(appointment).data if appointment and
+                can(request.user, business, Resources.APPOINTMENTS, Actions.VIEW, obj=appointment).allowed
+                else {"read_restricted": True})
+        return Response(data, status=command.status_code)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -406,8 +444,10 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
     def confirm(self, request, pk=None):
         appointment = self.get_object()
         assert_can(request.user, appointment.business, Resources.APPOINTMENTS, Actions.UPDATE, obj=appointment)
+        serializer = AppointmentVersionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         try:
-            appointment = confirm_appointment(appointment=appointment, actor=request.user)
+            appointment = confirm_appointment(appointment=appointment, actor=request.user, **serializer.validated_data)
         except ValueError as exc:
             raise InvalidTransition() from exc
         return Response(self.get_serializer(appointment).data)
@@ -424,6 +464,7 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
                 actor=request.user,
                 reason=serializer.validated_data["reason"],
                 request=request,
+                expected_updated_at=serializer.validated_data.get("expected_updated_at"),
             )
         except ValueError as exc:
             raise InvalidTransition() from exc
@@ -433,8 +474,10 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
     def complete(self, request, pk=None):
         appointment = self.get_object()
         assert_can(request.user, appointment.business, Resources.APPOINTMENTS, Actions.UPDATE, obj=appointment)
+        serializer = AppointmentVersionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         try:
-            appointment = complete_appointment(appointment=appointment, actor=request.user, request=request)
+            appointment = complete_appointment(appointment=appointment, actor=request.user, request=request, **serializer.validated_data)
         except ValueError as exc:
             raise InvalidTransition() from exc
         return Response(self.get_serializer(appointment).data)
@@ -451,6 +494,7 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
                 actor=request.user,
                 reason=serializer.validated_data["reason"],
                 request=request,
+                expected_updated_at=serializer.validated_data.get("expected_updated_at"),
             )
         except ValueError as exc:
             raise InvalidTransition() from exc
@@ -486,6 +530,7 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
                 branch=serializer.validated_data.get("branch", appointment.branch),
                 reason=serializer.validated_data.get("reason", ""),
                 request=request,
+                expected_updated_at=serializer.validated_data.get("expected_updated_at"),
             )
         except ValueError as exc:
             raise ScheduleConflict(errors={"start_at": "Choose another available time."}) from exc

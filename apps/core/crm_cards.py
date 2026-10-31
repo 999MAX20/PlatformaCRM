@@ -434,7 +434,7 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
         .distinct()
         .order_by("-updated_at")
     )
-    appointments = Appointment.objects.filter(business=business).select_related("business", "client", "lead", "service", "resource").filter(_or_queries(appointment_filters)).distinct().order_by("-start_at")
+    appointments = Appointment.objects.filter(business=business).select_related("business", "client", "lead", "service", "resource", "responsible_user", "source_conversation").filter(_or_queries(appointment_filters)).distinct().order_by("-start_at")
     tasks = (
         Task.objects.filter(business=business)
         .select_related(
@@ -556,10 +556,10 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
         "client": ClientSerializer(client, context={"actor": actor}).data if client is not None else None,
         "lead": LeadListSerializer(primary_lead).data if primary_lead is not None else None,
         "deal": DealListSerializer(primary_deal, context={"actor": actor}).data if primary_deal is not None else None,
-        "appointment": AppointmentSerializer(primary_appointment).data if primary_appointment is not None else None,
+        "appointment": AppointmentSerializer(primary_appointment, context={"actor": actor}).data if primary_appointment is not None else None,
         "leads": LeadListSerializer(leads[:RELATED_LIMIT], many=True).data,
         "deals": DealListSerializer(deals[:RELATED_LIMIT], many=True, context={"actor": actor}).data,
-        "appointments": AppointmentSerializer(appointments[:RELATED_LIMIT], many=True).data,
+        "appointments": AppointmentSerializer(appointments[:RELATED_LIMIT], many=True, context={"actor": actor}).data,
         "tasks": TaskSerializer(tasks[:RELATED_LIMIT], many=True).data,
         "conversations": InboxConversationSerializer(conversations[:RELATED_LIMIT], many=True).data,
         "timeline": ActivityEventSerializer(timeline[:TIMELINE_LIMIT], many=True).data,

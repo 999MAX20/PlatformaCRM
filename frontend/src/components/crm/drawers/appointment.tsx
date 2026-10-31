@@ -8,6 +8,7 @@ import { useEntityData } from "../../../hooks/useEntityData";
 import { canAccessAppointmentAction } from "../../../features/calendar/appointmentAccess";
 import { appointmentsApi } from "../../../api/appointments";
 import { formatDateTime } from "../../../lib/format";
+import { refreshAppointmentQueries } from "../../../lib/appointmentCache";
 import { useI18n } from "../../../lib/i18n";
 import type { CrmCardPayload } from "../../../types";
 import { useNotification } from "../../notifications/NotificationProvider";
@@ -40,6 +41,7 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
   const [notes, setNotes] = useState(appointment?.notes || "");
   const [statusReasonAction, setStatusReasonAction] = useState<AppointmentAction | null>(null);
   const [statusReason, setStatusReason] = useState("");
+  const [statusReasonVersion, setStatusReasonVersion] = useState("");
 
   useEffect(() => {
     setNotes(appointment?.notes || "");
@@ -50,25 +52,22 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
       if (!appointment) throw new Error("Appointment is required.");
       return appointmentsApi.update({ id: appointment.id, payload: { notes } });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["crm-card", entity.type, entity.id] });
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    onSuccess: (updated) => {
+      void refreshAppointmentQueries(queryClient, updated);
       showNotification({ message: t("common.saved"), tone: "success" });
     },
   });
 
   const lifecycleMutation = useMutation({
-    mutationFn: async ({ action, reason }: { action: AppointmentAction; reason?: string }) => {
+    mutationFn: async ({ action, reason, expected_updated_at }: { action: AppointmentAction; reason?: string; expected_updated_at: string }) => {
       if (!appointment) throw new Error("Appointment is required.");
-      if (action === "confirmed") return appointmentsApi.confirm(appointment.id);
-      if (action === "cancelled") return appointmentsApi.cancel(appointment.id, { reason: reason || "" });
-      if (action === "completed") return appointmentsApi.complete(appointment.id);
-      return appointmentsApi.noShow(appointment.id, { reason: reason || "" });
+      if (action === "confirmed") return appointmentsApi.confirm(appointment.id, expected_updated_at);
+      if (action === "cancelled") return appointmentsApi.cancel(appointment.id, { reason: reason || "", expected_updated_at });
+      if (action === "completed") return appointmentsApi.complete(appointment.id, expected_updated_at);
+      return appointmentsApi.noShow(appointment.id, { reason: reason || "", expected_updated_at });
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["crm-card", entity.type, entity.id] });
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      queryClient.invalidateQueries({ queryKey: ["activity-events"] });
+    onSuccess: (updated, variables) => {
+      void refreshAppointmentQueries(queryClient, updated);
       setStatusReasonAction(null);
       setStatusReason("");
       const labels: Record<AppointmentAction, string> = {
@@ -106,22 +105,22 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
           </div>
           {canUpdate && <div className="flex shrink-0 flex-wrap gap-2">
             {appointment.status !== "confirmed" && !isTerminal ? (
-              <Button size="sm" variant="secondary" isLoading={lifecycleMutation.isPending} onClick={() => lifecycleMutation.mutate({ action: "confirmed" })}>
+              <Button size="sm" variant="secondary" isLoading={lifecycleMutation.isPending} onClick={() => lifecycleMutation.mutate({ action: "confirmed", expected_updated_at: appointment.updated_at })}>
                 {t("appointment.actionConfirm")}
               </Button>
             ) : null}
             {appointment.status !== "completed" && appointment.status !== "cancelled" ? (
-              <Button size="sm" variant="secondary" isLoading={lifecycleMutation.isPending} onClick={() => lifecycleMutation.mutate({ action: "completed" })}>
+              <Button size="sm" variant="secondary" isLoading={lifecycleMutation.isPending} onClick={() => lifecycleMutation.mutate({ action: "completed", expected_updated_at: appointment.updated_at })}>
                 {t("appointment.actionComplete")}
               </Button>
             ) : null}
             {appointment.status !== "no_show" && appointment.status !== "cancelled" && appointment.status !== "completed" ? (
-              <Button size="sm" variant="warning" isLoading={lifecycleMutation.isPending} onClick={() => { setStatusReasonAction("no_show"); setStatusReason(""); }}>
+              <Button size="sm" variant="warning" isLoading={lifecycleMutation.isPending} onClick={() => { setStatusReasonAction("no_show"); setStatusReasonVersion(appointment.updated_at); setStatusReason(""); }}>
                 {t("appointment.actionNoShow")}
               </Button>
             ) : null}
             {appointment.status !== "cancelled" && appointment.status !== "completed" ? (
-              <Button size="sm" variant="warning" isLoading={lifecycleMutation.isPending} onClick={() => { setStatusReasonAction("cancelled"); setStatusReason(""); }}>
+              <Button size="sm" variant="warning" isLoading={lifecycleMutation.isPending} onClick={() => { setStatusReasonAction("cancelled"); setStatusReasonVersion(appointment.updated_at); setStatusReason(""); }}>
                 {t("appointment.actionCancel")}
               </Button>
             ) : null}
@@ -144,20 +143,24 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
                 variant="warning"
                 isLoading={lifecycleMutation.isPending}
                 disabled={!statusReason.trim()}
-                onClick={() => lifecycleMutation.mutate({ action: statusReasonAction, reason: statusReason.trim() })}
+                onClick={() => lifecycleMutation.mutate({ action: statusReasonAction, reason: statusReason.trim(), expected_updated_at: statusReasonVersion })}
               >
                 {statusReasonAction === "cancelled" ? t("appointment.actionCancel") : t("appointment.actionNoShow")}
               </Button>
             </div>
           </div>
         ) : null}
-        {notesMutation.error || lifecycleMutation.error ? <div className="mt-3"><ErrorState message={t("crmCard.saveError")} /></div> : null}
+        {notesMutation.error || lifecycleMutation.error ? <div className="mt-3"><ErrorState error={notesMutation.error || lifecycleMutation.error} action={<Button type="button" onClick={() => {
+          setStatusReasonAction(null);
+          void refreshAppointmentQueries(queryClient);
+        }}>{t("common.refresh")}</Button>} /></div> : null}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <SummaryItem icon={UserRound} label={t("appointment.client")} value={clientName} />
         <SummaryItem icon={ClipboardList} label={t("appointment.service")} value={serviceMeta} />
         <SummaryItem icon={CalendarClock} label={t("appointment.resource")} value={resourceName} />
+        {appointment.responsible_user_name && <SummaryItem icon={UserRound} label={t("appointment.responsible")} value={appointment.responsible_user_name} />}
         <SummaryItem icon={CheckCircle2} label={t("appointment.source")} value={sourceLabel(appointment.source, t)} />
       </div>
 

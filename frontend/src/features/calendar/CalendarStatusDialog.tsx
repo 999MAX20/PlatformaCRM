@@ -93,6 +93,7 @@ export function CalendarStatusDialog({
                 id: statusReasonTarget.appointment.id,
                 status: statusReasonTarget.status,
                 reason: statusReason.trim(),
+                expected_updated_at: statusReasonTarget.appointment.updated_at,
               });
             }}
           >

@@ -161,7 +161,7 @@ def build_inbox_context(conversation, *, actor, now=None):
         actions[f"link_{key}"] = update and sections[key]["state"] != "forbidden" and _allowed(actor, business, resource)
         actions[f"create_{key}"] = update and getattr(conversation, f"{key}_id") is None and _allowed(actor, business, resource, Actions.CREATE)
     actions["create_task"] = update and _allowed(actor, business, Resources.TASKS, Actions.CREATE)
-    actions["book"] = bool(client and not client.is_archived and _allowed(actor, business, Resources.APPOINTMENTS)
+    actions["book"] = bool(update and client and not client.is_archived and _allowed(actor, business, Resources.APPOINTMENTS)
                            and _allowed(actor, business, Resources.APPOINTMENTS, Actions.CREATE))
     return {
         "conversation_id": conversation.id, "business": business.id, "timezone": business.timezone,

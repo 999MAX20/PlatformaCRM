@@ -5,7 +5,7 @@ import type { Appointment, AppointmentMessageSetting, AvailableSlot, Id, Note } 
 export type AppointmentCreatePayload = Omit<
   Partial<Appointment>,
   "id" | "status" | "branch_name" | "branch_address" | "booked_price" | "booked_duration_minutes" | "is_archived" | "archive_reason" | "archived_at" | "archived_by" | "created_at" | "updated_at"
->;
+> & { expected_price?: string | null; expected_duration_minutes?: number };
 
 export type AppointmentUpdatePayload = Omit<
   Partial<Appointment>,
@@ -13,6 +13,7 @@ export type AppointmentUpdatePayload = Omit<
 >;
 
 export type AppointmentReschedulePayload = {
+  expected_updated_at?: string;
   branch?: Id;
   start_at: string;
   resource?: Id | null;
@@ -20,6 +21,7 @@ export type AppointmentReschedulePayload = {
 };
 
 export type AppointmentStatusReasonPayload = {
+  expected_updated_at?: string;
   reason: string;
 };
 
@@ -39,20 +41,26 @@ export type AppointmentListParams = {
 
 export const appointmentsApi = {
   ...createCrudApi<Appointment, AppointmentCreatePayload, AppointmentUpdatePayload>("/api/appointments/"),
+  createRecord: async (payload: AppointmentCreatePayload, idempotencyKey: string) => {
+    const { data } = await apiClient.post<Appointment | { read_restricted: true }>("/api/appointments/create-record/", payload, {
+      headers: { "Idempotency-Key": idempotencyKey },
+    });
+    return data;
+  },
   list: async (params?: AppointmentListParams) => {
     const { data } = await apiClient.get<Appointment[] | { results: Appointment[] }>("/api/appointments/", { params });
     return Array.isArray(data) ? data : data.results;
   },
-  confirm: async (id: Id) => {
-    const { data } = await apiClient.post<Appointment>(`/api/appointments/${id}/confirm/`);
+  confirm: async (id: Id, expected_updated_at?: string) => {
+    const { data } = await apiClient.post<Appointment>(`/api/appointments/${id}/confirm/`, { expected_updated_at });
     return data;
   },
   cancel: async (id: Id, payload: AppointmentStatusReasonPayload) => {
     const { data } = await apiClient.post<Appointment>(`/api/appointments/${id}/cancel/`, payload);
     return data;
   },
-  complete: async (id: Id) => {
-    const { data } = await apiClient.post<Appointment>(`/api/appointments/${id}/complete/`);
+  complete: async (id: Id, expected_updated_at?: string) => {
+    const { data } = await apiClient.post<Appointment>(`/api/appointments/${id}/complete/`, { expected_updated_at });
     return data;
   },
   noShow: async (id: Id, payload: AppointmentStatusReasonPayload) => {

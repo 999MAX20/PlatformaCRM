@@ -1,4 +1,5 @@
 export const calendar: Record<string, string> = {
+  "appointment.responsible": "Жазылуға жауапты",
   "appointment.selectSpecialist": "Белсенді маманды таңдаңыз",
   "calendar.title": "Бизнес күнтізбесі",
   "calendar.description":

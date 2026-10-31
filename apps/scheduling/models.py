@@ -102,6 +102,8 @@ class Appointment(TimeStampedModel):
     booked_duration_minutes = models.PositiveIntegerField(null=True, blank=True)
     client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="appointments")
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True, blank=True, related_name="appointments")
+    responsible_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="coordinated_appointments")
+    source_conversation = models.ForeignKey("bots.BotConversation", on_delete=models.SET_NULL, null=True, blank=True, related_name="originated_appointments")
     service = models.ForeignKey(Service, on_delete=models.PROTECT, related_name="appointments")
     resource = models.ForeignKey(Resource, on_delete=models.SET_NULL, null=True, blank=True, related_name="appointments")
     start_at = models.DateTimeField()

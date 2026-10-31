@@ -10,6 +10,9 @@ import { drawerSurfaceClass, EmptyBlock, getChannelLabel, SummaryItem } from "./
 import type { CrmDrawerEntity } from "./types";
 import type { ClientDrawerActions } from "../CrmEntityDrawer";
 import { PaymentsButton } from "../../../features/payments/PaymentsButton";
+import { useNavigate } from "react-router";
+import { useAuth } from "../../../features/auth/AuthProvider";
+import { hasPermission } from "../../../lib/permissions";
 
 function textValue(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : "";
@@ -26,6 +29,8 @@ function consentStatusLabel(status: string, t: (key: string) => string) {
 
 export function ClientDrawerContent({ data, entity, actions }: { data: CrmCardPayload; entity: CrmDrawerEntity; actions?: ClientDrawerActions }) {
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const client = data.client;
   const cleanPhone = client?.phone?.replace(/\D/g, "");
   if (!client) return <EmptyBlock title={t("nav.clients")} text={t("crmCard.loadError")} />;
@@ -56,6 +61,12 @@ export function ClientDrawerContent({ data, entity, actions }: { data: CrmCardPa
         </div>
         <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(132px,1fr))] gap-2 border-t border-platforma-border pt-4">
           <PaymentsButton client={client} />
+          {!client.is_archived && hasPermission(user, client.business, "appointments", "create") ? (
+            <Button variant="secondary" className="min-w-0 px-3" onClick={() => navigate(`/app/calendar?create=1&client=${client.id}`)}>
+              <CalendarClock className="shrink-0" size={16} />
+              <span className="truncate">{t("conversations.bookClient")}</span>
+            </Button>
+          ) : null}
           {actions?.onEdit ? (
             <Button variant="secondary" className="min-w-0 px-3" onClick={() => actions.onEdit?.(client)}>
               <Pencil className="shrink-0" size={16} />

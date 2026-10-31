@@ -1,3 +1,10 @@
+Manual booking from Client or Inbox uses one Appointment and a separate booking
+coordinator; closed Lead/Deal history is preserved. The UI checks current slots and
+terms, supports safe retry, and refreshes calendar/client/Inbox views. Additive
+scheduling0010 must be applied through the separately authorized target migration
+process; it was tested only in disposable databases. Plans/payments and live rollout
+remain outside this package. [Checks and publication](docs/testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
+
 # PlatformaCRM
 
 Owner signup starts with the neutral `other` business type; industry selection

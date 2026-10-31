@@ -35,6 +35,7 @@ export function AppointmentRescheduleForm({
   const branch = useBranchBooking(businessId, appointment.branch);
   const locale = language === "en" ? "en-US" : language === "kk" ? "kk-KZ" : "ru-RU";
   const [date, setDate] = useState(dateInTimeZone(appointment.start_at, timeZone) || todayInTimeZone(timeZone));
+  const [expectedVersion] = useState(appointment.updated_at);
   const [resource, setResource] = useState(appointment.resource ? String(appointment.resource) : "");
   const [slot, setSlot] = useState("");
   const [reason, setReason] = useState("");
@@ -82,6 +83,7 @@ export function AppointmentRescheduleForm({
         try {
           await onSubmit({
             start_at: slot,
+            expected_updated_at: expectedVersion,
             ...(branch.branchId ? { branch: Number(branch.branchId) } : {}),
             resource: resource ? Number(resource) : null,
             reason: reason.trim(),

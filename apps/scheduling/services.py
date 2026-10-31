@@ -187,7 +187,7 @@ def sync_appointment_after_update(
         schedule_appointment_followups(appointment)
 
 
-def confirm_appointment(*, appointment, actor, activity_metadata=None, activity_source="api"):
+def confirm_appointment(*, appointment, actor, activity_metadata=None, activity_source="api", expected_updated_at=None):
     return apply_appointment_status(
         appointment=appointment,
         actor=actor,
@@ -196,10 +196,11 @@ def confirm_appointment(*, appointment, actor, activity_metadata=None, activity_
         text="Запись подтверждена",
         activity_metadata=activity_metadata,
         activity_source=activity_source,
+        expected_updated_at=expected_updated_at,
     )
 
 
-def cancel_appointment(*, appointment, actor, reason, request=None, activity_metadata=None, activity_source="api"):
+def cancel_appointment(*, appointment, actor, reason, request=None, activity_metadata=None, activity_source="api", expected_updated_at=None):
     reason = (reason or "").strip()
     if not reason:
         raise ValueError("Cancellation reason is required.")
@@ -217,10 +218,11 @@ def cancel_appointment(*, appointment, actor, reason, request=None, activity_met
         reason=reason,
         activity_metadata=activity_metadata,
         activity_source=activity_source,
+        expected_updated_at=expected_updated_at,
     )
 
 
-def complete_appointment(*, appointment, actor, request=None):
+def complete_appointment(*, appointment, actor, request=None, expected_updated_at=None):
     return apply_appointment_status(
         appointment=appointment,
         actor=actor,
@@ -229,10 +231,11 @@ def complete_appointment(*, appointment, actor, request=None):
         text="Визит завершён",
         request=request,
         audit_metadata={},
+        expected_updated_at=expected_updated_at,
     )
 
 
-def mark_appointment_no_show(*, appointment, actor, reason, request=None):
+def mark_appointment_no_show(*, appointment, actor, reason, request=None, expected_updated_at=None):
     reason = (reason or "").strip()
     if not reason:
         raise ValueError("No-show reason is required.")
@@ -245,6 +248,7 @@ def mark_appointment_no_show(*, appointment, actor, reason, request=None):
         request=request,
         audit_metadata={"reason": reason},
         reason=reason,
+        expected_updated_at=expected_updated_at,
     )
 
 
@@ -280,11 +284,12 @@ def add_appointment_note(*, appointment, actor, text, request=None):
 
 
 @transaction.atomic
-def reschedule_appointment(*, appointment, actor, start_at, resource=None, branch=None, reason="", request=None):
+def reschedule_appointment(*, appointment, actor, start_at, resource=None, branch=None, reason="", request=None, expected_updated_at=None):
     Business.objects.select_for_update().get(pk=appointment.business_id)
     appointment = Appointment.objects.select_related("business", "client", "lead", "service", "resource").get(pk=appointment.pk)
     if actor is not None:
         assert_can(actor, appointment.business, Resources.APPOINTMENTS, Actions.UPDATE, obj=appointment)
+    _assert_appointment_version(appointment, expected_updated_at)
     if appointment.is_archived:
         raise InvalidTransition(
             "Archived appointments cannot be rescheduled.",
@@ -375,6 +380,12 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, branc
     return appointment
 
 
+def _assert_appointment_version(appointment, expected_updated_at):
+    if expected_updated_at is not None and appointment.updated_at != expected_updated_at:
+        raise InvalidTransition("The appointment changed. Reload it before applying this action.",
+                                errors={"expected_updated_at": "Reload the current appointment."})
+
+
 @transaction.atomic
 def apply_appointment_status(
     *,
@@ -388,6 +399,7 @@ def apply_appointment_status(
     reason="",
     activity_metadata=None,
     activity_source="api",
+    expected_updated_at=None,
 ):
     Business.objects.select_for_update().get(pk=appointment.business_id)
     appointment = (
@@ -395,6 +407,9 @@ def apply_appointment_status(
         .select_related("business", "client", "lead", "lead__responsible_user", "service", "resource", "resource__linked_user")
         .get(pk=appointment.pk)
     )
+    if actor is not None:
+        assert_can(actor, appointment.business, Resources.APPOINTMENTS, Actions.UPDATE, obj=appointment)
+    _assert_appointment_version(appointment, expected_updated_at)
     previous_status = appointment.status
     if appointment.is_archived:
         raise InvalidTransition(
@@ -619,6 +634,9 @@ def notify_appointment_responsible(appointment, text, *, actor=None, priority=No
 
 
 def appointment_responsible_user(appointment, *, actor=None):
+    if appointment.responsible_user_id:
+        user = appointment.responsible_user
+        return user if user.is_active and _is_active_business_member(appointment.business, user) else None
     candidates = [
         getattr(getattr(appointment, "lead", None), "responsible_user", None),
         getattr(getattr(appointment, "resource", None), "linked_user", None),

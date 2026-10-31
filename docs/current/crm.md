@@ -1,3 +1,29 @@
+## Одиночная ручная запись — реализованный контракт 31.10.2026
+
+`POST /api/appointments/create-record/` создаёт существующий Appointment через
+доменный сервис. Обязательны business/client/service/resource/start_at; optional
+branch/responsible_user/source_conversation/lead/notes. Ручной default ответственного
+— actor; другой ответственный должен быть активным разрешённым участником Business.
+Назначение не расширяет OWN/TEAM-доступ. Отключённый исторический ответственный
+сохраняется, уведомления/задачи не переназначаются автоматически другому сотруднику.
+Для источника нужны текущие Conversation VIEW/UPDATE и совпадающие Business/Client.
+Закрытые Lead/Deal не открываются заново; новая заявка не создаётся автоматически.
+Старые generic/Lead/Inbox endpoints и AI booking сохраняют прежнюю семантику.
+
+Сервис под блокировкой Business повторно проверяет права, активность, branch,
+специалиста, будущее время и overlap. Optional expected_price/expected_duration_minutes
+сравниваются с текущими условиями: изменение даёт409 до эффекта. UI отправляет их.
+Idempotency-Key закреплён за payload/actor/Business; replay проверяет текущие права
+и возвращает текущую запись, а без VIEW только read_restricted=true. Изменённый
+payload требует нового ключа. Audit/activity и существующие followups/automation
+участвуют в транзакции; ошибка откатывает запись и связанные эффекты.
+Confirm/cancel/no-show/complete/reschedule принимают optional expected_updated_at;
+новый UI передаёт версию, stale409 требует обновления. Старые клиенты без версии
+совместимы; новый план/денежный/early-completion контракт этим не реализован.
+Nullable responsible_user/source_conversation добавлены scheduling0010 без backfill
+или удаления старых данных. Source conversation ID выдаётся только с текущим VIEW.
+[Версия, проверки и границы](../testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
+
 # CRM: инварианты и технические границы
 
 AUD-10: `Lead.add-note` принимает `Idempotency-Key`; заметка, audit/activity и receipt

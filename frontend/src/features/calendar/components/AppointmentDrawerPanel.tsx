@@ -70,6 +70,10 @@ export function AppointmentDrawerPanel({
           </div>
 
           <div className="mt-5 rounded-card border border-platforma-border bg-surface-muted p-3">
+            {appointment.responsible_user_name ? <div className="py-2">
+              <p className="text-xs font-bold uppercase text-platforma-muted">{t("appointment.responsible")}</p>
+              <p className="text-sm font-bold text-platforma-text">{appointment.responsible_user_name}</p>
+            </div> : null}
             {appointment.branch_name && <p className="mb-3 text-sm font-semibold">{appointment.branch_name} · {appointment.branch_address}</p>}
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-platforma-muted">{t("calendar.visit")}</p>
             <div className="grid grid-cols-[88px_minmax(0,1fr)] items-center gap-3 border-t border-platforma-border/70 py-2 first:border-t-0 first:pt-0">

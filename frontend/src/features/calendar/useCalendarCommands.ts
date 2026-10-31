@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
+import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import {
   appointmentsApi,
   type AppointmentCreatePayload,
@@ -53,23 +55,26 @@ export function useCalendarCommands({
   t,
 }: Args) {
   const queryClient = useQueryClient();
+  const createAttempt = useRef<{ payload: string; key: string } | null>(null);
   function refreshAppointmentData(appointment?: Appointment) {
-    queryClient.invalidateQueries({ queryKey: ["appointments"] });
-    queryClient.invalidateQueries({ queryKey: ["tasks"] });
-    queryClient.invalidateQueries({ queryKey: ["available-slots"] });
-    queryClient.invalidateQueries({ queryKey: ["activity-events"] });
-    queryClient.invalidateQueries({ queryKey: ["crm-card"] });
-    if (appointment)
-      queryClient.invalidateQueries({
-        queryKey: ["crm-card", "appointment", appointment.id],
-      });
+    return refreshAppointmentQueries(queryClient, appointment);
   }
   const mutation = useMutation({
-    mutationFn: (payload: AppointmentCreatePayload) =>
-      appointmentsApi.create(payload),
+    mutationFn: (payload: AppointmentCreatePayload) => {
+      const fingerprint = JSON.stringify(payload);
+      if (createAttempt.current?.payload !== fingerprint)
+        createAttempt.current = { payload: fingerprint, key: crypto.randomUUID() };
+      return appointmentsApi.createRecord(payload, createAttempt.current.key);
+    },
     onSuccess: (appointment) => {
-      refreshAppointmentData(appointment);
+      createAttempt.current = null;
       setBookingOpen(false);
+      if ("read_restricted" in appointment) {
+        void refreshAppointmentData();
+        setNotice(t("common.saved"));
+        return;
+      }
+      void refreshAppointmentData(appointment);
       if (appointment.start_at)
         setDate(
           dateInTimeZone(
@@ -88,17 +93,19 @@ export function useCalendarCommands({
       id,
       status,
       reason,
+      expected_updated_at,
     }: {
       id: number;
       status: Appointment["status"];
       reason?: string;
+      expected_updated_at: string;
     }) => {
-      if (status === "confirmed") return appointmentsApi.confirm(id);
+      if (status === "confirmed") return appointmentsApi.confirm(id, expected_updated_at);
       if (status === "cancelled")
-        return appointmentsApi.cancel(id, { reason: reason || "" });
-      if (status === "completed") return appointmentsApi.complete(id);
+        return appointmentsApi.cancel(id, { reason: reason || "", expected_updated_at });
+      if (status === "completed") return appointmentsApi.complete(id, expected_updated_at);
       if (status === "no_show")
-        return appointmentsApi.noShow(id, { reason: reason || "" });
+        return appointmentsApi.noShow(id, { reason: reason || "", expected_updated_at });
       return appointmentsApi.get(id);
     },
     onSuccess: (appointment) => {
@@ -107,7 +114,10 @@ export function useCalendarCommands({
       setStatusReason("");
       setNotice(t("appointments.actionDone"));
     },
-    onError: (error) => notifyError(error),
+    onError: (error) => notifyError(error, { actionLabel: t("common.refresh"), retry: () => {
+      setStatusReasonTarget(null);
+      return refreshAppointmentData();
+    } }),
   });
   const rescheduleMutation = useMutation({
     mutationFn: appointmentsApi.reschedule,
@@ -127,7 +137,7 @@ export function useCalendarCommands({
     onError: (error) =>
       notifyError(error, {
         actionLabel: t("common.refresh"),
-        retry: () => refreshAppointmentData(),
+        retry: () => { setRescheduleTarget(null); return refreshAppointmentData(); },
       }),
   });
   const archiveMutation = useMutation({

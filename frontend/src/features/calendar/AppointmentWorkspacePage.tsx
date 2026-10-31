@@ -31,6 +31,7 @@ import { Button } from "../../components/ui/Button";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { Modal } from "../../components/ui/Modal";
 import { formatDateTime } from "../../lib/format";
+import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import { useI18n } from "../../lib/i18n";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useEntityData } from "../../hooks/useEntityData";
@@ -96,39 +97,30 @@ export function AppointmentWorkspacePage() {
       : false;
 
   const invalidateAppointment = async (updated?: Appointment) => {
-    if (updated)
-      queryClient.setQueryData(["appointments", updated.id], updated);
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: ["crm-card", "appointment", appointmentId],
-      }),
-      queryClient.invalidateQueries({ queryKey: ["appointments"] }),
-      queryClient.invalidateQueries({ queryKey: ["available-slots"] }),
-      queryClient.invalidateQueries({ queryKey: ["activity-events"] }),
-    ]);
+    await refreshAppointmentQueries(queryClient, updated);
   };
 
   const statusMutation = useMutation<
     Appointment,
     Error,
-    { status: Appointment["status"]; reason?: string }
+    { status: Appointment["status"]; reason?: string; expected_updated_at: string }
   >({
-    mutationFn: ({ status, reason }) => {
+    mutationFn: ({ status, reason, expected_updated_at }) => {
       if (!appointmentId) throw new Error(t("appointments.title"));
-      if (status === "confirmed") return appointmentsApi.confirm(appointmentId);
+      if (status === "confirmed") return appointmentsApi.confirm(appointmentId, expected_updated_at);
       if (status === "cancelled")
-        return appointmentsApi.cancel(appointmentId, { reason: reason || "" });
+        return appointmentsApi.cancel(appointmentId, { reason: reason || "", expected_updated_at });
       if (status === "completed")
-        return appointmentsApi.complete(appointmentId);
+        return appointmentsApi.complete(appointmentId, expected_updated_at);
       if (status === "no_show")
-        return appointmentsApi.noShow(appointmentId, { reason: reason || "" });
+        return appointmentsApi.noShow(appointmentId, { reason: reason || "", expected_updated_at });
       return appointmentsApi.get(appointmentId);
     },
     onSuccess: async (updated) => {
       notifySuccess(t("appointments.actionDone"));
       await invalidateAppointment(updated);
     },
-    onError: (error) => notifyError(error),
+    onError: (error) => notifyError(error, { actionLabel: t("common.refresh"), retry: () => invalidateAppointment() }),
   });
 
   const rescheduleMutation = useMutation<
@@ -148,11 +140,13 @@ export function AppointmentWorkspacePage() {
     onError: (error) =>
       notifyError(error, {
         actionLabel: t("common.refresh"),
-        retry: () => invalidateAppointment(),
+        retry: () => { setRescheduleOpen(false); return invalidateAppointment(); },
       }),
   });
 
   async function requestReasonAction(status: Appointment["status"]) {
+    const expected_updated_at = appointment?.updated_at;
+    if (!expected_updated_at) return;
     const result = await confirmAction({
       title: t("appointments.statusReasonTitle"),
       description: t("appointments.statusReasonPlaceholder"),
@@ -166,7 +160,7 @@ export function AppointmentWorkspacePage() {
       },
     });
     if (!result.confirmed || !result.reason) return;
-    statusMutation.mutate({ status, reason: result.reason });
+    statusMutation.mutate({ status, reason: result.reason, expected_updated_at });
   }
 
   if (!appointmentId)
@@ -263,6 +257,7 @@ export function AppointmentWorkspacePage() {
                 <StatusBadge status={appointment.source} />
               </div>
               <div className="mt-3 space-y-2 text-sm font-semibold text-platforma-subtle">
+                {appointment.responsible_user_name && <MetaRow label={t("appointment.responsible")} value={appointment.responsible_user_name} />}
                 {appointment.branch_name && <MetaRow label={t("branches.branch")} value={`${appointment.branch_name} · ${appointment.branch_address}`} />}
                 <MetaRow
                   label={t("tasks.dueAt")}
@@ -298,7 +293,7 @@ export function AppointmentWorkspacePage() {
                     onClick={() => {
                       if (status === "cancelled" || status === "no_show")
                         void requestReasonAction(status);
-                      else statusMutation.mutate({ status });
+                      else statusMutation.mutate({ status, expected_updated_at: appointment.updated_at });
                     }}
                   >
                     {getAppointmentActionIcon(status)}
