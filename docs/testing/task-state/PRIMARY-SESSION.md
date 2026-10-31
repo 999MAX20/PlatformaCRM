@@ -8,6 +8,22 @@
 
 ## CRM-R01-RECORD-FIRST-20261031 — single Appointment package
 
+CI follow-up31.10: both41178318197 (code) and41178418459 (receipt f888ecac)
+frontend jobs FAIL only at npm audit; frontend/widget build and bundle budget PASS.
+Current unchanged lockfile audit reproduced locally with
+`npm.cmd audit --package-lock-only --json`:8 advisories (7 moderate,1 high), including
+follow-redirects GHSA-mrwp-f3q8-3g9p, glob GHSA-3g3m-2fjr-6pw4 and minimatch
+GHSA-g3hv-75wg-m249. package.json/package-lock.json are identical to924b33f6;
+this is an external dependency blocker, not a green or waived gate. No dependency
+rewrite/force audit fix was performed outside the authorized single-visit package.
+Backend CI system/drift/readiness/static PASS; full backend tests still running
+at this snapshot, Python audit pending. Actual job snapshots and audit JSON saved
+under output/record-first-20261031. Feature/local verification is complete and
+published; complete CI acceptance remains unproven. Required remaining work:
+separately scoped dependency remediation and subsequent green CI; no production
+readiness or automatic follow-up promised. Historical local PASS above remains
+valid for its boundary and does not override this failure.
+
 Publication31.10: code bc46d7c9c47ef0dc767928cc714b73618264d788 normal-pushed
 to origin/main, remote SHA confirmed. Actual staged tree784b0fc3 equals reviewed
 candidate; apps/frontend blobs equal browser tree d033000f.42 reviewed paths;
@@ -19,7 +35,7 @@ matched actual remote924b33f6 before publication. No merge/rebase/reset/force pu
 Actual push CI41178318197 in progress at receipt, no green claim:
 https://github.com/999MAX20/PlatformaCRM/actions/runs/41178318197
 Task servers stopped; ports51319/51320 have no listeners, PostgreSQL stopped.
-No code/evidence/owner-decision remainder inside this package. Full R01 and
+No feature-code/local-evidence remainder; CI dependency blocker is recorded above. Full R01 and
 working migration/live/release acceptance remain separate as described below.
 
 Local scoped verification31.10 complete; publication receipt above is authoritative.
