@@ -1,6 +1,49 @@
 import Foundation
 import CRMCore
 
+// A retained peer blocks commands through its own ledger; the file-only aggregate is not a reply/handoff/retry ledger.
+@MainActor func retainedInboxPeerBarrier(_ peer:InboxViewModel,kind:Int)->Bool {
+    switch kind {
+    case 0: return peer.reply.submission?.phase == .unknown && peer.reply.submissionBlocked
+    case 1: return peer.handoff.record?.phase == .unknown && peer.handoff.blocked
+    case 2: return peer.messageMetadata?.retryRecord?.phase == .unknown && peer.retryCommandsBlocked
+    case 3: return peer.fileMetadata?.assignmentRecord?.phase == .unknown && peer.conversationCommandsBlocked
+    case 4: return peer.fileMetadata?.markerRecord?.phase == .unknown && peer.conversationCommandsBlocked
+    case 5: return peer.fileMetadata?.priorityRecord?.phase == .unknown && peer.conversationCommandsBlocked
+    case 6: return peer.fileMetadata?.lifecycleRecord?.phase == .unknown && peer.conversationCommandsBlocked
+    default: return false
+    }
+}
+@MainActor func requireInboxTest(_ ready:Bool,_ stage:String) throws {
+    guard ready else {throw ViewModelCheckFailure(message:"Inbox test prerequisite: "+stage)}
+    FileHandle.standardError.write(Data(("CHECK_STAGE "+stage+"\n").utf8))
+}
+@MainActor func requireInboxTestValue<T>(_ value:T?,_ stage:String) throws -> T {
+    guard let value else {throw ViewModelCheckFailure(message:"Inbox test value missing: "+stage)}
+    return value
+}
+@MainActor func prepareInboxFixtureClient(_ model:InboxLinkClientViewModel,id:Int,query:String,stage:String) async throws -> InboxLinkClientControl {
+    let picker=try requireInboxTestValue(model.picker,stage+" picker")
+    let input=try requireInboxTestValue(model.input,stage+" current input")
+    model.update(query,input:input)
+    let search=try requireInboxTestValue(model.control,stage+" search parent")
+    let window=try requireInboxTestValue(picker.control,stage+" search child")
+    await model.search(expected:search,child:window)
+    try requireInboxTest(picker.session.loaded && !picker.session.loading && picker.session.failure==nil,stage+" search loaded")
+    try requireInboxTest(picker.session.query==query && picker.session.submitted==query,stage+" exact submitted query")
+    try requireInboxTest(picker.session.items.count==1 && picker.session.total==1 && !picker.session.partial && picker.session.items.contains(where:{$0.id==id}),stage+" target in current bounded window")
+    try requireInboxTest(picker.session.profileSelection==nil && picker.profile.readSelection==nil && model.candidate==nil,stage+" no automatic profile/selection")
+    await model.openClient(id,expected:model.control,child:picker.control)
+    let profile=try requireInboxTestValue(picker.profile.readSelection,stage+" independent profile read")
+    try requireInboxTest(profile.business==101 && profile.id==id && picker.profile.failure==nil && model.candidate==nil,stage+" exact profile, no implicit Use")
+    model.useClient(expected:model.control,child:picker.control)
+    try requireInboxTest(model.candidate?.choice.id==id && model.candidate?.read==profile && model.canPrepare,stage+" explicit qualified Use")
+    model.prepare(expected:model.control)
+    let review=try requireInboxTestValue(model.review,stage+" review")
+    try requireInboxTest(review.candidate.choice.id==id && model.canSubmit,stage+" review canSubmit")
+    return try requireInboxTestValue(model.control,stage+" captured submit control")
+}
+
 actor ControlledInboxLinkClientPort:SyntheticInboxLinkClientPort {
     nonisolated let grants:[SyntheticInboxLinkClientGrant]
     private var attempts:[InboxLinkClientAttempt]=[]
@@ -94,7 +137,7 @@ actor LinkClientReadRecorder:ReadTransport {
             else {await f.loadLifecycle(expected:f.control);f.prepareLifecycle(action:.close,expected:f.control);try expect(f.canSubmitLifecycle,"Lifecycle peer review cannot submit");let r=try required(f.lifecycleReview,"f.lifecycleReview"),c=try required(f.control,"f.control"),j=Task {await f.submitLifecycle(r,expected:c)};await life.wait(0);await life.resolve(0,.unknown);await j.value}
             peer.closeFiles(expected:peer.filesPresentationControl)
         }
-        peer.openFiles(expected:peer.filesEntryControl);let peerFiles=try required(peer.fileMetadata,"peer file metadata");let child=try required(peerFiles.linkClient,"peer link client");await child.load(expected:child.control);child.open(expected:child.control);let requests=await lp.recorded();try expect(requests.isEmpty && child.source != nil && !child.canOpen && child.picker?.session.selection==nil && peer.conversationCommandsBlocked,"Unknown peer \(kind) became a link command context")
+        peer.openFiles(expected:peer.filesEntryControl);let peerFiles=try required(peer.fileMetadata,"peer file metadata");let child=try required(peerFiles.linkClient,"peer link client");await child.load(expected:child.control);child.open(expected:child.control);try expect(retainedInboxPeerBarrier(peer,kind:kind),"Retained peer \(kind) lost its specific unknown ledger/barrier");try expect(!child.canSubmit,"Retained peer \(kind) enabled direct submit");await child.submit(expected:child.control);let requests=await lp.recorded();try expect(requests.isEmpty && child.source != nil && !child.canOpen && !child.canPrepare && child.review==nil && child.picker?.session.selection==nil && retainedInboxPeerBarrier(peer,kind:kind),"Unknown peer \(kind) became a link command context")
     }
     // Late command/source/profile completions cannot replace a different Business query or control.
     let lp=ControlledInboxLinkClientPort(fixture.grants),late=InboxLinkClientViewModel(repository:source,clients:read,port:lp),ac=InboxConversationFilesContext(business:101,conversation:901,epoch:546,revision:1),bc=InboxConversationFilesContext(business:202,conversation:951,epoch:547,revision:1);late.commandsBlocked={false};late.bind(ac);late.show();await late.load(expected:late.control);late.open(expected:late.control);let pp=try required(late.picker,"late.picker");try await searchFor(late,id:1701,query:"catalogue1701@example.invalid",label:"Late link command");await late.openClient(1701,expected:late.control,child:pp.control);late.useClient(expected:late.control,child:pp.control);late.prepare(expected:late.control);try expect(late.canSubmit,"Late link review cannot submit");let lc=try required(late.control,"late.control"),lj=Task {await late.submit(expected:lc)};await lp.wait(0);let lateAttempts=await lp.recorded();let la=try required(lateAttempts.first,"late recorded attempt");late.hide();late.bind(bc);late.show();await late.load(expected:late.control);late.open(expected:late.control);late.update(" Business B raw query é ",input:late.input);let beforeLate=late.control,currentQuery=pp.session.query;await lp.resolve(0,try await fixture.execute(la));await lj.value;try expect(late.control==beforeLate && pp.session.query==currentQuery && late.source?.context==bc && late.candidate==nil && late.record==nil && late.retainedAttemptCount==1,"Late link result displaced foreign query/profile/source/control")
