@@ -2,6 +2,9 @@ name: CRM Client query semantic and runtime review
 
 on:
   workflow_dispatch:
+  push:
+    branches: ["codex/crm-client-query-review"]
+    paths: [".github/workflows/crm-queue-web.yml"]
 
 permissions:
   contents: read
@@ -14,7 +17,7 @@ jobs:
   diagnostic:
     if: github.ref == 'refs/heads/codex/crm-client-query-review'
     runs-on: ubuntu-24.04
-    timeout-minutes: 950
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
         with:

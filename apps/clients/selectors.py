@@ -40,12 +40,13 @@ def filter_client_queryset(queryset, request, *, client_ids=None):
     if source:
         queryset = queryset.filter(source=source)
     if tag_id:
-        tagged_client_ids = TaggedObject.objects.filter(
-            business_id__in=queryset.values_list("business_id", flat=True),
+        tagged_clients = TaggedObject.objects.filter(
+            business_id=OuterRef("business_id"),
             entity_type="client",
             tag_id=tag_id,
-        ).values_list("entity_id", flat=True)
-        queryset = queryset.filter(id__in=tagged_client_ids)
+            entity_id=Cast(OuterRef("id"), output_field=CharField()),
+        )
+        queryset = queryset.filter(Exists(tagged_clients))
     if segment_id:
         segment = Segment.objects.filter(
             id=segment_id,

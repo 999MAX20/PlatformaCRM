@@ -98,6 +98,7 @@ class ClientQueryStatisticsTests(TestCase):
         for params,ids in checks:
             with self.subTest(params=params):
                 response=self.api.get("/api/clients/",params);self.assertEqual(response.status_code,200);self.assertEqual(response.data["count"],len(ids));self.assertEqual({r["id"] for r in response.data["results"]},ids);self.assertEqual(response.data["summary"]["total"],len(ids))
+    def test_foreign_segment_is_empty_without_prior_request_errors(self):
         foreign=Segment.objects.create(business=self.other_business,name="Foreign segment")
         response=self.api.get("/api/clients/",{"segment":foreign.pk});self.assertEqual(response.status_code,200);self.assertEqual(response.data["count"],0);self.assertEqual(response.data["summary"]["total"],0)
 

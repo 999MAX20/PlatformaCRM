@@ -1,4 +1,5 @@
-from django.db.models import Q, QuerySet
+from django.db.models import CharField, Exists, OuterRef, Q, QuerySet
+from django.db.models.functions import Cast
 from django.utils import timezone
 
 from apps.activities.models import Segment, SegmentFilter, TaggedObject
@@ -37,7 +38,9 @@ def apply_segment_filter(queryset: QuerySet[Client], segment_filter: SegmentFilt
                 tag_names.append(item)
         tagged_ids = TaggedObject.objects.filter(
             business=segment_filter.business,
+            business_id=OuterRef("business_id"),
             entity_type="client",
+            entity_id=Cast(OuterRef("id"), output_field=CharField()),
         )
         if tag_ids:
             tagged_ids = tagged_ids.filter(tag_id__in=tag_ids)
@@ -45,8 +48,7 @@ def apply_segment_filter(queryset: QuerySet[Client], segment_filter: SegmentFilt
             tagged_ids = tagged_ids.filter(tag__name__in=tag_names)
         else:
             return queryset.none() if operator != SegmentFilter.Operators.IS_EMPTY else queryset
-        client_ids = tagged_ids.values_list("entity_id", flat=True)
-        return queryset.filter(id__in=client_ids)
+        return queryset.filter(Exists(tagged_ids))
 
     if operator == SegmentFilter.Operators.IS_EMPTY:
         return queryset.filter(Q(**{field: ""}) | Q(**{f"{field}__isnull": True}))
