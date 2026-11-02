@@ -1,0 +1,36 @@
+name: CRM disposable internal test stack
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["codex/mobile-max"]
+    paths: [".github/workflows/mobile-test-stack.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crm-disposable-test-stack-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  internal-stack:
+    if: github.ref == 'refs/heads/codex/mobile-max'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: One bounded isolated test-stack diagnostic
+        timeout-minutes: 18
+        run: python3 mobile/scripts/run_crm_test_stack.py "$RUNNER_TEMP/crm-test-stack"
+      - name: Preserve sanitized stage evidence
+        if: ${{ always() && !cancelled() }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@v4
+        with:
+          name: crm-test-stack-${{ github.sha }}
+          path: ${{ runner.temp }}/crm-test-stack/public/
+          if-no-files-found: error
+          retention-days: 3

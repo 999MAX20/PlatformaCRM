@@ -1,0 +1,21 @@
+services:
+  web:
+    image: crm-test-stack:${CRM_TEST_RUN}
+    mem_limit: 768m
+    cpus: 1.0
+    ports: !override
+      - "127.0.0.1:8000:8000"
+  celery:
+    image: crm-test-stack:${CRM_TEST_RUN}
+    command: celery -A config worker --loglevel=info --queues=default,automations,notifications,reports_exports --concurrency=1
+    mem_limit: 768m
+    cpus: 1.0
+  db:
+    mem_limit: 512m
+    ports: !reset []
+  redis:
+    mem_limit: 128m
+    ports: !reset []
+networks:
+  default:
+    internal: true
