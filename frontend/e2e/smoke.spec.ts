@@ -16,10 +16,9 @@ const users = {
 
 type TokenPayload = {
   access: string;
-  refresh: string;
+  refresh?: never;
 };
 
-const tokenCache = new Map<string, TokenPayload>();
 
 test.beforeAll(() => {
   if (process.env.E2E_SKIP_LOCAL_SETUP === "true") {
@@ -39,20 +38,10 @@ test.beforeAll(() => {
 });
 
 async function login(page: Page, email: string, target: RegExp) {
-  const tokens = await apiLogin(page, email);
   const targetPath = target.source.includes("platform") ? "/platform" : "/app";
   await page.goto("/");
-  await page.evaluate(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-  });
-  await page.evaluate(
-    ({ access, refresh }) => {
-      localStorage.setItem("ai_smb_access_token", access);
-      localStorage.setItem("ai_smb_refresh_token", refresh);
-    },
-    tokens,
-  );
+  await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+  await apiLogin(page, email);
   await page.goto(targetPath);
   await expect(page).toHaveURL(target);
 }
@@ -67,23 +56,15 @@ function routePattern(route: string) {
 }
 
 async function apiLogin(page: Page, email: string) {
-  const cached = tokenCache.get(email);
-  if (cached) return cached;
-
-  let response = await page.request.post(`${apiBaseURL}/api/auth/token/`, {
+  const response = await page.request.post(`${apiBaseURL}/api/auth/token/`, {
     data: { email, password },
   });
-  for (let attempt = 0; attempt < 3 && response.status() === 429; attempt += 1) {
-    await page.waitForTimeout(10_000);
-    response = await page.request.post(`${apiBaseURL}/api/auth/token/`, {
-      data: { email, password },
-    });
-  }
   expect(response.ok()).toBeTruthy();
   const payload = (await response.json()) as TokenPayload;
   expect(payload.access).toBeTruthy();
-  expect(payload.refresh).toBeTruthy();
-  tokenCache.set(email, payload);
+  expect(payload.refresh).toBeUndefined();
+  const cookies = await page.context().cookies(`${apiBaseURL}/api/auth/token/refresh/`);
+  expect(cookies.some(cookie => cookie.name === "zani_refresh_token" && cookie.httpOnly)).toBeTruthy();
   return payload;
 }
 
