@@ -108,7 +108,7 @@ class TaskSelfAssignmentTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         try {for(unknownCancel in listOf(false,true)) {
             val repo=Repo();val provenance=object:TaskCommentDraftSource {override suspend fun matchesFixture(detail:TaskDetails)=detail==this@TaskSelfAssignmentTest.detail(detail.business,detail.task.id)}
-            val list=TaskListViewModel(repo,commentSource=provenance,cancelSubmission=FixtureTaskCancelPort(fixture("task-cancel-outcome")),completeSubmission=FixtureTaskCompletePort(fixture("task-complete-outcome")),selfAssignSubmission=port())
+            val list=TaskListViewModel(repo,commentSource=provenance,cancelSubmission=FixtureTaskCancelPort.fromJSON(fixture("task-cancel-outcome").toString()),completeSubmission=FixtureTaskCompletePort(fixture("task-complete-outcome")),selfAssignSubmission=port())
             try {
                 list.load(101,150);runCurrent();list.open(if(unknownCancel)1102 else 1101);runCurrent();val reason=list.cancelReason!!;val read=reason.state.read!!
                 list.openCancelReason(read);reason.update("Manual source reason",reason.inputControl);reason.prepare(reason.control);reason.submit(reason.state.review!!,reason.control);val record=reason.submission!!;reason.close(expected=reason.returnControl)

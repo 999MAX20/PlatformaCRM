@@ -20,4 +20,7 @@ class FixtureTaskCancelPort private constructor(private val catalog: JSONObject)
             else->SyntheticTaskCancelOutcome.Unknown
         }
     }
+    companion object {
+        fun fromJSON(json:String):FixtureTaskCancelPort = FixtureTaskCancelPort(JSONObject(json))
+    }
 }
