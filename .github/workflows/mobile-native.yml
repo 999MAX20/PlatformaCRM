@@ -1,0 +1,45 @@
+name: Native CRM source validation
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crm-source-validation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  contracts:
+    name: Synthetic mobile contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check source contracts and fixtures
+        run: python3 mobile/scripts/check_contracts.py
+
+  swift-host:
+    name: Headless Swift core and ViewModel checks
+    needs: contracts
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Record compiler version
+        run: swiftc --version
+      - name: Check Swift core
+        timeout-minutes: 5
+        run: NATIVE_CHECK_OUTPUT="$RUNNER_TEMP/crm-source-checks" bash mobile/scripts/check_swift_core.sh
+      - name: Check SwiftUI ViewModels without app launch
+        timeout-minutes: 5
+        run: NATIVE_CHECK_OUTPUT="$RUNNER_TEMP/crm-source-checks" bash mobile/scripts/check_swift_view_model.sh

@@ -73,3 +73,9 @@ jobs:
 
       - name: Build frontend and widget
         run: npm run build
+
+  mobile:
+    name: Native CRM validation
+    permissions:
+      contents: read
+    uses: ./.github/workflows/mobile-native.yml
