@@ -1,3 +1,4 @@
+from decimal import Decimal
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
@@ -83,7 +84,8 @@ class OwnerDashboardAnalyticsTests(TestCase):
         self.assertEqual(response.data["conversion_lead_to_appointment"], 33)
         self.assertEqual(response.data["open_tasks"], 2)
         self.assertEqual(response.data["overdue_tasks"], 1)
-        self.assertEqual(response.data["revenue_estimate"], "15000")
+        self.assertIsInstance(response.data["revenue_estimate"], str)
+        self.assertEqual(Decimal(response.data["revenue_estimate"]), Decimal("15000"))
         self.assertEqual(response.data["leads_by_source"][0]["source"], Lead.Sources.WEBSITE)
         self.assertIn("business_pulse", response.data)
         self.assertIn("recommendations", response.data)

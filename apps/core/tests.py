@@ -1,3 +1,4 @@
+from decimal import Decimal
 from datetime import datetime, time
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -645,7 +646,8 @@ class PlatformDashboardTests(TestCase):
             self.assertEqual(merchants.status_code, 200)
             self.assertGreaterEqual(overview.data["total_businesses"], 2)
             self.assertEqual(overview.data["active_subscriptions"], 1)
-            self.assertEqual(overview.data["mrr_estimate"], "9900")
+            self.assertIsInstance(overview.data["mrr_estimate"], str)
+            self.assertEqual(Decimal(overview.data["mrr_estimate"]), Decimal("9900"))
             self.assertEqual(overview.data["bot_count"], 1)
             self.assertEqual(overview.data["active_bot_channels"], 1)
             self.assertEqual(overview.data["ai_requests_30d"], 1)

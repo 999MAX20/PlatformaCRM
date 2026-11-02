@@ -81,7 +81,7 @@ def run_conversation_pipeline(
     with transaction.atomic():
         conversation = (
             BotConversation.objects.select_for_update(of=("self", "business"))
-            .select_related("business", "client", "lead", "deal", "assigned_to")
+            .select_related("business")
             .get(pk=conversation.pk)
         )
         created = {"client": False, "lead": False, "deal": False, "task": False}

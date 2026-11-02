@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
@@ -54,10 +56,17 @@ class AICoreFoundationTests(TestCase):
         self.assertEqual(resolve_model(prompt_type="crm_assistant"), "kimi-smart")
         self.assertEqual(resolve_model(model="manual-model"), "manual-model")
 
-    @override_settings(AI_PROVIDER="kimi", KIMI_API_KEY="")
+    @override_settings(AI_ENABLED=True, AI_PROVIDER="kimi", KIMI_API_KEY="")
     def test_generate_text_can_return_controlled_error_without_key(self):
-        with self.assertRaises(AIClientError):
-            generate_text("Hello", allow_mock=False)
+        with patch("apps.ai_core.providers.compatible.request.urlopen") as network:
+            with self.assertRaises(AIClientError):
+                generate_text("Hello", allow_mock=False)
+            network.assert_not_called()
+            with override_settings(AI_ENABLED=False):
+                result = generate_text("Hello", allow_mock=False)
+                self.assertTrue(result.is_mock)
+                self.assertEqual(result.provider, "mock")
+            network.assert_not_called()
 
     @override_settings(AI_PROVIDER="mock", OPENAI_API_KEY="", OPENROUTER_API_KEY="", KIMI_API_KEY="")
     def test_run_ai_request_logs_mock_response(self):
