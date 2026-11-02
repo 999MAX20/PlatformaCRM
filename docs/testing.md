@@ -76,3 +76,11 @@ main merge or deployment. Its finite diagnostic selects the 14 previously
 failing cases plus these six regressions against real PostgreSQL. It does not
 rerun or certify the full backend suite. CI records all failures and resource
 unknowns; external providers remain disabled.
+
+Bounded review verification: GitHub run41456485318 tested
+`dd5a36cddd74d5253ee0480f434dfed3224bee63` on PostgreSQL: all20 selected
+methods passed, including the six regressions and two-connection idempotency.
+Migration drift/system checks passed, own containers stopped and final resource
+accounting completed within2GiB. The whole backend suite, native clients/devices
+and production/external-provider integration are not certified by this result.
+This review branch has not been merged or deployed.
