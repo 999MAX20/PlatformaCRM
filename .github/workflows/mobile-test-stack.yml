@@ -2,9 +2,6 @@ name: CRM disposable internal test stack
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["codex/mobile-max"]
-    paths: [".github/workflows/mobile-test-stack.yml"]
 
 permissions:
   contents: read
