@@ -52,10 +52,14 @@ struct AppointmentSlotReadContent:View {
                                 Text(context.read.intent.day+" · "+context.read.intent.timezone).font(.caption)
                                 if context.read.candidates.isEmpty {Text(AppCopy.text("slotReadEmpty"))}
                                 ForEach(Array(context.read.candidates.enumerated()),id:\.offset) {index,value in
+                                    let startLabel: String = AppCopy.text("intervalStart")+": "+instant(value.startAt,zone:context.read.intent.timezone)
+                                    let endLabel: String = AppCopy.text("intervalEnd")+": "+instant(value.endAt,zone:context.read.intent.timezone)
+                                    let intervalLabel: String = [startLabel,endLabel].joined(separator:", ")
+                                    let candidateLabel: String = AppCopy.text("slotReviewChoose")+": "+intervalLabel
                                     VStack(alignment:.leading) {
                                         Text(AppCopy.text("intervalStart")+": "+instant(value.startAt,zone:context.read.intent.timezone))
                                         Text(AppCopy.text("intervalEnd")+": "+instant(value.endAt,zone:context.read.intent.timezone))
-                                        Button(AppCopy.text("slotReviewChoose")) {if isCurrent() {model.selectCandidate(index,expected:control)}}.accessibilityLabel(Text(AppCopy.text("slotReviewChoose")+": "+[AppCopy.text("intervalStart")+": "+instant(value.startAt,zone:context.read.intent.timezone),AppCopy.text("intervalEnd")+": "+instant(value.endAt,zone:context.read.intent.timezone)].joined(separator:", ")))
+                                        Button(AppCopy.text("slotReviewChoose")) {if isCurrent() {model.selectCandidate(index,expected:control)}}.accessibilityLabel(Text(candidateLabel))
                                     }
                                 }
                             }
