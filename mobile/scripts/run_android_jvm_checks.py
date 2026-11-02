@@ -80,11 +80,13 @@ class Packet:
         # Gradle atomically moves transient cache entries. A failed traversal is
         # never an owned-size sample: remeasure only confirmed descendant ENOENT,
         # at most three reads inside the original ten-second measurement budget.
+        known_roots = {root for root in self.roots if root.is_dir()}
         for attempt in range(3):
-            if not self.output.is_dir():
+            if not self.output.is_dir() or any(not root.is_dir() for root in known_roots):
                 raise Blocked("Required owned artifact root disappeared")
             check_budget()
             roots = [p for p in self.roots if p.exists()]
+            known_roots.update(roots)
             try:
                 sample = subprocess.run(["du", "-sk", *(str(p) for p in roots)], text=True,
                                         capture_output=True, timeout=sample_deadline-time.monotonic(),
@@ -92,6 +94,8 @@ class Packet:
             except subprocess.TimeoutExpired as error:
                 raise Blocked("Resource sampling exceeded its ten-second budget") from error
             check_budget()
+            if any(not root.is_dir() for root in known_roots):
+                raise Blocked("Required owned resource root disappeared during measurement")
             if sample.returncode != 0 or sample.stderr.strip():
                 errors = sample.stderr.strip().splitlines()
                 matches = [re.fullmatch(r"du: (?:cannot access '([^']+)'|(/.+)): No such file or directory", line)
@@ -103,7 +107,18 @@ class Packet:
                         for root in roots) for match in matches)
                 if not transient:
                     raise Blocked("Resource measurement failed: "+sample.stderr.strip())
-                self.emit("RESOURCE_REMEASURE", sample=attempt+1, reason="Owned transient descendant ENOENT")
+                descendants = [str(Path(match[1] or match[2]).relative_to(root))
+                               for match in matches for root in roots
+                               if Path(match[1] or match[2]).is_relative_to(root)]
+                self.emit("RESOURCE_REMEASURE", sample=attempt+1,
+                          reason="Owned transient descendant ENOENT", descendants=descendants)
+                if attempt < 2:
+                    delay = (0.250, 0.500)[attempt]
+                    check_budget()
+                    if sample_deadline-time.monotonic() <= delay:
+                        raise Blocked("No remaining sample budget for bounded ENOENT pause")
+                    time.sleep(delay)
+                    check_budget()
                 continue
             rows = [line.split("\t", 1) for line in sample.stdout.splitlines()]
             if len(rows) != len(roots) or any(
