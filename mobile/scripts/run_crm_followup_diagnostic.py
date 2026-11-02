@@ -287,6 +287,16 @@ class StackPacket(StackBudget):
         matches=re.findall(r'__BUSINESS_ID__=(\d+)',(self.output/'synthetic-business-id.log').read_text()) if identity else []
         if identity and len(matches)!=1:raise Blocked('Ambiguous synthetic Business ID')
         if self.mode=='queue-web':
+            seed_probe = "from apps.businesses.models import Business; from apps.leads.models import Lead; import json; b=Business.objects.get(slug='zani-e2e-demo'); q=Lead.objects.filter(business=b); print('__DIAGNOSTIC_SEED__='+json.dumps({'businessId':b.id,'leadCount':q.count(),'leadIds':list(q.values_list('id',flat=True)[:100])}))"
+            if not self.do('diagnostic-seed-read',exec_web+['shell','-c',seed_probe],20,ready=bool(matches)):
+                raise Blocked('Synthetic seed identity/count unavailable')
+            seed_lines=re.findall(r'__DIAGNOSTIC_SEED__=(.+)',(self.output/'diagnostic-seed-read.log').read_text())
+            if len(seed_lines)!=1:raise Blocked('Ambiguous diagnostic seed evidence')
+            seed=json.loads(seed_lines[0])
+            if type(seed.get('businessId')) is not int or type(seed.get('leadCount')) is not int or seed['businessId']<=0 or seed['leadCount']<=0:
+                raise Blocked('Expected seeded Business and nonempty lead set not confirmed')
+            self.report['diagnosticSeed']=seed
+            self.environment.update(CRM_DIAGNOSTIC_BUSINESS_ID=str(seed['businessId']),CRM_DIAGNOSTIC_LEAD_COUNT=str(seed['leadCount']))
             self.do('real-queue-smoke',exec_web+['queue_runtime_smoke','--business-id',matches[0] if matches else '0','--timeout','45'],60,ready=bool(matches))
         mapped=self.do('effective-port-bindings',self.compose+['port','ci-loopback','8080'],15,ready=ingress)
         self.do('effective-web-state',self.compose+['ps','web','ci-loopback','--format','json'],15,ready=runtime)
@@ -329,10 +339,28 @@ class StackPacket(StackBudget):
         chrome=shutil.which('google-chrome')
         config=self.repo/'frontend/playwright.ci-stack.config.ts'
         if config.exists():raise Blocked('Refuse existing generated test config')
-        config.write_text("import {defineConfig} from '@playwright/test';\nimport base from './playwright.staging.config';\nexport default defineConfig(base,{retries:0,workers:1,use:{...base.use,channel:'chrome',trace:'off',screenshot:'off',video:'off'},reporter:[['list'],['json',{outputFile:process.env.CRM_E2E_REPORT}]]});\n")
+        config.write_text("import {defineConfig,devices} from '@playwright/test';\nimport base from './playwright.staging.config';\nexport default defineConfig(base,{testMatch:'auth-leads-diagnostic.spec.ts',timeout:45000,expect:{timeout:5000},forbidOnly:true,fullyParallel:false,retries:0,workers:1,projects:[{name:'bounded-desktop-diagnostic',use:{...devices['Desktop Chrome']}}],use:{...base.use,channel:'chrome',serviceWorkers:'block',actionTimeout:10000,navigationTimeout:10000,trace:'off',screenshot:'off',video:'off'},reporter:[['list'],['json',{outputFile:process.env.CRM_E2E_REPORT}]]});\n")
         self.environment['CRM_E2E_REPORT']=str(self.output/'browser-results.json')
         browser_seconds=min(300,max(0,int(self.deadline-time.monotonic()-30)))
         self.do('browser-tests',['npm','--prefix','frontend','exec','--','playwright','test','--config=frontend/playwright.ci-stack.config.ts','--workers=1','--retries=0','--global-timeout='+str(browser_seconds*1000)],browser_seconds+5,ready=frontend and seeded and host and ready and bool(chrome) and browser_seconds>0)
+        result_file=self.output/'browser-results.json'
+        if result_file.exists():
+            browser_report=json.loads(result_file.read_text())
+            cases=[]
+            def collect(suite):
+                for spec in suite.get('specs',[]):
+                    for case in spec.get('tests',[]):
+                        results=case.get('results',[])
+                        cases.append({'name':spec.get('title'),'status':results[0].get('status') if len(results)==1 else 'NOT_RUN',
+                                      'executionCount':len(results),'expectedStatus':case.get('expectedStatus')})
+                for child in suite.get('suites',[]):collect(child)
+            for suite in browser_report.get('suites',[]):collect(suite)
+            accepted=len(cases)==4 and not browser_report.get('errors') and all(c['status']=='passed' and c['executionCount']==1 and c['expectedStatus']=='passed' for c in cases)
+            self.report['browserDiagnostic']={'status':'PASS' if accepted else 'FAIL','cases':cases,
+                                             'old34ScenarioSuite':'NOT_RERUN_NOT_CERTIFIED','newRuntimeFixes':False}
+            if not accepted:self.report['phases'].append({'name':'browser-diagnostic-completeness','status':'FAIL','reason':'All four independent cases required exactly once, without skip/error'})
+        else:
+            self.report['phases'].append({'name':'browser-diagnostic-completeness','status':'BLOCKED','reason':'Required diagnostic result unavailable'})
         self.capacity()
         self.report['status']='PASS' if all(x['status']=='PASS' for x in self.report['phases']) else 'FAIL'
 
@@ -374,7 +402,7 @@ class StackPacket(StackBudget):
                 self.preview.terminate()
                 try:self.preview.wait(timeout=5)
                 except subprocess.TimeoutExpired:self.preview.kill()
-            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','real-queue-smoke','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','api-health','api-ready','frontend-npm-ci','frontend-build','internal-http-smoke','browser-tests'])
+            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','diagnostic-seed-read','real-queue-smoke','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','api-health','api-ready','frontend-npm-ci','frontend-build','internal-http-smoke','browser-tests'])
             observed={x['name'] for x in self.report['phases']}
             self.report['notRun']=[name for name in planned if name not in observed]
             if self.report['notRun'] and self.report['status']=='PASS':self.report['status']='BLOCKED'
