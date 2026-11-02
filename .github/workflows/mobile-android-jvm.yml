@@ -2,9 +2,6 @@ name: CRM Android JVM diagnostic
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["codex/mobile-max"]
-    paths: [".github/workflows/mobile-android-jvm.yml"]
 
 permissions:
   contents: read
