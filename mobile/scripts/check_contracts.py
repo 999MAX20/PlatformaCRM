@@ -789,7 +789,7 @@ for row in ta['read_feedback_cases']:
  assert all(dictionaries[lang][row['copy_key']].strip() for lang in ['ru','kk','en'])
 for file in ['ios/CRMApp/TaskDraftAppointmentPickerContent.swift','android/app/src/main/java/kz/zani/mobile/ui/TaskDraftAppointmentPickerContent.kt']:
  content=(root/file).read_text();assert 'TaskAppointmentReadFeedback.copyKey' in content
- assert ('accessibilityAddTraits(.isHeader)' in content and 'accessibilityHint' in content) if file.endswith('.swift') else ('heading()' in content and 'contentDescription=text("loading")' in content and 'liveRegion=LiveRegionMode.Polite' in content)
+ assert ('accessibilityAddTraits(.isHeader)' in content and 'accessibilityHint' in content) if file.endswith('.swift') else ('heading()' in content and 'contentDescription=readScope+": "+text("loading")' in content and 'liveRegion=LiveRegionMode.Polite' in content)
 print('PASS: Appointment denied/notFound/unavailable safe copy RU/KK/EN and paired heading/loading/validation/error accessibility source hooks; device/reader NOT_RUN')
 
 # Explicit optional parent_task uses current supplied Task list/detail and separate fake generic receipt.
