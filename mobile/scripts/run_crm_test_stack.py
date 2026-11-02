@@ -37,20 +37,25 @@ def docker_json(path):
         connection.close()
 
 
-def docker_sizes(data):
-    def size(value):
+def docker_sizes(data, known_omitted_container_zero=False):
+    def size(value, field):
         if type(value) is not int or value<0:
-            raise Blocked('Unknown Docker resource size; never substitute zero')
+            raise Blocked('Unknown Docker resource size at '+field+'; never substitute zero')
         return value
     for key in ('Containers','Volumes','BuildCache'):
         if key not in data or (data[key] is not None and not isinstance(data[key],list)):
             raise Blocked('Missing or invalid Docker resource collection: '+key)
     # Deliberately conservative: charge cache bytes even when shared with an
     # image. This is a declared upper bound, not a claim of physical disk use.
-    return {'layers':size(data.get('LayersSize')),
-            'containers':sum(size(x.get('SizeRw')) for x in (data.get('Containers') or [])),
-            'volumes':sum(size((x.get('UsageData') or {}).get('Size')) for x in (data.get('Volumes') or [])),
-            'buildCache':sum(size(x.get('Size')) for x in (data.get('BuildCache') or []))}
+    # Docker28.0.4 Summary.SizeRw is int64 with json omitempty, and
+    # /system/df explicitly computes container sizes. Only that verified
+    # protocol omission means zero; explicit null or any unknown version does not.
+    return {'layers':size(data.get('LayersSize'),'LayersSize'),
+            'containers':sum(size(x.get('SizeRw',0) if known_omitted_container_zero else x.get('SizeRw'),
+                                  'Containers['+str(i)+'].SizeRw') for i,x in enumerate(data.get('Containers') or [])),
+            'volumes':sum(size((x.get('UsageData') or {}).get('Size'),'Volumes['+str(i)+'].UsageData.Size')
+                          for i,x in enumerate(data.get('Volumes') or [])),
+            'buildCache':sum(size(x.get('Size'),'BuildCache['+str(i)+'].Size') for i,x in enumerate(data.get('BuildCache') or []))}
 
 
 class StackPacket(Packet):
@@ -60,6 +65,7 @@ class StackPacket(Packet):
         self.docker_baseline=None
         self.docker_growth=0
         self.api_version=None
+        self.engine_version=None
         self.environment={}
         self.secret_values=[]
         self.preview=None
@@ -74,11 +80,18 @@ class StackPacket(Packet):
     def capacity(self):
         version=self.api_version
         if version is None:
-            version=docker_json('/version').get('ApiVersion','')
+            metadata=docker_json('/version')
+            version=metadata.get('ApiVersion','')
             if not re.fullmatch(r'1\.\d{2,3}',version):
                 raise Blocked('Unsupported Docker accounting API version')
             self.api_version=version
-        current=docker_sizes(docker_json('/v'+version+'/system/df'))
+            self.engine_version=metadata.get('Version')
+        raw=docker_json('/v'+version+'/system/df')
+        self.report['lastResourceFieldShape']={'engineVersion':self.engine_version,'apiVersion':version,
+            'containerSizeRw':[x.get('SizeRw','OMITTED') for x in (raw.get('Containers') or [])],
+            'volumeSize':[(x.get('UsageData') or {}).get('Size','OMITTED') for x in (raw.get('Volumes') or [])],
+            'buildCacheSize':[x.get('Size','OMITTED') for x in (raw.get('BuildCache') or [])]}
+        current=docker_sizes(raw,known_omitted_container_zero=self.engine_version=='28.0.4' and version=='1.48')
         if self.docker_baseline is None:
             self.docker_baseline=current
         self.docker_growth=max(self.docker_growth,sum(max(0,current[k]-self.docker_baseline[k]) for k in current))
