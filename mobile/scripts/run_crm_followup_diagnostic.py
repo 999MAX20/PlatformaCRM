@@ -27,6 +27,14 @@ EXPECTED_BROWSER_CASES=(
     'Seed to owner API to lead DOM visibility',
 )
 
+def public_ci_environment(environ, mode):
+    expected_ref='refs/heads/codex/crm-postgres-compat-review' if mode=='backend-targeted' else 'refs/heads/codex/mobile-max'
+    fields={key:environ.get(key,'') for key in ('GITHUB_ACTIONS','GITHUB_REF','GITHUB_RUN_ID')}
+    if fields['GITHUB_ACTIONS']!='true' or fields['GITHUB_REF']!=expected_ref or not fields['GITHUB_RUN_ID'].isdigit():
+        raise Blocked('Missing or foreign public CI identity; do not forward arbitrary environment')
+    return fields
+
+
 def validate_browser_collection(listing):
     config=listing.get('config',{})
     projects=config.get('projects',[])
@@ -242,6 +250,8 @@ class StackPacket(StackBudget):
             raise Blocked('Declared projection would breach explicit cap/free reserve')
         self.report.update(initialCapacity=state,memoryBytes={k:int(v)*1024 for k,v in memory.items()})
         self.environment={k:os.environ[k] for k in ('PATH','HOME','LANG') if k in os.environ}
+        self.environment.update(public_ci_environment(os.environ,self.mode))
+        self.report['publicCIIdentity']={key:self.environment[key] for key in ('GITHUB_ACTIONS','GITHUB_REF','GITHUB_RUN_ID')}
         self.environment.update(CI='true',LC_ALL='C',npm_config_cache=str(self.output/'npm-cache'),
                                 PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD='1',DOCKER_CONFIG=str(self.output/'docker-config'),
                                 VITE_API_URL='http://127.0.0.1:8000',E2E_BASE_URL='http://127.0.0.1:4173',
