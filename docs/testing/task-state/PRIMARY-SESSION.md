@@ -8,6 +8,23 @@
 
 ## CRM-R01-RECORD-FIRST-20261031 — single Appointment package
 
+Publication02.11: fix02e89c3b4389c4fd284b81d1a95b477476e55271 normal-pushed
+to origin/main; remote SHA confirmed. CI41437983420 completed success (backend
+tests/Python audit and frontend build/budget/npm audit). Backend2288 tests PASS,
+43 skipped (PostgreSQL-specific etc.; no claim they executed in SQLite CI).
+Previous failure remains
+historical; this run closes the single-visit CI blocker. No remaining code/local
+evidence/publication criterion in this bounded package. Full R01 plans/money/live
+remain open; no working migration or deployment. Canonical root and current branch
+codex/ui-testing-toolkit retained. Starting foreign file hashes unchanged;
+only6 reviewed paths published. Empty31.10 index.lock moved after two no-git-process
+inspections; no history rewrite. Scoped actual99666f6c..02e89c3b diff hygiene PASS.
+CI: https://github.com/999MAX20/PlatformaCRM/actions/runs/41437983420
+Additional local audit: .venv/Scripts/python.exe -m pip_audit -r
+output/record-first-20261031/resume-20261102/requirements-published.txt --format=json:
+PASS,0 known vulnerabilities; requirements extracted from published HEAD,
+foreign requirements WIP excluded. Verified candidate code blobs equal published HEAD.
+
 Continuation02.11 local PASS: original CI41178318197 finished with one
 backend error in2288 tests (43 skipped), in addition to npm audit8. The notification
 preference test used SimpleNamespace without responsible_user_id. Reproduced in

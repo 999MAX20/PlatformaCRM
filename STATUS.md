@@ -1,7 +1,7 @@
 CRM-R01-RECORD-FIRST-20261031: single-Appointment Client/Inbox package published
 bc46d7c9.02.11 continuation corrected notification preference fixture and dependency
 audit blockers locally:31 backend/system/drift, app/widget/Storybook/types/XLSX and
-npm audit0 PASS. Publication/new CI pending; previous CI had1 backend error + audit8.
+npm audit0 PASS. Fix02e89c3b published, remote SHA confirmed; CI41437983420 success.
 Full R01 plans/money/live remain open; foreign WIP preserved. Evidence in PRIMARY.
 
 PILOT-ACCESS-20261031: two-Business onboarding/access verified and published43aab2fe.
