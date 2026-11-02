@@ -1,9 +1,8 @@
-CRM-R01-RECORD-FIRST-20261031: single-Appointment Client/Inbox package implemented.
-Current guards/replay/rollback/migration, PostgreSQL races and browser flows verified;
-coordinator separate from specialist, old Lead/Deal preserved. Published bc46d7c9;
-remote SHA confirmed. CI npm audit FAIL:8 advisories in unchanged dependencies;
-backend CI still running. Local feature checks PASS, full CI acceptance blocked.
-Full R01 plans/money/live open; foreign WIP retained. Evidence in PRIMARY.
+CRM-R01-RECORD-FIRST-20261031: single-Appointment Client/Inbox package published
+bc46d7c9.02.11 continuation corrected notification preference fixture and dependency
+audit blockers locally:31 backend/system/drift, app/widget/Storybook/types/XLSX and
+npm audit0 PASS. Publication/new CI pending; previous CI had1 backend error + audit8.
+Full R01 plans/money/live remain open; foreign WIP preserved. Evidence in PRIMARY.
 
 PILOT-ACCESS-20261031: two-Business onboarding/access verified and published43aab2fe.
 Existing security fixes integrated; neutral signup and MFA error recovery corrected.

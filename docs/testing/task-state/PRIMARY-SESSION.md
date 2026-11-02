@@ -8,6 +8,47 @@
 
 ## CRM-R01-RECORD-FIRST-20261031 — single Appointment package
 
+Continuation02.11 local PASS: original CI41178318197 finished with one
+backend error in2288 tests (43 skipped), in addition to npm audit8. The notification
+preference test used SimpleNamespace without responsible_user_id. Reproduced in
+resume-reproduce (4 tests,1 error), replaced with actual unsaved Appointment;
+assertions unchanged. No production notification or scheduling behavior changed.
+Dependencies: follow-redirects1.16.2, write-excel-file4.1.1; scoped Storybook
+docgen override glob14.0.3 brings minimatch11.0.4/path-scurry3.0.0. No force fix.
+Archive dependency chain removed by upstream XLSX package; app API unchanged.
+Exact candidate HEAD99666f6c + three owned files; Git-index read-only overlays
+exclude all foreign WIP. Node24.18.0, existing .venv, isolated disposable SQLite.
+PASS: run_candidate.py resume-backend test apps.notifications.tests_settings_preferences
+apps.scheduling.tests_record_commands apps.scheduling.tests_settings_delivery --noinput:
+31 tests; resume-check check and resume-drift makemigrations --check --dry-run.
+Frontend verify_frontend.py: i18n, tsc -b --force, Vite app/widget builds, Storybook
+types PASS. Storybook corrected dispatcher.js build PASS; first harness used old
+bin path and failed MODULE_NOT_FOUND (retained). npm audit --audit-level=moderate:
+0 vulnerabilities. check-bundle.mjs with candidate BUNDLE_ASSETS_DIR PASS;
+locale chunks retain warnings, app shell339.8KiB below400KiB. Browser XLSX API
+toBlob plus openpyxl readback PASS: RU/KK, phone, literal formula-like text,
+header and row count. Initial harness import depth fixed; original failure retained.
+All commands/logs: output/record-first-20261031/resume-20261102 and resume-*.log.
+No full local suite or repeat browser product certification: only test fixture and
+dependencies changed; existing single-visit behavior evidence retained at its SHA.
+Push CI remains required, not yet green. No working DB/config, migration or deploy.
+Contract/passport unchanged: no product/API/permission/AI/notification behavior delta.
+Roadmap records scoped result without closing plans/money/live. Foreign WIP preserved.
+Global working diff hygiene reports unrelated route-prefetch.test.mjs trailing blank
+line; scoped candidate hygiene passes. Publication receipt follows separately.
+
+Continuation02.11: owner requests analysis and continuation of last task.
+Scope: close single-visit CI failures, preserve all foreign WIP. Base99666f6c,
+canonical root, existing codex/ui-testing-toolkit. No working DB/deployment.
+CI2288 has one error: obsolete SimpleNamespace appointment fixture misses
+responsible_user_id; use actual unsaved Appointment and keep assertions.
+Frontend audit8: investigate minimal patched dependency graph; no force fix.
+Risk: export XLSX/runtime and Storybook build compatibility. Checks: isolated
+notification preferences + scheduling record consumers, system/drift; npm audit,
+app/widget types/build/budget, real XLSX generation/readback and Storybook build
+if dependencies change. Publish only reviewed owned paths after passing checks.
+No domain/permission/schema changes planned; full R01 plans/money/live remain open.
+
 CI follow-up31.10: both41178318197 (code) and41178418459 (receipt f888ecac)
 frontend jobs FAIL only at npm audit; frontend/widget build and bundle budget PASS.
 Current unchanged lockfile audit reproduced locally with

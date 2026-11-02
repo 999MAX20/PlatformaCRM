@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 from django.test import TestCase
 from django.utils import timezone
 
@@ -13,6 +11,7 @@ from apps.leads.models import Lead
 from apps.leads.services import notify_responsible
 from apps.notifications.models import Notification, NotificationPreference
 from apps.notifications.routing import create_role_notification
+from apps.scheduling.models import Appointment
 from apps.scheduling.services import notify_appointment_responsible
 
 
@@ -36,7 +35,7 @@ class SettingsPreferenceConsumersTests(TestCase):
 
     def test_sales_preference_applies_to_leads_and_appointments(self):
         lead = Lead.objects.create(business=self.business, client=self.customer, responsible_user=self.user)
-        appointment = SimpleNamespace(business=self.business, lead=lead, resource=None)
+        appointment = Appointment(business=self.business, lead=lead, resource=None)
         self.disable("sales")
         self.assertIsNone(notify_responsible(lead, "Lead assigned"))
         self.assertIsNone(notify_appointment_responsible(appointment, "Appointment assigned"))
