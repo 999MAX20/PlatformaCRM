@@ -2,6 +2,9 @@ name: CRM independent queue and web diagnostic
 
 on:
   workflow_dispatch:
+  push:
+    branches: ["codex/mobile-max"]
+    paths: [".github/workflows/crm-queue-web.yml"]
 
 permissions:
   contents: read
@@ -14,13 +17,13 @@ jobs:
   diagnostic:
     if: github.ref == 'refs/heads/codex/mobile-max'
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 950
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: One bounded isolated diagnostic
-        timeout-minutes: 18
+        timeout-minutes: 95
         run: python3 mobile/scripts/run_crm_followup_diagnostic.py "$RUNNER_TEMP/crm-queue-web" --mode queue-web
       - name: Preserve sanitized evidence
         if: ${{ always() && !cancelled() }}

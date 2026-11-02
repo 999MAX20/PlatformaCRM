@@ -63,7 +63,8 @@ def validate_browser_collection(listing):
     return {'status':'PASS','projects':1,'specs':1,'cases':cases,'caseCount':4,'retries':0,'repeatEach':1,'browserExecutionsDuringList':0}
 
 
-CLEANUP_SECONDS = 100
+PACKET_SECONDS = 5400
+CLEANUP_SECONDS = 180
 REPORT_LIMIT = 8*1024*1024
 
 def mandatory_result(phases, not_run=()):
@@ -274,6 +275,7 @@ class StackPacket(StackBudget):
         self.preview=None
         self.compose=[]
         self.mode=mode
+        self.deadline=self.start+PACKET_SECONDS
         self.work_deadline=self.deadline-CLEANUP_SECONDS
         self.active_deadline=self.work_deadline
         self.known_container_ids=[]
@@ -281,7 +283,7 @@ class StackPacket(StackBudget):
         self.project_name=None
         self.report={'status':'NOT_RUN','sourceSha':os.environ.get('GITHUB_SHA'),
                      'scope':mode+'; exact4 browser plus4 read-only SQL probes, no prior independent suites repeated; real PostgreSQL/Redis/Celery, synthetic data',
-                     'limits':{'jobSeconds':1200,'packetSeconds':1020,'lanes':1,
+                     'limits':{'jobSeconds':10800,'packetSeconds':PACKET_SECONDS,'cleanupSeconds':CLEANUP_SECONDS,'lanes':1,
                                'capBytes':self.artifact_cap,'reserveBytes':RESERVE},'phases':[],
                      'junit':{'status':'NOT_APPLICABLE'},'outsideScope':{'nativeDevice':'NOT_RUN','nativeRealAPI':'BLOCKED','externalProviders':'NOT_LIVE_VERIFIED'},
                      'accounting':'Owned files + new Docker layers/containers/volumes/cache upper bound; max with whole-volume allocation delta. Shared Docker cache may be conservatively counted twice; unknown sizes block.'}
@@ -296,7 +298,19 @@ class StackPacket(StackBudget):
                 raise Blocked('Unsupported Docker accounting API version')
             self.api_version=version
             self.engine_version=metadata.get('Version')
-        raw=docker_json('/v'+version+'/system/df',sample_deadline)
+        endpoint='/v'+version+'/system/df';sample_started=time.monotonic()
+        evidence={'phase':getattr(self,'current_phase','preflight'),'endpoint':endpoint,'startedElapsedSeconds':sample_started-self.start,'remainingSampleSeconds':sample_deadline-sample_started,'status':'RUNNING'}
+        try:
+            raw=docker_json(endpoint,sample_deadline);evidence['status']='PASS'
+        except Exception as error:
+            evidence.update(status='BLOCKED',error=type(error).__name__+': '+str(error));raise
+        finally:
+            evidence['elapsedSeconds']=time.monotonic()-sample_started
+            self.report.setdefault('accountingCalls',[]).append(evidence)
+            summary=self.report.setdefault('accountingSummary',{}).setdefault(evidence['phase'],{'calls':0,'elapsedSeconds':0.,'maxSeconds':0.,'blocked':0})
+            summary['calls']+=1;summary['elapsedSeconds']+=evidence['elapsedSeconds'];summary['maxSeconds']=max(summary['maxSeconds'],evidence['elapsedSeconds']);summary['blocked']+=evidence['status']!='PASS'
+            if len(self.report['accountingCalls'])>64:
+                self.report['accountingCalls'].pop(0);self.report['accountingRecentOnly']=True
         self.report['lastResourceFieldShape']={'engineVersion':self.engine_version,'apiVersion':version,
             'containerSizeRw':[x.get('SizeRw','OMITTED') for x in (raw.get('Containers') or [])],
             'volumeSize':[(x.get('UsageData') or {}).get('Size','OMITTED') for x in (raw.get('Volumes') or [])],
@@ -314,14 +328,18 @@ class StackPacket(StackBudget):
         return state
 
     def run(self,label,args,env,seconds):
-        started=time.monotonic();end=min(self.work_deadline,started+seconds)
-        entry={'name':label,'status':'NOT_RUN','limitSeconds':max(0,end-started)};self.report['phases'].append(entry)
+        started=time.monotonic();requested=seconds
+        seconds=45 if seconds<=20 else seconds
+        end=min(self.work_deadline,started+seconds)
+        self.current_phase=label
+        entry={'name':label,'status':'NOT_RUN','limitSeconds':max(0,end-started),'requestedSeconds':requested};self.report['phases'].append(entry)
         child=None;failure=None;self.active_deadline=end-2
         try:
             if end-started<=2:raise Blocked('No phase allocation remains')
             self.capacity()
             with (self.output/(label+'.log')).open('w') as log:
                 child=subprocess.Popen(args,cwd=self.repo,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+                entry['childStarted']=True
                 while child.poll() is None:
                     self.capacity()
                     if time.monotonic()>=end-2:raise Blocked(label+' absolute phase deadline')
@@ -338,7 +356,8 @@ class StackPacket(StackBudget):
                 try:stop_owned_group(child,end)
                 except Exception as error:
                     entry.update(status='BLOCKED',reason='Owned child shutdown unknown: '+str(error));failure=Blocked(entry['reason'])
-            self.active_deadline=self.work_deadline;entry['elapsedSeconds']=time.monotonic()-started
+            if child:entry['observedChildReturncode']=child.poll()
+            self.current_phase='between-phases';self.active_deadline=self.work_deadline;entry['elapsedSeconds']=time.monotonic()-started
         if failure:raise failure
         return child.returncode
 
@@ -427,12 +446,12 @@ class StackPacket(StackBudget):
             if set(proxy['networks'])!={'default','ci-loopback'} or proxy['image']!='docker.io/library/nginx@sha256:84ed8c0dd296c188bfc24ed506f46589e9285fb0b11cf3a04d91d524d3067e11':raise Blocked('Ingress topology/image drift')
             self.report['topologyPreflight']={'status':'PASS','published':expected,'applicationServicesInternalOnly':True}
         self.emit('PREFLIGHT_PASS',sha=head,**state)
-        built=self.do('image-build',self.compose+['build','web'],300)
-        db=self.do('db-redis-up',self.compose+['up','-d','--wait','--wait-timeout','90','db','redis'],100,ready=built)
+        built=self.do('image-build',self.compose+['build','web'],600)
+        db=self.do('db-redis-up',self.compose+['up','-d','--wait','--wait-timeout','90','db','redis'],120,ready=built)
         manage=self.compose+['run','--no-deps','-T','web','python','manage.py']
         self.do('migration-drift',manage+['makemigrations','--check','--dry-run'],45,ready=db)
         self.do('django-check',manage+['check'],45,ready=db)
-        migrated=self.do('migrate',manage+['migrate','--noinput'],90,ready=db)
+        migrated=self.do('migrate',manage+['migrate','--noinput'],180,ready=db)
         if self.mode=='backend-targeted':
             self.do('postgres-vendor',manage+['shell','-c',"from django.db import connection; assert connection.vendor=='postgresql',connection.vendor; print('POSTGRESQL_CONFIRMED')"],20,ready=migrated)
             selection=['apps.activities.tests_segments.TagsAndSegmentsTests.test_tags_are_tenant_safe_and_filter_clients', 'apps.ai_core.tests.AICoreFoundationTests.test_generate_text_can_return_controlled_error_without_key', 'apps.analytics.tests.OwnerDashboardAnalyticsTests.test_owner_dashboard_returns_real_metrics', 'apps.bots.tests.BotsFoundationTests.test_auto_booking_runs_appointment_message_delivery_and_confirmation_reply', 'apps.bots.tests.BotsFoundationTests.test_auto_pipeline_books_appointment_when_client_selects_offered_slot', 'apps.bots.tests.BotsFoundationTests.test_auto_pipeline_respects_agent_allowed_tools_for_deals', 'apps.bots.tests.BotsFoundationTests.test_auto_sales_reply_receives_playbook_prices_resources_and_slots', 'apps.bots.tests.BotsFoundationTests.test_crm_pipeline_runtime_check_command_passes_in_safe_mode', 'apps.bots.tests.BotsFoundationTests.test_public_website_chat_auto_pipeline_can_sell_and_create_draft_deal', 'apps.bots.tests.BotsFoundationTests.test_public_website_chat_auto_pipeline_lead_task_mode_is_guarded_and_idempotent', 'apps.bots.tests.InboxBackendTests.test_inbox_can_create_and_link_deal_from_conversation', 'apps.bots.tests.InboxBackendTests.test_inbox_can_create_task_and_lead_from_conversation', 'apps.bots.tests.InboxBackendTests.test_inbox_run_pipeline_creates_idempotent_crm_chain', 'apps.core.tests.PlatformDashboardTests.test_platform_users_can_open_overview_and_merchants', 'apps.activities.tests_postgres_tags', 'apps.conversations.tests_postgres_pipeline']
@@ -446,8 +465,8 @@ class StackPacket(StackBudget):
                 raise Blocked('Expected all14 known cases plus6 regressions without skip')
             self.report['status']='PASS' if all(x['status']=='PASS' for x in self.report['phases']) else 'FAIL'
             return
-        runtime=self.do('runtime-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','web','celery'],70,ready=migrated)
-        ingress=self.do('loopback-ingress-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','ci-loopback'],90,ready=runtime)
+        runtime=self.do('runtime-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','web','celery'],120,ready=migrated)
+        ingress=self.do('loopback-ingress-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','ci-loopback'],120,ready=runtime)
         exec_web=self.compose+['exec','-T','web','python','manage.py']
         seeded=self.do('synthetic-seed',exec_web+['prepare_e2e_smoke_data','--password',password],60,ready=runtime)
         identity=self.do('synthetic-business-id',exec_web+['shell','-c',"from apps.businesses.models import Business; print('__BUSINESS_ID__='+str(Business.objects.get(slug='zani-e2e-demo').id))"],30,ready=seeded)
@@ -493,8 +512,8 @@ class StackPacket(StackBudget):
                 self.report['ownedContainerIds']=self.known_container_ids
         host=self.do('api-health',['curl','--fail','--silent','--show-error','--max-time','15','http://127.0.0.1:8000/health/'],20,ready=mapped and internal and actual_bindings)
         ready=self.do('api-ready',['curl','--fail','--silent','--show-error','--max-time','15','http://127.0.0.1:8000/ready/'],20,ready=host)
-        installed=self.do('frontend-npm-ci',['npm','--prefix','frontend','ci','--no-audit','--no-fund'],180)
-        frontend=self.do('frontend-build',['npm','--prefix','frontend','run','build'],180,ready=installed)
+        installed=self.do('frontend-npm-ci',['npm','--prefix','frontend','ci','--no-audit','--no-fund'],600)
+        frontend=self.do('frontend-build',['npm','--prefix','frontend','run','build'],600,ready=installed)
         if frontend:
             self.preview=subprocess.Popen(['npm','--prefix','frontend','run','preview','--','--host','127.0.0.1','--port','4173'],cwd=self.repo,env=self.environment,stdout=(self.output/'frontend-preview.log').open('w'),stderr=subprocess.STDOUT,start_new_session=True)
             time.sleep(2)

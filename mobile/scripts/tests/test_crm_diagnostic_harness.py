@@ -291,7 +291,7 @@ class HarnessChecks(unittest.TestCase):
                 clock=Clock();obj=r.StackPacket(Path('/fake'),self.directory,'queue-web');obj.work_deadline=20;obj.capacity=lambda:None
                 class SlowStartup:
                     returncode=0;pid=876543
-                    def __init__(self,*a,**k):clock.advance(5)
+                    def __init__(self,*a,**k):clock.advance(25)
                     def poll(self):return 0
                     def wait(self,timeout):return 0
                 with patch.object(r.time,'monotonic',clock),patch.object(r.subprocess,'Popen',SlowStartup),patch.object(q.os,'killpg',side_effect=ProcessLookupError):
@@ -311,7 +311,7 @@ class HarnessChecks(unittest.TestCase):
                 with patch.object(q.os,'killpg',side_effect=signal):q.stop_owned_group(process,1,clock)
                 self.assertEqual(signals,[q.signal.SIGTERM])
             elif index==8:
-                self.assertEqual(r.CLEANUP_SECONDS,100);obj=r.StackPacket(Path('/fake'),self.directory,'queue-web');self.assertEqual(round(obj.deadline-obj.work_deadline),100)
+                self.assertEqual(r.CLEANUP_SECONDS,180);obj=r.StackPacket(Path('/fake'),self.directory,'queue-web');self.assertEqual(round(obj.deadline-obj.work_deadline),180)
             else:self.fail('unimplemented')
         elif group=='accounting_cleanup_publication':
             if index==1:
@@ -382,6 +382,38 @@ def negative_controls():
      rows.append({'mutation':name,'test':method,'status':'DETECTED' if detected else 'MISSED','failures':len(result.failures),'errors':len(result.errors)})
     report={'status':'PASS' if all(x['status']=='DETECTED' for x in rows) else 'FAIL','controls':rows,'realDispatches':0}
     return report
+
+
+class ShortPhaseTimingChecks(unittest.TestCase):
+    def test_all_fourteen_actual_short_paths(self):
+        source=ast.parse((HERE/'run_crm_followup_diagnostic.py').read_text());phases=[]
+        for node in ast.walk(source):
+            if isinstance(node,ast.Call) and isinstance(node.func,ast.Attribute) and node.func.attr=='do' and len(node.args)>2 and isinstance(node.args[0],ast.Constant) and isinstance(node.args[2],ast.Constant) and node.args[2].value<=20 and node.args[0].value!='postgres-vendor':phases.append((node.args[0].value,node.args[2].value))
+        self.assertEqual(len(phases),14)
+        for label,nominal in phases:
+            with self.subTest(phase=label),tempfile.TemporaryDirectory(prefix='crm-phase-fake-') as directory:
+                clock=Clock();samples=[];box=[]
+                class Process:
+                    pid=876543;returncode=None
+                    def __init__(self,*a,**k):self.due=clock()+.1;box.append(self)
+                    def poll(self):
+                        if clock()>=self.due:self.returncode=0
+                        return self.returncode
+                with patch.object(r.time,'monotonic',clock),patch.object(r.time,'sleep',side_effect=clock.advance),patch.object(r.subprocess,'Popen',Process),patch.object(r,'stop_owned_group',lambda *a:None):
+                    packet=r.StackPacket(Path('/fake'),Path(directory),'queue-web')
+                    def capacity():
+                        samples.append(clock());clock.advance(9.5)
+                        if clock()>=packet.active_deadline:raise r.Blocked('Synthetic accounting deadline')
+                    packet.capacity=capacity
+                    self.assertEqual(packet.run(label,['FAKE'],{},nominal),0)
+                    phase=packet.report['phases'][0];self.assertEqual(phase['status'],'PASS');self.assertEqual(phase['limitSeconds'],45);self.assertGreaterEqual(len(samples),3);self.assertLess(phase['elapsedSeconds'],45)
+        self.assertEqual(r.PACKET_SECONDS,5400);self.assertEqual(r.CLEANUP_SECONDS,180)
+    def test_unknown_accounting_stays_red_without_dispatch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            packet=r.StackPacket(Path('/fake'),Path(directory),'queue-web');packet.capacity=lambda:(_ for _ in ()).throw(r.Blocked('unknown'))
+            with patch.object(r.subprocess,'Popen',side_effect=AssertionError('dispatch forbidden')):
+                with self.assertRaises(r.Blocked):packet.run('owned-container-ids',['FAKE'],{},10)
+            self.assertEqual(packet.report['phases'][0]['status'],'BLOCKED')
 
 if __name__=='__main__':
     if len(sys.argv)==3 and sys.argv[1]=='--negative-controls':
