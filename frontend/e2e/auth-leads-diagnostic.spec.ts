@@ -195,8 +195,11 @@ test('Seed to owner API to lead DOM visibility', async ({ page }) => {
   expect(businessIds).toContain(seedBusiness);
   expect(Number(leads.count)).toBe(seedCount);
   expect(rows.every(row => row.business === seedBusiness)).toBeTruthy();
-  await uiLogin(page);
+  // API login already established the real HttpOnly-cookie session.
+  const restored = page.waitForResponse(r => r.url() === api+'/api/auth/me/', { timeout: 10000 }).catch(() => null);
   await page.goto('/app/leads');
+  expect((await restored)?.status(), 'Restore authenticated owner before lead DOM check').toBe(200);
+  await expect(page.locator('a[href="/app/leads"]:visible').first()).toBeVisible();
   await expect(page).toHaveURL(/\/app\/leads\/?$/);
   const visible = page.locator('div[role="button"][tabindex="0"]:visible');
   await expect(visible.first(), 'Seeded lead must be rendered, not a weakened selector').toBeVisible();

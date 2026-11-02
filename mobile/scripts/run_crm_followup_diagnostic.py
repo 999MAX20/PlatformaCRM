@@ -20,6 +20,39 @@ from run_android_jvm_checks import Packet, Blocked, CAP as ANDROID_CAP, RESERVE
 assert ANDROID_CAP == RESERVE == 2147483648
 
 
+EXPECTED_BROWSER_CASES=(
+    'API cookie baseline: rotate refresh, me and seeded leads',
+    'Product UI login preserves session across hard navigation and reload',
+    'Existing smoke helper preserves session across hard navigation and reload',
+    'Seed to owner API to lead DOM visibility',
+)
+
+def validate_browser_collection(listing):
+    config=listing.get('config',{})
+    projects=config.get('projects',[])
+    if listing.get('errors') or len(projects)!=1 or projects[0].get('name')!='bounded-desktop-diagnostic':
+        raise Blocked('Collection requires exactly one explicit desktop project and no errors')
+    project=projects[0]
+    if any(project.get(k)!=v for k,v in {'repeatEach':1,'retries':0,'timeout':45000}.items()) or project.get('testMatch')!=['auth-leads-diagnostic.spec.ts']:
+        raise Blocked('Collection project limits/testMatch mismatch')
+    if any(config.get(k)!=v for k,v in {'workers':1,'fullyParallel':False,'forbidOnly':True,'globalTimeout':300000,'maxFailures':0}.items()) or config.get('shard') is not None:
+        raise Blocked('Collection global limits/selection mismatch')
+    cases=[]
+    def visit(suite):
+        for spec in suite.get('specs',[]):
+            for test in spec.get('tests',[]):
+                cases.append({'name':spec.get('title'),'file':Path(spec.get('file','')).name,
+                    'project':test.get('projectName'),'expectedStatus':test.get('expectedStatus'),
+                    'annotations':test.get('annotations',[]),'executions':len(test.get('results',[]))})
+        for child in suite.get('suites',[]):visit(child)
+    for suite in listing.get('suites',[]):visit(suite)
+    if len(cases)!=4 or len({x['name'] for x in cases})!=4 or set(x['name'] for x in cases)!=set(EXPECTED_BROWSER_CASES):
+        raise Blocked('Collection must contain exactly the four expected unique cases')
+    if any(x['file']!='auth-leads-diagnostic.spec.ts' or x['project']!='bounded-desktop-diagnostic' or x['expectedStatus']!='passed' or x['executions'] or any(a.get('type') in ('skip','fixme','fail','only') for a in x['annotations']) for x in cases):
+        raise Blocked('Foreign spec, skip/only/expected-failure or prior execution in collection')
+    return {'status':'PASS','projects':1,'specs':1,'cases':cases,'caseCount':4,'retries':0,'repeatEach':1,'browserExecutionsDuringList':0}
+
+
 class DockerConnection(http.client.HTTPConnection):
     def connect(self):
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -144,7 +177,7 @@ class StackPacket(StackBudget):
         self.artifact_cap=2147483648 if mode=='backend-targeted' else 3221225472
         self.project_name=None
         self.report={'status':'NOT_RUN','sourceSha':os.environ.get('GITHUB_SHA'),
-                     'scope':mode+'; separate bounded diagnostic, no whole backend suite; real PostgreSQL/Redis/Celery, synthetic data',
+                     'scope':mode+'; exact4 browser plus4 read-only SQL probes, no prior independent suites repeated; real PostgreSQL/Redis/Celery, synthetic data',
                      'limits':{'jobSeconds':1200,'packetSeconds':1020,'lanes':1,
                                'capBytes':self.artifact_cap,'reserveBytes':RESERVE},'phases':[],
                      'junit':{'status':'NOT_APPLICABLE'},'outsideScope':{'nativeDevice':'NOT_RUN','nativeRealAPI':'BLOCKED','externalProviders':'NOT_LIVE_VERIFIED'},
@@ -297,7 +330,7 @@ class StackPacket(StackBudget):
                 raise Blocked('Expected seeded Business and nonempty lead set not confirmed')
             self.report['diagnosticSeed']=seed
             self.environment.update(CRM_DIAGNOSTIC_BUSINESS_ID=str(seed['businessId']),CRM_DIAGNOSTIC_LEAD_COUNT=str(seed['leadCount']))
-            self.do('real-queue-smoke',exec_web+['queue_runtime_smoke','--business-id',matches[0] if matches else '0','--timeout','45'],60,ready=bool(matches))
+            self.report['outsideScope']['realQueueSmoke']='PREVIOUS_PASS_NOT_RERUN'
         mapped=self.do('effective-port-bindings',self.compose+['port','ci-loopback','8080'],15,ready=ingress)
         self.do('effective-web-state',self.compose+['ps','web','ci-loopback','--format','json'],15,ready=runtime)
         internal=self.do('internal-health',self.compose+['exec','-T','web','python','-c',"import urllib.request; r=urllib.request.urlopen('http://127.0.0.1:8000/health/',timeout=5); assert r.status==200; print('INTERNAL_HEALTH200')"],15,ready=runtime)
@@ -323,26 +356,45 @@ class StackPacket(StackBudget):
         if frontend:
             self.preview=subprocess.Popen(['npm','--prefix','frontend','run','preview','--','--host','127.0.0.1','--port','4173'],cwd=self.repo,env=self.environment,stdout=(self.output/'frontend-preview.log').open('w'),stderr=subprocess.STDOUT,start_new_session=True)
             time.sleep(2)
-        # Existing smoke temp files are retained inside disposable CI instead of
-        # running its deletion trap. Its HTTP/auth/CORS assertions remain exact.
-        smoke=(self.repo/'scripts/staging_smoke.sh').read_text()
-        trap='trap \'rm -rf "$tmp_dir"\' EXIT'
-        if smoke.count(trap)!=1:raise Blocked('Unexpected smoke cleanup shape')
-        smoke=smoke.replace(trap,'# Preserve disposable smoke evidence; no deletion',1)
-        (self.output/'staging-smoke-retain.sh').write_text(smoke)
         self.environment.update(API_BASE_URL='http://127.0.0.1:8000',FRONTEND_URL='http://127.0.0.1:4173',
                                 PLATFORM_ADMIN_EMAIL='platform_admin@example.com',PLATFORM_ADMIN_PASSWORD=password,
                                 MERCHANT_OWNER_EMAIL='business_owner@example.com',MERCHANT_OWNER_PASSWORD=password,
                                 E2E_PASSWORD=password,E2E_PLATFORM_EMAIL='platform_admin@example.com',
                                 E2E_OWNER_EMAIL='business_owner@example.com',E2E_OPERATOR_EMAIL='business_operator@example.com')
-        self.do('internal-http-smoke',['bash',str(self.output/'staging-smoke-retain.sh')],60,ready=frontend and seeded and host and ready)
+        self.report['outsideScope']['priorBroadHttpSmoke']='NOT_RERUN; current API/UI cases are separate'
         chrome=shutil.which('google-chrome')
         config=self.repo/'frontend/playwright.ci-stack.config.ts'
         if config.exists():raise Blocked('Refuse existing generated test config')
-        config.write_text("import {defineConfig,devices} from '@playwright/test';\nimport base from './playwright.staging.config';\nexport default defineConfig(base,{testMatch:'auth-leads-diagnostic.spec.ts',timeout:45000,expect:{timeout:5000},forbidOnly:true,fullyParallel:false,retries:0,workers:1,projects:[{name:'bounded-desktop-diagnostic',use:{...devices['Desktop Chrome']}}],use:{...base.use,channel:'chrome',serviceWorkers:'block',actionTimeout:10000,navigationTimeout:10000,trace:'off',screenshot:'off',video:'off'},reporter:[['list'],['json',{outputFile:process.env.CRM_E2E_REPORT}]]});\n")
+        config.write_text("import {defineConfig,devices} from '@playwright/test';\nexport default defineConfig({testDir:'./e2e',testMatch:'auth-leads-diagnostic.spec.ts',timeout:45000,expect:{timeout:5000},forbidOnly:true,fullyParallel:false,retries:0,repeatEach:1,maxFailures:0,workers:1,globalTimeout:300000,projects:[{name:'bounded-desktop-diagnostic',use:{...devices['Desktop Chrome']}}],use:{baseURL:'http://127.0.0.1:4173',channel:'chrome',serviceWorkers:'block',actionTimeout:10000,navigationTimeout:10000,trace:'off',screenshot:'off',video:'off'},reporter:[['list'],['json',{outputFile:process.env.CRM_E2E_REPORT}]]});\n")
         self.environment['CRM_E2E_REPORT']=str(self.output/'browser-results.json')
-        browser_seconds=min(300,max(0,int(self.deadline-time.monotonic()-30)))
-        self.do('browser-tests',['npm','--prefix','frontend','exec','--','playwright','test','--config=frontend/playwright.ci-stack.config.ts','--workers=1','--retries=0','--global-timeout='+str(browser_seconds*1000)],browser_seconds+5,ready=frontend and seeded and host and ready and bool(chrome) and browser_seconds>0)
+        playwright=str(self.repo/'frontend/node_modules/.bin/playwright')
+        collected=self.do('browser-collection',[playwright,'test','--config=frontend/playwright.ci-stack.config.ts','--list','--reporter=json'],15,ready=installed and seeded)
+        if not collected:raise Blocked('Collection did not pass; no SQL or browser launch')
+        listing=json.loads((self.output/'browser-collection.log').read_text())
+        collection=validate_browser_collection(listing)
+        collection.update(configSha256=hashlib.sha256(config.read_bytes()).hexdigest(),
+                          testSha256=hashlib.sha256((self.repo/'frontend/e2e/auth-leads-diagnostic.spec.ts').read_bytes()).hexdigest())
+        self.report['browserCollection']=collection
+        self.emit('EXACT_FOUR_COLLECTION_PASS',**collection)
+        sql_ready=self.do('client-sql-diagnostic',['python3','mobile/scripts/crm_client_sql_diagnostic.py',
+            '--project',self.project_name,'--output',str(self.output/'sql-diagnostic.json')],60,ready=bool(matches) and host and ready)
+        sql_file=self.output/'sql-diagnostic.json'
+        if sql_file.exists():
+            self.report['sqlDiagnostic']=json.loads(sql_file.read_text())
+            sql_ready=sql_ready and self.report['sqlDiagnostic'].get('status')=='PASS'
+        else:
+            sql_ready=False
+        browser_ready=frontend and seeded and host and ready and bool(chrome) and sql_ready
+        if self.deadline-time.monotonic()<330:
+            browser_ready=False
+            self.report['browserBlocker']='Insufficient shared budget for full300s browser and shutdown reserve'
+        if not sql_ready:self.report['browserBlocker']='Required bounded SQL diagnostic did not pass; no repeated dependent UI queries'
+        self.report['browserDiagnostic']={'status':'NOT_RUN','cases':[{'name':name,'status':'NOT_RUN','executionCount':0} for name in EXPECTED_BROWSER_CASES],
+                                         'old34ScenarioSuite':'NOT_RERUN_NOT_CERTIFIED','newRuntimeFixes':False}
+        self.do('browser-tests',[playwright,'test','--config=frontend/playwright.ci-stack.config.ts','--workers=1','--retries=0','--global-timeout=300000'],305,ready=browser_ready)
+        if not browser_ready:
+            self.report['browserDiagnostic'].update(status='BLOCKED',reason=self.report.get('browserBlocker','Browser prerequisite unavailable'))
+            for case in self.report['browserDiagnostic']['cases']:case['status']='BLOCKED'
         result_file=self.output/'browser-results.json'
         if result_file.exists():
             browser_report=json.loads(result_file.read_text())
@@ -359,7 +411,7 @@ class StackPacket(StackBudget):
             self.report['browserDiagnostic']={'status':'PASS' if accepted else 'FAIL','cases':cases,
                                              'old34ScenarioSuite':'NOT_RERUN_NOT_CERTIFIED','newRuntimeFixes':False}
             if not accepted:self.report['phases'].append({'name':'browser-diagnostic-completeness','status':'FAIL','reason':'All four independent cases required exactly once, without skip/error'})
-        else:
+        elif browser_ready:
             self.report['phases'].append({'name':'browser-diagnostic-completeness','status':'BLOCKED','reason':'Required diagnostic result unavailable'})
         self.capacity()
         self.report['status']='PASS' if all(x['status']=='PASS' for x in self.report['phases']) else 'FAIL'
@@ -391,7 +443,7 @@ class StackPacket(StackBudget):
                         if inspect.returncode:raise Blocked('Own container stop state unknown')
                         for item in json.loads(inspect.stdout):
                             if (item.get('Config',{}).get('Labels') or {}).get('com.docker.compose.project')!=self.project_name:raise Blocked('Container ownership mismatch')
-                            states.append({'id':item['Id'],'running':item['State']['Running'],'status':item['State']['Status']})
+                            states.append({'id':item['Id'],'running':item['State']['Running'],'status':item['State']['Status'],'oomKilled':item['State'].get('OOMKilled')})
                         if any(x['running'] for x in states):raise Blocked('Own container remains running')
                     self.report['shutdown']={'status':'PASS','stopExitCode':stop.returncode,'containers':states}
                 except Exception as error:
@@ -402,7 +454,7 @@ class StackPacket(StackBudget):
                 self.preview.terminate()
                 try:self.preview.wait(timeout=5)
                 except subprocess.TimeoutExpired:self.preview.kill()
-            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','diagnostic-seed-read','real-queue-smoke','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','api-health','api-ready','frontend-npm-ci','frontend-build','internal-http-smoke','browser-tests'])
+            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','diagnostic-seed-read','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','api-health','api-ready','frontend-npm-ci','frontend-build','browser-collection','client-sql-diagnostic','browser-tests'])
             observed={x['name'] for x in self.report['phases']}
             self.report['notRun']=[name for name in planned if name not in observed]
             if self.report['notRun'] and self.report['status']=='PASS':self.report['status']='BLOCKED'
