@@ -1,9 +1,13 @@
+from django.core.paginator import Paginator
+from django.db.models import QuerySet
+from django.utils.functional import cached_property
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.businesses.access import Actions, assert_can
 from apps.clients.models import Client
-from apps.clients.selectors import build_client_facets, build_client_summary, client_queryset_for_request
+from apps.clients.selectors import build_client_facets, build_client_summary, client_queryset_for_request, count_client_queryset
 from apps.clients.serializers import ClientMergeDryRunSerializer, ClientMergeSerializer, ClientSerializer, DuplicateCheckSerializer
 from apps.core.audit import write_audit_log
 from apps.core.archive import archive_instance
@@ -12,9 +16,22 @@ from apps.core.models import AuditLog
 from apps.core.viewsets import TenantModelViewSet
 
 
+class ClientCountPaginator(Paginator):
+    @cached_property
+    def count(self):
+        if isinstance(self.object_list, QuerySet):
+            return count_client_queryset(self.object_list)
+        return super().count
+
+
+class ClientPageNumberPagination(PageNumberPagination):
+    django_paginator_class = ClientCountPaginator
+
+
 class ClientViewSet(TenantModelViewSet):
     queryset = Client.objects.select_related("business")
     serializer_class = ClientSerializer
+    pagination_class = ClientPageNumberPagination
     action_permission_map = {
         **TenantModelViewSet.action_permission_map,
         "archive": Actions.DELETE,

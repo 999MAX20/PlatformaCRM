@@ -43,7 +43,7 @@ class Budget:
 
 def admit(environ, project, source):
     run = environ.get('GITHUB_RUN_ID', '')
-    if environ.get('GITHUB_ACTIONS') != 'true' or environ.get('GITHUB_REF') != 'refs/heads/codex/mobile-max':
+    if environ.get('GITHUB_ACTIONS') != 'true' or environ.get('GITHUB_REF') not in ('refs/heads/codex/mobile-max','refs/heads/codex/crm-client-query-review'):
         raise DiagnosticError('ADMISSION', 'Foreign CI branch or missing Actions admission')
     if not re.fullmatch('[0-9]+', run) or project != 'crm-test-'+run+'-queue-web':
         raise DiagnosticError('IDENTITY', 'Per-run project identity mismatch')
@@ -249,7 +249,7 @@ class DjangoAdapter:
         from django.contrib.auth import get_user_model
         from rest_framework.test import APIRequestFactory,force_authenticate
         from apps.clients.views import ClientViewSet
-        from apps.clients.selectors import build_client_summary
+        from apps.clients.selectors import build_client_summary,count_client_queryset
         from apps.core.viewsets import TenantModelViewSet
         self.connection.settings_dict['OPTIONS']={**self.connection.settings_dict.get('OPTIONS',{}),'connect_timeout':2}
         with self.transaction.atomic():
@@ -263,7 +263,7 @@ class DjangoAdapter:
             view.request=view.initialize_request(raw);view.format_kwarg=None;view.check_permissions(view.request)
             plain=view.filter_queryset(TenantModelViewSet.get_queryset(view))
             annotated=view.filter_queryset(view.get_queryset(apply_quick_filter=False))
-        self.operations=dict(zip(PROBES,[lambda:plain.all().count(),lambda:build_client_summary(annotated.all()),lambda:annotated.all().count(),lambda:annotated.filter(is_vip=True).count()]))
+        self.operations=dict(zip(PROBES,[lambda:plain.all().count(),lambda:build_client_summary(annotated.all()),lambda:count_client_queryset(annotated.all()),lambda:count_client_queryset(annotated.filter(is_vip=True))]))
         self.thread=threading.Thread(target=self.observe,args=(budget,),daemon=True);self.thread.start()
         if not self.ready.wait(timeout=budget.remaining(1)) or self.errors:raise DiagnosticError('OBSERVER_START','Observer admission unavailable')
     def observe(self,budget):
@@ -343,6 +343,7 @@ def sql_sequence(identity,budget,adapter_factory=DjangoAdapter):
     adapter=None
     try:
         adapter=adapter_factory();adapter.prepare(budget)
+        report['databaseSettings']=getattr(adapter,'settings',None)
         for row in report['probes']:
             try:
                 budget.remaining(1,reserve=1)

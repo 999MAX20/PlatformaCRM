@@ -64,3 +64,16 @@ If a future test needs a provider integration, mock the provider/client explicit
 3. Search that test for external calls such as `urlopen`, `requests`, SDK clients, email backends or long sleeps.
 4. Disable the provider with `override_settings(...)` or patch the network client.
 5. Re-run the full suite before starting the next feature stage.
+
+
+## Client query statistics review
+
+The Client-specific count path projects unique Client IDs; summary retains only
+its required status flags. Related row counts use independent per-client
+subqueries, preserving non-archived counts and zero values. Summary active
+includes VIP; the active facet retains its existing is_active-only definition.
+
+Focused PostgreSQL regressions: `python manage.py test apps.clients.tests_query_statistics.ClientQueryStatisticsTests -v 2`.
+A host/unit or frontend build pass does not certify SQL latency or browser flows.
+The isolated Client review CI keeps the four read-only SQL probes and runs the
+four browser diagnostics only after mandatory semantic/SQL gates pass.

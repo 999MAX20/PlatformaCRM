@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import BooleanField, Case, CharField, Count, DateTimeField, Exists, F, IntegerField, OuterRef, Q, Subquery, Value, When
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast, Coalesce
 
 from apps.activities.models import Segment, TaggedObject
 from apps.activities.segments import evaluate_segment_queryset
@@ -58,6 +58,27 @@ def filter_client_queryset(queryset, request, *, client_ids=None):
         segment_ids = evaluate_segment_queryset(segment).values_list("id", flat=True)
         queryset = queryset.filter(id__in=segment_ids)
     return queryset
+
+
+def _client_related_count(model):
+    # Independent per-client counts avoid multiplying five reverse relations.
+    totals = (
+        model.objects.filter(client_id=OuterRef("pk"), is_archived=False)
+        .order_by()
+        .values("client_id")
+        .annotate(total=Count("pk", distinct=True))
+        .values("total")[:1]
+    )
+    return Coalesce(Subquery(totals, output_field=IntegerField()), Value(0), output_field=IntegerField())
+
+
+def client_statistics_projection(queryset, *fields):
+    # PK remains selected, so removing display-only columns never merges clients.
+    return queryset.order_by().values("id", *fields).distinct()
+
+
+def count_client_queryset(queryset):
+    return client_statistics_projection(queryset).count()
 
 
 def annotate_client_list_queryset(queryset):
@@ -128,11 +149,11 @@ def annotate_client_list_queryset(queryset):
         latest_task_title=Subquery(latest_task.values("title")[:1]),
         latest_task_due_at=Subquery(latest_task.values("due_at")[:1], output_field=DateTimeField()),
         latest_task_priority=Subquery(latest_task.values("priority")[:1]),
-        leads_count=Count("leads", filter=Q(leads__is_archived=False), distinct=True),
-        deals_count=Count("deals", filter=Q(deals__is_archived=False), distinct=True),
-        appointments_count=Count("appointments", filter=Q(appointments__is_archived=False), distinct=True),
-        tasks_count=Count("tasks", filter=Q(tasks__is_archived=False), distinct=True),
-        conversations_count=Count("bot_conversations", filter=Q(bot_conversations__is_archived=False), distinct=True),
+        leads_count=_client_related_count(Lead),
+        deals_count=_client_related_count(Deal),
+        appointments_count=_client_related_count(Appointment),
+        tasks_count=_client_related_count(Task),
+        conversations_count=_client_related_count(BotConversation),
         is_vip=Exists(
             TaggedObject.objects.filter(
                 business_id=OuterRef("business_id"),
@@ -212,7 +233,10 @@ def apply_client_quick_filter(queryset, request):
 
 
 def build_client_summary(queryset):
-    return queryset.aggregate(
+    statistics = client_statistics_projection(
+        queryset, "is_active", "is_vip", "has_no_reply", "has_multiple_deals", "has_multiple_appointments"
+    )
+    return statistics.aggregate(
         total=Count("id"),
         active=Count("id", filter=Q(is_active=True) | Q(is_vip=True)),
         no_reply=Count("id", filter=Q(has_no_reply=True)),
@@ -222,11 +246,11 @@ def build_client_summary(queryset):
 
 def build_client_facets(queryset):
     return {
-        "source": {item["source"] or "manual": item["count"] for item in queryset.values("source").annotate(count=Count("id", distinct=True))},
+        "source": {item["source"] or "manual": item["count"] for item in queryset.order_by().values("source").annotate(count=Count("id", distinct=True))},
         "activity": {
-            "active": queryset.filter(is_active=True).count(),
-            "vip": queryset.filter(is_vip=True).count(),
-            "no_reply": queryset.filter(has_no_reply=True).count(),
-            "repeat": queryset.filter(Q(has_multiple_deals=True) | Q(has_multiple_appointments=True)).count(),
+            "active": count_client_queryset(queryset.filter(is_active=True)),
+            "vip": count_client_queryset(queryset.filter(is_vip=True)),
+            "no_reply": count_client_queryset(queryset.filter(has_no_reply=True)),
+            "repeat": count_client_queryset(queryset.filter(Q(has_multiple_deals=True) | Q(has_multiple_appointments=True))),
         },
     }

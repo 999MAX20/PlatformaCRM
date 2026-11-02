@@ -1,18 +1,21 @@
-name: CRM independent queue and web diagnostic
+name: CRM Client query semantic and runtime review
 
 on:
   workflow_dispatch:
+  push:
+    branches: ["codex/crm-client-query-review"]
+    paths: [".github/workflows/crm-queue-web.yml"]
 
 permissions:
   contents: read
 
 concurrency:
-  group: queue-web-${{ github.ref }}
+  group: client-query-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   diagnostic:
-    if: github.ref == 'refs/heads/codex/mobile-max'
+    if: github.ref == 'refs/heads/codex/crm-client-query-review'
     runs-on: ubuntu-24.04
     timeout-minutes: 950
     steps:

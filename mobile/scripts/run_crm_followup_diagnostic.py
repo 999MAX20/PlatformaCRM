@@ -30,9 +30,9 @@ EXPECTED_BROWSER_CASES=(
 )
 
 def public_ci_environment(environ, mode):
-    expected_ref='refs/heads/codex/crm-postgres-compat-review' if mode=='backend-targeted' else 'refs/heads/codex/mobile-max'
+    expected_refs=('refs/heads/codex/crm-postgres-compat-review',) if mode=='backend-targeted' else ('refs/heads/codex/mobile-max','refs/heads/codex/crm-client-query-review')
     fields={key:environ.get(key,'') for key in ('GITHUB_ACTIONS','GITHUB_REF','GITHUB_RUN_ID')}
-    if fields['GITHUB_ACTIONS']!='true' or fields['GITHUB_REF']!=expected_ref or not re.fullmatch('[0-9]+',fields['GITHUB_RUN_ID']):
+    if fields['GITHUB_ACTIONS']!='true' or fields['GITHUB_REF'] not in expected_refs or not re.fullmatch('[0-9]+',fields['GITHUB_RUN_ID']):
         raise Blocked('Missing or foreign public CI identity; do not forward arbitrary environment')
     return fields
 
@@ -376,7 +376,7 @@ class StackPacket(StackBudget):
             raise
 
     def execute(self):
-        if platform.system()!='Linux' or os.environ.get('GITHUB_ACTIONS')!='true' or os.environ.get('GITHUB_REF')!=('refs/heads/codex/crm-postgres-compat-review' if self.mode=='backend-targeted' else 'refs/heads/codex/mobile-max'):
+        if platform.system()!='Linux' or os.environ.get('GITHUB_ACTIONS')!='true' or os.environ.get('GITHUB_REF') not in (('refs/heads/codex/crm-postgres-compat-review',) if self.mode=='backend-targeted' else ('refs/heads/codex/mobile-max','refs/heads/codex/crm-client-query-review')):
             raise Blocked('Only authorized isolated Linux CI and mode-specific branch may run')
         head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=self.repo,text=True).strip()
         if head!=self.report['sourceSha'] or subprocess.check_output(['git','status','--porcelain'],cwd=self.repo,text=True):
@@ -465,6 +465,16 @@ class StackPacket(StackBudget):
                 raise Blocked('Expected all14 known cases plus6 regressions without skip')
             self.report['status']='PASS' if all(x['status']=='PASS' for x in self.report['phases']) else 'FAIL'
             return
+        if os.environ.get('GITHUB_REF')=='refs/heads/codex/crm-client-query-review':
+            selected=['apps.clients.tests_query_statistics.ClientQueryStatisticsTests',
+                'apps.clients.tests.DuplicateDetectionFoundationTests.test_client_list_returns_summary_facets_and_enriched_row_fields',
+                'apps.clients.tests.DuplicateDetectionFoundationTests.test_client_identity_is_normalized_for_duplicates_and_search']
+            regression=self.do('client-query-regressions',manage+['test',*selected,'-v','2','--noinput'],600,ready=migrated)
+            if not regression:raise Blocked('Focused Client semantic regressions failed; no dependent SQL/browser execution')
+            native=(self.output/'client-query-regressions.log').read_text()
+            counts=re.findall(r'Ran (\d+) tests?',native)
+            if counts!=['11'] or not re.search(r'^OK\s*(?:\(.*\))?$',native,re.M) or re.search(r'\bskipped=|\bexpected failures=',native):raise Blocked('Expected exact11 native regression tests with no skip')
+            self.report['clientQueryRegressions']={'status':'PASS','tests':11,'skip':0,'scope':'9 new semantic cases plus2 existing API cases; real PostgreSQL'}
         runtime=self.do('runtime-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','web','celery'],120,ready=migrated)
         ingress=self.do('loopback-ingress-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','ci-loopback'],120,ready=runtime)
         exec_web=self.compose+['exec','-T','web','python','manage.py']
@@ -615,7 +625,7 @@ class StackPacket(StackBudget):
                     stop_owned_group(self.preview,min(self.deadline,time.monotonic()+3))
                     self.report['previewShutdown']={'status':'PASS','exitCode':self.preview.returncode}
             except Exception as error:self.report.update(status='BLOCKED',previewShutdown={'status':'BLOCKED','reason':str(error)})
-            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','diagnostic-seed-read','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','owned-container-ids','owned-container-inspect','api-health','api-ready','frontend-npm-ci','frontend-build','browser-collection','client-sql-diagnostic','browser-tests'])
+            planned=(['client-query-regressions'] if os.environ.get('GITHUB_REF')=='refs/heads/codex/crm-client-query-review' else [])+['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','diagnostic-seed-read','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','owned-container-ids','owned-container-inspect','api-health','api-ready','frontend-npm-ci','frontend-build','browser-collection','client-sql-diagnostic','browser-tests'])
             self.report['notRun']=[name for name in planned if name not in {x['name'] for x in self.report['phases']}]
             if self.report['notRun'] and self.report['status']=='PASS':self.report['status']='BLOCKED'
             try:
