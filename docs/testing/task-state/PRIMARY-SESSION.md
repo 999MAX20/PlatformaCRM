@@ -1,3 +1,42 @@
+## UI-REFRESH-20261102 — dev schema and refresh inspection
+
+Owner reported /leads list blinking every5–10s and requested other-page inspection.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, base c74e0fa0. Plan and starting
+WIP hashes/status retained in output/ui-refresh-20261102. Environment correction;
+no product-code edits, permission/notification/AI/event behavior changes or redesign.
+
+Confirmed missing scheduling fields caused HTTP500 in appointments/tasks and related
+summary/notification requests. Owner explicitly approved bots0013+scheduling0010,
+then accounts0011,billing0006,integrations0007/0008 for local db.sqlite3 only.
+All six applied; each group had a fresh SQLite backup and isolated clone verification.
+First group preserved six domain-table row hashes; second preserved134 existing
+tables and added9 empty tables. Integrity/foreign-key checks and Django check PASS;
+no pending migrations. No provider connection, payment, external send or deployment.
+Exact scripts/logs/proofs: prepare.py,migrate_dev.py,remaining_migrations.py,
+apply_remaining_dev.py,dev-migration-proof.json,remaining-migration-proof.json,
+remaining-dev-proof.json and corresponding logs under output/ui-refresh-20261102.
+Backups in that ignored directory are private local recovery artifacts, not published.
+
+Browser RU desktop: leads selection/unsaved draft retained across polling.36.464s
+idle probe included one leads poll and3 inbox-summary polls: no workspace replacement
+or loader. Final33.503s after all migrations likewise no replacement/loader.
+Dashboard,deals,clients,tasks,calendar,Inbox,settings,analytics,integrations,services,
+support,history and agent editor loaded. Tasks15s/calendar15s/support59.8s idle probes
+had no replacement. Inbox75s had2 initial mount changes within1.2s then no further
+replacement across10 message polls. Tariff previously500 now returns200 with honest
+empty-order state. Final backend log sample42 requests: all200. /ready/200.
+Original5–10s blink was not definitively reproduced: no claim that schema lag was its
+sole cause or that every component/role/locale was certified. No speculative UI fix.
+A stale worker-health notice remains; background delivery is outside this inspection.
+
+Dev remains running: frontend5173/backend8000, canonical source; backend parent
+PID13800 at closure. Runtime/logs in output/dev-20261102 (backend-final logs).
+No app build/full suite: no source/dependency changes; relevant migration/data/browser
+checks passed. Code,contracts,passports and roadmap need no changes for this local
+schema correction. Other WIP preserved. Scoped investigation/environment work complete;
+if blinking recurs, capture the affected session/network timing for a reproducer.
+Publication covers only this receipt and STATUS, never dev data or foreign changes.
+
 > Решение владельца 14.10.2026: межчатовая координация, роли primary/UI,
 > назначения writer, ожидание других чатов, автоматическая передача и связанные
 > ограничения отменены. Применять актуальный AGENTS.md. Ниже сохранены сведения

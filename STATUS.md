@@ -1,3 +1,9 @@
+UI-REFRESH-20261102: six owner-approved dev migrations applied with backups;
+data/integrity checks PASS. Tariff500 resolved; leads idle/selection/draft stable
+in representative browser checks. Original5–10s blink not definitively reproduced.
+Dev5173/8000 remains running; no product-code changes or deployment. Evidence and
+verification boundaries in PRIMARY checkpoint.
+
 CRM-R01-RECORD-FIRST-20261031: single-Appointment Client/Inbox package published
 bc46d7c9.02.11 continuation corrected notification preference fixture and dependency
 audit blockers locally:31 backend/system/drift, app/widget/Storybook/types/XLSX and
