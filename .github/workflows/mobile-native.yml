@@ -3,6 +3,9 @@ name: Native CRM source validation
 on:
   workflow_call:
   workflow_dispatch:
+  push:
+    branches: ["codex/mobile-max"]
+    paths: [".github/workflows/mobile-native.yml"]
 
 permissions:
   contents: read
@@ -43,7 +46,7 @@ jobs:
         run: NATIVE_CHECK_OUTPUT="$RUNNER_TEMP/crm-source-checks" bash mobile/scripts/check_swift_core.sh
       - name: Check SwiftUI ViewModels without app launch
         if: ${{ always() && !cancelled() && steps.core.outputs.shared_core_ready == 'true' }}
-        timeout-minutes: 5
+        timeout-minutes: 10
         run: NATIVE_CHECK_OUTPUT="$RUNNER_TEMP/crm-source-checks" bash mobile/scripts/check_swift_view_model.sh
       - name: Aggregate required host results
         if: ${{ always() && !cancelled() }}

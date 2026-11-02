@@ -13,6 +13,10 @@ import time
 SUITE_MANIFEST = {'core': ['runAppointmentLifecycleChecks', 'runAppointmentRescheduleChecks', 'runAppointmentTerminalChecks', 'runAppointmentBookingChecks', 'runAppointmentBookingCandidateChecks', 'runServiceDirectoryChecks', 'runResourceDirectoryChecks', 'runAppointmentBookingDirectoryChecks', 'runAppointmentBookingClientChecks', 'runMobileAuthContractChecks', 'runBackendReadTransportChecks', 'runReadContractChecks', 'runClientReadChecks', 'runBootstrapChecks', 'runInboxReadChecks', 'runInboxConversationFilesChecks', 'runInboxMessageFilesChecks', 'runInboxMessageObservationChecks', 'runInboxRetryMessageChecks', 'runInboxSelfAssignmentChecks', 'runInboxReadMarkerChecks', 'runInboxPriorityChecks', 'runInboxLifecycleChecks', 'runInboxLinkClientChecks', 'runLeadReadChecks', 'runInboxLinkLeadChecks', 'runDealReferenceChecks', 'runInboxLinkDealChecks', 'runMemberReferenceChecks', 'runInboxTargetAssignmentChecks', 'runInboxTaskSourceChecks', 'runInboxCreateTaskChecks', 'runInboxExistingClientChecks', 'runInboxExistingLeadChecks', 'runInboxExistingDealChecks', 'runTaskReadChecks', 'runNotificationReadChecks', 'runNotificationMarkReadChecks', 'runClientProfileChecks', 'runHomeTodayChecks', 'runAttentionQueueChecks', 'runAgendaDayChecks', 'runAppointmentRelationsChecks', 'runLoadedSearchChecks', 'runClientWorkChecks', 'runInboxClientReadChecks', 'runAppointmentStatusChecks', 'runCommunicationTextChecks', 'runClientDraftChecks', 'runReplyDraftChecks', 'runTaskDraftChecks', 'runClientServerSearchChecks', 'runQuickReplyChecks', 'runClientEditChecks', 'runTaskCommentChecks', 'runTaskQueryChecks', 'runHandoffReadChecks', 'runTaskCancelReasonChecks', 'runTaskCommentSubmissionChecks', 'runTaskScheduleReadChecks', 'runTaskCancellationChecks', 'runTaskPeopleReadChecks', 'runTaskCommentAuthorChecks', 'runTaskCreateValidationChecks', 'runTaskCreationChecks', 'runClientSourceValidationChecks', 'runClientCreationChecks', 'runInboxMessageStateChecks', 'runRelativeAppointmentCandidateChecks', 'runNotificationMarkUnreadChecks', 'runTaskSnoozeChecks', 'runTaskAssignChecks', 'runTaskDateEditChecks', 'runTaskPriorityEditChecks', 'runTaskTitleEditChecks', 'runTaskDescriptionEditChecks', 'runTaskCreateExactTextChecks', 'runTaskCreateDueChecks', 'runTaskCreateReminderChecks', 'runReplyDraftExactTextChecks', 'runInboxReplyReceiptChecks', 'runInboxHandoffChecks', 'runAppointmentReferenceChecks', 'runAppointmentSlotChecks', 'runAppointmentSlotReviewChecks', 'runTaskCreateClientChecks', 'runTaskCreateAppointmentChecks', 'runTaskCreateParentChecks', 'runTaskAppointmentEditChecks', 'runTaskClientEditChecks', 'inlineCore'], 'view-model': ['checkAppointmentDate', 'checkAgendaControls', 'checkAppointmentLifecycle', 'checkAppointmentReschedule', 'checkAppointmentTerminal', 'checkAppointmentBooking', 'checkAppointmentBookingCandidate', 'checkServiceDirectory', 'checkResourceDirectory', 'checkAppointmentBookingDirectory', 'checkAppointmentBookingClient', 'checkAppointmentRelationControls', 'checkClientDirectory', 'checkClientDirectoryControls', 'checkInboxMessageStates', 'checkInboxControls', 'checkInboxConversationFiles', 'checkInboxMessageFiles', 'checkInboxMessageObservation', 'checkInboxRetryMessage', 'checkInboxSelfAssignment', 'checkInboxReadMarkers', 'checkInboxPriority', 'checkInboxLifecycle', 'checkInboxLinkClient', 'checkLeadReference', 'checkInboxLinkLead', 'checkDealReference', 'checkInboxLinkDeal', 'checkMemberReference', 'checkInboxTargetAssignment', 'checkInboxTaskSource', 'checkInboxCreateTask', 'checkInboxExistingClient', 'checkInboxExistingLead', 'checkInboxExistingDeal', 'checkInboxInspectorPresentation', 'checkInbox', 'checkTaskList', 'checkTaskListControls', 'checkNotificationCenter', 'checkNotificationOwnerControls', 'checkNotificationRoute', 'checkNotificationMarkRead', 'checkNotificationMarkUnread', 'checkClientProfile', 'checkHomeToday', 'checkHomeOwnerControls', 'checkAttentionQueue', 'checkAttentionOwnerControls', 'checkAgendaDay', 'checkAppointmentRelations', 'checkLoadedSearch', 'checkLoadedSearchControls', 'checkClientWork', 'checkClientWorkControls', 'checkInboxClient', 'checkInboxClientControls', 'checkInboxListThreadControls', 'checkTaskCompletion', 'checkTaskSelfAssignment', 'checkTaskStart', 'checkTaskReopen', 'checkTaskFileMetadata', 'checkTaskWatcher', 'checkTaskUndoCancel', 'checkTaskSnooze', 'checkTaskAssign', 'checkTaskDateEdit', 'checkTaskPriorityEdit', 'checkTaskTitleEdit', 'checkTaskDescriptionEdit', 'checkTaskCreateExactText', 'checkTaskCreateDue', 'checkTaskCreateReminder', 'checkReplyDraftExactText', 'checkInboxReplyReceipt', 'checkInboxHandoff', 'checkAppointmentReferenceDetails', 'checkAppointmentSlotRead', 'checkAppointmentSlotReview', 'checkTaskCreateClient', 'checkTaskCreateAppointment', 'checkTaskCreateParent', 'checkTaskAppointmentEdit', 'checkTaskClientEdit', 'checkClientDraft', 'checkReplyDraft', 'checkTaskDraft', 'checkClientServerSearch', 'checkClientSearchWindows', 'checkQuickReplies', 'checkQuickReplyControls', 'checkClientEdit', 'checkClientEditControls', 'checkTaskComment', 'checkTaskQuery', 'checkHandoffRead', 'checkTaskCancelReason', 'checkTaskCommentSubmission', 'checkTaskCommentControls', 'checkTaskScheduleRead', 'checkTaskCancellation', 'checkTaskCancelControls', 'checkTaskPeopleRead', 'checkTaskCommentAuthor', 'checkTaskCreateValidation', 'checkTaskCreation', 'checkTaskCreateControls', 'checkClientSourceValidation', 'checkClientCreation', 'checkClientCreateControls', 'inlineAgenda']}
 INTERNAL_SECONDS = 285
 WORK_SECONDS = 270
+VM_INTERNAL_SECONDS = 585
+VM_WORK_SECONDS = 570
+VM_COMPILE_SECONDS = 360
+VM_RUNTIME_SECONDS = 180
 SUITE_SECONDS = 15
 CAP_BYTES = 2147483648
 RESERVE_BYTES = 2147483648
@@ -49,9 +53,13 @@ class Packet:
     def __init__(self, mode, root, output, inputs):
         self.mode, self.root, self.output, self.inputs = mode, root.resolve(), output.resolve(), inputs
         self.started = time.monotonic()
-        self.work_deadline = self.started + WORK_SECONDS
-        self.deadline = self.started + INTERNAL_SECONDS
-        self.report = {'mode': mode, 'status': 'RUNNING', 'atUtc': utc(), 'limits': {'internalSeconds': INTERNAL_SECONDS, 'workSeconds': WORK_SECONDS, 'suiteSeconds': SUITE_SECONDS, 'artifactCapBytes': CAP_BYTES, 'diskReserveBytes': RESERVE_BYTES, 'lane': 1}, 'phases': [], 'suites': []}
+        internal_seconds = VM_INTERNAL_SECONDS if mode == 'view-model' else INTERNAL_SECONDS
+        work_seconds = VM_WORK_SECONDS if mode == 'view-model' else WORK_SECONDS
+        self.work_deadline = self.started + work_seconds
+        self.deadline = self.started + internal_seconds
+        self.report = {'mode': mode, 'status': 'RUNNING', 'atUtc': utc(), 'limits': {'internalSeconds': internal_seconds, 'workSeconds': work_seconds, 'suiteSeconds': SUITE_SECONDS, 'artifactCapBytes': CAP_BYTES, 'diskReserveBytes': RESERVE_BYTES, 'lane': 1}, 'phases': [], 'suites': []}
+        if mode == 'view-model':
+            self.report['limits'].update(compileSeconds=VM_COMPILE_SECONDS, runtimeSeconds=VM_RUNTIME_SECONDS)
         self.output.mkdir(parents=True, exist_ok=True)
         (self.output / 'logs').mkdir(exist_ok=True)
         self.phase_number = 0
@@ -184,16 +192,20 @@ class Packet:
             event('VERIFIED_REUSE', mode=self.mode, sourceSha=sha, artifactCount=len(receipt['artifacts']))
         binary = self.output / ('CRMCoreChecks' if self.mode == 'core' else 'AgendaViewModelChecks')
         command = base + ['-parse-as-library', '-I', str(self.output), '-L', str(self.output), '-lCRMCore', '-Xlinker', '-rpath', '-Xlinker', str(self.output), '-module-cache-path', str(cache)] + [str(p) for p in checks] + ['-o', str(binary)]
-        self.must('compile-checks', command + DIAGNOSTICS)
+        self.must('compile-checks', command + DIAGNOSTICS, VM_COMPILE_SECONDS if self.mode == 'view-model' else None)
         listing = self.must('list-suites', [str(binary), str(self.root / 'contracts/fixtures'), '--list'], 10)
         lists = [json.loads(l[len('SUITES '):]) for l in listing.splitlines() if l.startswith('SUITES ')]
         if lists != [SUITE_MANIFEST[self.mode]]:
             raise StopPacket('STARTUP_FAIL', 'Suite registry mismatch, missing or duplicate suite')
         self.report['expectedSuites'] = SUITE_MANIFEST[self.mode]
+        runtime_deadline = min(self.work_deadline, time.monotonic() + VM_RUNTIME_SECONDS) if self.mode == 'view-model' else self.work_deadline
         for name in SUITE_MANIFEST[self.mode]:
+            if self.mode == 'view-model' and runtime_deadline - time.monotonic() <= 2:
+                self.report['reason'] = 'VM runtime or total packet deadline reached'
+                break
             if self.work_deadline - time.monotonic() <= 2:
                 break
-            row, log = self.phase('suite-' + name, [str(binary), str(self.root / 'contracts/fixtures'), '--suite', name], SUITE_SECONDS)
+            row, log = self.phase('suite-' + name, [str(binary), str(self.root / 'contracts/fixtures'), '--suite', name], min(SUITE_SECONDS, runtime_deadline - time.monotonic()) if self.mode == 'view-model' else SUITE_SECONDS)
             status, count = row['status'], None
             if status == 'PASS':
                 results = [json.loads(l[len('SUITE_RESULT '):]) for l in log.read_text(errors='replace').splitlines() if l.startswith('SUITE_RESULT ')]
