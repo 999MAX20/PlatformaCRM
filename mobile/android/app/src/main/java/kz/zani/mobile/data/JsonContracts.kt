@@ -16,7 +16,14 @@ object JsonContracts {
     private fun JSONObject.nullObject(key: String): JSONObject? = if (isNull(key)) null else getJSONObject(key)
     private fun business(o: JSONObject) = Business(o.integer("id"), o.text("name"), o.text("timezone"))
     private fun item(o: JSONObject) = Appointment(o.integer("id"), o.nullText("title"), o.text("status"), o.nullText("start_at"), o.nullText("end_at"), o.nullInteger("client_id"))
-    private fun named(o: JSONObject?): Named? = o?.let { Named(if (it.isNull("id")) null else it.integer("id"), it.nullText("name")) }
+    private fun namedID(o: JSONObject): Int? {
+        if (o.isNull("id")) return null
+        val raw = o.get("id"); require(raw is Number)
+        val value = raw.toString().toBigDecimal().toBigIntegerExact()
+        if (value < java.math.BigInteger.valueOf(Int.MIN_VALUE.toLong()) || value > java.math.BigInteger.valueOf(Int.MAX_VALUE.toLong())) return null
+        return value.toInt()
+    }
+    private fun named(o: JSONObject?): Named? = o?.let { Named(namedID(it), it.nullText("name")) }
     fun quickReplies(json: String): QuickReplyPage = parse {
         val parsed=org.json.JSONTokener(json).nextValue()
         val envelope=parsed as? JSONObject

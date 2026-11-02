@@ -59,7 +59,7 @@ class LoadedSearchViewModel(private val repository: APIReadRepository) : ViewMod
             try {
                 val value = when (hit.identity.kind) {
                     LoadedSearchKind.APPOINTMENTS -> repository.appointment(business, id).let {
-                        if(!AttentionDetail.AppointmentRead(it).validFor(business,AttentionTarget(AttentionKind.APPOINTMENT,id)))throw ReadException(ReadProblem.INVALID_PAYLOAD)
+                        if(business<=0 || id<=0 || it.business!=business || it.appointment.id!=id)throw ReadException(ReadProblem.INVALID_PAYLOAD)
                         AttentionDetail.AppointmentRead(it)
                     }
                     LoadedSearchKind.INBOX -> repository.thread(business, id).let {
