@@ -3,6 +3,9 @@ name: Native CRM source validation
 on:
   workflow_call:
   workflow_dispatch:
+  push:
+    branches: ["codex/mobile-max"]
+    paths: [".github/workflows/mobile-native.yml"]
 
 permissions:
   contents: read
@@ -38,8 +41,27 @@ jobs:
       - name: Record compiler version
         run: swiftc --version
       - name: Check Swift core
+        id: core
         timeout-minutes: 5
         run: NATIVE_CHECK_OUTPUT="$RUNNER_TEMP/crm-source-checks" bash mobile/scripts/check_swift_core.sh
       - name: Check SwiftUI ViewModels without app launch
+        if: ${{ always() && !cancelled() && steps.core.outputs.shared_core_ready == 'true' }}
         timeout-minutes: 5
         run: NATIVE_CHECK_OUTPUT="$RUNNER_TEMP/crm-source-checks" bash mobile/scripts/check_swift_view_model.sh
+      - name: Aggregate required host results
+        if: ${{ always() && !cancelled() }}
+        timeout-minutes: 1
+        run: python3 mobile/scripts/run_swift_host_suites.py summary mobile "$RUNNER_TEMP/crm-source-checks"
+      - name: Preserve diagnostic reports
+        if: ${{ always() && !cancelled() }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@v4
+        with:
+          name: crm-host-diagnostics-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/crm-source-checks/*-report.json
+            ${{ runner.temp }}/crm-source-checks/*-inputs.json
+            ${{ runner.temp }}/crm-source-checks/shared-core.json
+            ${{ runner.temp }}/crm-source-checks/logs/
+          if-no-files-found: error
+          retention-days: 3

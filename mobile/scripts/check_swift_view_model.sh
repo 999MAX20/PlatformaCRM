@@ -1,14 +1,73 @@
 #!/usr/bin/env bash
 set -euo pipefail
 NATIVE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CHECK_OUTPUT="${NATIVE_CHECK_OUTPUT:-$(mktemp -d "${TMPDIR:-/tmp}/platforma-view-model-checks.XXXXXX")}"
-mkdir -p "$CHECK_OUTPUT/module-cache"
-swiftc -swift-version 6 -emit-library -emit-module -module-name CRMCore \
-  -module-cache-path "$CHECK_OUTPUT/module-cache" "$NATIVE_ROOT"/ios/Sources/CRMCore/*.swift \
-  -emit-module-path "$CHECK_OUTPUT/CRMCore.swiftmodule" -o "$CHECK_OUTPUT/libCRMCore.dylib"
-swiftc -swift-version 6 -parse-as-library -I "$CHECK_OUTPUT" -L "$CHECK_OUTPUT" -lCRMCore \
-  -Xlinker -rpath -Xlinker "$CHECK_OUTPUT" -module-cache-path "$CHECK_OUTPUT/module-cache" \
-  "$NATIVE_ROOT/ios/CRMApp/InboxMessageFilesViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/InboxMessageFilesContent.swift" "$NATIVE_ROOT/ios/CRMApp/InboxConversationFilesViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/InboxConversationFilesContent.swift" "$NATIVE_ROOT/ios/CRMApp/AppointmentBookingClientPickerContent.swift" "$NATIVE_ROOT/ios/CRMApp/ResourceDirectoryContent.swift" "$NATIVE_ROOT/ios/CRMApp/ServiceDirectoryContent.swift" "$NATIVE_ROOT/ios/CRMApp/ResourceDirectoryViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ServiceDirectoryViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/AppointmentBookingViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/AppointmentLifecycleViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ClientMergePreviewViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ClientDuplicatePreviewViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskUndoCancelView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskWatcherView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskFileMetadataView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskReopenView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskDateEditView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskAppointmentEditViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskAppointmentEditView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskClientEditViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskClientEditView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskPriorityEditView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskTitleEditView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskDescriptionEditView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskAssignView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskSnoozeView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskStartView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskSelfAssignmentView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskCompletionView.swift" "$NATIVE_ROOT/ios/CRMApp/TaskCancelReasonViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskCommentViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ClientEditViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/QuickReplyViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ClientSearchViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskDraftViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskDraftClientPickerContent.swift" "$NATIVE_ROOT/ios/CRMApp/TaskAppointmentPickerViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskParentPickerViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskDraftParentPickerContent.swift" "$NATIVE_ROOT/ios/CRMApp/TaskDraftAppointmentPickerContent.swift" "$NATIVE_ROOT/ios/CRMApp/ReplyDraftViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/InboxReplyReceiptView.swift" "$NATIVE_ROOT/ios/CRMApp/InboxHandoffViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/InboxHandoffView.swift" "$NATIVE_ROOT/ios/CRMApp/InboxClientViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ClientDraftViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ClientWorkViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/LoadedSearchSources.swift" "$NATIVE_ROOT/ios/CRMApp/LoadedSearchViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/AppointmentRelationsViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/AppointmentReferenceContent.swift" "$NATIVE_ROOT/ios/CRMApp/AppointmentSlotReadViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/AppointmentSlotReadContent.swift" "$NATIVE_ROOT/ios/CRMApp/AttentionQueueViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/HomeTodayViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/AgendaViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ClientDirectoryViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/ClientProfileViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/InboxViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/TaskListViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/NotificationCenterViewModel.swift" "$NATIVE_ROOT/ios/CRMApp/AppCopy.swift" "$NATIVE_ROOT"/ios/CRMApp/NotificationMarkReadView.swift "$NATIVE_ROOT"/ios/CRMApp/NotificationMarkUnreadView.swift \
+CHECK_OUTPUT="${NATIVE_CHECK_OUTPUT:-$(mktemp -d "${TMPDIR:-/tmp}/platforma-host-checks.XXXXXX")}"
+exec python3 "$NATIVE_ROOT/scripts/run_swift_host_suites.py" view-model "$NATIVE_ROOT" "$CHECK_OUTPUT" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxMessageFilesViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxMessageFilesContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxConversationFilesViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxConversationFilesContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AppointmentBookingClientPickerContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ResourceDirectoryContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ServiceDirectoryContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ResourceDirectoryViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ServiceDirectoryViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AppointmentBookingViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AppointmentLifecycleViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ClientMergePreviewViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ClientDuplicatePreviewViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskUndoCancelView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskWatcherView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskFileMetadataView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskReopenView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskDateEditView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskAppointmentEditViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskAppointmentEditView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskClientEditViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskClientEditView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskPriorityEditView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskTitleEditView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskDescriptionEditView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskAssignView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskSnoozeView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskStartView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskSelfAssignmentView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskCompletionView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskCancelReasonViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskCommentViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ClientEditViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/QuickReplyViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ClientSearchViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskDraftViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskDraftClientPickerContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskAppointmentPickerViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskParentPickerViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskDraftParentPickerContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskDraftAppointmentPickerContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ReplyDraftViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxReplyReceiptView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxHandoffViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxHandoffView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxClientViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ClientDraftViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ClientWorkViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/LoadedSearchSources.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/LoadedSearchViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AppointmentRelationsViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AppointmentReferenceContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AppointmentSlotReadViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AppointmentSlotReadContent.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AttentionQueueViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/HomeTodayViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AgendaViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ClientDirectoryViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/ClientProfileViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/InboxViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/TaskListViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/NotificationCenterViewModel.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/AppCopy.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/NotificationMarkReadView.swift" \
+  "$NATIVE_ROOT/ios/CRMApp/NotificationMarkUnreadView.swift" \
   "$NATIVE_ROOT/ios/CRMApp/DealReferenceContent.swift" \
   "$NATIVE_ROOT/ios/CRMApp/DealReferenceViewModel.swift" \
   "$NATIVE_ROOT/ios/CRMApp/InboxCreateTaskContent.swift" \
@@ -33,6 +92,4 @@ swiftc -swift-version 6 -parse-as-library -I "$CHECK_OUTPUT" -L "$CHECK_OUTPUT" 
   "$NATIVE_ROOT/ios/CRMApp/LeadReferenceViewModel.swift" \
   "$NATIVE_ROOT/ios/CRMApp/MemberReferenceContent.swift" \
   "$NATIVE_ROOT/ios/CRMApp/MemberReferenceViewModel.swift" \
-  "$NATIVE_ROOT"/ios/AppChecks/*.swift \
-  -o "$CHECK_OUTPUT/AgendaViewModelChecks"
-"$CHECK_OUTPUT/AgendaViewModelChecks" "$NATIVE_ROOT/contracts/fixtures"
+  "$NATIVE_ROOT"/ios/AppChecks/*.swift
