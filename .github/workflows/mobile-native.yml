@@ -3,6 +3,9 @@ name: Native CRM source validation
 on:
   workflow_call:
   workflow_dispatch:
+  push:
+    branches: ["codex/mobile-max"]
+    paths: [".github/workflows/mobile-native.yml"]
 
 permissions:
   contents: read
