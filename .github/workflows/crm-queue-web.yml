@@ -2,9 +2,6 @@ name: CRM Client query semantic and runtime review
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["codex/crm-client-query-review"]
-    paths: [".github/workflows/crm-queue-web.yml"]
 
 permissions:
   contents: read
