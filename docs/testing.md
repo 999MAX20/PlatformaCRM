@@ -64,3 +64,15 @@ If a future test needs a provider integration, mock the provider/client explicit
 3. Search that test for external calls such as `urlopen`, `requests`, SDK clients, email backends or long sleeps.
 4. Disable the provider with `override_settings(...)` or patch the network client.
 5. Re-run the full suite before starting the next feature stage.
+
+## PostgreSQL compatibility review (2026-11-02)
+
+The separate `codex/crm-postgres-compat-review` branch proposes correlated
+text-ID tag matching and explicit conversation/business row locks that exclude
+nullable joins. Tenant predicates, transactions and lifecycle services remain in
+place. Six regressions cover malformed/cross-tenant generic IDs, nullable links,
+repeat reuse and two-connection idempotency. This is a review proposal, not a
+main merge or deployment. Its finite diagnostic selects the 14 previously
+failing cases plus these six regressions against real PostgreSQL. It does not
+rerun or certify the full backend suite. CI records all failures and resource
+unknowns; external providers remain disabled.

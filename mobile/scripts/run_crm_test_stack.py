@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import argparse
 import re
 import secrets
 import shutil
@@ -33,6 +34,8 @@ def docker_json(path):
         if response.status != 200 or len(raw)>10*1024*1024:
             raise Blocked('Docker accounting API unavailable or oversized')
         return json.loads(raw)
+    except (OSError, ValueError, http.client.HTTPException) as error:
+        raise Blocked('Docker accounting I/O unknown: '+type(error).__name__) from error
     finally:
         connection.close()
 
@@ -59,7 +62,7 @@ def docker_sizes(data, known_omitted_container_zero=False):
 
 
 class StackPacket(Packet):
-    def __init__(self, repo, output):
+    def __init__(self, repo, output, mode):
         super().__init__(repo, output)
         self.roots=[output,repo/'frontend/node_modules',repo/'frontend/dist',repo/'frontend/widget/dist',repo/'frontend/test-results']
         self.docker_baseline=None
@@ -70,8 +73,10 @@ class StackPacket(Packet):
         self.secret_values=[]
         self.preview=None
         self.compose=[]
+        self.mode=mode
+        self.project_name=None
         self.report={'status':'NOT_RUN','sourceSha':os.environ.get('GITHUB_SHA'),
-                     'scope':'Existing stack stages1-7+9, synthetic data, real PostgreSQL/Redis/Celery; native/API composition and external providers excluded NOT_RUN',
+                     'scope':mode+'; separate bounded diagnostic, no whole backend suite; real PostgreSQL/Redis/Celery, synthetic data',
                      'limits':{'jobSeconds':1200,'packetSeconds':1020,'lanes':1,
                                'capBytes':CAP,'reserveBytes':RESERVE},'phases':[],
                      'junit':{'status':'NOT_APPLICABLE'},'outsideScope':{'nativeDevice':'NOT_RUN','nativeRealAPI':'BLOCKED','externalProviders':'NOT_LIVE_VERIFIED'},
@@ -111,14 +116,15 @@ class StackPacket(Packet):
         try:
             return self.run(label,command,self.environment,seconds)==0
         except Blocked as error:
-            if str(error)==label+' wall-clock deadline reached' and self.deadline-time.monotonic()>30:
-                self.report['phases'][-1]['status']='TIMEOUT'
-                return False
+            if self.report['phases'] and self.report['phases'][-1]['name']==label:
+                self.report['phases'][-1].update(status='TIMEOUT' if 'deadline' in str(error) else 'BLOCKED',reason=str(error))
+            # A killed Docker CLI does not prove its container stopped. Stop
+            # dependent work; finally confirms only our own project shutdown.
             raise
 
     def execute(self):
-        if platform.system()!='Linux' or os.environ.get('GITHUB_ACTIONS')!='true' or os.environ.get('GITHUB_REF')!='refs/heads/codex/mobile-max':
-            raise Blocked('Only authorized isolated Linux CI/mobile branch may run')
+        if platform.system()!='Linux' or os.environ.get('GITHUB_ACTIONS')!='true' or os.environ.get('GITHUB_REF')!=('refs/heads/codex/crm-postgres-compat-review' if self.mode=='backend-targeted' else 'refs/heads/codex/mobile-max'):
+            raise Blocked('Only authorized isolated Linux CI and mode-specific branch may run')
         head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=self.repo,text=True).strip()
         if head!=self.report['sourceSha'] or subprocess.check_output(['git','status','--porcelain'],cwd=self.repo,text=True):
             raise Blocked('Immutable clean checkout required')
@@ -152,7 +158,7 @@ class StackPacket(Packet):
                 'CELERY_TASK_ALWAYS_EAGER':'False','AUTOMATIONS_RUN_INLINE':'False','CELERY_TASK_STORE_EAGER_RESULT':'False',
                 'WEB_CONCURRENCY':'1','CELERY_WORKER_CONCURRENCY':'1','SUPPORT_REQUIRES_GRANT':'True',
                 'SECURE_SSL_REDIRECT':'False','SESSION_COOKIE_SECURE':'False','CSRF_COOKIE_SECURE':'False',
-                'CORS_ALLOWED_ORIGINS':'http://127.0.0.1:4173','CSRF_TRUSTED_ORIGINS':'http://127.0.0.1:4173',
+                'CORS_ALLOW_CREDENTIALS':'True','CORS_ALLOWED_ORIGINS':'http://127.0.0.1:4173','CSRF_TRUSTED_ORIGINS':'http://127.0.0.1:4173',
                 'TELEGRAM_ENABLED':'False','WHATSAPP_ENABLED':'False','INSTAGRAM_ENABLED':'False',
                 'MOBILE_PUSH_DELIVERY_ENABLED':'False','MOBILE_PUSH_QUEUE_ENABLED':'False',
                 'AI_ENABLED':'False','AI_PROVIDER':'mock','OPENAI_API_KEY':'','OPENROUTER_API_KEY':'','KIMI_API_KEY':'',
@@ -166,7 +172,8 @@ class StackPacket(Packet):
         if env_file.exists():raise Blocked('Refuse existing env file')
         env_file.write_text(''.join(k+'='+v+'\n' for k,v in values.items()));env_file.chmod(0o600)
         self.report['envKeys']=sorted(values)
-        self.compose=['docker','compose','--project-name','crm-test-'+run_id,'-f','docker-compose.yml',
+        self.project_name='crm-test-'+run_id+'-'+self.mode
+        self.compose=['docker','compose','--project-name',self.project_name,'-f','docker-compose.yml',
                       '-f','mobile/ci/crm-test-stack.compose.yml','--env-file',str(env_file)]
         if not self.do('compose-preflight',self.compose+['config','--quiet'],20):raise Blocked('Compose config invalid; no build attempted')
         self.emit('PREFLIGHT_PASS',sha=head,**state)
@@ -176,14 +183,28 @@ class StackPacket(Packet):
         self.do('migration-drift',manage+['makemigrations','--check','--dry-run'],45,ready=db)
         self.do('django-check',manage+['check'],45,ready=db)
         migrated=self.do('migrate',manage+['migrate','--noinput'],90,ready=db)
-        self.do('backend-tests',manage+['test','-v','2'],360,ready=migrated)
+        if self.mode=='backend-targeted':
+            self.do('postgres-vendor',manage+['shell','-c',"from django.db import connection; assert connection.vendor=='postgresql',connection.vendor; print('POSTGRESQL_CONFIRMED')"],20,ready=migrated)
+            selection=['apps.activities.tests_segments.TagsAndSegmentsTests.test_tags_are_tenant_safe_and_filter_clients', 'apps.ai_core.tests.AICoreFoundationTests.test_generate_text_can_return_controlled_error_without_key', 'apps.analytics.tests.OwnerDashboardAnalyticsTests.test_owner_dashboard_returns_real_metrics', 'apps.bots.tests.BotsFoundationTests.test_auto_booking_runs_appointment_message_delivery_and_confirmation_reply', 'apps.bots.tests.BotsFoundationTests.test_auto_pipeline_books_appointment_when_client_selects_offered_slot', 'apps.bots.tests.BotsFoundationTests.test_auto_pipeline_respects_agent_allowed_tools_for_deals', 'apps.bots.tests.BotsFoundationTests.test_auto_sales_reply_receives_playbook_prices_resources_and_slots', 'apps.bots.tests.BotsFoundationTests.test_crm_pipeline_runtime_check_command_passes_in_safe_mode', 'apps.bots.tests.BotsFoundationTests.test_public_website_chat_auto_pipeline_can_sell_and_create_draft_deal', 'apps.bots.tests.BotsFoundationTests.test_public_website_chat_auto_pipeline_lead_task_mode_is_guarded_and_idempotent', 'apps.bots.tests.InboxBackendTests.test_inbox_can_create_and_link_deal_from_conversation', 'apps.bots.tests.InboxBackendTests.test_inbox_can_create_task_and_lead_from_conversation', 'apps.bots.tests.InboxBackendTests.test_inbox_run_pipeline_creates_idempotent_crm_chain', 'apps.core.tests.PlatformDashboardTests.test_platform_users_can_open_overview_and_merchants', 'apps.activities.tests_postgres_tags', 'apps.conversations.tests_postgres_pipeline']
+            tested=self.do('backend-targeted',manage+['test',*selection,'-v','2','--noinput'],360,ready=migrated)
+            log=(self.output/'backend-targeted.log').read_text(errors='replace') if migrated else ''
+            self.report['testSelection']=selection
+            self.report['testSummary']={key:re.findall(pattern,log) for key,pattern in {
+                'ran':r'Ran (\d+) tests? in ([0-9.]+)s','result':r'^(OK|FAILED[^\n]*)$',
+                'skipped':r'^.*skipped [^\n]*$'}.items()}
+            if tested and ('Ran 20 tests' not in log or re.search(r'\bskipped[= ]',log)):
+                raise Blocked('Expected all14 known cases plus6 regressions without skip')
+            self.report['status']='PASS' if all(x['status']=='PASS' for x in self.report['phases']) else 'FAIL'
+            return
         runtime=self.do('runtime-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','web','celery'],70,ready=migrated)
         exec_web=self.compose+['exec','-T','web','python','manage.py']
         seeded=self.do('synthetic-seed',exec_web+['prepare_e2e_smoke_data','--password',password],60,ready=runtime)
         identity=self.do('synthetic-business-id',exec_web+['shell','-c',"from apps.businesses.models import Business; print('__BUSINESS_ID__='+str(Business.objects.get(slug='zani-e2e-demo').id))"],30,ready=seeded)
         matches=re.findall(r'__BUSINESS_ID__=(\d+)',(self.output/'synthetic-business-id.log').read_text()) if identity else []
         if identity and len(matches)!=1:raise Blocked('Ambiguous synthetic Business ID')
-        self.do('real-queue-smoke',exec_web+['queue_runtime_smoke','--business-id',matches[0] if matches else '0','--timeout','45'],60,ready=bool(matches))
+        if self.mode=='queue-web':
+            self.do('real-queue-smoke',exec_web+['queue_runtime_smoke','--business-id',matches[0] if matches else '0','--timeout','45'],60,ready=bool(matches))
+        self.do('api-health',['curl','--fail','--silent','--show-error','--max-time','15','http://127.0.0.1:8000/health/'],20,ready=runtime)
         installed=self.do('frontend-npm-ci',['npm','--prefix','frontend','ci','--no-audit','--no-fund'],180)
         frontend=self.do('frontend-build',['npm','--prefix','frontend','run','build'],180,ready=installed)
         if frontend:
@@ -225,9 +246,27 @@ class StackPacket(Packet):
             if self.compose:
                 try:
                     with (self.output/'container-tail.log').open('w') as log:
-                        subprocess.run(self.compose+['logs','--no-color','--tail','200'],cwd=self.repo,env=self.environment,stdout=log,stderr=subprocess.STDOUT,timeout=10)
-                    subprocess.run(self.compose+['stop','--timeout','5'],cwd=self.repo,env=self.environment,capture_output=True,timeout=15)
-                except Exception:self.report['stopNote']='Own test-project stop/log collection not confirmed; hosted runner teardown remains responsible'
+                        tail=subprocess.run(self.compose+['logs','--no-color','--tail','200'],cwd=self.repo,env=self.environment,stdout=log,stderr=subprocess.STDOUT,timeout=10)
+                    stop=subprocess.run(self.compose+['stop','--timeout','5'],cwd=self.repo,env=self.environment,capture_output=True,timeout=20)
+                    listing=subprocess.run(['docker','ps','--all','--quiet','--filter','label=com.docker.compose.project='+self.project_name],cwd=self.repo,env=self.environment,text=True,capture_output=True,timeout=10)
+                    if stop.returncode or listing.returncode:raise Blocked('Own container stop/list failed')
+                    ids=listing.stdout.split()
+                    if any(not re.fullmatch(r'[0-9a-f]{12,64}',x) for x in ids):raise Blocked('Invalid own container IDs')
+                    states=[]
+                    if ids:
+                        stopped=subprocess.run(['docker','stop','--time','5',*ids],cwd=self.repo,env=self.environment,text=True,capture_output=True,timeout=15)
+                        if stopped.returncode:raise Blocked('Own one-off containers stop failed')
+                        inspect=subprocess.run(['docker','inspect',*ids],cwd=self.repo,env=self.environment,text=True,capture_output=True,timeout=10)
+                        if inspect.returncode:raise Blocked('Own container stop state unknown')
+                        for item in json.loads(inspect.stdout):
+                            if (item.get('Config',{}).get('Labels') or {}).get('com.docker.compose.project')!=self.project_name:raise Blocked('Container ownership mismatch')
+                            states.append({'id':item['Id'],'running':item['State']['Running'],'status':item['State']['Status']})
+                        if any(x['running'] for x in states):raise Blocked('Own container remains running')
+                    self.report['shutdown']={'status':'PASS','stopExitCode':stop.returncode,'containers':states}
+                except Exception as error:
+                    self.report.update(status='BLOCKED',shutdown={'status':'BLOCKED','reason':type(error).__name__+': '+str(error)})
+            try:self.report['finalCapacity']=self.capacity()
+            except Exception as error:self.report.update(status='BLOCKED',finalAccounting={'status':'BLOCKED','reason':type(error).__name__+': '+str(error)})
             if self.preview and self.preview.poll() is None:
                 self.preview.terminate()
                 try:self.preview.wait(timeout=5)
@@ -246,4 +285,8 @@ class StackPacket(Packet):
 
 
 if __name__=='__main__':
-    raise SystemExit(StackPacket(Path.cwd().resolve(),Path(sys.argv[1]).resolve()).main())
+    parser=argparse.ArgumentParser()
+    parser.add_argument('output')
+    parser.add_argument('--mode',choices=['backend-targeted','queue-web'],required=True)
+    args=parser.parse_args()
+    raise SystemExit(StackPacket(Path.cwd().resolve(),Path(args.output).resolve(),args.mode).main())
