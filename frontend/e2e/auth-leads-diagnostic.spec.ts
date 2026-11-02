@@ -19,8 +19,10 @@ function record(page: Page, event: Record<string, unknown>) {
   state.events.push(entry); return entry;
 }
 function safePath(value: string) { return new URL(value).pathname; }
-function watch(page: Page, work: Promise<void>) {
-  obs(page).pending.push(work.catch(() => { obs(page).telemetryErrors.push('observation-unavailable'); }));
+function watch(page: Page, work: () => Promise<void>) {
+  const state=obs(page);
+  if (state.pending.length>=600) { if (!state.telemetryErrors.includes('observation-queue-limit')) state.telemetryErrors.push('observation-queue-limit'); return; }
+  state.pending.push(work().catch(() => { state.telemetryErrors.push('observation-unavailable'); }));
 }
 async function summarize(page: Page, response: Response | APIResponse, source: string) {
   const url = new URL(response.url());
@@ -31,8 +33,9 @@ async function summarize(page: Page, response: Response | APIResponse, source: s
     secure: /;\s*secure/i.test(h.value), sameSite: /;\s*samesite=(\w+)/i.exec(h.value)?.[1] ?? null,
     path: /;\s*path=([^;]*)/i.exec(h.value)?.[1] ?? null,
   }));
-  if (url.pathname.startsWith('/api/')) {
-    const data: unknown = await response.json().catch(() => null);
+  const method = 'request' in response ? response.request().method() : undefined;
+  if (url.pathname.startsWith('/api/') && ![204,205].includes(response.status()) && method !== 'OPTIONS') {
+    const data: unknown = await response.json().catch(() => { obs(page).telemetryErrors.push('required-json-unavailable:'+url.pathname); return null; });
     if (data && typeof data === 'object') {
       const object = data as Record<string, unknown>;
       if (!response.ok()) {
@@ -75,14 +78,14 @@ test.beforeEach(async ({ page, context }) => {
     const url = new URL(request.url());
     const entry: Record<string, unknown> = record(page, { event: 'request', method: request.method(), origin: url.origin, path: url.pathname,
       authorizationPresent: null, refreshCookiePresent: null });
-    watch(page, request.allHeaders().then(headers => {
+    watch(page, () => request.allHeaders().then(headers => {
       entry.authorizationPresent = Boolean(headers.authorization);
       entry.refreshCookiePresent = /(?:^|;\s*)zani_refresh_token=/.test(headers.cookie ?? '');
     }));
   });
-  page.on('response', response => { watch(page, summarize(page, response, 'browser')); });
-  page.on('pageerror', error => { record(page, { event: 'page-error', name: error.name }); });
-  page.on('console', message => { if (message.type() === 'error') record(page, { event: 'console-error', origin: message.location().url ? new URL(message.location().url).origin : null }); });
+  page.on('response', response => { watch(page, () => summarize(page, response, 'browser')); });
+  page.on('pageerror', error => { record(page, { event: 'page-error', name: error.name }); obs(page).telemetryErrors.push('page-error:'+error.name); });
+  page.on('console', message => { if (message.type() === 'error') { try { record(page, { event: 'console-error', origin: message.location().url ? new URL(message.location().url).origin : null }); } catch { obs(page).telemetryErrors.push('console-url-unavailable'); } } });
 });
 test.afterEach(async ({ page }, info) => {
   const state = obs(page);
@@ -93,7 +96,7 @@ test.afterEach(async ({ page }, info) => {
       return await Promise.race([work, new Promise<null>(resolve => { timer=setTimeout(() => resolve(null),Math.max(1,deadline-Date.now())); })]);
     } finally { if (timer) clearTimeout(timer); }
   }
-  if (await bounded(Promise.all(state.pending)) === null) state.telemetryErrors.push('observation-deadline');
+  if (await bounded(Promise.all([...state.pending])) === null) state.telemetryErrors.push('observation-deadline');
   const dom = await bounded(page.evaluate(() => ({
     path: location.pathname, viewport: { width: innerWidth, height: innerHeight },
     tableRows: [...document.querySelectorAll('div[role="button"][tabindex="0"]')].map(el => ({
@@ -104,6 +107,8 @@ test.afterEach(async ({ page }, info) => {
     headings: [...document.querySelectorAll('h1,h2')].map(el => ({ tag: el.tagName, textLength: el.textContent?.length ?? 0 })),
   })).catch(() => null));
   if (dom === null) state.telemetryErrors.push('dom-observation-unavailable');
+  if (await bounded(page.context().close().then(() => true).catch(() => false)) !== true) state.telemetryErrors.push('context-close-unavailable');
+  if (await bounded(Promise.all(state.pending)) === null) state.telemetryErrors.push('observation-deadline');
   const body = JSON.stringify({ name: info.title, events: state.events, unexpectedOrigins: state.unexpectedOrigins,
     telemetryErrors: state.telemetryErrors, dom }, null, 2);
   await info.attach('sanitized-diagnostic', { body: Buffer.from(body), contentType: 'application/json' });

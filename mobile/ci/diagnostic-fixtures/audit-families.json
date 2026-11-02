@@ -1,0 +1,324 @@
+{
+  "fixtureFamilies": [
+    {
+      "id": "admission_environment-01",
+      "family": "valid_chain",
+      "purpose_and_expected": "Exact admitted SHA/ref/run/project;PASS"
+    },
+    {
+      "id": "admission_environment-02",
+      "family": "missing_identity",
+      "purpose_and_expected": "Each required public field absent;BLOCKED"
+    },
+    {
+      "id": "admission_environment-03",
+      "family": "foreign_ref",
+      "purpose_and_expected": "main/unknown branch;BLOCKED"
+    },
+    {
+      "id": "admission_environment-04",
+      "family": "non_ascii_or_bad_id",
+      "purpose_and_expected": "Unicode/non-numeric/empty run ID;BLOCKED"
+    },
+    {
+      "id": "admission_environment-05",
+      "family": "project_mismatch",
+      "purpose_and_expected": "Foreign per-run project;BLOCKED"
+    },
+    {
+      "id": "admission_environment-06",
+      "family": "dirty_or_foreign_sha",
+      "purpose_and_expected": "Dirty checkout/wrong source identity;BLOCKED"
+    },
+    {
+      "id": "admission_environment-07",
+      "family": "credential_sentinels",
+      "purpose_and_expected": "GITHUB_TOKEN/ACTIONS/provider sentinels not inherited or exported"
+    },
+    {
+      "id": "admission_environment-08",
+      "family": "invalid_mode_platform",
+      "purpose_and_expected": "Unknown mode/non-Linux admission;BLOCKED"
+    },
+    {
+      "id": "cgroup_transport_and_schema-01",
+      "family": "v2_valid",
+      "purpose_and_expected": "Canonical scalar+counter records with per-file return codes;PASS"
+    },
+    {
+      "id": "cgroup_transport_and_schema-02",
+      "family": "order_and_extra_keys",
+      "purpose_and_expected": "Reordered entries and additional dotted numeric key retained;PASS"
+    },
+    {
+      "id": "cgroup_transport_and_schema-03",
+      "family": "bad_scalar",
+      "purpose_and_expected": "Empty/text/negative/float scalar;BLOCKED"
+    },
+    {
+      "id": "cgroup_transport_and_schema-04",
+      "family": "max_context",
+      "purpose_and_expected": "memory.max=max typed unlimited;counter value max rejected;memory.events key max with integer valid"
+    },
+    {
+      "id": "cgroup_transport_and_schema-05",
+      "family": "missing_required_file",
+      "purpose_and_expected": "Missing peak or other mandatory profile field;explicit BLOCKED,not zero"
+    },
+    {
+      "id": "cgroup_transport_and_schema-06",
+      "family": "permission_io_nonzero",
+      "purpose_and_expected": "Per-file permission/I/O/nonzero exit;preserve bytes+reason and BLOCKED"
+    },
+    {
+      "id": "cgroup_transport_and_schema-07",
+      "family": "duplicate_fields",
+      "purpose_and_expected": "Duplicate marker/file/key;BLOCKED"
+    },
+    {
+      "id": "cgroup_transport_and_schema-08",
+      "family": "stdout_contamination",
+      "purpose_and_expected": "Preamble/trailer/embedded marker/CRLF;framed evidence must classify,never silently PASS"
+    },
+    {
+      "id": "cgroup_transport_and_schema-09",
+      "family": "truncated_oversized_encoding",
+      "purpose_and_expected": "Partial/oversized/invalid UTF8;bounded raw evidence and BLOCKED"
+    },
+    {
+      "id": "cgroup_transport_and_schema-10",
+      "family": "v1_hybrid_unknown",
+      "purpose_and_expected": "Recognize distinct profile;unsupported admission BLOCKED,never map failcnt to OOM kills"
+    },
+    {
+      "id": "cgroup_transport_and_schema-11",
+      "family": "counter_reset_oom",
+      "purpose_and_expected": "Before/after reset or oom_kill delta;explicit UNKNOWN/BLOCKED,not clamp0"
+    },
+    {
+      "id": "cgroup_transport_and_schema-12",
+      "family": "identity_limit_mismatch",
+      "purpose_and_expected": "Foreign container/cgroup path or effective limit differing from declared profile;BLOCKED"
+    },
+    {
+      "id": "sql_orchestration_observer-01",
+      "family": "startup_exception",
+      "purpose_and_expected": "Import/settings/view construction failure produces complete NOT_RUN ledger"
+    },
+    {
+      "id": "sql_orchestration_observer-02",
+      "family": "tenant_scope",
+      "purpose_and_expected": "Actual ClientViewSet and permission path adapter chosen;no all-tenant replacement"
+    },
+    {
+      "id": "sql_orchestration_observer-03",
+      "family": "capture_exact_once",
+      "purpose_and_expected": "One captured SELECT,0 business executions during capture;many/nonSELECT/missing capture BLOCKED"
+    },
+    {
+      "id": "sql_orchestration_observer-04",
+      "family": "readonly_admission",
+      "purpose_and_expected": "READ ONLY and timeouts established before dispatch;failure =>execution0"
+    },
+    {
+      "id": "sql_orchestration_observer-05",
+      "family": "explain_failure",
+      "purpose_and_expected": "EXPLAIN withoutANALYZE,<=2s;plan failure stops affected execution"
+    },
+    {
+      "id": "sql_orchestration_observer-06",
+      "family": "four_results",
+      "purpose_and_expected": "Exact4 identities and typed count/summary widths;no bool/null/float/string coercion"
+    },
+    {
+      "id": "sql_orchestration_observer-07",
+      "family": "sql_timeout_lock",
+      "purpose_and_expected": "57014/55P03 preserve error/actual rollback;no retry;independent next probe once"
+    },
+    {
+      "id": "sql_orchestration_observer-08",
+      "family": "budget_exhaustion",
+      "purpose_and_expected": "No remaining common budget =>explicit NOT_RUN without dispatch"
+    },
+    {
+      "id": "sql_orchestration_observer-09",
+      "family": "observer_failure",
+      "purpose_and_expected": "Constructor/start/query/close/join failure =>required observation BLOCKED"
+    },
+    {
+      "id": "sql_orchestration_observer-10",
+      "family": "pid_sample_lifecycle",
+      "purpose_and_expected": "PID change,fast completion,late samples,scheduler skipping0/1/3;no false no-lock claim"
+    },
+    {
+      "id": "result_protocol-01",
+      "family": "valid_envelope",
+      "purpose_and_expected": "One complete frame bound to protocol/source/run/project;PASS"
+    },
+    {
+      "id": "result_protocol-02",
+      "family": "zero_multiple_frames",
+      "purpose_and_expected": "Missing/duplicate frame;BLOCKED"
+    },
+    {
+      "id": "result_protocol-03",
+      "family": "foreign_identity",
+      "purpose_and_expected": "Wrong schema version/SHA/run/project;BLOCKED"
+    },
+    {
+      "id": "result_protocol-04",
+      "family": "probe_registry",
+      "purpose_and_expected": "Missing/duplicate/extra probe ID;BLOCKED"
+    },
+    {
+      "id": "result_protocol-05",
+      "family": "pass_with_bad_execution",
+      "purpose_and_expected": "PASS but0/2 executions,nonreadonly,overbudget orinvalid result type;reject"
+    },
+    {
+      "id": "result_protocol-06",
+      "family": "malformed_payload",
+      "purpose_and_expected": "Bad JSON/UTF8/partial/oversized result;bounded evidence and red"
+    },
+    {
+      "id": "result_protocol-07",
+      "family": "exit_and_noise",
+      "purpose_and_expected": "Nonzero exit,traceback or unknown control noise with apparent PASS payload;red"
+    },
+    {
+      "id": "result_protocol-08",
+      "family": "flush_write_failure",
+      "purpose_and_expected": "Interrupted/failed report write keeps minimum terminal FAIL evidence"
+    },
+    {
+      "id": "browser_collection_gating-01",
+      "family": "exact_four_collection",
+      "purpose_and_expected": "Saved actual1project/1spec/4 declarations,results[];admit,not runtime PASS"
+    },
+    {
+      "id": "browser_collection_gating-02",
+      "family": "old_twelve_projects",
+      "purpose_and_expected": "Saved historical3project/12case artifact;reject"
+    },
+    {
+      "id": "browser_collection_gating-03",
+      "family": "wrong_registry",
+      "purpose_and_expected": "Duplicate/missing/extra name or foreign spec/project;reject"
+    },
+    {
+      "id": "browser_collection_gating-04",
+      "family": "selection_mutation",
+      "purpose_and_expected": "skip/only/fail annotation,retries/repeat/shard;reject"
+    },
+    {
+      "id": "browser_collection_gating-05",
+      "family": "sql_not_pass",
+      "purpose_and_expected": "Every SQL FAIL/BLOCKED/NOT_RUN/unknown =>browser invocation0"
+    },
+    {
+      "id": "browser_collection_gating-06",
+      "family": "final_result_binding",
+      "purpose_and_expected": "Four PASS require exact registry/config/input binding and one execution each"
+    },
+    {
+      "id": "browser_collection_gating-07",
+      "family": "browser_terminal_errors",
+      "purpose_and_expected": "Crash/global timeout/missing report/remaining NOT_RUN stays red"
+    },
+    {
+      "id": "browser_collection_gating-08",
+      "family": "telemetry_lifecycle",
+      "purpose_and_expected": "Late async/invalidURL/malformed required JSON/queue overflow/external origin;structured red,never permissive font stub"
+    },
+    {
+      "id": "deadlines_processes-01",
+      "family": "phase_clock",
+      "purpose_and_expected": "Absolute phase begins before accounting/startup;fake clock proves no fresh budgets"
+    },
+    {
+      "id": "deadlines_processes-02",
+      "family": "sql_total",
+      "purpose_and_expected": "Capture/plan/execute/observer/kill/write allinside60s"
+    },
+    {
+      "id": "deadlines_processes-03",
+      "family": "sample_total",
+      "purpose_and_expected": "Docker dribble+du share original10s;timeout never partial measurement"
+    },
+    {
+      "id": "deadlines_processes-04",
+      "family": "startup_stall",
+      "purpose_and_expected": "Process/connection startup delay consumes remaining allocation"
+    },
+    {
+      "id": "deadlines_processes-05",
+      "family": "exec_cli_vs_inner",
+      "purpose_and_expected": "CLI exits but fake container exec remains;must stop dependent and confirm owned stop"
+    },
+    {
+      "id": "deadlines_processes-06",
+      "family": "term_kill",
+      "purpose_and_expected": "TERM/KILL/wait inside assigned phase/common cleanup reserve"
+    },
+    {
+      "id": "deadlines_processes-07",
+      "family": "preview_group",
+      "purpose_and_expected": "npm parent exit with childalive never shutdown PASS"
+    },
+    {
+      "id": "deadlines_processes-08",
+      "family": "global_finalization",
+      "purpose_and_expected": "All cleanup/export/final sample inside1020s and job1200s;insufficient time yields red"
+    },
+    {
+      "id": "accounting_cleanup_publication-01",
+      "family": "du_good_and_boundaries",
+      "purpose_and_expected": "Complete du;cap-1/cap/cap+1 and reserve-1/reserve/reserve+1"
+    },
+    {
+      "id": "accounting_cleanup_publication-02",
+      "family": "du_unknown",
+      "purpose_and_expected": "Partial/malformed/permission/missing root or total sample timeout;BLOCKED"
+    },
+    {
+      "id": "accounting_cleanup_publication-03",
+      "family": "transient_enoent",
+      "purpose_and_expected": "Only known childENOENT,max3 reads within10s;never partial accepted"
+    },
+    {
+      "id": "accounting_cleanup_publication-04",
+      "family": "docker_shape",
+      "purpose_and_expected": "Exact documented omitted-zero profile vs missing/null/invalid/unknown size;unknown BLOCKED"
+    },
+    {
+      "id": "accounting_cleanup_publication-05",
+      "family": "export_growth",
+      "purpose_and_expected": "Evidence/report growth charged before certified final cap result"
+    },
+    {
+      "id": "accounting_cleanup_publication-06",
+      "family": "ownership_before_stop",
+      "purpose_and_expected": "Foreign ID/label never stopped;expected ID ledger checked"
+    },
+    {
+      "id": "accounting_cleanup_publication-07",
+      "family": "empty_or_changed_listing",
+      "purpose_and_expected": "Previously known containers missing/empty listing =>explicit proof or UNKNOWN,not vacuous PASS"
+    },
+    {
+      "id": "accounting_cleanup_publication-08",
+      "family": "stop_inspect_failure",
+      "purpose_and_expected": "Nonzero stop/inspect/stillRunning/unreaped preview =>BLOCKED"
+    },
+    {
+      "id": "accounting_cleanup_publication-09",
+      "family": "redaction_export",
+      "purpose_and_expected": "Secret/JWT/DSN/header/base64 sentinel removed or blocked;mandatory missing evidence red"
+    },
+    {
+      "id": "accounting_cleanup_publication-10",
+      "family": "git_trigger_ledger",
+      "purpose_and_expected": "Fake Git/API:remote drift,uncertain push,duplicate run,cleanup-only diff;no blind retry/main/forcepush"
+    }
+  ]
+}

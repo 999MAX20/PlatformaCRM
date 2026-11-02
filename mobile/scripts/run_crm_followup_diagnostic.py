@@ -13,6 +13,8 @@ import shutil
 import socket
 import subprocess
 import sys
+import signal
+from crm_client_sql_diagnostic import Budget, DiagnosticError, capture_process, stop_owned_group, validate_sql, validate_host_report, STREAM_LIMIT
 import time
 
 from run_android_jvm_checks import Packet, Blocked, CAP as ANDROID_CAP, RESERVE
@@ -30,7 +32,7 @@ EXPECTED_BROWSER_CASES=(
 def public_ci_environment(environ, mode):
     expected_ref='refs/heads/codex/crm-postgres-compat-review' if mode=='backend-targeted' else 'refs/heads/codex/mobile-max'
     fields={key:environ.get(key,'') for key in ('GITHUB_ACTIONS','GITHUB_REF','GITHUB_RUN_ID')}
-    if fields['GITHUB_ACTIONS']!='true' or fields['GITHUB_REF']!=expected_ref or not fields['GITHUB_RUN_ID'].isdigit():
+    if fields['GITHUB_ACTIONS']!='true' or fields['GITHUB_REF']!=expected_ref or not re.fullmatch('[0-9]+',fields['GITHUB_RUN_ID']):
         raise Blocked('Missing or foreign public CI identity; do not forward arbitrary environment')
     return fields
 
@@ -61,17 +63,99 @@ def validate_browser_collection(listing):
     return {'status':'PASS','projects':1,'specs':1,'cases':cases,'caseCount':4,'retries':0,'repeatEach':1,'browserExecutionsDuringList':0}
 
 
+CLEANUP_SECONDS = 100
+REPORT_LIMIT = 8*1024*1024
+
+def mandatory_result(phases, not_run=()):
+    return 'PASS' if phases and not not_run and all(row.get('status')=='PASS' for row in phases) else 'FAIL'
+
+def validate_browser_result(report, expected, identity=None):
+    if not isinstance(report,dict) or report.get('errors'):raise Blocked('Browser result missing or contains global errors')
+    config=report.get('config',{});projects=config.get('projects',[])
+    if len(projects)!=1 or projects[0].get('name')!='bounded-desktop-diagnostic' or config.get('workers')!=1 or not 0<config.get('globalTimeout',300001)<=300000 or projects[0].get('retries')!=0 or projects[0].get('repeatEach')!=1 or projects[0].get('timeout')!=45000:
+        raise Blocked('Browser final project/budget mismatch')
+    cases=[]
+    def visit(suite):
+        for spec in suite.get('specs',[]):
+            for case in spec.get('tests',[]):
+                results=case.get('results',[])
+                cases.append({'name':spec.get('title'),'file':Path(spec.get('file','')).name,'project':case.get('projectName'),
+                    'status':results[0].get('status') if len(results)==1 else 'NOT_RUN','executionCount':len(results),'expectedStatus':case.get('expectedStatus')})
+        for child in suite.get('suites',[]):visit(child)
+    for suite in report.get('suites',[]):visit(suite)
+    if len(cases)!=4 or set(c['name'] for c in cases)!=set(expected) or len({c['name'] for c in cases})!=4:
+        raise Blocked('Browser final registry mismatch')
+    if any(c['file']!='auth-leads-diagnostic.spec.ts' or c['project']!='bounded-desktop-diagnostic' or c['executionCount']!=1 or c['status']!='passed' or c['expectedStatus']!='passed' for c in cases):
+        raise Blocked('Browser final mandatory case incomplete')
+    return cases
+
+def owned_container_states(items, project, expected=()):
+    if not isinstance(items,list) or (expected and not items):raise Blocked('Expected owned containers missing')
+    rows=[]
+    for item in items:
+        if not re.fullmatch('[0-9a-f]{12,64}',item.get('Id','')) or (item.get('Config',{}).get('Labels') or {}).get('com.docker.compose.project')!=project:
+            raise Blocked('Foreign or invalid container identity; never stop it')
+        state=item.get('State',{})
+        if type(state.get('Running')) is not bool:raise Blocked('Unknown owned container state')
+        rows.append({'id':item['Id'],'running':state['Running'],'status':state.get('Status'),'oomKilled':state.get('OOMKilled')})
+    if expected and not set(expected)<={x['id'] for x in rows}:raise Blocked('Recorded owned IDs absent from inspect')
+    return rows
+
+def redact_export(text, secrets=()):
+    for secret in secrets:
+        if secret:text=text.replace(secret,'[REDACTED_TEST_SECRET]')
+    text=re.sub(r'\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b','[REDACTED_TEST_JWT]',text)
+    text=re.sub(r'(?i)(authorization\s*[:=]\s*bearer\s+)[^\s"\\]+',r'\1[REDACTED]',text)
+    text=re.sub(r'(postgres(?:ql)?://)[^@\s]+@',r'\1[REDACTED]@',text)
+    return text
+
+def sanitize_attachments(value,secrets=()):
+    import base64
+    if isinstance(value,list):return [sanitize_attachments(x,secrets) for x in value]
+    if not isinstance(value,dict):return value
+    result={k:sanitize_attachments(v,secrets) for k,v in value.items()}
+    if 'body' in result and 'contentType' in result:
+        if result['contentType']!='application/json':raise Blocked('Unknown opaque attachment cannot be safely exported')
+        try:
+            raw=base64.b64decode(result['body'],validate=True)
+            if len(raw)>STREAM_LIMIT:raise Blocked('Attachment output limit')
+            text=redact_export(raw.decode('utf-8'),secrets)
+            json.loads(text);result['body']=base64.b64encode(text.encode()).decode()
+        except (ValueError,UnicodeError) as error:raise Blocked('Malformed attachment') from error
+    return result
+
+def padded_report(path, data, allocation=None):
+    raw=(json.dumps(data,indent=2,default=str)+'\n').encode()
+    if len(raw)>REPORT_LIMIT:raise Blocked('Report output bound exceeded')
+    size=allocation or ((len(raw)+8192+4095)//4096)*4096
+    if len(raw)>size:raise Blocked('Final report exceeded reserved allocation')
+    path.write_bytes(raw+b' '*(size-len(raw)))
+    return size
+
+class DeadlineSocket(socket.socket):
+    def __init__(self, deadline):
+        super().__init__(socket.AF_UNIX,socket.SOCK_STREAM);self.deadline=deadline
+    def remaining(self):
+        value=self.deadline-time.monotonic()
+        if value<=0:raise Blocked('Resource sampling total deadline reached')
+        self.settimeout(value)
+    def connect(self,*args):self.remaining();return super().connect(*args)
+    def recv_into(self,*args):self.remaining();return super().recv_into(*args)
+    def sendall(self,*args):self.remaining();return super().sendall(*args)
+
+
 class DockerConnection(http.client.HTTPConnection):
+    def __init__(self, host, timeout, deadline):
+        super().__init__(host,timeout=timeout);self.deadline=deadline
     def connect(self):
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.sock.settimeout(self.timeout)
+        self.sock = DeadlineSocket(self.deadline)
         self.sock.connect('/var/run/docker.sock')
 
 
 def docker_json(path, deadline):
     remaining=deadline-time.monotonic()
     if remaining<=0:raise Blocked('Resource sample total10second deadline reached')
-    connection = DockerConnection('localhost', timeout=min(10,remaining))
+    connection = DockerConnection('localhost', timeout=min(10,remaining),deadline=deadline)
     try:
         connection.request('GET', path)
         response = connection.getresponse()
@@ -126,11 +210,14 @@ class StackBudget(Packet):
         # Gradle atomically moves transient cache entries. A failed traversal is
         # never an owned-size sample: remeasure only confirmed descendant ENOENT,
         # at most three reads inside the original ten-second measurement budget.
+        known_roots=set(getattr(self,'known_roots',()))|{p for p in self.roots if p.is_dir()}
+        self.known_roots=known_roots
         for attempt in range(3):
-            if not self.output.is_dir():
+            if not self.output.is_dir() or any(not p.is_dir() for p in known_roots):
                 raise Blocked("Required owned artifact root disappeared")
             check_budget()
             roots = [p for p in self.roots if p.exists()]
+            known_roots.update(roots)
             try:
                 sample = subprocess.run(["du", "-sk", *(str(p) for p in roots)], text=True,
                                         capture_output=True, timeout=sample_deadline-time.monotonic(),
@@ -138,6 +225,7 @@ class StackBudget(Packet):
             except subprocess.TimeoutExpired as error:
                 raise Blocked("Resource sampling exceeded its ten-second budget") from error
             check_budget()
+            if any(not p.is_dir() for p in known_roots):raise Blocked('Owned root disappeared during sample')
             if sample.returncode != 0 or sample.stderr.strip():
                 errors = sample.stderr.strip().splitlines()
                 matches = [re.fullmatch(r"du: (?:cannot access '([^']+)'|(/.+)): No such file or directory", line)
@@ -150,6 +238,10 @@ class StackBudget(Packet):
                 if not transient:
                     raise Blocked("Resource measurement failed: "+sample.stderr.strip())
                 self.emit("RESOURCE_REMEASURE", sample=attempt+1, reason="Owned transient descendant ENOENT")
+                if attempt<2:
+                    delay=(.25,.5)[attempt]
+                    if sample_deadline-time.monotonic()<=delay:raise Blocked('No remaining sample allocation')
+                    time.sleep(delay);check_budget()
                 continue
             rows = [line.split("\t", 1) for line in sample.stdout.splitlines()]
             if len(rows) != len(roots) or any(
@@ -182,6 +274,9 @@ class StackPacket(StackBudget):
         self.preview=None
         self.compose=[]
         self.mode=mode
+        self.work_deadline=self.deadline-CLEANUP_SECONDS
+        self.active_deadline=self.work_deadline
+        self.known_container_ids=[]
         self.artifact_cap=2147483648 if mode=='backend-targeted' else 3221225472
         self.project_name=None
         self.report={'status':'NOT_RUN','sourceSha':os.environ.get('GITHUB_SHA'),
@@ -192,7 +287,7 @@ class StackPacket(StackBudget):
                      'accounting':'Owned files + new Docker layers/containers/volumes/cache upper bound; max with whole-volume allocation delta. Shared Docker cache may be conservatively counted twice; unknown sizes block.'}
 
     def capacity(self):
-        sample_deadline=min(self.deadline,time.monotonic()+10)
+        sample_deadline=min(self.deadline,self.active_deadline,time.monotonic()+10)
         version=self.api_version
         if version is None:
             metadata=docker_json('/version',sample_deadline)
@@ -217,6 +312,35 @@ class StackPacket(StackBudget):
         if charged>self.artifact_cap:
             raise Blocked('Conservative stack artifact budget exceeds explicit mode-specific artifact cap')
         return state
+
+    def run(self,label,args,env,seconds):
+        started=time.monotonic();end=min(self.work_deadline,started+seconds)
+        entry={'name':label,'status':'NOT_RUN','limitSeconds':max(0,end-started)};self.report['phases'].append(entry)
+        child=None;failure=None;self.active_deadline=end-2
+        try:
+            if end-started<=2:raise Blocked('No phase allocation remains')
+            self.capacity()
+            with (self.output/(label+'.log')).open('w') as log:
+                child=subprocess.Popen(args,cwd=self.repo,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+                while child.poll() is None:
+                    self.capacity()
+                    if time.monotonic()>=end-2:raise Blocked(label+' absolute phase deadline')
+                    if (self.output/(label+'.log')).stat().st_size>STREAM_LIMIT:raise Blocked('Phase output limit')
+                    time.sleep(min(.1,max(.001,end-2-time.monotonic())))
+            if time.monotonic()>end:raise Blocked(label+' completion beyond absolute phase deadline')
+            if (self.output/(label+'.log')).stat().st_size>STREAM_LIMIT:raise Blocked('Phase output limit')
+            self.capacity()
+            entry.update(status='PASS' if child.returncode==0 else 'FAIL',exitCode=child.returncode)
+        except BaseException as e:
+            entry.update(status='TIMEOUT' if 'deadline' in str(e).lower() else 'BLOCKED',reason=type(e).__name__+': '+str(e));failure=e
+        finally:
+            if child:
+                try:stop_owned_group(child,end)
+                except Exception as error:
+                    entry.update(status='BLOCKED',reason='Owned child shutdown unknown: '+str(error));failure=Blocked(entry['reason'])
+            self.active_deadline=self.work_deadline;entry['elapsedSeconds']=time.monotonic()-started
+        if failure:raise failure
+        return child.returncode
 
     def do(self, label, command, seconds, ready=True):
         if not ready:
@@ -359,6 +483,14 @@ class StackPacket(StackBudget):
                 if len(values)!=2 or any({k:v for k,v in value.items() if v}!=wanted for value in values):raise Blocked('Actual ingress binding is missing or not exclusive loopback')
                 actual_bindings=True
                 self.report['actualBindings']={'status':'PASS','HostConfig':values[0],'NetworkSettings':values[1]}
+        ledger_ready=self.do('owned-container-ids',self.compose+['ps','--all','--quiet'],10,ready=runtime)
+        if ledger_ready:
+            ledger_ids=(self.output/'owned-container-ids.log').read_text().split()
+            if not ledger_ids or any(not re.fullmatch('[0-9a-f]{12,64}',x) for x in ledger_ids):raise Blocked('Invalid pre-SQL owned container ledger')
+            ledger_ready=self.do('owned-container-inspect',['docker','inspect',*ledger_ids],10)
+            if ledger_ready:
+                self.known_container_ids=[x['id'] for x in owned_container_states(json.loads((self.output/'owned-container-inspect.log').read_text()),self.project_name)]
+                self.report['ownedContainerIds']=self.known_container_ids
         host=self.do('api-health',['curl','--fail','--silent','--show-error','--max-time','15','http://127.0.0.1:8000/health/'],20,ready=mapped and internal and actual_bindings)
         ready=self.do('api-ready',['curl','--fail','--silent','--show-error','--max-time','15','http://127.0.0.1:8000/ready/'],20,ready=host)
         installed=self.do('frontend-npm-ci',['npm','--prefix','frontend','ci','--no-audit','--no-fund'],180)
@@ -387,96 +519,112 @@ class StackPacket(StackBudget):
         self.report['browserCollection']=collection
         self.emit('EXACT_FOUR_COLLECTION_PASS',**collection)
         sql_ready=self.do('client-sql-diagnostic',['python3','mobile/scripts/crm_client_sql_diagnostic.py',
-            '--project',self.project_name,'--output',str(self.output/'sql-diagnostic.json')],60,ready=bool(matches) and host and ready)
+            '--project',self.project_name,'--source-sha',head,'--output',str(self.output/'sql-diagnostic.json')],60,ready=bool(matches) and host and ready and ledger_ready)
         sql_file=self.output/'sql-diagnostic.json'
         if sql_file.exists():
             self.report['sqlDiagnostic']=json.loads(sql_file.read_text())
-            sql_ready=sql_ready and self.report['sqlDiagnostic'].get('status')=='PASS'
+            sql_report=self.report['sqlDiagnostic']
+            expected_identity={'sourceSha':head,'runId':run_id,'project':self.project_name}
+            try:
+                valid=validate_host_report(sql_report,expected_identity)
+                sql_ready=sql_ready and sql_report.get('status')=='PASS' and valid
+            except DiagnosticError as error:
+                sql_ready=False;self.report['sqlProtocolError']=str(error)
         else:
             sql_ready=False
         browser_ready=frontend and seeded and host and ready and bool(chrome) and sql_ready
-        if self.deadline-time.monotonic()<330:
+        if self.work_deadline-time.monotonic()<300:
             browser_ready=False
             self.report['browserBlocker']='Insufficient shared budget for full300s browser and shutdown reserve'
         if not sql_ready:self.report['browserBlocker']='Required bounded SQL diagnostic did not pass; no repeated dependent UI queries'
         self.report['browserDiagnostic']={'status':'NOT_RUN','cases':[{'name':name,'status':'NOT_RUN','executionCount':0} for name in EXPECTED_BROWSER_CASES],
                                          'old34ScenarioSuite':'NOT_RERUN_NOT_CERTIFIED','newRuntimeFixes':False}
-        self.do('browser-tests',[playwright,'test','--config=frontend/playwright.ci-stack.config.ts','--workers=1','--retries=0','--global-timeout=300000'],305,ready=browser_ready)
+        self.do('browser-tests',[playwright,'test','--config=frontend/playwright.ci-stack.config.ts','--workers=1','--retries=0','--global-timeout=295000'],300,ready=browser_ready)
         if not browser_ready:
             self.report['browserDiagnostic'].update(status='BLOCKED',reason=self.report.get('browserBlocker','Browser prerequisite unavailable'))
             for case in self.report['browserDiagnostic']['cases']:case['status']='BLOCKED'
         result_file=self.output/'browser-results.json'
         if result_file.exists():
             browser_report=json.loads(result_file.read_text())
-            cases=[]
-            def collect(suite):
-                for spec in suite.get('specs',[]):
-                    for case in spec.get('tests',[]):
-                        results=case.get('results',[])
-                        cases.append({'name':spec.get('title'),'status':results[0].get('status') if len(results)==1 else 'NOT_RUN',
-                                      'executionCount':len(results),'expectedStatus':case.get('expectedStatus')})
-                for child in suite.get('suites',[]):collect(child)
-            for suite in browser_report.get('suites',[]):collect(suite)
-            accepted=len(cases)==4 and not browser_report.get('errors') and all(c['status']=='passed' and c['executionCount']==1 and c['expectedStatus']=='passed' for c in cases)
-            self.report['browserDiagnostic']={'status':'PASS' if accepted else 'FAIL','cases':cases,
-                                             'old34ScenarioSuite':'NOT_RERUN_NOT_CERTIFIED','newRuntimeFixes':False}
-            if not accepted:self.report['phases'].append({'name':'browser-diagnostic-completeness','status':'FAIL','reason':'All four independent cases required exactly once, without skip/error'})
+            try:
+                cases=validate_browser_result(browser_report,EXPECTED_BROWSER_CASES)
+                if hashlib.sha256(config.read_bytes()).hexdigest()!=collection['configSha256'] or hashlib.sha256((self.repo/'frontend/e2e/auth-leads-diagnostic.spec.ts').read_bytes()).hexdigest()!=collection['testSha256']:
+                    raise Blocked('Browser inputs changed after collection')
+                self.report['browserDiagnostic']={'status':'PASS','cases':cases,'old34ScenarioSuite':'NOT_RERUN_NOT_CERTIFIED'}
+            except Blocked as error:
+                self.report['browserDiagnostic']['status']='FAIL';self.report['browserDiagnostic']['reason']=str(error)
+                self.report['phases'].append({'name':'browser-diagnostic-completeness','status':'FAIL','reason':str(error)})
         elif browser_ready:
             self.report['phases'].append({'name':'browser-diagnostic-completeness','status':'BLOCKED','reason':'Required diagnostic result unavailable'})
         self.capacity()
-        self.report['status']='PASS' if all(x['status']=='PASS' for x in self.report['phases']) else 'FAIL'
+        self.report['status']=mandatory_result(self.report['phases'])
 
     def main(self):
         self.output.mkdir(parents=True,exist_ok=False)
         public=self.output/'public';public.mkdir()
+        # Allocate the final failure receipt before work: cap failure must not
+        # require unaccounted emergency file growth merely to report BLOCKED.
+        if shutil.disk_usage(self.output).free-REPORT_LIMIT<RESERVE:
+            raise Blocked('Cannot reserve final receipt while preserving free-space reserve')
+        target=public/'report.json';padded_report(target,{'status':'NOT_RUN'},REPORT_LIMIT)
+        def safe_report(value):return json.loads(redact_export(json.dumps(value,default=str),self.secret_values))
         try:
             self.execute()
         except Blocked as error:self.report.update(status='BLOCKED',reason=str(error))
         except Exception as error:self.report.update(status='FAIL',reason=type(error).__name__+': '+str(error))
         finally:
-            # Stop only this per-run test project; retain containers/volumes and
-            # evidence. No global Docker cleanup or deletion, no new test runs.
-            if self.compose:
-                try:
-                    with (self.output/'container-tail.log').open('w') as log:
-                        tail=subprocess.run(self.compose+['logs','--no-color','--tail','200'],cwd=self.repo,env=self.environment,stdout=log,stderr=subprocess.STDOUT,timeout=10)
-                    stop=subprocess.run(self.compose+['stop','--timeout','5'],cwd=self.repo,env=self.environment,capture_output=True,timeout=20)
-                    listing=subprocess.run(['docker','ps','--all','--quiet','--filter','label=com.docker.compose.project='+self.project_name],cwd=self.repo,env=self.environment,text=True,capture_output=True,timeout=10)
-                    if stop.returncode or listing.returncode:raise Blocked('Own container stop/list failed')
-                    ids=listing.stdout.split()
-                    if any(not re.fullmatch(r'[0-9a-f]{12,64}',x) for x in ids):raise Blocked('Invalid own container IDs')
-                    states=[]
-                    if ids:
-                        stopped=subprocess.run(['docker','stop','--time','5',*ids],cwd=self.repo,env=self.environment,text=True,capture_output=True,timeout=15)
-                        if stopped.returncode:raise Blocked('Own one-off containers stop failed')
-                        inspect=subprocess.run(['docker','inspect',*ids],cwd=self.repo,env=self.environment,text=True,capture_output=True,timeout=10)
-                        if inspect.returncode:raise Blocked('Own container stop state unknown')
-                        for item in json.loads(inspect.stdout):
-                            if (item.get('Config',{}).get('Labels') or {}).get('com.docker.compose.project')!=self.project_name:raise Blocked('Container ownership mismatch')
-                            states.append({'id':item['Id'],'running':item['State']['Running'],'status':item['State']['Status'],'oomKilled':item['State'].get('OOMKilled')})
-                        if any(x['running'] for x in states):raise Blocked('Own container remains running')
-                    self.report['shutdown']={'status':'PASS','stopExitCode':stop.returncode,'containers':states}
-                except Exception as error:
-                    self.report.update(status='BLOCKED',shutdown={'status':'BLOCKED','reason':type(error).__name__+': '+str(error)})
-            try:self.report['finalCapacity']=self.capacity()
-            except Exception as error:self.report.update(status='BLOCKED',finalAccounting={'status':'BLOCKED','reason':type(error).__name__+': '+str(error)})
-            if self.preview and self.preview.poll() is None:
-                self.preview.terminate()
-                try:self.preview.wait(timeout=5)
-                except subprocess.TimeoutExpired:self.preview.kill()
-            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','diagnostic-seed-read','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','api-health','api-ready','frontend-npm-ci','frontend-build','browser-collection','client-sql-diagnostic','browser-tests'])
-            observed={x['name'] for x in self.report['phases']}
-            self.report['notRun']=[name for name in planned if name not in observed]
+            self.active_deadline=self.deadline
+            def command(label,args,seconds):
+                data=capture_process(args,self.environment,self.repo,self.output,'cleanup-'+label,Budget(seconds,end=self.deadline),seconds)
+                if data.get('error') or data['exitCode']!=0:raise Blocked('Cleanup '+label+' unknown: '+str(data.get('error') or data['stderr'][:300]))
+                return data['stdout']
+            try:
+                if self.compose:
+                    ids=command('ids',self.compose+['ps','--all','--quiet'],5).split()
+                    if not ids or any(not re.fullmatch('[0-9a-f]{12,64}',x) for x in ids):raise Blocked('Expected owned container list unavailable')
+                    before=owned_container_states(json.loads(command('inspect-before',['docker','inspect',*ids],5)),self.project_name,self.known_container_ids)
+                    self.known_container_ids=[x['id'] for x in before]
+                    command('stop',['docker','stop','--time','5',*self.known_container_ids],15)
+                    after=owned_container_states(json.loads(command('inspect-after',['docker','inspect',*self.known_container_ids],5)),self.project_name,self.known_container_ids)
+                    if any(x['running'] for x in after):raise Blocked('Owned container remains running')
+                    self.report['shutdown']={'status':'PASS','containers':after}
+                    command('logs',self.compose+['logs','--no-color','--tail','200'],5)
+            except Exception as error:self.report.update(status='BLOCKED',shutdown={'status':'BLOCKED','reason':type(error).__name__+': '+str(error)})
+            try:
+                if self.preview:
+                    # The process was started in its own session; no global process listing.
+                    stop_owned_group(self.preview,min(self.deadline,time.monotonic()+3))
+                    self.report['previewShutdown']={'status':'PASS','exitCode':self.preview.returncode}
+            except Exception as error:self.report.update(status='BLOCKED',previewShutdown={'status':'BLOCKED','reason':str(error)})
+            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','diagnostic-seed-read','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','owned-container-ids','owned-container-inspect','api-health','api-ready','frontend-npm-ci','frontend-build','browser-collection','client-sql-diagnostic','browser-tests'])
+            self.report['notRun']=[name for name in planned if name not in {x['name'] for x in self.report['phases']}]
             if self.report['notRun'] and self.report['status']=='PASS':self.report['status']='BLOCKED'
-            self.report['elapsedSeconds']=round(time.monotonic()-self.start,3)
-            def sanitize(text):
-                for value in self.secret_values:text=text.replace(value,'[REDACTED_TEST_SECRET]')
-                return re.sub(r'\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b','[REDACTED_TEST_JWT]',text)
-            for path in self.output.glob('*.log'):(public/path.name).write_text(sanitize(path.read_text(errors='replace')))
-            for name in ('browser-results.json',):
-                path=self.output/name
-                if path.exists():(public/name).write_text(sanitize(path.read_text(errors='replace')))
-            (public/'report.json').write_text(sanitize(json.dumps(self.report,indent=2)+'\n'))
+            try:
+                payloads=[]
+                for path in list(self.output.glob('*.log'))+[self.output/'browser-results.json']:
+                    if path.exists():
+                        if path.stat().st_size>STREAM_LIMIT:raise Blocked('Retained evidence output bound')
+                        value=redact_export(path.read_text(errors='strict'),self.secret_values)
+                        if path.name=='browser-results.json':
+                            value=json.dumps(sanitize_attachments(json.loads(value),self.secret_values))
+                        payloads.append((path.name,value))
+                self.capacity()
+                projected=sum(len(v.encode())+4096 for _,v in payloads)
+                state=self.report['lastCapacity']
+                if state['chargedBytes']+projected>self.artifact_cap or state['freeBytes']-projected<RESERVE:raise Blocked('Evidence export cannot fit existing cap/reserve')
+                for name,value in payloads:(public/name).write_text(value)
+                self.report['elapsedSeconds']=time.monotonic()-self.start
+                allocation=padded_report(target,safe_report(self.report),REPORT_LIMIT)
+                self.report['finalCapacity']=self.capacity()
+                padded_report(target,safe_report(self.report),allocation)
+                # Fixed allocation prevents the measurement metadata itself adding uncharged file growth.
+                measured=self.capacity();self.report['finalCapacity']=measured
+                padded_report(target,safe_report(self.report),allocation)
+            except Exception as error:
+                self.report.update(status='BLOCKED',finalAccounting={'status':'BLOCKED','reason':type(error).__name__+': '+str(error)})
+                minimal={k:self.report.get(k) for k in ('status','sourceSha','shutdown','previewShutdown','finalAccounting','notRun')}
+                try:padded_report(target,safe_report(minimal),REPORT_LIMIT)
+                except Exception:pass
             self.emit('FINAL',status=self.report['status'],reason=self.report.get('reason'))
         return 0 if self.report['status']=='PASS' else 1
 
