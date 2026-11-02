@@ -48,6 +48,8 @@ class Packet:
         self.repo, self.output = repo, output
         self.project = repo / "mobile/android"
         self.roots = [output, self.project / ".gradle", self.project / "build", self.project / "app/build"]
+        self.storage_baseline = None
+        self.charged_high_water = 0
         self.report = {"status": "NOT_RUN", "sourceSha": os.environ.get("GITHUB_SHA"),
                        "limits": {"jobSeconds": 1200, "packetSeconds": TOTAL_SECONDS,
                                   "gradleSeconds": GRADLE_SECONDS, "lanes": 1,
@@ -61,18 +63,64 @@ class Packet:
         print(json.dumps({"event": event, "elapsedSeconds": round(time.monotonic()-self.start, 3), **fields}), flush=True)
 
     def capacity(self):
-        roots = [str(p) for p in self.roots if p.exists()]
-        raw = subprocess.check_output(["du", "-sk", *roots], text=True, timeout=10)
-        owned = sum(int(line.split()[0]) * 1024 for line in raw.splitlines())
-        free = shutil.disk_usage(self.output).free
-        state = {"ownedBytes": owned, "freeBytes": free, "capHeadroomBytes": CAP-owned,
-                 "reserveHeadroomBytes": free-RESERVE}
-        self.report["lastCapacity"] = state
-        if owned > CAP or free < RESERVE:
-            raise Blocked("Artifact cap or free-space reserve reached")
-        if time.monotonic() >= self.deadline:
-            raise Blocked("Packet wall-clock deadline reached")
-        return state
+        sample_deadline = min(self.deadline, time.monotonic()+10)
+
+        def check_budget(measured=None):
+            free = shutil.disk_usage(self.output).free
+            delta_charge = 0 if self.storage_baseline is None else (
+                self.storage_baseline[0]+max(0, self.storage_baseline[1]-free))
+            self.charged_high_water = max(self.charged_high_water, delta_charge,
+                                          measured if measured is not None else 0)
+            if free < RESERVE or self.charged_high_water > CAP:
+                raise Blocked("Artifact cap or free-space reserve reached")
+            if time.monotonic() >= sample_deadline:
+                raise Blocked("Resource sampling or packet deadline reached")
+            return free
+
+        # Gradle atomically moves transient cache entries. A failed traversal is
+        # never an owned-size sample: remeasure only confirmed descendant ENOENT,
+        # at most three reads inside the original ten-second measurement budget.
+        for attempt in range(3):
+            if not self.output.is_dir():
+                raise Blocked("Required owned artifact root disappeared")
+            check_budget()
+            roots = [p for p in self.roots if p.exists()]
+            try:
+                sample = subprocess.run(["du", "-sk", *(str(p) for p in roots)], text=True,
+                                        capture_output=True, timeout=sample_deadline-time.monotonic(),
+                                        env={"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "LC_ALL": "C"})
+            except subprocess.TimeoutExpired as error:
+                raise Blocked("Resource sampling exceeded its ten-second budget") from error
+            check_budget()
+            if sample.returncode != 0 or sample.stderr.strip():
+                errors = sample.stderr.strip().splitlines()
+                matches = [re.fullmatch(r"du: (?:cannot access '([^']+)'|(/.+)): No such file or directory", line)
+                           for line in errors]
+                transient = sample.returncode == 1 and bool(matches) and all(
+                    match is not None and any(
+                        Path(match[1] or match[2]) != root and
+                        Path(match[1] or match[2]).is_relative_to(root) and root.is_dir()
+                        for root in roots) for match in matches)
+                if not transient:
+                    raise Blocked("Resource measurement failed: "+sample.stderr.strip())
+                self.emit("RESOURCE_REMEASURE", sample=attempt+1, reason="Owned transient descendant ENOENT")
+                continue
+            rows = [line.split("\t", 1) for line in sample.stdout.splitlines()]
+            if len(rows) != len(roots) or any(
+                len(row) != 2 or not row[0].isdigit() or row[1] != str(root)
+                for row, root in zip(rows, roots)):
+                raise Blocked("Incomplete or malformed resource measurement")
+            owned = sum(int(row[0])*1024 for row in rows)
+            free = check_budget(owned)
+            if self.storage_baseline is None:
+                self.storage_baseline = (owned, free)
+            state = {"ownedBytes": owned, "chargedBytes": self.charged_high_water,
+                     "freeBytes": free, "capHeadroomBytes": CAP-self.charged_high_water,
+                     "reserveHeadroomBytes": free-RESERVE,
+                     "measurementAttempts": attempt+1, "completeMeasurement": True}
+            self.report["lastCapacity"] = state
+            return state
+        raise Blocked("No complete resource measurement after three bounded reads")
 
     def run(self, label, args, env, seconds):
         seconds = min(seconds, self.deadline-time.monotonic()-20)
