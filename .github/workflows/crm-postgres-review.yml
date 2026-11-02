@@ -2,9 +2,6 @@ name: CRM PostgreSQL compatibility review
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["codex/crm-postgres-compat-review"]
-    paths: [".github/workflows/crm-postgres-review.yml"]
 
 permissions:
   contents: read
