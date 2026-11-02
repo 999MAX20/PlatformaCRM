@@ -203,7 +203,7 @@ class StackPacket(StackBudget):
         if int(memory.get('MemAvailable','0'))*1024<4*1024**3:
             raise Blocked('Less than4GiB available RAM for existing service topology')
         state=self.capacity()
-        projected=1932735283 if self.mode=='backend-targeted' else 2895382962
+        projected=1932735283 if self.mode=='backend-targeted' else 3029600690
         self.report['projection']={'bytes':projected,'estimateIsNotMeasuredPeak':True}
         if state['chargedBytes']+projected>self.artifact_cap or state['freeBytes']-projected<RESERVE:
             raise Blocked('Declared projection would breach explicit cap/free reserve')
@@ -247,6 +247,18 @@ class StackPacket(StackBudget):
         self.compose=['docker','compose','--project-name',self.project_name,'-f','docker-compose.yml',
                       '-f','mobile/ci/crm-test-stack.compose.yml','--env-file',str(env_file)]
         if not self.do('compose-preflight',self.compose+['config','--quiet'],20):raise Blocked('Compose config invalid; no build attempted')
+        if self.mode=='queue-web':
+            if not self.do('compose-effective-config',self.compose+['config','--format','json'],20):raise Blocked('Merged test topology not available')
+            effective=json.loads((self.output/'compose-effective-config.log').read_text())
+            services=effective['services'];proxy=services['ci-loopback']
+            expected=[{'target':8080,'published':'8000','host_ip':'127.0.0.1','protocol':'tcp'}]
+            actual=[{k:str(p[k]) if k=='published' else p.get(k) for k in ('target','published','host_ip','protocol')} for p in proxy.get('ports',[])]
+            if actual!=expected:raise Blocked('Declared test port must be exactly127.0.0.1:8000->8080/tcp')
+            if effective['networks']['default'].get('internal') is not True:raise Blocked('Application network isolation changed')
+            for service in ('web','db','redis','celery'):
+                if services[service].get('ports') or set(services[service]['networks'])!={'default'}:raise Blocked('Application service exposed or non-internal: '+service)
+            if set(proxy['networks'])!={'default','ci-loopback'} or proxy['image']!='docker.io/library/nginx@sha256:84ed8c0dd296c188bfc24ed506f46589e9285fb0b11cf3a04d91d524d3067e11':raise Blocked('Ingress topology/image drift')
+            self.report['topologyPreflight']={'status':'PASS','published':expected,'applicationServicesInternalOnly':True}
         self.emit('PREFLIGHT_PASS',sha=head,**state)
         built=self.do('image-build',self.compose+['build','web'],300)
         db=self.do('db-redis-up',self.compose+['up','-d','--wait','--wait-timeout','90','db','redis'],100,ready=built)
@@ -268,6 +280,7 @@ class StackPacket(StackBudget):
             self.report['status']='PASS' if all(x['status']=='PASS' for x in self.report['phases']) else 'FAIL'
             return
         runtime=self.do('runtime-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','web','celery'],70,ready=migrated)
+        ingress=self.do('loopback-ingress-up',self.compose+['up','-d','--no-build','--wait','--wait-timeout','60','ci-loopback'],90,ready=runtime)
         exec_web=self.compose+['exec','-T','web','python','manage.py']
         seeded=self.do('synthetic-seed',exec_web+['prepare_e2e_smoke_data','--password',password],60,ready=runtime)
         identity=self.do('synthetic-business-id',exec_web+['shell','-c',"from apps.businesses.models import Business; print('__BUSINESS_ID__='+str(Business.objects.get(slug='zani-e2e-demo').id))"],30,ready=seeded)
@@ -275,14 +288,26 @@ class StackPacket(StackBudget):
         if identity and len(matches)!=1:raise Blocked('Ambiguous synthetic Business ID')
         if self.mode=='queue-web':
             self.do('real-queue-smoke',exec_web+['queue_runtime_smoke','--business-id',matches[0] if matches else '0','--timeout','45'],60,ready=bool(matches))
-        mapped=self.do('effective-port-bindings',self.compose+['port','web','8000'],15,ready=runtime)
-        self.do('effective-web-state',self.compose+['ps','web','--format','json'],15,ready=runtime)
+        mapped=self.do('effective-port-bindings',self.compose+['port','ci-loopback','8080'],15,ready=ingress)
+        self.do('effective-web-state',self.compose+['ps','web','ci-loopback','--format','json'],15,ready=runtime)
         internal=self.do('internal-health',self.compose+['exec','-T','web','python','-c',"import urllib.request; r=urllib.request.urlopen('http://127.0.0.1:8000/health/',timeout=5); assert r.status==200; print('INTERNAL_HEALTH200')"],15,ready=runtime)
         if mapped:
             binding=(self.output/'effective-port-bindings.log').read_text().strip()
             self.report['effectiveHostBinding']=binding
             if binding!='127.0.0.1:8000':raise Blocked('Loopback-only declared host binding not confirmed')
-        host=self.do('api-health',['curl','--fail','--silent','--show-error','--max-time','15','http://127.0.0.1:8000/health/'],20,ready=mapped and internal)
+        actual_bindings=False
+        if self.do('ingress-container-id',self.compose+['ps','--quiet','ci-loopback'],15,ready=ingress):
+            cid=(self.output/'ingress-container-id.log').read_text().strip()
+            if not re.fullmatch(r'[0-9a-f]{12,64}',cid):raise Blocked('Ambiguous own ingress ID')
+            template='{{json .HostConfig.PortBindings}}\n{{json .NetworkSettings.Ports}}'
+            if self.do('ingress-actual-bindings',['docker','inspect','--format',template,cid],15):
+                values=[json.loads(line) for line in (self.output/'ingress-actual-bindings.log').read_text().splitlines() if line.strip()]
+                wanted={'8080/tcp':[{'HostIp':'127.0.0.1','HostPort':'8000'}]}
+                if len(values)!=2 or any({k:v for k,v in value.items() if v}!=wanted for value in values):raise Blocked('Actual ingress binding is missing or not exclusive loopback')
+                actual_bindings=True
+                self.report['actualBindings']={'status':'PASS','HostConfig':values[0],'NetworkSettings':values[1]}
+        host=self.do('api-health',['curl','--fail','--silent','--show-error','--max-time','15','http://127.0.0.1:8000/health/'],20,ready=mapped and internal and actual_bindings)
+        ready=self.do('api-ready',['curl','--fail','--silent','--show-error','--max-time','15','http://127.0.0.1:8000/ready/'],20,ready=host)
         installed=self.do('frontend-npm-ci',['npm','--prefix','frontend','ci','--no-audit','--no-fund'],180)
         frontend=self.do('frontend-build',['npm','--prefix','frontend','run','build'],180,ready=installed)
         if frontend:
@@ -300,14 +325,14 @@ class StackPacket(StackBudget):
                                 MERCHANT_OWNER_EMAIL='business_owner@example.com',MERCHANT_OWNER_PASSWORD=password,
                                 E2E_PASSWORD=password,E2E_PLATFORM_EMAIL='platform_admin@example.com',
                                 E2E_OWNER_EMAIL='business_owner@example.com',E2E_OPERATOR_EMAIL='business_operator@example.com')
-        self.do('internal-http-smoke',['bash',str(self.output/'staging-smoke-retain.sh')],60,ready=frontend and seeded and host)
+        self.do('internal-http-smoke',['bash',str(self.output/'staging-smoke-retain.sh')],60,ready=frontend and seeded and host and ready)
         chrome=shutil.which('google-chrome')
         config=self.repo/'frontend/playwright.ci-stack.config.ts'
         if config.exists():raise Blocked('Refuse existing generated test config')
         config.write_text("import {defineConfig} from '@playwright/test';\nimport base from './playwright.staging.config';\nexport default defineConfig(base,{retries:0,workers:1,use:{...base.use,channel:'chrome',trace:'off',screenshot:'off',video:'off'},reporter:[['list'],['json',{outputFile:process.env.CRM_E2E_REPORT}]]});\n")
         self.environment['CRM_E2E_REPORT']=str(self.output/'browser-results.json')
         browser_seconds=min(300,max(0,int(self.deadline-time.monotonic()-30)))
-        self.do('browser-tests',['npm','--prefix','frontend','exec','--','playwright','test','--config=frontend/playwright.ci-stack.config.ts','--workers=1','--retries=0','--global-timeout='+str(browser_seconds*1000)],browser_seconds+5,ready=frontend and seeded and host and bool(chrome) and browser_seconds>0)
+        self.do('browser-tests',['npm','--prefix','frontend','exec','--','playwright','test','--config=frontend/playwright.ci-stack.config.ts','--workers=1','--retries=0','--global-timeout='+str(browser_seconds*1000)],browser_seconds+5,ready=frontend and seeded and host and ready and bool(chrome) and browser_seconds>0)
         self.capacity()
         self.report['status']='PASS' if all(x['status']=='PASS' for x in self.report['phases']) else 'FAIL'
 
@@ -349,7 +374,7 @@ class StackPacket(StackBudget):
                 self.preview.terminate()
                 try:self.preview.wait(timeout=5)
                 except subprocess.TimeoutExpired:self.preview.kill()
-            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['runtime-up','synthetic-seed','synthetic-business-id','real-queue-smoke','effective-port-bindings','effective-web-state','internal-health','api-health','frontend-npm-ci','frontend-build','internal-http-smoke','browser-tests'])
+            planned=['docker-version','compose-preflight','image-build','db-redis-up','migration-drift','django-check','migrate']+(['postgres-vendor','backend-targeted'] if self.mode=='backend-targeted' else ['compose-effective-config','runtime-up','loopback-ingress-up','synthetic-seed','synthetic-business-id','real-queue-smoke','effective-port-bindings','effective-web-state','internal-health','ingress-container-id','ingress-actual-bindings','api-health','api-ready','frontend-npm-ci','frontend-build','internal-http-smoke','browser-tests'])
             observed={x['name'] for x in self.report['phases']}
             self.report['notRun']=[name for name in planned if name not in observed]
             if self.report['notRun'] and self.report['status']=='PASS':self.report['status']='BLOCKED'

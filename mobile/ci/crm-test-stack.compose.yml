@@ -3,8 +3,7 @@ services:
     image: crm-test-stack:${CRM_TEST_RUN}
     mem_limit: 768m
     cpus: 1.0
-    ports: !override
-      - "127.0.0.1:8000:8000"
+    ports: !reset []
   celery:
     image: crm-test-stack:${CRM_TEST_RUN}
     command: celery -A config worker --loglevel=info --queues=default,automations,notifications,reports_exports --concurrency=1
@@ -16,6 +15,25 @@ services:
   redis:
     mem_limit: 128m
     ports: !reset []
+  ci-loopback:
+    image: docker.io/library/nginx@sha256:84ed8c0dd296c188bfc24ed506f46589e9285fb0b11cf3a04d91d524d3067e11
+    mem_limit: 64m
+    cpus: 0.25
+    ports:
+      - target: 8080
+        published: "8000"
+        host_ip: "127.0.0.1"
+        protocol: tcp
+    volumes:
+      - ./mobile/ci/crm-ci-loopback.nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - default
+      - ci-loopback
+    depends_on:
+      web:
+        condition: service_healthy
 networks:
+  ci-loopback:
+    driver: bridge
   default:
     internal: true

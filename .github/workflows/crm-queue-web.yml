@@ -2,6 +2,9 @@ name: CRM independent queue and web diagnostic
 
 on:
   workflow_dispatch:
+  push:
+    branches: ["codex/mobile-max"]
+    paths: [".github/workflows/crm-queue-web.yml"]
 
 permissions:
   contents: read
