@@ -3,13 +3,29 @@ import CRMCore
 func runInboxLifecycleChecks(directory:URL) async throws -> Int {
     var count=0
     func expect(_ v:Bool,_ m:String) throws {guard v else {throw CheckFailure(message:m)};count += 1}
-    let d=try JSONSerialization.jsonObject(with:Data(contentsOf:directory.appendingPathComponent("inbox-lifecycle.json"))) as! [String:Any]
+    guard let fixtureData=try? Data(contentsOf:directory.appendingPathComponent("inbox-lifecycle.json")),
+          let d=(try? JSONSerialization.jsonObject(with:fixtureData)) as? [String:Any],
+          d["fixture_only"] as? Bool == true,
+          d["source_cases"] is [[String:Any]], d["receipt_cases"] is [[String:Any]],
+          let fixtureContext=d["context"] as? [String:Int],
+          ["business","conversation","epoch","revision"].allSatisfy({fixtureContext[$0] != nil}),
+          let fixtureSourceJSON=d["source_json"] as? String
+    else {throw CheckFailure(message:"Missing or invalid fixture envelope: inbox-lifecycle.json")}
     func context(_ v:[String:Int])->InboxConversationFilesContext {InboxConversationFilesContext(business:v["business"]!,conversation:v["conversation"]!,epoch:v["epoch"]!,revision:v["revision"]!)}
     for row in d["source_cases"] as! [[String:Any]] {let s=InboxLifecycleSource.decode(Data((row["response_json"] as! String).utf8),context:context(row["context"] as! [String:Int]));try expect((s != nil)==row["valid"] as! Bool,"Lifecycle raw scope/strict bool \(row["name"]!)");if let s {try expect(s.valid && Mirror(reflecting:s).children.count==5,"Lifecycle retained unexposed close_reason/metadata/authority")}}
-    let c=context(d["context"] as! [String:Int]),s=InboxLifecycleSource.decode(Data((d["source_json"] as! String).utf8),context:c)!,port=FixtureInboxLifecyclePort(directory:directory),auth=port.grants[0].authorization(for:c)!
+    let c=context(fixtureContext)
+    guard let s=InboxLifecycleSource.decode(Data(fixtureSourceJSON.utf8),context:c)
+    else {throw CheckFailure(message:"Invalid source fixture: inbox-lifecycle.json")}
+    let port=FixtureInboxLifecyclePort(directory:directory)
+    func fixtureAuthorization(_ owner:InboxConversationFilesContext) throws -> SyntheticInboxLifecycleAuthorization {
+        guard let grant=port.grants.first,let authorization=grant.authorization(for:owner)
+        else {throw CheckFailure(message:"Missing, invalid or unauthorized fixture grants: inbox-lifecycle.json")}
+        return authorization
+    }
+    let auth=try fixtureAuthorization(c)
     for row in d["receipt_cases"] as! [[String:Any]] {let action=InboxLifecycleAction(rawValue:row["action"] as! String)!;var l=InboxLifecycleLedger();let a=l.begin(InboxLifecycleReview(source:s,authorization:auth,action:action,visit:1))!,r=InboxLifecycleReceipt.decode(Data((row["response_json"] as! String).utf8),attempt:a);try expect((r != nil)==row["valid"] as! Bool,"Lifecycle plain200 \(row["name"]!)");l.complete(a,outcome:.response(status:200,data:Data((row["response_json"] as! String).utf8)));try expect(l.visible(auth)?.phase == (r==nil ? .unknown:.response) && l.records[0].attempt==a,"Malformed response lost original omission/action or released unknown")}
     for action in [InboxLifecycleAction.close,.reopen] {var l=InboxLifecycleLedger();let r=InboxLifecycleReview(source:s,authorization:auth,action:action,visit:2),a=l.begin(r)!;try expect(a.preparedBody()==Data("{}".utf8) && a.path=="/api/inbox/conversations/901/\(action.rawValue)/" && a.query.isEmpty && a.headers.isEmpty,"Lifecycle invented reason/body/key/version/query");try expect(l.begin(r)==nil && !l.acknowledge(auth,record:l.visible(auth)!),"Pending lifecycle repeated or acknowledged");l.complete(a,outcome:try await port.execute(a));let result=l.visible(auth)!;try expect(result.phase == .response && result.result?.source.status==(action == .close ? "closed":"open") && result.attempt.review.source==s && l.acknowledge(auth,record:result),"Synthetic result changed original or lost explicit ack");if action == .reopen {try expect(result.result?.source.botEnabled==false && result.result?.source.handoffRequired==true,"Reopen invented a bot enable/handoff reset")}}
-    var l=InboxLifecycleLedger();let r=InboxLifecycleReview(source:s,authorization:auth,action:.reopen,visit:3),a=l.begin(r)!;l.complete(a,outcome:.unknown);let unknown=l.visible(auth)!,next=InboxConversationFilesContext(business:101,conversation:901,epoch:2,revision:2),na=port.grants[0].authorization(for:next)!,matching=InboxLifecycleSource.decode(Data((d["reopen_response_json"] as! String).utf8),context:next)!
+    var l=InboxLifecycleLedger();let r=InboxLifecycleReview(source:s,authorization:auth,action:.reopen,visit:3),a=l.begin(r)!;l.complete(a,outcome:.unknown);let unknown=l.visible(auth)!,next=InboxConversationFilesContext(business:101,conversation:901,epoch:2,revision:2),na=try fixtureAuthorization(next),matching=InboxLifecycleSource.decode(Data((d["reopen_response_json"] as! String).utf8),context:next)!
     try expect(l.visible(na)==unknown && !l.acknowledge(na,record:unknown) && l.begin(InboxLifecycleReview(source:matching,authorization:na,action:.close,visit:4))==nil && l.records[0].attempt==a,"Already-open/matching GET/opposite lifecycle action recovered unknown despite real SYSTEM-row side effects")
     let other=SyntheticInboxLifecycleGrant(business:101,conversation:901,actor:6002,update:true).authorization(for:next)!;try expect(l.visible(other)==nil && l.blocked(business:101,conversation:901) && !l.blocked(business:202,conversation:951),"Lifecycle actor/Business isolation")
     for g in [SyntheticInboxLifecycleGrant(business:101,conversation:901,actor:5001,update:false),SyntheticInboxLifecycleGrant(business:202,conversation:901,actor:5001,update:true),SyntheticInboxLifecycleGrant(business:101,conversation:951,actor:5001,update:true),SyntheticInboxLifecycleGrant(business:101,conversation:901,actor:0,update:true)] {try expect(g.authorization(for:c)==nil,"GET or another action grant minted lifecycle UPDATE")}

@@ -64,13 +64,13 @@ public struct FixtureInboxPriorityPort:SyntheticInboxPriorityPort {
     private struct Scenario:Decodable,Sendable {let business:Int,conversation:Int,actor:Int,priority:String,outcome:String;let status:Int?;let response_json:String?}
     private struct Catalog:Decodable {let fixture_only:Bool;let grants:[SyntheticInboxPriorityGrant];let scenarios:[Scenario]}
     public let grants:[SyntheticInboxPriorityGrant];private let scenarios:[Scenario]
-    public init(directory:URL) {if let d=try? Data(contentsOf:directory.appendingPathComponent("inbox-read-marker.json")),let c=try? JSONDecoder().decode(Catalog.self,from:d),c.fixture_only {grants=c.grants;scenarios=c.scenarios} else {grants=[];scenarios=[]}}
+    public init(directory:URL) {if let d=try? Data(contentsOf:directory.appendingPathComponent("inbox-priority.json")),let c=try? JSONDecoder().decode(Catalog.self,from:d),c.fixture_only {grants=c.grants;scenarios=c.scenarios} else {grants=[];scenarios=[]}}
     public func execute(_ a:InboxPriorityAttempt) async throws -> SyntheticInboxPriorityOutcome {let auth=a.review.authorization,c=auth.context;guard a.review.valid,grants.compactMap({$0.authorization(for:c)}).contains(auth),let s=scenarios.first(where:{$0.business==c.business && $0.conversation==c.conversation && $0.actor==auth.actor && $0.priority==a.review.value.rawValue}) else {return .rejectedWithoutWrite};if s.outcome=="response",let status=s.status,let raw=s.response_json {return .response(status:status,data:Data(raw.utf8))};return s.outcome=="rejected" ? .rejectedWithoutWrite:.unknown}
 }
 public struct FixtureInboxPriorityReadTransport:ReadTransport {
     private struct Row:Decodable,Sendable {let path:String,response_json:String}
     private struct Catalog:Decodable {let fixture_only:Bool;let reads:[Row]}
     private let rows:[Row]
-    public init(directory:URL) {if let d=try? Data(contentsOf:directory.appendingPathComponent("inbox-read-marker.json")),let c=try? JSONDecoder().decode(Catalog.self,from:d),c.fixture_only {rows=c.reads} else {rows=[]}}
+    public init(directory:URL) {if let d=try? Data(contentsOf:directory.appendingPathComponent("inbox-priority.json")),let c=try? JSONDecoder().decode(Catalog.self,from:d),c.fixture_only {rows=c.reads} else {rows=[]}}
     public func get(_ q:ReadRequest) async throws -> ReadResponse {guard q.query.isEmpty,let row=rows.first(where:{$0.path==q.path}) else {throw ReadFailure.invalidContext};return ReadResponse(status:200,data:Data(row.response_json.utf8))}
 }
