@@ -29,7 +29,12 @@ actor LinkClientReadRecorder:ReadTransport {
     m.openFiles(expected:m.filesEntryControl);try expect(await transport.recorded().isEmpty && link.source==nil && picker.session.selection==nil && !link.canOpen,"Bounded link/open minted generic source/Client identity/grant or automatic GET")
     await link.load(expected:link.control);let sourceSnapshot=link.source!,before=link.control!;try expect(sourceSnapshot.client==701 && link.canOpen && !link.editing,"Generic client alias or source scope")
     link.open(expected:before);let input=link.input!;link.update("  Synthetic search-only é  ",input:input);link.update("",input:input);try expect(picker.session.query.isEmpty && picker.session.items.isEmpty && link.candidate==nil,"Continuous input failed or locally filtered Directory rows became results")
-    let searchControl=link.control!,oldWindow=picker.control!;await link.search(expected:searchControl,child:oldWindow);try expect(picker.session.loaded && picker.session.partial && picker.session.items.count==50 && picker.session.total==54 && link.candidate==nil,"Bounded search window became full catalog or auto Client choice")
+    let searchControl=link.control!,oldWindow=picker.control!;await link.search(expected:searchControl,child:oldWindow);
+    try expect(picker.session.loaded,"Client search window was not loaded")
+    try expect(picker.session.partial,"Client search lost the partial fifty-of-fifty-six window")
+    try expect(picker.session.items.count==50,"Client search expected fifty visible rows, got \(picker.session.items.count)")
+    try expect(picker.session.total==56,"Client search catalogue expected total fifty-six, got \(String(describing:picker.session.total))")
+    try expect(link.candidate==nil,"Client search automatically selected a candidate")
     await link.openClient(1701,expected:searchControl,child:oldWindow);try expect(picker.session.profileSelection==nil,"Old query/window opened a current profile")
     await link.openClient(1701,expected:link.control,child:picker.control);let profile=picker.profile.readSelection!;try expect(profile.business==101 && profile.id==1701 && link.candidate==nil && !link.canPrepare,"Directory row skipped independent profile read")
     let useControl=link.control!,profileControl=picker.control!;link.useClient(expected:useControl,child:profileControl);let candidate=link.candidate!,choiceControl=link.control!;try expect(candidate.choice.id==1701 && candidate.source==sourceSnapshot && candidate.read==profile && link.canPrepare && !container.canPrepareMarker && !container.canChoosePriority,"Qualified Client not bound to current source/profile or sibling editor remained available")
