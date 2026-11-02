@@ -8,7 +8,7 @@ class FixtureAppointmentBookingPort private constructor(private val rows:List<Ro
     private data class Input(val client:Int,val service:Int,val resource:Int?,val start:String)
     private data class Row(val grant:SyntheticAppointmentBookingGrant,val input:Input,val outcome:String,val status:Int?,val body:String?)
     override val grants get()=rows.map {it.grant}
-    constructor(assets:AssetManager):this(runCatching {parse(assets.open("fixtures/appointment-booking.json").bufferedReader().use {it.readText()})}.getOrDefault(emptyList()))
+    constructor(assets:AssetManager):this(kotlin.runCatching {FixtureAppointmentBookingPort.parse(assets.open("fixtures/appointment-booking.json").bufferedReader().use {it.readText()})}.getOrDefault(emptyList()))
     override suspend fun execute(attempt:AppointmentBookingAttempt):SyntheticAppointmentBookingOutcome {
         val row=rows.filter {it.grant.authorization(attempt.review.source)==attempt.authorization}.singleOrNull() ?: return SyntheticAppointmentBookingOutcome.Unknown;val input=attempt.review.input
         if(row.input.client!=input.client.id || row.input.service!=input.service.id || row.input.resource!=input.resource.id || row.input.start!=input.start.raw)return SyntheticAppointmentBookingOutcome.Unknown

@@ -2,7 +2,7 @@ package kz.zani.mobile.core
 
 import org.json.JSONObject
 
-enum class AppointmentReferenceKind {SERVICE,RESOURCE
+enum class AppointmentReferenceKind {SERVICE,RESOURCE;
     fun path(id:Int):String?=if(id>0)"/api/${if(this==SERVICE)"services" else "resources"}/$id/" else null
 }
 data class AppointmentReferenceDetail(val id:Int,val business:Int,val name:String,val isActive:Boolean?,val resourceType:String?) {

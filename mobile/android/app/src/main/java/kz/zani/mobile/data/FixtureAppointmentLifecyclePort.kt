@@ -8,7 +8,7 @@ class FixtureAppointmentLifecyclePort private constructor(private val rows:List<
     private data class Expected(val start:String,val reason:String,val resource:Int?)
     private data class Row(val grant:SyntheticAppointmentLifecycleGrant,val action:AppointmentLifecycleAction,val outcome:String,val status:Int?,val body:String?,val input:Expected?)
     override val grants get()=rows.map {it.grant}.distinct()
-    constructor(assets:AssetManager):this(runCatching {parse(assets.open("fixtures/appointment-lifecycle.json").bufferedReader().use {it.readText()})}.getOrDefault(emptyList()))
+    constructor(assets:AssetManager):this(kotlin.runCatching {FixtureAppointmentLifecyclePort.parse(assets.open("fixtures/appointment-lifecycle.json").bufferedReader().use {it.readText()})}.getOrDefault(emptyList()))
     override suspend fun execute(attempt:AppointmentLifecycleAttempt):SyntheticAppointmentLifecycleOutcome {
         val row=rows.filter {it.action==attempt.review.action && it.grant.authorization(attempt.review.source,it.action)==attempt.authorization}.singleOrNull() ?: return SyntheticAppointmentLifecycleOutcome.Unknown
         if(attempt.review.action==AppointmentLifecycleAction.RESCHEDULE) {val input=attempt.review.reschedule ?: return SyntheticAppointmentLifecycleOutcome.Unknown;val expected=row.input ?: return SyntheticAppointmentLifecycleOutcome.Unknown;if(input.start.raw!=expected.start || input.rawReason!=expected.reason || input.resource.id!=expected.resource)return SyntheticAppointmentLifecycleOutcome.Unknown}

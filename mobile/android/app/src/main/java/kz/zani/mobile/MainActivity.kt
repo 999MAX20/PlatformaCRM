@@ -11,6 +11,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kz.zani.mobile.data.APIReadRepository
+import kz.zani.mobile.data.APIInboxConversationFilesRepository
+import kz.zani.mobile.data.FixtureInboxConversationFilesTransport
+import kz.zani.mobile.data.APIInboxMessageFilesRepository
+import kz.zani.mobile.data.FixtureTaskAppointmentEditPort
+import kz.zani.mobile.data.FixtureTaskClientEditPort
 import kz.zani.mobile.data.APILeadReadRepository
 import kz.zani.mobile.data.APIInboxLinkLeadRepository
 import kz.zani.mobile.data.APIDealReadRepository

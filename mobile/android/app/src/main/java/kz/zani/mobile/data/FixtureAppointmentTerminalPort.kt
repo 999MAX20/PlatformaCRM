@@ -9,7 +9,7 @@ class FixtureAppointmentTerminalPort private constructor(private val mobile:Fixt
     private data class Row(val grant:SyntheticAppointmentTerminalGrant,val action:AppointmentLifecycleAction,val outcome:String,val status:Int?,val body:String?)
     override val grants get()=mobile.grants
     override val terminalGrants get()=rows.map {it.grant}.distinct()
-    constructor(assets:AssetManager):this(FixtureAppointmentLifecyclePort(assets),runCatching {parse(assets.open("fixtures/appointment-terminal.json").bufferedReader().use {it.readText()})}.getOrDefault(emptyList()))
+    constructor(assets:AssetManager):this(FixtureAppointmentLifecyclePort(assets),kotlin.runCatching {FixtureAppointmentTerminalPort.parse(assets.open("fixtures/appointment-terminal.json").bufferedReader().use {it.readText()})}.getOrDefault(emptyList()))
     override suspend fun execute(attempt:AppointmentLifecycleAttempt):SyntheticAppointmentLifecycleOutcome {
         if(!attempt.review.action.isGenericTerminal)return mobile.execute(attempt)
         val row=rows.filter {it.action==attempt.review.action && it.grant.authorization(attempt.review.source,it.action)==attempt.authorization}.singleOrNull() ?: return SyntheticAppointmentLifecycleOutcome.Unknown

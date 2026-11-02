@@ -8,7 +8,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kz.zani.mobile.core.*
 
-@Composable private fun InboxExistingClientSourceContent(source:InboxExistingClientSource,copy:Map<String,String>) {fun text(k:String)=copy[k] ?: k;Text(source.client?.let {text("inboxExistingOriginal")+": #$it"} ?: text("inboxExistingAbsent"))}
+@Composable private fun InboxExistingClientSourceContent(source:InboxExistingClientSource,copy:Map<String,String>) {
+    fun text(k:String):String = copy[k] ?: k
+    Text(source.client?.let {text("inboxExistingOriginal")+": #$it"} ?: text("inboxExistingAbsent"))
+}
 @Composable fun InboxExistingClientContent(model:InboxExistingClientModel,copy:Map<String,String>,isCurrent:()->Boolean) {
     fun text(k:String)=copy[k] ?: k
     val readScope=text("inboxExistingTitle")
