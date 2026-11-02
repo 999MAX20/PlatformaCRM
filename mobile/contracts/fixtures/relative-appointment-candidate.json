@@ -1,0 +1,531 @@
+{
+  "fixture_only": true,
+  "contract": "Existing independent notification appointment_id + exact action_url. Candidate is untrusted syntax; no fetch, ingress or permission.",
+  "parse_cases": [
+    {
+      "name": "query501",
+      "raw": "/app/calendar?appointment=501",
+      "candidate_id": "501"
+    },
+    {
+      "name": "path501",
+      "raw": "/app/calendar/501",
+      "candidate_id": "501"
+    },
+    {
+      "name": "slash501",
+      "raw": "/app/calendar/501/",
+      "candidate_id": "501"
+    },
+    {
+      "name": "path502",
+      "raw": "/app/calendar/502",
+      "candidate_id": "502"
+    },
+    {
+      "name": "one",
+      "raw": "/app/calendar/1",
+      "candidate_id": "1"
+    },
+    {
+      "name": "beyond_source_Int32",
+      "raw": "/app/calendar/2147483648",
+      "candidate_id": "2147483648"
+    },
+    {
+      "name": "signed64_max",
+      "raw": "/app/calendar/9223372036854775807",
+      "candidate_id": "9223372036854775807"
+    },
+    {
+      "name": "empty",
+      "raw": "",
+      "candidate_id": null
+    },
+    {
+      "name": "absolute",
+      "raw": "https://example.invalid/app/calendar/501",
+      "candidate_id": null
+    },
+    {
+      "name": "scheme",
+      "raw": "crm:/app/calendar/501",
+      "candidate_id": null
+    },
+    {
+      "name": "scheme_relative",
+      "raw": "//example.invalid/app/calendar/501",
+      "candidate_id": null
+    },
+    {
+      "name": "userinfo",
+      "raw": "https://a@b/app/calendar/501",
+      "candidate_id": null
+    },
+    {
+      "name": "fragment",
+      "raw": "/app/calendar/501#x",
+      "candidate_id": null
+    },
+    {
+      "name": "query_fragment",
+      "raw": "/app/calendar?appointment=501#x",
+      "candidate_id": null
+    },
+    {
+      "name": "extra_query",
+      "raw": "/app/calendar?appointment=501&x=1",
+      "candidate_id": null
+    },
+    {
+      "name": "duplicate_query",
+      "raw": "/app/calendar?appointment=501&appointment=501",
+      "candidate_id": null
+    },
+    {
+      "name": "encoded_query",
+      "raw": "/app/calendar?appointment=%35%30%31",
+      "candidate_id": null
+    },
+    {
+      "name": "encoded_slash",
+      "raw": "/app/calendar%2F501",
+      "candidate_id": null
+    },
+    {
+      "name": "double_slash",
+      "raw": "/app/calendar//501",
+      "candidate_id": null
+    },
+    {
+      "name": "double_end",
+      "raw": "/app/calendar/501//",
+      "candidate_id": null
+    },
+    {
+      "name": "backslash",
+      "raw": "/app/calendar\\501",
+      "candidate_id": null
+    },
+    {
+      "name": "space",
+      "raw": " /app/calendar/501",
+      "candidate_id": null
+    },
+    {
+      "name": "end_space",
+      "raw": "/app/calendar/501 ",
+      "candidate_id": null
+    },
+    {
+      "name": "newline",
+      "raw": "/app/calendar/501\n",
+      "candidate_id": null
+    },
+    {
+      "name": "tab",
+      "raw": "/app/calendar/\t501",
+      "candidate_id": null
+    },
+    {
+      "name": "zero",
+      "raw": "/app/calendar/0",
+      "candidate_id": null
+    },
+    {
+      "name": "negative",
+      "raw": "/app/calendar/-501",
+      "candidate_id": null
+    },
+    {
+      "name": "plus",
+      "raw": "/app/calendar/+501",
+      "candidate_id": null
+    },
+    {
+      "name": "leading_zero",
+      "raw": "/app/calendar/0501",
+      "candidate_id": null
+    },
+    {
+      "name": "decimal",
+      "raw": "/app/calendar/501.0",
+      "candidate_id": null
+    },
+    {
+      "name": "exponent",
+      "raw": "/app/calendar/5e2",
+      "candidate_id": null
+    },
+    {
+      "name": "unicode_digits",
+      "raw": "/app/calendar/５０１",
+      "candidate_id": null
+    },
+    {
+      "name": "unicode_separator",
+      "raw": "/app/calendar/501 ",
+      "candidate_id": null
+    },
+    {
+      "name": "overflow",
+      "raw": "/app/calendar/9223372036854775808",
+      "candidate_id": null
+    },
+    {
+      "name": "huge",
+      "raw": "/app/calendar/9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "candidate_id": null
+    },
+    {
+      "name": "missing",
+      "raw": "/app/calendar/",
+      "candidate_id": null
+    },
+    {
+      "name": "query_empty",
+      "raw": "/app/calendar?appointment=",
+      "candidate_id": null
+    },
+    {
+      "name": "path_query",
+      "raw": "/app/calendar/501?appointment=501",
+      "candidate_id": null
+    },
+    {
+      "name": "query_slash",
+      "raw": "/app/calendar?appointment=501/",
+      "candidate_id": null
+    },
+    {
+      "name": "case",
+      "raw": "/app/Calendar/501",
+      "candidate_id": null
+    },
+    {
+      "name": "dot",
+      "raw": "/app/calendar/./501",
+      "candidate_id": null
+    },
+    {
+      "name": "parent",
+      "raw": "/app/calendar/../501",
+      "candidate_id": null
+    },
+    {
+      "name": "lead",
+      "raw": "/app/leads/501",
+      "candidate_id": null
+    },
+    {
+      "name": "deal",
+      "raw": "/app/deals/501",
+      "candidate_id": null
+    },
+    {
+      "name": "encoded_question",
+      "raw": "/app/calendar%3Fappointment=501",
+      "candidate_id": null
+    },
+    {
+      "name": "encoded_key",
+      "raw": "/app/calendar?%61ppointment=501",
+      "candidate_id": null
+    },
+    {
+      "name": "semicolon",
+      "raw": "/app/calendar/501;",
+      "candidate_id": null
+    },
+    {
+      "name": "nul",
+      "raw": "/app/calendar/501\u0000",
+      "candidate_id": null
+    }
+  ],
+  "corroboration_cases": [
+    {
+      "name": "independent_0",
+      "raw": "/app/calendar?appointment=501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": 501
+    },
+    {
+      "name": "independent_1",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": 501
+    },
+    {
+      "name": "independent_2",
+      "raw": "/app/calendar/501/",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": 501
+    },
+    {
+      "name": "different_candidate",
+      "raw": "/app/calendar/502",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": null
+    },
+    {
+      "name": "no_source_ID",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null
+      },
+      "target": null
+    },
+    {
+      "name": "null_source_ID",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": null
+      },
+      "target": null
+    },
+    {
+      "name": "mismatched_source_ID",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 502
+      },
+      "target": null
+    },
+    {
+      "name": "no_source_href",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": null
+    },
+    {
+      "name": "legacy_lead_source",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/leads/501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": null
+    },
+    {
+      "name": "absolute_source",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "https://example.invalid/app/calendar/501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": null
+    },
+    {
+      "name": "invalid_source_identity",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 0,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": null
+    },
+    {
+      "name": "invalid_source_date",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "bad",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": null
+    },
+    {
+      "name": "source_zero",
+      "raw": "/app/calendar/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 0
+      },
+      "target": null
+    },
+    {
+      "name": "raw_not_supported",
+      "raw": "/app/leads/501",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": null
+    },
+    {
+      "name": "wide_candidate_not_authority",
+      "raw": "/app/calendar/2147483648",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "target": null
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T06:32:00Z",
+  "client": {
+    "id": 7002,
+    "title": "Fresh synthetic Appointment client 7002",
+    "phone": "+70000007002",
+    "email": "appointment-7002@example.invalid",
+    "source": "manual",
+    "notes": "Independently read Appointment client 7002",
+    "created_at": "2026-10-28T00:00:00Z",
+    "updated_at": "2026-10-28T01:00:00Z",
+    "href": "/app/clients?client=7002"
+  },
+  "details": {
+    "notes": "Independently read Appointment client 7002",
+    "normalized_phone": "",
+    "normalized_email": "",
+    "whatsapp_id": "",
+    "telegram_id": "",
+    "instagram_id": ""
+  },
+  "related": {
+    "leads": [],
+    "tasks": [],
+    "appointments": [],
+    "conversations": []
+  },
+  "payload_budget": {
+    "target_kb": 80,
+    "max_related_per_section": 5
+  }
+}

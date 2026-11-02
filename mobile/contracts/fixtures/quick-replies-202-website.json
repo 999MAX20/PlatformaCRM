@@ -1,0 +1,19 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 9202,
+      "business": 202,
+      "title": "Beta booking",
+      "text": "  Synthetic booking\nSecond line  ",
+      "category": "appointments",
+      "channel": "website",
+      "sort_order": 1,
+      "is_active": true,
+      "created_at": "2026-10-29T00:00:00Z",
+      "updated_at": "2026-10-29T00:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,857 @@
+{
+  "fixture_only": true,
+  "note": "Local current-read membership/context cases. The local visit control is distinct from server version/hold/booking authority.",
+  "cases": [
+    {
+      "name": "unspecified Resource stays omitted",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": true,
+      "review_valid": true,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "selected linked Resource identity",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": {
+        "id": 9001,
+        "business": 101,
+        "name": "Scoped resource",
+        "resource_type": "room",
+        "is_active": true
+      },
+      "request_resource": true,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": true,
+      "review_valid": true,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "{\"id\":9001,\"business\":101,\"name\":\"Scoped resource\",\"resource_type\":\"room\",\"is_active\":true}",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "\"Scoped resource\""
+    },
+    {
+      "name": "first exact returned candidate",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 0,
+      "context_valid": true,
+      "review_valid": true,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "negative index",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": -1,
+      "context_valid": true,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "end index",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 2,
+      "context_valid": true,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "large foreign index",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 2147483647,
+      "context_valid": true,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "empty read has no selection",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [],
+      "index": 1,
+      "context_valid": true,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "duplicate ranges retain source index",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "index": 1,
+      "context_valid": true,
+      "review_valid": true,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "exact leading FEFF names",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "﻿Service",
+        "is_active": true
+      },
+      "context_resource": {
+        "id": 9001,
+        "business": 101,
+        "name": "﻿Resource",
+        "resource_type": "room",
+        "is_active": true
+      },
+      "request_resource": true,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": true,
+      "review_valid": true,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"﻿Service\",\"is_active\":true}",
+      "context_resource_json": "{\"id\":9001,\"business\":101,\"name\":\"﻿Resource\",\"resource_type\":\"room\",\"is_active\":true}",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"﻿Service\"",
+      "resource_name_json": "\"﻿Resource\""
+    },
+    {
+      "name": "canonically equivalent names are exact values",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Café",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": true,
+      "review_valid": true,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Café\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Café\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "inactive remains readonly",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": false
+      },
+      "context_resource": {
+        "id": 9001,
+        "business": 101,
+        "name": "Scoped resource",
+        "resource_type": "room",
+        "is_active": false
+      },
+      "request_resource": true,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": true,
+      "review_valid": true,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":false}",
+      "context_resource_json": "{\"id\":9001,\"business\":101,\"name\":\"Scoped resource\",\"resource_type\":\"room\",\"is_active\":false}",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "\"Scoped resource\""
+    },
+    {
+      "name": "unknown activity remains readonly",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": "unknown"
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": true,
+      "review_valid": true,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":\"unknown\"}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "foreign Business",
+      "context_business": {
+        "id": 202,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":202,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "mismatched Business timezone",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "UTC"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"UTC\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "unknown Business timezone",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Unknown/Zone"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Unknown/Zone\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "foreign service Business",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 202,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":202,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "other service identity",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8002,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8002,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "missing service identity",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 0,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":0,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "selected Resource missing",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": true,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    },
+    {
+      "name": "unspecified Resource becomes selected",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": {
+        "id": 9001,
+        "business": 101,
+        "name": "Scoped resource",
+        "resource_type": "room",
+        "is_active": true
+      },
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "{\"id\":9001,\"business\":101,\"name\":\"Scoped resource\",\"resource_type\":\"room\",\"is_active\":true}",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "\"Scoped resource\""
+    },
+    {
+      "name": "foreign Resource",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": {
+        "id": 9001,
+        "business": 202,
+        "name": "Scoped resource",
+        "resource_type": "room",
+        "is_active": true
+      },
+      "request_resource": true,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "{\"id\":9001,\"business\":202,\"name\":\"Scoped resource\",\"resource_type\":\"room\",\"is_active\":true}",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "\"Scoped resource\""
+    },
+    {
+      "name": "other Resource identity",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": {
+        "id": 9002,
+        "business": 101,
+        "name": "Scoped resource",
+        "resource_type": "room",
+        "is_active": true
+      },
+      "request_resource": true,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "{\"id\":9002,\"business\":101,\"name\":\"Scoped resource\",\"resource_type\":\"room\",\"is_active\":true}",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "\"Scoped resource\""
+    },
+    {
+      "name": "bad candidate body",
+      "context_business": {
+        "id": 101,
+        "name": "Synthetic Business A",
+        "timezone": "Asia/Almaty"
+      },
+      "context_service": {
+        "id": 8001,
+        "business": 101,
+        "name": "Scoped service",
+        "is_active": true
+      },
+      "context_resource": null,
+      "request_resource": false,
+      "intent_timezone": "Asia/Almaty",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T04:15:00Z"
+        }
+      ],
+      "index": 1,
+      "context_valid": false,
+      "review_valid": false,
+      "context_business_json": "{\"id\":101,\"name\":\"Synthetic Business A\",\"timezone\":\"Asia/Almaty\"}",
+      "context_service_json": "{\"id\":8001,\"business\":101,\"name\":\"Scoped service\",\"is_active\":true}",
+      "context_resource_json": "null",
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T04:15:00Z\"}]",
+      "service_name_json": "\"Scoped service\"",
+      "resource_name_json": "null"
+    }
+  ]
+}

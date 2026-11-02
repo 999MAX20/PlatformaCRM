@@ -1,0 +1,600 @@
+{
+  "fixture_only": true,
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 1200,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+  "receipt_cases": [
+    {
+      "name": "independent Deal Client and Lead",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": true
+    },
+    {
+      "name": "Deal relations happen to match original",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":701,\"lead\":81,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": true
+    },
+    {
+      "name": "nullable Deal Lead",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":null,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": true
+    },
+    {
+      "name": "blank observed title",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": true
+    },
+    {
+      "name": "sensitive lifecycle actor values discarded",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\",\"amount\":\"synthetic unconsumed value\",\"currency\":\"ZZZ\",\"notes\":\"synthetic discarded\",\"lost_reason\":\"synthetic discarded\",\"sla_overdue\":true,\"owner\":6001,\"status\":\"won\"}",
+      "valid": true
+    },
+    {
+      "name": "field mask presence does not grant or default",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\",\"amount\":null,\"currency\":\"\",\"notes\":\"\"}",
+      "valid": true
+    },
+    {
+      "name": "missing id",
+      "response_json": "{\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id None",
+      "response_json": "{\"id\":null,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id False",
+      "response_json": "{\"id\":false,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id True",
+      "response_json": "{\"id\":true,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 0",
+      "response_json": "{\"id\":0,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id -1",
+      "response_json": "{\"id\":-1,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 2147483648",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 1.5",
+      "response_json": "{\"id\":1.5,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id '111'",
+      "response_json": "{\"id\":\"111\",\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id []",
+      "response_json": "{\"id\":[],\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id {}",
+      "response_json": "{\"id\":{},\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 112",
+      "response_json": "{\"id\":112,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing business",
+      "response_json": "{\"id\":111,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business None",
+      "response_json": "{\"id\":111,\"business\":null,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business False",
+      "response_json": "{\"id\":111,\"business\":false,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business True",
+      "response_json": "{\"id\":111,\"business\":true,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 0",
+      "response_json": "{\"id\":111,\"business\":0,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business -1",
+      "response_json": "{\"id\":111,\"business\":-1,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 2147483648",
+      "response_json": "{\"id\":111,\"business\":2147483648,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 1.5",
+      "response_json": "{\"id\":111,\"business\":1.5,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business '111'",
+      "response_json": "{\"id\":111,\"business\":\"111\",\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business []",
+      "response_json": "{\"id\":111,\"business\":[],\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business {}",
+      "response_json": "{\"id\":111,\"business\":{},\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 202",
+      "response_json": "{\"id\":111,\"business\":202,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing client",
+      "response_json": "{\"id\":111,\"business\":101,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client None",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":null,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client False",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":false,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client True",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":true,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 0",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":0,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client -1",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":-1,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 2147483648",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":2147483648,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 1.5",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1.5,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client '1701'",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":\"1701\",\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client []",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":[],\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client {}",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":{},\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing lead",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead False",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":false,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead True",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":true,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 0",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":0,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead -1",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":-1,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 2147483648",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":2147483648,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 1.5",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":1.5,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead '381'",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":\"381\",\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead []",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":[],\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead {}",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":{},\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing title",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title None",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":null,\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title False",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":false,\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title 0",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":0,\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title []",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":[],\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title {}",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":{},\"updated_at\":\"existing-Deal raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing updated_at",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at None",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":null}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at False",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at 0",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":0}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at []",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at {}",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":{}}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"\"}",
+      "valid": false
+    }
+  ],
+  "source_cases": [
+    {
+      "name": "existing Deal source relations (None, None)",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":null,\"client\":null,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "existing Deal source relations (None, 81)",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":81,\"client\":null,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "existing Deal source relations (701, None)",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":null,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "existing Deal source relations (701, 81)",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "unset Deal",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":null,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "invalid deal 0",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":0,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid deal False",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":false,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid deal '111'",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":\"111\",\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid lead False",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":false,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid client False",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":81,\"client\":false,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid id 902",
+      "response_json": "{\"id\":902,\"business\":101,\"deal\":111,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid business 202",
+      "response_json": "{\"id\":901,\"business\":202,\"deal\":111,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":81,\"client\":701,\"updated_at\":\"\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing deal",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing lead",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing client",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":81,\"updated_at\":\"existing-Deal raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing updated_at",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":81,\"client\":701}",
+      "valid": false,
+      "eligible": false
+    }
+  ],
+  "grant_cases": [
+    {
+      "name": "both exact grants",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "deals_create": true,
+        "conversations_update": true
+      },
+      "valid": true
+    },
+    {
+      "name": "invalid deals_create",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "deals_create": false,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid conversations_update",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "deals_create": true,
+        "conversations_update": false
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 0,
+        "deals_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": -1,
+        "deals_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid business",
+      "grant": {
+        "business": 202,
+        "conversation": 901,
+        "actor": 5001,
+        "deals_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid conversation",
+      "grant": {
+        "business": 101,
+        "conversation": 902,
+        "actor": 5001,
+        "deals_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    }
+  ],
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "deals_create": true,
+      "conversations_update": true
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "deals_create": true,
+      "conversations_update": true
+    },
+    {
+      "business": 101,
+      "conversation": 903,
+      "actor": 5001,
+      "deals_create": true,
+      "conversations_update": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "deals_create": true,
+      "conversations_update": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "response_json": "{\"id\":901,\"business\":101,\"deal\":111,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/902/",
+      "response_json": "{\"id\":902,\"business\":101,\"deal\":111,\"lead\":null,\"client\":null,\"updated_at\":\"existing-Deal raw conversation\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/903/",
+      "response_json": "{\"id\":903,\"business\":101,\"deal\":null,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Deal raw conversation\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "response_json": "{\"id\":951,\"business\":202,\"deal\":211,\"lead\":91,\"client\":801,\"updated_at\":\"existing-Deal raw conversation\"}"
+    }
+  ],
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "original_deal": 111,
+      "original_lead": 81,
+      "original_client": 701,
+      "original_updated_at": "existing-Deal raw conversation",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}"
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "original_deal": 111,
+      "original_lead": null,
+      "original_client": null,
+      "original_updated_at": "existing-Deal raw conversation",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":111,\"business\":101,\"client\":1701,\"lead\":381,\"title\":\"Observed é Deal\",\"updated_at\":\"existing-Deal raw reply\"}"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "original_deal": 211,
+      "original_lead": 91,
+      "original_client": 801,
+      "original_updated_at": "existing-Deal raw conversation",
+      "outcome": "rejected"
+    }
+  ],
+  "boundary": "Positive existing Deal only. Required Deal Client and nullable Deal Lead independent of conversation relations; plain200 nonfinancial identity/title projection, no mask/owner/status/default/pipeline/new record/client fill inference or real result. Unknown immutable."
+}

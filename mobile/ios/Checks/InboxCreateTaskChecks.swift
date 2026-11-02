@@ -1,0 +1,24 @@
+import Foundation
+import CRMCore
+
+func runInboxCreateTaskChecks(directory:URL) async throws -> Int {
+    var count=0
+    func expect(_ value:Bool,_ message:String) throws {guard value else {throw CheckFailure(message:message)};count += 1}
+    let d=try JSONSerialization.jsonObject(with:Data(contentsOf:directory.appendingPathComponent("inbox-create-task.json"))) as! [String:Any],fixture=FixtureInboxCreateTaskPort(directory:directory)
+    func context(_ x:[String:Int])->InboxConversationFilesContext {InboxConversationFilesContext(business:x["business"]!,conversation:x["conversation"]!,epoch:x["epoch"]!,revision:x["revision"]!)}
+    func reference(_ raw:String,_ c:InboxConversationFilesContext)->QualifiedInboxTaskSource {var s=InboxTaskSourceSession();s.bind(c);s.show();let ticket=s.begin(expected:s.control)!;s.accept(InboxTaskSource.decode(Data(raw.utf8),context:c)!,ticket:ticket);s.use(expected:s.control);return s.choice!}
+    let c=context(d["context"] as! [String:Int]),ref=reference(d["source_json"] as! String,c),auth=fixture.grants[0].authorization(for:c)!,review=InboxCreateTaskReview(reference:ref,authorization:auth,visit:1)
+    for x in d["grant_cases"] as! [[String:Any]] {let g=try JSONDecoder().decode(SyntheticInboxCreateTaskGrant.self,from:JSONSerialization.data(withJSONObject:x["grant"]!));try expect((g.authorization(for:c) != nil)==x["valid"] as! Bool,"Separate TASKS.CREATE \(x["name"]!)")}
+    for x in d["receipt_cases"] as! [[String:Any]] {let owner=context(x["context"] as! [String:Int]),r=InboxCreateTaskReview(reference:reference(x["source_json"] as! String,owner),authorization:fixture.grants[0].authorization(for:owner)!,visit:1);var l=InboxCreateTaskLedger();let attempt=l.begin(r)!;try expect((InboxCreateTaskReceipt.decode(Data((x["response_json"] as! String).utf8),attempt:attempt) != nil)==x["valid"] as! Bool,"Exact TaskSerializer omission receipt \(x["name"]!)")}
+    var ledger=InboxCreateTaskLedger();let a=ledger.begin(review)!,body=try JSONSerialization.jsonObject(with:a.preparedBody()) as! [String:Any];try expect(body.isEmpty && a.path=="/api/inbox/conversations/901/create-task/" && a.query.isEmpty && a.headers.isEmpty,"Omitted fields became title/date/relations/default/body/key/query")
+    try expect(ledger.begin(review)==nil && !ledger.acknowledge(auth,record:ledger.visible(auth)!),"Pending repeated or acknowledged")
+    ledger.complete(a,outcome:try await fixture.execute(a));let known=ledger.visible(auth)!;try expect(known.phase == .response && known.result?.id==9901 && known.result?.client==701 && known.result?.lead==81 && known.result?.assignee==5001 && known.result?.createdBy==5001 && known.result?.priority=="normal" && known.result?.dueAt==nil && known.attempt.review.reference==ref,"Fake Task result lost original source/actor/omission semantics")
+    ledger.complete(a,outcome:.unknown);try expect(ledger.visible(auth)==known && ledger.acknowledge(auth,record:known),"Late duplicate replaced response/history")
+    let u=ledger.begin(review)!;ledger.complete(u,outcome:.unknown);let unknown=ledger.visible(auth)!,next=InboxConversationFilesContext(business:101,conversation:901,epoch:901,revision:2),na=fixture.grants[0].authorization(for:next)!,nextRef=reference(d["source_json"] as! String,next)
+    ledger.complete(u,outcome:try await fixture.execute(u));try expect(ledger.visible(na)==unknown && ledger.begin(InboxCreateTaskReview(reference:nextRef,authorization:na,visit:2))==nil && !ledger.acknowledge(na,record:unknown) && unknown.attempt==u && unknown.attempt.review.reference==ref,"Matching Task response/unchanged conversation reread/new epoch recovered unknown")
+    let other=SyntheticInboxCreateTaskGrant(business:101,conversation:901,actor:6001,create:true).authorization(for:next)!;try expect(ledger.visible(other)==nil && ledger.blocked(business:101,conversation:901) && !ledger.blocked(business:202,conversation:951),"Actor/owner barrier lost")
+    try expect(!InboxCreateTaskReview(reference:nextRef,authorization:auth,visit:1).valid && !InboxCreateTaskReview(reference:ref,authorization:auth,visit:0).valid,"Mismatched qualified owner/read accepted")
+    for status in [200,202,204,400,403,409,422,500] {var l=InboxCreateTaskLedger();let attempt=l.begin(review)!;if case .response(_,let data)=try await fixture.execute(attempt) {l.complete(attempt,outcome:.response(status:status,data:data))};try expect(l.visible(auth)?.phase == .unknown,"Non-plain201 became known create result")}
+    var rejection=InboxCreateTaskLedger();let rejected=rejection.begin(review)!;rejection.complete(rejected,outcome:.rejectedWithoutWrite);let record=rejection.visible(auth)!;try expect(record.phase == .rejected && rejection.acknowledge(auth,record:record) && rejection.records.count==1,"Definite no-write rejection erased history")
+    return count
+}

@@ -1,0 +1,966 @@
+{
+  "fixture_only": true,
+  "scope": "Existing-supported native title-only text normalization subset, not installed DRF compatibility. Exact raw retained, JS trim then Python strip once, nonempty<=255 codepoints/no null. Body only title, separate fake UPDATE; no real PATCH or other-field resave. Result is compared to reviewed normalized title, never normalized again.",
+  "input_cases": [
+    {
+      "name": "plain",
+      "raw": "Call client",
+      "title": "Call client",
+      "expected_body": {
+        "title": "Call client"
+      },
+      "raw_json": "\"Call client\"",
+      "expected_body_json": "{\"title\": \"Call client\"}"
+    },
+    {
+      "name": "ru",
+      "raw": "Позвонить клиенту",
+      "title": "Позвонить клиенту",
+      "expected_body": {
+        "title": "Позвонить клиенту"
+      },
+      "raw_json": "\"Позвонить клиенту\"",
+      "expected_body_json": "{\"title\": \"Позвонить клиенту\"}"
+    },
+    {
+      "name": "kk",
+      "raw": "Клиентке қоңырау шалу",
+      "title": "Клиентке қоңырау шалу",
+      "expected_body": {
+        "title": "Клиентке қоңырау шалу"
+      },
+      "raw_json": "\"Клиентке қоңырау шалу\"",
+      "expected_body_json": "{\"title\": \"Клиентке қоңырау шалу\"}"
+    },
+    {
+      "name": "js_trim",
+      "raw": "﻿  Call client 　﻿",
+      "title": "Call client",
+      "expected_body": {
+        "title": "Call client"
+      },
+      "raw_json": "\"﻿  Call client 　﻿\"",
+      "expected_body_json": "{\"title\": \"Call client\"}"
+    },
+    {
+      "name": "python_trim",
+      "raw": "\u001cCall client\u001f",
+      "title": "Call client",
+      "expected_body": {
+        "title": "Call client"
+      },
+      "raw_json": "\"\\u001cCall client\\u001f\"",
+      "expected_body_json": "{\"title\": \"Call client\"}"
+    },
+    {
+      "name": "one_pass_exposed_bom",
+      "raw": "\u001c﻿ Call client ﻿\u001c",
+      "title": "﻿ Call client ﻿",
+      "expected_body": {
+        "title": "﻿ Call client ﻿"
+      },
+      "raw_json": "\"\\u001c﻿ Call client ﻿\\u001c\"",
+      "expected_body_json": "{\"title\": \"﻿ Call client ﻿\"}"
+    },
+    {
+      "name": "inner_spaces",
+      "raw": "Call  client",
+      "title": "Call  client",
+      "expected_body": {
+        "title": "Call  client"
+      },
+      "raw_json": "\"Call  client\"",
+      "expected_body_json": "{\"title\": \"Call  client\"}"
+    },
+    {
+      "name": "inner_newline",
+      "raw": "Call\nclient",
+      "title": "Call\nclient",
+      "expected_body": {
+        "title": "Call\nclient"
+      },
+      "raw_json": "\"Call\\nclient\"",
+      "expected_body_json": "{\"title\": \"Call\\nclient\"}"
+    },
+    {
+      "name": "combining",
+      "raw": "é",
+      "title": "é",
+      "expected_body": {
+        "title": "é"
+      },
+      "raw_json": "\"é\"",
+      "expected_body_json": "{\"title\": \"é\"}"
+    },
+    {
+      "name": "emoji",
+      "raw": "🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂",
+      "title": "🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂",
+      "expected_body": {
+        "title": "🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂"
+      },
+      "raw_json": "\"🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂\"",
+      "expected_body_json": "{\"title\": \"🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂\"}"
+    },
+    {
+      "name": "codepoints255",
+      "raw": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected_body": {
+        "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "raw_json": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+      "expected_body_json": "{\"title\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}"
+    },
+    {
+      "name": "trim_before_limit",
+      "raw": "  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  ",
+      "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected_body": {
+        "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "raw_json": "\"  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  \"",
+      "expected_body_json": "{\"title\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}"
+    },
+    {
+      "name": "scalar_limit_combining",
+      "raw": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée",
+      "title": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée",
+      "expected_body": {
+        "title": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée"
+      },
+      "raw_json": "\"ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée\"",
+      "expected_body_json": "{\"title\": \"ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée\"}"
+    },
+    {
+      "name": "empty",
+      "raw": "",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\"\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "spaces",
+      "raw": " \n\t",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\" \\n\\t\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "bom_only",
+      "raw": "﻿",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\"﻿\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "python_space_only",
+      "raw": "\u001c",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\"\\u001c\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "over_limit",
+      "raw": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "emoji_over_limit",
+      "raw": "🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\"🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "combining_over_limit",
+      "raw": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "null",
+      "raw": "Call\u0000client",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\"Call\\u0000client\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "null_edges",
+      "raw": "\u0000Call\u0000",
+      "title": null,
+      "expected_body": null,
+      "raw_json": "\"\\u0000Call\\u0000\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "zwsp_not_trimmed",
+      "raw": "​Call​",
+      "title": "​Call​",
+      "expected_body": {
+        "title": "​Call​"
+      },
+      "raw_json": "\"​Call​\"",
+      "expected_body_json": "{\"title\": \"​Call​\"}"
+    },
+    {
+      "name": "python_does_not_trim_bom_again",
+      "raw": "\u001c﻿\u001c",
+      "title": "﻿",
+      "expected_body": {
+        "title": "﻿"
+      },
+      "raw_json": "\"\\u001c﻿\\u001c\"",
+      "expected_body_json": "{\"title\": \"﻿\"}"
+    },
+    {
+      "name": "no_description",
+      "raw": "New title, untouched original description",
+      "title": "New title, untouched original description",
+      "expected_body": {
+        "title": "New title, untouched original description"
+      },
+      "raw_json": "\"New title, untouched original description\"",
+      "expected_body_json": "{\"title\": \"New title, untouched original description\"}"
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "supported_plain",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_ru",
+      "raw": "Позвонить клиенту",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Позвонить клиенту",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"Позвонить клиенту\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Позвонить клиенту\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_kk",
+      "raw": "Клиентке қоңырау шалу",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Клиентке қоңырау шалу",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"Клиентке қоңырау шалу\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Клиентке қоңырау шалу\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_js_trim",
+      "raw": "﻿  Call client 　﻿",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"﻿  Call client 　﻿\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_python_trim",
+      "raw": "\u001cCall client\u001f",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"\\u001cCall client\\u001f\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_one_pass_exposed_bom",
+      "raw": "\u001c﻿ Call client ﻿\u001c",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "﻿ Call client ﻿",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"\\u001c﻿ Call client ﻿\\u001c\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"﻿ Call client ﻿\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_inner_spaces",
+      "raw": "Call  client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call  client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"Call  client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call  client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_inner_newline",
+      "raw": "Call\nclient",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call\nclient",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"Call\\nclient\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call\\nclient\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_combining",
+      "raw": "é",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "é",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"é\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"é\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_emoji",
+      "raw": "🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_codepoints255",
+      "raw": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_trim_before_limit",
+      "raw": "  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  ",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  \"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_scalar_limit_combining",
+      "raw": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééée\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_zwsp_not_trimmed",
+      "raw": "​Call​",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "​Call​",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"​Call​\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"​Call​\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_python_does_not_trim_bom_again",
+      "raw": "\u001c﻿\u001c",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "﻿",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"\\u001c﻿\\u001c\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"﻿\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "supported_no_description",
+      "raw": "New title, untouched original description",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "New title, untouched original description",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"New title, untouched original description\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"New title, untouched original description\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "status_preserved",
+      "raw": "Call client",
+      "source_status": "in_progress",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"in_progress\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "clock_not_version",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2000-02-29T00:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2000-02-29T00:00:00Z\"}"
+    },
+    {
+      "name": "unused_fields_ignored",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "description": false,
+        "priority": null,
+        "due_at": "bad"
+      },
+      "expected": "confirmed",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"description\": false, \"priority\": null, \"due_at\": \"bad\"}"
+    },
+    {
+      "name": "foreign_task",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1401,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1401, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "foreign_business",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 202, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "status_changed",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"done\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "different_title",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call another client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call another client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "raw_echo_not_normalized",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": " Call client ",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \" Call client \", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "null_title",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": null, \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "numeric_title",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": 12,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": 12, \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "bool_title",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": true,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": true, \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "bad_clock",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "bad"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"bad\"}"
+    },
+    {
+      "name": "bad_calendar_clock",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-02-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-02-30T12:00:00Z\"}"
+    },
+    {
+      "name": "null_clock",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": null
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": null}"
+    },
+    {
+      "name": "text_id",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": "1101",
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": \"1101\", \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "bool_business",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": true,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": true, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "float_id",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101.5,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101.5, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "zero_id",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 0, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "missing_id",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "missing_business",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "missing_status",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "missing_title",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "missing_updated_at",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\"}"
+    },
+    {
+      "name": "wrapped",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "task": {
+          "id": 1101,
+          "business": 101,
+          "status": "open",
+          "title": "Call client",
+          "updated_at": "2026-10-30T12:00:00Z"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"task\": {\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}}"
+    },
+    {
+      "name": "wrong_http",
+      "raw": "Call client",
+      "source_status": "open",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"Call client\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "must_not_trim_returned_title_again",
+      "raw": "\u001c﻿ Call client ﻿\u001c",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Call client",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"\\u001c﻿ Call client ﻿\\u001c\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"Call client\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "canonical_equivalent_is_not_exact_wire",
+      "raw": "é",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "é",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown",
+      "raw_json": "\"é\"",
+      "response_json": "{\"id\": 1101, \"business\": 101, \"status\": \"open\", \"title\": \"é\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    }
+  ],
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "title": "Synthetic follow-up Alpha",
+        "updated_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": 8001,
+  "business": 101,
+  "name": "Synthetic service",
+  "is_active": true,
+  "created_at": "2026-10-28T00:00:00Z",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "description": "Synthetic unselected internal note",
+  "duration_minutes": 30,
+  "price_from": "1000.00"
+}

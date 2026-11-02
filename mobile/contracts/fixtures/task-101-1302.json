@@ -1,0 +1,32 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T06:32:00Z",
+  "task": {
+    "id": 1302,
+    "title": "Synthetic Appointment task 1302",
+    "status": "open",
+    "priority": "high",
+    "due_at": "2026-10-28T05:00:00Z",
+    "client_id": 7001,
+    "lead_id": null,
+    "deal_id": null,
+    "assignee_id": null,
+    "href": "/app/tasks?task=1302"
+  },
+  "details": {
+    "description": "Independently read Appointment task 1302",
+    "reminder_at": null,
+    "snoozed_until": null,
+    "completed_at": null,
+    "cancelled_at": null,
+    "cancel_reason": "",
+    "created_by": null,
+    "assignee": null,
+    "appointment_id": 501
+  },
+  "comments": [],
+  "payload_budget": {
+    "target_kb": 60,
+    "max_comments": 5
+  }
+}

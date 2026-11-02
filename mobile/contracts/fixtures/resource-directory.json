@@ -1,0 +1,437 @@
+{
+  "fixture_only": true,
+  "boundary": "Existing GET resources list/detail, no Business wire filter/automatic next URL/default type/active/eligibility/availability/CREATE/booking inference.",
+  "reads": [
+    {
+      "path": "/api/resources/",
+      "response_json": "{\"count\": 999, \"next\": \"https://foreign.invalid/do-not-follow?private=secret\", \"previous\": null, \"results\": [{\"id\": 9001, \"business\": 101, \"name\": \"Специалист\", \"resource_type\": \"staff\", \"is_active\": true, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}, {\"id\": 9002, \"business\": 202, \"name\": \"FOREIGN_PRIVATE_RESOURCE\", \"resource_type\": \"room\", \"is_active\": true, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}, {\"id\": 9003, \"business\": 101, \"name\": \"Café\", \"resource_type\": \"legacy/unknown\", \"is_active\": false, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}]}"
+    },
+    {
+      "path": "/api/resources/9001/",
+      "response_json": "{\"id\": 9001, \"business\": 101, \"name\": \"Кабинет после отдельного чтения\", \"resource_type\": \"room\", \"is_active\": false, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-30T04:00:00Z\"}"
+    },
+    {
+      "path": "/api/resources/9003/",
+      "response_json": "{\"id\": 9003, \"business\": 101, \"name\": \"Café\", \"resource_type\": \"legacy/unknown\", \"is_active\": false, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}"
+    },
+    {
+      "path": "/api/resources/9002/",
+      "response_json": "{\"id\": 9002, \"business\": 202, \"name\": \"FOREIGN_PRIVATE_RESOURCE\", \"resource_type\": \"room\", \"is_active\": true, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}"
+    }
+  ],
+  "cases": [
+    {
+      "name": "mixed-business-results",
+      "response_json": "{\"count\":999,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9001,
+        9003
+      ]
+    },
+    {
+      "name": "mixed-business-array",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9001,
+        9003
+      ]
+    },
+    {
+      "name": "second-business",
+      "response_json": "{\"count\":999,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 202,
+      "valid": true,
+      "ids": [
+        9002
+      ]
+    },
+    {
+      "name": "absent-business-window",
+      "response_json": "{\"count\":999,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 303,
+      "valid": true,
+      "ids": []
+    },
+    {
+      "name": "empty-array",
+      "response_json": "[]",
+      "business": 101,
+      "valid": true,
+      "ids": []
+    },
+    {
+      "name": "empty-results",
+      "response_json": "{\"results\":[]}",
+      "business": 101,
+      "valid": true,
+      "ids": []
+    },
+    {
+      "name": "results-without-metadata",
+      "response_json": "{\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9001,
+        9003
+      ]
+    },
+    {
+      "name": "null-links",
+      "response_json": "{\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}],\"next\":null,\"previous\":null}",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9001,
+        9003
+      ]
+    },
+    {
+      "name": "present-links-no-follow",
+      "response_json": "{\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}],\"next\":\"javascript:private\",\"previous\":\"/untrusted\"}",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9001,
+        9003
+      ]
+    },
+    {
+      "name": "missing-id",
+      "response_json": "[{\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-business",
+      "response_json": "[{\"id\":9001,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-name",
+      "response_json": "[{\"id\":9001,\"business\":101,\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-resource_type",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-is_active",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-created_at",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-updated_at",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-id-true",
+      "response_json": "[{\"id\":true,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-id-1.0",
+      "response_json": "[{\"id\":1.0,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-id-0",
+      "response_json": "[{\"id\":0,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-id-2147483648",
+      "response_json": "[{\"id\":2147483648,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-business-false",
+      "response_json": "[{\"id\":9001,\"business\":false,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-business--1",
+      "response_json": "[{\"id\":9001,\"business\":-1,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-name-null",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":null,\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-resource_type-3",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":3,\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-resource_type-null",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":null,\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-is_active-1",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":1,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-is_active-\"true\"",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":\"true\",\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-created_at-\"2026-10-29T04:00:00\"",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-29T04:00:00\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-updated_at-\"nonsense\"",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"nonsense\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "same-id-duplicate",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "same-id-cross-business",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9001,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "malformed-foreign-not-empty",
+      "response_json": "[{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":3,\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-results",
+      "response_json": "{}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "null-results",
+      "response_json": "{\"results\":null}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "object-results",
+      "response_json": "{\"results\":{}}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "scalar-row",
+      "response_json": "[1]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "null-count",
+      "response_json": "{\"count\":null,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bool-count",
+      "response_json": "{\"count\":true,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "float-count",
+      "response_json": "{\"count\":3.0,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "negative-count",
+      "response_json": "{\"count\":-1,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "count-below-received",
+      "response_json": "{\"count\":2,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "count-over-int64",
+      "response_json": "{\"count\":9223372036854775808,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bool-next",
+      "response_json": "{\"count\":999,\"next\":false,\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "empty-next",
+      "response_json": "{\"count\":999,\"next\":\"\",\"previous\":null,\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "object-previous",
+      "response_json": "{\"count\":999,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":{},\"results\":[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_RESOURCE\",\"resource_type\":\"room\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "observed-type-staff",
+      "response_json": "[{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"staff\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9003
+      ]
+    },
+    {
+      "name": "observed-type-room",
+      "response_json": "[{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"room\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9003
+      ]
+    },
+    {
+      "name": "observed-type-hall",
+      "response_json": "[{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"hall\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9003
+      ]
+    },
+    {
+      "name": "observed-type-box",
+      "response_json": "[{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"box\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9003
+      ]
+    },
+    {
+      "name": "observed-type-equipment",
+      "response_json": "[{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"equipment\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9003
+      ]
+    },
+    {
+      "name": "observed-type-other",
+      "response_json": "[{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"other\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9003
+      ]
+    },
+    {
+      "name": "observed-type-legacy/unknown",
+      "response_json": "[{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"legacy/unknown\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9003
+      ]
+    },
+    {
+      "name": "observed-type-",
+      "response_json": "[{\"id\":9003,\"business\":101,\"name\":\"Café\",\"resource_type\":\"\",\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9003
+      ]
+    },
+    {
+      "name": "unknown-extra-fields",
+      "response_json": "[{\"id\":9001,\"business\":101,\"name\":\"Специалист\",\"resource_type\":\"staff\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\",\"extra\":null}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        9001
+      ]
+    }
+  ]
+}

@@ -1,0 +1,776 @@
+{
+  "fixture_only": true,
+  "scope": "Exact existing FileAttachmentSerializer metadata only. Task fixture scope; no real VIEW authority, scanner fields, upload/download/picker/bytes. URL/extras never retained/opened; window count is not full list proof.",
+  "scenarios": [
+    {
+      "business": 101,
+      "task": 1101,
+      "items": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        },
+        {
+          "id": 8102,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic metadata only",
+          "content_type": "",
+          "size": 0,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "https://example.invalid/do-not-fetch",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "business": 101,
+      "task": 1401,
+      "items": []
+    },
+    {
+      "business": 202,
+      "task": 1201,
+      "items": [
+        {
+          "id": 8201,
+          "business": 202,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1201",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ]
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "exact_array_64bit_blank_type",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        },
+        {
+          "id": 8102,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic metadata only",
+          "content_type": "",
+          "size": 0,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "https://example.invalid/do-not-fetch",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": true
+    },
+    {
+      "name": "wrapped_window_not_full_count",
+      "body": {
+        "results": [
+          {
+            "id": 8101,
+            "business": 101,
+            "uploaded_by": null,
+            "original_name": "Synthetic task attachment.pdf",
+            "content_type": "application/pdf",
+            "size": 4294967296,
+            "entity_type": "task",
+            "entity_id": "1101",
+            "visibility": "private",
+            "download_url": "/api/file-attachments/8101/download/",
+            "created_at": "2026-10-30T12:00:00Z"
+          }
+        ],
+        "count": 100,
+        "next": "https://example.invalid/never-follow"
+      },
+      "valid": true
+    },
+    {
+      "name": "empty_window_not_all_files",
+      "body": [],
+      "valid": true
+    },
+    {
+      "name": "extras_cannot_grant_scan_or_download",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z",
+          "scan_status": "clean",
+          "lease": "invented-extra",
+          "file": "https://example.invalid/never-open"
+        }
+      ],
+      "valid": true
+    },
+    {
+      "name": "foreign_business",
+      "body": [
+        {
+          "id": 8101,
+          "business": 202,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "foreign_task",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1201",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "numeric_entity_id_not_string",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": 1101,
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "leading_zero_not_exact_id",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "01101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "legacy_lead_not_task",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "lead",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "unknown_entity",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "mystery",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "public_not_private",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "public",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_safety_not_permission",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": null,
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "negative_size",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": -1,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "boolean_size",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": true,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "fraction_size",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 0.5,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "null_size",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": null,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "boolean_id",
+      "body": [
+        {
+          "id": true,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "zero_id",
+      "body": [
+        {
+          "id": 0,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "string_id",
+      "body": [
+        {
+          "id": "8101",
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "empty_filename",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "null_filename",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": null,
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "numeric_content_type",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": 1,
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "malformed_created_at",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "yesterday"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "null_created_at",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": null
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_id",
+      "body": [
+        {
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_business",
+      "body": [
+        {
+          "id": 8101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_original_name",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_content_type",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_size",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_entity_type",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_entity_id",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_visibility",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing_created_at",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "duplicate_identity",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        },
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "mixed_scope_window",
+      "body": [
+        {
+          "id": 8101,
+          "business": 101,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1101",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        },
+        {
+          "id": 8201,
+          "business": 202,
+          "uploaded_by": null,
+          "original_name": "Synthetic task attachment.pdf",
+          "content_type": "application/pdf",
+          "size": 4294967296,
+          "entity_type": "task",
+          "entity_id": "1201",
+          "visibility": "private",
+          "download_url": "/api/file-attachments/8101/download/",
+          "created_at": "2026-10-30T12:00:00Z"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "object_not_window",
+      "body": {
+        "id": 8101,
+        "business": 101,
+        "uploaded_by": null,
+        "original_name": "Synthetic task attachment.pdf",
+        "content_type": "application/pdf",
+        "size": 4294967296,
+        "entity_type": "task",
+        "entity_id": "1101",
+        "visibility": "private",
+        "download_url": "/api/file-attachments/8101/download/",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "valid": false
+    },
+    {
+      "name": "null_results",
+      "body": {
+        "results": null
+      },
+      "valid": false
+    }
+  ]
+}

@@ -1,0 +1,1050 @@
+{
+  "fixture_only": true,
+  "scope": "Synthetic generic InboxConversationSerializer attachments metadata projection, source-defined9 fields only; no real GET/permission/download/file bytes/current or command result.",
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "response_json": "{\"id\": 901, \"business\": 101, \"attachments\": [{\"id\": 9101, \"business\": 101, \"original_name\": \"Synthetic conversation attachment.pdf\", \"content_type\": \"application/pdf\", \"size\": 4294967296, \"entity_type\": \"bot_conversation\", \"entity_id\": \"901\", \"visibility\": \"private\", \"created_at\": \"2026-10-30T12:00:00Z\", \"download_url\": \"https://example.invalid/not-fetched\", \"uploaded_by\": null, \"uploaded_by_email\": \"withheld@example.invalid\"}, {\"id\": 9102, \"business\": 101, \"original_name\": \"é.txt\", \"content_type\": \"\", \"size\": 0, \"entity_type\": \"bot_conversation\", \"entity_id\": \"901\", \"visibility\": \"private\", \"created_at\": \"2026-10-30T12:00:00Z\", \"download_url\": \"https://example.invalid/not-fetched\", \"uploaded_by\": null, \"uploaded_by_email\": \"withheld@example.invalid\"}], \"metadata_json\": {\"not_retained\": \"synthetic\"}}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "response_json": "{\"id\": 951, \"business\": 202, \"attachments\": [{\"id\": 9201, \"business\": 202, \"original_name\": \"Synthetic conversation attachment.pdf\", \"content_type\": \"application/pdf\", \"size\": 4294967296, \"entity_type\": \"bot_conversation\", \"entity_id\": \"951\", \"visibility\": \"private\", \"created_at\": \"2026-10-30T12:00:00Z\", \"download_url\": \"https://example.invalid/not-fetched\", \"uploaded_by\": null, \"uploaded_by_email\": \"withheld@example.invalid\"}]}"
+    }
+  ],
+  "cases": [
+    {
+      "name": "exact_generic_detail_9_field_projection",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "provided_empty_array",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_attachments_is_not_empty",
+      "response_json": "{\"id\":901,\"business\":101,\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "attachments_wrong_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":null,\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "attachments_wrong_{}",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":{},\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "attachments_wrong_[]",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":\"[]\",\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "attachments_wrong_1",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":1,\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_id_0",
+      "response_json": "{\"id\":0,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_id_-1",
+      "response_json": "{\"id\":-1,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_id_True",
+      "response_json": "{\"id\":true,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_id_'901'",
+      "response_json": "{\"id\":\"901\",\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_id_None",
+      "response_json": "{\"id\":null,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_id_1.5",
+      "response_json": "{\"id\":1.5,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_id_2147483648",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_business_0",
+      "response_json": "{\"id\":901,\"business\":0,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_business_-1",
+      "response_json": "{\"id\":901,\"business\":-1,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_business_True",
+      "response_json": "{\"id\":901,\"business\":true,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_business_'901'",
+      "response_json": "{\"id\":901,\"business\":\"901\",\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_business_None",
+      "response_json": "{\"id\":901,\"business\":null,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_business_1.5",
+      "response_json": "{\"id\":901,\"business\":1.5,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_business_2147483648",
+      "response_json": "{\"id\":901,\"business\":2147483648,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "foreign_top_business",
+      "response_json": "{\"id\":901,\"business\":202,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "wrong_top_conversation",
+      "response_json": "{\"id\":902,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "top_results_is_not_detail",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"},\"results\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}]}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "array_is_not_generic_detail",
+      "response_json": "[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}]",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "results_wrapper_is_not_generic_detail",
+      "response_json": "{\"results\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}]}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_id",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_business",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_size",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_entity_type",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_entity_id",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_visibility",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_original_name",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_content_type",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "missing_row_created_at",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_id_0",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":0,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_id_-1",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":-1,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_id_True",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":true,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_id_'9101'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":\"9101\",\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_id_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":null,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_id_1.5",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":1.5,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_id_2147483648",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":2147483648,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_business_202",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":202,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_business_True",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":true,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_business_'101'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":\"101\",\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_business_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":null,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_business_101.5",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101.5,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_size_-1",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":-1,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_size_True",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":true,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_size_False",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":false,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_size_'0'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":\"0\",\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_size_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":null,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_size_1.5",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":1.5,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "row_size_9223372036854775808",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":9223372036854775808,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "max_int64_size",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":9223372036854775807,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_type_'task'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"task\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_type_'bot_message'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_message\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_type_'BOT_CONVERSATION'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"BOT_CONVERSATION\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_type_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":null,\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_type_1",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":1,\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_id_'0901'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"0901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_id_'902'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"902\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_id_901",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":901,\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_id_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":null,\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "entity_id_'901 '",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901 \",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "visibility_''",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "visibility_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":null,\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "visibility_'public'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"public\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "visibility_'PRIVATE'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"PRIVATE\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "original_name_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":null,\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "original_name_1",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":1,\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "original_name_False",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":false,\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "original_name_{}",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":{},\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "content_type_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":null,\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "content_type_1",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":1,\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "content_type_False",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":false,\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "content_type_{}",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":{},\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "empty_name_is_retained_observation",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "raw_name_NFC",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "raw_name_NFD",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "offset_microsecond_timestamp",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T17:00:00.123456+05:00\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "bad_timestamp_''",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "bad_timestamp_None",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":null,\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "bad_timestamp_1",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":1,\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "bad_timestamp_'2026-02-30T12:00:00Z'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-02-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "bad_timestamp_'2026-10-30T12:00:00'",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "duplicate_file_id",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "valid_local_then_foreign_row_rejects_all",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9201,\"business\":202,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"951\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "valid_local_then_invalid_row_rejects_all",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},\"bad\"],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "irrelevant_url_payload_count_extras_are_not_retained",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":{\"must\":\"never retained/followed\"},\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\",\"payload_json\":{\"must\":\"never retained\"}},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"},\"count\":999,\"next\":\"https://example.invalid/no-paging\"}",
+      "valid": true,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "invalid_context_business",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 0,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "invalid_context_conversation",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 0,
+        "epoch": 1,
+        "revision": 1
+      }
+    },
+    {
+      "name": "invalid_context_epoch",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 0,
+        "revision": 1
+      }
+    },
+    {
+      "name": "invalid_context_revision",
+      "response_json": "{\"id\":901,\"business\":101,\"attachments\":[{\"id\":9101,\"business\":101,\"original_name\":\"Synthetic conversation attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"},{\"id\":9102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_conversation\",\"entity_id\":\"901\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/not-fetched\",\"uploaded_by\":null,\"uploaded_by_email\":\"withheld@example.invalid\"}],\"metadata_json\":{\"not_retained\":\"synthetic\"}}",
+      "valid": false,
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 0
+      }
+    }
+  ]
+}

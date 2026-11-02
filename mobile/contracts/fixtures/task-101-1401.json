@@ -1,0 +1,53 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T04:00:00Z",
+  "task": {
+    "id": 1401,
+    "title": "Synthetic Client 701 task 1",
+    "status": "open",
+    "priority": "high",
+    "due_at": "2026-10-28T05:00:00Z",
+    "client_id": 701,
+    "lead_id": null,
+    "deal_id": null,
+    "assignee_id": null,
+    "href": "/app/tasks?task=1401"
+  },
+  "details": {
+    "description": "Synthetic task context; no operation performed",
+    "reminder_at": null,
+    "snoozed_until": null,
+    "completed_at": null,
+    "cancelled_at": null,
+    "cancel_reason": "",
+    "created_by": null,
+    "assignee": null,
+    "appointment_id": null
+  },
+  "comments": [
+    {
+      "id": 14011,
+      "text": "Synthetic follow-up comment 2",
+      "author": {
+        "id": 9001,
+        "email": "fixture@example.invalid",
+        "full_name": "Synthetic operator"
+      },
+      "created_at": "2026-10-28T03:20:00Z"
+    },
+    {
+      "id": 14012,
+      "text": "Synthetic follow-up comment 1",
+      "author": {
+        "id": 9001,
+        "email": "fixture@example.invalid",
+        "full_name": "Synthetic operator"
+      },
+      "created_at": "2026-10-28T03:10:00Z"
+    }
+  ],
+  "payload_budget": {
+    "target_kb": 60,
+    "max_comments": 5
+  }
+}

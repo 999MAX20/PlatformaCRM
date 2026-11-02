@@ -1,0 +1,69 @@
+{
+  "business": 202,
+  "generated_at": "2026-10-28T01:00:00Z",
+  "client": {
+    "id": 801,
+    "title": "Synthetic Client Gamma",
+    "phone": "+70000000002",
+    "email": null,
+    "source": "manual",
+    "notes": "Synthetic client profile note",
+    "created_at": "2026-10-28T00:00:00Z",
+    "updated_at": "2026-10-28T01:00:00Z",
+    "href": "/app/clients?client=801"
+  },
+  "details": {
+    "notes": "Synthetic client profile note",
+    "normalized_phone": "",
+    "normalized_email": "",
+    "whatsapp_id": "",
+    "telegram_id": "",
+    "instagram_id": ""
+  },
+  "related": {
+    "leads": [],
+    "tasks": [
+      {
+        "id": 2401,
+        "title": "Synthetic Client 801 task 1",
+        "status": "open",
+        "priority": "high",
+        "due_at": "2026-10-28T05:00:00Z",
+        "client_id": 801,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=2401"
+      }
+    ],
+    "appointments": [
+      {
+        "id": 5201,
+        "title": "Synthetic Client Gamma",
+        "status": "confirmed",
+        "client_id": 801,
+        "lead_id": null,
+        "service_id": 8001,
+        "start_at": "2026-10-27T04:00:00Z",
+        "end_at": "2026-10-27T04:30:00Z",
+        "href": "/app/calendar?appointment=5201"
+      }
+    ],
+    "conversations": [
+      {
+        "id": 1031,
+        "title": "Synthetic Client 801 conversation 1",
+        "channel": "website",
+        "unread_count": 2,
+        "handoff_required": false,
+        "assigned_to_id": null,
+        "last_message_at": "2026-10-28T04:20:00Z",
+        "href": "/app/conversations?conversation=1031"
+      }
+    ]
+  },
+  "payload_budget": {
+    "target_kb": 80,
+    "max_related_per_section": 5
+  }
+}

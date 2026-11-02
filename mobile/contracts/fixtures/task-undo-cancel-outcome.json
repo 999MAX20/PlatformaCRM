@@ -1,0 +1,667 @@
+{
+  "fixture_only": true,
+  "scope": "Existing keyless undo-cancel action -> TaskSerializer200. Cancelled only, no client target/audit_id/key/version input. Server selects actual open/in_progress/done; cancellation cleared, completion metadata retained. Confirmed UI Task3167 comes unchanged from existing source-query catalogue. Other scenario grants do not override status eligibility; test harness variants only.",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 3167,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      }
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "returned_open_prior_or_fallback_not_predicted",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "returned_in_progress_not_reopen",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "in_progress",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "returned_done_preserves_completion",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "done",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": "2026-10-27T09:00:00Z",
+        "completed_by": 9003
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "returned_done_nullable_completion_not_reconstructed",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "done",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "open_does_not_clear_existing_completion",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": "2026-10-27T09:00:00Z",
+        "completed_by": 9003
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "deleted_completion_actor_does_not_clear_timestamp",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "done",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": "2026-10-27T09:00:00Z",
+        "completed_by": null
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "foreign_task",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 202,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "still_cancelled",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "cancelled",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "unknown_status",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "waiting",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "empty_status",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "string_business",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": "101",
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_business",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": true,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "noncleared_cancelled_at",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": "2026-10-28T00:05:00Z",
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "noncleared_cancelled_by",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "nonempty_cancel_reason",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "old reason",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "blank_not_empty_cancel_reason",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": " ",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_cancel_reason",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": null,
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_cancel_reason",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": false,
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_updated_at",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "yesterday",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_updated_at",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_completion_at",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": "yesterday",
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_completion_at",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": true,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_completion_by",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": 0
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "negative_completion_by",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": -1
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_completion_by",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": true
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "string_completion_by",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": "9003"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_id",
+      "status": 200,
+      "response": {
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_status",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_updated_at",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_cancelled_at",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_cancelled_by",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_cancel_reason",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_completed_at",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_completed_by",
+      "status": 200,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http201",
+      "status": 201,
+      "response": {
+        "id": 3167,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T00:30:00Z",
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "",
+        "completed_at": null,
+        "completed_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrapped_projection_not_web_result",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "task": {
+          "id": 3167,
+          "business": 101,
+          "status": "open",
+          "updated_at": "2026-10-28T00:30:00Z",
+          "cancelled_at": null,
+          "cancelled_by": null,
+          "cancel_reason": "",
+          "completed_at": null,
+          "completed_by": null
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    }
+  ]
+}

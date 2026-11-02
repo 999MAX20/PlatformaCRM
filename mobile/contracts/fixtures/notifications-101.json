@@ -1,0 +1,59 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T05:20:00Z",
+  "limit": 50,
+  "summary": {
+    "total": 3,
+    "unread": 2,
+    "urgent": 0,
+    "failed": 0
+  },
+  "items": [
+    {
+      "id": 2101,
+      "category": "sales",
+      "priority": "normal",
+      "status": "sent",
+      "channel": "system",
+      "text": "Synthetic appointment reminder Alpha",
+      "action_url": "/app/calendar?appointment=501",
+      "action_label": "",
+      "send_at": "2026-10-28T05:00:00Z",
+      "read_at": null,
+      "client_id": null,
+      "appointment_id": 501
+    },
+    {
+      "id": 2103,
+      "category": "sales",
+      "priority": "normal",
+      "status": "sent",
+      "channel": "system",
+      "text": "Synthetic specialist reminder Beta",
+      "action_url": "/app/calendar/502",
+      "action_label": "",
+      "send_at": "2026-10-28T05:00:00Z",
+      "read_at": null,
+      "client_id": null,
+      "appointment_id": 502
+    },
+    {
+      "id": 2102,
+      "category": "tasks",
+      "priority": "normal",
+      "status": "sent",
+      "channel": "system",
+      "text": "Synthetic legacy link",
+      "action_url": "/app/leads/501",
+      "action_label": "",
+      "send_at": "2026-10-28T05:00:00Z",
+      "read_at": "2026-10-28T05:10:00Z",
+      "client_id": null,
+      "appointment_id": 501
+    }
+  ],
+  "payload_budget": {
+    "target_kb": 80,
+    "max_items": 50
+  }
+}

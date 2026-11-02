@@ -1,0 +1,834 @@
+{
+  "fixture_only": true,
+  "scope": "Explicit-offset local subset; direct TaskSerializer200. input/source_status/source_reminder metadata are test-harness facts, never extra API fields. Fake response producer echoes manual input only after explicit submit. No real timer/status/due/reminder/write.",
+  "input_cases": [
+    {
+      "name": "utc",
+      "raw": "2026-10-30T12:00:00Z",
+      "microseconds": 1793361600000000
+    },
+    {
+      "name": "positive_offset",
+      "raw": "2026-10-30T17:00:00+05:00",
+      "microseconds": 1793361600000000
+    },
+    {
+      "name": "negative_offset",
+      "raw": "2026-10-30T07:00:00-05:00",
+      "microseconds": 1793361600000000
+    },
+    {
+      "name": "fraction_1",
+      "raw": "2026-10-30T12:00:00.1Z",
+      "microseconds": 1793361600100000
+    },
+    {
+      "name": "fraction_6",
+      "raw": "2026-10-30T17:00:00.123456+05:00",
+      "microseconds": 1793361600123456
+    },
+    {
+      "name": "fraction_zero",
+      "raw": "2026-10-30T12:00:00.000000Z",
+      "microseconds": 1793361600000000
+    },
+    {
+      "name": "past",
+      "raw": "2000-02-29T00:00:00Z",
+      "microseconds": 951782400000000
+    },
+    {
+      "name": "future",
+      "raw": "2038-01-19T03:14:08Z",
+      "microseconds": 2147483648000000
+    },
+    {
+      "name": "proleptic_1500",
+      "raw": "1500-03-01T00:00:00Z",
+      "microseconds": -14826672000000000
+    },
+    {
+      "name": "cutover_october",
+      "raw": "1582-10-10T00:00:00Z",
+      "microseconds": -12219724800000000
+    },
+    {
+      "name": "century_leap",
+      "raw": "2000-02-29T23:59:59Z",
+      "microseconds": 951868799000000
+    },
+    {
+      "name": "min_year",
+      "raw": "0001-01-01T00:00:00Z",
+      "microseconds": -62135596800000000
+    },
+    {
+      "name": "max_year",
+      "raw": "9999-12-31T23:59:59.999999Z",
+      "microseconds": 253402300799999999
+    },
+    {
+      "name": "wide_offset",
+      "raw": "2026-10-30T23:59:00+23:59",
+      "microseconds": 1793318400000000
+    },
+    {
+      "name": "wide_negative",
+      "raw": "2026-10-30T00:00:00-23:59",
+      "microseconds": 1793404740000000
+    },
+    {
+      "name": "explicit_zero_offset",
+      "raw": "2026-10-30T12:00:00+00:00",
+      "microseconds": 1793361600000000
+    },
+    {
+      "name": "day_roll",
+      "raw": "2026-10-30T00:00:00+05:00",
+      "microseconds": 1793300400000000
+    },
+    {
+      "name": "empty",
+      "raw": "",
+      "microseconds": null
+    },
+    {
+      "name": "date_only",
+      "raw": "2026-10-30",
+      "microseconds": null
+    },
+    {
+      "name": "naive",
+      "raw": "2026-10-30T12:00:00",
+      "microseconds": null
+    },
+    {
+      "name": "minutes_only",
+      "raw": "2026-10-30T12:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "space",
+      "raw": " 2026-10-30T12:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "end_space",
+      "raw": "2026-10-30T12:00:00Z ",
+      "microseconds": null
+    },
+    {
+      "name": "newline",
+      "raw": "2026-10-30T12:00:00Z\n",
+      "microseconds": null
+    },
+    {
+      "name": "year_zero",
+      "raw": "0000-01-01T00:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "long_year",
+      "raw": "10000-01-01T00:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "bad_leap",
+      "raw": "1900-02-29T00:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "julian_not_leap",
+      "raw": "1500-02-29T00:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "bad_day",
+      "raw": "2026-02-30T12:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "day_zero",
+      "raw": "2026-10-00T12:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "month_zero",
+      "raw": "2026-00-30T12:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "month_13",
+      "raw": "2026-13-01T12:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "hour24",
+      "raw": "2026-10-30T24:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "minute60",
+      "raw": "2026-10-30T12:60:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "second60",
+      "raw": "2026-10-30T12:00:60Z",
+      "microseconds": null
+    },
+    {
+      "name": "empty_fraction",
+      "raw": "2026-10-30T12:00:00.Z",
+      "microseconds": null
+    },
+    {
+      "name": "fraction7",
+      "raw": "2026-10-30T12:00:00.1234567Z",
+      "microseconds": null
+    },
+    {
+      "name": "comma_fraction",
+      "raw": "2026-10-30T12:00:00,1Z",
+      "microseconds": null
+    },
+    {
+      "name": "lower_z",
+      "raw": "2026-10-30T12:00:00z",
+      "microseconds": null
+    },
+    {
+      "name": "lower_t",
+      "raw": "2026-10-30t12:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "spaced_t",
+      "raw": "2026-10-30 12:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "unknown_offset",
+      "raw": "2026-10-30T12:00:00-00:00",
+      "microseconds": null
+    },
+    {
+      "name": "bad_offset_hour",
+      "raw": "2026-10-30T12:00:00+24:00",
+      "microseconds": null
+    },
+    {
+      "name": "bad_offset_minute",
+      "raw": "2026-10-30T12:00:00+05:60",
+      "microseconds": null
+    },
+    {
+      "name": "colonless_offset",
+      "raw": "2026-10-30T12:00:00+0500",
+      "microseconds": null
+    },
+    {
+      "name": "utc_year_underflow",
+      "raw": "0001-01-01T00:00:00+00:01",
+      "microseconds": null
+    },
+    {
+      "name": "utc_year_overflow",
+      "raw": "9999-12-31T23:59:59-00:01",
+      "microseconds": null
+    },
+    {
+      "name": "unicode_year",
+      "raw": "２０２６-10-30T12:00:00Z",
+      "microseconds": null
+    },
+    {
+      "name": "null_byte",
+      "raw": "2026-10-30T12:00:00Z\u0000",
+      "microseconds": null
+    }
+  ],
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "source_snooze200",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "offset_same_instant",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T17:00:00+05:00",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "fraction_same_instant",
+      "input": "2026-10-30T17:00:00.123456+05:00",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00.123456Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "past_not_invented_future_rule",
+      "input": "2000-02-29T00:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2000-02-29T00:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "in_progress_preserved",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "in_progress",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "due_same_instant",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T10:00:00+05:00",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "known_reminder_preserved",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": "2026-10-28T10:00:00+05:00",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": "2026-10-28T05:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "updated_at_not_version",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2020-01-01T00:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "wrong_id_8",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 9999,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_business_9",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_status_10",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_snoozed_until_11",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:01Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_snoozed_until_12",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00.000001Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_due_at_13",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": null,
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_reminder_at_14",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": "2026-10-28T05:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_updated_at_15",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "bad"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_id",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_status",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_snoozed_until",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_due_at",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_reminder_at",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_updated_at",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "null_snooze",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": null,
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_snooze",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": true,
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_id",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": true,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "text_scope",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": "101",
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_due",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "bad",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_reminder_null",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": "2026-10-28T05:00:00Z",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "unknown_source_reminder",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": {
+        "unknown": true
+      },
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrapped",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "result": {
+          "id": 1101,
+          "business": 101,
+          "status": "open",
+          "snoozed_until": "2026-10-30T12:00:00Z",
+          "due_at": "2026-10-28T05:00:00Z",
+          "reminder_at": null,
+          "updated_at": "2026-10-30T12:00:00Z"
+        }
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http",
+      "input": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "source_reminder": null,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "snoozed_until": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 201,
+      "expected": "unknown"
+    }
+  ]
+}

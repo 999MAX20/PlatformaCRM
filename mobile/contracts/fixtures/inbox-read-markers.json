@@ -1,0 +1,1916 @@
+{
+  "fixture_only": true,
+  "contract": "Independent generic unread_count/raw updated_at GET; separate synthetic UPDATE/actor, closed action choice, exact{} body/plain200; no badge/thread/count mutation, idempotency/version/recovery or matching GET outcome inference",
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 1,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+  "read_response_json": "{\"id\":901,\"business\":101,\"unread_count\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+  "unread_response_json": "{\"id\":901,\"business\":101,\"unread_count\":1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "update": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 6001,
+      "update": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "response_json": "{\"id\":951,\"business\":202,\"unread_count\":3,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}"
+    }
+  ],
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "action": "mark-read",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}"
+    },
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "action": "mark-unread",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 6001,
+      "action": "mark-read",
+      "outcome": "unknown"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 6001,
+      "action": "mark-unread",
+      "outcome": "rejected"
+    }
+  ],
+  "source_cases": [
+    {
+      "name": "generic_source",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "missing_id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":false,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":true,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":null,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":[],\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":{},\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_\"7\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"7\",\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"\",\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":0,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":-1,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":1,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":1.5,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":2147483648,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_9223372036854775807",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":9223372036854775807,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "id_9223372036854775808",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":9223372036854775808,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "missing_business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":false,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":true,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":null,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":[],\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":{},\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_\"7\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"7\",\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"\",\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":0,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":-1,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":1,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":1.5,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":2147483648,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_9223372036854775807",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":9223372036854775807,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "business_9223372036854775808",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":9223372036854775808,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "missing_unread_count",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":false,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":true,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":null,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":[],\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":{},\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_\"7\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":\"7\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":\"\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "unread_count_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":-1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "unread_count_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1.5,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "unread_count_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":2147483648,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "unread_count_9223372036854775807",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":9223372036854775807,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "unread_count_9223372036854775808",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":9223372036854775808,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "missing_updated_at",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":false,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":true,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":null,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":[],\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":{},\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"7\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"7\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "updated_at_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":0,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":-1,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":1,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_9223372036854775807",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":9223372036854775807,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_9223372036854775808",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":9223372036854775808,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "raw_' '",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\" \",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "raw_'é'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "raw_'é'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "raw_'raw\\ntext'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"raw\\ntext\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "raw_'\\x00'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"\\u0000\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "context_business0",
+      "context": {
+        "business": 0,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "context_business-1",
+      "context": {
+        "business": -1,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "context_conversation0",
+      "context": {
+        "business": 101,
+        "conversation": 0,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "context_conversation-1",
+      "context": {
+        "business": 101,
+        "conversation": -1,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "context_epoch0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 0,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "context_epoch-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": -1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "context_revision0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 0
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "context_revision-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": -1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "root_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "root_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "root_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "root_\"raw\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "\"raw\"",
+      "valid": false
+    },
+    {
+      "name": "root_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "true",
+      "valid": false
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "mark-read_generic_source",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_missing_id",
+      "action": "mark-read",
+      "response_json": "{\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_false",
+      "action": "mark-read",
+      "response_json": "{\"id\":false,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_true",
+      "action": "mark-read",
+      "response_json": "{\"id\":true,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_null",
+      "action": "mark-read",
+      "response_json": "{\"id\":null,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_[]",
+      "action": "mark-read",
+      "response_json": "{\"id\":[],\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_{}",
+      "action": "mark-read",
+      "response_json": "{\"id\":{},\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_\"7\"",
+      "action": "mark-read",
+      "response_json": "{\"id\":\"7\",\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_\"\"",
+      "action": "mark-read",
+      "response_json": "{\"id\":\"\",\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_0",
+      "action": "mark-read",
+      "response_json": "{\"id\":0,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_-1",
+      "action": "mark-read",
+      "response_json": "{\"id\":-1,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_1",
+      "action": "mark-read",
+      "response_json": "{\"id\":1,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_1.5",
+      "action": "mark-read",
+      "response_json": "{\"id\":1.5,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_2147483648",
+      "action": "mark-read",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_9223372036854775807",
+      "action": "mark-read",
+      "response_json": "{\"id\":9223372036854775807,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_id_9223372036854775808",
+      "action": "mark-read",
+      "response_json": "{\"id\":9223372036854775808,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_missing_business",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_false",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":false,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_true",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":true,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_null",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":null,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_[]",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":[],\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_{}",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":{},\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_\"7\"",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":\"7\",\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_\"\"",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":\"\",\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_0",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":0,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_-1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":-1,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":1,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_1.5",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":1.5,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_2147483648",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":2147483648,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_9223372036854775807",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":9223372036854775807,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_business_9223372036854775808",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":9223372036854775808,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_missing_unread_count",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_false",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":false,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_true",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":true,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_null",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":null,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_[]",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":[],\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_{}",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":{},\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_\"7\"",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":\"7\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_\"\"",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":\"\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_0",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-read_unread_count_-1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":-1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_1.5",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1.5,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_2147483648",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":2147483648,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_9223372036854775807",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":9223372036854775807,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_unread_count_9223372036854775808",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":9223372036854775808,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_missing_updated_at",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_false",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":false,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_true",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":true,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_null",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":null,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_[]",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":[],\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_{}",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":{},\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_\"7\"",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"7\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_\"\"",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_0",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":0,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_-1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":-1,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":1,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_1.5",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_2147483648",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_9223372036854775807",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":9223372036854775807,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_updated_at_9223372036854775808",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":9223372036854775808,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_raw_' '",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\" \",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_raw_'é'",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_raw_'é'",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_raw_'raw\\ntext'",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"raw\\ntext\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_raw_'\\x00'",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"\\u0000\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_context_business0",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_context_business-1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_context_conversation0",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_context_conversation-1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_context_epoch0",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_context_epoch-1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_context_revision0",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_context_revision-1",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_root_[]",
+      "action": "mark-read",
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "mark-read_root_{}",
+      "action": "mark-read",
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "mark-read_root_null",
+      "action": "mark-read",
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "mark-read_root_\"raw\"",
+      "action": "mark-read",
+      "response_json": "\"raw\"",
+      "valid": false
+    },
+    {
+      "name": "mark-read_root_true",
+      "action": "mark-read",
+      "response_json": "true",
+      "valid": false
+    },
+    {
+      "name": "mark-read_exact",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-read_same_timestamp_no_version",
+      "action": "mark-read",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_generic_source",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_missing_id",
+      "action": "mark-unread",
+      "response_json": "{\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_false",
+      "action": "mark-unread",
+      "response_json": "{\"id\":false,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_true",
+      "action": "mark-unread",
+      "response_json": "{\"id\":true,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_null",
+      "action": "mark-unread",
+      "response_json": "{\"id\":null,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_[]",
+      "action": "mark-unread",
+      "response_json": "{\"id\":[],\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_{}",
+      "action": "mark-unread",
+      "response_json": "{\"id\":{},\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_\"7\"",
+      "action": "mark-unread",
+      "response_json": "{\"id\":\"7\",\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_\"\"",
+      "action": "mark-unread",
+      "response_json": "{\"id\":\"\",\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_0",
+      "action": "mark-unread",
+      "response_json": "{\"id\":0,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_-1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":-1,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":1,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_1.5",
+      "action": "mark-unread",
+      "response_json": "{\"id\":1.5,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_2147483648",
+      "action": "mark-unread",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_9223372036854775807",
+      "action": "mark-unread",
+      "response_json": "{\"id\":9223372036854775807,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_id_9223372036854775808",
+      "action": "mark-unread",
+      "response_json": "{\"id\":9223372036854775808,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_missing_business",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_false",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":false,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_true",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":true,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_null",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":null,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_[]",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":[],\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_{}",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":{},\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_\"7\"",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":\"7\",\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_\"\"",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":\"\",\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_0",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":0,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_-1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":-1,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":1,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_1.5",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":1.5,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_2147483648",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":2147483648,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_9223372036854775807",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":9223372036854775807,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_business_9223372036854775808",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":9223372036854775808,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_missing_unread_count",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_false",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":false,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_true",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":true,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_null",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":null,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_[]",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":[],\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_{}",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":{},\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_\"7\"",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":\"7\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_\"\"",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":\"\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_0",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_-1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":-1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_unread_count_1.5",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1.5,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_unread_count_2147483648",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":2147483648,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_unread_count_9223372036854775807",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":9223372036854775807,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_unread_count_9223372036854775808",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":9223372036854775808,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_missing_updated_at",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_false",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":false,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_true",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":true,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_null",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":null,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_[]",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":[],\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_{}",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":{},\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_\"7\"",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"7\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_updated_at_\"\"",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_0",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":0,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_-1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":-1,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":1,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_1.5",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_2147483648",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_9223372036854775807",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":9223372036854775807,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_updated_at_9223372036854775808",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":9223372036854775808,\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_raw_' '",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\" \",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_raw_'é'",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_raw_'é'",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_raw_'raw\\ntext'",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"raw\\ntext\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_raw_'\\x00'",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"\\u0000\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_context_business0",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_context_business-1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_context_conversation0",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_context_conversation-1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_context_epoch0",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_context_epoch-1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_context_revision0",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_context_revision-1",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":7,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_root_[]",
+      "action": "mark-unread",
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_root_{}",
+      "action": "mark-unread",
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_root_null",
+      "action": "mark-unread",
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_root_\"raw\"",
+      "action": "mark-unread",
+      "response_json": "\"raw\"",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_root_true",
+      "action": "mark-unread",
+      "response_json": "true",
+      "valid": false
+    },
+    {
+      "name": "mark-unread_exact",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    },
+    {
+      "name": "mark-unread_same_timestamp_no_version",
+      "action": "mark-unread",
+      "response_json": "{\"id\":901,\"business\":101,\"unread_count\":1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":\"synthetic\"},\"assigned_to\":9001,\"handoff_required\":true}",
+      "valid": true
+    }
+  ]
+}

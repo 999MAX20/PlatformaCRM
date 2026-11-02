@@ -1,0 +1,1604 @@
+{
+  "fixture_only": true,
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 900,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+  "receipt_cases": [
+    {
+      "name": "exact Task",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": true
+    },
+    {
+      "name": "Task id equals conversation id distinct namespace",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": true
+    },
+    {
+      "name": "observed title not locally reconstructed",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Observed synthetic title é\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": true
+    },
+    {
+      "name": "unknown fields grant no authority",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\",\"permissions\":{\"create\":true},\"bot_enabled\":false}",
+      "valid": true
+    },
+    {
+      "name": "missing id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":null,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":false,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":true,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":0,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":-1,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":1.5,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id '9901'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":\"9901\",\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":[],\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":{},\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":null,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":false,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":true,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":0,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":-1,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":2147483648,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":1.5,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business '701'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":\"701\",\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":[],\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":{},\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 202",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":202,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing title",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":null,\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":false,\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":0,\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title ''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":[],\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid title {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":{},\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing description",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid description None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":null,\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid description False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":false,\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid description 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":0,\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid description 'nonempty'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"nonempty\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid description ' '",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\" \",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid description []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":[],\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid description {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":{},\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing client",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":null,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":false,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":true,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":0,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":-1,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":2147483648,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":1.5,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client '701'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":\"701\",\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":[],\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":{},\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 6001",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":6001,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing lead",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":null,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":false,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":true,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":0,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":-1,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":2147483648,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":1.5,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead '701'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":\"701\",\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":[],\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":{},\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 6001",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":6001,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing assignee",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":null,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":false,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":true,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":0,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":-1,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":2147483648,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":1.5,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee '701'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":\"701\",\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":[],\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":{},\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assignee 6001",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":6001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing created_by",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":null,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":false,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":true,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":0,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":-1,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":2147483648,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":1.5,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by '701'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":\"701\",\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":[],\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":{},\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid created_by 6001",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":6001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing priority",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":null,\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":false,\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":0,\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority ''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority 'high'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"high\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority 'Normal'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"Normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority 'normal '",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal \",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":[],\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid priority {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":{},\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing due_at",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid due_at False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":false,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid due_at 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":0,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid due_at ''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":\"\",\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid due_at 'null'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":\"null\",\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid due_at '2026-11-02T12:00:00Z'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":\"2026-11-02T12:00:00Z\",\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid due_at []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":[],\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid due_at {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":{},\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing updated_at",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":null}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":0}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":{}}",
+      "valid": false
+    },
+    {
+      "name": "required nullable matching (None, None)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":null,\"lead\":null,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":null,\"lead\":null,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": true
+    },
+    {
+      "name": "required nullable mismatch (None, None)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":null,\"lead\":null,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":702,\"lead\":null,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "required nullable matching (None, 81)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":null,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":null,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": true
+    },
+    {
+      "name": "required nullable mismatch (None, 81)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":null,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":702,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "required nullable matching (701, None)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":null,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":null,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": true
+    },
+    {
+      "name": "required nullable mismatch (701, None)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":null,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":null,\"lead\":null,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    },
+    {
+      "name": "required nullable matching (701, 81)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": true
+    },
+    {
+      "name": "required nullable mismatch (701, 81)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 900,
+        "revision": 1
+      },
+      "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":null,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}",
+      "valid": false
+    }
+  ],
+  "grant_cases": [
+    {
+      "name": "separate TASKS.CREATE",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "create": true
+      },
+      "valid": true
+    },
+    {
+      "name": "invalid business",
+      "grant": {
+        "business": 202,
+        "conversation": 901,
+        "actor": 5001,
+        "create": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid conversation",
+      "grant": {
+        "business": 101,
+        "conversation": 902,
+        "actor": 5001,
+        "create": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 0,
+        "create": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": -1,
+        "create": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid create",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "create": false
+      },
+      "valid": false
+    }
+  ],
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "create": true
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "create": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "create": true
+    }
+  ],
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "original_client": 701,
+      "original_lead": 81,
+      "original_updated_at": "raw task source timestamp",
+      "outcome": "response",
+      "status": 201,
+      "response_json": "{\"id\":9901,\"business\":101,\"title\":\"Follow up: synthetic Client fixture\",\"description\":\"\",\"client\":701,\"lead\":81,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}"
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "original_client": null,
+      "original_lead": null,
+      "original_updated_at": "raw task source timestamp",
+      "outcome": "response",
+      "status": 201,
+      "response_json": "{\"id\":9902,\"business\":101,\"title\":\"Follow up: synthetic no-relations conversation\",\"description\":\"\",\"client\":null,\"lead\":null,\"assignee\":5001,\"created_by\":5001,\"priority\":\"normal\",\"due_at\":null,\"updated_at\":\"raw synthetic Task reply\"}"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "original_client": 1701,
+      "original_lead": null,
+      "original_updated_at": "raw task source timestamp",
+      "outcome": "rejected"
+    }
+  ],
+  "boundary": "Only explicitly omitted-field {} fake command. Source and TASKS.CREATE separate. Task reply is synthetic/observed; title not reconstructed, fields not locally supplied. Unknown has no retry/recovery, and Task id equality with conversation id is not namespace identity."
+}

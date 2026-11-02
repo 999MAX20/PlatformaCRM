@@ -1,0 +1,2746 @@
+{
+  "fixture_only": true,
+  "note": "Manual Task appointment FK, explicit read day/list/detail; no canonical follow-up, booking eligibility or live command.",
+  "choice_cases": [
+    {
+      "name": "same business",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 501,
+      "valid": true,
+      "title_json": "\"Synthetic Client A\""
+    },
+    {
+      "name": "second business",
+      "detail": {
+        "business": 202,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 601,
+          "title": "Synthetic Client C",
+          "status": "confirmed",
+          "client_id": 7003,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=601"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7003,
+            "title": "Synthetic Client C"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": []
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":202,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":601,\"title\":\"Synthetic Client C\",\"status\":\"confirmed\",\"client_id\":7003,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=601\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7003,\"title\":\"Synthetic Client C\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 202,
+      "id": 601,
+      "valid": true,
+      "title_json": "\"Synthetic Client C\""
+    },
+    {
+      "name": "foreign",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 202,
+      "id": 501,
+      "valid": false,
+      "title_json": "\"Synthetic Client A\""
+    },
+    {
+      "name": "wrong id",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 502,
+      "valid": false,
+      "title_json": "\"Synthetic Client A\""
+    },
+    {
+      "name": "zero",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 0,
+      "valid": false,
+      "title_json": "\"Synthetic Client A\""
+    },
+    {
+      "name": "negative",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": -1,
+      "valid": false,
+      "title_json": "\"Synthetic Client A\""
+    },
+    {
+      "name": "invalid business",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 0,
+      "id": 501,
+      "valid": false,
+      "title_json": "\"Synthetic Client A\""
+    },
+    {
+      "name": "absent title",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": null,
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":null,\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 501,
+      "valid": true,
+      "title_json": "null"
+    },
+    {
+      "name": "empty title",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 501,
+      "valid": true,
+      "title_json": "\"\""
+    },
+    {
+      "name": "leading FEFF",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "﻿Visit",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"﻿Visit\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 501,
+      "valid": true,
+      "title_json": "\"﻿Visit\""
+    },
+    {
+      "name": "decomposed title",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Café",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Café\",\"status\":\"confirmed\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 501,
+      "valid": true,
+      "title_json": "\"Café\""
+    },
+    {
+      "name": "cancelled still read reference",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "cancelled",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"cancelled\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 501,
+      "valid": true,
+      "title_json": "\"Synthetic Client A\""
+    },
+    {
+      "name": "unknown status and time no eligibility inferred",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "future-status",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "unknown",
+          "end_at": null,
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"future-status\",\"client_id\":7001,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"unknown\",\"end_at\":null,\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 501,
+      "valid": true,
+      "title_json": "\"Synthetic Client A\""
+    },
+    {
+      "name": "different client is independent",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 999,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T04:00:00Z",
+          "end_at": "2026-10-28T04:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "details": {
+          "notes": "Synthetic fixture note",
+          "source": "manual",
+          "client": {
+            "id": 7001,
+            "title": "Synthetic Client A"
+          },
+          "service": {
+            "id": 8001,
+            "name": "Synthetic service",
+            "duration_minutes": 30,
+            "price_from": "1000.00"
+          },
+          "resource": {
+            "id": 9001,
+            "name": "Synthetic specialist",
+            "type": "staff"
+          }
+        },
+        "related": {
+          "tasks": [
+            {
+              "id": 1301,
+              "title": "Synthetic Appointment task 1301",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1301"
+            },
+            {
+              "id": 1302,
+              "title": "Synthetic Appointment task 1302",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1302"
+            },
+            {
+              "id": 1303,
+              "title": "Synthetic Appointment task 1303",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1303"
+            },
+            {
+              "id": 1304,
+              "title": "Synthetic Appointment task 1304",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1304"
+            },
+            {
+              "id": 1305,
+              "title": "Synthetic Appointment task 1305",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 7001,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1305"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 60,
+          "max_related_per_section": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T00:00:00Z\",\"appointment\":{\"id\":501,\"title\":\"Synthetic Client A\",\"status\":\"confirmed\",\"client_id\":999,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-28T04:00:00Z\",\"end_at\":\"2026-10-28T04:30:00Z\",\"href\":\"/app/calendar?appointment=501\"},\"details\":{\"notes\":\"Synthetic fixture note\",\"source\":\"manual\",\"client\":{\"id\":7001,\"title\":\"Synthetic Client A\"},\"service\":{\"id\":8001,\"name\":\"Synthetic service\",\"duration_minutes\":30,\"price_from\":\"1000.00\"},\"resource\":{\"id\":9001,\"name\":\"Synthetic specialist\",\"type\":\"staff\"}},\"related\":{\"tasks\":[{\"id\":1301,\"title\":\"Synthetic Appointment task 1301\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1301\"},{\"id\":1302,\"title\":\"Synthetic Appointment task 1302\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1302\"},{\"id\":1303,\"title\":\"Synthetic Appointment task 1303\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1303\"},{\"id\":1304,\"title\":\"Synthetic Appointment task 1304\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1304\"},{\"id\":1305,\"title\":\"Synthetic Appointment task 1305\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":7001,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1305\"}]},\"payload_budget\":{\"target_kb\":60,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 501,
+      "valid": true,
+      "title_json": "\"Synthetic Client A\""
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "matching FK",
+      "body": {
+        "appointment": 501
+      },
+      "body_json": "{\"appointment\":501}",
+      "selected": 501,
+      "status": 201,
+      "accepted": true,
+      "kind": "appointment",
+      "id": 501
+    },
+    {
+      "name": "other FK",
+      "body": {
+        "appointment": 502
+      },
+      "body_json": "{\"appointment\":502}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "appointment",
+      "id": 502
+    },
+    {
+      "name": "GET alias",
+      "body": {
+        "appointment_id": 501
+      },
+      "body_json": "{\"appointment_id\":501}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "GET nested alias",
+      "body": {
+        "details": {
+          "appointment_id": 501
+        }
+      },
+      "body_json": "{\"details\":{\"appointment_id\":501}}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "missing",
+      "body": {},
+      "body_json": "{}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "null selected",
+      "body": {
+        "appointment": null
+      },
+      "body_json": "{\"appointment\":null}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "notSet",
+      "id": null
+    },
+    {
+      "name": "zero",
+      "body": {
+        "appointment": 0
+      },
+      "body_json": "{\"appointment\":0}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "negative",
+      "body": {
+        "appointment": -1
+      },
+      "body_json": "{\"appointment\":-1}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "bool",
+      "body": {
+        "appointment": true
+      },
+      "body_json": "{\"appointment\":true}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "string",
+      "body": {
+        "appointment": "501"
+      },
+      "body_json": "{\"appointment\":\"501\"}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "float",
+      "body": {
+        "appointment": 501.0
+      },
+      "body_json": "{\"appointment\":501.0}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "fraction",
+      "body": {
+        "appointment": 501.5
+      },
+      "body_json": "{\"appointment\":501.5}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "array",
+      "body": {
+        "appointment": [
+          501
+        ]
+      },
+      "body_json": "{\"appointment\":[501]}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "object",
+      "body": {
+        "appointment": {
+          "id": 501
+        }
+      },
+      "body_json": "{\"appointment\":{\"id\":501}}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "wide",
+      "body": {
+        "appointment": 2147483648
+      },
+      "body_json": "{\"appointment\":2147483648}",
+      "selected": 501,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "status200",
+      "body": {
+        "appointment": 501
+      },
+      "body_json": "{\"appointment\":501}",
+      "selected": 501,
+      "status": 200,
+      "accepted": false,
+      "kind": "appointment",
+      "id": 501
+    },
+    {
+      "name": "status202",
+      "body": {
+        "appointment": 501
+      },
+      "body_json": "{\"appointment\":501}",
+      "selected": 501,
+      "status": 202,
+      "accepted": false,
+      "kind": "appointment",
+      "id": 501
+    },
+    {
+      "name": "status400",
+      "body": {
+        "appointment": 501
+      },
+      "body_json": "{\"appointment\":501}",
+      "selected": 501,
+      "status": 400,
+      "accepted": false,
+      "kind": "appointment",
+      "id": 501
+    },
+    {
+      "name": "status403",
+      "body": {
+        "appointment": 501
+      },
+      "body_json": "{\"appointment\":501}",
+      "selected": 501,
+      "status": 403,
+      "accepted": false,
+      "kind": "appointment",
+      "id": 501
+    },
+    {
+      "name": "status409",
+      "body": {
+        "appointment": 501
+      },
+      "body_json": "{\"appointment\":501}",
+      "selected": 501,
+      "status": 409,
+      "accepted": false,
+      "kind": "appointment",
+      "id": 501
+    },
+    {
+      "name": "status500",
+      "body": {
+        "appointment": 501
+      },
+      "body_json": "{\"appointment\":501}",
+      "selected": 501,
+      "status": 500,
+      "accepted": false,
+      "kind": "appointment",
+      "id": 501
+    },
+    {
+      "name": "omitted",
+      "body": {},
+      "body_json": "{}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "omitted null",
+      "body": {
+        "appointment": null
+      },
+      "body_json": "{\"appointment\":null}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "notSet",
+      "id": null
+    },
+    {
+      "name": "omitted FK not promoted",
+      "body": {
+        "appointment": 999
+      },
+      "body_json": "{\"appointment\":999}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "appointment",
+      "id": 999
+    }
+  ],
+  "day_cases": [
+    {
+      "day": "2026-10-30",
+      "day_json": "\"2026-10-30\"",
+      "valid": true
+    },
+    {
+      "day": "2028-02-29",
+      "day_json": "\"2028-02-29\"",
+      "valid": true
+    },
+    {
+      "day": "2000-02-29",
+      "day_json": "\"2000-02-29\"",
+      "valid": true
+    },
+    {
+      "day": "",
+      "day_json": "\"\"",
+      "valid": false
+    },
+    {
+      "day": "2026-02-29",
+      "day_json": "\"2026-02-29\"",
+      "valid": false
+    },
+    {
+      "day": "1900-02-29",
+      "day_json": "\"1900-02-29\"",
+      "valid": false
+    },
+    {
+      "day": "0000-01-01",
+      "day_json": "\"0000-01-01\"",
+      "valid": false
+    },
+    {
+      "day": "2026-13-01",
+      "day_json": "\"2026-13-01\"",
+      "valid": false
+    },
+    {
+      "day": "2026-1-01",
+      "day_json": "\"2026-1-01\"",
+      "valid": false
+    },
+    {
+      "day": " 2026-10-30",
+      "day_json": "\" 2026-10-30\"",
+      "valid": false
+    },
+    {
+      "day": "2026-10-30\n",
+      "day_json": "\"2026-10-30\\n\"",
+      "valid": false
+    },
+    {
+      "day": "﻿2026-10-30",
+      "day_json": "\"﻿2026-10-30\"",
+      "valid": false
+    },
+    {
+      "day": "２０２６-10-30",
+      "day_json": "\"２０２６-10-30\"",
+      "valid": false
+    },
+    {
+      "day": "2026-10-30T00:00:00Z",
+      "day_json": "\"2026-10-30T00:00:00Z\"",
+      "valid": false
+    }
+  ],
+  "page_cases": [
+    {
+      "name": "source window",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "limit": 50,
+        "date": "2026-10-30",
+        "summary": {
+          "total": 2,
+          "today": 2,
+          "upcoming": 2,
+          "needs_confirmation": 0
+        },
+        "items": [
+          {
+            "id": 501,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 502,
+            "title": "Synthetic Client B",
+            "status": "created",
+            "client_id": 7002,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T08:00:00Z",
+            "end_at": "2026-10-28T08:30:00Z",
+            "href": "/app/calendar?appointment=502"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T00:00:00Z\", \"limit\": 50, \"date\": \"2026-10-30\", \"summary\": {\"total\": 2, \"today\": 2, \"upcoming\": 2, \"needs_confirmation\": 0}, \"items\": [{\"id\": 501, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 502, \"title\": \"Synthetic Client B\", \"status\": \"created\", \"client_id\": 7002, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T08:00:00Z\", \"end_at\": \"2026-10-28T08:30:00Z\", \"href\": \"/app/calendar?appointment=502\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": true
+    },
+    {
+      "name": "partial truthful",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "limit": 50,
+        "date": "2026-10-30",
+        "summary": {
+          "total": 10
+        },
+        "items": [
+          {
+            "id": 501,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 502,
+            "title": "Synthetic Client B",
+            "status": "created",
+            "client_id": 7002,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T08:00:00Z",
+            "end_at": "2026-10-28T08:30:00Z",
+            "href": "/app/calendar?appointment=502"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T00:00:00Z\", \"limit\": 50, \"date\": \"2026-10-30\", \"summary\": {\"total\": 10}, \"items\": [{\"id\": 501, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 502, \"title\": \"Synthetic Client B\", \"status\": \"created\", \"client_id\": 7002, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T08:00:00Z\", \"end_at\": \"2026-10-28T08:30:00Z\", \"href\": \"/app/calendar?appointment=502\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": true
+    },
+    {
+      "name": "foreign",
+      "page": {
+        "business": 202,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "limit": 50,
+        "date": "2026-10-30",
+        "summary": {
+          "total": 2,
+          "today": 2,
+          "upcoming": 2,
+          "needs_confirmation": 0
+        },
+        "items": [
+          {
+            "id": 501,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 502,
+            "title": "Synthetic Client B",
+            "status": "created",
+            "client_id": 7002,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T08:00:00Z",
+            "end_at": "2026-10-28T08:30:00Z",
+            "href": "/app/calendar?appointment=502"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 202, \"generated_at\": \"2026-10-28T00:00:00Z\", \"limit\": 50, \"date\": \"2026-10-30\", \"summary\": {\"total\": 2, \"today\": 2, \"upcoming\": 2, \"needs_confirmation\": 0}, \"items\": [{\"id\": 501, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 502, \"title\": \"Synthetic Client B\", \"status\": \"created\", \"client_id\": 7002, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T08:00:00Z\", \"end_at\": \"2026-10-28T08:30:00Z\", \"href\": \"/app/calendar?appointment=502\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "other day",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "limit": 50,
+        "date": "2026-10-29",
+        "summary": {
+          "total": 2,
+          "today": 2,
+          "upcoming": 2,
+          "needs_confirmation": 0
+        },
+        "items": [
+          {
+            "id": 501,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 502,
+            "title": "Synthetic Client B",
+            "status": "created",
+            "client_id": 7002,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T08:00:00Z",
+            "end_at": "2026-10-28T08:30:00Z",
+            "href": "/app/calendar?appointment=502"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T00:00:00Z\", \"limit\": 50, \"date\": \"2026-10-29\", \"summary\": {\"total\": 2, \"today\": 2, \"upcoming\": 2, \"needs_confirmation\": 0}, \"items\": [{\"id\": 501, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 502, \"title\": \"Synthetic Client B\", \"status\": \"created\", \"client_id\": 7002, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T08:00:00Z\", \"end_at\": \"2026-10-28T08:30:00Z\", \"href\": \"/app/calendar?appointment=502\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "short count",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "limit": 50,
+        "date": "2026-10-30",
+        "summary": {
+          "total": 0
+        },
+        "items": [
+          {
+            "id": 501,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 502,
+            "title": "Synthetic Client B",
+            "status": "created",
+            "client_id": 7002,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T08:00:00Z",
+            "end_at": "2026-10-28T08:30:00Z",
+            "href": "/app/calendar?appointment=502"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T00:00:00Z\", \"limit\": 50, \"date\": \"2026-10-30\", \"summary\": {\"total\": 0}, \"items\": [{\"id\": 501, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 502, \"title\": \"Synthetic Client B\", \"status\": \"created\", \"client_id\": 7002, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T08:00:00Z\", \"end_at\": \"2026-10-28T08:30:00Z\", \"href\": \"/app/calendar?appointment=502\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "duplicate",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "limit": 50,
+        "date": "2026-10-30",
+        "summary": {
+          "total": 2
+        },
+        "items": [
+          {
+            "id": 501,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 501,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T00:00:00Z\", \"limit\": 50, \"date\": \"2026-10-30\", \"summary\": {\"total\": 2}, \"items\": [{\"id\": 501, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 501, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "zero row",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "limit": 50,
+        "date": "2026-10-30",
+        "summary": {
+          "total": 1
+        },
+        "items": [
+          {
+            "id": 0,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T00:00:00Z\", \"limit\": 50, \"date\": \"2026-10-30\", \"summary\": {\"total\": 1}, \"items\": [{\"id\": 0, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "over cap",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T00:00:00Z",
+        "limit": 50,
+        "date": "2026-10-30",
+        "summary": {
+          "total": 51
+        },
+        "items": [
+          {
+            "id": 1000,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1001,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1002,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1003,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1004,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1005,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1006,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1007,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1008,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1009,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1010,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1011,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1012,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1013,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1014,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1015,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1016,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1017,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1018,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1019,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1020,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1021,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1022,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1023,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1024,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1025,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1026,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1027,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1028,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1029,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1030,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1031,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1032,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1033,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1034,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1035,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1036,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1037,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1038,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1039,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1040,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1041,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1042,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1043,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1044,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1045,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1046,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1047,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1048,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1049,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          },
+          {
+            "id": 1050,
+            "title": "Synthetic Client A",
+            "status": "confirmed",
+            "client_id": 7001,
+            "lead_id": null,
+            "service_id": 8001,
+            "start_at": "2026-10-28T04:00:00Z",
+            "end_at": "2026-10-28T04:30:00Z",
+            "href": "/app/calendar?appointment=501"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T00:00:00Z\", \"limit\": 50, \"date\": \"2026-10-30\", \"summary\": {\"total\": 51}, \"items\": [{\"id\": 1000, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1001, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1002, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1003, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1004, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1005, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1006, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1007, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1008, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1009, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1010, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1011, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1012, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1013, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1014, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1015, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1016, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1017, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1018, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1019, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1020, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1021, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1022, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1023, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1024, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1025, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1026, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1027, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1028, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1029, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1030, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1031, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1032, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1033, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1034, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1035, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1036, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1037, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1038, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1039, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1040, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1041, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1042, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1043, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1044, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1045, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1046, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1047, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1048, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1049, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}, {\"id\": 1050, \"title\": \"Synthetic Client A\", \"status\": \"confirmed\", \"client_id\": 7001, \"lead_id\": null, \"service_id\": 8001, \"start_at\": \"2026-10-28T04:00:00Z\", \"end_at\": \"2026-10-28T04:30:00Z\", \"href\": \"/app/calendar?appointment=501\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    }
+  ],
+  "read_feedback_cases": [
+    {
+      "problem": "denied",
+      "copy_key": "denied"
+    },
+    {
+      "problem": "not_found",
+      "copy_key": "notFound"
+    },
+    {
+      "problem": "unavailable",
+      "copy_key": "unavailable"
+    },
+    {
+      "problem": "invalid_payload",
+      "copy_key": "unavailable"
+    },
+    {
+      "problem": "invalid_context",
+      "copy_key": "unavailable"
+    }
+  ]
+}

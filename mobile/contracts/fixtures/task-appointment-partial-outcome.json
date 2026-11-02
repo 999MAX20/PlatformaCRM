@@ -1,0 +1,824 @@
+{
+  "fixture_only": true,
+  "scope": "Only one existing due_at/reminder_at key in local prepared PATCH-shaped data, explicit set or null clear, no date/mode by default. Direct TaskSerializer selected-field result lens; unknown/unselected fields not retained/promoted. No real PATCH, description/other DTO/clock/version default.",
+  "input_cases": [
+    {
+      "name": "due_at_utc",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "expected_body": {
+        "due_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "name": "due_at_offset",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T17:00:00+05:00",
+      "expected_body": {
+        "due_at": "2026-10-30T17:00:00+05:00"
+      }
+    },
+    {
+      "name": "due_at_fraction",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00.123456Z",
+      "expected_body": {
+        "due_at": "2026-10-30T12:00:00.123456Z"
+      }
+    },
+    {
+      "name": "due_at_past",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2000-02-29T00:00:00Z",
+      "expected_body": {
+        "due_at": "2000-02-29T00:00:00Z"
+      }
+    },
+    {
+      "name": "due_at_clear",
+      "field": "due_at",
+      "mode": "clear",
+      "raw": "",
+      "expected_body": {
+        "due_at": null
+      }
+    },
+    {
+      "name": "due_at_clear_retains_unused_raw",
+      "field": "due_at",
+      "mode": "clear",
+      "raw": "bad unsent date",
+      "expected_body": {
+        "due_at": null
+      }
+    },
+    {
+      "name": "due_at_empty_set",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "",
+      "expected_body": null
+    },
+    {
+      "name": "due_at_naive_set",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00",
+      "expected_body": null
+    },
+    {
+      "name": "due_at_bad_calendar",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-02-30T12:00:00Z",
+      "expected_body": null
+    },
+    {
+      "name": "reminder_at_utc",
+      "field": "reminder_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "expected_body": {
+        "reminder_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "name": "reminder_at_offset",
+      "field": "reminder_at",
+      "mode": "set",
+      "raw": "2026-10-30T17:00:00+05:00",
+      "expected_body": {
+        "reminder_at": "2026-10-30T17:00:00+05:00"
+      }
+    },
+    {
+      "name": "reminder_at_fraction",
+      "field": "reminder_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00.123456Z",
+      "expected_body": {
+        "reminder_at": "2026-10-30T12:00:00.123456Z"
+      }
+    },
+    {
+      "name": "reminder_at_past",
+      "field": "reminder_at",
+      "mode": "set",
+      "raw": "2000-02-29T00:00:00Z",
+      "expected_body": {
+        "reminder_at": "2000-02-29T00:00:00Z"
+      }
+    },
+    {
+      "name": "reminder_at_clear",
+      "field": "reminder_at",
+      "mode": "clear",
+      "raw": "",
+      "expected_body": {
+        "reminder_at": null
+      }
+    },
+    {
+      "name": "reminder_at_clear_retains_unused_raw",
+      "field": "reminder_at",
+      "mode": "clear",
+      "raw": "bad unsent date",
+      "expected_body": {
+        "reminder_at": null
+      }
+    },
+    {
+      "name": "reminder_at_empty_set",
+      "field": "reminder_at",
+      "mode": "set",
+      "raw": "",
+      "expected_body": null
+    },
+    {
+      "name": "reminder_at_naive_set",
+      "field": "reminder_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00",
+      "expected_body": null
+    },
+    {
+      "name": "reminder_at_bad_calendar",
+      "field": "reminder_at",
+      "mode": "set",
+      "raw": "2026-02-30T12:00:00Z",
+      "expected_body": null
+    }
+  ],
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-28T05:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "appointment": null
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "set_due",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "set_reminder",
+      "field": "reminder_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "clear_due",
+      "field": "due_at",
+      "mode": "clear",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": null,
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "clear_reminder",
+      "field": "reminder_at",
+      "mode": "clear",
+      "raw": "retained unused input",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "equivalent_offset",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T17:00:00+05:00",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "fraction_exact",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00.123456Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T17:00:00.123456+05:00",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "past_no_future_rule",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2000-02-29T00:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2000-02-29T00:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "in_progress_preserved",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "in_progress",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "clock_not_version",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2020-01-01T00:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "unused_response_fields_not_promoted",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "untrusted unrelated extra",
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "description": "Not part of prepared body or retained result"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "unused_fields_omitted",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "foreign_task",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1401,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "status_changed",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "different_instant",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:01Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "fraction_changed",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00.000001Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_instead_set",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": null,
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_instead_date",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": false,
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "numeric_instead_date",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": 123,
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_calendar_date",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-02-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_clock",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "bad"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_clock_calendar",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-02-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_identity",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": true,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "text_business",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": "101",
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_id",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_status",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_due_at",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_updated_at",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "clear_still_has_date",
+      "field": "due_at",
+      "mode": "clear",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "clear_missing_not_null",
+      "field": "due_at",
+      "mode": "clear",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "clear_string_null",
+      "field": "due_at",
+      "mode": "clear",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "null",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "other_field_not_selected",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "reminder_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrapped",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "result": {
+          "id": 1101,
+          "business": 101,
+          "status": "open",
+          "due_at": "2026-10-30T12:00:00Z",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "updated_at": "2026-10-30T12:00:00Z"
+        }
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http",
+      "field": "due_at",
+      "mode": "set",
+      "raw": "2026-10-30T12:00:00Z",
+      "source_status": "open",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    }
+  ],
+  "note": "Separate synthetic UPDATE actor/grant and direct generic selected Appointment relation result; source-only, no actual PATCH/booking/follow-up."
+}

@@ -1,0 +1,556 @@
+{
+  "fixture_only": true,
+  "scope": "Existing Task create exact text correlation after existing JS-title/Python-description normalization. No NFC/NFD conversion, new API/body field/default or actual POST. Exact raw snapshot comparison also invalidates old UI clear controls.",
+  "cases": [
+    {
+      "name": "exact_decomposed",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "different_title_spelling",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "different_description_spelling",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "both_canonically_equivalent",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "raw_echo_not_preview",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": " é ",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "exact_precomposed",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "visually_similar_wrong",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "e",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "empty_description_exact",
+      "raw": {
+        "title": " é ",
+        "description": " \t\n",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "",
+        "priority": "high"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "single_pass_trim_exact",
+      "raw": {
+        "title": "\u001c﻿ é ﻿\u001c",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "﻿ é ﻿",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "﻿ é ﻿",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "second_trim_not_exact",
+      "raw": {
+        "title": "\u001c﻿ é ﻿\u001c",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "﻿ é ﻿",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_title",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_description",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_status_http",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 200,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 202,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_creator",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9002,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_lifecycle_status",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "in_progress",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_clock",
+      "raw": {
+        "title": " é ",
+        "description": " ś ",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "bad",
+        "due_at": null,
+        "title": "é",
+        "description": "ś",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "interior_whitespace_exact",
+      "raw": {
+        "title": "Call  client",
+        "description": "Line one\nLine two",
+        "priority": "high"
+      },
+      "preview": {
+        "title": "Call  client",
+        "description": "Line one\nLine two",
+        "priority": "high"
+      },
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T10:00:00Z",
+        "updated_at": "2026-10-30T10:00:00Z",
+        "due_at": null,
+        "title": "Call  client",
+        "description": "Line one\nLine two",
+        "priority": "high"
+      },
+      "expected": "confirmed"
+    }
+  ],
+  "snapshot_cases": [
+    {
+      "name": "title_0",
+      "field": "title",
+      "left": {
+        "title": "é",
+        "description": "Note",
+        "priority": "normal"
+      },
+      "right": {
+        "title": "é",
+        "description": "Note",
+        "priority": "normal"
+      },
+      "raw_equal": false,
+      "preview_equal": false
+    },
+    {
+      "name": "description_1",
+      "field": "description",
+      "left": {
+        "title": "Task",
+        "description": "ś",
+        "priority": "normal"
+      },
+      "right": {
+        "title": "Task",
+        "description": "ś",
+        "priority": "normal"
+      },
+      "raw_equal": false,
+      "preview_equal": false
+    },
+    {
+      "name": "title_2",
+      "field": "title",
+      "left": {
+        "title": " é ",
+        "description": "Note",
+        "priority": "normal"
+      },
+      "right": {
+        "title": "é",
+        "description": "Note",
+        "priority": "normal"
+      },
+      "raw_equal": false,
+      "preview_equal": true
+    },
+    {
+      "name": "description_3",
+      "field": "description",
+      "left": {
+        "title": "Task",
+        "description": " note ",
+        "priority": "normal"
+      },
+      "right": {
+        "title": "Task",
+        "description": "note",
+        "priority": "normal"
+      },
+      "raw_equal": false,
+      "preview_equal": true
+    }
+  ]
+}

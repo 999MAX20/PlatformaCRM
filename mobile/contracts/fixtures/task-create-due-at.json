@@ -1,0 +1,503 @@
+{
+  "fixture_only": true,
+  "scope": "Existing manual Task CREATE optional due_at set/omit only. Existing exact text/201/scope/creator/status/time guards; selected nonnull valid instant correlated, omission proves no server date/null/default. No null-clear/other fields/new endpoint/real POST.",
+  "input_cases": [
+    {
+      "name": "input_0",
+      "mode": "omit",
+      "raw": "",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal"
+      }
+    },
+    {
+      "name": "input_1",
+      "mode": "omit",
+      "raw": "kept invalid input",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal"
+      }
+    },
+    {
+      "name": "input_2",
+      "mode": "omit",
+      "raw": "2000-02-29T00:00:00Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal"
+      }
+    },
+    {
+      "name": "input_3",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "name": "input_4",
+      "mode": "setDate",
+      "raw": "2026-10-30T17:00:00+05:00",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T17:00:00+05:00"
+      }
+    },
+    {
+      "name": "input_5",
+      "mode": "setDate",
+      "raw": "2000-02-29T00:00:00Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2000-02-29T00:00:00Z"
+      }
+    },
+    {
+      "name": "input_6",
+      "mode": "setDate",
+      "raw": "2038-01-19T03:14:08Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2038-01-19T03:14:08Z"
+      }
+    },
+    {
+      "name": "input_7",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00.123456Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T12:00:00.123456Z"
+      }
+    },
+    {
+      "name": "input_8",
+      "mode": "setDate",
+      "raw": "",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "input_9",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "input_10",
+      "mode": "setDate",
+      "raw": " 2026-10-30T12:00:00Z",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "input_11",
+      "mode": "setDate",
+      "raw": "2026-02-30T12:00:00Z",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "input_12",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00-00:00",
+      "valid": false,
+      "expected_body": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "exact",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "equivalent_offset",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T17:00:00+05:00"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "fraction",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00.123456Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T17:00:00.123456+05:00"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "past_no_future_rule",
+      "mode": "setDate",
+      "raw": "2000-02-29T00:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2000-02-29T00:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "omit_ignores_untouched_date",
+      "mode": "omit",
+      "raw": "kept invalid input",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "untrusted untouched date"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "omit_no_date_claim",
+      "mode": "omit",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "wrong_instant",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:01Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_selected",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "invalid_calendar",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-02-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "naive",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_selected",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "number_selected",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": 12
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_business",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 202,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_actor",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9002,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_status",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "in_progress",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_title",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Another",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_clock",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "bad",
+        "due_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_selected",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http",
+      "mode": "setDate",
+      "raw": "2026-10-30T12:00:00Z",
+      "status": 200,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    }
+  ]
+}

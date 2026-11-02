@@ -1,0 +1,601 @@
+{
+  "fixture_only": true,
+  "scope": "Synthetic Business/target catalogs outside exact merge-dry-run DTO. No real POST, merge/archive, permissions, version, recovery or outcome claim.",
+  "source": "apps/clients/services.py:147-190; views.py:85-91; serializers.py:100-125",
+  "catalogs": [
+    {
+      "business": 101,
+      "target": 701,
+      "previews": [
+        {
+          "target_client_id": 701,
+          "duplicate": {
+            "id": 702,
+            "full_name": "Synthetic duplicate Ә",
+            "phone": "+70000000002",
+            "email": "duplicate@example.invalid",
+            "whatsapp_id": "",
+            "telegram_id": "synthetic-telegram",
+            "instagram_id": "",
+            "source": "manual",
+            "is_archived": false
+          },
+          "transferred": {
+            "leads": 0,
+            "appointments": 1,
+            "conversations": 2,
+            "bot_conversations": 3,
+            "tasks": 4,
+            "deals": 5,
+            "notes": 6,
+            "activity_events": 7,
+            "analytics_events": 8,
+            "notifications": 9,
+            "tags": 10,
+            "attachments": 11,
+            "custom_field_values": 12
+          },
+          "will_delete_duplicate": false,
+          "policy": "archive_duplicate_after_transfer"
+        },
+        {
+          "target_client_id": 701,
+          "duplicate": {
+            "id": 703,
+            "full_name": "Synthetic second duplicate",
+            "phone": "",
+            "email": "duplicate@example.invalid",
+            "whatsapp_id": "",
+            "telegram_id": "synthetic-telegram",
+            "instagram_id": "",
+            "source": "manual",
+            "is_archived": false
+          },
+          "transferred": {
+            "leads": 0,
+            "appointments": 1,
+            "conversations": 2,
+            "bot_conversations": 3,
+            "tasks": 4,
+            "deals": 5,
+            "notes": 6,
+            "activity_events": 7,
+            "analytics_events": 8,
+            "notifications": 9,
+            "tags": 10,
+            "attachments": 11,
+            "custom_field_values": 12
+          },
+          "will_delete_duplicate": false,
+          "policy": "archive_duplicate_after_transfer"
+        }
+      ]
+    },
+    {
+      "business": 101,
+      "target": 702,
+      "previews": []
+    },
+    {
+      "business": 202,
+      "target": 801,
+      "previews": [
+        {
+          "target_client_id": 801,
+          "duplicate": {
+            "id": 802,
+            "full_name": "Synthetic duplicate Ә",
+            "phone": "+70000000002",
+            "email": "duplicate@example.invalid",
+            "whatsapp_id": "",
+            "telegram_id": "synthetic-telegram",
+            "instagram_id": "",
+            "source": "manual",
+            "is_archived": false
+          },
+          "transferred": {
+            "leads": 0,
+            "appointments": 1,
+            "conversations": 2,
+            "bot_conversations": 3,
+            "tasks": 4,
+            "deals": 5,
+            "notes": 6,
+            "activity_events": 7,
+            "analytics_events": 8,
+            "notifications": 9,
+            "tags": 10,
+            "attachments": 11,
+            "custom_field_values": 12
+          },
+          "will_delete_duplicate": false,
+          "policy": "archive_duplicate_after_transfer"
+        }
+      ]
+    }
+  ],
+  "decode_cases": [
+    {
+      "name": "provided13",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": true
+    },
+    {
+      "name": "blank_provided_labels",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"\",\"phone\":\"\",\"email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\",\"source\":\"\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": true
+    },
+    {
+      "name": "provided_archived_snapshot",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":true},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": true
+    },
+    {
+      "name": "provided_zero_counts",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":0,\"conversations\":0,\"bot_conversations\":0,\"tasks\":0,\"deals\":0,\"notes\":0,\"activity_events\":0,\"analytics_events\":0,\"notifications\":0,\"tags\":0,\"attachments\":0,\"custom_field_values\":0},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": true
+    },
+    {
+      "name": "unknown_snapshot_top_fields",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false,\"extra\":\"ignored\"},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\",\"extra\":false}",
+      "valid": true
+    },
+    {
+      "name": "raw_label",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"é‍Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": true
+    },
+    {
+      "name": "missing_count_leads",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_leads",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":-1,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_leads",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":true,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_leads",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":null,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_appointments",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_appointments",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":-1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_appointments",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":true,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_appointments",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":null,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_conversations",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_conversations",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":-1,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_conversations",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":true,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_conversations",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":null,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_bot_conversations",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_bot_conversations",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":-1,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_bot_conversations",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":true,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_bot_conversations",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":null,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_tasks",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_tasks",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":-1,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_tasks",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":true,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_tasks",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":null,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_deals",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_deals",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":-1,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_deals",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":true,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_deals",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":null,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_notes",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_notes",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":-1,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_notes",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":true,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_notes",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":null,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_activity_events",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_activity_events",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":-1,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_activity_events",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":true,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_activity_events",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":null,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_analytics_events",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_analytics_events",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":-1,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_analytics_events",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":true,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_analytics_events",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":null,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_notifications",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_notifications",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":-1,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_notifications",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":true,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_notifications",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":null,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_tags",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_tags",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":-1,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_tags",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":true,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_tags",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":null,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_attachments",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_attachments",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":-1,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_attachments",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":true,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_attachments",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":null,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_count_custom_field_values",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "negative_count_custom_field_values",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":-1},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "bool_count_custom_field_values",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":true},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_count_custom_field_values",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":null},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_transferred",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":null,\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "array_transferred",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":[],\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "extra_transferred",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12,\"new_unknown_relation\":3},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_transferred",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_id",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_full_name",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_phone",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_email",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_whatsapp_id",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_telegram_id",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_instagram_id",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_source",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_snapshot_is_archived",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\"},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_snapshot_full_name",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":null,\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_snapshot_phone",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":null,\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_snapshot_email",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":null,\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_snapshot_whatsapp_id",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":null,\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_snapshot_telegram_id",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":null,\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_snapshot_instagram_id",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":null,\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "null_snapshot_source",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":null,\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "target_zero",
+      "response_json": "{\"target_client_id\":0,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "duplicate_zero",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":0,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "same_id",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":701,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "target_bool",
+      "response_json": "{\"target_client_id\":true,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "duplicate_text",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":\"702\",\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "unknown_policy",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false,\"policy\":\"hard_delete_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "delete_true",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":true,\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "delete_text",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":\"false\",\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "missing_policy",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"will_delete_duplicate\":false}",
+      "valid": false
+    },
+    {
+      "name": "missing_will_delete_duplicate",
+      "response_json": "{\"target_client_id\":701,\"duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"policy\":\"archive_duplicate_after_transfer\"}",
+      "valid": false
+    },
+    {
+      "name": "merge_outcome_is_not_preview",
+      "response_json": "{\"target_client_id\":701,\"archived_duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"deleted_duplicate\":{\"id\":702,\"full_name\":\"Synthetic duplicate Ә\",\"phone\":\"+70000000002\",\"email\":\"duplicate@example.invalid\",\"whatsapp_id\":\"\",\"telegram_id\":\"synthetic-telegram\",\"instagram_id\":\"\",\"source\":\"manual\",\"is_archived\":false},\"transferred\":{\"leads\":0,\"appointments\":1,\"conversations\":2,\"bot_conversations\":3,\"tasks\":4,\"deals\":5,\"notes\":6,\"activity_events\":7,\"analytics_events\":8,\"notifications\":9,\"tags\":10,\"attachments\":11,\"custom_field_values\":12},\"merge_log_id\":1}",
+      "valid": false
+    }
+  ],
+  "snapshot_identity_pairs": [
+    {
+      "field": "full_name",
+      "before_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"é\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}",
+      "after_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"é\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}"
+    },
+    {
+      "field": "phone",
+      "before_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"é\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}",
+      "after_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"é\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}"
+    },
+    {
+      "field": "email",
+      "before_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"é\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}",
+      "after_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"é\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}"
+    },
+    {
+      "field": "whatsapp_id",
+      "before_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"é\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}",
+      "after_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"é\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}"
+    },
+    {
+      "field": "telegram_id",
+      "before_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"é\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}",
+      "after_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"é\", \"instagram_id\": \"\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}"
+    },
+    {
+      "field": "instagram_id",
+      "before_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"é\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}",
+      "after_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"é\", \"source\": \"manual\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}"
+    },
+    {
+      "field": "source",
+      "before_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"é\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}",
+      "after_json": "{\"target_client_id\": 701, \"duplicate\": {\"id\": 702, \"full_name\": \"Synthetic duplicate Ә\", \"phone\": \"+70000000002\", \"email\": \"duplicate@example.invalid\", \"whatsapp_id\": \"\", \"telegram_id\": \"synthetic-telegram\", \"instagram_id\": \"\", \"source\": \"é\", \"is_archived\": false}, \"transferred\": {\"leads\": 0, \"appointments\": 1, \"conversations\": 2, \"bot_conversations\": 3, \"tasks\": 4, \"deals\": 5, \"notes\": 6, \"activity_events\": 7, \"analytics_events\": 8, \"notifications\": 9, \"tags\": 10, \"attachments\": 11, \"custom_field_values\": 12}, \"will_delete_duplicate\": false, \"policy\": \"archive_duplicate_after_transfer\"}"
+    }
+  ]
+}

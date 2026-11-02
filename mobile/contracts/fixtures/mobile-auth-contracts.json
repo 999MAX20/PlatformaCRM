@@ -1,0 +1,4328 @@
+{
+  "fixture_only": true,
+  "scope": "Exact source-defined schema preparation; synthetic values only, never executed/authenticated/stored",
+  "login_inputs": {
+    "ios-minimal": {
+      "device_id": "synthetic-device-ios",
+      "platform": "ios",
+      "email": "synthetic@example.invalid",
+      "password": "synthetic-password-not-a-credential"
+    },
+    "android-full": {
+      "device_id": "synthetic-device-android",
+      "platform": "android",
+      "email": "synthetic2@example.invalid",
+      "password": "synthetic-password2-never-used",
+      "business": 202,
+      "app_version": "",
+      "build_number": "synthetic-build",
+      "os_version": "synthetic-os",
+      "device_model": "Synthetic model"
+    },
+    "ios-raw": {
+      "device_id": " synthetic-device-é ",
+      "platform": "ios",
+      "email": " Synthetic.Mixed@Example.invalid ",
+      "password": " synthetic-password-é + spaces ",
+      "business": 101,
+      "app_version": "synthetic-é",
+      "build_number": "",
+      "os_version": "",
+      "device_model": ""
+    }
+  },
+  "request_cases": [
+    {
+      "name": "ios-minimal",
+      "operation": "login",
+      "values": {
+        "device_id": "synthetic-device-ios",
+        "platform": "ios",
+        "email": "synthetic@example.invalid",
+        "password": "synthetic-password-not-a-credential"
+      },
+      "expected_body": {
+        "device_id": "synthetic-device-ios",
+        "platform": "ios",
+        "email": "synthetic@example.invalid",
+        "password": "synthetic-password-not-a-credential"
+      }
+    },
+    {
+      "name": "android-full",
+      "operation": "login",
+      "values": {
+        "device_id": "synthetic-device-android",
+        "platform": "android",
+        "email": "synthetic2@example.invalid",
+        "password": "synthetic-password2-never-used",
+        "business": 202,
+        "app_version": "",
+        "build_number": "synthetic-build",
+        "os_version": "synthetic-os",
+        "device_model": "Synthetic model"
+      },
+      "expected_body": {
+        "device_id": "synthetic-device-android",
+        "platform": "android",
+        "email": "synthetic2@example.invalid",
+        "password": "synthetic-password2-never-used",
+        "business": 202,
+        "app_version": "",
+        "build_number": "synthetic-build",
+        "os_version": "synthetic-os",
+        "device_model": "Synthetic model"
+      }
+    },
+    {
+      "name": "ios-raw",
+      "operation": "login",
+      "values": {
+        "device_id": " synthetic-device-é ",
+        "platform": "ios",
+        "email": " Synthetic.Mixed@Example.invalid ",
+        "password": " synthetic-password-é + spaces ",
+        "business": 101,
+        "app_version": "synthetic-é",
+        "build_number": "",
+        "os_version": "",
+        "device_model": ""
+      },
+      "expected_body": {
+        "device_id": " synthetic-device-é ",
+        "platform": "ios",
+        "email": " Synthetic.Mixed@Example.invalid ",
+        "password": " synthetic-password-é + spaces ",
+        "business": 101,
+        "app_version": "synthetic-é",
+        "build_number": "",
+        "os_version": "",
+        "device_model": ""
+      }
+    },
+    {
+      "name": "refresh",
+      "operation": "refresh",
+      "values": {
+        "refresh": "synthetic-refresh-not-a-token"
+      },
+      "expected_body": {
+        "refresh": "synthetic-refresh-not-a-token"
+      }
+    },
+    {
+      "name": "logout-omitted",
+      "operation": "logout",
+      "values": {},
+      "expected_body": {}
+    },
+    {
+      "name": "logout-blank",
+      "operation": "logout",
+      "values": {
+        "refresh": ""
+      },
+      "expected_body": {
+        "refresh": ""
+      }
+    },
+    {
+      "name": "logout-provided",
+      "operation": "logout",
+      "values": {
+        "refresh": "synthetic-refresh-not-a-token"
+      },
+      "expected_body": {
+        "refresh": "synthetic-refresh-not-a-token"
+      }
+    }
+  ],
+  "response_cases": [
+    {
+      "name": "ios-login",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "loaded"
+    },
+    {
+      "name": "android-explicit-business",
+      "operation": "login",
+      "input": "android-full",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 202,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9002,
+          "business": 202,
+          "platform": "android",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "loaded"
+    },
+    {
+      "name": "omitted-business-server-response",
+      "operation": "login",
+      "input": "ios-minimal",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 202,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 202,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "loaded"
+    },
+    {
+      "name": "empty-provided-descriptors-null-timestamp",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": []
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": null,
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "loaded"
+    },
+    {
+      "name": "refresh-exact",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-new-access",
+        "refresh": "synthetic-new-refresh",
+        "token_type": "Bearer"
+      },
+      "expected": "loaded"
+    },
+    {
+      "name": "logout-exact",
+      "operation": "logout",
+      "input": "ios-raw",
+      "body": {
+        "ok": true
+      },
+      "expected": "loaded"
+    },
+    {
+      "name": "login--access-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--access-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": null,
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--access-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": 7,
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--refresh-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--refresh-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": null,
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--refresh-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": 7,
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--token_type-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--token_type-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": null,
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--token_type-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": 7,
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--business-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--business-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": null,
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--business-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": false,
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--device-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--device-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": null
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login--device-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": false
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-id-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-id-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": null,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-id-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": false,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-name-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-name-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": null,
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-name-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": 7,
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-slug-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-slug-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": null,
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-slug-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": 7,
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-business_type-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-business_type-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": null,
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-business_type-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": 7,
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-city-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-city-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": null,
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-city-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": 7,
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-timezone-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-timezone-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": null,
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-timezone-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": 7,
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-language-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-language-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": null,
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-language-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": 7,
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-currency-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-currency-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": null,
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-currency-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": 7,
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-status-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-status-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": null,
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-status-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": 7,
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-permissions-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active"
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-permissions-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": null
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-business-permissions-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": false
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-id-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-id-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": null,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-id-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": false,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-business-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-business-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": null,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-business-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": false,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-platform-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-platform-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": null,
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-platform-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": 7,
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-app_version-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-app_version-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": null,
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-app_version-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": 7,
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-build_number-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-build_number-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": null,
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-build_number-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": 7,
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-os_version-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-os_version-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": null,
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-os_version-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": 7,
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-device_model-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-device_model-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": null,
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-device_model-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": 7,
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-last_seen_at-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-last_seen_at-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": 7,
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-revoked_at-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-revoked_at-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": 7,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-created_at-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-created_at-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": null,
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-created_at-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": 7,
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-updated_at-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-updated_at-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": null
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-device-updated_at-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": 7
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-resource-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-resource-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": null,
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-resource-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": 7,
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-action-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-action-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": null,
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-action-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": 7,
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-scope-missing",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-scope-null",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": null
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "permission-scope-type",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": 7
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "business-zero",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 0,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "device-zero",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 0,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "wrong-device-business",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 202,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "unsupported-platform",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "web",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "wrong-request-platform",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "android",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "contextMismatch"
+    },
+    {
+      "name": "wrong-explicit-business",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 202,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 202,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "contextMismatch"
+    },
+    {
+      "name": "login-access-''",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-refresh-''",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "",
+        "token_type": "Bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-token_type-'bearer'",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "bearer",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-token_type-'Bearer '",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access-é-not-a-token",
+        "refresh": "synthetic-refresh-not-a-token",
+        "token_type": "Bearer ",
+        "business": {
+          "id": 101,
+          "name": "Synthetic Business é",
+          "slug": "synthetic",
+          "business_type": "service",
+          "city": "",
+          "timezone": "Asia/Almaty",
+          "language": "kk",
+          "currency": "KZT",
+          "status": "active",
+          "permissions": [
+            {
+              "resource": "clients",
+              "action": "read",
+              "scope": "BUSINESS"
+            }
+          ]
+        },
+        "device": {
+          "id": 9001,
+          "business": 101,
+          "platform": "ios",
+          "app_version": "",
+          "build_number": "",
+          "os_version": "",
+          "device_model": "",
+          "last_seen_at": "2026-10-30T00:00:00Z",
+          "revoked_at": null,
+          "created_at": "2026-10-01T00:00:00Z",
+          "updated_at": "2026-10-30T00:00:00Z"
+        }
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-access-missing",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "refresh": "synthetic-refresh",
+        "token_type": "Bearer"
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-access-null",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": null,
+        "refresh": "synthetic-refresh",
+        "token_type": "Bearer"
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-access-type",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": 7,
+        "refresh": "synthetic-refresh",
+        "token_type": "Bearer"
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-refresh-missing",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access",
+        "token_type": "Bearer"
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-refresh-null",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access",
+        "refresh": null,
+        "token_type": "Bearer"
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-refresh-type",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access",
+        "refresh": 7,
+        "token_type": "Bearer"
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-token_type-missing",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access",
+        "refresh": "synthetic-refresh"
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-token_type-null",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access",
+        "refresh": "synthetic-refresh",
+        "token_type": null
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "refresh-token_type-type",
+      "operation": "refresh",
+      "input": "ios-raw",
+      "body": {
+        "access": "synthetic-access",
+        "refresh": "synthetic-refresh",
+        "token_type": 7
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "logout-wrong-False",
+      "operation": "logout",
+      "input": "ios-raw",
+      "body": {
+        "ok": false
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "logout-wrong-1",
+      "operation": "logout",
+      "input": "ios-raw",
+      "body": {
+        "ok": 1
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "logout-wrong-true",
+      "operation": "logout",
+      "input": "ios-raw",
+      "body": {
+        "ok": "true"
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "logout-wrong-None",
+      "operation": "logout",
+      "input": "ios-raw",
+      "body": {
+        "ok": null
+      },
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "logout-missing",
+      "operation": "logout",
+      "input": "ios-raw",
+      "body": {},
+      "expected": "invalidPayload"
+    },
+    {
+      "name": "login-error-not-success",
+      "operation": "login",
+      "input": "ios-raw",
+      "body": {
+        "detail": "Synthetic invalid credentials"
+      },
+      "expected": "invalidPayload"
+    }
+  ]
+}

@@ -1,0 +1,1285 @@
+{
+  "fixture_only": true,
+  "scope": "Existing HTTP200 MobileInboxReply wrapper, source-scoped conversation/outbound manager message and queued/sent/failed receipt. Explicit fake-only UPDATE/key catalogue separate from GET; no actual send/key transport/version/TTL/recovery. Unknown retains full raw/review/key/body/attempt; response500 excerpt not full-input proof. Provider error_text never displayed/retained in receipt.",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 9001,
+        "update": true,
+        "keys": [
+          "fixture-inbox-101-901-a",
+          "fixture-inbox-101-901-b",
+          "fixture-inbox-101-901-c"
+        ]
+      },
+      "outcome": "response",
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "conversation": 902,
+        "actor": 9001,
+        "update": true,
+        "keys": [
+          "fixture-inbox-101-902-a",
+          "fixture-inbox-101-902-b",
+          "fixture-inbox-101-902-c"
+        ]
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "conversation": 951,
+        "actor": 9002,
+        "update": true,
+        "keys": [
+          "fixture-inbox-202-951-a",
+          "fixture-inbox-202-951-b",
+          "fixture-inbox-202-951-c"
+        ]
+      },
+      "outcome": "unknown",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 101,
+        "conversation": 911,
+        "actor": 9001,
+        "update": true,
+        "keys": [
+          "fixture-inbox-101-911-a",
+          "fixture-inbox-101-911-b",
+          "fixture-inbox-101-911-c"
+        ]
+      },
+      "outcome": "response",
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 911,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88004,
+          "conversation_id": 911,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "sent",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": "2026-10-30T11:59:59Z",
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "conversation": 931,
+        "actor": 9001,
+        "update": true,
+        "keys": [
+          "fixture-inbox-101-931-a",
+          "fixture-inbox-101-931-b",
+          "fixture-inbox-101-931-c"
+        ]
+      },
+      "outcome": "response",
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 931,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88005,
+          "conversation_id": 931,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "failed",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      }
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "queued_receipt",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "sent_provider_status",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "sent",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": "2026-10-30T12:00:00Z",
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"sent\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": \"2026-10-30T12:00:00Z\", \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "failed_is_created_receipt_not_no_write",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "failed",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"failed\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "replayed_true",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": true,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": true, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "sent_before_message_created_is_source_valid",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "sent",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": "2026-10-30T11:59:59.999999Z",
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"sent\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": \"2026-10-30T11:59:59.999999Z\", \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "python_only_bom",
+      "raw": " ﻿Reply﻿ ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "﻿Reply﻿",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" ﻿Reply﻿ \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"﻿Reply﻿\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "exact_unicode_decomposed",
+      "raw": " é ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "é",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" é \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"é\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "exact500",
+      "raw": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "scalar500_not_grapheme",
+      "raw": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "long501_excerpt_not_full_proof",
+      "raw": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ\"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "long501_even_full_echo_not_source_receipt",
+      "raw": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "provider_error_unselected_not_retained",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "UNTRUSTED_SYNTHETIC_NOT_FOR_UI"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"UNTRUSTED_SYNTHETIC_NOT_FOR_UI\"}}"
+    },
+    {
+      "name": "ok_false",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": false,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": false, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "ok_number",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": 1,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": 1, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "replayed_number",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": 1,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": 1, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "replayed_string",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": "false",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": \"false\", \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "foreign_message_parent",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 902,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 902, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "wrong_direction",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "inbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"inbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "wrong_sender",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "bot",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"bot\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "different_text",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Another",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Another\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "canonical_equivalent_not_exact",
+      "raw": " é ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "é",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" é \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"é\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "unknown_status",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "delivered",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"delivered\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "bad_created",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "bad",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"bad\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "bad_calendar_created",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-02-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-02-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "queued_has_sent_at",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": "2026-10-30T12:00:00Z",
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": \"2026-10-30T12:00:00Z\", \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "sent_missing_timestamp",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "sent",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"sent\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "sent_bad_timestamp",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "sent",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": "bad",
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"sent\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": \"bad\", \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "bool_id",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": true,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": true, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "float_id",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001.5,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001.5, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "numeric_text",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": 12,
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": 12, \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "foreign_conversation",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 902,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 902, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "bool_conversation",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": true,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": true, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "missing_sent_at",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "missing_created_at",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "missing_text",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "missing_replayed",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "missing_ok",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "wrapped",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "result": {
+          "ok": true,
+          "replayed": false,
+          "conversation": {
+            "id": 901,
+            "title": "Synthetic conversation",
+            "unread_count": 4
+          },
+          "message": {
+            "id": 88001,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Reply",
+            "status": "queued",
+            "created_at": "2026-10-30T12:00:00Z",
+            "sent_at": null,
+            "error_text": "Synthetic provider detail, not displayed"
+          }
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"result\": {\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}}"
+    },
+    {
+      "name": "http201",
+      "raw": " Reply ",
+      "status": 201,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "http409_is_not_typed_no_write",
+      "raw": " Reply ",
+      "status": 409,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 88001,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 88001, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    },
+    {
+      "name": "beyond_shared_native_message_id_width",
+      "raw": " Reply ",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "replayed": false,
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic conversation",
+          "unread_count": 4
+        },
+        "message": {
+          "id": 2147483648,
+          "conversation_id": 901,
+          "direction": "outbound",
+          "sender_type": "manager",
+          "text": "Reply",
+          "status": "queued",
+          "created_at": "2026-10-30T12:00:00Z",
+          "sent_at": null,
+          "error_text": "Synthetic provider detail, not displayed"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Reply \"",
+      "response_json": "{\"ok\": true, \"replayed\": false, \"conversation\": {\"id\": 901, \"title\": \"Synthetic conversation\", \"unread_count\": 4}, \"message\": {\"id\": 2147483648, \"conversation_id\": 901, \"direction\": \"outbound\", \"sender_type\": \"manager\", \"text\": \"Reply\", \"status\": \"queued\", \"created_at\": \"2026-10-30T12:00:00Z\", \"sent_at\": null, \"error_text\": \"Synthetic provider detail, not displayed\"}}"
+    }
+  ]
+}

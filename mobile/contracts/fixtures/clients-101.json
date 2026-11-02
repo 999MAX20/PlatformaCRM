@@ -1,0 +1,38 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T00:00:00Z",
+  "limit": 50,
+  "summary": {
+    "total": 2,
+    "with_phone": 1,
+    "with_email": 1
+  },
+  "items": [
+    {
+      "id": 701,
+      "title": "Synthetic Client Alpha",
+      "phone": "+70000000001",
+      "email": "alpha@example.invalid",
+      "source": "manual",
+      "notes": "",
+      "created_at": "2026-10-28T00:00:00Z",
+      "updated_at": "2026-10-28T00:00:00Z",
+      "href": "/app/clients?client=701"
+    },
+    {
+      "id": 702,
+      "title": "Synthetic Client Beta",
+      "phone": null,
+      "email": null,
+      "source": "manual",
+      "notes": "",
+      "created_at": "2026-10-28T00:00:00Z",
+      "updated_at": "2026-10-28T00:00:00Z",
+      "href": "/app/clients?client=702"
+    }
+  ],
+  "payload_budget": {
+    "target_kb": 100,
+    "max_items": 50
+  }
+}

@@ -1,0 +1,27 @@
+package kz.zani.mobile
+import kotlinx.coroutines.*
+import kotlinx.coroutines.test.*
+import org.json.JSONObject
+import org.junit.Test
+import org.junit.Assert.*
+import kz.zani.mobile.core.*
+import kz.zani.mobile.data.*
+import kz.zani.mobile.ui.*
+
+@OptIn(ExperimentalCoroutinesApi::class) class DealReferenceTest {
+    private fun fixture(n:String)=javaClass.classLoader!!.getResourceAsStream("fixtures/$n.json")!!.bufferedReader().use {it.readText()}
+    private fun api()=APIDealReadRepository(FixtureDealReadTransport.fromJSON(fixture("deal-read")))
+    @Test fun exactGenericProjectionLocalIdentifierAndNoInventedBusinessQuery()=runTest {
+        val d=JSONObject(fixture("deal-read"));val rows=d.getJSONArray("source_cases");for(i in 0 until rows.length()){val x=rows.getJSONObject(i);assertEquals(x.getString("name"),x.getBoolean("valid"),DealReadSource.decode(x.getString("response_json"),x.getInt("business"),x.getInt("id"))!=null)}
+        val inputs=d.getJSONArray("input_cases");for(i in 0 until inputs.length()){val x=inputs.getJSONObject(i);assertEquals(x.getString("raw"),if(x.isNull("parsed"))null else x.getInt("parsed"),DealReferenceIdentifier.parse(x.getString("raw")))}
+        val calls=mutableListOf<ReadRequest>();val repo=APIDealReadRepository(ReadTransport {calls+=it;FixtureDealReadTransport.fromJSON(fixture("deal-read")).get(it)});val source=repo.deal(101,5701);val nullable=repo.deal(101,5702);assertEquals(listOf(ReadRequest("/api/deals/5701/"),ReadRequest("/api/deals/5702/")),calls);assertEquals(1701,source.client);assertEquals(3701,source.lead);assertNull(nullable.lead);assertEquals(ReadProblem.INVALID_PAYLOAD,(runCatching {repo.deal(101,6701)}.exceptionOrNull() as ReadException).problem);assertEquals(ReadProblem.DENIED,(runCatching {repo.deal(101,5704)}.exceptionOrNull() as ReadException).problem);assertEquals(ReadProblem.NOT_FOUND,(runCatching {repo.deal(101,5703)}.exceptionOrNull() as ReadException).problem)
+    }
+    @Test fun actualModelExplicitReadUseRawInputAndParentScope()=runTest {
+        val a=InboxConversationFilesContext(101,901,1,1);val b=InboxConversationFilesContext(202,951,2,1);val m=DealReferenceModel(api());m.bind(a);m.show();assertEquals("",m.state.rawInput);assertFalse(m.state.canRead);val input=m.input;m.update("5",input);m.update("57",input);m.update("005701",input);val old=m.control;m.read(old);assertEquals(5701,m.state.source!!.id);assertNull(m.state.choice);m.use(old);assertNull(m.state.choice);m.use(m.control);assertTrue(m.state.choice!!.valid);assertEquals("005701",m.state.choice!!.rawInput);val stale=m.control;m.clearChoice(stale);m.use(stale);assertNull(m.state.choice);m.update("5702",m.input);assertNull(m.state.source);m.read(m.control);m.use(m.control);assertNull(m.state.choice!!.source.lead);m.controlsBlocked={true};val frozen=m.control;m.clear(m.control);m.update("5701",m.input);m.read(m.control);assertEquals(frozen,m.control);m.controlsBlocked={false};m.update("5704",m.input);m.read(m.control);m.use(m.control);assertEquals(ReadProblem.DENIED,m.state.problem);assertNull(m.state.choice);assertEquals("5704",m.state.rawInput);m.hide();m.show();assertEquals("5704",m.state.rawInput);m.bind(b);m.show();assertEquals("",m.state.rawInput)
+        val files=InboxConversationFilesModel(APIInboxConversationFilesRepository(FixtureInboxConversationFilesTransport.fromJSON(fixture("inbox-conversation-files"))),deals=api());files.bind(a);assertTrue(files.open(files.control));val p=files.dealReference!!;p.update("005701",p.input);p.read(p.control);p.use(p.control);files.load(files.control);assertEquals("005701",p.state.rawInput);assertNull(p.state.source);assertNull(p.state.choice);assertTrue(p.state.presented);files.items.firstOrNull()?.let {files.select(it,files.control);assertFalse(p.state.presented);files.back(files.control);assertTrue(p.state.presented);assertEquals("005701",p.state.rawInput)};files.bind(b);assertEquals("",p.state.rawInput);assertFalse(p.state.presented)
+    }
+    private class Held:DealReadRepository {val pending=mutableListOf<CompletableDeferred<DealReadSource>>();override suspend fun deal(business:Int,id:Int)=withContext(NonCancellable){CompletableDeferred<DealReadSource>().also {pending+=it}.await()}}
+    @Test fun lateEditsIgnoredCancellationFailureAndBusinessABA()=runTest {
+        val a=InboxConversationFilesContext(101,901,1,1);val b=InboxConversationFilesContext(202,951,2,1);val held=Held();val m=DealReferenceModel(held);m.bind(a);m.show();m.update("5701",m.input);val first=api().deal(101,5701);val second=api().deal(101,5702);val old=launch {m.read(m.control)};runCurrent();m.update("5702",m.input);val edited=m.control;held.pending[0].complete(first);old.join();assertEquals(edited,m.control);assertNull(m.state.source);assertEquals("5702",m.state.rawInput);val cancel=launch {m.read(m.control)};runCurrent();cancel.cancel();held.pending[1].complete(second);cancel.join();assertFalse(m.state.loading);assertNull(m.state.source);val fail=launch {m.read(m.control)};runCurrent();m.bind(b);m.show();m.update("6701",m.input);val current=m.control;held.pending[2].completeExceptionally(IllegalStateException("late failure"));fail.join();assertEquals(current,m.control);assertNull(m.state.problem);assertEquals("6701",m.state.rawInput);val aba=launch {m.read(m.control)};runCurrent();m.bind(a);m.show();val back=m.control;held.pending[3].complete(api().deal(202,6701));aba.join();assertEquals(back,m.control);assertNull(m.state.source);assertNull(m.state.choice);assertEquals("",m.state.rawInput)
+    }
+}

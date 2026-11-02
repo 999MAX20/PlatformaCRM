@@ -1,0 +1,1265 @@
+{
+  "fixture_only": true,
+  "note": "Exact existing GET task.client_id presence versus one-field generic client set/null update result; no Appointment inference/new DTO/version/key/real mutation.",
+  "original_cases": [
+    {
+      "name": "absent",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "explicit null",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": null
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":null},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "notSet",
+      "id": null
+    },
+    {
+      "name": "positive",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": 1754
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":1754},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "client",
+      "id": 1754
+    },
+    {
+      "name": "shared width max",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": 2147483647
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":2147483647},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "client",
+      "id": 2147483647
+    },
+    {
+      "name": "zero",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": 0
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":0},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "negative",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": -1
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":-1},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "boolean",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": true
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":true},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "string",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": "501"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":\"501\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "float",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": 501.0
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":501.0},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "fraction",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": 501.5
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":501.5},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "array",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": [
+            501
+          ]
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":[501]},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "object",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": {
+            "id": 501
+          }
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":{\"id\":501}},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "wide",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101",
+          "client_id": 2147483648
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\",\"client_id\":2147483648},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "generic command field not GET original",
+      "payload": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        },
+        "client": 501
+      },
+      "payload_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5},\"client\":501}",
+      "kind": "unknown",
+      "id": null
+    }
+  ],
+  "result_cases": [
+    {
+      "name": "matching set",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": true
+    },
+    {
+      "name": "matching clear",
+      "mode": "clear",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":null,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": true
+    },
+    {
+      "name": "set null",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":null,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "clear positive",
+      "mode": "clear",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "wrong FK",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 502,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":502,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "wrong task",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1102,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1102,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "wrong Business",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":202,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "changed lifecycle",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"done\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "HTTP201",
+      "mode": "set",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "HTTP202",
+      "mode": "set",
+      "status": 202,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "HTTP400",
+      "mode": "set",
+      "status": 400,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "HTTP403",
+      "mode": "set",
+      "status": 403,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "HTTP409",
+      "mode": "set",
+      "status": 409,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "HTTP500",
+      "mode": "set",
+      "status": 500,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "zero",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 0,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":0,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "negative",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": -1,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":-1,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "boolean",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": true,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":true,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "string",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": "501",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":\"501\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "float",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 501.0,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":501.0,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "fraction",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 501.5,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":501.5,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "array",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": [
+          501
+        ],
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":[501],\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "object",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": {
+          "id": 501
+        },
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":{\"id\":501},\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "wide",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 2147483648,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":2147483648,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "missing field",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "accepted": false
+    },
+    {
+      "name": "missing time",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754}",
+      "accepted": false
+    },
+    {
+      "name": "GET alias",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "client_id": 501
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"updated_at\":\"2026-10-30T12:00:00Z\",\"client_id\":501}",
+      "accepted": false
+    },
+    {
+      "name": "GET nested alias",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "details": {
+          "appointment_id": 501
+        }
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"updated_at\":\"2026-10-30T12:00:00Z\",\"details\":{\"appointment_id\":501}}",
+      "accepted": false
+    },
+    {
+      "name": "invalid timestamp",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "unknown"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"unknown\"}",
+      "accepted": false
+    },
+    {
+      "name": "blank timestamp",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": ""
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"\"}",
+      "accepted": false
+    },
+    {
+      "name": "unrelated fields not promoted",
+      "mode": "set",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "client": 1754,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "description": "UNRELATED TRUNCATED VALUE",
+        "appointment": 999,
+        "parent_task": 999,
+        "reminder_at": "unknown"
+      },
+      "response_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"client\":1754,\"updated_at\":\"2026-10-30T12:00:00Z\",\"description\":\"UNRELATED TRUNCATED VALUE\",\"appointment\":999,\"parent_task\":999,\"reminder_at\":\"unknown\"}",
+      "accepted": true
+    }
+  ]
+}

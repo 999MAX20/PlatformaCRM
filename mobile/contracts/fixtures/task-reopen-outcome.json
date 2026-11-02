@@ -1,0 +1,707 @@
+{
+  "fixture_only": true,
+  "scope": "Existing reopen_task/TaskSerializer200 exact subset; done/cancelled->open, completed and cancelled metadata cleared, assignee unchanged. Distinct from undo-cancel; no previous-status inference. Default confirmed case uses existing terminal1103. Other grants cannot override open source eligibility; explicit synthetic status variants only in test harness.",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1103,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      }
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "source_reopen200_unassigned_stays_null",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "foreign_task",
+      "status": 200,
+      "response": {
+        "id": 1201,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 202,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "self_assignment_is_not_reopen",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": 9001,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "other_assignee",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "still_done",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "done",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "done_not_reopen",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "done",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "yesterday",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": null,
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "string_business",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": "101",
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_assignee",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": true,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_assignee",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http201",
+      "status": 201,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "mobile_assignee_id_is_not_web_assignee",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee_id": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrapped_projection_not_web_reopen_result",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "task": {
+          "id": 1103,
+          "business": 101,
+          "status": "open",
+          "assignee": null,
+          "updated_at": "2026-10-30T12:00:00Z",
+          "completed_at": null,
+          "completed_by": null,
+          "cancelled_at": null,
+          "cancelled_by": null,
+          "cancel_reason": ""
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "known_assignee_stays_not_actor",
+      "source_assignee": {
+        "id": 9003,
+        "email": "assigned@example.invalid",
+        "full_name": "Synthetic assigned employee"
+      },
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "known_assignee_cannot_disappear",
+      "source_assignee": {
+        "id": 9003,
+        "email": "assigned@example.invalid",
+        "full_name": "Synthetic assigned employee"
+      },
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "withheld_assignee_is_not_unassigned",
+      "omit_source_assignee": true,
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "malformed_assignee_is_unknown",
+      "source_assignee": {
+        "id": 0,
+        "email": "",
+        "full_name": ""
+      },
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "completed_at_missing",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "completed_at_not_cleared",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": "2026-10-30T12:00:00Z",
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "completed_at_wrong_type",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": false,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "completed_by_missing",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "completed_by_not_cleared",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": 9001,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "completed_by_wrong_type",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": false,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancelled_at_missing",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancelled_at_not_cleared",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancelled_at_wrong_type",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": false,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancelled_by_missing",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancelled_by_not_cleared",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancelled_by_wrong_type",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": false,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancel_reason_missing",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancel_reason_not_cleared",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": "old reason"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "cancel_reason_wrong_type",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "undo_cancel_in_progress_is_not_reopen",
+      "status": 200,
+      "response": {
+        "id": 1103,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "completed_at": null,
+        "completed_by": null,
+        "cancelled_at": null,
+        "cancelled_by": null,
+        "cancel_reason": ""
+      },
+      "expected": "unknown"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "fixture_only": true,
+  "note": "Exact raw query ownership only; same provided title matches both raw forms under existing loaded-title filtering. No normalization, extra requests/DTO/server version/grant.",
+  "cases": [
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "é",
+      "after_submitted": "é",
+      "title": "Fixture  \té \n |  \té \n"
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "é",
+      "after_submitted": "é",
+      "title": "Fixture  é  |  é "
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "가",
+      "after_submitted": "가",
+      "title": "Fixture  가  |  가 "
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "ẹ́",
+      "after_submitted": "ẹ́",
+      "title": "Fixture  ẹ́  |  ẹ́ "
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "Å",
+      "after_submitted": "Å",
+      "title": "Fixture  Å  |  Å "
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "canonical_equivalent": false,
+      "before_submitted": "👩💻",
+      "after_submitted": "👩‍💻",
+      "title": "Fixture  👩💻  |  👩‍💻 "
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "canonical_equivalent": true,
+      "before_submitted": "exact",
+      "after_submitted": "exact",
+      "title": "Fixture  exact  |  exact "
+    },
+    {
+      "name": "same visible row after trimming change",
+      "before": " Fixture ",
+      "after": "Fixture",
+      "changed": true,
+      "title": "Fixture persistent title"
+    }
+  ]
+}

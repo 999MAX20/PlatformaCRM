@@ -1,0 +1,54 @@
+{
+  "source": "conversation.handoff_required existing scoped selector; no truthiness/default/inference",
+  "cases": [
+    {
+      "present": true,
+      "value": true,
+      "expected": "required"
+    },
+    {
+      "present": true,
+      "value": false,
+      "expected": "notRequired"
+    },
+    {
+      "present": false,
+      "expected": "unknown"
+    },
+    {
+      "present": true,
+      "value": null,
+      "expected": "unknown"
+    },
+    {
+      "present": true,
+      "value": "false",
+      "expected": "unknown"
+    },
+    {
+      "present": true,
+      "value": "true",
+      "expected": "unknown"
+    },
+    {
+      "present": true,
+      "value": 0,
+      "expected": "unknown"
+    },
+    {
+      "present": true,
+      "value": 1,
+      "expected": "unknown"
+    },
+    {
+      "present": true,
+      "value": {},
+      "expected": "unknown"
+    },
+    {
+      "present": true,
+      "value": [],
+      "expected": "unknown"
+    }
+  ]
+}

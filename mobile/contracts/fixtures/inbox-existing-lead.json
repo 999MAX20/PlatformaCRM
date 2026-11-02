@@ -1,0 +1,513 @@
+{
+  "fixture_only": true,
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 1100,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+  "receipt_cases": [
+    {
+      "name": "independent required Lead Client",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": true
+    },
+    {
+      "name": "Lead Client happens to match conversation Client",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": true
+    },
+    {
+      "name": "blank message",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": true
+    },
+    {
+      "name": "no status actor or title assumptions",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\",\"status\":\"lost\",\"responsible_user\":6001,\"title\":\"ignored mobile alias\",\"permissions\":{\"create\":true}}",
+      "valid": true
+    },
+    {
+      "name": "missing id",
+      "response_json": "{\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id None",
+      "response_json": "{\"id\":null,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id False",
+      "response_json": "{\"id\":false,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id True",
+      "response_json": "{\"id\":true,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 0",
+      "response_json": "{\"id\":0,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id -1",
+      "response_json": "{\"id\":-1,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 2147483648",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 1.5",
+      "response_json": "{\"id\":1.5,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id '81'",
+      "response_json": "{\"id\":\"81\",\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id []",
+      "response_json": "{\"id\":[],\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id {}",
+      "response_json": "{\"id\":{},\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 82",
+      "response_json": "{\"id\":82,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing business",
+      "response_json": "{\"id\":81,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business None",
+      "response_json": "{\"id\":81,\"business\":null,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business False",
+      "response_json": "{\"id\":81,\"business\":false,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business True",
+      "response_json": "{\"id\":81,\"business\":true,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 0",
+      "response_json": "{\"id\":81,\"business\":0,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business -1",
+      "response_json": "{\"id\":81,\"business\":-1,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 2147483648",
+      "response_json": "{\"id\":81,\"business\":2147483648,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 1.5",
+      "response_json": "{\"id\":81,\"business\":1.5,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business '81'",
+      "response_json": "{\"id\":81,\"business\":\"81\",\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business []",
+      "response_json": "{\"id\":81,\"business\":[],\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business {}",
+      "response_json": "{\"id\":81,\"business\":{},\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 202",
+      "response_json": "{\"id\":81,\"business\":202,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing client",
+      "response_json": "{\"id\":81,\"business\":101,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client None",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":null,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client False",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":false,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client True",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":true,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 0",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":0,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client -1",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":-1,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 2147483648",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":2147483648,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 1.5",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1.5,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client '1701'",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":\"1701\",\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client []",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":[],\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client {}",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":{},\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing message",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid message None",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":null,\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid message False",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":false,\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid message 0",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":0,\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid message []",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":[],\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid message {}",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":{},\"updated_at\":\"existing-Lead raw reply\"}",
+      "valid": false
+    },
+    {
+      "name": "missing updated_at",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at None",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":null}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at False",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at 0",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":0}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at []",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at {}",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":{}}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"\"}",
+      "valid": false
+    }
+  ],
+  "source_cases": [
+    {
+      "name": "existing Lead",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "null conversation Client still qualifies",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"client\":null,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "unset Lead",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":null,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "invalid lead 0",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":0,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid lead False",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":false,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid lead '81'",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":\"81\",\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid client False",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"client\":false,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid id 902",
+      "response_json": "{\"id\":902,\"business\":101,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid business 202",
+      "response_json": "{\"id\":901,\"business\":202,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"client\":701,\"updated_at\":\"\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing lead",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing client",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"updated_at\":\"existing-Lead raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing updated_at",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"client\":701}",
+      "valid": false,
+      "eligible": false
+    }
+  ],
+  "grant_cases": [
+    {
+      "name": "both grants",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "leads_create": true,
+        "conversations_update": true
+      },
+      "valid": true
+    },
+    {
+      "name": "invalid leads_create",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "leads_create": false,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid conversations_update",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "leads_create": true,
+        "conversations_update": false
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 0,
+        "leads_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": -1,
+        "leads_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid business",
+      "grant": {
+        "business": 202,
+        "conversation": 901,
+        "actor": 5001,
+        "leads_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid conversation",
+      "grant": {
+        "business": 101,
+        "conversation": 902,
+        "actor": 5001,
+        "leads_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    }
+  ],
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "leads_create": true,
+      "conversations_update": true
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "leads_create": true,
+      "conversations_update": true
+    },
+    {
+      "business": 101,
+      "conversation": 903,
+      "actor": 5001,
+      "leads_create": true,
+      "conversations_update": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "leads_create": true,
+      "conversations_update": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/902/",
+      "response_json": "{\"id\":902,\"business\":101,\"lead\":81,\"client\":null,\"updated_at\":\"existing-Lead raw conversation\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/903/",
+      "response_json": "{\"id\":903,\"business\":101,\"lead\":null,\"client\":701,\"updated_at\":\"existing-Lead raw conversation\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "response_json": "{\"id\":951,\"business\":202,\"lead\":91,\"client\":801,\"updated_at\":\"existing-Lead raw conversation\"}"
+    }
+  ],
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "original_lead": 81,
+      "original_client": 701,
+      "original_updated_at": "existing-Lead raw conversation",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}"
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "original_lead": 81,
+      "original_client": null,
+      "original_updated_at": "existing-Lead raw conversation",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":81,\"business\":101,\"client\":1701,\"message\":\"Observed é Lead message\\nraw line\",\"updated_at\":\"existing-Lead raw reply\"}"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "original_lead": 91,
+      "original_client": 801,
+      "original_updated_at": "existing-Lead raw conversation",
+      "outcome": "rejected"
+    }
+  ],
+  "boundary": "Positive existing Lead early return only; required Lead.client independent of nullable conversation.client. Plain200 direct generic Lead, no title/status/responsible actor inference, no201 pipeline/new/client fill/AI or actual mutation; unknown immutable."
+}

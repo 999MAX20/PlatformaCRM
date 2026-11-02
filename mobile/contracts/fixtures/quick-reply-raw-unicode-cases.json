@@ -1,0 +1,209 @@
+{
+  "fixture_only": true,
+  "note": "Loaded local filter raw input/choice/window parity only. Both raw forms match one existing-shaped row. JS trim/lower and literal insertion unchanged; no real read/send/header/permission.",
+  "cases": [
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "é",
+      "after_submitted": "é",
+      "page": {
+        "count": 1,
+        "next": null,
+        "results": [
+          {
+            "id": 9101,
+            "business": 101,
+            "title": " \té \n |  \té \n",
+            "text": "  {{client}} literal é 👩‍💻  ",
+            "category": "general",
+            "channel": "website",
+            "sort_order": 1,
+            "is_active": true
+          }
+        ]
+      },
+      "page_json": "{\"count\":1,\"next\":null,\"results\":[{\"id\":9101,\"business\":101,\"title\":\" \\té \\n |  \\té \\n\",\"text\":\"  {{client}} literal é 👩‍💻  \",\"category\":\"general\",\"channel\":\"website\",\"sort_order\":1,\"is_active\":true}]}",
+      "template": "  {{client}} literal é 👩‍💻  ",
+      "draft": "  Operator own  \n",
+      "inserted": "  Operator own\n  {{client}} literal é 👩‍💻  "
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "é",
+      "after_submitted": "é",
+      "page": {
+        "count": 1,
+        "next": null,
+        "results": [
+          {
+            "id": 9101,
+            "business": 101,
+            "title": " é  |  é ",
+            "text": "  {{client}} literal é 👩‍💻  ",
+            "category": "general",
+            "channel": "website",
+            "sort_order": 1,
+            "is_active": true
+          }
+        ]
+      },
+      "page_json": "{\"count\":1,\"next\":null,\"results\":[{\"id\":9101,\"business\":101,\"title\":\" é  |  é \",\"text\":\"  {{client}} literal é 👩‍💻  \",\"category\":\"general\",\"channel\":\"website\",\"sort_order\":1,\"is_active\":true}]}",
+      "template": "  {{client}} literal é 👩‍💻  ",
+      "draft": "  Operator own  \n",
+      "inserted": "  Operator own\n  {{client}} literal é 👩‍💻  "
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "가",
+      "after_submitted": "가",
+      "page": {
+        "count": 1,
+        "next": null,
+        "results": [
+          {
+            "id": 9101,
+            "business": 101,
+            "title": " 가  |  가 ",
+            "text": "  {{client}} literal é 👩‍💻  ",
+            "category": "general",
+            "channel": "website",
+            "sort_order": 1,
+            "is_active": true
+          }
+        ]
+      },
+      "page_json": "{\"count\":1,\"next\":null,\"results\":[{\"id\":9101,\"business\":101,\"title\":\" 가  |  가 \",\"text\":\"  {{client}} literal é 👩‍💻  \",\"category\":\"general\",\"channel\":\"website\",\"sort_order\":1,\"is_active\":true}]}",
+      "template": "  {{client}} literal é 👩‍💻  ",
+      "draft": "  Operator own  \n",
+      "inserted": "  Operator own\n  {{client}} literal é 👩‍💻  "
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "ẹ́",
+      "after_submitted": "ẹ́",
+      "page": {
+        "count": 1,
+        "next": null,
+        "results": [
+          {
+            "id": 9101,
+            "business": 101,
+            "title": " ẹ́  |  ẹ́ ",
+            "text": "  {{client}} literal é 👩‍💻  ",
+            "category": "general",
+            "channel": "website",
+            "sort_order": 1,
+            "is_active": true
+          }
+        ]
+      },
+      "page_json": "{\"count\":1,\"next\":null,\"results\":[{\"id\":9101,\"business\":101,\"title\":\" ẹ́  |  ẹ́ \",\"text\":\"  {{client}} literal é 👩‍💻  \",\"category\":\"general\",\"channel\":\"website\",\"sort_order\":1,\"is_active\":true}]}",
+      "template": "  {{client}} literal é 👩‍💻  ",
+      "draft": "  Operator own  \n",
+      "inserted": "  Operator own\n  {{client}} literal é 👩‍💻  "
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "Å",
+      "after_submitted": "Å",
+      "page": {
+        "count": 1,
+        "next": null,
+        "results": [
+          {
+            "id": 9101,
+            "business": 101,
+            "title": " Å  |  Å ",
+            "text": "  {{client}} literal é 👩‍💻  ",
+            "category": "general",
+            "channel": "website",
+            "sort_order": 1,
+            "is_active": true
+          }
+        ]
+      },
+      "page_json": "{\"count\":1,\"next\":null,\"results\":[{\"id\":9101,\"business\":101,\"title\":\" Å  |  Å \",\"text\":\"  {{client}} literal é 👩‍💻  \",\"category\":\"general\",\"channel\":\"website\",\"sort_order\":1,\"is_active\":true}]}",
+      "template": "  {{client}} literal é 👩‍💻  ",
+      "draft": "  Operator own  \n",
+      "inserted": "  Operator own\n  {{client}} literal é 👩‍💻  "
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "canonical_equivalent": false,
+      "before_submitted": "👩💻",
+      "after_submitted": "👩‍💻",
+      "page": {
+        "count": 1,
+        "next": null,
+        "results": [
+          {
+            "id": 9101,
+            "business": 101,
+            "title": " 👩💻  |  👩‍💻 ",
+            "text": "  {{client}} literal é 👩‍💻  ",
+            "category": "general",
+            "channel": "website",
+            "sort_order": 1,
+            "is_active": true
+          }
+        ]
+      },
+      "page_json": "{\"count\":1,\"next\":null,\"results\":[{\"id\":9101,\"business\":101,\"title\":\" 👩💻  |  👩‍💻 \",\"text\":\"  {{client}} literal é 👩‍💻  \",\"category\":\"general\",\"channel\":\"website\",\"sort_order\":1,\"is_active\":true}]}",
+      "template": "  {{client}} literal é 👩‍💻  ",
+      "draft": "  Operator own  \n",
+      "inserted": "  Operator own\n  {{client}} literal é 👩‍💻  "
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "canonical_equivalent": true,
+      "before_submitted": "exact",
+      "after_submitted": "exact",
+      "page": {
+        "count": 1,
+        "next": null,
+        "results": [
+          {
+            "id": 9101,
+            "business": 101,
+            "title": " exact  |  exact ",
+            "text": "  {{client}} literal é 👩‍💻  ",
+            "category": "general",
+            "channel": "website",
+            "sort_order": 1,
+            "is_active": true
+          }
+        ]
+      },
+      "page_json": "{\"count\":1,\"next\":null,\"results\":[{\"id\":9101,\"business\":101,\"title\":\" exact  |  exact \",\"text\":\"  {{client}} literal é 👩‍💻  \",\"category\":\"general\",\"channel\":\"website\",\"sort_order\":1,\"is_active\":true}]}",
+      "template": "  {{client}} literal é 👩‍💻  ",
+      "draft": "  Operator own  \n",
+      "inserted": "  Operator own\n  {{client}} literal é 👩‍💻  "
+    }
+  ]
+}

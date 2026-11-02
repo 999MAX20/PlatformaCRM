@@ -1,0 +1,244 @@
+{
+  "fixture_only": true,
+  "scope": "Public config and in-memory HTTP exchange only; no network/session/credentials/security/global selection operations",
+  "config_cases": [
+    {
+      "name": "positive_7",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "7"
+      },
+      "expected": "configured",
+      "milliseconds": 7000
+    },
+    {
+      "name": "positive_1.25",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "1.25"
+      },
+      "expected": "configured",
+      "milliseconds": 1250
+    },
+    {
+      "name": "positive_0.001",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "0.001"
+      },
+      "expected": "configured",
+      "milliseconds": 1
+    },
+    {
+      "name": "positive_0002.500",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "0002.500"
+      },
+      "expected": "configured",
+      "milliseconds": 2500
+    },
+    {
+      "name": "positive_ 7 ",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": " 7 "
+      },
+      "expected": "configured",
+      "milliseconds": 7000
+    },
+    {
+      "name": "empty",
+      "values": {},
+      "expected": "unconfigured"
+    },
+    {
+      "name": "blank",
+      "values": {
+        "CRM_API_ORIGIN": "",
+        "CRM_READ_TIMEOUT_SECONDS": ""
+      },
+      "expected": "unconfigured"
+    },
+    {
+      "name": "missing_timeout",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid"
+      },
+      "expected": "unconfigured"
+    },
+    {
+      "name": "bad_timeout_0",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "0"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_0.000",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "0.000"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_-1",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "-1"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_NaN",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "NaN"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_Infinity",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "Infinity"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_1e3",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "1e3"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_0.0001",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "0.0001"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_7ms",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "7ms"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_1,5",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "1,5"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_timeout_9223372036854776",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "9223372036854776"
+      },
+      "expected": "invalidTimeout"
+    },
+    {
+      "name": "bad_origin_http://fixture-api.example.invalid",
+      "values": {
+        "CRM_API_ORIGIN": "http://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "7"
+      },
+      "expected": "invalidOrigin"
+    },
+    {
+      "name": "bad_origin_https://user:pass@fixture-api.example.invalid",
+      "values": {
+        "CRM_API_ORIGIN": "https://user:pass@fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "7"
+      },
+      "expected": "invalidOrigin"
+    },
+    {
+      "name": "bad_origin_https://fixture-api.example.invalid/path",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid/path",
+        "CRM_READ_TIMEOUT_SECONDS": "7"
+      },
+      "expected": "invalidOrigin"
+    },
+    {
+      "name": "bad_origin_https://fixture-api.example.invalid?business=101",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid?business=101",
+        "CRM_READ_TIMEOUT_SECONDS": "7"
+      },
+      "expected": "invalidOrigin"
+    },
+    {
+      "name": "bad_origin_https://fixture-api.example.invalid#fragment",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid#fragment",
+        "CRM_READ_TIMEOUT_SECONDS": "7"
+      },
+      "expected": "invalidOrigin"
+    },
+    {
+      "name": "unexpected_key",
+      "values": {
+        "CRM_API_ORIGIN": "https://fixture-api.example.invalid",
+        "CRM_READ_TIMEOUT_SECONDS": "7",
+        "UNRELATED": "synthetic-only"
+      },
+      "expected": "unexpectedKey"
+    }
+  ],
+  "status_cases": [
+    {
+      "status": 200,
+      "expected": "loaded",
+      "response_fixture": "clients-101.json"
+    },
+    {
+      "status": 401,
+      "expected": "unavailable",
+      "response_fixture": null
+    },
+    {
+      "status": 403,
+      "expected": "denied",
+      "response_fixture": null
+    },
+    {
+      "status": 404,
+      "expected": "notFound",
+      "response_fixture": null
+    },
+    {
+      "status": 409,
+      "expected": "unavailable",
+      "response_fixture": null
+    },
+    {
+      "status": 429,
+      "expected": "unavailable",
+      "response_fixture": null
+    },
+    {
+      "status": 503,
+      "expected": "unavailable",
+      "response_fixture": null
+    }
+  ],
+  "request": {
+    "path": "/api/mobile/v1/clients/",
+    "query": {
+      "business": "101"
+    }
+  },
+  "origin": "https://fixture-api.example.invalid"
+}

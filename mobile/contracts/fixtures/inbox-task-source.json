@@ -1,0 +1,688 @@
+{
+  "fixture_only": true,
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 800,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+  "source_cases": [
+    {
+      "name": "exact original",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": true
+    },
+    {
+      "name": "extra task/title/permission ignored",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\",\"task_id\":9999,\"title\":\"not the task title\",\"due_at\":\"invented date\",\"permissions\":{\"create\":true}}",
+      "valid": true
+    },
+    {
+      "name": "nullable pair (None, None)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":null,\"lead\":null,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": true
+    },
+    {
+      "name": "nullable pair (None, 81)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":null,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": true
+    },
+    {
+      "name": "nullable pair (701, None)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":null,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": true
+    },
+    {
+      "name": "nullable pair (701, 81)",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": true
+    },
+    {
+      "name": "missing id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":null,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":true,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":false,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":0,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":-1,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":2147483648,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":1.5,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id '901'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"901\",\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":[],\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":{},\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "missing business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":null,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":true,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":false,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":0,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":-1,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":2147483648,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":1.5,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business '901'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"901\",\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":[],\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":{},\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "missing client",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":true,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":false,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":0,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":-1,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":2147483648,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":1.5,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client '701'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":\"701\",\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":[],\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid client {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":{},\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "missing lead",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":true,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":false,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":0,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":-1,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":2147483648,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":1.5,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead '701'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":\"701\",\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":[],\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid lead {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":{},\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "missing updated_at",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":null}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":0}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":{}}",
+      "valid": false
+    },
+    {
+      "name": "foreign id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":902,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "foreign business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":202,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}",
+      "valid": false
+    },
+    {
+      "name": "bounded aliases only",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 800,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client_id\":701,\"lead_id\":81,\"updated_at\":\"x\"}",
+      "valid": false
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/902/",
+      "status": 200,
+      "response_json": "{\"id\":902,\"business\":101,\"client\":null,\"lead\":null,\"updated_at\":\"raw task source timestamp\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "status": 200,
+      "response_json": "{\"id\":951,\"business\":202,\"client\":1701,\"lead\":null,\"updated_at\":\"raw task source timestamp\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/903/",
+      "status": 403,
+      "response_json": "{\"id\":903,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/904/",
+      "status": 404,
+      "response_json": "{\"id\":904,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/905/",
+      "status": 503,
+      "response_json": "{\"id\":905,\"business\":101,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/906/",
+      "status": 200,
+      "response_json": "{\"id\":906,\"business\":202,\"client\":701,\"lead\":81,\"updated_at\":\"raw task source timestamp\"}"
+    }
+  ],
+  "boundary": "Exact generic conversation Client/Lead source only; no Task DTO, title/date defaults, command grant or task creation."
+}

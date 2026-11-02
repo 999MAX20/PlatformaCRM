@@ -1,0 +1,52 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T06:31:00Z",
+  "conversation": {
+    "id": 911,
+    "title": "Synthetic attention inquiry",
+    "channel": "website",
+    "unread_count": 2,
+    "handoff_required": true,
+    "assigned_to_id": null,
+    "last_message_at": "2026-10-28T04:20:00Z",
+    "href": "/app/conversations?conversation=911"
+  },
+  "details": {
+    "status": "open",
+    "priority": "normal",
+    "channel": "website",
+    "bot_enabled": false,
+    "handoff_reason": "",
+    "client": null,
+    "lead": null,
+    "assigned_to": null
+  },
+  "messages": [
+    {
+      "id": 9011,
+      "conversation_id": 911,
+      "direction": "inbound",
+      "sender_type": "client",
+      "text": "Synthetic inquiry about available time",
+      "status": "received",
+      "created_at": "2026-10-28T04:10:00Z",
+      "sent_at": null,
+      "error_text": ""
+    },
+    {
+      "id": 9012,
+      "conversation_id": 911,
+      "direction": "outbound",
+      "sender_type": "manager",
+      "text": "Synthetic operator response; no booking confirmed",
+      "status": "sent",
+      "created_at": "2026-10-28T04:20:00Z",
+      "sent_at": null,
+      "error_text": ""
+    }
+  ],
+  "payload_budget": {
+    "target_kb": 100,
+    "max_messages": 30
+  }
+}

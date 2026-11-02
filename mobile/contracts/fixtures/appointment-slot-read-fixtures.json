@@ -1,0 +1,118 @@
+{
+  "fixture_only": true,
+  "note": "Explicit synthetic new-booking candidate read; no reservation, live eligibility, clock default or existing Appointment exclusion",
+  "reads": [
+    {
+      "query": {
+        "business_id": "101",
+        "service_id": "8001",
+        "date": "2026-11-02"
+      },
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]"
+    },
+    {
+      "query": {
+        "business_id": "101",
+        "service_id": "8001",
+        "date": "2026-11-03"
+      },
+      "response": [],
+      "response_json": "[]"
+    },
+    {
+      "query": {
+        "business_id": "101",
+        "service_id": "8001",
+        "date": "2026-11-02",
+        "resource_id": "9001"
+      },
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]"
+    },
+    {
+      "query": {
+        "business_id": "101",
+        "service_id": "8001",
+        "date": "2026-11-03",
+        "resource_id": "9001"
+      },
+      "response": [],
+      "response_json": "[]"
+    },
+    {
+      "query": {
+        "business_id": "202",
+        "service_id": "8002",
+        "date": "2026-11-02"
+      },
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]"
+    },
+    {
+      "query": {
+        "business_id": "202",
+        "service_id": "8002",
+        "date": "2026-11-03"
+      },
+      "response": [],
+      "response_json": "[]"
+    },
+    {
+      "query": {
+        "business_id": "202",
+        "service_id": "8002",
+        "date": "2026-11-02",
+        "resource_id": "9002"
+      },
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T06:30:00+00:00",
+          "end_at": "2026-11-02T07:10:00+00:00"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T06:30:00+00:00\",\"end_at\":\"2026-11-02T07:10:00+00:00\"}]"
+    },
+    {
+      "query": {
+        "business_id": "202",
+        "service_id": "8002",
+        "date": "2026-11-03",
+        "resource_id": "9002"
+      },
+      "response": [],
+      "response_json": "[]"
+    }
+  ]
+}

@@ -1,0 +1,2393 @@
+{
+  "fixture_only": true,
+  "note": "Manual Task optional existing parent_task FK via explicit current Task list+independent bounded detail, no hierarchy/fields/graph/lifecycle inheritance or actual command.",
+  "choice_cases": [
+    {
+      "name": "current positive",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "second Business",
+      "detail": {
+        "business": 202,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1201,
+          "title": "Synthetic follow-up Gamma",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-28T05:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1201"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 12012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 12011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":202,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1201,\"title\":\"Synthetic follow-up Gamma\",\"status\":\"open\",\"priority\":\"normal\",\"due_at\":\"2026-10-28T05:30:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1201\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":12012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":12011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 202,
+      "id": 1201,
+      "valid": true,
+      "title_json": "\"Synthetic follow-up Gamma\""
+    },
+    {
+      "name": "foreign",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 202,
+      "id": 1101,
+      "valid": false,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "other id",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1102,
+      "valid": false,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "zero id",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 0,
+      "valid": false,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "negative id",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": -1,
+      "valid": false,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "invalid Business",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 0,
+      "id": 1101,
+      "valid": false,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "nil title",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": null,
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":null,\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "null"
+    },
+    {
+      "name": "empty title",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "\"\""
+    },
+    {
+      "name": "FEFF title",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "﻿Parent",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"﻿Parent\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "\"﻿Parent\""
+    },
+    {
+      "name": "decomposed title",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Café",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Café\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "\"Café\""
+    },
+    {
+      "name": "done remains read reference",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "done",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"done\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "cancelled remains read reference",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "cancelled",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "unknown status no eligibility inferred",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "future-status",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"future-status\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "related header client is not inherited",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": 999,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":999,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": true,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "invalid bounded detail duplicate comments",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 5
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "business": 101,
+      "id": 1101,
+      "valid": false,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    },
+    {
+      "name": "invalid bounded detail budget",
+      "detail": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "task": {
+          "id": 1101,
+          "title": "Synthetic follow-up Alpha",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1101"
+        },
+        "details": {
+          "description": "Synthetic task context; no operation performed",
+          "reminder_at": null,
+          "snoozed_until": null,
+          "completed_at": null,
+          "cancelled_at": null,
+          "cancel_reason": "",
+          "created_by": null,
+          "assignee": null,
+          "appointment_id": null
+        },
+        "comments": [
+          {
+            "id": 11012,
+            "text": "Synthetic follow-up comment 2",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:20:00Z"
+          },
+          {
+            "id": 11011,
+            "text": "Synthetic follow-up comment 1",
+            "author": {
+              "id": 9001,
+              "email": "fixture@example.invalid",
+              "full_name": "Synthetic operator"
+            },
+            "created_at": "2026-10-28T03:10:00Z"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 60,
+          "max_comments": 0
+        }
+      },
+      "detail_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":0}}",
+      "business": 101,
+      "id": 1101,
+      "valid": false,
+      "title_json": "\"Synthetic follow-up Alpha\""
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "selected all matching",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": true,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "other parent",
+      "body": {
+        "parent_task": 1102
+      },
+      "body_json": "{\"parent_task\":1102}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1102,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "invented GET alias",
+      "body": {
+        "parent_task_id": 1101
+      },
+      "body_json": "{\"parent_task_id\":1101}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "nested alias",
+      "body": {
+        "details": {
+          "parent_task_id": 1101
+        }
+      },
+      "body_json": "{\"details\":{\"parent_task_id\":1101}}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "missing",
+      "body": {},
+      "body_json": "{}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "null selected",
+      "body": {
+        "parent_task": null
+      },
+      "body_json": "{\"parent_task\":null}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "notSet",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "zero",
+      "body": {
+        "parent_task": 0
+      },
+      "body_json": "{\"parent_task\":0}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "negative",
+      "body": {
+        "parent_task": -1
+      },
+      "body_json": "{\"parent_task\":-1}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "boolean",
+      "body": {
+        "parent_task": true
+      },
+      "body_json": "{\"parent_task\":true}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "string",
+      "body": {
+        "parent_task": "1101"
+      },
+      "body_json": "{\"parent_task\":\"1101\"}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "float",
+      "body": {
+        "parent_task": 1101.0
+      },
+      "body_json": "{\"parent_task\":1101.0}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "fraction",
+      "body": {
+        "parent_task": 1101.5
+      },
+      "body_json": "{\"parent_task\":1101.5}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "array",
+      "body": {
+        "parent_task": [
+          1101
+        ]
+      },
+      "body_json": "{\"parent_task\":[1101]}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "object",
+      "body": {
+        "parent_task": {
+          "id": 1101
+        }
+      },
+      "body_json": "{\"parent_task\":{\"id\":1101}}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "wide",
+      "body": {
+        "parent_task": 2147483648
+      },
+      "body_json": "{\"parent_task\":2147483648}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "status200",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 200,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "status202",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 202,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "status400",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 400,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "status403",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 403,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "status409",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 409,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "status500",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 500,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "unselected omitted",
+      "body": {},
+      "body_json": "{}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "unknown",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "unselected null",
+      "body": {
+        "parent_task": null
+      },
+      "body_json": "{\"parent_task\":null}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "notSet",
+      "id": null,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "unselected unrelated FK not promoted",
+      "body": {
+        "parent_task": 999
+      },
+      "body_json": "{\"parent_task\":999}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "parent",
+      "id": 999,
+      "client_echo": 701,
+      "appointment_echo": 501
+    },
+    {
+      "name": "matching parent wrong independent Client",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 702,
+      "appointment_echo": 501
+    },
+    {
+      "name": "matching parent wrong independent Appointment",
+      "body": {
+        "parent_task": 1101
+      },
+      "body_json": "{\"parent_task\":1101}",
+      "selected": 1101,
+      "status": 201,
+      "accepted": false,
+      "kind": "parent",
+      "id": 1101,
+      "client_echo": 701,
+      "appointment_echo": 502
+    }
+  ],
+  "page_cases": [
+    {
+      "name": "source window",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 3,
+          "open": 2,
+          "overdue": 0,
+          "today": 1
+        },
+        "items": [
+          {
+            "id": 1101,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 1103,
+            "title": "Synthetic completed review",
+            "status": "done",
+            "priority": "normal",
+            "due_at": "2026-10-28T06:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1103"
+          },
+          {
+            "id": 1102,
+            "title": "Synthetic inquiry Beta",
+            "status": "in_progress",
+            "priority": "low",
+            "due_at": null,
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1102"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 3, \"open\": 2, \"overdue\": 0, \"today\": 1}, \"items\": [{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 1103, \"title\": \"Synthetic completed review\", \"status\": \"done\", \"priority\": \"normal\", \"due_at\": \"2026-10-28T06:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1103\"}, {\"id\": 1102, \"title\": \"Synthetic inquiry Beta\", \"status\": \"in_progress\", \"priority\": \"low\", \"due_at\": null, \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1102\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": true
+    },
+    {
+      "name": "partial source count",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 13
+        },
+        "items": [
+          {
+            "id": 1101,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 1103,
+            "title": "Synthetic completed review",
+            "status": "done",
+            "priority": "normal",
+            "due_at": "2026-10-28T06:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1103"
+          },
+          {
+            "id": 1102,
+            "title": "Synthetic inquiry Beta",
+            "status": "in_progress",
+            "priority": "low",
+            "due_at": null,
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1102"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 13}, \"items\": [{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 1103, \"title\": \"Synthetic completed review\", \"status\": \"done\", \"priority\": \"normal\", \"due_at\": \"2026-10-28T06:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1103\"}, {\"id\": 1102, \"title\": \"Synthetic inquiry Beta\", \"status\": \"in_progress\", \"priority\": \"low\", \"due_at\": null, \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1102\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": true
+    },
+    {
+      "name": "foreign",
+      "page": {
+        "business": 202,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 3,
+          "open": 2,
+          "overdue": 0,
+          "today": 1
+        },
+        "items": [
+          {
+            "id": 1101,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 1103,
+            "title": "Synthetic completed review",
+            "status": "done",
+            "priority": "normal",
+            "due_at": "2026-10-28T06:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1103"
+          },
+          {
+            "id": 1102,
+            "title": "Synthetic inquiry Beta",
+            "status": "in_progress",
+            "priority": "low",
+            "due_at": null,
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1102"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 202, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 3, \"open\": 2, \"overdue\": 0, \"today\": 1}, \"items\": [{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 1103, \"title\": \"Synthetic completed review\", \"status\": \"done\", \"priority\": \"normal\", \"due_at\": \"2026-10-28T06:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1103\"}, {\"id\": 1102, \"title\": \"Synthetic inquiry Beta\", \"status\": \"in_progress\", \"priority\": \"low\", \"due_at\": null, \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1102\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "short count",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 0
+        },
+        "items": [
+          {
+            "id": 1101,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 1103,
+            "title": "Synthetic completed review",
+            "status": "done",
+            "priority": "normal",
+            "due_at": "2026-10-28T06:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1103"
+          },
+          {
+            "id": 1102,
+            "title": "Synthetic inquiry Beta",
+            "status": "in_progress",
+            "priority": "low",
+            "due_at": null,
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1102"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 0}, \"items\": [{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 1103, \"title\": \"Synthetic completed review\", \"status\": \"done\", \"priority\": \"normal\", \"due_at\": \"2026-10-28T06:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1103\"}, {\"id\": 1102, \"title\": \"Synthetic inquiry Beta\", \"status\": \"in_progress\", \"priority\": \"low\", \"due_at\": null, \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1102\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "duplicate",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 2
+        },
+        "items": [
+          {
+            "id": 1101,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 1101,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 2}, \"items\": [{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "zero row",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 1
+        },
+        "items": [
+          {
+            "id": 0,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 1}, \"items\": [{\"id\": 0, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "over cap",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 51
+        },
+        "items": [
+          {
+            "id": 2000,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2001,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2002,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2003,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2004,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2005,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2006,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2007,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2008,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2009,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2010,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2011,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2012,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2013,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2014,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2015,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2016,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2017,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2018,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2019,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2020,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2021,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2022,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2023,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2024,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2025,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2026,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2027,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2028,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2029,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2030,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2031,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2032,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2033,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2034,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2035,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2036,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2037,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2038,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2039,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2040,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2041,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2042,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2043,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2044,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2045,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2046,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2047,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2048,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2049,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          },
+          {
+            "id": 2050,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "2026-10-28T05:00:00Z",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 51}, \"items\": [{\"id\": 2000, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2001, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2002, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2003, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2004, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2005, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2006, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2007, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2008, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2009, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2010, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2011, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2012, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2013, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2014, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2015, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2016, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2017, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2018, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2019, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2020, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2021, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2022, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2023, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2024, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2025, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2026, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2027, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2028, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2029, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2030, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2031, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2032, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2033, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2034, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2035, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2036, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2037, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2038, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2039, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2040, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2041, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2042, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2043, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2044, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2045, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2046, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2047, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2048, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2049, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, {\"id\": 2050, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    },
+    {
+      "name": "empty scoped",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 0
+        },
+        "items": [],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 0}, \"items\": [], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": true
+    },
+    {
+      "name": "malformed existing read item",
+      "page": {
+        "business": 101,
+        "generated_at": "2026-10-28T04:00:00Z",
+        "limit": 50,
+        "summary": {
+          "total": 1
+        },
+        "items": [
+          {
+            "id": 1101,
+            "title": "Synthetic follow-up Alpha",
+            "status": "open",
+            "priority": "high",
+            "due_at": "bad",
+            "client_id": null,
+            "lead_id": null,
+            "deal_id": null,
+            "assignee_id": null,
+            "href": "/app/tasks?task=1101"
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "page_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"limit\": 50, \"summary\": {\"total\": 1}, \"items\": [{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"bad\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}], \"payload_budget\": {\"target_kb\": 100, \"max_items\": 50}}",
+      "valid": false
+    }
+  ]
+}

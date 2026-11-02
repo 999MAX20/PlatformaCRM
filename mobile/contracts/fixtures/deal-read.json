@@ -1,0 +1,713 @@
+{
+  "fixture_only": true,
+  "basis": "DEAL-DETAIL-READ-AUDIT424.json; generic response lens only, no fabricated mobile Deal DTO/catalogue/Business query or grants",
+  "source_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+  "null_source_json": "{\"id\":5702,\"business\":101,\"client\":1702,\"lead\":null,\"title\":\"Сделка без обращения\",\"updated_at\":\"observed nullable lead\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+  "business_b_source_json": "{\"id\":6701,\"business\":202,\"client\":2701,\"lead\":4701,\"title\":\"Сделка другой компании\",\"updated_at\":\"observed Business B\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+  "reads": [
+    {
+      "path": "/api/deals/5701/",
+      "status": 200,
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}"
+    },
+    {
+      "path": "/api/deals/5702/",
+      "status": 200,
+      "response_json": "{\"id\":5702,\"business\":101,\"client\":1702,\"lead\":null,\"title\":\"Сделка без обращения\",\"updated_at\":\"observed nullable lead\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}"
+    },
+    {
+      "path": "/api/deals/6701/",
+      "status": 200,
+      "response_json": "{\"id\":6701,\"business\":202,\"client\":2701,\"lead\":4701,\"title\":\"Сделка другой компании\",\"updated_at\":\"observed Business B\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}"
+    },
+    {
+      "path": "/api/deals/5703/",
+      "status": 404,
+      "response_json": "{\"detail\":\"Fixture normal VIEW-subset not found\"}"
+    },
+    {
+      "path": "/api/deals/5704/",
+      "status": 403,
+      "response_json": "{\"detail\":\"Fixture VIEW denied\"}"
+    }
+  ],
+  "source_cases": [
+    {
+      "name": "base_generic_projection",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "nullable_lead",
+      "response_json": "{\"id\":5702,\"business\":101,\"client\":1702,\"lead\":null,\"title\":\"Сделка без обращения\",\"updated_at\":\"observed nullable lead\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5702,
+      "valid": true
+    },
+    {
+      "name": "independent_Business_B",
+      "response_json": "{\"id\":6701,\"business\":202,\"client\":2701,\"lead\":4701,\"title\":\"Сделка другой компании\",\"updated_at\":\"observed Business B\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 202,
+      "id": 6701,
+      "valid": true
+    },
+    {
+      "name": "foreign_Business_no_exposure",
+      "response_json": "{\"id\":6701,\"business\":202,\"client\":2701,\"lead\":4701,\"title\":\"Сделка другой компании\",\"updated_at\":\"observed Business B\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 6701,
+      "valid": false
+    },
+    {
+      "name": "missing_id",
+      "response_json": "{\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "missing_business",
+      "response_json": "{\"id\":5701,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "missing_client",
+      "response_json": "{\"id\":5701,\"business\":101,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "missing_lead",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "missing_title",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "missing_updated_at",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_True",
+      "response_json": "{\"id\":true,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_False",
+      "response_json": "{\"id\":false,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_5701",
+      "response_json": "{\"id\":\"5701\",\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_0",
+      "response_json": "{\"id\":0,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_-1",
+      "response_json": "{\"id\":-1,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_1.0",
+      "response_json": "{\"id\":1.0,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_1.5",
+      "response_json": "{\"id\":1.5,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_2147483648",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_{}",
+      "response_json": "{\"id\":{},\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_id_[]",
+      "response_json": "{\"id\":[],\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "nullable_id",
+      "response_json": "{\"id\":null,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_True",
+      "response_json": "{\"id\":5701,\"business\":true,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_False",
+      "response_json": "{\"id\":5701,\"business\":false,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_5701",
+      "response_json": "{\"id\":5701,\"business\":\"5701\",\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_0",
+      "response_json": "{\"id\":5701,\"business\":0,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_-1",
+      "response_json": "{\"id\":5701,\"business\":-1,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_1.0",
+      "response_json": "{\"id\":5701,\"business\":1.0,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_1.5",
+      "response_json": "{\"id\":5701,\"business\":1.5,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_2147483648",
+      "response_json": "{\"id\":5701,\"business\":2147483648,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_{}",
+      "response_json": "{\"id\":5701,\"business\":{},\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_business_[]",
+      "response_json": "{\"id\":5701,\"business\":[],\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "nullable_business",
+      "response_json": "{\"id\":5701,\"business\":null,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_True",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":true,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_False",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":false,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_5701",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":\"5701\",\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_0",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":0,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_-1",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":-1,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_1.0",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1.0,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_1.5",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1.5,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_2147483648",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":2147483648,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_{}",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":{},\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_client_[]",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":[],\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "nullable_client",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":null,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_True",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":true,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_False",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":false,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_5701",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":\"5701\",\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_0",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":0,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_-1",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":-1,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_1.0",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":1.0,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_1.5",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":1.5,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_2147483648",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":2147483648,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_{}",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":{},\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_lead_[]",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":[],\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "nullable_lead",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":null,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "invalid_title_None",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":null,\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_title_True",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":true,\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_title_1",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":1,\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_title_[]",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":[],\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_title_{}",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":{},\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "raw_title_''",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "raw_title_'  '",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"  \",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "raw_title_'é'",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "raw_title_'é'",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "raw_title_'👩🏽\\u200d💻'",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"👩🏽‍💻\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "invalid_updated_at_None",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":null,\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_updated_at_True",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":true,\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_updated_at_1",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":1,\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_updated_at_[]",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":[],\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "invalid_updated_at_{}",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":{},\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "raw_updated_at_''",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "raw_updated_at_'  '",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"  \",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "raw_updated_at_'é'",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "raw_updated_at_'é'",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "raw_updated_at_'👩🏽\\u200d💻'",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"👩🏽‍💻\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "mobile_alias_client",
+      "response_json": "{\"id\":5701,\"business\":101,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false,\"client_id\":1701}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "mobile_alias_lead",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false,\"lead_id\":3701}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "wrapped_deal_not_plain",
+      "response_json": "{\"deal\":{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}}",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "wrong_requested_id",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 101,
+      "id": 5702,
+      "valid": false
+    },
+    {
+      "name": "wrong_selected_Business",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false}",
+      "business": 202,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "masked_sensitive_fields_ignored",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false,\"lost_reason\":\"\"}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "extra_sensitive_and_permission_fields_never_retained",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":\"999999.99\",\"currency\":\"KZT\",\"notes\":\"fixture-only sensitive excluded\",\"status\":\"open\",\"is_archived\":false,\"permissions\":{\"update\":true},\"replayed\":true,\"version\":999}",
+      "business": 101,
+      "id": 5701,
+      "valid": true
+    },
+    {
+      "name": "non_object_or_trailing",
+      "response_json": "[]",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "non_object_or_trailing",
+      "response_json": "null",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "non_object_or_trailing",
+      "response_json": "true",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    },
+    {
+      "name": "non_object_or_trailing",
+      "response_json": "{\"id\":5701,\"business\":101,\"client\":1701,\"lead\":3701,\"title\":\"Сделка é\",\"updated_at\":\"observed raw é\",\"amount\":null,\"currency\":\"\",\"notes\":\"\",\"status\":\"open\",\"is_archived\":false} trailing",
+      "business": 101,
+      "id": 5701,
+      "valid": false
+    }
+  ],
+  "input_cases": [
+    {
+      "raw": "",
+      "parsed": null
+    },
+    {
+      "raw": "0",
+      "parsed": null
+    },
+    {
+      "raw": "000",
+      "parsed": null
+    },
+    {
+      "raw": "-1",
+      "parsed": null
+    },
+    {
+      "raw": "+5701",
+      "parsed": null
+    },
+    {
+      "raw": " 5701",
+      "parsed": null
+    },
+    {
+      "raw": "5701 ",
+      "parsed": null
+    },
+    {
+      "raw": "57 01",
+      "parsed": null
+    },
+    {
+      "raw": "5701\n",
+      "parsed": null
+    },
+    {
+      "raw": "٥٧٠١",
+      "parsed": null
+    },
+    {
+      "raw": "５７０１",
+      "parsed": null
+    },
+    {
+      "raw": "é",
+      "parsed": null
+    },
+    {
+      "raw": "57​01",
+      "parsed": null
+    },
+    {
+      "raw": "2147483648",
+      "parsed": null
+    },
+    {
+      "raw": "999999999999999999999999999999999999",
+      "parsed": null
+    },
+    {
+      "raw": "5701",
+      "parsed": 5701
+    },
+    {
+      "raw": "005701",
+      "parsed": 5701
+    },
+    {
+      "raw": "1",
+      "parsed": 1
+    },
+    {
+      "raw": "2147483647",
+      "parsed": 2147483647
+    },
+    {
+      "raw": "000000000000000000000000000000000000000000000000000000000000000000000000000000005701",
+      "parsed": 5701
+    }
+  ]
+}

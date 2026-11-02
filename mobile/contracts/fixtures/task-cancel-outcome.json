@@ -1,0 +1,314 @@
+{
+  "fixture_only": true,
+  "scope": "Existing TaskSerializer cancel response; local fake only, no server cancel/activity/notify/audit",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1102,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "valid",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "wrong_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_task",
+      "status": 200,
+      "response": {
+        "id": 1102,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_status",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "done",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_actor",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9002,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_reason",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Other reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_cancel_date",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "yesterday",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_cancel_date",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_updated",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_updated",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "yesterday"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "string_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": "101",
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_actor",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": true,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_due",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": "invalid",
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "comment201_not_cancel200",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "title": "Synthetic task",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": null,
+        "cancelled_by": 9001,
+        "cancel_reason": "Manual reason",
+        "cancelled_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "read_projection_not_action",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "status": "cancelled",
+        "title": "Synthetic task"
+      },
+      "expected": "unknown"
+    }
+  ]
+}

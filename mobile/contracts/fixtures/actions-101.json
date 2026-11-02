@@ -1,0 +1,86 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T06:30:00Z",
+  "limit": 20,
+  "total": 5,
+  "items": [
+    {
+      "key": "approve_ai_request",
+      "type": "approval",
+      "priority": 5,
+      "entity": {
+        "id": 1111,
+        "title": "Synthetic pending request",
+        "status": "pending",
+        "source": "existing_action",
+        "message": "",
+        "created_at": "2026-10-28T06:00:00Z",
+        "href": "/app/ai-assistant?approval=1111"
+      }
+    },
+    {
+      "key": "complete_task",
+      "type": "task",
+      "priority": 10,
+      "entity": {
+        "id": 1111,
+        "title": "Synthetic attention follow-up",
+        "status": "open",
+        "priority": "high",
+        "due_at": "2026-10-28T06:00:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=1111"
+      }
+    },
+    {
+      "key": "reply_conversation",
+      "type": "conversation",
+      "priority": 15,
+      "entity": {
+        "id": 911,
+        "title": "Synthetic attention inquiry",
+        "channel": "website",
+        "unread_count": 2,
+        "handoff_required": true,
+        "assigned_to_id": null,
+        "last_message_at": "2026-10-28T04:20:00Z",
+        "href": "/app/conversations?conversation=911"
+      }
+    },
+    {
+      "key": "process_lead",
+      "type": "lead",
+      "priority": 20,
+      "entity": {
+        "id": 511,
+        "title": "Synthetic legacy inquiry",
+        "status": "new",
+        "created_at": "2026-10-28T06:00:00Z",
+        "href": "/app/leads?lead=511"
+      }
+    },
+    {
+      "key": "confirm_appointment",
+      "type": "appointment",
+      "priority": 30,
+      "entity": {
+        "id": 511,
+        "title": "Synthetic attention booking",
+        "status": "created",
+        "client_id": 7002,
+        "lead_id": null,
+        "service_id": 8001,
+        "start_at": "2026-10-28T08:00:00Z",
+        "end_at": "2026-10-28T08:30:00Z",
+        "href": "/app/calendar?appointment=511"
+      }
+    }
+  ],
+  "payload_budget": {
+    "target_kb": 50,
+    "max_items": 20
+  }
+}

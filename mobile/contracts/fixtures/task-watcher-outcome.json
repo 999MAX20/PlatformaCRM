@@ -1,0 +1,535 @@
+{
+  "fixture_only": true,
+  "scope": "Existing add_task_watcher with omitted user_id actor fallback. Separate synthetic UPDATE/member context only; open/in_progress status unchanged, no new membership/count/updated_at/notification/real action claim. source_status in cases is synthetic read harness metadata, not an action payload.",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true,
+        "active_member": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true,
+        "active_member": true
+      },
+      "outcome": "unknown",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true,
+        "active_member": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "actor_in_exact_watchers",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "stale_annotation_not_membership_proof",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z",
+        "watchers_count": 0
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "already_membership_and_other_users_no_new_add_claim",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9003,
+          9001,
+          9005
+        ],
+        "updated_at": "2026-10-28T04:00:00Z",
+        "watchers_count": 1
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "source_in_progress_is_retained",
+      "source_status": "in_progress",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "foreign_task",
+      "status": 200,
+      "response": {
+        "id": 1201,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "still_open_for_progress",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown",
+      "source_status": "in_progress"
+    },
+    {
+      "name": "not_start_action",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "terminal_done",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "terminal_cancelled",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "cancelled",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "actor_absent",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "empty_watchers",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_watchers",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": null,
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "object_watchers_not_PK_list",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          {
+            "id": 9001
+          }
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "string_watcher_id",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          "9001"
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_watcher_id",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          true
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_watcher_id",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          0
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "negative_watcher_id",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          -1
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "fraction_watcher_id",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          0.5
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "duplicate_watcher_ids",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9001
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "string_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": "101",
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_task",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_task",
+      "status": 200,
+      "response": {
+        "id": true,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "yesterday"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_id",
+      "status": 200,
+      "response": {
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_status",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_watchers",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ]
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "count_only_not_member_list",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-28T04:00:00Z",
+        "watchers_count": 2
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrapped_mobile_projection_not_web_result",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "task": {
+          "id": 1101,
+          "business": 101,
+          "status": "open",
+          "watchers": [
+            9001,
+            9003
+          ],
+          "updated_at": "2026-10-28T04:00:00Z"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http201",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "watchers": [
+          9001,
+          9003
+        ],
+        "updated_at": "2026-10-28T04:00:00Z"
+      },
+      "expected": "unknown"
+    }
+  ]
+}

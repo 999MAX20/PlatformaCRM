@@ -1,0 +1,610 @@
+{
+  "fixture_only": true,
+  "scope": "One explicit existing low/normal/high/urgent choice only. No default priority/null/empty or whole DTO. Separate fake UPDATE; selected direct TaskSerializer result lens never promotes other response fields. No real PATCH.",
+  "input_cases": [
+    {
+      "name": "exact_low",
+      "raw": "low",
+      "expected_body": {
+        "priority": "low"
+      }
+    },
+    {
+      "name": "exact_normal",
+      "raw": "normal",
+      "expected_body": {
+        "priority": "normal"
+      }
+    },
+    {
+      "name": "exact_high",
+      "raw": "high",
+      "expected_body": {
+        "priority": "high"
+      }
+    },
+    {
+      "name": "exact_urgent",
+      "raw": "urgent",
+      "expected_body": {
+        "priority": "urgent"
+      }
+    },
+    {
+      "name": "unsupported_0",
+      "raw": "",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_1",
+      "raw": "LOW",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_2",
+      "raw": "Normal",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_3",
+      "raw": " high",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_4",
+      "raw": "urgent ",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_5",
+      "raw": "none",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_6",
+      "raw": "null",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_7",
+      "raw": "0",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_8",
+      "raw": "normal\n",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_9",
+      "raw": "ｈｉｇｈ",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_10",
+      "raw": " high\n",
+      "expected_body": null
+    },
+    {
+      "name": "unsupported_11",
+      "raw": "high​",
+      "expected_body": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "choice_low",
+      "selected": "low",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "low",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "choice_normal",
+      "selected": "normal",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "normal",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "choice_high",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "choice_urgent",
+      "selected": "urgent",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "urgent",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "in_progress",
+      "selected": "high",
+      "source_status": "in_progress",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "clock_not_version",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2000-02-29T00:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "offset_clock",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T17:00:00+05:00"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "unselected_unknown_fields_ignored",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "description": "untrusted extra",
+        "due_at": false,
+        "reminder_at": "bad"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "foreign_task",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1401,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "changed_status",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "different_priority",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "low",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_priority",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "empty_priority",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "upper_priority",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "HIGH",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "number_priority",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": 2,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_priority",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": true,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_clock",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "bad"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "naive_clock",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_calendar",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-02-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_clock",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "text_id",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": "1101",
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_id",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": true,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "float_id",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101.5,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_business",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": true,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_id",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_status",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_priority",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_updated_at",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrapped",
+      "selected": "high",
+      "source_status": "open",
+      "status": 200,
+      "response": {
+        "task": {
+          "id": 1101,
+          "business": 101,
+          "status": "open",
+          "priority": "high",
+          "updated_at": "2026-10-30T12:00:00Z"
+        }
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "http201",
+      "selected": "high",
+      "source_status": "open",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "http409",
+      "selected": "high",
+      "source_status": "open",
+      "status": 409,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    }
+  ],
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "priority": "high",
+        "updated_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    }
+  ]
+}

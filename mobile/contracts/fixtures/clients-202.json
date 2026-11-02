@@ -1,0 +1,27 @@
+{
+  "business": 202,
+  "generated_at": "2026-10-28T00:00:00Z",
+  "limit": 50,
+  "summary": {
+    "total": 1,
+    "with_phone": 1,
+    "with_email": 0
+  },
+  "items": [
+    {
+      "id": 801,
+      "title": "Synthetic Client Gamma",
+      "phone": "+70000000002",
+      "email": null,
+      "source": "manual",
+      "notes": "",
+      "created_at": "2026-10-28T00:00:00Z",
+      "updated_at": "2026-10-28T00:00:00Z",
+      "href": "/app/clients?client=801"
+    }
+  ],
+  "payload_budget": {
+    "target_kb": 100,
+    "max_items": 50
+  }
+}

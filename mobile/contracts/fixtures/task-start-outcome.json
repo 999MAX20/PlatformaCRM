@@ -1,0 +1,325 @@
+{
+  "fixture_only": true,
+  "scope": "Existing start_task -> TaskSerializer200 subset. Start only open->in_progress, leaves assignee unchanged, no actor response echo. Separate synthetic UPDATE context, no actual lifecycle or CURRENT binding. Case source_assignee/omit_source_assignee are test harness metadata for existing details.assignee, not wire fields.",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "source_start200_unassigned_stays_null",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "foreign_task",
+      "status": 200,
+      "response": {
+        "id": 1201,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "self_assignment_is_not_start",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": 9001,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "other_assignee",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "still_open",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "done_not_start",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "yesterday"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "string_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": "101",
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_assignee",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": true,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_assignee",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http201",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "mobile_assignee_id_is_not_web_assignee",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee_id": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrapped_projection_not_web_start_result",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "task": {
+          "id": 1101,
+          "business": 101,
+          "status": "in_progress",
+          "assignee": null,
+          "updated_at": "2026-10-30T12:00:00Z"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "known_assignee_stays_not_actor",
+      "source_assignee": {
+        "id": 9003,
+        "email": "assigned@example.invalid",
+        "full_name": "Synthetic assigned employee"
+      },
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "known_assignee_cannot_disappear",
+      "source_assignee": {
+        "id": 9003,
+        "email": "assigned@example.invalid",
+        "full_name": "Synthetic assigned employee"
+      },
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "withheld_assignee_is_not_unassigned",
+      "omit_source_assignee": true,
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "malformed_assignee_is_unknown",
+      "source_assignee": {
+        "id": 0,
+        "email": "",
+        "full_name": ""
+      },
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    }
+  ]
+}

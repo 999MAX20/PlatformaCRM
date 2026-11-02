@@ -1,0 +1,804 @@
+{
+  "fixture_only": true,
+  "source": "apps/mobile/views.py MobileNotificationMarkReadView; apps/mobile/selectors.py _notification_item; apps/notifications/models.py mark_read",
+  "scope": "Local synthetic UPDATE only. No HTTP, marker/count mutation, idempotency/current grant/delivery acceptance. Pinned timestamps are fixture data, not defaults.",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "notification": 2101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      }
+    },
+    {
+      "grant": {
+        "business": 202,
+        "notification": 2201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown"
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "valid",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": true
+    },
+    {
+      "name": "replayed",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": true
+      },
+      "decode": true,
+      "confirmed": true
+    },
+    {
+      "name": "no_business_actor_echo",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": true
+    },
+    {
+      "name": "wrong_http_status",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 201,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "ok_false",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": false,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_id_999",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 999,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_read_at_None",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": null,
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_read_at_invalid",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "invalid",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_text_changed",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "changed",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_status_failed",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "failed",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_channel_sms",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "sms",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_send_at_2026-10-28T04:00:00Z",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T04:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_appointment_id_999",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 999
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "changed_action_url_/app/calendar/999",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar/999",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "missing_read_marker",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    },
+    {
+      "name": "typed_id",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": "2101",
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": false,
+      "confirmed": false
+    },
+    {
+      "name": "typed_ok",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": "true",
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": false,
+      "confirmed": false
+    },
+    {
+      "name": "typed_replayed",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": null,
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": 1
+      },
+      "decode": false,
+      "confirmed": false
+    },
+    {
+      "name": "already_read_preserved",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": "2026-10-28T05:10:00Z",
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:10:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": true
+    },
+    {
+      "name": "already_read_changed",
+      "source": {
+        "id": 2101,
+        "category": "sales",
+        "priority": "normal",
+        "status": "sent",
+        "channel": "system",
+        "text": "Synthetic appointment reminder Alpha",
+        "action_url": "/app/calendar?appointment=501",
+        "action_label": "",
+        "send_at": "2026-10-28T05:00:00Z",
+        "read_at": "2026-10-28T05:10:00Z",
+        "client_id": null,
+        "appointment_id": 501
+      },
+      "status": 200,
+      "reply": {
+        "ok": true,
+        "notification": {
+          "id": 2101,
+          "category": "sales",
+          "priority": "normal",
+          "status": "sent",
+          "channel": "system",
+          "text": "Synthetic appointment reminder Alpha",
+          "action_url": "/app/calendar?appointment=501",
+          "action_label": "",
+          "send_at": "2026-10-28T05:00:00Z",
+          "read_at": "2026-10-28T05:11:00Z",
+          "client_id": null,
+          "appointment_id": 501
+        },
+        "replayed": false
+      },
+      "decode": true,
+      "confirmed": false
+    }
+  ]
+}

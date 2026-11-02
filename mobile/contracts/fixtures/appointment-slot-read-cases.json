@@ -1,0 +1,629 @@
+{
+  "fixture_only": true,
+  "cases": [
+    {
+      "name": "positive Z",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": true,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "empty selected read",
+      "response": [],
+      "response_json": "[]",
+      "valid": true,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "UTC previous date belongs to selected local day",
+      "response": [
+        {
+          "start_at": "2026-11-01T20:00:00Z",
+          "end_at": "2026-11-01T20:10:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-01T20:00:00Z\",\"end_at\":\"2026-11-01T20:10:00Z\"}]",
+      "valid": true,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "explicit offset",
+      "response": [
+        {
+          "start_at": "2026-11-02T09:00:00+05:00",
+          "end_at": "2026-11-02T09:45:00+05:00"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T09:00:00+05:00\",\"end_at\":\"2026-11-02T09:45:00+05:00\"}]",
+      "valid": true,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "microseconds positive",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:00:00.000001Z",
+          "end_at": "2026-11-02T04:00:00.000002Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:00:00.000001Z\",\"end_at\":\"2026-11-02T04:00:00.000002Z\"}]",
+      "valid": true,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "end next local day",
+      "response": [
+        {
+          "start_at": "2026-11-02T18:59:00Z",
+          "end_at": "2026-11-02T19:10:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T18:59:00Z\",\"end_at\":\"2026-11-02T19:10:00Z\"}]",
+      "valid": true,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "unsorted preserves source order",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {
+          "start_at": "2026-11-02T03:00:00Z",
+          "end_at": "2026-11-02T03:20:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{\"start_at\":\"2026-11-02T03:00:00Z\",\"end_at\":\"2026-11-02T03:20:00Z\"}]",
+      "valid": true,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "DST explicit offsets",
+      "response": [
+        {
+          "start_at": "2026-11-01T01:30:00-04:00",
+          "end_at": "2026-11-01T01:30:00-05:00"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-01T01:30:00-04:00\",\"end_at\":\"2026-11-01T01:30:00-05:00\"}]",
+      "valid": true,
+      "day": "2026-11-01",
+      "timezone": "America/New_York",
+      "status": 200
+    },
+    {
+      "name": "unselected fields ignored",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z",
+          "version": "ignored",
+          "hold": "not evidence",
+          "resource_id": 99999
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\",\"version\":\"ignored\",\"hold\":\"not evidence\",\"resource_id\":99999}]",
+      "valid": true,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "envelope",
+      "response": {
+        "results": [
+          {
+            "start_at": "2026-11-02T04:15:00Z",
+            "end_at": "2026-11-02T05:00:00Z"
+          }
+        ]
+      },
+      "response_json": "{\"results\":[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]}",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "object",
+      "response": {
+        "start_at": "2026-11-02T04:15:00Z",
+        "end_at": "2026-11-02T05:00:00Z"
+      },
+      "response_json": "{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "null",
+      "response": null,
+      "response_json": "null",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "scalar",
+      "response": "text",
+      "response_json": "\"text\"",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "null item",
+      "response": [
+        null
+      ],
+      "response_json": "[null]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "missing start",
+      "response": [
+        {
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "missing end",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "number start",
+      "response": [
+        {
+          "start_at": 12,
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":12,\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "array start",
+      "response": [
+        {
+          "start_at": [],
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":[],\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "zero interval",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T04:15:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T04:15:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "negative interval",
+      "response": [
+        {
+          "start_at": "2026-11-02T05:00:00Z",
+          "end_at": "2026-11-02T04:15:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T05:00:00Z\",\"end_at\":\"2026-11-02T04:15:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "one bad row",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        },
+        {}
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"},{}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "missing zone",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "unknown offset",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00-00:00",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00-00:00\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "invalid day",
+      "response": [
+        {
+          "start_at": "2026-02-30T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-02-30T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "hour24",
+      "response": [
+        {
+          "start_at": "2026-11-02T24:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T24:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "minute60",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:60:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:60:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "leap second unsupported",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:60Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:60Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "offset19",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00+19:00",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00+19:00\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "space delimiter",
+      "response": [
+        {
+          "start_at": "2026-11-02 04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02 04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "trailing text",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Zsuffix",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Zsuffix\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "date only",
+      "response": [
+        {
+          "start_at": "2026-11-02",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "year zero",
+      "response": [
+        {
+          "start_at": "0000-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"0000-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "fraction7 unsupported",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00.1234567Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00.1234567Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "FEFF prefix",
+      "response": [
+        {
+          "start_at": "﻿2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"\\ufeff2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "wrong local day",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-03",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "UTC raw day is next local day",
+      "response": [
+        {
+          "start_at": "2026-11-02T20:00:00Z",
+          "end_at": "2026-11-02T20:10:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T20:00:00Z\",\"end_at\":\"2026-11-02T20:10:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 200
+    },
+    {
+      "name": "status 400",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 400
+    },
+    {
+      "name": "status 403",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 403
+    },
+    {
+      "name": "status 404",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 404
+    },
+    {
+      "name": "status 500",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 500
+    },
+    {
+      "name": "status 204",
+      "response": [
+        {
+          "start_at": "2026-11-02T04:15:00Z",
+          "end_at": "2026-11-02T05:00:00Z"
+        }
+      ],
+      "response_json": "[{\"start_at\":\"2026-11-02T04:15:00Z\",\"end_at\":\"2026-11-02T05:00:00Z\"}]",
+      "valid": false,
+      "day": "2026-11-02",
+      "timezone": "Asia/Almaty",
+      "status": 204
+    }
+  ],
+  "intent_cases": [
+    {
+      "day": "",
+      "valid": false,
+      "day_json": "\"\""
+    },
+    {
+      "day": "2026-11-02",
+      "valid": true,
+      "day_json": "\"2026-11-02\""
+    },
+    {
+      "day": "2026-11-2",
+      "valid": false,
+      "day_json": "\"2026-11-2\""
+    },
+    {
+      "day": " 2026-11-02",
+      "valid": false,
+      "day_json": "\" 2026-11-02\""
+    },
+    {
+      "day": "2026-11-02 ",
+      "valid": false,
+      "day_json": "\"2026-11-02 \""
+    },
+    {
+      "day": "2026-02-29",
+      "valid": false,
+      "day_json": "\"2026-02-29\""
+    },
+    {
+      "day": "2028-02-29",
+      "valid": true,
+      "day_json": "\"2028-02-29\""
+    },
+    {
+      "day": "0000-01-01",
+      "valid": false,
+      "day_json": "\"0000-01-01\""
+    },
+    {
+      "day": "2026-13-01",
+      "valid": false,
+      "day_json": "\"2026-13-01\""
+    },
+    {
+      "day": "2026-11-02T00:00:00Z",
+      "valid": false,
+      "day_json": "\"2026-11-02T00:00:00Z\""
+    },
+    {
+      "day": "٢٠٢٦-١١-٠٢",
+      "valid": false,
+      "day_json": "\"٢٠٢٦-١١-٠٢\""
+    },
+    {
+      "day": "﻿2026-11-02",
+      "valid": false,
+      "day_json": "\"﻿2026-11-02\""
+    }
+  ]
+}

@@ -1,0 +1,294 @@
+{
+  "fixture_only": true,
+  "scope": "Existing web TaskViewSet.complete -> TaskSerializer subset; independent fake UPDATE grant. No mobile write/permission/version/idempotency/current acceptance. GET/list stays unchanged.",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1102,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "source_complete200",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "foreign_task",
+      "status": 200,
+      "response": {
+        "id": 1201,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_actor",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9002,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "not_done",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "cancelled",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_completed_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "yesterday",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_updated_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": null,
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "snooze_not_cleared",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": "2026-10-31T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "string_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": "101",
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_actor",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": true,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_snoozed_until",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_completed_at",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_completed_by",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http201",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "done",
+        "completed_by": 9001,
+        "completed_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "snoozed_until": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "mobile_read_projection_not_complete_result",
+      "status": 200,
+      "response": {
+        "id": 1101,
+        "status": "done",
+        "title": "Synthetic task"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "mobile_wrapped_result_is_distinct",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "task": {
+          "id": 1101,
+          "business": 101,
+          "status": "done",
+          "completed_by": 9001,
+          "completed_at": "2026-10-30T12:00:00Z",
+          "updated_at": "2026-10-30T12:00:00Z",
+          "snoozed_until": null
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    }
+  ]
+}

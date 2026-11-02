@@ -1,0 +1,73 @@
+{
+  "source": {
+    "fields": "Client model/ClientSerializer/ClientForm at source73482a3b",
+    "email": "Existing frontend lock zod3.25.76 email pattern from official pinned types.ts:582; expected values computed by original JS RegExp in V8, no dependency installed",
+    "endpoint_binding": "NONE: local draft only; accepted CURRENT=false"
+  },
+  "email_cases": [
+    {
+      "email": "",
+      "valid": true
+    },
+    {
+      "email": "a@example.invalid",
+      "valid": true
+    },
+    {
+      "email": "alpha.beta+tag@example.invalid",
+      "valid": true
+    },
+    {
+      "email": "a..b@example.invalid",
+      "valid": false
+    },
+    {
+      "email": ".alpha@example.invalid",
+      "valid": false
+    },
+    {
+      "email": "alpha.@example.invalid",
+      "valid": false
+    },
+    {
+      "email": "alpha@-example.invalid",
+      "valid": false
+    },
+    {
+      "email": "alpha@example.c",
+      "valid": false
+    },
+    {
+      "email": "alpha@ex_ample.invalid",
+      "valid": false
+    },
+    {
+      "email": "имя@example.invalid",
+      "valid": false
+    },
+    {
+      "email": "a@b.co\n",
+      "valid": false
+    },
+    {
+      "email": "a@b.co\r\n",
+      "valid": false
+    },
+    {
+      "email": "a@b.co ",
+      "valid": false
+    },
+    {
+      "email": " a@b.co",
+      "valid": false
+    },
+    {
+      "email": "a@b.co",
+      "valid": true
+    },
+    {
+      "email": "O'Neil@example.invalid",
+      "valid": true
+    }
+  ]
+}

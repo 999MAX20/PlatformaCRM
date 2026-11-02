@@ -1,0 +1,727 @@
+{
+  "fixture_only": true,
+  "scope": "Existing Task CREATE reminder_at set/omit, independent due date and same whole form/Business attempt. Existing selected TaskSerializer reminder string evidence only, no GET DTO expansion or new wire envelope. Missing/null/no caller evidence cannot confirm selected set; omission proves no default/no-date. No real POST.",
+  "input_cases": [
+    {
+      "name": "utc",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      }
+    },
+    {
+      "name": "offset",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T16:00:00+05:00",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T16:00:00+05:00"
+      }
+    },
+    {
+      "name": "past",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2000-02-29T00:00:00Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2000-02-29T00:00:00Z"
+      }
+    },
+    {
+      "name": "fraction",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00.123456Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00.123456Z"
+      }
+    },
+    {
+      "name": "empty_set",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "naive",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "bad_calendar",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-02-30T11:00:00Z",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "unknown_offset",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00-00:00",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "omit_kept",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "omit",
+      "reminder_raw": "kept invalid reminder",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "name": "both_omit",
+      "due_mode": "omit",
+      "due_raw": "kept invalid due",
+      "reminder_mode": "omit",
+      "reminder_raw": "kept invalid reminder",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal"
+      }
+    },
+    {
+      "name": "reminder_only",
+      "due_mode": "omit",
+      "due_raw": "kept invalid due",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      }
+    },
+    {
+      "name": "invalid_due_cannot_hide_behind_valid_reminder",
+      "due_mode": "setDate",
+      "due_raw": "",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "valid": false,
+      "expected_body": null
+    },
+    {
+      "name": "reminder_after_due_no_order_rule",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T13:00:00Z",
+      "valid": true,
+      "expected_body": {
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T13:00:00Z"
+      }
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "both_selected_exact",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "offset_equivalence",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T16:00:00+05:00"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "fraction",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00.123456Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T16:00:00.123456+05:00"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "reminder_after_due_no_order_rule",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T13:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T13:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "only_reminder",
+      "due_mode": "omit",
+      "due_raw": "kept raw",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "only_due_untrusted_reminder_ignored",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "omit",
+      "reminder_raw": "kept raw",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": true
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "both_omitted_no_date_claim",
+      "due_mode": "omit",
+      "due_raw": "kept due",
+      "reminder_mode": "omit",
+      "reminder_raw": "kept reminder",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "untrusted date",
+        "reminder_at": "untrusted date"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "wrong_reminder_instant",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:01Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_due_instant",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:01Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "reminder_is_due_not_requested",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_reminder",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_reminder",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": true
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "numeric_reminder",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": 12
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_calendar_reminder",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-02-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "naive_reminder",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_business",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 202,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_creator",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9002,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_status",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "in_progress",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_title",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Another",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_description",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Another",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_clock",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "bad",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_reminder",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "old_caller_no_evidence_cannot_confirm",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": false,
+      "status": 201,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "http200",
+      "due_mode": "setDate",
+      "due_raw": "2026-10-30T12:00:00Z",
+      "reminder_mode": "setDate",
+      "reminder_raw": "2026-10-30T11:00:00Z",
+      "include_evidence": true,
+      "status": 200,
+      "response": {
+        "id": 9101,
+        "business": 101,
+        "title": "Task",
+        "description": "Note",
+        "priority": "normal",
+        "status": "open",
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "due_at": "2026-10-30T12:00:00Z",
+        "reminder_at": "2026-10-30T11:00:00Z"
+      },
+      "expected": "unknown"
+    }
+  ]
+}

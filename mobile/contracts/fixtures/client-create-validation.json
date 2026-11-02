@@ -1,0 +1,834 @@
+{
+  "fixture_only": true,
+  "reference": "Actual Node raw Zod UTF16/string-pattern stage, actual Python str.strip/len stage and source-defined limits/ASCII-domain subset. No installed/current Django/DRF/Zod package execution or general EmailValidator/IDNA clone.",
+  "cases": [
+    {
+      "name": "python_strip_only",
+      "values": {
+        "fullName": "\u001c Client \u001f",
+        "phone": " \u001c +7 (123) \u001f ",
+        "email": "",
+        "source": "manual",
+        "notes": "\u001c Notes\nsecond line \u001f"
+      },
+      "preview": {
+        "fullName": "Client",
+        "phone": "+7 (123)",
+        "email": "",
+        "source": "manual",
+        "notes": "Notes\nsecond line"
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "BOM_is_not_JS_trimmed",
+      "values": {
+        "fullName": "\ufeffA",
+        "phone": "\ufeff 123 \ufeff",
+        "email": "",
+        "source": "manual",
+        "notes": "\ufeff Notes \ufeff"
+      },
+      "preview": {
+        "fullName": "\ufeffA",
+        "phone": "\ufeff 123 \ufeff",
+        "email": "",
+        "source": "manual",
+        "notes": "\ufeff Notes \ufeff"
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "raw_min2",
+      "values": {
+        "fullName": "A",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "A",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [
+        {
+          "field": "fullName",
+          "problem": "name"
+        }
+      ],
+      "sourceIssues": [],
+      "issues": [
+        {
+          "field": "fullName",
+          "problem": "name"
+        }
+      ]
+    },
+    {
+      "name": "raw_min2_after_trim_not_reapplied",
+      "values": {
+        "fullName": " A ",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "A",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "one_emoji_utf16_two",
+      "values": {
+        "fullName": "\ud83d\ude00",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "\ud83d\ude00",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "blank_python_controls",
+      "values": {
+        "fullName": "\u001c\u001f",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "fullName",
+          "problem": "name"
+        }
+      ],
+      "issues": [
+        {
+          "field": "fullName",
+          "problem": "name"
+        }
+      ]
+    },
+    {
+      "name": "name255",
+      "values": {
+        "fullName": "\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "name256",
+      "values": {
+        "fullName": "\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8\u04d8",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "fullName",
+          "problem": "nameLength"
+        }
+      ],
+      "issues": [
+        {
+          "field": "fullName",
+          "problem": "nameLength"
+        }
+      ]
+    },
+    {
+      "name": "name255_nonBMP",
+      "values": {
+        "fullName": "\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "combining255",
+      "values": {
+        "fullName": "e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "phone32",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "11111111111111111111111111111111",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "11111111111111111111111111111111",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "phone33",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "111111111111111111111111111111111",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "111111111111111111111111111111111",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "phone",
+          "problem": "phoneLength"
+        }
+      ],
+      "issues": [
+        {
+          "field": "phone",
+          "problem": "phoneLength"
+        }
+      ]
+    },
+    {
+      "name": "phone_no_format_rule",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": " ABC +7 (123) ",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "ABC +7 (123)",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "email_normal",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "O'Neil@example.invalid",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "O'Neil@example.invalid",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "email_raw_whitespace",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": " a@b.co ",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@b.co",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ],
+      "sourceIssues": [],
+      "issues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ]
+    },
+    {
+      "name": "email_unicode_web_rejects",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "\u0438\u043c\u044f@example.invalid",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "\u0438\u043c\u044f@example.invalid",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ],
+      "sourceIssues": [],
+      "issues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ]
+    },
+    {
+      "name": "email_trailing_hyphen_web_accepts",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@domain-.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@domain-.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ],
+      "issues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ]
+    },
+    {
+      "name": "email_label63",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "email_label64",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ],
+      "issues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ]
+    },
+    {
+      "name": "email_tld64",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@x.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a@x.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ],
+      "issues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ]
+    },
+    {
+      "name": "email254",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@example.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@example.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "email255",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@example.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@example.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "email",
+          "problem": "emailLength"
+        }
+      ],
+      "issues": [
+        {
+          "field": "email",
+          "problem": "emailLength"
+        }
+      ]
+    },
+    {
+      "name": "email_long_local_no_invented64",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@example.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@example.com",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "name_NUL",
+      "values": {
+        "fullName": "A\u0000",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "A\u0000",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "fullName",
+          "problem": "characters"
+        }
+      ],
+      "issues": [
+        {
+          "field": "fullName",
+          "problem": "characters"
+        }
+      ]
+    },
+    {
+      "name": "phone_NUL",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "1\u0000",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "1\u0000",
+        "email": "",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "phone",
+          "problem": "characters"
+        }
+      ],
+      "issues": [
+        {
+          "field": "phone",
+          "problem": "characters"
+        }
+      ]
+    },
+    {
+      "name": "email_NUL",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a\u0000@b.co",
+        "source": "manual",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "a\u0000@b.co",
+        "source": "manual",
+        "notes": ""
+      },
+      "webIssues": [
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ],
+      "sourceIssues": [
+        {
+          "field": "email",
+          "problem": "characters"
+        }
+      ],
+      "issues": [
+        {
+          "field": "email",
+          "problem": "email"
+        },
+        {
+          "field": "email",
+          "problem": "characters"
+        }
+      ]
+    },
+    {
+      "name": "notes_NUL",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": "Note\u0000end"
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": "Note\u0000end"
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "notes",
+          "problem": "characters"
+        }
+      ],
+      "issues": [
+        {
+          "field": "notes",
+          "problem": "characters"
+        }
+      ]
+    },
+    {
+      "name": "no_notes_cap",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": "Note\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\n"
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "",
+        "source": "manual",
+        "notes": "Note\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote\nNote"
+      },
+      "webIssues": [],
+      "sourceIssues": [],
+      "issues": []
+    },
+    {
+      "name": "source_not_trimmed",
+      "values": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "",
+        "source": "manual ",
+        "notes": ""
+      },
+      "preview": {
+        "fullName": "Synthetic client",
+        "phone": "",
+        "email": "",
+        "source": "manual ",
+        "notes": ""
+      },
+      "webIssues": [],
+      "sourceIssues": [
+        {
+          "field": "source",
+          "problem": "source"
+        }
+      ],
+      "issues": [
+        {
+          "field": "source",
+          "problem": "source"
+        }
+      ]
+    },
+    {
+      "name": "all_stages",
+      "values": {
+        "fullName": " ",
+        "phone": "111111111111111111111111111111111",
+        "email": " x@b.co ",
+        "source": "manual",
+        "notes": "\u0000"
+      },
+      "preview": {
+        "fullName": "",
+        "phone": "111111111111111111111111111111111",
+        "email": "x@b.co",
+        "source": "manual",
+        "notes": "\u0000"
+      },
+      "webIssues": [
+        {
+          "field": "fullName",
+          "problem": "name"
+        },
+        {
+          "field": "email",
+          "problem": "email"
+        }
+      ],
+      "sourceIssues": [
+        {
+          "field": "fullName",
+          "problem": "name"
+        },
+        {
+          "field": "phone",
+          "problem": "phoneLength"
+        },
+        {
+          "field": "notes",
+          "problem": "characters"
+        }
+      ],
+      "issues": [
+        {
+          "field": "fullName",
+          "problem": "name"
+        },
+        {
+          "field": "email",
+          "problem": "email"
+        },
+        {
+          "field": "phone",
+          "problem": "phoneLength"
+        },
+        {
+          "field": "notes",
+          "problem": "characters"
+        }
+      ]
+    }
+  ],
+  "kotlin_utf16_cases": [
+    {
+      "field": "fullName",
+      "units": [
+        65,
+        55296
+      ]
+    },
+    {
+      "field": "phone",
+      "units": [
+        49,
+        56320
+      ]
+    },
+    {
+      "field": "notes",
+      "units": [
+        55296,
+        65
+      ]
+    },
+    {
+      "field": "email",
+      "units": [
+        65,
+        56320
+      ]
+    }
+  ]
+}

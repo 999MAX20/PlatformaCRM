@@ -1,0 +1,5550 @@
+{
+  "fixture_only": true,
+  "business": 202,
+  "producer": {
+    "now": "2026-10-28T00:30:00Z",
+    "timezone": "UTC",
+    "database_order": "PostgreSQL NULLS LAST ascending",
+    "source": "apps/mobile/selectors.py372–407; this is a synthetic projection, not CURRENT acceptance"
+  },
+  "catalogue": [
+    {
+      "id": 4164,
+      "title": "Synthetic source-query Task 202/64",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4164",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4163,
+      "title": "Synthetic source-query Task 202/63",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4163",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4162,
+      "title": "Synthetic source-query Task 202/62",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4162",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4161,
+      "title": "Synthetic source-query Task 202/61",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4161",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4160,
+      "title": "Synthetic source-query Task 202/60",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4160",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4159,
+      "title": "Synthetic source-query Task 202/59",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4159",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4158,
+      "title": "Synthetic source-query Task 202/58",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4158",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4157,
+      "title": "Synthetic source-query Task 202/57",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4157",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4156,
+      "title": "Synthetic source-query Task 202/56",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4156",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4155,
+      "title": "Synthetic source-query Task 202/55",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4155",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4154,
+      "title": "Synthetic source-query Task 202/54",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4154",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4153,
+      "title": "Synthetic source-query Task 202/53",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4153",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4152,
+      "title": "Synthetic source-query Task 202/52",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4152",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4151,
+      "title": "Synthetic source-query Task 202/51",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4151",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4150,
+      "title": "Synthetic source-query Task 202/50",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4150",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4149,
+      "title": "Synthetic source-query Task 202/49",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4149",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4148,
+      "title": "Synthetic source-query Task 202/48",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4148",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4147,
+      "title": "Synthetic source-query Task 202/47",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4147",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4146,
+      "title": "Synthetic source-query Task 202/46",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4146",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4145,
+      "title": "Synthetic source-query Task 202/45",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4145",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4144,
+      "title": "Synthetic source-query Task 202/44",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4144",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4143,
+      "title": "Synthetic source-query Task 202/43",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4143",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4142,
+      "title": "Synthetic source-query Task 202/42",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4142",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4141,
+      "title": "Synthetic source-query Task 202/41",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4141",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4140,
+      "title": "Synthetic source-query Task 202/40",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4140",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4139,
+      "title": "Synthetic source-query Task 202/39",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4139",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4138,
+      "title": "Synthetic source-query Task 202/38",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4138",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4137,
+      "title": "Synthetic source-query Task 202/37",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4137",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4136,
+      "title": "Synthetic source-query Task 202/36",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4136",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4135,
+      "title": "Synthetic source-query Task 202/35",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4135",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4134,
+      "title": "Synthetic source-query Task 202/34",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4134",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4133,
+      "title": "Synthetic source-query Task 202/33",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4133",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4132,
+      "title": "Synthetic source-query Task 202/32",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4132",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4131,
+      "title": "Synthetic source-query Task 202/31",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4131",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4130,
+      "title": "Synthetic source-query Task 202/30",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4130",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4129,
+      "title": "Synthetic source-query Task 202/29",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4129",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4128,
+      "title": "Synthetic source-query Task 202/28",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4128",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4127,
+      "title": "Synthetic source-query Task 202/27",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4127",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4126,
+      "title": "Synthetic source-query Task 202/26",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4126",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4125,
+      "title": "Synthetic source-query Task 202/25",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4125",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4124,
+      "title": "Synthetic source-query Task 202/24",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4124",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4123,
+      "title": "Synthetic source-query Task 202/23",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4123",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4122,
+      "title": "Synthetic source-query Task 202/22",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4122",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4121,
+      "title": "Synthetic source-query Task 202/21",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4121",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4120,
+      "title": "Synthetic source-query Task 202/20",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4120",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4119,
+      "title": "Synthetic source-query Task 202/19",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4119",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4118,
+      "title": "Synthetic source-query Task 202/18",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4118",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4117,
+      "title": "Synthetic source-query Task 202/17",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4117",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4116,
+      "title": "Synthetic source-query Task 202/16",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4116",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4115,
+      "title": "Synthetic source-query Task 202/15",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4115",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4114,
+      "title": "Synthetic source-query Task 202/14",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4114",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4113,
+      "title": "Synthetic source-query Task 202/13",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4113",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4112,
+      "title": "Synthetic source-query Task 202/12",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4112",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4111,
+      "title": "Synthetic source-query Task 202/11",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4111",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4110,
+      "title": "Synthetic source-query Task 202/10",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4110",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4109,
+      "title": "Synthetic source-query Task 202/9",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4109",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4108,
+      "title": "Synthetic source-query Task 202/8",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4108",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4107,
+      "title": "Synthetic source-query Task 202/7",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4107",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4106,
+      "title": "Synthetic source-query Task 202/6",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4106",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4105,
+      "title": "Synthetic source-query Task 202/5",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4105",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4104,
+      "title": "Synthetic source-query Task 202/4",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4104",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4103,
+      "title": "Synthetic source-query Task 202/3",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4103",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4102,
+      "title": "Synthetic source-query Task 202/2",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4102",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4101,
+      "title": "Synthetic source-query Task 202/1",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4101",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4100,
+      "title": "Synthetic source-query Task 202/0",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-27T23:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4100",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4167,
+      "title": "Synthetic clock edge 67",
+      "status": "cancelled",
+      "priority": "high",
+      "due_at": "2026-10-28T00:05:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4167",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4166,
+      "title": "Synthetic clock edge 66",
+      "status": "done",
+      "priority": "high",
+      "due_at": "2026-10-28T00:05:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4166",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4165,
+      "title": "Synthetic clock edge 65",
+      "status": "open",
+      "priority": "high",
+      "due_at": "2026-10-28T00:10:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4165",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 1201,
+      "title": "Synthetic follow-up Gamma",
+      "status": "open",
+      "priority": "normal",
+      "due_at": "2026-10-28T05:30:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=1201",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4168,
+      "title": "Synthetic clock edge 68",
+      "status": "in_progress",
+      "priority": "high",
+      "due_at": "2026-10-28T23:50:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4168",
+      "created_at": "2026-10-27T00:00:00Z"
+    },
+    {
+      "id": 4169,
+      "title": "Synthetic clock edge 69",
+      "status": "open",
+      "priority": "high",
+      "due_at": "2026-10-29T00:05:00Z",
+      "client_id": null,
+      "lead_id": null,
+      "deal_id": null,
+      "assignee_id": null,
+      "href": "/app/tasks?task=4169",
+      "created_at": "2026-10-27T00:00:00Z"
+    }
+  ],
+  "queries": {
+    "|": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 71,
+        "open": 69,
+        "overdue": 66,
+        "today": 3
+      },
+      "items": [
+        {
+          "id": 4164,
+          "title": "Synthetic source-query Task 202/64",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4164"
+        },
+        {
+          "id": 4163,
+          "title": "Synthetic source-query Task 202/63",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4163"
+        },
+        {
+          "id": 4162,
+          "title": "Synthetic source-query Task 202/62",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4162"
+        },
+        {
+          "id": 4161,
+          "title": "Synthetic source-query Task 202/61",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4161"
+        },
+        {
+          "id": 4160,
+          "title": "Synthetic source-query Task 202/60",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4160"
+        },
+        {
+          "id": 4159,
+          "title": "Synthetic source-query Task 202/59",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4159"
+        },
+        {
+          "id": 4158,
+          "title": "Synthetic source-query Task 202/58",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4158"
+        },
+        {
+          "id": 4157,
+          "title": "Synthetic source-query Task 202/57",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4157"
+        },
+        {
+          "id": 4156,
+          "title": "Synthetic source-query Task 202/56",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4156"
+        },
+        {
+          "id": 4155,
+          "title": "Synthetic source-query Task 202/55",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4155"
+        },
+        {
+          "id": 4154,
+          "title": "Synthetic source-query Task 202/54",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4154"
+        },
+        {
+          "id": 4153,
+          "title": "Synthetic source-query Task 202/53",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4153"
+        },
+        {
+          "id": 4152,
+          "title": "Synthetic source-query Task 202/52",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4152"
+        },
+        {
+          "id": 4151,
+          "title": "Synthetic source-query Task 202/51",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4151"
+        },
+        {
+          "id": 4150,
+          "title": "Synthetic source-query Task 202/50",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4150"
+        },
+        {
+          "id": 4149,
+          "title": "Synthetic source-query Task 202/49",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4149"
+        },
+        {
+          "id": 4148,
+          "title": "Synthetic source-query Task 202/48",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4148"
+        },
+        {
+          "id": 4147,
+          "title": "Synthetic source-query Task 202/47",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4147"
+        },
+        {
+          "id": 4146,
+          "title": "Synthetic source-query Task 202/46",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4146"
+        },
+        {
+          "id": 4145,
+          "title": "Synthetic source-query Task 202/45",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4145"
+        },
+        {
+          "id": 4144,
+          "title": "Synthetic source-query Task 202/44",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4144"
+        },
+        {
+          "id": 4143,
+          "title": "Synthetic source-query Task 202/43",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4143"
+        },
+        {
+          "id": 4142,
+          "title": "Synthetic source-query Task 202/42",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4142"
+        },
+        {
+          "id": 4141,
+          "title": "Synthetic source-query Task 202/41",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4141"
+        },
+        {
+          "id": 4140,
+          "title": "Synthetic source-query Task 202/40",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4140"
+        },
+        {
+          "id": 4139,
+          "title": "Synthetic source-query Task 202/39",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4139"
+        },
+        {
+          "id": 4138,
+          "title": "Synthetic source-query Task 202/38",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4138"
+        },
+        {
+          "id": 4137,
+          "title": "Synthetic source-query Task 202/37",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4137"
+        },
+        {
+          "id": 4136,
+          "title": "Synthetic source-query Task 202/36",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4136"
+        },
+        {
+          "id": 4135,
+          "title": "Synthetic source-query Task 202/35",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4135"
+        },
+        {
+          "id": 4134,
+          "title": "Synthetic source-query Task 202/34",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4134"
+        },
+        {
+          "id": 4133,
+          "title": "Synthetic source-query Task 202/33",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4133"
+        },
+        {
+          "id": 4132,
+          "title": "Synthetic source-query Task 202/32",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4132"
+        },
+        {
+          "id": 4131,
+          "title": "Synthetic source-query Task 202/31",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4131"
+        },
+        {
+          "id": 4130,
+          "title": "Synthetic source-query Task 202/30",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4130"
+        },
+        {
+          "id": 4129,
+          "title": "Synthetic source-query Task 202/29",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4129"
+        },
+        {
+          "id": 4128,
+          "title": "Synthetic source-query Task 202/28",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4128"
+        },
+        {
+          "id": 4127,
+          "title": "Synthetic source-query Task 202/27",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4127"
+        },
+        {
+          "id": 4126,
+          "title": "Synthetic source-query Task 202/26",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4126"
+        },
+        {
+          "id": 4125,
+          "title": "Synthetic source-query Task 202/25",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4125"
+        },
+        {
+          "id": 4124,
+          "title": "Synthetic source-query Task 202/24",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4124"
+        },
+        {
+          "id": 4123,
+          "title": "Synthetic source-query Task 202/23",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4123"
+        },
+        {
+          "id": 4122,
+          "title": "Synthetic source-query Task 202/22",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4122"
+        },
+        {
+          "id": 4121,
+          "title": "Synthetic source-query Task 202/21",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4121"
+        },
+        {
+          "id": 4120,
+          "title": "Synthetic source-query Task 202/20",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4120"
+        },
+        {
+          "id": 4119,
+          "title": "Synthetic source-query Task 202/19",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4119"
+        },
+        {
+          "id": 4118,
+          "title": "Synthetic source-query Task 202/18",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4118"
+        },
+        {
+          "id": 4117,
+          "title": "Synthetic source-query Task 202/17",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4117"
+        },
+        {
+          "id": 4116,
+          "title": "Synthetic source-query Task 202/16",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4116"
+        },
+        {
+          "id": 4115,
+          "title": "Synthetic source-query Task 202/15",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4115"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "|today": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 5,
+        "open": 3,
+        "overdue": 1,
+        "today": 3
+      },
+      "items": [
+        {
+          "id": 4167,
+          "title": "Synthetic clock edge 67",
+          "status": "cancelled",
+          "priority": "high",
+          "due_at": "2026-10-28T00:05:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4167"
+        },
+        {
+          "id": 4166,
+          "title": "Synthetic clock edge 66",
+          "status": "done",
+          "priority": "high",
+          "due_at": "2026-10-28T00:05:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4166"
+        },
+        {
+          "id": 4165,
+          "title": "Synthetic clock edge 65",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T00:10:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4165"
+        },
+        {
+          "id": 1201,
+          "title": "Synthetic follow-up Gamma",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-28T05:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1201"
+        },
+        {
+          "id": 4168,
+          "title": "Synthetic clock edge 68",
+          "status": "in_progress",
+          "priority": "high",
+          "due_at": "2026-10-28T23:50:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4168"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "|overdue": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 66,
+        "open": 66,
+        "overdue": 66,
+        "today": 1
+      },
+      "items": [
+        {
+          "id": 4164,
+          "title": "Synthetic source-query Task 202/64",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4164"
+        },
+        {
+          "id": 4163,
+          "title": "Synthetic source-query Task 202/63",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4163"
+        },
+        {
+          "id": 4162,
+          "title": "Synthetic source-query Task 202/62",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4162"
+        },
+        {
+          "id": 4161,
+          "title": "Synthetic source-query Task 202/61",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4161"
+        },
+        {
+          "id": 4160,
+          "title": "Synthetic source-query Task 202/60",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4160"
+        },
+        {
+          "id": 4159,
+          "title": "Synthetic source-query Task 202/59",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4159"
+        },
+        {
+          "id": 4158,
+          "title": "Synthetic source-query Task 202/58",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4158"
+        },
+        {
+          "id": 4157,
+          "title": "Synthetic source-query Task 202/57",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4157"
+        },
+        {
+          "id": 4156,
+          "title": "Synthetic source-query Task 202/56",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4156"
+        },
+        {
+          "id": 4155,
+          "title": "Synthetic source-query Task 202/55",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4155"
+        },
+        {
+          "id": 4154,
+          "title": "Synthetic source-query Task 202/54",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4154"
+        },
+        {
+          "id": 4153,
+          "title": "Synthetic source-query Task 202/53",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4153"
+        },
+        {
+          "id": 4152,
+          "title": "Synthetic source-query Task 202/52",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4152"
+        },
+        {
+          "id": 4151,
+          "title": "Synthetic source-query Task 202/51",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4151"
+        },
+        {
+          "id": 4150,
+          "title": "Synthetic source-query Task 202/50",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4150"
+        },
+        {
+          "id": 4149,
+          "title": "Synthetic source-query Task 202/49",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4149"
+        },
+        {
+          "id": 4148,
+          "title": "Synthetic source-query Task 202/48",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4148"
+        },
+        {
+          "id": 4147,
+          "title": "Synthetic source-query Task 202/47",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4147"
+        },
+        {
+          "id": 4146,
+          "title": "Synthetic source-query Task 202/46",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4146"
+        },
+        {
+          "id": 4145,
+          "title": "Synthetic source-query Task 202/45",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4145"
+        },
+        {
+          "id": 4144,
+          "title": "Synthetic source-query Task 202/44",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4144"
+        },
+        {
+          "id": 4143,
+          "title": "Synthetic source-query Task 202/43",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4143"
+        },
+        {
+          "id": 4142,
+          "title": "Synthetic source-query Task 202/42",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4142"
+        },
+        {
+          "id": 4141,
+          "title": "Synthetic source-query Task 202/41",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4141"
+        },
+        {
+          "id": 4140,
+          "title": "Synthetic source-query Task 202/40",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4140"
+        },
+        {
+          "id": 4139,
+          "title": "Synthetic source-query Task 202/39",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4139"
+        },
+        {
+          "id": 4138,
+          "title": "Synthetic source-query Task 202/38",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4138"
+        },
+        {
+          "id": 4137,
+          "title": "Synthetic source-query Task 202/37",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4137"
+        },
+        {
+          "id": 4136,
+          "title": "Synthetic source-query Task 202/36",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4136"
+        },
+        {
+          "id": 4135,
+          "title": "Synthetic source-query Task 202/35",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4135"
+        },
+        {
+          "id": 4134,
+          "title": "Synthetic source-query Task 202/34",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4134"
+        },
+        {
+          "id": 4133,
+          "title": "Synthetic source-query Task 202/33",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4133"
+        },
+        {
+          "id": 4132,
+          "title": "Synthetic source-query Task 202/32",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4132"
+        },
+        {
+          "id": 4131,
+          "title": "Synthetic source-query Task 202/31",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4131"
+        },
+        {
+          "id": 4130,
+          "title": "Synthetic source-query Task 202/30",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4130"
+        },
+        {
+          "id": 4129,
+          "title": "Synthetic source-query Task 202/29",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4129"
+        },
+        {
+          "id": 4128,
+          "title": "Synthetic source-query Task 202/28",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4128"
+        },
+        {
+          "id": 4127,
+          "title": "Synthetic source-query Task 202/27",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4127"
+        },
+        {
+          "id": 4126,
+          "title": "Synthetic source-query Task 202/26",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4126"
+        },
+        {
+          "id": 4125,
+          "title": "Synthetic source-query Task 202/25",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4125"
+        },
+        {
+          "id": 4124,
+          "title": "Synthetic source-query Task 202/24",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4124"
+        },
+        {
+          "id": 4123,
+          "title": "Synthetic source-query Task 202/23",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4123"
+        },
+        {
+          "id": 4122,
+          "title": "Synthetic source-query Task 202/22",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4122"
+        },
+        {
+          "id": 4121,
+          "title": "Synthetic source-query Task 202/21",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4121"
+        },
+        {
+          "id": 4120,
+          "title": "Synthetic source-query Task 202/20",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4120"
+        },
+        {
+          "id": 4119,
+          "title": "Synthetic source-query Task 202/19",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4119"
+        },
+        {
+          "id": 4118,
+          "title": "Synthetic source-query Task 202/18",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4118"
+        },
+        {
+          "id": 4117,
+          "title": "Synthetic source-query Task 202/17",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4117"
+        },
+        {
+          "id": 4116,
+          "title": "Synthetic source-query Task 202/16",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4116"
+        },
+        {
+          "id": 4115,
+          "title": "Synthetic source-query Task 202/15",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4115"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "open|": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 68,
+        "open": 68,
+        "overdue": 66,
+        "today": 2
+      },
+      "items": [
+        {
+          "id": 4164,
+          "title": "Synthetic source-query Task 202/64",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4164"
+        },
+        {
+          "id": 4163,
+          "title": "Synthetic source-query Task 202/63",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4163"
+        },
+        {
+          "id": 4162,
+          "title": "Synthetic source-query Task 202/62",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4162"
+        },
+        {
+          "id": 4161,
+          "title": "Synthetic source-query Task 202/61",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4161"
+        },
+        {
+          "id": 4160,
+          "title": "Synthetic source-query Task 202/60",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4160"
+        },
+        {
+          "id": 4159,
+          "title": "Synthetic source-query Task 202/59",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4159"
+        },
+        {
+          "id": 4158,
+          "title": "Synthetic source-query Task 202/58",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4158"
+        },
+        {
+          "id": 4157,
+          "title": "Synthetic source-query Task 202/57",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4157"
+        },
+        {
+          "id": 4156,
+          "title": "Synthetic source-query Task 202/56",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4156"
+        },
+        {
+          "id": 4155,
+          "title": "Synthetic source-query Task 202/55",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4155"
+        },
+        {
+          "id": 4154,
+          "title": "Synthetic source-query Task 202/54",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4154"
+        },
+        {
+          "id": 4153,
+          "title": "Synthetic source-query Task 202/53",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4153"
+        },
+        {
+          "id": 4152,
+          "title": "Synthetic source-query Task 202/52",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4152"
+        },
+        {
+          "id": 4151,
+          "title": "Synthetic source-query Task 202/51",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4151"
+        },
+        {
+          "id": 4150,
+          "title": "Synthetic source-query Task 202/50",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4150"
+        },
+        {
+          "id": 4149,
+          "title": "Synthetic source-query Task 202/49",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4149"
+        },
+        {
+          "id": 4148,
+          "title": "Synthetic source-query Task 202/48",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4148"
+        },
+        {
+          "id": 4147,
+          "title": "Synthetic source-query Task 202/47",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4147"
+        },
+        {
+          "id": 4146,
+          "title": "Synthetic source-query Task 202/46",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4146"
+        },
+        {
+          "id": 4145,
+          "title": "Synthetic source-query Task 202/45",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4145"
+        },
+        {
+          "id": 4144,
+          "title": "Synthetic source-query Task 202/44",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4144"
+        },
+        {
+          "id": 4143,
+          "title": "Synthetic source-query Task 202/43",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4143"
+        },
+        {
+          "id": 4142,
+          "title": "Synthetic source-query Task 202/42",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4142"
+        },
+        {
+          "id": 4141,
+          "title": "Synthetic source-query Task 202/41",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4141"
+        },
+        {
+          "id": 4140,
+          "title": "Synthetic source-query Task 202/40",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4140"
+        },
+        {
+          "id": 4139,
+          "title": "Synthetic source-query Task 202/39",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4139"
+        },
+        {
+          "id": 4138,
+          "title": "Synthetic source-query Task 202/38",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4138"
+        },
+        {
+          "id": 4137,
+          "title": "Synthetic source-query Task 202/37",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4137"
+        },
+        {
+          "id": 4136,
+          "title": "Synthetic source-query Task 202/36",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4136"
+        },
+        {
+          "id": 4135,
+          "title": "Synthetic source-query Task 202/35",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4135"
+        },
+        {
+          "id": 4134,
+          "title": "Synthetic source-query Task 202/34",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4134"
+        },
+        {
+          "id": 4133,
+          "title": "Synthetic source-query Task 202/33",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4133"
+        },
+        {
+          "id": 4132,
+          "title": "Synthetic source-query Task 202/32",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4132"
+        },
+        {
+          "id": 4131,
+          "title": "Synthetic source-query Task 202/31",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4131"
+        },
+        {
+          "id": 4130,
+          "title": "Synthetic source-query Task 202/30",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4130"
+        },
+        {
+          "id": 4129,
+          "title": "Synthetic source-query Task 202/29",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4129"
+        },
+        {
+          "id": 4128,
+          "title": "Synthetic source-query Task 202/28",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4128"
+        },
+        {
+          "id": 4127,
+          "title": "Synthetic source-query Task 202/27",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4127"
+        },
+        {
+          "id": 4126,
+          "title": "Synthetic source-query Task 202/26",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4126"
+        },
+        {
+          "id": 4125,
+          "title": "Synthetic source-query Task 202/25",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4125"
+        },
+        {
+          "id": 4124,
+          "title": "Synthetic source-query Task 202/24",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4124"
+        },
+        {
+          "id": 4123,
+          "title": "Synthetic source-query Task 202/23",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4123"
+        },
+        {
+          "id": 4122,
+          "title": "Synthetic source-query Task 202/22",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4122"
+        },
+        {
+          "id": 4121,
+          "title": "Synthetic source-query Task 202/21",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4121"
+        },
+        {
+          "id": 4120,
+          "title": "Synthetic source-query Task 202/20",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4120"
+        },
+        {
+          "id": 4119,
+          "title": "Synthetic source-query Task 202/19",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4119"
+        },
+        {
+          "id": 4118,
+          "title": "Synthetic source-query Task 202/18",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4118"
+        },
+        {
+          "id": 4117,
+          "title": "Synthetic source-query Task 202/17",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4117"
+        },
+        {
+          "id": 4116,
+          "title": "Synthetic source-query Task 202/16",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4116"
+        },
+        {
+          "id": 4115,
+          "title": "Synthetic source-query Task 202/15",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4115"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "open|today": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 2,
+        "open": 2,
+        "overdue": 1,
+        "today": 2
+      },
+      "items": [
+        {
+          "id": 4165,
+          "title": "Synthetic clock edge 65",
+          "status": "open",
+          "priority": "high",
+          "due_at": "2026-10-28T00:10:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4165"
+        },
+        {
+          "id": 1201,
+          "title": "Synthetic follow-up Gamma",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-28T05:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=1201"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "open|overdue": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 66,
+        "open": 66,
+        "overdue": 66,
+        "today": 1
+      },
+      "items": [
+        {
+          "id": 4164,
+          "title": "Synthetic source-query Task 202/64",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4164"
+        },
+        {
+          "id": 4163,
+          "title": "Synthetic source-query Task 202/63",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4163"
+        },
+        {
+          "id": 4162,
+          "title": "Synthetic source-query Task 202/62",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4162"
+        },
+        {
+          "id": 4161,
+          "title": "Synthetic source-query Task 202/61",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4161"
+        },
+        {
+          "id": 4160,
+          "title": "Synthetic source-query Task 202/60",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4160"
+        },
+        {
+          "id": 4159,
+          "title": "Synthetic source-query Task 202/59",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4159"
+        },
+        {
+          "id": 4158,
+          "title": "Synthetic source-query Task 202/58",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4158"
+        },
+        {
+          "id": 4157,
+          "title": "Synthetic source-query Task 202/57",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4157"
+        },
+        {
+          "id": 4156,
+          "title": "Synthetic source-query Task 202/56",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4156"
+        },
+        {
+          "id": 4155,
+          "title": "Synthetic source-query Task 202/55",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4155"
+        },
+        {
+          "id": 4154,
+          "title": "Synthetic source-query Task 202/54",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4154"
+        },
+        {
+          "id": 4153,
+          "title": "Synthetic source-query Task 202/53",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4153"
+        },
+        {
+          "id": 4152,
+          "title": "Synthetic source-query Task 202/52",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4152"
+        },
+        {
+          "id": 4151,
+          "title": "Synthetic source-query Task 202/51",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4151"
+        },
+        {
+          "id": 4150,
+          "title": "Synthetic source-query Task 202/50",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4150"
+        },
+        {
+          "id": 4149,
+          "title": "Synthetic source-query Task 202/49",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4149"
+        },
+        {
+          "id": 4148,
+          "title": "Synthetic source-query Task 202/48",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4148"
+        },
+        {
+          "id": 4147,
+          "title": "Synthetic source-query Task 202/47",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4147"
+        },
+        {
+          "id": 4146,
+          "title": "Synthetic source-query Task 202/46",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4146"
+        },
+        {
+          "id": 4145,
+          "title": "Synthetic source-query Task 202/45",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4145"
+        },
+        {
+          "id": 4144,
+          "title": "Synthetic source-query Task 202/44",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4144"
+        },
+        {
+          "id": 4143,
+          "title": "Synthetic source-query Task 202/43",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4143"
+        },
+        {
+          "id": 4142,
+          "title": "Synthetic source-query Task 202/42",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4142"
+        },
+        {
+          "id": 4141,
+          "title": "Synthetic source-query Task 202/41",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4141"
+        },
+        {
+          "id": 4140,
+          "title": "Synthetic source-query Task 202/40",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4140"
+        },
+        {
+          "id": 4139,
+          "title": "Synthetic source-query Task 202/39",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4139"
+        },
+        {
+          "id": 4138,
+          "title": "Synthetic source-query Task 202/38",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4138"
+        },
+        {
+          "id": 4137,
+          "title": "Synthetic source-query Task 202/37",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4137"
+        },
+        {
+          "id": 4136,
+          "title": "Synthetic source-query Task 202/36",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4136"
+        },
+        {
+          "id": 4135,
+          "title": "Synthetic source-query Task 202/35",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4135"
+        },
+        {
+          "id": 4134,
+          "title": "Synthetic source-query Task 202/34",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4134"
+        },
+        {
+          "id": 4133,
+          "title": "Synthetic source-query Task 202/33",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4133"
+        },
+        {
+          "id": 4132,
+          "title": "Synthetic source-query Task 202/32",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4132"
+        },
+        {
+          "id": 4131,
+          "title": "Synthetic source-query Task 202/31",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4131"
+        },
+        {
+          "id": 4130,
+          "title": "Synthetic source-query Task 202/30",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4130"
+        },
+        {
+          "id": 4129,
+          "title": "Synthetic source-query Task 202/29",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4129"
+        },
+        {
+          "id": 4128,
+          "title": "Synthetic source-query Task 202/28",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4128"
+        },
+        {
+          "id": 4127,
+          "title": "Synthetic source-query Task 202/27",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4127"
+        },
+        {
+          "id": 4126,
+          "title": "Synthetic source-query Task 202/26",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4126"
+        },
+        {
+          "id": 4125,
+          "title": "Synthetic source-query Task 202/25",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4125"
+        },
+        {
+          "id": 4124,
+          "title": "Synthetic source-query Task 202/24",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4124"
+        },
+        {
+          "id": 4123,
+          "title": "Synthetic source-query Task 202/23",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4123"
+        },
+        {
+          "id": 4122,
+          "title": "Synthetic source-query Task 202/22",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4122"
+        },
+        {
+          "id": 4121,
+          "title": "Synthetic source-query Task 202/21",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4121"
+        },
+        {
+          "id": 4120,
+          "title": "Synthetic source-query Task 202/20",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4120"
+        },
+        {
+          "id": 4119,
+          "title": "Synthetic source-query Task 202/19",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4119"
+        },
+        {
+          "id": 4118,
+          "title": "Synthetic source-query Task 202/18",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4118"
+        },
+        {
+          "id": 4117,
+          "title": "Synthetic source-query Task 202/17",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4117"
+        },
+        {
+          "id": 4116,
+          "title": "Synthetic source-query Task 202/16",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4116"
+        },
+        {
+          "id": 4115,
+          "title": "Synthetic source-query Task 202/15",
+          "status": "open",
+          "priority": "normal",
+          "due_at": "2026-10-27T23:30:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4115"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "in_progress|": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 1,
+        "open": 1,
+        "overdue": 0,
+        "today": 1
+      },
+      "items": [
+        {
+          "id": 4168,
+          "title": "Synthetic clock edge 68",
+          "status": "in_progress",
+          "priority": "high",
+          "due_at": "2026-10-28T23:50:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4168"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "in_progress|today": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 1,
+        "open": 1,
+        "overdue": 0,
+        "today": 1
+      },
+      "items": [
+        {
+          "id": 4168,
+          "title": "Synthetic clock edge 68",
+          "status": "in_progress",
+          "priority": "high",
+          "due_at": "2026-10-28T23:50:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4168"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "in_progress|overdue": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 0,
+        "open": 0,
+        "overdue": 0,
+        "today": 0
+      },
+      "items": [],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "done|": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 1,
+        "open": 0,
+        "overdue": 0,
+        "today": 0
+      },
+      "items": [
+        {
+          "id": 4166,
+          "title": "Synthetic clock edge 66",
+          "status": "done",
+          "priority": "high",
+          "due_at": "2026-10-28T00:05:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4166"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "done|today": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 1,
+        "open": 0,
+        "overdue": 0,
+        "today": 0
+      },
+      "items": [
+        {
+          "id": 4166,
+          "title": "Synthetic clock edge 66",
+          "status": "done",
+          "priority": "high",
+          "due_at": "2026-10-28T00:05:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4166"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "done|overdue": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 0,
+        "open": 0,
+        "overdue": 0,
+        "today": 0
+      },
+      "items": [],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "cancelled|": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 1,
+        "open": 0,
+        "overdue": 0,
+        "today": 0
+      },
+      "items": [
+        {
+          "id": 4167,
+          "title": "Synthetic clock edge 67",
+          "status": "cancelled",
+          "priority": "high",
+          "due_at": "2026-10-28T00:05:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4167"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "cancelled|today": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 1,
+        "open": 0,
+        "overdue": 0,
+        "today": 0
+      },
+      "items": [
+        {
+          "id": 4167,
+          "title": "Synthetic clock edge 67",
+          "status": "cancelled",
+          "priority": "high",
+          "due_at": "2026-10-28T00:05:00Z",
+          "client_id": null,
+          "lead_id": null,
+          "deal_id": null,
+          "assignee_id": null,
+          "href": "/app/tasks?task=4167"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    },
+    "cancelled|overdue": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "limit": 50,
+      "summary": {
+        "total": 0,
+        "open": 0,
+        "overdue": 0,
+        "today": 0
+      },
+      "items": [],
+      "payload_budget": {
+        "target_kb": 100,
+        "max_items": 50
+      }
+    }
+  },
+  "profiles": {
+    "4164": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4164,
+        "title": "Synthetic source-query Task 202/64",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4164"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4163": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4163,
+        "title": "Synthetic source-query Task 202/63",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4163"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4162": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4162,
+        "title": "Synthetic source-query Task 202/62",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4162"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4161": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4161,
+        "title": "Synthetic source-query Task 202/61",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4161"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4160": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4160,
+        "title": "Synthetic source-query Task 202/60",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4160"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4159": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4159,
+        "title": "Synthetic source-query Task 202/59",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4159"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4158": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4158,
+        "title": "Synthetic source-query Task 202/58",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4158"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4157": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4157,
+        "title": "Synthetic source-query Task 202/57",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4157"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4156": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4156,
+        "title": "Synthetic source-query Task 202/56",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4156"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4155": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4155,
+        "title": "Synthetic source-query Task 202/55",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4155"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4154": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4154,
+        "title": "Synthetic source-query Task 202/54",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4154"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4153": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4153,
+        "title": "Synthetic source-query Task 202/53",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4153"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4152": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4152,
+        "title": "Synthetic source-query Task 202/52",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4152"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4151": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4151,
+        "title": "Synthetic source-query Task 202/51",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4151"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4150": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4150,
+        "title": "Synthetic source-query Task 202/50",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4150"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4149": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4149,
+        "title": "Synthetic source-query Task 202/49",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4149"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4148": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4148,
+        "title": "Synthetic source-query Task 202/48",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4148"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4147": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4147,
+        "title": "Synthetic source-query Task 202/47",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4147"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4146": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4146,
+        "title": "Synthetic source-query Task 202/46",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4146"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4145": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4145,
+        "title": "Synthetic source-query Task 202/45",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4145"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4144": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4144,
+        "title": "Synthetic source-query Task 202/44",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4144"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4143": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4143,
+        "title": "Synthetic source-query Task 202/43",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4143"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4142": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4142,
+        "title": "Synthetic source-query Task 202/42",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4142"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4141": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4141,
+        "title": "Synthetic source-query Task 202/41",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4141"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4140": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4140,
+        "title": "Synthetic source-query Task 202/40",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4140"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4139": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4139,
+        "title": "Synthetic source-query Task 202/39",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4139"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4138": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4138,
+        "title": "Synthetic source-query Task 202/38",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4138"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4137": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4137,
+        "title": "Synthetic source-query Task 202/37",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4137"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4136": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4136,
+        "title": "Synthetic source-query Task 202/36",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4136"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4135": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4135,
+        "title": "Synthetic source-query Task 202/35",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4135"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4134": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4134,
+        "title": "Synthetic source-query Task 202/34",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4134"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4133": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4133,
+        "title": "Synthetic source-query Task 202/33",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4133"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4132": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4132,
+        "title": "Synthetic source-query Task 202/32",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4132"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4131": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4131,
+        "title": "Synthetic source-query Task 202/31",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4131"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4130": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4130,
+        "title": "Synthetic source-query Task 202/30",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4130"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4129": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4129,
+        "title": "Synthetic source-query Task 202/29",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4129"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4128": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4128,
+        "title": "Synthetic source-query Task 202/28",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4128"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4127": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4127,
+        "title": "Synthetic source-query Task 202/27",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4127"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4126": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4126,
+        "title": "Synthetic source-query Task 202/26",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4126"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4125": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4125,
+        "title": "Synthetic source-query Task 202/25",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4125"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4124": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4124,
+        "title": "Synthetic source-query Task 202/24",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4124"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4123": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4123,
+        "title": "Synthetic source-query Task 202/23",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4123"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4122": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4122,
+        "title": "Synthetic source-query Task 202/22",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4122"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4121": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4121,
+        "title": "Synthetic source-query Task 202/21",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4121"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4120": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4120,
+        "title": "Synthetic source-query Task 202/20",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4120"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4119": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4119,
+        "title": "Synthetic source-query Task 202/19",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4119"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4118": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4118,
+        "title": "Synthetic source-query Task 202/18",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4118"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4117": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4117,
+        "title": "Synthetic source-query Task 202/17",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4117"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4116": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4116,
+        "title": "Synthetic source-query Task 202/16",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4116"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4115": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4115,
+        "title": "Synthetic source-query Task 202/15",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4115"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4114": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4114,
+        "title": "Synthetic source-query Task 202/14",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4114"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4113": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4113,
+        "title": "Synthetic source-query Task 202/13",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4113"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4112": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4112,
+        "title": "Synthetic source-query Task 202/12",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4112"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4111": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4111,
+        "title": "Synthetic source-query Task 202/11",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4111"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4110": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4110,
+        "title": "Synthetic source-query Task 202/10",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4110"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4109": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4109,
+        "title": "Synthetic source-query Task 202/9",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4109"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4108": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4108,
+        "title": "Synthetic source-query Task 202/8",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4108"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4107": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4107,
+        "title": "Synthetic source-query Task 202/7",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4107"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4106": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4106,
+        "title": "Synthetic source-query Task 202/6",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4106"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4105": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4105,
+        "title": "Synthetic source-query Task 202/5",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4105"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4104": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4104,
+        "title": "Synthetic source-query Task 202/4",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4104"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4103": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4103,
+        "title": "Synthetic source-query Task 202/3",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4103"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4102": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4102,
+        "title": "Synthetic source-query Task 202/2",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4102"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4101": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4101,
+        "title": "Synthetic source-query Task 202/1",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4101"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4100": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4100,
+        "title": "Synthetic source-query Task 202/0",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-27T23:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4100"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4167": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4167,
+        "title": "Synthetic clock edge 67",
+        "status": "cancelled",
+        "priority": "high",
+        "due_at": "2026-10-28T00:05:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4167"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4166": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4166,
+        "title": "Synthetic clock edge 66",
+        "status": "done",
+        "priority": "high",
+        "due_at": "2026-10-28T00:05:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4166"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4165": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4165,
+        "title": "Synthetic clock edge 65",
+        "status": "open",
+        "priority": "high",
+        "due_at": "2026-10-28T00:10:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4165"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "1201": {
+      "business": 202,
+      "generated_at": "2026-10-28T04:00:00Z",
+      "task": {
+        "id": 1201,
+        "title": "Synthetic follow-up Gamma",
+        "status": "open",
+        "priority": "normal",
+        "due_at": "2026-10-28T05:30:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=1201"
+      },
+      "details": {
+        "description": "Synthetic task context; no operation performed",
+        "reminder_at": null,
+        "snoozed_until": null,
+        "completed_at": null,
+        "cancelled_at": null,
+        "cancel_reason": "",
+        "created_by": null,
+        "assignee": null,
+        "appointment_id": null
+      },
+      "comments": [
+        {
+          "id": 12012,
+          "text": "Synthetic follow-up comment 2",
+          "author": {
+            "id": 9001,
+            "email": "fixture@example.invalid",
+            "full_name": "Synthetic operator"
+          },
+          "created_at": "2026-10-28T03:20:00Z"
+        },
+        {
+          "id": 12011,
+          "text": "Synthetic follow-up comment 1",
+          "author": {
+            "id": 9001,
+            "email": "fixture@example.invalid",
+            "full_name": "Synthetic operator"
+          },
+          "created_at": "2026-10-28T03:10:00Z"
+        }
+      ],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4168": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4168,
+        "title": "Synthetic clock edge 68",
+        "status": "in_progress",
+        "priority": "high",
+        "due_at": "2026-10-28T23:50:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4168"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    },
+    "4169": {
+      "business": 202,
+      "generated_at": "2026-10-28T00:30:00Z",
+      "task": {
+        "id": 4169,
+        "title": "Synthetic clock edge 69",
+        "status": "open",
+        "priority": "high",
+        "due_at": "2026-10-29T00:05:00Z",
+        "client_id": null,
+        "lead_id": null,
+        "deal_id": null,
+        "assignee_id": null,
+        "href": "/app/tasks?task=4169"
+      },
+      "details": {
+        "description": "Synthetic source-query detail; no operation performed",
+        "appointment_id": null
+      },
+      "comments": [],
+      "payload_budget": {
+        "target_kb": 60,
+        "max_comments": 5
+      }
+    }
+  }
+}

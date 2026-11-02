@@ -1,0 +1,96 @@
+{
+  "source": "Reference evaluated from existing insertQuickReply JavaScript; no send or placeholder interpolation",
+  "cases": [
+    {
+      "draft": "",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "",
+      "trim_end": "",
+      "inserted": "  {{client}}\nLiteral  "
+    },
+    {
+      "draft": " \t\n",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "",
+      "trim_end": "",
+      "inserted": "  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "  Own text  \n",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "Own text",
+      "trim_end": "  Own text",
+      "inserted": "  Own text\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "﻿",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "",
+      "trim_end": "",
+      "inserted": "  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "",
+      "trim_end": "",
+      "inserted": "\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "\u001c",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "\u001c",
+      "trim_end": "\u001c",
+      "inserted": "\u001c\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "Lead\n\n",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "Lead",
+      "trim_end": "Lead",
+      "inserted": "Lead\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "Привет 👋  ",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "Привет 👋",
+      "trim_end": "Привет 👋",
+      "inserted": "Привет 👋\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "İ  ",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "İ",
+      "trim_end": "İ",
+      "inserted": "İ\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "​",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "​",
+      "trim_end": "​",
+      "inserted": "​\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": " X ",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "X",
+      "trim_end": " X",
+      "inserted": " X\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "x﻿",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "x",
+      "trim_end": "x",
+      "inserted": "x\n  {{client}}\nLiteral  "
+    },
+    {
+      "draft": "x",
+      "template": "  {{client}}\nLiteral  ",
+      "trim": "x",
+      "trim_end": "x",
+      "inserted": "x\n  {{client}}\nLiteral  "
+    }
+  ]
+}

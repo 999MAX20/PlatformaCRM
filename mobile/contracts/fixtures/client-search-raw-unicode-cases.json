@@ -1,0 +1,69 @@
+{
+  "fixture_only": true,
+  "note": "Raw input identity/window invalidation only; request uses existing Python strip, no NFC normalization/database collation/IME acceptance.",
+  "cases": [
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "é",
+      "after_submitted": "é"
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "é",
+      "after_submitted": "é"
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "가",
+      "after_submitted": "가"
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "ẹ́",
+      "after_submitted": "ẹ́"
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "Å",
+      "after_submitted": "Å"
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "canonical_equivalent": false,
+      "before_submitted": "👩💻",
+      "after_submitted": "👩‍💻"
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "canonical_equivalent": true,
+      "before_submitted": "exact",
+      "after_submitted": "exact"
+    }
+  ]
+}

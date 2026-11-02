@@ -1,0 +1,1850 @@
+{
+  "fixture_only": true,
+  "note": "Optional independently read Client relation and existing generic TaskSerializer client field, no GET grant/default/null-clear/live outcome.",
+  "choice_cases": [
+    {
+      "name": "positive101",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "Synthetic Client Alpha",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"Synthetic Client Alpha\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 701,
+      "valid": true,
+      "title_json": "\"Synthetic Client Alpha\""
+    },
+    {
+      "name": "positive202",
+      "profile": {
+        "business": 202,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 801,
+          "title": "Synthetic Client Gamma",
+          "phone": "+70000000002",
+          "email": null,
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=801"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 2401,
+              "title": "Synthetic Client 801 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 801,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=2401"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5201,
+              "title": "Synthetic Client Gamma",
+              "status": "confirmed",
+              "client_id": 801,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5201"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 1031,
+              "title": "Synthetic Client 801 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=1031"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":202,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":801,\"title\":\"Synthetic Client Gamma\",\"phone\":\"+70000000002\",\"email\":null,\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=801\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":2401,\"title\":\"Synthetic Client 801 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":801,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=2401\"}],\"appointments\":[{\"id\":5201,\"title\":\"Synthetic Client Gamma\",\"status\":\"confirmed\",\"client_id\":801,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5201\"}],\"conversations\":[{\"id\":1031,\"title\":\"Synthetic Client 801 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=1031\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 202,
+      "id": 801,
+      "valid": true,
+      "title_json": "\"Synthetic Client Gamma\""
+    },
+    {
+      "name": "foreignBusiness",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "Synthetic Client Alpha",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"Synthetic Client Alpha\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 202,
+      "id": 701,
+      "valid": false,
+      "title_json": "\"Synthetic Client Alpha\""
+    },
+    {
+      "name": "otherID",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "Synthetic Client Alpha",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"Synthetic Client Alpha\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 702,
+      "valid": false,
+      "title_json": "\"Synthetic Client Alpha\""
+    },
+    {
+      "name": "zeroID",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "Synthetic Client Alpha",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"Synthetic Client Alpha\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 0,
+      "valid": false,
+      "title_json": "\"Synthetic Client Alpha\""
+    },
+    {
+      "name": "negativeID",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "Synthetic Client Alpha",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"Synthetic Client Alpha\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": -1,
+      "valid": false,
+      "title_json": "\"Synthetic Client Alpha\""
+    },
+    {
+      "name": "invalidBusiness",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "Synthetic Client Alpha",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"Synthetic Client Alpha\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 0,
+      "id": 701,
+      "valid": false,
+      "title_json": "\"Synthetic Client Alpha\""
+    },
+    {
+      "name": "absent title is not missing identity",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": null,
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":null,\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 701,
+      "valid": true,
+      "title_json": "null"
+    },
+    {
+      "name": "empty title",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 701,
+      "valid": true,
+      "title_json": "\"\""
+    },
+    {
+      "name": "exact leading FEFF",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "﻿Client",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"﻿Client\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 701,
+      "valid": true,
+      "title_json": "\"﻿Client\""
+    },
+    {
+      "name": "decomposed spelling",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "Café",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 701,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"Café\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":701,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 701,
+      "valid": true,
+      "title_json": "\"Café\""
+    },
+    {
+      "name": "mismatched visit client",
+      "profile": {
+        "business": 101,
+        "generated_at": "2026-10-28T01:00:00Z",
+        "client": {
+          "id": 701,
+          "title": "Synthetic Client Alpha",
+          "phone": "+70000000001",
+          "email": "alpha@example.invalid",
+          "source": "manual",
+          "notes": "Synthetic client profile note",
+          "created_at": "2026-10-28T00:00:00Z",
+          "updated_at": "2026-10-28T01:00:00Z",
+          "href": "/app/clients?client=701"
+        },
+        "details": {
+          "notes": "Synthetic client profile note",
+          "normalized_phone": "",
+          "normalized_email": "",
+          "whatsapp_id": "",
+          "telegram_id": "",
+          "instagram_id": ""
+        },
+        "related": {
+          "leads": [],
+          "tasks": [
+            {
+              "id": 1401,
+              "title": "Synthetic Client 701 task 1",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T05:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1401"
+            },
+            {
+              "id": 1402,
+              "title": "Synthetic Client 701 task 2",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T06:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1402"
+            },
+            {
+              "id": 1403,
+              "title": "Synthetic Client 701 task 3",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T07:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1403"
+            },
+            {
+              "id": 1404,
+              "title": "Synthetic Client 701 task 4",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T08:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1404"
+            },
+            {
+              "id": 1405,
+              "title": "Synthetic Client 701 task 5",
+              "status": "open",
+              "priority": "high",
+              "due_at": "2026-10-28T09:00:00Z",
+              "client_id": 701,
+              "lead_id": null,
+              "deal_id": null,
+              "assignee_id": null,
+              "href": "/app/tasks?task=1405"
+            }
+          ],
+          "appointments": [
+            {
+              "id": 5101,
+              "title": "Synthetic Client Alpha",
+              "status": "confirmed",
+              "client_id": 801,
+              "lead_id": null,
+              "service_id": 8001,
+              "start_at": "2026-10-27T04:00:00Z",
+              "end_at": "2026-10-27T04:30:00Z",
+              "href": "/app/calendar?appointment=5101"
+            }
+          ],
+          "conversations": [
+            {
+              "id": 931,
+              "title": "Synthetic Client 701 conversation 1",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=931"
+            },
+            {
+              "id": 932,
+              "title": "Synthetic Client 701 conversation 2",
+              "channel": "website",
+              "unread_count": 2,
+              "handoff_required": false,
+              "assigned_to_id": null,
+              "last_message_at": "2026-10-28T04:20:00Z",
+              "href": "/app/conversations?conversation=932"
+            }
+          ]
+        },
+        "payload_budget": {
+          "target_kb": 80,
+          "max_related_per_section": 5
+        }
+      },
+      "profile_json": "{\"business\":101,\"generated_at\":\"2026-10-28T01:00:00Z\",\"client\":{\"id\":701,\"title\":\"Synthetic Client Alpha\",\"phone\":\"+70000000001\",\"email\":\"alpha@example.invalid\",\"source\":\"manual\",\"notes\":\"Synthetic client profile note\",\"created_at\":\"2026-10-28T00:00:00Z\",\"updated_at\":\"2026-10-28T01:00:00Z\",\"href\":\"/app/clients?client=701\"},\"details\":{\"notes\":\"Synthetic client profile note\",\"normalized_phone\":\"\",\"normalized_email\":\"\",\"whatsapp_id\":\"\",\"telegram_id\":\"\",\"instagram_id\":\"\"},\"related\":{\"leads\":[],\"tasks\":[{\"id\":1401,\"title\":\"Synthetic Client 701 task 1\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1401\"},{\"id\":1402,\"title\":\"Synthetic Client 701 task 2\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T06:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1402\"},{\"id\":1403,\"title\":\"Synthetic Client 701 task 3\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T07:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1403\"},{\"id\":1404,\"title\":\"Synthetic Client 701 task 4\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T08:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1404\"},{\"id\":1405,\"title\":\"Synthetic Client 701 task 5\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T09:00:00Z\",\"client_id\":701,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1405\"}],\"appointments\":[{\"id\":5101,\"title\":\"Synthetic Client Alpha\",\"status\":\"confirmed\",\"client_id\":801,\"lead_id\":null,\"service_id\":8001,\"start_at\":\"2026-10-27T04:00:00Z\",\"end_at\":\"2026-10-27T04:30:00Z\",\"href\":\"/app/calendar?appointment=5101\"}],\"conversations\":[{\"id\":931,\"title\":\"Synthetic Client 701 conversation 1\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=931\"},{\"id\":932,\"title\":\"Synthetic Client 701 conversation 2\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=932\"}]},\"payload_budget\":{\"target_kb\":80,\"max_related_per_section\":5}}",
+      "business": 101,
+      "id": 701,
+      "valid": false,
+      "title_json": "\"Synthetic Client Alpha\""
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "matching selected generic client",
+      "body": {
+        "client": 701
+      },
+      "body_json": "{\"client\":701}",
+      "selected": 701,
+      "status": 201,
+      "accepted": true,
+      "kind": "client",
+      "id": 701
+    },
+    {
+      "name": "other generic client",
+      "body": {
+        "client": 702
+      },
+      "body_json": "{\"client\":702}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "client",
+      "id": 702
+    },
+    {
+      "name": "bounded GET is not generic FK",
+      "body": {
+        "client_id": 701
+      },
+      "body_json": "{\"client_id\":701}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "missing generic field",
+      "body": {},
+      "body_json": "{}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "explicit null is not selected",
+      "body": {
+        "client": null
+      },
+      "body_json": "{\"client\":null}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "notSet",
+      "id": null
+    },
+    {
+      "name": "zero",
+      "body": {
+        "client": 0
+      },
+      "body_json": "{\"client\":0}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "negative",
+      "body": {
+        "client": -1
+      },
+      "body_json": "{\"client\":-1}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "bool",
+      "body": {
+        "client": true
+      },
+      "body_json": "{\"client\":true}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "string",
+      "body": {
+        "client": "701"
+      },
+      "body_json": "{\"client\":\"701\"}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "float",
+      "body": {
+        "client": 701.0
+      },
+      "body_json": "{\"client\":701.0}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "fraction",
+      "body": {
+        "client": 701.5
+      },
+      "body_json": "{\"client\":701.5}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "array",
+      "body": {
+        "client": [
+          701
+        ]
+      },
+      "body_json": "{\"client\":[701]}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "object",
+      "body": {
+        "client": {
+          "id": 701
+        }
+      },
+      "body_json": "{\"client\":{\"id\":701}}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "out of shared width",
+      "body": {
+        "client": 2147483648
+      },
+      "body_json": "{\"client\":2147483648}",
+      "selected": 701,
+      "status": 201,
+      "accepted": false,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "status200",
+      "body": {
+        "client": 701
+      },
+      "body_json": "{\"client\":701}",
+      "selected": 701,
+      "status": 200,
+      "accepted": false,
+      "kind": "client",
+      "id": 701
+    },
+    {
+      "name": "status202",
+      "body": {
+        "client": 701
+      },
+      "body_json": "{\"client\":701}",
+      "selected": 701,
+      "status": 202,
+      "accepted": false,
+      "kind": "client",
+      "id": 701
+    },
+    {
+      "name": "status400",
+      "body": {
+        "client": 701
+      },
+      "body_json": "{\"client\":701}",
+      "selected": 701,
+      "status": 400,
+      "accepted": false,
+      "kind": "client",
+      "id": 701
+    },
+    {
+      "name": "status403",
+      "body": {
+        "client": 701
+      },
+      "body_json": "{\"client\":701}",
+      "selected": 701,
+      "status": 403,
+      "accepted": false,
+      "kind": "client",
+      "id": 701
+    },
+    {
+      "name": "status409",
+      "body": {
+        "client": 701
+      },
+      "body_json": "{\"client\":701}",
+      "selected": 701,
+      "status": 409,
+      "accepted": false,
+      "kind": "client",
+      "id": 701
+    },
+    {
+      "name": "status500",
+      "body": {
+        "client": 701
+      },
+      "body_json": "{\"client\":701}",
+      "selected": 701,
+      "status": 500,
+      "accepted": false,
+      "kind": "client",
+      "id": 701
+    },
+    {
+      "name": "unselected missing field not promoted",
+      "body": {},
+      "body_json": "{}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "unknown",
+      "id": null
+    },
+    {
+      "name": "unselected null",
+      "body": {
+        "client": null
+      },
+      "body_json": "{\"client\":null}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "notSet",
+      "id": null
+    },
+    {
+      "name": "unselected foreign FK not promoted",
+      "body": {
+        "client": 999
+      },
+      "body_json": "{\"client\":999}",
+      "selected": null,
+      "status": 201,
+      "accepted": true,
+      "kind": "client",
+      "id": 999
+    }
+  ],
+  "raw_title": "  Manual Client task\n",
+  "raw_description": "  Exact Client description\n",
+  "due_raw": "2026-11-02T09:30:00+05:00",
+  "reminder_raw": "2026-11-01T14:00:00Z"
+}

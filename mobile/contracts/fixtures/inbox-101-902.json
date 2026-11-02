@@ -1,0 +1,29 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T05:00:00Z",
+  "conversation": {
+    "id": 902,
+    "title": "Synthetic inquiry Beta",
+    "channel": "website",
+    "unread_count": 0,
+    "handoff_required": false,
+    "assigned_to_id": null,
+    "last_message_at": null,
+    "href": "/app/conversations?conversation=902"
+  },
+  "details": {
+    "status": "open",
+    "priority": "normal",
+    "channel": "website",
+    "bot_enabled": false,
+    "handoff_reason": "",
+    "client": null,
+    "lead": null,
+    "assigned_to": null
+  },
+  "messages": [],
+  "payload_budget": {
+    "target_kb": 100,
+    "max_messages": 30
+  }
+}

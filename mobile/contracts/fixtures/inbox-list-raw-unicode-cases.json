@@ -1,0 +1,475 @@
+{
+  "fixture_only": true,
+  "note": "Existing scoped Inbox list shape; raw query action-window parity with same provided visible row, both complete/partial metadata and unchanged unread/source data. No read mutation/send/current claim.",
+  "cases": [
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "é",
+      "after_submitted": "é",
+      "list": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "limit": 50,
+        "summary": {
+          "open": 3,
+          "unread": 1,
+          "handoff_required": 0
+        },
+        "items": [
+          {
+            "id": 901,
+            "title": " \té \n |  \té \n",
+            "channel": "website",
+            "unread_count": 2,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": "2026-10-28T04:20:00Z",
+            "href": "/app/conversations?conversation=901",
+            "last_message_preview": {
+              "direction": "outbound",
+              "sender_type": "manager",
+              "text": "Synthetic operator response; no booking confirmed",
+              "created_at": "2026-10-28T04:20:00Z"
+            }
+          },
+          {
+            "id": 902,
+            "title": "Synthetic inquiry Beta",
+            "channel": "website",
+            "unread_count": 0,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": null,
+            "href": "/app/conversations?conversation=902",
+            "last_message_preview": {
+              "direction": "",
+              "sender_type": "",
+              "text": "",
+              "created_at": null
+            }
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "list_json": "{\"business\":101,\"generated_at\":\"2026-10-28T05:00:00Z\",\"limit\":50,\"summary\":{\"open\":3,\"unread\":1,\"handoff_required\":0},\"items\":[{\"id\":901,\"title\":\" \\té \\n |  \\té \\n\",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=901\",\"last_message_preview\":{\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\"}},{\"id\":902,\"title\":\"Synthetic inquiry Beta\",\"channel\":\"website\",\"unread_count\":0,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":null,\"href\":\"/app/conversations?conversation=902\",\"last_message_preview\":{\"direction\":\"\",\"sender_type\":\"\",\"text\":\"\",\"created_at\":null}}],\"payload_budget\":{\"target_kb\":100,\"max_items\":50}}",
+      "loaded_ids": [
+        901,
+        902
+      ],
+      "visible_ids": [
+        901
+      ],
+      "total": 3,
+      "partial": true
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "é",
+      "after_submitted": "é",
+      "list": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "limit": 50,
+        "summary": {
+          "open": 2,
+          "unread": 1,
+          "handoff_required": 0
+        },
+        "items": [
+          {
+            "id": 901,
+            "title": " é  |  é ",
+            "channel": "website",
+            "unread_count": 2,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": "2026-10-28T04:20:00Z",
+            "href": "/app/conversations?conversation=901",
+            "last_message_preview": {
+              "direction": "outbound",
+              "sender_type": "manager",
+              "text": "Synthetic operator response; no booking confirmed",
+              "created_at": "2026-10-28T04:20:00Z"
+            }
+          },
+          {
+            "id": 902,
+            "title": "Synthetic inquiry Beta",
+            "channel": "website",
+            "unread_count": 0,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": null,
+            "href": "/app/conversations?conversation=902",
+            "last_message_preview": {
+              "direction": "",
+              "sender_type": "",
+              "text": "",
+              "created_at": null
+            }
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "list_json": "{\"business\":101,\"generated_at\":\"2026-10-28T05:00:00Z\",\"limit\":50,\"summary\":{\"open\":2,\"unread\":1,\"handoff_required\":0},\"items\":[{\"id\":901,\"title\":\" é  |  é \",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=901\",\"last_message_preview\":{\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\"}},{\"id\":902,\"title\":\"Synthetic inquiry Beta\",\"channel\":\"website\",\"unread_count\":0,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":null,\"href\":\"/app/conversations?conversation=902\",\"last_message_preview\":{\"direction\":\"\",\"sender_type\":\"\",\"text\":\"\",\"created_at\":null}}],\"payload_budget\":{\"target_kb\":100,\"max_items\":50}}",
+      "loaded_ids": [
+        901,
+        902
+      ],
+      "visible_ids": [
+        901
+      ],
+      "total": 2,
+      "partial": false
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "가",
+      "after_submitted": "가",
+      "list": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "limit": 50,
+        "summary": {
+          "open": 3,
+          "unread": 1,
+          "handoff_required": 0
+        },
+        "items": [
+          {
+            "id": 901,
+            "title": " 가  |  가 ",
+            "channel": "website",
+            "unread_count": 2,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": "2026-10-28T04:20:00Z",
+            "href": "/app/conversations?conversation=901",
+            "last_message_preview": {
+              "direction": "outbound",
+              "sender_type": "manager",
+              "text": "Synthetic operator response; no booking confirmed",
+              "created_at": "2026-10-28T04:20:00Z"
+            }
+          },
+          {
+            "id": 902,
+            "title": "Synthetic inquiry Beta",
+            "channel": "website",
+            "unread_count": 0,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": null,
+            "href": "/app/conversations?conversation=902",
+            "last_message_preview": {
+              "direction": "",
+              "sender_type": "",
+              "text": "",
+              "created_at": null
+            }
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "list_json": "{\"business\":101,\"generated_at\":\"2026-10-28T05:00:00Z\",\"limit\":50,\"summary\":{\"open\":3,\"unread\":1,\"handoff_required\":0},\"items\":[{\"id\":901,\"title\":\" 가  |  가 \",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=901\",\"last_message_preview\":{\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\"}},{\"id\":902,\"title\":\"Synthetic inquiry Beta\",\"channel\":\"website\",\"unread_count\":0,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":null,\"href\":\"/app/conversations?conversation=902\",\"last_message_preview\":{\"direction\":\"\",\"sender_type\":\"\",\"text\":\"\",\"created_at\":null}}],\"payload_budget\":{\"target_kb\":100,\"max_items\":50}}",
+      "loaded_ids": [
+        901,
+        902
+      ],
+      "visible_ids": [
+        901
+      ],
+      "total": 3,
+      "partial": true
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "ẹ́",
+      "after_submitted": "ẹ́",
+      "list": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "limit": 50,
+        "summary": {
+          "open": 2,
+          "unread": 1,
+          "handoff_required": 0
+        },
+        "items": [
+          {
+            "id": 901,
+            "title": " ẹ́  |  ẹ́ ",
+            "channel": "website",
+            "unread_count": 2,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": "2026-10-28T04:20:00Z",
+            "href": "/app/conversations?conversation=901",
+            "last_message_preview": {
+              "direction": "outbound",
+              "sender_type": "manager",
+              "text": "Synthetic operator response; no booking confirmed",
+              "created_at": "2026-10-28T04:20:00Z"
+            }
+          },
+          {
+            "id": 902,
+            "title": "Synthetic inquiry Beta",
+            "channel": "website",
+            "unread_count": 0,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": null,
+            "href": "/app/conversations?conversation=902",
+            "last_message_preview": {
+              "direction": "",
+              "sender_type": "",
+              "text": "",
+              "created_at": null
+            }
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "list_json": "{\"business\":101,\"generated_at\":\"2026-10-28T05:00:00Z\",\"limit\":50,\"summary\":{\"open\":2,\"unread\":1,\"handoff_required\":0},\"items\":[{\"id\":901,\"title\":\" ẹ́  |  ẹ́ \",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=901\",\"last_message_preview\":{\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\"}},{\"id\":902,\"title\":\"Synthetic inquiry Beta\",\"channel\":\"website\",\"unread_count\":0,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":null,\"href\":\"/app/conversations?conversation=902\",\"last_message_preview\":{\"direction\":\"\",\"sender_type\":\"\",\"text\":\"\",\"created_at\":null}}],\"payload_budget\":{\"target_kb\":100,\"max_items\":50}}",
+      "loaded_ids": [
+        901,
+        902
+      ],
+      "visible_ids": [
+        901
+      ],
+      "total": 2,
+      "partial": false
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "canonical_equivalent": true,
+      "before_submitted": "Å",
+      "after_submitted": "Å",
+      "list": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "limit": 50,
+        "summary": {
+          "open": 3,
+          "unread": 1,
+          "handoff_required": 0
+        },
+        "items": [
+          {
+            "id": 901,
+            "title": " Å  |  Å ",
+            "channel": "website",
+            "unread_count": 2,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": "2026-10-28T04:20:00Z",
+            "href": "/app/conversations?conversation=901",
+            "last_message_preview": {
+              "direction": "outbound",
+              "sender_type": "manager",
+              "text": "Synthetic operator response; no booking confirmed",
+              "created_at": "2026-10-28T04:20:00Z"
+            }
+          },
+          {
+            "id": 902,
+            "title": "Synthetic inquiry Beta",
+            "channel": "website",
+            "unread_count": 0,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": null,
+            "href": "/app/conversations?conversation=902",
+            "last_message_preview": {
+              "direction": "",
+              "sender_type": "",
+              "text": "",
+              "created_at": null
+            }
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "list_json": "{\"business\":101,\"generated_at\":\"2026-10-28T05:00:00Z\",\"limit\":50,\"summary\":{\"open\":3,\"unread\":1,\"handoff_required\":0},\"items\":[{\"id\":901,\"title\":\" Å  |  Å \",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=901\",\"last_message_preview\":{\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\"}},{\"id\":902,\"title\":\"Synthetic inquiry Beta\",\"channel\":\"website\",\"unread_count\":0,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":null,\"href\":\"/app/conversations?conversation=902\",\"last_message_preview\":{\"direction\":\"\",\"sender_type\":\"\",\"text\":\"\",\"created_at\":null}}],\"payload_budget\":{\"target_kb\":100,\"max_items\":50}}",
+      "loaded_ids": [
+        901,
+        902
+      ],
+      "visible_ids": [
+        901
+      ],
+      "total": 3,
+      "partial": true
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "canonical_equivalent": false,
+      "before_submitted": "👩💻",
+      "after_submitted": "👩‍💻",
+      "list": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "limit": 50,
+        "summary": {
+          "open": 2,
+          "unread": 1,
+          "handoff_required": 0
+        },
+        "items": [
+          {
+            "id": 901,
+            "title": " 👩💻  |  👩‍💻 ",
+            "channel": "website",
+            "unread_count": 2,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": "2026-10-28T04:20:00Z",
+            "href": "/app/conversations?conversation=901",
+            "last_message_preview": {
+              "direction": "outbound",
+              "sender_type": "manager",
+              "text": "Synthetic operator response; no booking confirmed",
+              "created_at": "2026-10-28T04:20:00Z"
+            }
+          },
+          {
+            "id": 902,
+            "title": "Synthetic inquiry Beta",
+            "channel": "website",
+            "unread_count": 0,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": null,
+            "href": "/app/conversations?conversation=902",
+            "last_message_preview": {
+              "direction": "",
+              "sender_type": "",
+              "text": "",
+              "created_at": null
+            }
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "list_json": "{\"business\":101,\"generated_at\":\"2026-10-28T05:00:00Z\",\"limit\":50,\"summary\":{\"open\":2,\"unread\":1,\"handoff_required\":0},\"items\":[{\"id\":901,\"title\":\" 👩💻  |  👩‍💻 \",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=901\",\"last_message_preview\":{\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\"}},{\"id\":902,\"title\":\"Synthetic inquiry Beta\",\"channel\":\"website\",\"unread_count\":0,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":null,\"href\":\"/app/conversations?conversation=902\",\"last_message_preview\":{\"direction\":\"\",\"sender_type\":\"\",\"text\":\"\",\"created_at\":null}}],\"payload_budget\":{\"target_kb\":100,\"max_items\":50}}",
+      "loaded_ids": [
+        901,
+        902
+      ],
+      "visible_ids": [
+        901
+      ],
+      "total": 2,
+      "partial": false
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "canonical_equivalent": true,
+      "before_submitted": "exact",
+      "after_submitted": "exact",
+      "list": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "limit": 50,
+        "summary": {
+          "open": 3,
+          "unread": 1,
+          "handoff_required": 0
+        },
+        "items": [
+          {
+            "id": 901,
+            "title": " exact  |  exact ",
+            "channel": "website",
+            "unread_count": 2,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": "2026-10-28T04:20:00Z",
+            "href": "/app/conversations?conversation=901",
+            "last_message_preview": {
+              "direction": "outbound",
+              "sender_type": "manager",
+              "text": "Synthetic operator response; no booking confirmed",
+              "created_at": "2026-10-28T04:20:00Z"
+            }
+          },
+          {
+            "id": 902,
+            "title": "Synthetic inquiry Beta",
+            "channel": "website",
+            "unread_count": 0,
+            "handoff_required": false,
+            "assigned_to_id": null,
+            "last_message_at": null,
+            "href": "/app/conversations?conversation=902",
+            "last_message_preview": {
+              "direction": "",
+              "sender_type": "",
+              "text": "",
+              "created_at": null
+            }
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_items": 50
+        }
+      },
+      "list_json": "{\"business\":101,\"generated_at\":\"2026-10-28T05:00:00Z\",\"limit\":50,\"summary\":{\"open\":3,\"unread\":1,\"handoff_required\":0},\"items\":[{\"id\":901,\"title\":\" exact  |  exact \",\"channel\":\"website\",\"unread_count\":2,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":\"2026-10-28T04:20:00Z\",\"href\":\"/app/conversations?conversation=901\",\"last_message_preview\":{\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\"}},{\"id\":902,\"title\":\"Synthetic inquiry Beta\",\"channel\":\"website\",\"unread_count\":0,\"handoff_required\":false,\"assigned_to_id\":null,\"last_message_at\":null,\"href\":\"/app/conversations?conversation=902\",\"last_message_preview\":{\"direction\":\"\",\"sender_type\":\"\",\"text\":\"\",\"created_at\":null}}],\"payload_budget\":{\"target_kb\":100,\"max_items\":50}}",
+      "loaded_ids": [
+        901,
+        902
+      ],
+      "visible_ids": [
+        901
+      ],
+      "total": 3,
+      "partial": true
+    }
+  ]
+}

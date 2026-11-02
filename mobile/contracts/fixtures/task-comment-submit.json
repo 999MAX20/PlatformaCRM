@@ -1,0 +1,252 @@
+{
+  "fixture_only": true,
+  "scope": "Explicit synthetic grants, existing TaskCommentSerializer response fields; no Business echo/idempotency/recovery assertion",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1102,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1103,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 8801,
+        "task": 1201,
+        "author": 9002,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      }
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "valid",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "other_task",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1102,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "other_actor",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": 9002,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "other_text",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "not this attempt",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "invalid_date",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "yesterday"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "status": 201,
+      "response": {
+        "id": 0,
+        "task": 1101,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_author_name",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": 9001,
+        "author_name": null,
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_author_email",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": null,
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_task",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": null,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "author_read_miniobject",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": {
+          "id": 9001
+        },
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "boolean_author",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": true,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_status",
+      "status": 200,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": 9001,
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "full_read_miniobject_never_action_actor",
+      "status": 201,
+      "response": {
+        "id": 8801,
+        "task": 1101,
+        "author": {
+          "id": 9001,
+          "email": "fixture@example.invalid",
+          "full_name": "Synthetic employee"
+        },
+        "author_name": "Synthetic employee",
+        "author_email": "fixture@example.invalid",
+        "text": "Manual comment",
+        "created_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    }
+  ]
+}

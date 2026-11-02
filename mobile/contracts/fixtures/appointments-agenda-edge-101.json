@@ -1,0 +1,81 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-29T04:00:00Z",
+  "limit": 50,
+  "date": "2026-10-29",
+  "summary": {
+    "total": 8
+  },
+  "items": [
+    {
+      "id": 5602,
+      "title": "Synthetic agenda case 5602",
+      "status": "confirmed",
+      "client_id": 7001,
+      "lead_id": null,
+      "service_id": 8001,
+      "start_at": "2026-10-29T18:30:00Z",
+      "end_at": "2026-10-29T20:30:00Z",
+      "href": "/app/calendar?appointment=5602"
+    },
+    {
+      "id": 5601,
+      "title": "Synthetic agenda case 5601",
+      "status": "confirmed",
+      "client_id": 7001,
+      "lead_id": null,
+      "service_id": 8001,
+      "start_at": "2026-10-29T05:00:00Z",
+      "end_at": "2026-10-29T05:30:00Z",
+      "href": "/app/calendar?appointment=5601"
+    },
+    {
+      "id": 5603,
+      "title": "Synthetic agenda case 5603",
+      "status": "confirmed",
+      "client_id": 7001,
+      "lead_id": null,
+      "service_id": 8001,
+      "start_at": null,
+      "end_at": null,
+      "href": "/app/calendar?appointment=5603"
+    },
+    {
+      "id": 5604,
+      "title": "Synthetic agenda case 5604",
+      "status": "confirmed",
+      "client_id": 7001,
+      "lead_id": null,
+      "service_id": 8001,
+      "start_at": "not-an-instant",
+      "end_at": "2026-10-29T07:30:00Z",
+      "href": "/app/calendar?appointment=5604"
+    },
+    {
+      "id": 5605,
+      "title": "Synthetic agenda case 5605",
+      "status": "confirmed",
+      "client_id": 7001,
+      "lead_id": null,
+      "service_id": 8001,
+      "start_at": "2026-10-29T07:00:00Z",
+      "end_at": "2026-10-29T07:00:00Z",
+      "href": "/app/calendar?appointment=5605"
+    },
+    {
+      "id": 5606,
+      "title": "Synthetic agenda case 5606",
+      "status": "confirmed",
+      "client_id": 7001,
+      "lead_id": null,
+      "service_id": 8001,
+      "start_at": "2026-10-28T17:00:00Z",
+      "end_at": "2026-10-28T17:45:00Z",
+      "href": "/app/calendar?appointment=5606"
+    }
+  ],
+  "payload_budget": {
+    "max_items": 50,
+    "target_kb": 100
+  }
+}

@@ -1,0 +1,1401 @@
+{
+  "fixture_only": true,
+  "contract": "Generic retry-message exact message_id body/plain201; no idempotency/recovery contract; explicit synthetic UPDATE actor; all commands fake-only separate from reads",
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "update": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 6001,
+      "update": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "query": {},
+      "response_json": "{\"id\": 901, \"business\": 101, \"attachments\": [{\"id\": 9101, \"business\": 101, \"original_name\": \"Synthetic conversation attachment.pdf\", \"content_type\": \"application/pdf\", \"size\": 4294967296, \"entity_type\": \"bot_conversation\", \"entity_id\": \"901\", \"visibility\": \"private\", \"created_at\": \"2026-10-30T12:00:00Z\", \"download_url\": \"https://example.invalid/not-fetched\", \"uploaded_by\": null, \"uploaded_by_email\": \"withheld@example.invalid\"}, {\"id\": 9102, \"business\": 101, \"original_name\": \"é.txt\", \"content_type\": \"\", \"size\": 0, \"entity_type\": \"bot_conversation\", \"entity_id\": \"901\", \"visibility\": \"private\", \"created_at\": \"2026-10-30T12:00:00Z\", \"download_url\": \"https://example.invalid/not-fetched\", \"uploaded_by\": null, \"uploaded_by_email\": \"withheld@example.invalid\"}], \"metadata_json\": {\"not_retained\": \"synthetic\"}}"
+    },
+    {
+      "path": "/api/inbox/conversations/901/messages/",
+      "query": {
+        "limit": "30"
+      },
+      "response_json": "{\"count\":2,\"next\":null,\"previous\":null,\"results\":[{\"id\":9011,\"direction\":\"inbound\",\"sender_type\":\"client\",\"text\":\"Synthetic inquiry about available time\",\"status\":\"received\",\"created_at\":\"2026-10-28T04:10:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[{\"id\":10101,\"business\":101,\"original_name\":\"Synthetic message attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_message\",\"entity_id\":\"9011\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/do-not-follow\",\"uploaded_by\":null,\"scan_status\":\"not-a-source-field\"},{\"id\":10102,\"business\":101,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_message\",\"entity_id\":\"9011\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/do-not-follow\",\"uploaded_by\":null,\"scan_status\":\"not-a-source-field\"}]},{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}],\"next_before_id\":null,\"has_more\":false}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "query": {},
+      "response_json": "{\"id\": 951, \"business\": 202, \"attachments\": [{\"id\": 9201, \"business\": 202, \"original_name\": \"Synthetic conversation attachment.pdf\", \"content_type\": \"application/pdf\", \"size\": 4294967296, \"entity_type\": \"bot_conversation\", \"entity_id\": \"951\", \"visibility\": \"private\", \"created_at\": \"2026-10-30T12:00:00Z\", \"download_url\": \"https://example.invalid/not-fetched\", \"uploaded_by\": null, \"uploaded_by_email\": \"withheld@example.invalid\"}]}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/messages/",
+      "query": {
+        "limit": "30"
+      },
+      "response_json": "{\"count\":2,\"next\":null,\"previous\":null,\"results\":[{\"id\":9511,\"direction\":\"inbound\",\"sender_type\":\"client\",\"text\":\"Synthetic inquiry about available time\",\"status\":\"received\",\"created_at\":\"2026-10-28T04:10:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":951,\"attachments\":[{\"id\":20201,\"business\":202,\"original_name\":\"Synthetic message attachment.pdf\",\"content_type\":\"application/pdf\",\"size\":4294967296,\"entity_type\":\"bot_message\",\"entity_id\":\"9511\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/do-not-follow\",\"uploaded_by\":null,\"scan_status\":\"not-a-source-field\"},{\"id\":20202,\"business\":202,\"original_name\":\"é.txt\",\"content_type\":\"\",\"size\":0,\"entity_type\":\"bot_message\",\"entity_id\":\"9511\",\"visibility\":\"private\",\"created_at\":\"2026-10-30T12:00:00Z\",\"download_url\":\"https://example.invalid/do-not-follow\",\"uploaded_by\":null,\"scan_status\":\"not-a-source-field\"}]},{\"id\":9512,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":951,\"attachments\":[]}],\"next_before_id\":null,\"has_more\":false}"
+    }
+  ],
+  "source_cases": [
+    {
+      "name": "exact_generic_source",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "missing_direction",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_direction_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":null,\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_direction_bool",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":true,\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_direction_int",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":1,\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_direction_array",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":[],\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_direction_object",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":{},\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_sender_type",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_sender_type_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":null,\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_sender_type_bool",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":true,\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_sender_type_int",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":1,\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_sender_type_array",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":[],\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_sender_type_object",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":{},\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_text",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_text_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":null,\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_text_bool",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":true,\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_text_int",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":1,\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_text_array",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":[],\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_text_object",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":{},\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_status",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_status_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":null,\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_status_bool",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":true,\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_status_int",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":1,\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_status_array",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":[],\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_status_object",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":{},\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "status_'received'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"received\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "status_'queued'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "status_'failed'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "status_'sent'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"sent\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "status_'delivered'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"delivered\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "status_'SENT'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"SENT\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "status_'sent '",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"sent \",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "status_''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "status_'unknown'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"unknown\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "sender_'client'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"client\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "sender_'bot'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"bot\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "sender_'manager'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "sender_'ai'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"ai\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "sender_'system'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"system\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "sender_'MANAGER'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"MANAGER\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "sender_''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "sender_'future'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"future\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "direction_'inbound'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"inbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "direction_'outbound'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "direction_'OUTBOUND'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"OUTBOUND\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "direction_''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "direction_'future'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"future\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "raw_text_''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_text_' '",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\" \",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_text_' é '",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\" é \",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_text_' é '",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\" é \",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_text_'\\r\\nexact\\r\\n'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"\\r\\nexact\\r\\n\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_text_'\\u2028\\u2029raw'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"  raw\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_text_' raw\\xa0text '",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\" raw text \",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "bad_scope_id_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":0,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_scope_id_True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":true,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_scope_id_'9012'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":\"9012\",\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_scope_id_9011",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9011,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_scope_conversation_951",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":951,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "bad_scope_conversation_True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":true,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "mobile_FK_not_generic",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"attachments\":[],\"conversation_id\":901}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_context_business",
+      "context": {
+        "business": 0,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_context_conversation",
+      "context": {
+        "business": 101,
+        "conversation": 0,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_context_message",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 0,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_context_epoch",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 0,
+        "revision": 1,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_context_revision",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 0,
+        "limit": 30
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_context_limit",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "message": 9012,
+        "epoch": 1,
+        "revision": 1,
+        "limit": 301
+      },
+      "response_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "valid": false,
+      "eligible": false
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "plain201_exact_new_message",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": true
+    },
+    {
+      "name": "missing_id",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_conversation",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_direction",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_sender_type",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_text",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_status",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_created_at",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_sent_at",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_payload_json",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_id_0",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":0,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_id_-1",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":-1,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_id_True",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":true,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_id_'9901'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":\"9901\",\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_id_9901.5",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901.5,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_id_2147483648",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":2147483648,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_id_9012",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9012,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_conversation_951",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":951,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_conversation_True",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":true,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_conversation_'901'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":\"901\",\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_conversation_None",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":null,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_direction_'inbound'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"inbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_direction_None",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":null,\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_direction_True",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":true,\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_sender_type_'system'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"system\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_sender_type_'MANAGER'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"MANAGER\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_sender_type_None",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":null,\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_sender_type_1",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":1,\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_text_'Synthetic operator response; no booking confirmed '",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed \",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_text_None",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":null,\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_text_False",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":false,\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_status_'received'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"received\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_status_'delivered'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"delivered\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_status_'SENT'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"SENT\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_status_''",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_status_None",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":null,\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_status_1",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":1,\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_created_at_''",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_created_at_None",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":null,\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_created_at_1",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":1,\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_sent_at_True",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":true,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_sent_at_1",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":1,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_sent_at_{}",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":{},\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_sent_at_[]",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":[],\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_payload_json_None",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":null,\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_payload_json_[]",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":[],\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_payload_json_1",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":1,\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_payload_json_'{}'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":\"{}\",\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_retry_of_None",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":null,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_retry_of_True",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":true,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_retry_of_'9012'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":\"9012\",\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_retry_of_9011",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9011,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_retry_of_0",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":0,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid_retry_of_9012.5",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012.5,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "missing_retry_of",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "mobile_reply_envelope",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"ok\":true,\"message\":{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]},\"replayed\":false}",
+      "valid": false
+    },
+    {
+      "name": "known_response_queued",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": true
+    },
+    {
+      "name": "known_response_sent",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"sent\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": true
+    },
+    {
+      "name": "known_response_failed",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": true
+    },
+    {
+      "name": "raw_nullable_sent_'2026-10-28T10:20:00.000000+06:00'",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":\"2026-10-28T10:20:00.000000+06:00\",\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": true
+    },
+    {
+      "name": "raw_nullable_sent_' raw timestamp '",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":\" raw timestamp \",\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": true
+    },
+    {
+      "name": "raw_nullable_sent_''",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":\"\",\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": true
+    },
+    {
+      "name": "exact_NFD_source_receipt",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\" é \",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9902,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\" é \",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": true
+    },
+    {
+      "name": "NFC_is_not_NFD_source_receipt",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\" é \",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9902,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\" é \",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    },
+    {
+      "name": "ineligible_source_sent",
+      "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"sent\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}",
+      "valid": false
+    }
+  ],
+  "source_json": "{\"id\":9012,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"failed\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"error_text\":\"\",\"conversation\":901,\"attachments\":[]}",
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "message": 9012,
+    "epoch": 1,
+    "revision": 1,
+    "limit": 30
+  },
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "message_id": 9012,
+      "outcome": "response",
+      "status": 201,
+      "response_json": "{\"id\":9901,\"conversation\":901,\"direction\":\"outbound\",\"sender_type\":\"manager\",\"text\":\"Synthetic operator response; no booking confirmed\",\"status\":\"queued\",\"created_at\":\"2026-10-28T04:20:00Z\",\"sent_at\":null,\"delivered_at\":null,\"read_at\":null,\"payload_json\":{\"retry_of_message_id\":9012,\"provider_result\":{\"not\":\"retained\"}},\"external_message_id\":\"not retained\",\"error_text\":\"not retained\",\"attachments\":[]}"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "message_id": 9512,
+      "outcome": "unknown"
+    }
+  ]
+}

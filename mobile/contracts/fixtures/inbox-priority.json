@@ -1,0 +1,2551 @@
+{
+  "fixture_only": true,
+  "contract": "Closed priority only field low/normal/high/urgent; independent raw source/explicit synthetic UPDATE and fake command, no default choice or actual Inbox change",
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 1,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "update": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 6001,
+      "update": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "response_json": "{\"id\":951,\"business\":202,\"priority\":\"low\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}"
+    }
+  ],
+  "source_cases": [
+    {
+      "name": "unknown_raw_source",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "missing_id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":null,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":false,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":true,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":[],\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":{},\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":0,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":-1,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":1.5,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":2147483648,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"normal\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"normal\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"future é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"future é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":null,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":false,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":true,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":[],\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":{},\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":0,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":-1,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":1.5,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":2147483648,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"normal\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"normal\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"future é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"future é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_priority",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":null,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":false,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":true,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":[],\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":{},\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":0,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":-1,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":1.5,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":2147483648,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "priority_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "priority_\"normal\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"normal\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "priority_\"future é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "priority_\"future é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "missing_updated_at",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":null,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":false,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":true,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":[],\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":{},\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":0,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":-1,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"normal\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"normal\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "updated_at_\"future é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "updated_at_\"future é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "context_business0",
+      "context": {
+        "business": 0,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_business-1",
+      "context": {
+        "business": -1,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_conversation0",
+      "context": {
+        "business": 101,
+        "conversation": 0,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_conversation-1",
+      "context": {
+        "business": 101,
+        "conversation": -1,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_epoch0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 0,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_epoch-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": -1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_revision0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 0
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_revision-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": -1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "root_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "root_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "root_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "root_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "false",
+      "valid": false
+    },
+    {
+      "name": "root_\"raw\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "\"raw\"",
+      "valid": false
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "low_unknown_raw_source",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_missing_id",
+      "priority": "low",
+      "response_json": "{\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_null",
+      "priority": "low",
+      "response_json": "{\"id\":null,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_false",
+      "priority": "low",
+      "response_json": "{\"id\":false,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_true",
+      "priority": "low",
+      "response_json": "{\"id\":true,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_[]",
+      "priority": "low",
+      "response_json": "{\"id\":[],\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_{}",
+      "priority": "low",
+      "response_json": "{\"id\":{},\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_0",
+      "priority": "low",
+      "response_json": "{\"id\":0,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_-1",
+      "priority": "low",
+      "response_json": "{\"id\":-1,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_1.5",
+      "priority": "low",
+      "response_json": "{\"id\":1.5,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_2147483648",
+      "priority": "low",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_\"\"",
+      "priority": "low",
+      "response_json": "{\"id\":\"\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_\"normal\"",
+      "priority": "low",
+      "response_json": "{\"id\":\"normal\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_\"future é\"",
+      "priority": "low",
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_id_\"future é\"",
+      "priority": "low",
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_missing_business",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_null",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":null,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_false",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":false,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_true",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":true,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_[]",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":[],\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_{}",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":{},\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_0",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":0,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_-1",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":-1,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_1.5",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":1.5,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_2147483648",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":2147483648,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_\"\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":\"\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_\"normal\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":\"normal\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_\"future é\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_business_\"future é\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_missing_priority",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_null",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":null,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_false",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":false,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_true",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":true,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_[]",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":[],\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_{}",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":{},\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_0",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":0,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_-1",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":-1,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_1.5",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":1.5,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_2147483648",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":2147483648,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_\"\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_\"normal\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"normal\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_\"future é\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_priority_\"future é\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_missing_updated_at",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_null",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":null,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_false",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":false,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_true",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":true,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_[]",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":[],\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_{}",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":{},\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_0",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":0,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_-1",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":-1,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_1.5",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_2147483648",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_\"\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_\"normal\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"normal\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_\"future é\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_updated_at_\"future é\"",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_context_business0",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_context_business-1",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_context_conversation0",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_context_conversation-1",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_context_epoch0",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_context_epoch-1",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_context_revision0",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_context_revision-1",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "low_root_null",
+      "priority": "low",
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "low_root_[]",
+      "priority": "low",
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "low_root_{}",
+      "priority": "low",
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "low_root_false",
+      "priority": "low",
+      "response_json": "false",
+      "valid": false
+    },
+    {
+      "name": "low_root_\"raw\"",
+      "priority": "low",
+      "response_json": "\"raw\"",
+      "valid": false
+    },
+    {
+      "name": "low_exact_echo",
+      "priority": "low",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"low\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "normal_unknown_raw_source",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_missing_id",
+      "priority": "normal",
+      "response_json": "{\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_null",
+      "priority": "normal",
+      "response_json": "{\"id\":null,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_false",
+      "priority": "normal",
+      "response_json": "{\"id\":false,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_true",
+      "priority": "normal",
+      "response_json": "{\"id\":true,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_[]",
+      "priority": "normal",
+      "response_json": "{\"id\":[],\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_{}",
+      "priority": "normal",
+      "response_json": "{\"id\":{},\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_0",
+      "priority": "normal",
+      "response_json": "{\"id\":0,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_-1",
+      "priority": "normal",
+      "response_json": "{\"id\":-1,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_1.5",
+      "priority": "normal",
+      "response_json": "{\"id\":1.5,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_2147483648",
+      "priority": "normal",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_\"\"",
+      "priority": "normal",
+      "response_json": "{\"id\":\"\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_\"normal\"",
+      "priority": "normal",
+      "response_json": "{\"id\":\"normal\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_\"future é\"",
+      "priority": "normal",
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_id_\"future é\"",
+      "priority": "normal",
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_missing_business",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_null",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":null,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_false",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":false,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_true",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":true,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_[]",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":[],\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_{}",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":{},\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_0",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":0,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_-1",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":-1,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_1.5",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":1.5,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_2147483648",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":2147483648,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_\"\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":\"\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_\"normal\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":\"normal\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_\"future é\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_business_\"future é\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_missing_priority",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_null",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":null,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_false",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":false,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_true",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":true,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_[]",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":[],\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_{}",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":{},\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_0",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":0,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_-1",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":-1,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_1.5",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":1.5,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_2147483648",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":2147483648,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_\"\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_\"normal\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"normal\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "normal_priority_\"future é\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_priority_\"future é\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_missing_updated_at",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_null",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":null,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_false",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":false,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_true",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":true,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_[]",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":[],\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_{}",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":{},\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_0",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":0,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_-1",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":-1,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_1.5",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_2147483648",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_\"\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_\"normal\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"normal\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_\"future é\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_updated_at_\"future é\"",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_context_business0",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_context_business-1",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_context_conversation0",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_context_conversation-1",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_context_epoch0",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_context_epoch-1",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_context_revision0",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_context_revision-1",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "normal_root_null",
+      "priority": "normal",
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "normal_root_[]",
+      "priority": "normal",
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "normal_root_{}",
+      "priority": "normal",
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "normal_root_false",
+      "priority": "normal",
+      "response_json": "false",
+      "valid": false
+    },
+    {
+      "name": "normal_root_\"raw\"",
+      "priority": "normal",
+      "response_json": "\"raw\"",
+      "valid": false
+    },
+    {
+      "name": "normal_exact_echo",
+      "priority": "normal",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"normal\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "high_unknown_raw_source",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_missing_id",
+      "priority": "high",
+      "response_json": "{\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_null",
+      "priority": "high",
+      "response_json": "{\"id\":null,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_false",
+      "priority": "high",
+      "response_json": "{\"id\":false,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_true",
+      "priority": "high",
+      "response_json": "{\"id\":true,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_[]",
+      "priority": "high",
+      "response_json": "{\"id\":[],\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_{}",
+      "priority": "high",
+      "response_json": "{\"id\":{},\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_0",
+      "priority": "high",
+      "response_json": "{\"id\":0,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_-1",
+      "priority": "high",
+      "response_json": "{\"id\":-1,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_1.5",
+      "priority": "high",
+      "response_json": "{\"id\":1.5,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_2147483648",
+      "priority": "high",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_\"\"",
+      "priority": "high",
+      "response_json": "{\"id\":\"\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_\"normal\"",
+      "priority": "high",
+      "response_json": "{\"id\":\"normal\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_\"future é\"",
+      "priority": "high",
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_id_\"future é\"",
+      "priority": "high",
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_missing_business",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_null",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":null,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_false",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":false,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_true",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":true,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_[]",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":[],\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_{}",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":{},\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_0",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":0,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_-1",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":-1,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_1.5",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":1.5,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_2147483648",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":2147483648,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_\"\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":\"\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_\"normal\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":\"normal\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_\"future é\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_business_\"future é\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_missing_priority",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_null",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":null,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_false",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":false,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_true",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":true,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_[]",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":[],\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_{}",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":{},\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_0",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":0,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_-1",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":-1,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_1.5",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":1.5,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_2147483648",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":2147483648,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_\"\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_\"normal\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"normal\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_\"future é\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_priority_\"future é\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_missing_updated_at",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_null",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":null,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_false",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":false,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_true",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":true,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_[]",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":[],\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_{}",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":{},\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_0",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":0,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_-1",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":-1,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_1.5",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_2147483648",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_\"\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_\"normal\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"normal\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_\"future é\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_updated_at_\"future é\"",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_context_business0",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_context_business-1",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_context_conversation0",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_context_conversation-1",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_context_epoch0",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_context_epoch-1",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_context_revision0",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_context_revision-1",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "high_root_null",
+      "priority": "high",
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "high_root_[]",
+      "priority": "high",
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "high_root_{}",
+      "priority": "high",
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "high_root_false",
+      "priority": "high",
+      "response_json": "false",
+      "valid": false
+    },
+    {
+      "name": "high_root_\"raw\"",
+      "priority": "high",
+      "response_json": "\"raw\"",
+      "valid": false
+    },
+    {
+      "name": "high_exact_echo",
+      "priority": "high",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"high\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "urgent_unknown_raw_source",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_missing_id",
+      "priority": "urgent",
+      "response_json": "{\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_null",
+      "priority": "urgent",
+      "response_json": "{\"id\":null,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_false",
+      "priority": "urgent",
+      "response_json": "{\"id\":false,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_true",
+      "priority": "urgent",
+      "response_json": "{\"id\":true,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_[]",
+      "priority": "urgent",
+      "response_json": "{\"id\":[],\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_{}",
+      "priority": "urgent",
+      "response_json": "{\"id\":{},\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_0",
+      "priority": "urgent",
+      "response_json": "{\"id\":0,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_-1",
+      "priority": "urgent",
+      "response_json": "{\"id\":-1,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_1.5",
+      "priority": "urgent",
+      "response_json": "{\"id\":1.5,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_2147483648",
+      "priority": "urgent",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_\"\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":\"\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_\"normal\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":\"normal\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_\"future é\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_id_\"future é\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":\"future é\",\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_missing_business",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_null",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":null,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_false",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":false,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_true",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":true,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_[]",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":[],\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_{}",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":{},\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_0",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":0,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_-1",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":-1,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_1.5",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":1.5,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_2147483648",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":2147483648,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_\"\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":\"\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_\"normal\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":\"normal\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_\"future é\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_business_\"future é\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":\"future é\",\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_missing_priority",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_null",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":null,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_false",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":false,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_true",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":true,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_[]",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":[],\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_{}",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":{},\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_0",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":0,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_-1",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":-1,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_1.5",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":1.5,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_2147483648",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":2147483648,\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_\"\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_\"normal\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"normal\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_\"future é\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_priority_\"future é\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_missing_updated_at",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_null",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":null,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_false",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":false,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_true",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":true,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_[]",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":[],\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_{}",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":{},\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_0",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":0,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_-1",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":-1,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_1.5",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_2147483648",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_\"\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_\"normal\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"normal\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_\"future é\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_updated_at_\"future é\"",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"future é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_context_business0",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_context_business-1",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_context_conversation0",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_context_conversation-1",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_context_epoch0",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_context_epoch-1",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_context_revision0",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_context_revision-1",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"future é\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "urgent_root_null",
+      "priority": "urgent",
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "urgent_root_[]",
+      "priority": "urgent",
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "urgent_root_{}",
+      "priority": "urgent",
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "urgent_root_false",
+      "priority": "urgent",
+      "response_json": "false",
+      "valid": false
+    },
+    {
+      "name": "urgent_root_\"raw\"",
+      "priority": "urgent",
+      "response_json": "\"raw\"",
+      "valid": false
+    },
+    {
+      "name": "urgent_exact_echo",
+      "priority": "urgent",
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"urgent\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    }
+  ],
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "priority": "low",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"low\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}"
+    },
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "priority": "normal",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"normal\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}"
+    },
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "priority": "high",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"high\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}"
+    },
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "priority": "urgent",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"priority\":\"urgent\",\"updated_at\":\"synthetic raw update\",\"metadata_json\":{\"not_retained\":true}}"
+    }
+  ]
+}

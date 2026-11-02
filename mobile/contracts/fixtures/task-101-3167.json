@@ -1,0 +1,25 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T00:30:00Z",
+  "task": {
+    "id": 3167,
+    "title": "Synthetic clock edge 67",
+    "status": "cancelled",
+    "priority": "high",
+    "due_at": "2026-10-28T00:05:00Z",
+    "client_id": null,
+    "lead_id": null,
+    "deal_id": null,
+    "assignee_id": null,
+    "href": "/app/tasks?task=3167"
+  },
+  "details": {
+    "description": "Synthetic source-query detail; no operation performed",
+    "appointment_id": null
+  },
+  "comments": [],
+  "payload_budget": {
+    "target_kb": 60,
+    "max_comments": 5
+  }
+}

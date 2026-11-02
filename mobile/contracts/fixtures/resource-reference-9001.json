@@ -1,0 +1,9 @@
+{
+  "id": 9001,
+  "business": 101,
+  "name": "Synthetic specialist",
+  "is_active": true,
+  "created_at": "2026-10-28T00:00:00Z",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "resource_type": "staff"
+}

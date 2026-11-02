@@ -1,0 +1,75 @@
+{
+  "source": "Selected Task title nonempty/max255 rule: existing TasksPage JS trim then serializer Python trim; not full serializer acceptance",
+  "cases": [
+    {
+      "title": "",
+      "required": true,
+      "too_long": false
+    },
+    {
+      "title": " ",
+      "required": true,
+      "too_long": false
+    },
+    {
+      "title": "﻿",
+      "required": true,
+      "too_long": false
+    },
+    {
+      "title": "\u001c\u001f",
+      "required": true,
+      "too_long": false
+    },
+    {
+      "title": "A",
+      "required": false,
+      "too_long": false
+    },
+    {
+      "title": "  A  ",
+      "required": false,
+      "too_long": false
+    },
+    {
+      "title": "​",
+      "required": false,
+      "too_long": false
+    },
+    {
+      "title": "\u001c﻿",
+      "required": true,
+      "too_long": false
+    },
+    {
+      "title": "﻿\u001c",
+      "required": true,
+      "too_long": false
+    },
+    {
+      "title": "ӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘ",
+      "required": false,
+      "too_long": false
+    },
+    {
+      "title": "ӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘӘ",
+      "required": false,
+      "too_long": true
+    },
+    {
+      "title": "🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂",
+      "required": false,
+      "too_long": false
+    },
+    {
+      "title": "🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂",
+      "required": false,
+      "too_long": true
+    },
+    {
+      "title": "  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  ",
+      "required": false,
+      "too_long": false
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "fixture_only": true,
+  "cases": [
+    {
+      "name": "null",
+      "fields": {
+        "reminder_at": null,
+        "snoozed_until": null
+      },
+      "reminder": "not_set",
+      "snoozed": "not_set"
+    },
+    {
+      "name": "missing",
+      "fields": {},
+      "reminder": "unknown",
+      "snoozed": "unknown"
+    },
+    {
+      "name": "valid_UTC",
+      "fields": {
+        "reminder_at": "2026-10-29T23:30:00Z",
+        "snoozed_until": "2026-10-30T02:15:00Z"
+      },
+      "reminder": "instant",
+      "snoozed": "instant"
+    },
+    {
+      "name": "offset",
+      "fields": {
+        "reminder_at": "2026-10-30T04:30:00+05:00",
+        "snoozed_until": "2026-10-29T22:15:00-04:00"
+      },
+      "reminder": "instant",
+      "snoozed": "instant"
+    },
+    {
+      "name": "bad_date",
+      "fields": {
+        "reminder_at": "not a date",
+        "snoozed_until": "2026-13-40T00:00:00Z"
+      },
+      "reminder": "unknown",
+      "snoozed": "unknown"
+    },
+    {
+      "name": "naive",
+      "fields": {
+        "reminder_at": "2026-10-30T04:30:00",
+        "snoozed_until": "2026-10-30"
+      },
+      "reminder": "unknown",
+      "snoozed": "unknown"
+    },
+    {
+      "name": "empty",
+      "fields": {
+        "reminder_at": "",
+        "snoozed_until": " "
+      },
+      "reminder": "unknown",
+      "snoozed": "unknown"
+    },
+    {
+      "name": "type",
+      "fields": {
+        "reminder_at": true,
+        "snoozed_until": 123
+      },
+      "reminder": "unknown",
+      "snoozed": "unknown"
+    },
+    {
+      "name": "shape",
+      "fields": {
+        "reminder_at": {},
+        "snoozed_until": []
+      },
+      "reminder": "unknown",
+      "snoozed": "unknown"
+    },
+    {
+      "name": "mixed",
+      "fields": {
+        "reminder_at": null,
+        "snoozed_until": "2026-10-30T02:15:00Z"
+      },
+      "reminder": "not_set",
+      "snoozed": "instant"
+    }
+  ],
+  "business_timezone": "Asia/Almaty",
+  "UTC_equivalent_cases": [
+    "valid_UTC",
+    "offset"
+  ],
+  "expected_business_reminder_day": "2026-10-30",
+  "meaning": "Raw scheduled fields only, no effective snoozed status/delivery/clock/countdown/grant"
+}

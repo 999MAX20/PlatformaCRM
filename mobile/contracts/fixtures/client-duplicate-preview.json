@@ -1,0 +1,237 @@
+{
+  "fixture_only": true,
+  "scope": "Synthetic source catalog metadata is outside exact server duplicates response; no real check/normalization/permission/result claim",
+  "source": "apps/clients/views.py:58-63, serializers.py:59-97, services.py:62-87; generic POST, not mobile GET",
+  "scenarios": [
+    {
+      "business": 101,
+      "phone": "+70000000000",
+      "email": "",
+      "response": {
+        "duplicates": [
+          {
+            "id": 701,
+            "full_name": "Synthetic Ә client",
+            "phone": "+70000000000",
+            "email": "alpha@example.invalid",
+            "matched_fields": [
+              "phone",
+              "email"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "business": 202,
+      "phone": "+70000000000",
+      "email": "",
+      "response": {
+        "duplicates": [
+          {
+            "id": 801,
+            "full_name": "Other synthetic Business",
+            "phone": "+70000000000",
+            "email": "alpha@example.invalid",
+            "matched_fields": [
+              "phone"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "business": 101,
+      "phone": "",
+      "email": "",
+      "response": {
+        "duplicates": []
+      }
+    },
+    {
+      "business": 101,
+      "phone": "",
+      "email": "alpha@example.invalid",
+      "response": {
+        "duplicates": [
+          {
+            "id": 701,
+            "full_name": "Synthetic Ә client",
+            "phone": "+70000000000",
+            "email": "alpha@example.invalid",
+            "matched_fields": [
+              "phone",
+              "email"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "business": 101,
+      "phone": "é",
+      "email": "",
+      "response": {
+        "duplicates": [
+          {
+            "id": 701,
+            "full_name": "Synthetic Ә client",
+            "phone": "+70000000000",
+            "email": "alpha@example.invalid",
+            "matched_fields": [
+              "phone",
+              "email"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "decode_cases": [
+    {
+      "name": "provided",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": true
+    },
+    {
+      "name": "empty",
+      "response_json": "{\"duplicates\":[]}",
+      "valid": true
+    },
+    {
+      "name": "blank_display_and_no_match_fields",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"\",\"phone\":\"\",\"email\":\"\",\"matched_fields\":[]}]}",
+      "valid": true
+    },
+    {
+      "name": "all_existing_fields",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\",\"whatsapp_id\",\"telegram_id\",\"instagram_id\"]}]}",
+      "valid": true
+    },
+    {
+      "name": "raw_unicode_label",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"é‍Ә\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": true
+    },
+    {
+      "name": "unknown_noncontract_extra_ignored",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"],\"extra\":false}],\"extra\":\"ignored\"}",
+      "valid": true
+    },
+    {
+      "name": "id_zero",
+      "response_json": "{\"duplicates\":[{\"id\":0,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "id_negative",
+      "response_json": "{\"duplicates\":[{\"id\":-1,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "id_bool",
+      "response_json": "{\"duplicates\":[{\"id\":true,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "id_fraction",
+      "response_json": "{\"duplicates\":[{\"id\":701.5,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "id_text",
+      "response_json": "{\"duplicates\":[{\"id\":\"701\",\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "full_name_None",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":null,\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "phone_None",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":null,\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "email_None",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":null,\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "phone_123",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":123,\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "matched_fields_None",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":null}]}",
+      "valid": false
+    },
+    {
+      "name": "matched_fields_['unknown']",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"unknown\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "matched_fields_['phone', 'phone']",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"phone\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "matched_fields_[1]",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[1]}]}",
+      "valid": false
+    },
+    {
+      "name": "missing_id",
+      "response_json": "{\"duplicates\":[{\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "missing_full_name",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "missing_phone",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "missing_email",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    },
+    {
+      "name": "missing_matched_fields",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\"}]}",
+      "valid": false
+    },
+    {
+      "name": "missing_wrapper",
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "null_wrapper",
+      "response_json": "{\"duplicates\":null}",
+      "valid": false
+    },
+    {
+      "name": "object_wrapper",
+      "response_json": "{\"duplicates\":{}}",
+      "valid": false
+    },
+    {
+      "name": "null_row",
+      "response_json": "{\"duplicates\":[null]}",
+      "valid": false
+    },
+    {
+      "name": "repeated_id",
+      "response_json": "{\"duplicates\":[{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]},{\"id\":701,\"full_name\":\"Synthetic Ә client\",\"phone\":\"+70000000000\",\"email\":\"alpha@example.invalid\",\"matched_fields\":[\"phone\",\"email\"]}]}",
+      "valid": false
+    }
+  ]
+}

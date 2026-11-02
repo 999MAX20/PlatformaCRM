@@ -1,0 +1,416 @@
+{
+  "fixture_only": true,
+  "boundary": "Existing GET list/detail, no selected-Business wire query or automatic next URL; explicit local read choice only, no CREATE/eligibility/currency/version/defaults.",
+  "reads": [
+    {
+      "path": "/api/services/",
+      "response_json": "{\"count\": 999, \"next\": \"https://foreign.invalid/do-not-follow?private=secret\", \"previous\": null, \"results\": [{\"id\": 8001, \"business\": 101, \"name\": \"Консультация\", \"description\": \"Исходное описание\", \"duration_minutes\": 45, \"price_from\": \"5000.00\", \"is_active\": true, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}, {\"id\": 8002, \"business\": 202, \"name\": \"FOREIGN_PRIVATE_SERVICE\", \"description\": \"FOREIGN_PRIVATE_DESCRIPTION\", \"duration_minutes\": 45, \"price_from\": \"5000.00\", \"is_active\": true, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}, {\"id\": 8003, \"business\": 101, \"name\": \"Café\", \"description\": \"Нулевая длительность из источника\", \"duration_minutes\": 0, \"price_from\": null, \"is_active\": false, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}]}"
+    },
+    {
+      "path": "/api/services/8001/",
+      "response_json": "{\"id\": 8001, \"business\": 101, \"name\": \"Повторная консультация\", \"description\": \"Новое чтение карточки\", \"duration_minutes\": 45, \"price_from\": \"5000.00\", \"is_active\": true, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-30T04:00:00Z\"}"
+    },
+    {
+      "path": "/api/services/8003/",
+      "response_json": "{\"id\": 8003, \"business\": 101, \"name\": \"Café\", \"description\": \"Нулевая длительность из источника\", \"duration_minutes\": 0, \"price_from\": null, \"is_active\": false, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}"
+    },
+    {
+      "path": "/api/services/8002/",
+      "response_json": "{\"id\": 8002, \"business\": 202, \"name\": \"FOREIGN_PRIVATE_SERVICE\", \"description\": \"FOREIGN_PRIVATE_DESCRIPTION\", \"duration_minutes\": 45, \"price_from\": \"5000.00\", \"is_active\": true, \"created_at\": \"2026-10-01T04:00:00Z\", \"updated_at\": \"2026-10-29T04:00:00Z\"}"
+    }
+  ],
+  "cases": [
+    {
+      "name": "mixed-business-results",
+      "response_json": "{\"count\":999,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        8001,
+        8003
+      ]
+    },
+    {
+      "name": "mixed-business-array",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        8001,
+        8003
+      ]
+    },
+    {
+      "name": "second-business",
+      "response_json": "{\"count\":999,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 202,
+      "valid": true,
+      "ids": [
+        8002
+      ]
+    },
+    {
+      "name": "no-business-row-window",
+      "response_json": "{\"count\":999,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 303,
+      "valid": true,
+      "ids": []
+    },
+    {
+      "name": "empty-array",
+      "response_json": "[]",
+      "business": 101,
+      "valid": true,
+      "ids": []
+    },
+    {
+      "name": "empty-results",
+      "response_json": "{\"results\":[]}",
+      "business": 101,
+      "valid": true,
+      "ids": []
+    },
+    {
+      "name": "results-without-metadata",
+      "response_json": "{\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        8001,
+        8003
+      ]
+    },
+    {
+      "name": "explicit-null-links",
+      "response_json": "{\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}],\"next\":null,\"previous\":null}",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        8001,
+        8003
+      ]
+    },
+    {
+      "name": "links-present-no-follow",
+      "response_json": "{\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}],\"next\":\"javascript:private\",\"previous\":\"/not-trusted\"}",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        8001,
+        8003
+      ]
+    },
+    {
+      "name": "missing-id",
+      "response_json": "[{\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-business",
+      "response_json": "[{\"id\":8001,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-name",
+      "response_json": "[{\"id\":8001,\"business\":101,\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-description",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-duration_minutes",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-price_from",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-is_active",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-created_at",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "missing-updated_at",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-id-true",
+      "response_json": "[{\"id\":true,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-id-1.0",
+      "response_json": "[{\"id\":1.0,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-id-0",
+      "response_json": "[{\"id\":0,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-id-2147483648",
+      "response_json": "[{\"id\":2147483648,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-business-false",
+      "response_json": "[{\"id\":8001,\"business\":false,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-business--1",
+      "response_json": "[{\"id\":8001,\"business\":-1,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-duration_minutes-true",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":true,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-duration_minutes-1.0",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":1.0,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-duration_minutes--1",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":-1,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-duration_minutes-2147483648",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":2147483648,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-name-null",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":null,\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-description-4",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":4,\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-price_from-0",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":0,\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-is_active-1",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":1,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-is_active-\"true\"",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":\"true\",\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-created_at-\"2026-10-29T04:00:00\"",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-29T04:00:00\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "bad-updated_at-\"nonsense\"",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"nonsense\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "same-id-duplicate",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "same-id-cross-business",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8001,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "malformed-foreign-must-not-look-empty",
+      "response_json": "[{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":0,\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "object-no-results",
+      "response_json": "{}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "results-null",
+      "response_json": "{\"results\":null}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "results-object",
+      "response_json": "{\"results\":{}}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "scalar-row",
+      "response_json": "[1]",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "count-null",
+      "response_json": "{\"count\":null,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "count-bool",
+      "response_json": "{\"count\":true,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "count-float",
+      "response_json": "{\"count\":3.0,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "count-negative",
+      "response_json": "{\"count\":-1,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "count-below-received",
+      "response_json": "{\"count\":2,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "count-over-int64",
+      "response_json": "{\"count\":9223372036854775808,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "next-boolean",
+      "response_json": "{\"count\":999,\"next\":false,\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "next-empty",
+      "response_json": "{\"count\":999,\"next\":\"\",\"previous\":null,\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "previous-object",
+      "response_json": "{\"count\":999,\"next\":\"https://foreign.invalid/do-not-follow?private=secret\",\"previous\":{},\"results\":[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8002,\"business\":202,\"name\":\"FOREIGN_PRIVATE_SERVICE\",\"description\":\"FOREIGN_PRIVATE_DESCRIPTION\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"},{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]}",
+      "business": 101,
+      "valid": false,
+      "ids": []
+    },
+    {
+      "name": "zero-inactive-required-null",
+      "response_json": "[{\"id\":8003,\"business\":101,\"name\":\"Café\",\"description\":\"Нулевая длительность из источника\",\"duration_minutes\":0,\"price_from\":null,\"is_active\":false,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        8003
+      ]
+    },
+    {
+      "name": "unknown-fields-ignored",
+      "response_json": "[{\"id\":8001,\"business\":101,\"name\":\"Консультация\",\"description\":\"Исходное описание\",\"duration_minutes\":45,\"price_from\":\"5000.00\",\"is_active\":true,\"created_at\":\"2026-10-01T04:00:00Z\",\"updated_at\":\"2026-10-29T04:00:00Z\",\"extra\":\"observed-ignore\"}]",
+      "business": 101,
+      "valid": true,
+      "ids": [
+        8001
+      ]
+    }
+  ]
+}

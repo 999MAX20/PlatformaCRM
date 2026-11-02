@@ -1,0 +1,870 @@
+{
+  "fixture_only": true,
+  "basis": "TEAM-MEMBER-READ-AUDIT428.json; membership record id differs from nested User id; observed membership flag not command authority",
+  "source_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+  "inactive_source_json": "{\"id\":8102,\"business\":101,\"user\":{\"id\":5003,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\",\"is_active\":true},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":false,\"updated_at\":\"observed inactive membership\"}",
+  "business_b_source_json": "{\"id\":9101,\"business\":202,\"user\":{\"id\":6002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник компании B\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed B member\"}",
+  "reads": [
+    {
+      "path": "/api/team/members/8101/",
+      "status": 200,
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}"
+    },
+    {
+      "path": "/api/team/members/8102/",
+      "status": 200,
+      "response_json": "{\"id\":8102,\"business\":101,\"user\":{\"id\":5003,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\",\"is_active\":true},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":false,\"updated_at\":\"observed inactive membership\"}"
+    },
+    {
+      "path": "/api/team/members/8103/",
+      "status": 200,
+      "response_json": "{\"id\":8103,\"business\":101,\"user\":{\"id\":5004,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\",\"is_active\":false},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed active membership not account flag\"}"
+    },
+    {
+      "path": "/api/team/members/9101/",
+      "status": 200,
+      "response_json": "{\"id\":9101,\"business\":202,\"user\":{\"id\":6002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник компании B\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed B member\"}"
+    },
+    {
+      "path": "/api/team/members/8104/",
+      "status": 403,
+      "response_json": "{\"detail\":\"fixture TEAM VIEW denied\"}"
+    }
+  ],
+  "source_cases": [
+    {
+      "name": "active_business_membership",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "inactive_membership_readable_not_eligible",
+      "response_json": "{\"id\":8102,\"business\":101,\"user\":{\"id\":5003,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\",\"is_active\":true},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":false,\"updated_at\":\"observed inactive membership\"}",
+      "id": 8102,
+      "business": 101,
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "account_flag_does_not_override_membership",
+      "response_json": "{\"id\":8103,\"business\":101,\"user\":{\"id\":5004,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\",\"is_active\":false},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed active membership not account flag\"}",
+      "id": 8103,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "other_scope_read",
+      "response_json": "{\"id\":9101,\"business\":202,\"user\":{\"id\":6002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник компании B\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed B member\"}",
+      "id": 9101,
+      "business": 202,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "foreign_Business_not_exposed",
+      "response_json": "{\"id\":9101,\"business\":202,\"user\":{\"id\":6002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник компании B\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed B member\"}",
+      "id": 9101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_id",
+      "response_json": "{\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_business",
+      "response_json": "{\"id\":8101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_user",
+      "response_json": "{\"id\":8101,\"business\":101,\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_is_active",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_updated_at",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_None",
+      "response_json": "{\"id\":null,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_True",
+      "response_json": "{\"id\":true,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_False",
+      "response_json": "{\"id\":false,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_8101",
+      "response_json": "{\"id\":\"8101\",\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_0",
+      "response_json": "{\"id\":0,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_-1",
+      "response_json": "{\"id\":-1,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_1.0",
+      "response_json": "{\"id\":1.0,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_1.5",
+      "response_json": "{\"id\":1.5,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_2147483648",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_id_999",
+      "response_json": "{\"id\":999,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_None",
+      "response_json": "{\"id\":8101,\"business\":null,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_True",
+      "response_json": "{\"id\":8101,\"business\":true,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_False",
+      "response_json": "{\"id\":8101,\"business\":false,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_8101",
+      "response_json": "{\"id\":8101,\"business\":\"8101\",\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_0",
+      "response_json": "{\"id\":8101,\"business\":0,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_-1",
+      "response_json": "{\"id\":8101,\"business\":-1,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_1.0",
+      "response_json": "{\"id\":8101,\"business\":1.0,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_1.5",
+      "response_json": "{\"id\":8101,\"business\":1.5,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_2147483648",
+      "response_json": "{\"id\":8101,\"business\":2147483648,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_business_999",
+      "response_json": "{\"id\":8101,\"business\":999,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_None",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":null,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_True",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":true,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_False",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":false,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_5002",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":\"5002\",\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_0",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":0,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_-1",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":-1,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_1.0",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":1.0,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_1.5",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":1.5,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_id_2147483648",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":2147483648,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_nested_id",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_nested_email",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing_nested_full_name",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_object_None",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":null,\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_object_5002",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":5002,\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_object_True",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":true,\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_object_[]",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":[],\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_object_{}",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_object_name",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":\"name\",\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "strict_membership_boolean_None",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":null,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "strict_membership_boolean_0",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":0,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "strict_membership_boolean_1",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":1,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "strict_membership_boolean_true",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":\"true\",\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "strict_membership_boolean_false",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":\"false\",\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "strict_membership_boolean_",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":\"\",\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "strict_membership_boolean_[]",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":[],\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "strict_membership_boolean_{}",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":{},\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_emailNone",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":null,\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_emailTrue",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":true,\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_email1",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":1,\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_email[]",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":[],\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_email{}",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":{},\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "raw_user_email''",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_user_email'  '",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"  \",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_user_email'é'",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"é\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_user_email'é'",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"é\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_user_email'👩🏽\\u200d💻'",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"👩🏽‍💻\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "invalid_user_text_full_nameNone",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":null,\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_full_nameTrue",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":true,\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_full_name1",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":1,\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_full_name[]",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":[],\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_user_text_full_name{}",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":{},\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "raw_user_full_name''",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_user_full_name'  '",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"  \",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_user_full_name'é'",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_user_full_name'é'",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_user_full_name'👩🏽\\u200d💻'",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"👩🏽‍💻\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "invalid_updated_None",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":null}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_updated_True",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":true}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_updated_1",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":1}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_updated_",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_updated_[]",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":[]}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid_updated_{}",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":{}}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "raw_updated_'é'",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_updated_'é'",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "raw_updated_' raw not a version '",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\" raw not a version \"}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "write_only_user_id_not_GET_alias",
+      "response_json": "{\"id\":8101,\"business\":101,\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\",\"user_id\":5002}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "account_role_not_membership_active",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\",\"is_active\":true},\"role\":\"owner\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"updated_at\":\"observed member é\"}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "wrapped_not_plain",
+      "response_json": "{\"member\":{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}}",
+      "id": 8101,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "wrong_record_id",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"}",
+      "id": 5002,
+      "business": 101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "extra_roles_phone_permissions_ignored",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"excluded fixture phone\",\"role\":\"owner\",\"is_active\":false},\"role\":\"owner\",\"business_role\":999,\"business_role_name\":\"\",\"teams\":[{\"id\":99}],\"is_active\":true,\"updated_at\":\"observed member é\",\"permissions\":{\"manage\":true}}",
+      "id": 8101,
+      "business": 101,
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "non_object_or_trailing",
+      "response_json": "[]",
+      "business": 101,
+      "id": 8101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "non_object_or_trailing",
+      "response_json": "null",
+      "business": 101,
+      "id": 8101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "non_object_or_trailing",
+      "response_json": "true",
+      "business": 101,
+      "id": 8101,
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "non_object_or_trailing",
+      "response_json": "{\"id\":8101,\"business\":101,\"user\":{\"id\":5002,\"email\":\"member.fixture@example.invalid\",\"full_name\":\"Участник é\",\"phone\":\"\",\"role\":\"staff\"},\"role\":\"manager\",\"business_role\":null,\"business_role_name\":\"\",\"teams\":[],\"is_active\":true,\"updated_at\":\"observed member é\"} trailing",
+      "business": 101,
+      "id": 8101,
+      "valid": false,
+      "eligible": false
+    }
+  ],
+  "input_cases": [
+    {
+      "raw": "",
+      "parsed": null
+    },
+    {
+      "raw": "0",
+      "parsed": null
+    },
+    {
+      "raw": "000",
+      "parsed": null
+    },
+    {
+      "raw": "-1",
+      "parsed": null
+    },
+    {
+      "raw": "+8101",
+      "parsed": null
+    },
+    {
+      "raw": " 8101",
+      "parsed": null
+    },
+    {
+      "raw": "8101 ",
+      "parsed": null
+    },
+    {
+      "raw": "57 01",
+      "parsed": null
+    },
+    {
+      "raw": "8101\n",
+      "parsed": null
+    },
+    {
+      "raw": "٥٧٠١",
+      "parsed": null
+    },
+    {
+      "raw": "５７０１",
+      "parsed": null
+    },
+    {
+      "raw": "é",
+      "parsed": null
+    },
+    {
+      "raw": "57​01",
+      "parsed": null
+    },
+    {
+      "raw": "2147483648",
+      "parsed": null
+    },
+    {
+      "raw": "999999999999999999999999999999999999",
+      "parsed": null
+    },
+    {
+      "raw": "8101",
+      "parsed": 8101
+    },
+    {
+      "raw": "008101",
+      "parsed": 8101
+    },
+    {
+      "raw": "1",
+      "parsed": 1
+    },
+    {
+      "raw": "2147483647",
+      "parsed": 2147483647
+    },
+    {
+      "raw": "000000000000000000000000000000000000000000000000000000000000000000000000000000008101",
+      "parsed": 8101
+    }
+  ]
+}

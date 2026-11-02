@@ -1,0 +1,1771 @@
+{
+  "fixture_only": true,
+  "contract": "Generic conversation client field distinct from bounded client_id; qualified existing Client search/profile reference; separate CLIENTS.UPDATE+CONVERSATIONS.UPDATE fake grant. Body client_id only/plain200 projection; no actual link or GET recovery.",
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 1,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "clients_update": true,
+      "conversations_update": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 6001,
+      "clients_update": true,
+      "conversations_update": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "response_json": "{\"id\":951,\"business\":202,\"client\":801,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}"
+    }
+  ],
+  "source_cases": [
+    {
+      "name": "exact_generic_client_relation",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "missing_id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":null,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":false,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":true,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":[],\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":{},\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":0,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":-1,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":1.5,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":2147483648,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"\",\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"1701\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"1701\",\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_1701",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":1701,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"é\",\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":null,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":false,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":true,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":[],\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":{},\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":0,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":-1,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":1.5,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":2147483648,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"\",\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"1701\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"1701\",\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_1701",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":1701,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"é\",\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_client",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":null,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "client_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":false,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":true,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":[],\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":{},\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":-1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":1.5,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":2147483648,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":\"\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_\"1701\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":\"1701\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_1701",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":1701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "client_\"é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":\"é\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_updated_at",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":null,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":false,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_true",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":true,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":[],\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":{},\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":0,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":-1,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"1701\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"1701\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "updated_at_1701",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":1701,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"é\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "context_business0",
+      "context": {
+        "business": 0,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_business-1",
+      "context": {
+        "business": -1,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_conversation0",
+      "context": {
+        "business": 101,
+        "conversation": 0,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_conversation-1",
+      "context": {
+        "business": 101,
+        "conversation": -1,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_epoch0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 0,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_epoch-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": -1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_revision0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 0
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_revision-1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": -1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_id_alias_not_generic_field",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"client_id\":1701,\"updated_at\":\"synthetic raw\"}",
+      "valid": false
+    },
+    {
+      "name": "root_null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "root_[]",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "root_{}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "root_false",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "false",
+      "valid": false
+    },
+    {
+      "name": "root_\"raw\"",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 1,
+        "revision": 1
+      },
+      "response_json": "\"raw\"",
+      "valid": false
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "exact_generic_client_relation",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_id",
+      "response_json": "{\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_null",
+      "response_json": "{\"id\":null,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_false",
+      "response_json": "{\"id\":false,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_true",
+      "response_json": "{\"id\":true,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_[]",
+      "response_json": "{\"id\":[],\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_{}",
+      "response_json": "{\"id\":{},\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_0",
+      "response_json": "{\"id\":0,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_-1",
+      "response_json": "{\"id\":-1,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_1.5",
+      "response_json": "{\"id\":1.5,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_2147483648",
+      "response_json": "{\"id\":2147483648,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"\"",
+      "response_json": "{\"id\":\"\",\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"1701\"",
+      "response_json": "{\"id\":\"1701\",\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_1701",
+      "response_json": "{\"id\":1701,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "id_\"é\"",
+      "response_json": "{\"id\":\"é\",\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_business",
+      "response_json": "{\"id\":901,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_null",
+      "response_json": "{\"id\":901,\"business\":null,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_false",
+      "response_json": "{\"id\":901,\"business\":false,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_true",
+      "response_json": "{\"id\":901,\"business\":true,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_[]",
+      "response_json": "{\"id\":901,\"business\":[],\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_{}",
+      "response_json": "{\"id\":901,\"business\":{},\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_0",
+      "response_json": "{\"id\":901,\"business\":0,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_-1",
+      "response_json": "{\"id\":901,\"business\":-1,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_1.5",
+      "response_json": "{\"id\":901,\"business\":1.5,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_2147483648",
+      "response_json": "{\"id\":901,\"business\":2147483648,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"\"",
+      "response_json": "{\"id\":901,\"business\":\"\",\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"1701\"",
+      "response_json": "{\"id\":901,\"business\":\"1701\",\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_1701",
+      "response_json": "{\"id\":901,\"business\":1701,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "business_\"é\"",
+      "response_json": "{\"id\":901,\"business\":\"é\",\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_client",
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_null",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":null,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_false",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":false,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_true",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":true,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_[]",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":[],\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_{}",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":{},\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_0",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":0,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_-1",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":-1,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_1.5",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":1.5,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_2147483648",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":2147483648,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_\"\"",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":\"\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_\"1701\"",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":\"1701\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_1701",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":1701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    },
+    {
+      "name": "client_\"é\"",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":\"é\",\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing_updated_at",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_null",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":null,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_false",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":false,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_true",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":true,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_[]",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":[],\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_{}",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":{},\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_0",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":0,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_-1",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":-1,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_1.5",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":1.5,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_2147483648",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":2147483648,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"\"",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"1701\"",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"1701\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_1701",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":1701,\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "updated_at_\"é\"",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_business0",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_business-1",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_conversation0",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_conversation-1",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_epoch0",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_epoch-1",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_revision0",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "context_revision-1",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": false
+    },
+    {
+      "name": "client_id_alias_not_generic_field",
+      "response_json": "{\"id\":901,\"business\":101,\"client_id\":1701,\"updated_at\":\"synthetic raw\"}",
+      "valid": false
+    },
+    {
+      "name": "root_null",
+      "response_json": "null",
+      "valid": false
+    },
+    {
+      "name": "root_[]",
+      "response_json": "[]",
+      "valid": false
+    },
+    {
+      "name": "root_{}",
+      "response_json": "{}",
+      "valid": false
+    },
+    {
+      "name": "root_false",
+      "response_json": "false",
+      "valid": false
+    },
+    {
+      "name": "root_\"raw\"",
+      "response_json": "\"raw\"",
+      "valid": false
+    },
+    {
+      "name": "exact_plain200_selected",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":1701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}",
+      "valid": true
+    }
+  ],
+  "candidate_cases": [
+    {
+      "name": "qualified_current_profile",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": true
+    },
+    {
+      "name": "search_business0",
+      "local_only": true,
+      "search_business": 0,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "search_business-1",
+      "local_only": true,
+      "search_business": -1,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "search_business202",
+      "local_only": true,
+      "search_business": 202,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "search_epoch0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 0,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "search_epoch-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": -1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "search_epoch2",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 2,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "selection_generation0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 0,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "selection_generation-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": -1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "selection_generation2",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 2,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": true
+    },
+    {
+      "name": "profile_generation0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 0,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "profile_generation-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": -1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "profile_generation2",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 2,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": true
+    },
+    {
+      "name": "selected_id0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 0,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "selected_id-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": -1,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "selected_id1702",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1702,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_business0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 0,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_business-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": -1,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_business202",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 202,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_id0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 0,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_id-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": -1,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_id1702",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1702,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_revision0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 0,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_revision-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": -1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "read_revision2",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 2,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": true
+    },
+    {
+      "name": "profile_business0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 0,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "profile_business-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": -1,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "profile_business202",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 202,
+      "profile_id": 1701,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "profile_id0",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 0,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "profile_id-1",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": -1,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "profile_id1702",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1702,
+      "raw_query": "  synthetic é  ",
+      "valid": false
+    },
+    {
+      "name": "raw_query_''",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "",
+      "valid": true
+    },
+    {
+      "name": "raw_query_'é'",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "é",
+      "valid": true
+    },
+    {
+      "name": "raw_query_'é'",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "é",
+      "valid": true
+    },
+    {
+      "name": "raw_query_'query\\nwith\\ttabs'",
+      "local_only": true,
+      "search_business": 101,
+      "search_epoch": 1,
+      "selection_generation": 1,
+      "profile_generation": 1,
+      "selected_id": 1701,
+      "read_business": 101,
+      "read_id": 1701,
+      "read_revision": 1,
+      "profile_business": 101,
+      "profile_id": 1701,
+      "raw_query": "query\nwith\ttabs",
+      "valid": true
+    }
+  ],
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "client_id": 1701,
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"client\":1701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}"
+    },
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "client_id": 1702,
+      "outcome": "unknown"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 6001,
+      "client_id": 2701,
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":951,\"business\":202,\"client\":2701,\"updated_at\":\"synthetic raw updated_at é\",\"metadata_json\":{\"not_retained\":true}}"
+    }
+  ]
+}

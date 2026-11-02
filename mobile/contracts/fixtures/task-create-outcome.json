@@ -1,0 +1,308 @@
+{
+  "fixture_only": true,
+  "scope": "Existing TaskSerializer manual-create201; explicit synthetic CREATE only, no real Task/activity/audit/notification",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "actor": 9001,
+        "create": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 202,
+        "actor": 9002,
+        "create": true
+      },
+      "outcome": "unknown",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "valid",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "wrong_business",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 202,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_actor",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9002,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_actor",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": null,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_title",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Raw or other title",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_description",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Different description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_priority",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "normal",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_status",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "done",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "status": 201,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_created",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "yesterday",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_created",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_updated",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "yesterday"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "actor_miniobject",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": {
+          "id": 9001,
+          "email": "fixture@example.invalid",
+          "full_name": "Employee"
+        },
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "business_string",
+      "status": 201,
+      "response": {
+        "id": 88001,
+        "business": "101",
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "update200_not_create201",
+      "status": 200,
+      "response": {
+        "id": 88001,
+        "business": 101,
+        "title": "Manual task",
+        "description": "Manual description",
+        "priority": "high",
+        "status": "open",
+        "due_at": null,
+        "created_by": 9001,
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bounded_read_not_result",
+      "status": 201,
+      "response": {
+        "id": 1101,
+        "title": "Manual task",
+        "status": "open",
+        "priority": "high",
+        "due_at": null
+      },
+      "expected": "unknown"
+    }
+  ]
+}

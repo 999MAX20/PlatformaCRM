@@ -1,0 +1,616 @@
+{
+  "fixture_only": true,
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 1000,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"existing-client raw conversation\"}",
+  "source_cases": [
+    {
+      "name": "positive existing link",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"existing-client raw conversation\"}",
+      "valid": true,
+      "eligible": true
+    },
+    {
+      "name": "explicit null link",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":null,\"updated_at\":\"existing-client raw conversation\"}",
+      "valid": true,
+      "eligible": false
+    },
+    {
+      "name": "invalid client 0",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":0,\"updated_at\":\"existing-client raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid client False",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":false,\"updated_at\":\"existing-client raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid client '701'",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":\"701\",\"updated_at\":\"existing-client raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid id 902",
+      "response_json": "{\"id\":902,\"business\":101,\"client\":701,\"updated_at\":\"existing-client raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid business 202",
+      "response_json": "{\"id\":901,\"business\":202,\"client\":701,\"updated_at\":\"existing-client raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing client",
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"existing-client raw conversation\"}",
+      "valid": false,
+      "eligible": false
+    },
+    {
+      "name": "missing updated_at",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701}",
+      "valid": false,
+      "eligible": false
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "exact existing Client",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": true
+    },
+    {
+      "name": "blank observed identity strings",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"\",\"phone\":\"\",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": true
+    },
+    {
+      "name": "ignored annotations not authority",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\",\"is_active\":true,\"manager_user_id\":6001,\"tasks_count\":999,\"permissions\":{\"create\":true}},\"duplicates\":[],\"created\":false}",
+      "valid": true
+    },
+    {
+      "name": "missing root client",
+      "response_json": "{\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root client None",
+      "response_json": "{\"client\":null,\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root client False",
+      "response_json": "{\"client\":false,\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root client 701",
+      "response_json": "{\"client\":701,\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root client 'client'",
+      "response_json": "{\"client\":\"client\",\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root client []",
+      "response_json": "{\"client\":[],\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root client {}",
+      "response_json": "{\"client\":{},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "missing root duplicates",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root duplicates None",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":null,\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root duplicates False",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":false,\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root duplicates 0",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":0,\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root duplicates '[]'",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":\"[]\",\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root duplicates [701]",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[701],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root duplicates [{'id': 701}]",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[{\"id\":701}],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid root duplicates {}",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":{},\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "missing root created",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid root created None",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":null}",
+      "valid": false
+    },
+    {
+      "name": "invalid root created 0",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":0}",
+      "valid": false
+    },
+    {
+      "name": "invalid root created 1",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":1}",
+      "valid": false
+    },
+    {
+      "name": "invalid root created True",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":true}",
+      "valid": false
+    },
+    {
+      "name": "invalid root created 'false'",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":\"false\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid root created 'true'",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":\"true\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid root created []",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid root created {}",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":{}}",
+      "valid": false
+    },
+    {
+      "name": "missing Client id",
+      "response_json": "{\"client\":{\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id None",
+      "response_json": "{\"client\":{\"id\":null,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id True",
+      "response_json": "{\"client\":{\"id\":true,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id False",
+      "response_json": "{\"client\":{\"id\":false,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id 0",
+      "response_json": "{\"client\":{\"id\":0,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id -1",
+      "response_json": "{\"client\":{\"id\":-1,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id 2147483648",
+      "response_json": "{\"client\":{\"id\":2147483648,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id 1.5",
+      "response_json": "{\"client\":{\"id\":1.5,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id '701'",
+      "response_json": "{\"client\":{\"id\":\"701\",\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id []",
+      "response_json": "{\"client\":{\"id\":[],\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id {}",
+      "response_json": "{\"client\":{\"id\":{},\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client id 702",
+      "response_json": "{\"client\":{\"id\":702,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "missing Client business",
+      "response_json": "{\"client\":{\"id\":701,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business None",
+      "response_json": "{\"client\":{\"id\":701,\"business\":null,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business True",
+      "response_json": "{\"client\":{\"id\":701,\"business\":true,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business False",
+      "response_json": "{\"client\":{\"id\":701,\"business\":false,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business 0",
+      "response_json": "{\"client\":{\"id\":701,\"business\":0,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business -1",
+      "response_json": "{\"client\":{\"id\":701,\"business\":-1,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business 2147483648",
+      "response_json": "{\"client\":{\"id\":701,\"business\":2147483648,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business 1.5",
+      "response_json": "{\"client\":{\"id\":701,\"business\":1.5,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business '701'",
+      "response_json": "{\"client\":{\"id\":701,\"business\":\"701\",\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business []",
+      "response_json": "{\"client\":{\"id\":701,\"business\":[],\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business {}",
+      "response_json": "{\"client\":{\"id\":701,\"business\":{},\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client business 202",
+      "response_json": "{\"client\":{\"id\":701,\"business\":202,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "missing Client full_name",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client full_name None",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":null,\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client full_name False",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":false,\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client full_name 0",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":0,\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client full_name []",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":[],\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client full_name {}",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":{},\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "missing Client phone",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client phone None",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":null,\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client phone False",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":false,\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client phone 0",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":0,\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client phone []",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":[],\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client phone {}",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":{},\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "missing Client email",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client email None",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":null,\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client email False",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":false,\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client email 0",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":0,\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client email []",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":[],\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client email {}",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":{},\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "missing Client updated_at",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client updated_at None",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":null},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client updated_at False",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":false},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client updated_at 0",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":0},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client updated_at []",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":[]},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client updated_at {}",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":{}},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid Client updated_at ''",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"\"},\"duplicates\":[],\"created\":false}",
+      "valid": false
+    },
+    {
+      "name": "confirmation branch marker None",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false,\"requires_confirmation\":null}",
+      "valid": false
+    },
+    {
+      "name": "confirmation branch marker False",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false,\"requires_confirmation\":false}",
+      "valid": false
+    },
+    {
+      "name": "confirmation branch marker True",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false,\"requires_confirmation\":true}",
+      "valid": false
+    },
+    {
+      "name": "confirmation branch marker 0",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false,\"requires_confirmation\":0}",
+      "valid": false
+    },
+    {
+      "name": "confirmation branch marker 'false'",
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false,\"requires_confirmation\":\"false\"}",
+      "valid": false
+    }
+  ],
+  "grant_cases": [
+    {
+      "name": "both exact grants",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "clients_create": true,
+        "conversations_update": true
+      },
+      "valid": true
+    },
+    {
+      "name": "invalid clients_create",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "clients_create": false,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid conversations_update",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "clients_create": true,
+        "conversations_update": false
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 0,
+        "clients_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": -1,
+        "clients_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid business",
+      "grant": {
+        "business": 202,
+        "conversation": 901,
+        "actor": 5001,
+        "clients_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid conversation",
+      "grant": {
+        "business": 101,
+        "conversation": 902,
+        "actor": 5001,
+        "clients_create": true,
+        "conversations_update": true
+      },
+      "valid": false
+    }
+  ],
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "clients_create": true,
+      "conversations_update": true
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "clients_create": true,
+      "conversations_update": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "clients_create": true,
+      "conversations_update": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "response_json": "{\"id\":901,\"business\":101,\"client\":701,\"updated_at\":\"existing-client raw conversation\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/902/",
+      "response_json": "{\"id\":902,\"business\":101,\"client\":null,\"updated_at\":\"existing-client raw conversation\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "response_json": "{\"id\":951,\"business\":202,\"client\":801,\"updated_at\":\"existing-client raw conversation\"}"
+    }
+  ],
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "original_client": 701,
+      "original_updated_at": "existing-client raw conversation",
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"client\":{\"id\":701,\"business\":101,\"full_name\":\"Observed é Client\",\"phone\":\"  +77000000000  \",\"email\":\"\",\"updated_at\":\"existing-client raw Client reply\"},\"duplicates\":[],\"created\":false}"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "original_client": 801,
+      "original_updated_at": "existing-client raw conversation",
+      "outcome": "rejected"
+    }
+  ],
+  "boundary": "Only positive already-linked Client early return: plain200 client identity, duplicates=[], created strictly false, confirmation marker absent for this selected subset. No new Client/default contact/force/duplicate confirmation/current/server result. Unknown cannot retry/recover through matching reads."
+}

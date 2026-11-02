@@ -1,0 +1,1282 @@
+{
+  "fixture_only": true,
+  "boundary": "Selected-user subset only; original generic assigned_to source; separate MANAGE and target active membership. Nested User id is command value; membership id/raw owner/read only retained input. No real POST/retry/recovery/GET-derived authority.",
+  "context": {
+    "business": 101,
+    "conversation": 901,
+    "epoch": 700,
+    "revision": 1
+  },
+  "source_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+  "source_cases": [
+    {
+      "name": "exact assigned",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": true
+    },
+    {
+      "name": "explicit null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":null,\"updated_at\":\"raw observed assignment\"}",
+      "valid": true
+    },
+    {
+      "name": "extra bot handoff ignored",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\",\"bot_enabled\":true,\"handoff_active\":false,\"permissions\":{\"manage\":true}}",
+      "valid": true
+    },
+    {
+      "name": "missing id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":null,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":false,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":true,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":0,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":-1,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":2147483648,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":1.5,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id '901'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"901\",\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":[],\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":{},\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "missing business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":null,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":false,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":true,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":0,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":-1,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":2147483648,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":1.5,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business '901'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"901\",\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":[],\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":{},\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "missing assigned_to",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":false,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":true,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":0,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":-1,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":2147483648,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":1.5,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to '5002'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":\"5002\",\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":[],\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":{},\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "missing updated_at",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":null}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":0}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":{}}",
+      "valid": false
+    },
+    {
+      "name": "foreign id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":902,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "foreign business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":202,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "bounded assignee alias only",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to_id\":5002,\"updated_at\":\"x\"}",
+      "valid": false
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "plain matching User",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":5002,\"updated_at\":\"synthetic raw result\"}",
+      "valid": true
+    },
+    {
+      "name": "User with ignored extra fields",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":5002,\"updated_at\":\"synthetic raw result\",\"bot_enabled\":false,\"handoff_active\":true}",
+      "valid": true
+    },
+    {
+      "name": "exact assigned",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "explicit null",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":null,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "extra bot handoff ignored",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\",\"bot_enabled\":true,\"handoff_active\":false,\"permissions\":{\"manage\":true}}",
+      "valid": false
+    },
+    {
+      "name": "missing id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":null,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":false,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":true,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":0,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":-1,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":2147483648,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":1.5,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id '901'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":\"901\",\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":[],\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid id {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":{},\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "missing business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":null,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":false,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":true,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":0,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":-1,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":2147483648,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":1.5,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business '901'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":\"901\",\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":[],\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid business {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":{},\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "missing assigned_to",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":false,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to True",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":true,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":0,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to -1",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":-1,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to 2147483648",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":2147483648,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to 1.5",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":1.5,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to '5002'",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":\"5002\",\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":[],\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid assigned_to {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":{},\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "missing updated_at",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":null}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at False",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":false}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at 0",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":0}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at ''",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"\"}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at []",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":[]}",
+      "valid": false
+    },
+    {
+      "name": "invalid updated_at {}",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":{}}",
+      "valid": false
+    },
+    {
+      "name": "foreign id",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":902,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "foreign business",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":202,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}",
+      "valid": false
+    },
+    {
+      "name": "bounded assignee alias only",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to_id\":5002,\"updated_at\":\"x\"}",
+      "valid": false
+    },
+    {
+      "name": "wrong User None",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":null,\"updated_at\":\"synthetic raw result\"}",
+      "valid": false
+    },
+    {
+      "name": "wrong User 7000",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"synthetic raw result\"}",
+      "valid": false
+    },
+    {
+      "name": "wrong User 8101",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":8101,\"updated_at\":\"synthetic raw result\"}",
+      "valid": false
+    },
+    {
+      "name": "wrong User 5004",
+      "context": {
+        "business": 101,
+        "conversation": 901,
+        "epoch": 700,
+        "revision": 1
+      },
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":5004,\"updated_at\":\"synthetic raw result\"}",
+      "valid": false
+    }
+  ],
+  "grant_cases": [
+    {
+      "name": "explicit MANAGE",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "manage": true
+      },
+      "valid": true
+    },
+    {
+      "name": "invalid business",
+      "grant": {
+        "business": 202,
+        "conversation": 901,
+        "actor": 5001,
+        "manage": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid conversation",
+      "grant": {
+        "business": 101,
+        "conversation": 902,
+        "actor": 5001,
+        "manage": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 0,
+        "manage": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid actor",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": -1,
+        "manage": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid manage",
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 5001,
+        "manage": false
+      },
+      "valid": false
+    }
+  ],
+  "target_cases": [
+    {
+      "name": "separate target User",
+      "target": {
+        "business": 101,
+        "user": 5002,
+        "active_member": true
+      },
+      "valid": true
+    },
+    {
+      "name": "invalid business",
+      "target": {
+        "business": 202,
+        "user": 5002,
+        "active_member": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid user",
+      "target": {
+        "business": 101,
+        "user": 8101,
+        "active_member": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid user",
+      "target": {
+        "business": 101,
+        "user": 5004,
+        "active_member": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid user",
+      "target": {
+        "business": 101,
+        "user": 0,
+        "active_member": true
+      },
+      "valid": false
+    },
+    {
+      "name": "invalid active_member",
+      "target": {
+        "business": 101,
+        "user": 5002,
+        "active_member": false
+      },
+      "valid": false
+    }
+  ],
+  "grants": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "manage": true
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "manage": true
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "manage": true
+    }
+  ],
+  "target_memberships": [
+    {
+      "business": 101,
+      "user": 5002,
+      "active_member": true
+    },
+    {
+      "business": 101,
+      "user": 5004,
+      "active_member": true
+    },
+    {
+      "business": 202,
+      "user": 6002,
+      "active_member": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/api/inbox/conversations/901/",
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":7000,\"updated_at\":\"raw observed assignment\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/902/",
+      "response_json": "{\"id\":902,\"business\":101,\"assigned_to\":null,\"updated_at\":\"raw observed assignment\"}"
+    },
+    {
+      "path": "/api/inbox/conversations/951/",
+      "response_json": "{\"id\":951,\"business\":202,\"assigned_to\":null,\"updated_at\":\"raw observed assignment\"}"
+    }
+  ],
+  "scenarios": [
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "user_id": 5002,
+      "member_id": 8101,
+      "original_assigned_to": 7000,
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":901,\"business\":101,\"assigned_to\":5002,\"updated_at\":\"synthetic raw result\"}"
+    },
+    {
+      "business": 101,
+      "conversation": 901,
+      "actor": 5001,
+      "user_id": 5004,
+      "member_id": 8103,
+      "original_assigned_to": 7000,
+      "outcome": "unknown"
+    },
+    {
+      "business": 101,
+      "conversation": 902,
+      "actor": 5001,
+      "user_id": 5002,
+      "member_id": 8101,
+      "original_assigned_to": null,
+      "outcome": "rejected"
+    },
+    {
+      "business": 202,
+      "conversation": 951,
+      "actor": 5001,
+      "user_id": 6002,
+      "member_id": 9101,
+      "original_assigned_to": null,
+      "outcome": "response",
+      "status": 200,
+      "response_json": "{\"id\":951,\"business\":202,\"assigned_to\":6002,\"updated_at\":\"synthetic raw result\"}"
+    }
+  ]
+}

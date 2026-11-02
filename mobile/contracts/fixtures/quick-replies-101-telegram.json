@@ -1,0 +1,43 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 9101,
+      "business": 101,
+      "title": "Alpha greeting",
+      "text": "Синтетический ответ {{client}}.",
+      "category": "greeting",
+      "channel": "all",
+      "sort_order": 0,
+      "is_active": true,
+      "created_at": "2026-10-29T00:00:00Z",
+      "updated_at": "2026-10-29T00:00:00Z"
+    },
+    {
+      "id": 9104,
+      "business": 101,
+      "title": "Telegram detail",
+      "text": "Synthetic Telegram reply",
+      "category": "help",
+      "channel": "telegram",
+      "sort_order": 1,
+      "is_active": true,
+      "created_at": "2026-10-29T00:00:00Z",
+      "updated_at": "2026-10-29T00:00:00Z"
+    },
+    {
+      "id": 9103,
+      "business": 101,
+      "title": "Gamma question",
+      "text": "Синтетический сұрақ.",
+      "category": "details",
+      "channel": "all",
+      "sort_order": 2,
+      "is_active": true,
+      "created_at": "2026-10-29T00:00:00Z",
+      "updated_at": "2026-10-29T00:00:00Z"
+    }
+  ]
+}

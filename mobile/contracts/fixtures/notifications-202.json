@@ -1,0 +1,31 @@
+{
+  "business": 202,
+  "generated_at": "2026-10-28T05:20:00Z",
+  "limit": 50,
+  "summary": {
+    "total": 1,
+    "unread": 1,
+    "urgent": 0,
+    "failed": 0
+  },
+  "items": [
+    {
+      "id": 2201,
+      "category": "sales",
+      "priority": "normal",
+      "status": "sent",
+      "channel": "system",
+      "text": "Synthetic appointment reminder Gamma",
+      "action_url": "/app/calendar/601",
+      "action_label": "",
+      "send_at": "2026-10-28T05:00:00Z",
+      "read_at": null,
+      "client_id": null,
+      "appointment_id": 601
+    }
+  ],
+  "payload_budget": {
+    "target_kb": 80,
+    "max_items": 50
+  }
+}

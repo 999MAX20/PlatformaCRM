@@ -1,0 +1,691 @@
+{
+  "fixture_only": true,
+  "scope": "Existing assign user_id required + same-Business active target, preserves source status. eligible_members is only injected synthetic grant context, never GET/DTO/current catalogue. Explicit fake producer echoes selected assignee after submit; not current actor default.",
+  "input_cases": [
+    {
+      "name": "target",
+      "raw": "9003",
+      "user_id": 9003
+    },
+    {
+      "name": "actor_explicit",
+      "raw": "9001",
+      "user_id": 9001
+    },
+    {
+      "name": "one",
+      "raw": "1",
+      "user_id": 1
+    },
+    {
+      "name": "wide32",
+      "raw": "2147483648",
+      "user_id": 2147483648
+    },
+    {
+      "name": "max64",
+      "raw": "9223372036854775807",
+      "user_id": 9223372036854775807
+    },
+    {
+      "name": "empty",
+      "raw": "",
+      "user_id": null
+    },
+    {
+      "name": "zero",
+      "raw": "0",
+      "user_id": null
+    },
+    {
+      "name": "negative",
+      "raw": "-9003",
+      "user_id": null
+    },
+    {
+      "name": "plus",
+      "raw": "+9003",
+      "user_id": null
+    },
+    {
+      "name": "leading_zero",
+      "raw": "09003",
+      "user_id": null
+    },
+    {
+      "name": "space",
+      "raw": " 9003",
+      "user_id": null
+    },
+    {
+      "name": "end_space",
+      "raw": "9003 ",
+      "user_id": null
+    },
+    {
+      "name": "newline",
+      "raw": "9003\n",
+      "user_id": null
+    },
+    {
+      "name": "float",
+      "raw": "9003.0",
+      "user_id": null
+    },
+    {
+      "name": "exponent",
+      "raw": "9e3",
+      "user_id": null
+    },
+    {
+      "name": "unicode",
+      "raw": "９００３",
+      "user_id": null
+    },
+    {
+      "name": "overflow",
+      "raw": "9223372036854775808",
+      "user_id": null
+    },
+    {
+      "name": "huge",
+      "raw": "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "user_id": null
+    },
+    {
+      "name": "null_byte",
+      "raw": "9003\u0000",
+      "user_id": null
+    },
+    {
+      "name": "hex",
+      "raw": "0x232b",
+      "user_id": null
+    }
+  ],
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "task": 1101,
+        "actor": 9001,
+        "update": true,
+        "eligible_members": [
+          9003,
+          9001
+        ]
+      },
+      "outcome": "response",
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "task": 1401,
+        "actor": 9001,
+        "update": true,
+        "eligible_members": [
+          9003
+        ]
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "task": 1201,
+        "actor": 9002,
+        "update": true,
+        "eligible_members": [
+          9004
+        ]
+      },
+      "outcome": "unknown",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "source_assign200",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "explicit_actor_choice_still_open",
+      "input": "9001",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9001,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "in_progress_preserved",
+      "input": "9003",
+      "source_status": "in_progress",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "wide32_target",
+      "input": "2147483648",
+      "source_status": "open",
+      "eligible_members": [
+        2147483648
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 2147483648,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "max64_target",
+      "input": "9223372036854775807",
+      "source_status": "open",
+      "eligible_members": [
+        9223372036854775807
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9223372036854775807,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "timestamp_not_version",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2020-01-01T00:00:00Z"
+      },
+      "status": 200,
+      "expected": "confirmed"
+    },
+    {
+      "name": "wrong_actor_echo",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9001,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "unselected_eligible",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9004,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "implicit_self_start",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "in_progress",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_id",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1401,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "foreign_scope",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 202,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "null_target",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_target",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": true,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "float_target",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003.25,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "text_target",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": "9003",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_target",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 0,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "negative_target",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": -1,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_time",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "bad"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "calendar_bad_time",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-02-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "bool_id",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": true,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "text_scope",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": "101",
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_id",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_business",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_status",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_assignee",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "missing_updated_at",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_user_id_field",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "user_id": 9003
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_assignee_id_field",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "assignee_id": 9003
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrapped",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "result": {
+          "id": 1101,
+          "business": 101,
+          "status": "open",
+          "assignee": 9003,
+          "updated_at": "2026-10-30T12:00:00Z"
+        }
+      },
+      "status": 200,
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_http",
+      "input": "9003",
+      "source_status": "open",
+      "eligible_members": [
+        9003,
+        9001
+      ],
+      "response": {
+        "id": 1101,
+        "business": 101,
+        "status": "open",
+        "assignee": 9003,
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "status": 201,
+      "expected": "unknown"
+    }
+  ]
+}

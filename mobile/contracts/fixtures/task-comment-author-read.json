@@ -1,0 +1,124 @@
+{
+  "fixture_only": true,
+  "scope": "Existing comments[].author miniobject vs numeric TaskCommentSerializer author. Numeric is never a read person; object is never an action actor.",
+  "cases": [
+    {
+      "name": "known",
+      "value": {
+        "id": 9001,
+        "email": "fixture@example.invalid",
+        "full_name": "Synthetic employee"
+      },
+      "expected": "person",
+      "display": "Synthetic employee"
+    },
+    {
+      "name": "email_fallback",
+      "value": {
+        "id": 9001,
+        "email": "fixture@example.invalid",
+        "full_name": ""
+      },
+      "expected": "person",
+      "display": "fixture@example.invalid"
+    },
+    {
+      "name": "no_display",
+      "value": {
+        "id": 9001,
+        "email": "",
+        "full_name": ""
+      },
+      "expected": "person",
+      "display": null
+    },
+    {
+      "name": "null",
+      "value": null,
+      "expected": "not_set",
+      "display": null
+    },
+    {
+      "name": "missing",
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "zero_id",
+      "value": {
+        "id": 0,
+        "email": "fixture@example.invalid",
+        "full_name": "Synthetic employee"
+      },
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "string_id",
+      "value": {
+        "id": "9001",
+        "email": "fixture@example.invalid",
+        "full_name": "Synthetic employee"
+      },
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "bool_id",
+      "value": {
+        "id": true,
+        "email": "fixture@example.invalid",
+        "full_name": "Synthetic employee"
+      },
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "missing_name",
+      "value": {
+        "id": 9001,
+        "email": "fixture@example.invalid"
+      },
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "wrong_email_type",
+      "value": {
+        "id": 9001,
+        "email": 123,
+        "full_name": "Synthetic employee"
+      },
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "null_name",
+      "value": {
+        "id": 9001,
+        "email": "fixture@example.invalid",
+        "full_name": null
+      },
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "number",
+      "value": 9001,
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "array",
+      "value": [],
+      "expected": "unknown",
+      "display": null
+    },
+    {
+      "name": "string",
+      "value": "employee",
+      "expected": "unknown",
+      "display": null
+    }
+  ]
+}

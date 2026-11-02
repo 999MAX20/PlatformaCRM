@@ -1,0 +1,276 @@
+{
+  "fixture_only": true,
+  "scope": "Existing ClientSerializer fields only; no actor echo, duplicates/safe merge/current or real POST. Synthetic actor is local context correlation.",
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "actor": 9001,
+        "create": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      }
+    },
+    {
+      "grant": {
+        "business": 202,
+        "actor": 9002,
+        "create": true
+      },
+      "outcome": "unknown",
+      "response": null
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "valid",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "wrong_business",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 202,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_name",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Other client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_phone",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 999",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_email",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "other@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_source",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "website",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong_notes",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Other notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "zero_id",
+      "status": 201,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bad_created",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "yesterday",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_updated",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "business_string",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": "101",
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "null_phone",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": null,
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "extra_actor_is_not_a_contract_echo",
+      "status": 201,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "created_by": 999999
+      },
+      "expected": "confirmed"
+    },
+    {
+      "name": "update200_not_create201",
+      "status": 200,
+      "response": {
+        "id": 87001,
+        "business": 101,
+        "full_name": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "bounded_read_not_full_result",
+      "status": 201,
+      "response": {
+        "id": 701,
+        "title": "Manual client",
+        "phone": "+7 123",
+        "email": "alpha@example.invalid",
+        "source": "manual",
+        "notes": "Manual notes",
+        "created_at": "2026-10-30T12:00:00Z",
+        "updated_at": "2026-10-30T12:00:00Z"
+      },
+      "expected": "unknown"
+    }
+  ]
+}

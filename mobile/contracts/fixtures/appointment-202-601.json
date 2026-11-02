@@ -1,0 +1,41 @@
+{
+  "business": 202,
+  "generated_at": "2026-10-28T00:00:00Z",
+  "appointment": {
+    "id": 601,
+    "title": "Synthetic Client C",
+    "status": "confirmed",
+    "client_id": 7003,
+    "lead_id": null,
+    "service_id": 8001,
+    "start_at": "2026-10-28T04:00:00Z",
+    "end_at": "2026-10-28T04:30:00Z",
+    "href": "/app/calendar?appointment=601"
+  },
+  "details": {
+    "notes": "Synthetic fixture note",
+    "source": "manual",
+    "client": {
+      "id": 7003,
+      "title": "Synthetic Client C"
+    },
+    "service": {
+      "id": 8001,
+      "name": "Synthetic service",
+      "duration_minutes": 30,
+      "price_from": "1000.00"
+    },
+    "resource": {
+      "id": 9001,
+      "name": "Synthetic specialist",
+      "type": "staff"
+    }
+  },
+  "related": {
+    "tasks": []
+  },
+  "payload_budget": {
+    "target_kb": 60,
+    "max_related_per_section": 5
+  }
+}

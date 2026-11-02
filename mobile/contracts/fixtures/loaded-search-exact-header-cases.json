@@ -1,0 +1,60 @@
+{
+  "fixture_only": true,
+  "note": "Exact local provided/independently read header identity in existing shapes; same ID/token/Business, no normalization, query collation or server version/grant invented.",
+  "cases": [
+    {
+      "name": "decomposed to composed",
+      "before_title": "Shared  \té \n",
+      "after_title": "Shared  \té \n",
+      "changed": true
+    },
+    {
+      "name": "composed to decomposed",
+      "before_title": "Shared  é ",
+      "after_title": "Shared  é ",
+      "changed": true
+    },
+    {
+      "name": "Hangul composition",
+      "before_title": "Shared  가 ",
+      "after_title": "Shared  가 ",
+      "changed": true
+    },
+    {
+      "name": "canonical combining order",
+      "before_title": "Shared  ẹ́ ",
+      "after_title": "Shared  ẹ́ ",
+      "changed": true
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before_title": "Shared  Å ",
+      "after_title": "Shared  Å ",
+      "changed": true
+    },
+    {
+      "name": "ZWJ input change",
+      "before_title": "Shared  👩💻 ",
+      "after_title": "Shared  👩‍💻 ",
+      "changed": true
+    },
+    {
+      "name": "same exact bytes",
+      "before_title": "Shared  exact ",
+      "after_title": "Shared  exact ",
+      "changed": false
+    },
+    {
+      "name": "withheld header",
+      "before_title": "Shared original",
+      "after_title": null,
+      "changed": true
+    },
+    {
+      "name": "empty independent header",
+      "before_title": "Shared original",
+      "after_title": "",
+      "changed": true
+    }
+  ]
+}

@@ -1,0 +1,1160 @@
+{
+  "fixture_only": true,
+  "scope": "Explicit reschedule input/review and bounded supplied-field fixture reply; no actual booking/resource/reason/availability/stale proof",
+  "inputs": {
+    "501": {
+      "start_at": "2026-10-28T05:00:00Z",
+      "reason_raw": "  Synthetic move é  ",
+      "resource": null
+    },
+    "502": {
+      "start_at": "2026-10-28T09:00:00+06:00",
+      "reason_raw": "  ",
+      "resource": 9001
+    },
+    "601": {
+      "start_at": "2026-10-28T06:00:00Z",
+      "reason_raw": "",
+      "resource": null
+    }
+  },
+  "time_cases": [
+    {
+      "raw": "",
+      "valid": false
+    },
+    {
+      "raw": "2026-10-28",
+      "valid": false
+    },
+    {
+      "raw": "2026-10-28T05:00:00",
+      "valid": false
+    },
+    {
+      "raw": "2026-10-28T05:00:00Z",
+      "valid": true
+    },
+    {
+      "raw": "2026-10-28T10:00:00+05:00",
+      "valid": true
+    },
+    {
+      "raw": "2026-10-28T05:00:00.123Z",
+      "valid": true
+    },
+    {
+      "raw": "2026-10-28T05:00:00.123000Z",
+      "valid": true
+    },
+    {
+      "raw": "2026-10-28T05:00:00.123456Z",
+      "valid": false
+    },
+    {
+      "raw": "2026-10-28T05:00:00.000001Z",
+      "valid": false
+    },
+    {
+      "raw": "2026-02-29T00:00:00Z",
+      "valid": false
+    },
+    {
+      "raw": "2028-02-29T00:00:00Z",
+      "valid": true
+    },
+    {
+      "raw": "2026-10-28T24:00:00Z",
+      "valid": false
+    },
+    {
+      "raw": "2026-10-28T05:00:00+24:00",
+      "valid": false
+    },
+    {
+      "raw": "2026-10-28T05:00:00-00:00",
+      "valid": false
+    },
+    {
+      "raw": " 2026-10-28T05:00:00Z",
+      "valid": false
+    },
+    {
+      "raw": "2026-10-28T05:00:00Z\n",
+      "valid": false
+    },
+    {
+      "raw": "2026-10-28t05:00:00z",
+      "valid": false
+    },
+    {
+      "raw": "2020-01-01T00:00:00Z",
+      "valid": true
+    },
+    {
+      "raw": "9999-12-31T23:59:59.999Z",
+      "valid": true
+    }
+  ],
+  "receipt_cases": [
+    {
+      "name": "exact",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "acceptedFixture"
+    },
+    {
+      "name": "replay-exact",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": true
+      },
+      "expected": "acceptedFixture"
+    },
+    {
+      "name": "-ok-missing",
+      "status": 200,
+      "body": {
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "-ok-null",
+      "status": 200,
+      "body": {
+        "ok": null,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "-ok-type",
+      "status": 200,
+      "body": {
+        "ok": "wrong",
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "-appointment-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "-appointment-null",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": null,
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "-appointment-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": false,
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "-replayed-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        }
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "-replayed-null",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": null
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "-replayed-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": "wrong"
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-id-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-id-null",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": null,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-id-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": "wrong",
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-title-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-title-null",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": null,
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-title-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": false,
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-status-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-status-null",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": null,
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-status-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": false,
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-client_id-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-client_id-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": "wrong",
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-lead_id-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-lead_id-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": "wrong",
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-service_id-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-service_id-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": "wrong",
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-start_at-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-start_at-null",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": null,
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-start_at-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": false,
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-end_at-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-end_at-null",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": null,
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-end_at-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": false,
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-href-missing",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-href-null",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": null
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "appointment-href-type",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": false
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong-id502",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 502,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong-id0",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 0,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong-status'cancelled'",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "cancelled",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong-href'/app/calendar?appointment=502'",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=502"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong-start_at'invalid'",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "invalid",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong-end_at'invalid'",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "invalid",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong-client_id0",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 0,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "false-ok",
+      "status": 200,
+      "body": {
+        "ok": false,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-201",
+      "status": 201,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-400",
+      "status": 400,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-401",
+      "status": 401,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-403",
+      "status": 403,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-404",
+      "status": 404,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-409",
+      "status": 409,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-429",
+      "status": 429,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-500",
+      "status": 500,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "HTTP-503",
+      "status": 503,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "equivalent-offset",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T10:00:00+05:00",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "acceptedFixture"
+    },
+    {
+      "name": "wrong-new-time",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "confirmed",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:01:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    },
+    {
+      "name": "status-not-preserved",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "appointment": {
+          "id": 501,
+          "title": "Synthetic Client A",
+          "status": "rescheduled",
+          "client_id": 7001,
+          "lead_id": null,
+          "service_id": 8001,
+          "start_at": "2026-10-28T05:00:00Z",
+          "end_at": "2026-10-28T05:30:00Z",
+          "href": "/app/calendar?appointment=501"
+        },
+        "replayed": false
+      },
+      "expected": "unknown"
+    }
+  ],
+  "linked_resource_fixture": "resource-reference-9001.json"
+}

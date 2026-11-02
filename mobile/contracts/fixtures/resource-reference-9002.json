@@ -1,0 +1,9 @@
+{
+  "id": 9002,
+  "business": 202,
+  "name": "Synthetic room",
+  "is_active": true,
+  "created_at": "2026-10-28T00:00:00Z",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "resource_type": "room"
+}

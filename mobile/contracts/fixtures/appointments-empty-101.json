@@ -1,0 +1,17 @@
+{
+  "business": 101,
+  "generated_at": "2026-10-28T00:00:00Z",
+  "limit": 50,
+  "date": "2026-10-28",
+  "summary": {
+    "total": 0,
+    "today": 0,
+    "upcoming": 0,
+    "needs_confirmation": 0
+  },
+  "items": [],
+  "payload_budget": {
+    "target_kb": 100,
+    "max_items": 50
+  }
+}

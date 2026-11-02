@@ -1,0 +1,959 @@
+{
+  "fixture_only": true,
+  "source": "Existing mobile_message_item.status; exact BotMessage.Statuses",
+  "cases": [
+    {
+      "name": "received",
+      "expected": "received",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": "received",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "queued",
+      "expected": "queued",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": "queued",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "sent",
+      "expected": "sent",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": "sent",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "failed",
+      "expected": "failed",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": "failed",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "future-delivered",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": "delivered",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "future-read",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": "read",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "case",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": "SENT",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "spaces",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": " sent ",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "null",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": null,
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "bool",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": true,
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "number",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": 1,
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "object",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": {},
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "array",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "status": [
+              "sent"
+            ],
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    },
+    {
+      "name": "missing",
+      "expected": "unknown",
+      "response": {
+        "business": 101,
+        "generated_at": "2026-10-28T05:00:00Z",
+        "conversation": {
+          "id": 901,
+          "title": "Synthetic inquiry Alpha",
+          "channel": "website",
+          "unread_count": 2,
+          "handoff_required": false,
+          "assigned_to_id": null,
+          "last_message_at": "2026-10-28T04:20:00Z",
+          "href": "/app/conversations?conversation=901"
+        },
+        "details": {
+          "status": "open",
+          "priority": "normal",
+          "channel": "website",
+          "bot_enabled": false,
+          "handoff_reason": "",
+          "client": {
+            "id": 701,
+            "title": "Synthetic Client Alpha",
+            "phone": "+70000000001",
+            "email": "alpha@example.invalid",
+            "source": "manual",
+            "notes": "Synthetic client profile note",
+            "created_at": "2026-10-28T00:00:00Z",
+            "updated_at": "2026-10-28T01:00:00Z",
+            "href": "/app/clients?client=701"
+          },
+          "lead": null,
+          "assigned_to": null
+        },
+        "messages": [
+          {
+            "id": 9011,
+            "conversation_id": 901,
+            "direction": "inbound",
+            "sender_type": "client",
+            "text": "Synthetic inquiry about available time",
+            "created_at": "2026-10-28T04:10:00Z",
+            "sent_at": "2026-10-30T01:00:00Z",
+            "error_text": "Synthetic provider detail never displayed",
+            "delivered_at": "2026-10-30T01:00:01Z",
+            "read_at": "2026-10-30T01:00:02Z"
+          },
+          {
+            "id": 9012,
+            "conversation_id": 901,
+            "direction": "outbound",
+            "sender_type": "manager",
+            "text": "Synthetic operator response; no booking confirmed",
+            "status": "sent",
+            "created_at": "2026-10-28T04:20:00Z",
+            "sent_at": null,
+            "error_text": ""
+          }
+        ],
+        "payload_budget": {
+          "target_kb": 100,
+          "max_messages": 30
+        }
+      }
+    }
+  ]
+}

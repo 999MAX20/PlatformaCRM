@@ -1,0 +1,38 @@
+{
+  "api_version": "mobile-v1",
+  "server_time": "2026-10-28T00:00:00Z",
+  "user": {
+    "id": 9001,
+    "email": "fixture@example.invalid"
+  },
+  "active_business": {
+    "id": 101,
+    "name": "Synthetic Business A",
+    "timezone": "Asia/Almaty"
+  },
+  "businesses": [
+    {
+      "id": 101,
+      "name": "Synthetic Business A",
+      "timezone": "Asia/Almaty"
+    },
+    {
+      "id": 202,
+      "name": "Synthetic Business B",
+      "timezone": "Asia/Almaty"
+    }
+  ],
+  "version_policy": {
+    "min_supported_version": "0.1.0",
+    "latest_version": "0.1.0",
+    "update_urls": {
+      "ios": "",
+      "android": ""
+    }
+  },
+  "feature_flags": {},
+  "budgets": {
+    "bootstrap_kb": 30,
+    "list_kb": 100
+  }
+}

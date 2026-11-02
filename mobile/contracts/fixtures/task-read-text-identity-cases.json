@@ -1,0 +1,658 @@
+{
+  "fixture_only": true,
+  "note": "Exact existing typed Task text identity only. Bounded detail uses only its own fields; action description/cancel reason use existing separate response shapes. Other-field/presence sentinels do not confer command authority or create source defaults. No raw JSON ordering/provenance claim.",
+  "cases": [
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" \\té \\n\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" \\té \\n\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" é \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" é \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" 가 \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" 가 \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" ẹ́ \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" ẹ́ \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" Å \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" Å \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" 👩💻 \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" 👩‍💻 \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" exact \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\" exact \",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "nil to empty",
+      "before": null,
+      "after": "",
+      "changed": true,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":null,\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "empty to nil",
+      "before": "",
+      "after": null,
+      "changed": true,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":null,\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "same nil",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "field": "task.title",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":null,\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":null,\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" \\té \\n\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" \\té \\n\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" é \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" é \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" 가 \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" 가 \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" ẹ́ \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" ẹ́ \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" Å \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" Å \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" 👩💻 \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" 👩‍💻 \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" exact \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\" exact \",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "nil to empty",
+      "before": null,
+      "after": "",
+      "changed": true,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":null,\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "empty to nil",
+      "before": "",
+      "after": null,
+      "changed": true,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":null,\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "same nil",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "field": "details.description",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":null,\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":null,\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"Synthetic follow-up comment 2\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" \\té \\n\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" \\té \\n\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" é \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" é \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" 가 \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" 가 \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" ẹ́ \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" ẹ́ \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" Å \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" Å \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" 👩💻 \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" 👩‍💻 \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" exact \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\" exact \",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "nil to empty",
+      "before": null,
+      "after": "",
+      "changed": true,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":null,\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "empty to nil",
+      "before": "",
+      "after": null,
+      "changed": true,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":\"\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":null,\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "same nil",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "field": "comments.text",
+      "kind": "bounded",
+      "before_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":null,\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}",
+      "after_json": "{\"business\":101,\"generated_at\":\"2026-10-28T04:00:00Z\",\"task\":{\"id\":1101,\"title\":\"Synthetic follow-up Alpha\",\"status\":\"open\",\"priority\":\"high\",\"due_at\":\"2026-10-28T05:00:00Z\",\"client_id\":null,\"lead_id\":null,\"deal_id\":null,\"assignee_id\":null,\"href\":\"/app/tasks?task=1101\"},\"details\":{\"description\":\"Synthetic task context; no operation performed\",\"reminder_at\":null,\"snoozed_until\":null,\"completed_at\":null,\"cancelled_at\":null,\"cancel_reason\":\"\",\"created_by\":null,\"assignee\":null,\"appointment_id\":null},\"comments\":[{\"id\":11012,\"text\":null,\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:20:00Z\"},{\"id\":11011,\"text\":\"Synthetic follow-up comment 1\",\"author\":{\"id\":9001,\"email\":\"fixture@example.invalid\",\"full_name\":\"Synthetic operator\"},\"created_at\":\"2026-10-28T03:10:00Z\"}],\"payload_budget\":{\"target_kb\":60,\"max_comments\":5}}"
+    },
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" \\té \\n\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" \\té \\n\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" é \",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" é \",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" 가 \",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" 가 \",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" ẹ́ \",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" ẹ́ \",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" Å \",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" Å \",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" 👩💻 \",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" 👩‍💻 \",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" exact \",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\" exact \",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "nil to empty",
+      "before": null,
+      "after": "",
+      "changed": true,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":null,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\"\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "empty to nil",
+      "before": "",
+      "after": null,
+      "changed": true,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":\"\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":null,\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "same nil",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "field": "action.description",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":null,\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"status\":\"open\",\"description\":null,\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "decomposed to composed",
+      "before": " \té \n",
+      "after": " \té \n",
+      "changed": true,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" \\té \\n\",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" \\té \\n\",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "composed to decomposed",
+      "before": " é ",
+      "after": " é ",
+      "changed": true,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" é \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" é \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "Hangul composition",
+      "before": " 가 ",
+      "after": " 가 ",
+      "changed": true,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" 가 \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" 가 \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "canonical combining order",
+      "before": " ẹ́ ",
+      "after": " ẹ́ ",
+      "changed": true,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" ẹ́ \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" ẹ́ \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "Angstrom equivalent",
+      "before": " Å ",
+      "after": " Å ",
+      "changed": true,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" Å \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" Å \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "ZWJ input change",
+      "before": " 👩💻 ",
+      "after": " 👩‍💻 ",
+      "changed": true,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" 👩💻 \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" 👩‍💻 \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "same exact bytes",
+      "before": " exact ",
+      "after": " exact ",
+      "changed": false,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" exact \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\" exact \",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "nil to empty",
+      "before": null,
+      "after": "",
+      "changed": true,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":null,\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\"\",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "empty to nil",
+      "before": "",
+      "after": null,
+      "changed": true,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":\"\",\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":null,\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "name": "same nil",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "field": "action.cancel_reason",
+      "kind": "action",
+      "before_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":null,\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}",
+      "after_json": "{\"id\":1101,\"business\":101,\"title\":\"Synthetic task\",\"status\":\"cancelled\",\"priority\":\"high\",\"due_at\":null,\"cancelled_by\":9001,\"cancel_reason\":null,\"cancelled_at\":\"2026-10-30T12:00:00Z\",\"updated_at\":\"2026-10-30T12:00:00Z\"}"
+    }
+  ],
+  "nontext_cases": [
+    {
+      "kind": "work",
+      "field": "id",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1102, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}"
+    },
+    {
+      "kind": "work",
+      "field": "status",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"in_progress\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}"
+    },
+    {
+      "kind": "work",
+      "field": "priority",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"normal\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}"
+    },
+    {
+      "kind": "work",
+      "field": "due_at",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": null, \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}"
+    },
+    {
+      "kind": "work",
+      "field": "client_id",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": 701, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}"
+    },
+    {
+      "kind": "work",
+      "field": "business",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\", \"business\": 101}"
+    },
+    {
+      "kind": "work",
+      "field": "cancelled_at",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\", \"cancelled_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "kind": "work",
+      "field": "cancelled_by",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\", \"cancelled_by\": 9001}"
+    },
+    {
+      "kind": "work",
+      "field": "updated_at",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\", \"updated_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "kind": "work",
+      "field": "created_by",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\", \"created_by\": 9001}"
+    },
+    {
+      "kind": "work",
+      "field": "created_at",
+      "before_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}",
+      "after_json": "{\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\", \"created_at\": \"2026-10-30T12:00:00Z\"}"
+    },
+    {
+      "kind": "comment",
+      "field": "id",
+      "before_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}",
+      "after_json": "{\"id\": 11011, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}"
+    },
+    {
+      "kind": "comment",
+      "field": "created_at",
+      "before_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}",
+      "after_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}"
+    },
+    {
+      "kind": "comment",
+      "field": "task",
+      "before_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}",
+      "after_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\", \"task\": 1101}"
+    },
+    {
+      "kind": "comment",
+      "field": "author",
+      "before_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}",
+      "after_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": 9002, \"created_at\": \"2026-10-28T03:20:00Z\"}"
+    },
+    {
+      "kind": "comment",
+      "field": "author_name",
+      "before_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}",
+      "after_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\", \"author_name\": \"Other fixture author\"}"
+    },
+    {
+      "kind": "comment",
+      "field": "author_email",
+      "before_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}",
+      "after_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\", \"author_email\": \"other@example.invalid\"}"
+    },
+    {
+      "kind": "details",
+      "field": "appointment_id",
+      "before_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}",
+      "after_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": 501}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}"
+    },
+    {
+      "kind": "details",
+      "field": "reminder_at",
+      "before_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}",
+      "after_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}"
+    },
+    {
+      "kind": "details",
+      "field": "snoozed_until",
+      "before_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}",
+      "after_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}"
+    },
+    {
+      "kind": "details",
+      "field": "created_by",
+      "before_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}",
+      "after_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}"
+    },
+    {
+      "kind": "details",
+      "field": "assignee",
+      "before_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}",
+      "after_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}"
+    },
+    {
+      "kind": "details",
+      "field": "client_read_presence",
+      "before_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}",
+      "after_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}"
+    },
+    {
+      "kind": "comment",
+      "field": "authorRead",
+      "before_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}",
+      "after_json": "{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Changed fixture name\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}"
+    },
+    {
+      "kind": "details",
+      "field": "appointment_read_presence",
+      "before_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null, \"appointment_id\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}",
+      "after_json": "{\"business\": 101, \"generated_at\": \"2026-10-28T04:00:00Z\", \"task\": {\"id\": 1101, \"title\": \"Synthetic follow-up Alpha\", \"status\": \"open\", \"priority\": \"high\", \"due_at\": \"2026-10-28T05:00:00Z\", \"client_id\": null, \"lead_id\": null, \"deal_id\": null, \"assignee_id\": null, \"href\": \"/app/tasks?task=1101\"}, \"details\": {\"description\": \"Synthetic task context; no operation performed\", \"reminder_at\": null, \"snoozed_until\": null, \"completed_at\": null, \"cancelled_at\": null, \"cancel_reason\": \"\", \"created_by\": null, \"assignee\": null}, \"comments\": [{\"id\": 11012, \"text\": \"Synthetic follow-up comment 2\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:20:00Z\"}, {\"id\": 11011, \"text\": \"Synthetic follow-up comment 1\", \"author\": {\"id\": 9001, \"email\": \"fixture@example.invalid\", \"full_name\": \"Synthetic operator\"}, \"created_at\": \"2026-10-28T03:10:00Z\"}], \"payload_budget\": {\"target_kb\": 60, \"max_comments\": 5}}"
+    }
+  ]
+}

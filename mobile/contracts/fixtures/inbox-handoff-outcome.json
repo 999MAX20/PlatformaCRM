@@ -1,0 +1,1045 @@
+{
+  "fixture_only": true,
+  "scope": "Existing manual handoff web action shape only; explicitly synthetic context/port, no server execution/AI return/timer/notices/outbox policy acceptance",
+  "input_cases": [
+    {
+      "name": "blank",
+      "raw": "",
+      "valid": true,
+      "reason": "",
+      "expected_body": {
+        "reason": ""
+      },
+      "raw_json": "\"\"",
+      "expected_body_json": "{\"reason\": \"\"}"
+    },
+    {
+      "name": "spaces",
+      "raw": " \t\n ",
+      "valid": true,
+      "reason": "",
+      "expected_body": {
+        "reason": ""
+      },
+      "raw_json": "\" \\t\\n \"",
+      "expected_body_json": "{\"reason\": \"\"}"
+    },
+    {
+      "name": "python_controls",
+      "raw": "\u001c Manager review \u001f",
+      "valid": true,
+      "reason": "Manager review",
+      "expected_body": {
+        "reason": "Manager review"
+      },
+      "raw_json": "\"\\u001c Manager review \\u001f\"",
+      "expected_body_json": "{\"reason\": \"Manager review\"}"
+    },
+    {
+      "name": "bom_not_python_whitespace",
+      "raw": "﻿ Review ﻿",
+      "valid": true,
+      "reason": "﻿ Review ﻿",
+      "expected_body": {
+        "reason": "﻿ Review ﻿"
+      },
+      "raw_json": "\"﻿ Review ﻿\"",
+      "expected_body_json": "{\"reason\": \"﻿ Review ﻿\"}"
+    },
+    {
+      "name": "RU",
+      "raw": " Проверка сотрудником ",
+      "valid": true,
+      "reason": "Проверка сотрудником",
+      "expected_body": {
+        "reason": "Проверка сотрудником"
+      },
+      "raw_json": "\" Проверка сотрудником \"",
+      "expected_body_json": "{\"reason\": \"Проверка сотрудником\"}"
+    },
+    {
+      "name": "KK",
+      "raw": " Қызметкердің тексеруі ",
+      "valid": true,
+      "reason": "Қызметкердің тексеруі",
+      "expected_body": {
+        "reason": "Қызметкердің тексеруі"
+      },
+      "raw_json": "\" Қызметкердің тексеруі \"",
+      "expected_body_json": "{\"reason\": \"Қызметкердің тексеруі\"}"
+    },
+    {
+      "name": "decomposed",
+      "raw": " é ",
+      "valid": true,
+      "reason": "é",
+      "expected_body": {
+        "reason": "é"
+      },
+      "raw_json": "\" é \"",
+      "expected_body_json": "{\"reason\": \"é\"}"
+    },
+    {
+      "name": "composed",
+      "raw": " é ",
+      "valid": true,
+      "reason": "é",
+      "expected_body": {
+        "reason": "é"
+      },
+      "raw_json": "\" é \"",
+      "expected_body_json": "{\"reason\": \"é\"}"
+    },
+    {
+      "name": "emoji",
+      "raw": " 🙂 ",
+      "valid": true,
+      "reason": "🙂",
+      "expected_body": {
+        "reason": "🙂"
+      },
+      "raw_json": "\" 🙂 \"",
+      "expected_body_json": "{\"reason\": \"🙂\"}"
+    },
+    {
+      "name": "long_full",
+      "raw": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "valid": true,
+      "reason": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "expected_body": {
+        "reason": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+      },
+      "raw_json": "\"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\"",
+      "expected_body_json": "{\"reason\": \"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\"}"
+    },
+    {
+      "name": "nul",
+      "raw": "A\u0000B",
+      "valid": false,
+      "reason": null,
+      "expected_body": null,
+      "raw_json": "\"A\\u0000B\"",
+      "expected_body_json": "null"
+    },
+    {
+      "name": "punctuation",
+      "raw": " {{client}} / 50% ",
+      "valid": true,
+      "reason": "{{client}} / 50%",
+      "expected_body": {
+        "reason": "{{client}} / 50%"
+      },
+      "raw_json": "\" {{client}} / 50% \"",
+      "expected_body_json": "{\"reason\": \"{{client}} / 50%\"}"
+    },
+    {
+      "name": "newline",
+      "raw": "One\nTwo",
+      "valid": true,
+      "reason": "One\nTwo",
+      "expected_body": {
+        "reason": "One\nTwo"
+      },
+      "raw_json": "\"One\\nTwo\"",
+      "expected_body_json": "{\"reason\": \"One\\nTwo\"}"
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "saved_flags_only",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "explicit_blank_reason",
+      "raw": " \n ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" \\n \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "exact_decomposed",
+      "raw": " é ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "é",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\" é \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"é\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "canonical_not_exact",
+      "raw": " é ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "é",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" é \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"é\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "long_complete_reason_no_source_limit",
+      "raw": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "confirmed",
+      "raw_json": "\"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "long_reason_excerpt_is_not_full_proof",
+      "raw": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "provider_metadata_unselected",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        },
+        "error_text": "Synthetic private provider detail",
+        "client": {
+          "id": 99999
+        },
+        "last_outbound_at": null
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}, \"error_text\": \"Synthetic private provider detail\", \"client\": {\"id\": 99999}, \"last_outbound_at\": null}"
+    },
+    {
+      "name": "unknown_policy_fields_do_not_claim_return",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        },
+        "status": "closed",
+        "last_outbound_at": "2026-10-29T01:00:00Z"
+      },
+      "expected": "confirmed",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}, \"status\": \"closed\", \"last_outbound_at\": \"2026-10-29T01:00:00Z\"}"
+    },
+    {
+      "name": "foreign_business",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 202,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 202, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "foreign_conversation",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 902,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 902, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "bool_business",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": true,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": true, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "bool_id",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": true,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": true, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "float_id",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901.0,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901.0, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "float_business",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101.0,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101.0, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "string_id",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": "901",
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": \"901\", \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "zero_id",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 0,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 0, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "negative_business",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": -1,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": -1, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "oversized_native_id",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 2147483648,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 2147483648, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "handoff_false",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": false,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": false, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "handoff_numeric",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": 1,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": 1, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "handoff_string",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": "true",
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": \"true\", \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "bot_true",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": true,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": true, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "bot_numeric",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": 0,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": 0, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "bot_string",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": "false",
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": \"false\", \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "reason_null",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": null,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": null, \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "reason_number",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": 7,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": 7, \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "different_reason",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Other",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Other\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "reason_untrimmed",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": " Manager review ",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \" Manager review \", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "clock_missing_zone",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "clock_invalid_calendar",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-02-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-02-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "clock_number",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": 1,
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": 1, \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "clock_null",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": null,
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": null, \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "missing_id",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "missing_business",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "missing_handoff_required",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "missing_bot_enabled",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "missing_handoff_reason",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "missing_updated_at",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "wrapped_payload",
+      "raw": " Manager review ",
+      "status": 200,
+      "response": {
+        "result": {
+          "id": 901,
+          "business": 101,
+          "handoff_required": true,
+          "bot_enabled": false,
+          "handoff_reason": "Manager review",
+          "updated_at": "2026-10-30T12:00:00Z",
+          "unread_count": 4,
+          "metadata_json": {
+            "synthetic_unselected": "not retained"
+          }
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"result\": {\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}}"
+    },
+    {
+      "name": "http201",
+      "raw": " Manager review ",
+      "status": 201,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    },
+    {
+      "name": "http409_is_not_no_write",
+      "raw": " Manager review ",
+      "status": 409,
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      },
+      "expected": "unknown",
+      "raw_json": "\" Manager review \"",
+      "response_json": "{\"id\": 901, \"business\": 101, \"handoff_required\": true, \"bot_enabled\": false, \"handoff_reason\": \"Manager review\", \"updated_at\": \"2026-10-30T12:00:00Z\", \"unread_count\": 4, \"metadata_json\": {\"synthetic_unselected\": \"not retained\"}}"
+    }
+  ],
+  "review_pairs": [
+    {
+      "left": " é ",
+      "right": " é ",
+      "equal": false,
+      "left_json": "\" é \"",
+      "right_json": "\" é \""
+    },
+    {
+      "left": "Reason",
+      "right": " Reason ",
+      "equal": false,
+      "left_json": "\"Reason\"",
+      "right_json": "\" Reason \""
+    },
+    {
+      "left": " Same ",
+      "right": " Same ",
+      "equal": true,
+      "left_json": "\" Same \"",
+      "right_json": "\" Same \""
+    },
+    {
+      "left": " ",
+      "right": "",
+      "equal": false,
+      "left_json": "\" \"",
+      "right_json": "\"\""
+    }
+  ],
+  "scenarios": [
+    {
+      "grant": {
+        "business": 101,
+        "conversation": 901,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "response",
+      "response": {
+        "id": 901,
+        "business": 101,
+        "handoff_required": true,
+        "bot_enabled": false,
+        "handoff_reason": "Manager review",
+        "updated_at": "2026-10-30T12:00:00Z",
+        "unread_count": 4,
+        "metadata_json": {
+          "synthetic_unselected": "not retained"
+        }
+      }
+    },
+    {
+      "grant": {
+        "business": 101,
+        "conversation": 902,
+        "actor": 9001,
+        "update": true
+      },
+      "outcome": "rejected_without_write",
+      "response": null
+    },
+    {
+      "grant": {
+        "business": 202,
+        "conversation": 951,
+        "actor": 9002,
+        "update": true
+      },
+      "outcome": "unknown",
+      "response": null
+    }
+  ]
+}
