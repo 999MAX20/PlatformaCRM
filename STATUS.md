@@ -804,3 +804,6 @@ Password-only entry implemented for the dedicated stand overlay; RU/KK/EN style,
 STAND-ACCESS local29.10: test credentials configured in ignored ENV; CRM5174 and
 Market3080 preview running. Cookie collision fixed; HTTP11/11 and real Caddy PASS.
 Chrome gate-to-app verified. Public deployment remains separate; details PRIMARY.
+
+VITE-CACHE-FIX publication:764277c6 pushed/remote confirmed; CI41642801467
+in progress. Owned isolated runtimes stopped; working dev retained.

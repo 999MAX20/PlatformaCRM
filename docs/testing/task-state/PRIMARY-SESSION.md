@@ -8672,3 +8672,11 @@ updated. Roadmap, product/CRM contracts and passports need no change: this fixes
 development infrastructure and adds no product capability or acceptance closure.
 Publish only owned hunks; source gate covers working snapshot (unrelated WIP present),
 not certification of that WIP. Scoped config checks are independent of its SSE proxy.
+
+Publication: owned patch committed764277c6 and normal-pushed to origin/main;
+remote SHA confirmed764277c627d334003f90dce316775ac367eda18e. CI41642801467
+in progress, not green. Scoped working/index/committed-range diff and reviewed
+links/new-file/secret checks PASS. No code/local verification/publication remainder.
+Owned isolated PIDs16640/21440 stopped; ordinary dev retained. Before staging,
+stale empty index.lock from17:57 removed after two no-Git-process inspections,
+exclusive-open check and unchanged index hash. No unrelated hunks staged.
