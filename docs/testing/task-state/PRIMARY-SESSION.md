@@ -8781,4 +8781,11 @@ in-scope failures resolved. No full backend/E2E, reinstall, working migration or
 [post-implementation audit](../../../anti-slop/audit-001-20261103.md).
 Frontend contract/scheduling passport/current map updated. Other business contracts,
 passports/roadmap/README unchanged: no workflow/data/setup or release-stage change.
-No code/scoped-evidence remainder; publication/CI to be recorded after remote readback.
+Published44a9c92e5a2f575587920ba39b64feb5e60ff84c by normal push to origin/main;
+remote SHA confirmed. CI41656489506 in progress, not green or deployed. No remaining
+code/scoped verification/publication work. Owned source clean; foreign WIP retained.
+Own stage34 paths, working/index/committed-range hygiene, links and secret-pattern
+review PASS. Stale empty18:48 index.lock removed after repeated no-Git-process checks,
+exclusive open and unchanged index hash. First docs-only patch check exposed Windows
+CRLF and foreign registry context; corrected serialization/context before staging,
+no foreign content staged. Test runtimes managed/stopped by Playwright; dev retained.

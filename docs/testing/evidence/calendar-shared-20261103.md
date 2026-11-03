@@ -94,8 +94,11 @@ source boundary; only unaffected assertions are reused after the narrow CSS fixe
 [date-time draft](calendar-shared-20261103-assets/datetime-desktop.png).
 Screenshots are explicit isolated component fixtures, not merchant production data.
 
-No code or scoped verification remainder. Publication/remote SHA and actual CI are
-recorded in the task checkpoint. This change does not close a roadmap release stage.
+No code or scoped verification remainder. Published source commit
+`44a9c92e5a2f575587920ba39b64feb5e60ff84c` by normal push to origin/main, remote SHA
+confirmed. [CI41656489506](https://github.com/999MAX20/PlatformaCRM/actions/runs/41656489506)
+was in progress at publication readback, not a green or deployed claim.
+This change does not close a roadmap release stage.
 Frontend contract and scheduling passport updated. Other business contracts,
 passports, roadmap and README need no change: their data, permission, setup and
 business workflows are unchanged; the frontend contract owns the shared control map.

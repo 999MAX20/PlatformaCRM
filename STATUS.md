@@ -1,7 +1,8 @@
 CALENDAR-SHARED-20261103: approved picker reused across7 consumer areas and all26
-Input date/datetime fields. Draft/apply, time, native validation/ref and dialog focus
-preserved; explicit RU/KK/EN months. Scoped checks/publication boundary:
-docs/testing/evidence/calendar-shared-20261103.md. Foreign WIP retained.
+Input date/datetime fields. Shared15/consumer8/browser/build/types/i18n6680/bundle PASS.
+Antislop cursor finding fixed with owner approval. Published44a9c92e to origin/main;
+remote SHA confirmed, CI41656489506 in progress. Evidence: docs/testing/evidence/calendar-shared-20261103.md.
+No scoped code/evidence/publication remainder; foreign WIP retained, no deployment.
 
 RECORDS-PERIOD-POPOVER-20261103: period calendar floats above content without
 layout shift; visible guidance/presets removed for this picker. Desktop/mobile390,
