@@ -1,8 +1,9 @@
 import { InputHTMLAttributes, ReactNode, forwardRef, useId } from "react";
 
 import { cn } from "../../lib/cn";
+import { CalendarInput } from "./CalendarInput";
 
-type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   error?: string;
   leftIcon?: ReactNode;
@@ -13,6 +14,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, leftIcon, rightIcon, className, "aria-describedby": describedBy, ...props }, ref) => {
     const errorId = useId();
     const resolvedDescribedBy = [describedBy, error ? errorId : null].filter(Boolean).join(" ") || undefined;
+
+    if (props.type === "date" || props.type === "datetime-local") {
+      return <CalendarInput ref={ref} label={label} error={error} leftIcon={leftIcon} rightIcon={rightIcon} className={className} aria-describedby={describedBy} {...props} />;
+    }
 
     return (
       <label className="block">

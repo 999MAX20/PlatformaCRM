@@ -578,13 +578,15 @@ retry/cancel видны при MANAGE. RU/KK/EN, desktop/mobile, клавиат�
 проверены на изолированном кандидате; evidence — AUD07 в PRIMARY-SESSION.
 
 Названия месяцев в списке выбора месяца DateRangePicker выводятся полностью на
-RU/KK/EN, включая compact-вариант календаря периода.
+RU/KK/EN из словарей, включая compact-вариант календаря периода. Это исключает
+браузерный fallback вида M11 при неполной поддержке kk в Intl.
 
 ## Календарь выбора даты: принятый вариант и карта использования — 03.11.2026
 
 Владелец подтвердил текущую реализацию выбора периода на странице «Записи».
-Зафиксированный вариант: исходный код `cf110590` (изменения `835a5985`, `40a807ba`),
-цепочка RecordsToolbar → RecordsPeriodPanel → DateRangePicker.
+Исходный принятый вариант: код `cf110590` (изменения `835a5985`, `40a807ba`).
+После поручения CALENDAR-SHARED-20261103 он переиспользуется через общие
+CalendarPopover, DatePickerPanel и CalendarInput; RecordsPeriodPanel остаётся адаптером.
 
 - Панель открывается у кнопки периода поверх контента через portal/PopoverSurface,
   без сдвига списка, затемнения и модального окна; ограничена размером viewport.
@@ -598,20 +600,26 @@ RU/KK/EN, включая compact-вариант календаря период�
 - Сохранены общие цвета/типографика/размеры контролов, клавиатурный выбор дат,
   горизонтальная мобильная панель фильтров и хранение выбранного периода в текущей вкладке.
 
-Это фиксация принятого варианта «Записей», а не выполненное распространение на другие
-экраны. Всплывающая оболочка RecordsPeriodPanel используется только в RecordsToolbar.
+Принятый вариант распространён на перечисленные ниже подключения и все26 полей
+даты/времени. CalendarBoard остаётся отдельной сеткой расписания. Одиночная дата
+применяется сразу; диапазон и дата со временем используют черновик/отмену/применение.
+Очищение доступно там, где поле необязательно. Вложенная панель остаётся внутри
+focus boundary родительского диалога; первый Escape закрывает список месяца/года,
+следующий календарь, не форму. Tab после панели продолжает порядок полей.
+Проверки и границы: [CALENDAR-SHARED-20261103](../testing/evidence/calendar-shared-20261103.md).
 
-### Все прямые подключения общего DateRangePicker
+### Подключения общего календаря
 
 | Раздел / сценарий | Место подключения | Текущая оболочка |
 | --- | --- | --- |
 | Записи: период списка | [RecordsPeriodPanel](../../frontend/src/features/calendar/RecordsPeriodPanel.tsx) | Принятый всплывающий вариант, черновик/отмена/применение |
-| Календарь: переход к дню | [CalendarPicker](../../frontend/src/features/calendar/components/CalendarPicker.tsx) → CalendarToolbar → CalendarPage | Modal, одна дата; выбор сразу закрывает окно |
-| Клиенты: дата создания; Заявки: дата создания; Сделки: дата создания и ожидаемого закрытия | [CrmFilterFields](../../frontend/src/components/crm/CrmFilterFields.tsx) → CrmFilterControls → ClientsFilters / LeadsToolbar / DealsFilters | Календарь раскрывается внутри формы CRM-фильтров; стандартные подсказка/пресеты |
-| Аналитика: период отчётов | [AnalyticsPage](../../frontend/src/features/analytics/AnalyticsPage.tsx) | Стандартный DateRangePicker, черновик периода |
-| Администрирование: операции, вкладки incidents/connectors/history | [OperationsWorklist](../../frontend/src/features/platform/OperationsWorklist.tsx) → PlatformOperationsPage | Стандартный DateRangePicker; вкладка infrastructure использует другую панель |
+| Календарь: переход к дню | [CalendarPicker](../../frontend/src/features/calendar/components/CalendarPicker.tsx) → CalendarToolbar → CalendarPage | DatePickerPanel у кнопки, одна дата; выбор сразу закрывает панель |
+| Клиенты: дата создания; Заявки: дата создания; Сделки: дата создания и ожидаемого закрытия | [CrmFilterFields](../../frontend/src/components/crm/CrmFilterFields.tsx) → CrmFilterControls → ClientsFilters / LeadsToolbar / DealsFilters | DateRangePicker открывает общую панель поверх формы фильтров; черновик/очистить/применить |
+| Аналитика: период отчётов | [AnalyticsPage](../../frontend/src/features/analytics/AnalyticsPage.tsx) | DatePickerPanel у кнопки периода, без дополнительного Modal |
+| Администрирование: история операций | [OperationsWorklist](../../frontend/src/features/platform/OperationsWorklist.tsx) → PlatformOperationsPage | DatePickerPanel; сохранены запрет будущих дат и максимум365 дней между границами |
 
-Итого5 прямых JSX-подключений,7 разделов с учётом трёх потребителей CrmFilterFields.
+Итого7 разделов с учётом трёх потребителей CrmFilterFields. Прежние5 прямых
+JSX-подключений заменены общей оболочкой и адаптерами.
 В текущем дереве старые LeadsPage/DealsPage сохранены в legacyRoutes на `/leads`
 и `/deals`; `/app/leads` и `/app/deals` используют LegacyRecordsPage. Наличие
 старых компонентов не означает их присутствия в обычном меню «Записей».
@@ -625,8 +633,13 @@ RU/KK/EN, включая compact-вариант календаря период�
 - [SimpleCalendar](../../frontend/src/components/calendar/SimpleCalendar.tsx):
   отдельная почасовая сетка. В актуальном исходном frontend найдена только декларация;
   импортов/JSX-подключений не найдено. Компонент не удалён в рамках инвентаризации.
-- Стандартные HTML-поля `date`/`datetime-local` используют системный календарь
-  браузера и не наследуют оформление DateRangePicker:26 полей в19 файлах ниже.
+- Все26 полей `Input type="date"`/`type="datetime-local"` в19 файлах ниже теперь
+  используют [CalendarInput](../../frontend/src/components/ui/CalendarInput.tsx) и
+  общий календарь. Нативный редактор значения сохранён для клавиатуры, required,
+  min/max/step, form name/ref и React Hook Form; штатная кнопка календаря заменена.
+  Для datetime-local календарь сохраняет время, предлагает ввод времени в черновике
+  и не применяет неполное/недопустимое значение. Формат данных и timezone-преобразования
+  остаются у существующих потребителей. Disabled/readOnly запрещают открытие панели.
   Иконки CalendarDays/CalendarClock/CalendarPlus не считаются компонентами выбора даты.
 
 | Файл стандартного поля даты/времени | Число полей | Строки среза |
@@ -655,5 +668,7 @@ RU/KK/EN, включая compact-вариант календаря период�
 текущего checkout03.11.2026; проверены родители и маршруты. В widget/Storybook
 дополнительных подключений этих календарей не найдено. Архив, generated/dist,
 node_modules и временные output-сценарии не являются продуктовыми потребителями.
-Это карта кода, не повторная runtime-приёмка каждого экрана. В checkout есть
-несвязанный WIP; он не включается в публикацию этой документации.
+Исходная карта была статической инвентаризацией. Текущая реализация дополнена
+целевыми проверками общих контролов и репрезентативных reachable flows: это не
+повторная runtime-приёмка каждой страницы или полная release-сертификация.
+Несвязанный WIP checkout не включается в публикацию этой задачи.

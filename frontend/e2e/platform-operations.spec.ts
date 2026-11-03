@@ -69,8 +69,9 @@ test('operator worklists separate dated failures connectors and infrastructure',
   await expect(page.getByTestId('operations-count')).toContainText('13');
   await page.getByRole('button',{name:ru['operationsWorkspace.period'],exact:true}).click();
   const dialog=page.getByRole('dialog');
-  await dialog.getByRole('button',{name:new RegExp(ru['operationsWorkspace.period'])}).click();
-  await dialog.getByRole('button',{name:ru['crmFilters.last7'],exact:true}).click();
+  const today = new Date().toISOString().slice(0,10);
+  await dialog.locator(`[data-date="${today}"]`).click();
+  await dialog.locator(`[data-date="${today}"]`).click();
   await dialog.getByRole('button',{name:ru['crmFilters.apply'],exact:true}).click();
   await expect(page).toHaveURL(/date_from=/);
   await select(page,ru['operationsWorkspace.source'],ru['operationsWorkspace.webhooks']);

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { platformApi } from "../../api/platform";
 import { normalizeAppError } from "../../api/appError";
@@ -7,8 +7,7 @@ import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
-import { DateRangePicker, isCalendarDate } from "../../components/ui/DateRangePicker";
-import { Dialog } from "../../components/ui/Overlay";
+import { DatePickerPanel } from "../../components/ui/DateRangePicker";
 import { LoadingState, EmptyState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { CrmPagination } from "../../components/crm/CrmPagination";
@@ -33,7 +32,9 @@ export function OperationsWorklist({ section, params, update }: {
   const today = new Date().toISOString().slice(0, 10);
   const defaultStart = new Date(`${today}T00:00:00Z`); defaultStart.setUTCDate(defaultStart.getUTCDate() - 29);
   const from = params.get("date_from") || defaultStart.toISOString().slice(0, 10), to = params.get("date_to") || today;
-  const [periodOpen, setPeriodOpen] = useState(false), [draft, setDraft] = useState({ from, to });
+  const [periodOpen, setPeriodOpen] = useState(false);
+  const periodAnchor = useRef<HTMLButtonElement>(null);
+  const closePeriod = (restore = true) => { setPeriodOpen(false); if (restore) periodAnchor.current?.focus(); };
   const filters: OperationFilters = { source, search: needle, page, page_size: pageSize,
     ...(params.get("business") ? { business: Number(params.get("business")) } : {}),
     ...(incidents ? { component: params.get("component") || undefined, freshness: params.get("freshness") || undefined } : {}),
@@ -41,7 +42,6 @@ export function OperationsWorklist({ section, params, update }: {
   const result = useQuery({ queryKey: ["platform-worklist", filters], queryFn: () => platformApi.operationsWorklist(filters), refetchInterval: 30_000 });
   const forbidden = result.isError && !["offline", "temporary", "provider", "rate_limit", "internal"].includes(normalizeAppError(result.error).category);
   const data = forbidden ? undefined : result.data;
-  const validPeriod = isCalendarDate(draft.from) && isCalendarDate(draft.to) && draft.from <= draft.to && draft.to <= today && (Date.parse(draft.to)-Date.parse(draft.from))/86400000 <= 365;
   return <div className="space-y-4">
     <div className="flex flex-wrap items-center gap-3 [&>label]:w-full sm:[&>label]:w-auto">
       {params.get("business") && <p className="text-sm">{t("platform.merchants.merchant")} #{params.get("business")}</p>}
@@ -52,7 +52,7 @@ export function OperationsWorklist({ section, params, update }: {
       </>}
       {history && <>
         <Select aria-label={t("operationsWorkspace.source")} value={source} onChange={event => update({ source: event.target.value, page: "" })} options={["automations", "integrations", "webhooks"].map(value => ({ value, label: t(`operationsWorkspace.${value}`) }))} />
-        <Button variant="secondary" onClick={() => { setDraft({ from, to }); setPeriodOpen(true); }} aria-label={t("operationsWorkspace.period")}>{from} — {to} · UTC</Button>
+        <Button ref={periodAnchor} data-calendar-trigger type="button" variant="secondary" className="min-h-11" onClick={() => setPeriodOpen(current => !current)} aria-haspopup="dialog" aria-expanded={periodOpen} aria-label={t("operationsWorkspace.period")}>{from} — {to} · UTC</Button>
       </>}
       <Button className="sm:ml-auto" variant="secondary" onClick={() => result.refetch()} isLoading={result.isFetching}>{t("common.refresh")}</Button>
       {(search || params.get("business") || params.get("component") || params.get("freshness") || params.get("date_from") || params.get("date_to")) && <Button variant="ghost" onClick={() => update({ search: "", business: "", component: "", freshness: "", date_from: "", date_to: "", page: "" })}>{t("tasks.resetFilters")}</Button>}
@@ -79,9 +79,8 @@ export function OperationsWorklist({ section, params, update }: {
         <CrmPagination compact shown={data.results.length} total={data.count} page={page} pageSize={pageSize} onPageChange={value => update({ page: String(value) })} onPageSizeChange={value => update({ page_size: String(value), page: "" })} previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")} />
       </Card>}
     </>}
-    <Dialog title={t("operationsWorkspace.period")} open={periodOpen} onClose={() => setPeriodOpen(false)} size="sm"><div className="space-y-4">
-      <DateRangePicker label={t("operationsWorkspace.period")} value={draft} onChange={setDraft} today={today} />
-      <div className="flex justify-end gap-2"><Button variant="ghost" onClick={() => setPeriodOpen(false)}>{t("common.cancel")}</Button><Button disabled={!validPeriod} onClick={() => { update({ date_from: draft.from, date_to: draft.to, page: "" }); setPeriodOpen(false); }}>{t("crmFilters.apply")}</Button></div>
-    </div></Dialog>
+    {periodOpen && <DatePickerPanel anchor={periodAnchor} label={t("operationsWorkspace.period")} value={{ from, to }} today={today} max={today}
+      validate={draft => (Date.parse(draft.to) - Date.parse(draft.from)) / 86400000 <= 365}
+      onApply={draft => { update({ date_from: draft.from, date_to: draft.to, page: "" }); closePeriod(); }} onClose={closePeriod} />}
   </div>;
 }

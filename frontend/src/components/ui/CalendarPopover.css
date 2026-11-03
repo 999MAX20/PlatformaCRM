@@ -1,0 +1,16 @@
+@layer base {
+  :where(.platforma-calendar-popover button, .platforma-calendar-field button, .platforma-calendar-field label[for], [data-calendar-trigger]) {
+    cursor: pointer;
+  }
+
+  :where(.platforma-calendar-popover button:disabled, .platforma-calendar-field button:disabled, .platforma-calendar-field[data-disabled] label[for], [data-calendar-trigger]:disabled) {
+    cursor: not-allowed;
+  }
+}
+
+/* Native disabled buttons still block actions while allowing their cursor to show. */
+.platforma-calendar-popover button:disabled,
+.platforma-calendar-field button:disabled,
+[data-calendar-trigger]:disabled {
+  pointer-events: auto;
+}

@@ -8752,3 +8752,33 @@ Plan: output/calendar-inventory-20261103/PLAN.md. Source links verified; no secr
 unrelated source staged. Source/app acceptance unchanged; no build/install/DB/browser
 tests for Markdown. Frontend contract owns this map; no new document/registry entry,
 roadmap or passport change needed. Prior browser evidence remains scoped to Records.
+
+## CALENDAR-SHARED-20261103
+
+Owner requested implementation of accepted Records calendar, explicitly including
+all26 native date/datetime Input fields. CalendarBoard retained. Antislop After
+selected; sole cursor finding1 then explicitly approved and corrected locally.
+Base98d83de0, canonical PlatformaCRM/current codex/ui-testing-toolkit. Task source
+paths clean at start; unrelated source/docs WIP retained. Plan, full starting diff,
+commands/logs and selection review in output/calendar-shared-20261103.
+
+Shared CalendarPopover/DatePickerPanel/CalendarInput now serve7 consumer areas and
+26 fields in19 files. One-day selection immediate, ranges/datetime draft/apply;
+optional clear, native min/max/required/step/ref/events/RHF, time representation,
+operations365-day/future rules and nested form focus preserved. Full RU/KK/EN month
+dictionary fixes reproduced Chromium M11; compact320 header fits long month/year.
+Cursor CSS scoped to calendar; no shared global Button redesign. No backend/API,
+schema, permission, BusinessEvent/notification/AI or working-data changes.
+
+15 unique shared-control browser cases PASS across applicable final-input runs;
+eight actual consumer scenarios PASS (desktop/mobile analytics503/recovery,
+Records/schedule/client URL filters, real isolated task POST/timezone, platform history).
+Final safe build/types/i18n6680/app/widget and bundle PASS; existing RU/KK size warnings
+retained. All fixtures use isolated ports/mock providers/disposable databases only.
+Initial selector errors, Kazakh fallback and320 clipping retained in report; all
+in-scope failures resolved. No full backend/E2E, reinstall, working migration or deploy.
+[Evidence](../evidence/calendar-shared-20261103.md) and
+[post-implementation audit](../../../anti-slop/audit-001-20261103.md).
+Frontend contract/scheduling passport/current map updated. Other business contracts,
+passports/roadmap/README unchanged: no workflow/data/setup or release-stage change.
+No code/scoped-evidence remainder; publication/CI to be recorded after remote readback.

@@ -55,7 +55,7 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
   return <div className="min-w-0" data-testid="records-toolbar">
     <div className="flex min-w-0 items-center gap-2 overflow-x-auto px-1 py-1" data-testid="records-toolbar-row">
       <RecordsSearch params={params} setParams={setParams} />
-      <Button ref={periodTrigger} variant="secondary" className="h-11 max-w-60 shrink-0 gap-2 lg:h-10" title={period} aria-label={`${t("analyticsWorkspace.period")}: ${period}`} aria-expanded={periodOpen} aria-controls={periodOpen ? "records-period-panel" : undefined} data-focus-return-id="records-period" onClick={() => setPeriodOpen(current => !current)}><CalendarDays size={16} className="shrink-0" /><span className="truncate">{period}</span></Button>
+      <Button ref={periodTrigger} data-calendar-trigger variant="secondary" className="h-11 max-w-60 shrink-0 gap-2 lg:h-10" title={period} aria-label={`${t("analyticsWorkspace.period")}: ${period}`} aria-expanded={periodOpen} aria-controls={periodOpen ? "records-period-panel" : undefined} data-focus-return-id="records-period" onClick={() => setPeriodOpen(current => !current)}><CalendarDays size={16} className="shrink-0" /><span className="truncate">{period}</span></Button>
       <div className="w-48 shrink-0"><Select portal aria-label={t("records.pipeline")} density="compact" className="h-11 lg:h-10" value={filters.workflow || ""} onChange={event => update({ workflow: event.target.value })} options={[
         { value: "", label: `${t("crmFilters.allStatuses")}${total !== undefined ? ` · ${total}` : ""}` },
         ...recordWorkflows.map(state => ({ value: state, label: `${t(`records.${state}`)}${summary ? ` · ${summary[state] ?? 0}` : ""}` })),

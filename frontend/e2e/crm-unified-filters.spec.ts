@@ -80,7 +80,9 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       await expect(calendar).toBeHidden();
       await expect(dateTrigger).toBeFocused();
       await dateTrigger.click();
-      await dialog.getByRole("button", { name: copy["crmFilters.last7"], exact: true }).click();
+      await calendar.getByRole("gridcell").nth(8).click();
+      await calendar.getByRole("gridcell").nth(14).click();
+      await dialog.getByRole("dialog", { name: copy["crmFilters.created"], exact: true }).getByRole("button", { name: copy["crmFilters.apply"], exact: true }).click();
       await expect(calendar).toBeHidden();
       await dialog.getByRole("button", { name: copy["crmFilters.apply"], exact: true }).click();
       await expect(page).toHaveURL(/created_from=\d{4}-\d{2}-\d{2}/);

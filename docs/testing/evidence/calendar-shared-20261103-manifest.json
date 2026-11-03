@@ -1,0 +1,214 @@
+{
+  "task": "CALENDAR-SHARED-20261103",
+  "base": "98d83de05eab1f9d311ab8592655922d2c3077b1",
+  "boundary": "working snapshot with unrelated WIP; only listed task source/tests are published",
+  "task_source": [
+    "frontend/src/components/ui/CalendarInput.tsx",
+    "frontend/src/components/ui/CalendarPopover.tsx",
+    "frontend/src/components/ui/CalendarPopover.css",
+    "frontend/src/components/ui/DateRangePicker.tsx",
+    "frontend/src/components/ui/Input.tsx",
+    "frontend/src/features/calendar/RecordsPeriodPanel.tsx",
+    "frontend/src/features/calendar/RecordsToolbar.tsx",
+    "frontend/src/features/calendar/components/CalendarPicker.tsx",
+    "frontend/src/features/calendar/calendarUtils.ts",
+    "frontend/src/features/analytics/AnalyticsPage.tsx",
+    "frontend/src/features/platform/OperationsWorklist.tsx",
+    "frontend/src/lib/i18n/ru/calendar.ts",
+    "frontend/src/lib/i18n/kk/calendar.ts",
+    "frontend/src/lib/i18n/en/calendar.ts"
+  ],
+  "task_tests": [
+    "frontend/e2e/calendar-controls.spec.ts",
+    "frontend/e2e/calendar-consumers.spec.ts",
+    "frontend/e2e/fixtures/calendar-controls.html",
+    "frontend/e2e/fixtures/calendar-controls.tsx",
+    "frontend/playwright.calendar-controls.config.ts",
+    "frontend/e2e/crm-unified-filters.spec.ts",
+    "frontend/e2e/platform-operations.spec.ts"
+  ],
+  "native_consumers": [
+    {
+      "path": "frontend/src/components/forms/AppointmentForm.tsx",
+      "lines": [
+        326
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/components/forms/AppointmentRescheduleForm.tsx",
+      "lines": [
+        106
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/automations/AutomationActionFields.tsx",
+      "lines": [
+        40
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/conversations/InboxTaskDialog.tsx",
+      "lines": [
+        93
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/outreach/OutreachPage.tsx",
+      "lines": [
+        714
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/payments/PaymentForm.tsx",
+      "lines": [
+        126
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/platform/BusinessBillingPanel.tsx",
+      "lines": [
+        75
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/timeline/TimelineToolbar.tsx",
+      "lines": [
+        69,
+        79
+      ],
+      "count": 2
+    },
+    {
+      "path": "frontend/src/features/assistant/components/AgentConversationPanel.tsx",
+      "lines": [
+        133,
+        134
+      ],
+      "count": 2
+    },
+    {
+      "path": "frontend/src/features/assistant/components/AIHistoryPanel.tsx",
+      "lines": [
+        29,
+        30
+      ],
+      "count": 2
+    },
+    {
+      "path": "frontend/src/features/business/components/BranchScheduleEditor.tsx",
+      "lines": [
+        37
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/deals/components/DealModals.tsx",
+      "lines": [
+        256
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/leads/components/LeadNextActionModal.tsx",
+      "lines": [
+        56
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/resources/components/SpecialistLifecycle.tsx",
+      "lines": [
+        47,
+        47
+      ],
+      "count": 2
+    },
+    {
+      "path": "frontend/src/features/settings/components/ScheduleExceptionsPanel.tsx",
+      "lines": [
+        82
+      ],
+      "count": 1
+    },
+    {
+      "path": "frontend/src/features/tasks/components/TaskEditor.tsx",
+      "lines": [
+        82,
+        91
+      ],
+      "count": 2
+    },
+    {
+      "path": "frontend/src/features/tasks/components/TaskFormModal.tsx",
+      "lines": [
+        250,
+        251
+      ],
+      "count": 2
+    },
+    {
+      "path": "frontend/src/features/tasks/components/TaskHeaderFilters.tsx",
+      "lines": [
+        176,
+        183
+      ],
+      "count": 2
+    },
+    {
+      "path": "frontend/src/features/tasks/components/TaskInspector.tsx",
+      "lines": [
+        149
+      ],
+      "count": 1
+    }
+  ],
+  "sha256": {
+    "frontend/e2e/calendar-consumers.spec.ts": "989bb318ee96fd04907c55328651cfc879faab5046174e6e4c1e1ff8e41e42be",
+    "frontend/e2e/calendar-controls.spec.ts": "78305a6af643bfd8a9228d1e90ef21453fe7dfc66a21bf591da410b0ce371461",
+    "frontend/e2e/crm-unified-filters.spec.ts": "5110cc6de9ae92ff20007e7b2cc9044b00908c36ffdbc267061f033166152540",
+    "frontend/e2e/fixtures/calendar-controls.html": "36bc0b802985959f07836bedf148d04ce15119c8d730b4d6032df23a4aa81baf",
+    "frontend/e2e/fixtures/calendar-controls.tsx": "0721a2cf274489e1a4cb6fd105364159530f1ca9fe0c9e5ca47d3008aced181a",
+    "frontend/e2e/platform-operations.spec.ts": "903d82d36c9b8e9a9a01f2887f9ae8adb925d295d48ea96cc3081f1122de3f28",
+    "frontend/playwright.calendar-controls.config.ts": "e1cd0a61b00e92424f91719c2d223f7a19591b34c31f0e80b2ebff2c2f440857",
+    "frontend/src/components/forms/AppointmentForm.tsx": "558db75034f21ff5ce1fa5da5141566261eb2d21c777773aac9c9615ad6daf2b",
+    "frontend/src/components/forms/AppointmentRescheduleForm.tsx": "301bf01e7ead306b74623de30383fc79a9be02fd80d46b9e6ee6fd5163925040",
+    "frontend/src/components/ui/CalendarInput.tsx": "6e79bf492b62c8c536d22bf8d98f4e7c4a157c9e0efdaa9713c02a134aa76605",
+    "frontend/src/components/ui/CalendarPopover.css": "d2f3bc798505211198de67c93e9a97bef63727ed1fa7d55e03edaf8e390a7c8d",
+    "frontend/src/components/ui/CalendarPopover.tsx": "bd4cc06bb7d50e18f87acfaf7905e5bc9aa44d9ae08ce8e01059e93da2944671",
+    "frontend/src/components/ui/DateRangePicker.tsx": "573248d7e6ec4188980ae5f126c79a11f340ef43f383d6d6154795455bc00e8a",
+    "frontend/src/components/ui/Input.tsx": "cb2a725179c9e401dd53fd4ebcdd741f6f1ab32ed4698d563c7f80ec8d9a94f7",
+    "frontend/src/features/analytics/AnalyticsPage.tsx": "c51d569dd317f73ee1f34e7faf542b8e1543cb20c9261cb26eab8626df0cb7c3",
+    "frontend/src/features/assistant/components/AIHistoryPanel.tsx": "fe560f70258dbd4d23d393b003cf09175abacc2171b015bc4b4b3224e06ac359",
+    "frontend/src/features/assistant/components/AgentConversationPanel.tsx": "ab9008873b05dc42ca07b495c2cb37cbe2de4afd62b842971307bc83cf0db09a",
+    "frontend/src/features/automations/AutomationActionFields.tsx": "094a5ae9b320ffb6e5b03d379c7f78b162ee250a459ae3303eaac94825677eee",
+    "frontend/src/features/business/components/BranchScheduleEditor.tsx": "4aaed4d1819aff91dd81c8d8e8d6dc53bffbffda8e21c20fb4d36f83a3d4299e",
+    "frontend/src/features/calendar/RecordsPeriodPanel.tsx": "0935e0d536fc0a94ab896bca5f5936d89200e622d7f0a11602c6834182ead836",
+    "frontend/src/features/calendar/RecordsToolbar.tsx": "04ed7c71f2f14506976634d585abcd21e7888b9d4310b360e45314fe2227dfc0",
+    "frontend/src/features/calendar/calendarUtils.ts": "d2e3d35b06989861b38e517d889e8ab8a51f32a65747ef15950352a02e0e6c65",
+    "frontend/src/features/calendar/components/CalendarPicker.tsx": "b412fb9ae2851d63388b178f1ef93aa0af0c914b2696c7ad64b75beaa4f4ac6b",
+    "frontend/src/features/conversations/InboxTaskDialog.tsx": "909b55b7a4e13daa3f131a5c07cf065f532cdbd2decf71ce76a904a538cee66a",
+    "frontend/src/features/deals/components/DealModals.tsx": "305ff3e6464333a0b00b408437ca9373fd57abf58cb755b483f2f30d3d27c43f",
+    "frontend/src/features/leads/components/LeadNextActionModal.tsx": "7d26532671727a2c6af40e94dd459160beb7c1892c973afe81727419cb9bdbbf",
+    "frontend/src/features/outreach/OutreachPage.tsx": "b216e7320bc8e6279a2d2a05fe6b752e71ab3448fac2549b8eb8b3b345acafb3",
+    "frontend/src/features/payments/PaymentForm.tsx": "1d6f82984f83d957ecaa8daa9297453b4510f9c872208ab005751373dc01e215",
+    "frontend/src/features/platform/BusinessBillingPanel.tsx": "ac4acd1b40cd5393041592c3da57bd7cfbbd8e9ff4031e9236e7b1f4abce467e",
+    "frontend/src/features/platform/OperationsWorklist.tsx": "48b37ba8aaf4b1f847921ebd14038067add4781943ca125a4e46754f860312d6",
+    "frontend/src/features/resources/components/SpecialistLifecycle.tsx": "140564879d2607adc1e051bf2023e002a147378678742fd48d6a637aac490e90",
+    "frontend/src/features/settings/components/ScheduleExceptionsPanel.tsx": "fb8a376010d7a1dc9421542d32fe3eea8ab9b4162f5ffaf1ebcfe7cd2aa41b63",
+    "frontend/src/features/tasks/components/TaskEditor.tsx": "fdb0195e566439ecab91154a9f3f3c7664f6059618a6e2db1fb0e69ae3ad7cdb",
+    "frontend/src/features/tasks/components/TaskFormModal.tsx": "2d76fdfd7ccbf8c380378b9138ce3b67310247bb514221d536905fac63cead69",
+    "frontend/src/features/tasks/components/TaskHeaderFilters.tsx": "236e25812a8d1ca12e6cb0ee2f07269fb88783e16b9292150270382ed45bc976",
+    "frontend/src/features/tasks/components/TaskInspector.tsx": "b3a9df9d9ab47c2b7070d8dbf75c846892f22ce5d401ff97be1efae03a1198bc",
+    "frontend/src/features/timeline/TimelineToolbar.tsx": "3299bebb3480448829b3627ad8f41813b4e5475c39a9cead6ef414c57785d2c8",
+    "frontend/src/lib/i18n/en/calendar.ts": "053698d8877f91de03d5439ec0d7d83ce364bdcc829b393b969dcb8483d4273e",
+    "frontend/src/lib/i18n/kk/calendar.ts": "68ff9960bc9f4e0b9e6e027ef661ea7400060428b913a722f9dc5c7176c66040",
+    "frontend/src/lib/i18n/ru/calendar.ts": "eb76eff4ad028d90c13bf76b4212af632d978b6580e9a1b2edf017d98fa9a6c1"
+  }
+}

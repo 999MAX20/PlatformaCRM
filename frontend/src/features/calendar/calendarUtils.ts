@@ -67,7 +67,7 @@ export function normalizeTimeZone(value?: string | null) {
 
 export function formatPickerDate(value: string, locale: string) {
   const date = parseDate(value);
-  return new Intl.DateTimeFormat(locale, { day: "2-digit", month: "long", year: "numeric" }).format(date);
+  return new Intl.DateTimeFormat(locale, { day: "2-digit", month: locale.startsWith("kk") ? "numeric" : "long", year: "numeric" }).format(date);
 }
 
 export function getWeekDates(value: string) {
