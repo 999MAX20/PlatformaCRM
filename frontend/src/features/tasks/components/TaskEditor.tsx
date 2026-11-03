@@ -23,8 +23,8 @@ import { TaskDraftGuard } from "./TaskDraftGuard";
 const links: TaskRelationType[] = ["client", "lead", "deal", "appointment", "conversation", "parent_task", "specialist"];
 const resources = { client: "clients", lead: "leads", deal: "deals", appointment: "appointments", conversation: "conversations", parent_task: "tasks", specialist: "settings" } as const;
 
-export function TaskEditor({ task, business, zone, initialClient, parentDirty = false, onClose, onSaved }: {
-  task?: Task; business: Id; zone: string; initialClient?: Id; parentDirty?: boolean; onClose: () => void; onSaved: (task: Task) => void;
+export function TaskEditor({ task, business, zone, initialClient, initialAppointment, parentDirty = false, onClose, onSaved }: {
+  task?: Task; business: Id; zone: string; initialClient?: Id; initialAppointment?: Id; parentDirty?: boolean; onClose: () => void; onSaved: (task: Task) => void;
 }) {
   const { t } = useI18n();
   const { user } = useAuth();
@@ -33,11 +33,11 @@ export function TaskEditor({ task, business, zone, initialClient, parentDirty = 
   const initial = useRef<Record<string, string>>({
     title: task?.title || "", description: task?.description || "", priority: task?.priority || "normal",
     assignee: String(task ? task.assignee ?? "" : user?.id ?? ""), due_at: taskDateInput(task?.due_at, zone), reminder_at: taskDateInput(task?.reminder_at, zone),
-    ...Object.fromEntries(links.map(field => [field, String(task?.[field] ?? (field === "client" ? initialClient : "") ?? "")])),
+    ...Object.fromEntries(links.map(field => [field, String(task?.[field] ?? (field === "client" ? initialClient : field === "appointment" ? initialAppointment : "") ?? "")])),
   }).current;
   const [draft, setDraft] = useState(initial);
-  const [relation, setRelation] = useState<TaskRelationType>("client");
-  const [more, setMore] = useState(Boolean(task?.description || task?.relations?.length || initialClient));
+  const [relation, setRelation] = useState<TaskRelationType>(initialAppointment ? "appointment" : "client");
+  const [more, setMore] = useState(Boolean(task?.description || task?.relations?.length || initialClient || initialAppointment));
   const attempt = useRef({ signature: "", key: "" });
   const saved = useRef(false);
   const assignees = useQuery({ queryKey: ["task-assignees", business, task ? "update" : "create"], queryFn: () => tasksApi.assignees(business, task ? "update" : "create") });
@@ -68,7 +68,7 @@ export function TaskEditor({ task, business, zone, initialClient, parentDirty = 
     onSuccess: current => { setVersion(current); save.reset(); },
   });
   const conflict = save.error && normalizeAppError(save.error).category === "conflict";
-  const allowedLinks = links.filter(field => hasPermission(user, business, resources[field], "view"));
+  const allowedLinks = links.filter(field => field !== "lead" && field !== "deal" && hasPermission(user, business, resources[field], "view"));
   return <Modal open title={t(task ? "taskWorkspace.edit" : "taskWorkspace.create")} onClose={() => void close()} size="lg" testId="task-editor">
     <TaskDraftGuard dirty={dirty || parentDirty} pending={save.isPending} saved={saved} />
     <form className="space-y-4" onSubmit={e => { e.preventDefault(); save.mutate(); }}>

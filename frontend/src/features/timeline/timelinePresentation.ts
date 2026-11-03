@@ -4,6 +4,8 @@ export function readTimelineFilters(params: URLSearchParams): TimelineFilters {
   const page = Number(params.get("page"));
   const size = Number(params.get("page_size"));
   return {
+    entity_type: params.get("entity_type") || "",
+    entity_id: params.get("entity_id") || "",
     search: params.get("search") || "",
     category: params.get("category") || "",
     actor: params.get("actor") || "",
@@ -174,7 +176,7 @@ export const timelineEntityRoutes: Record<
     label: "crmCard.timelineFieldTask",
   },
   appointment: {
-    path: "calendar",
+    path: "appointments",
     permission: "appointments",
     label: "crmCard.timelineFieldAppointment",
   },

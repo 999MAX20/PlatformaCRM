@@ -21,7 +21,7 @@ export function TimelineToolbar({
 }) {
   const { t } = useI18n();
   const active = Boolean(
-    filters.search ||
+    filters.entity_id || filters.entity_type || filters.search ||
       filters.category ||
       filters.actor ||
       filters.date_from ||
@@ -32,6 +32,7 @@ export function TimelineToolbar({
       className="shrink-0 space-y-3 border-b border-platforma-border p-3"
       data-testid="timeline-toolbar"
     >
+      {filters.entity_id ? <p className="text-sm text-platforma-subtle">{t("timeline.object")} #{filters.entity_id}</p> : null}
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(180px,1fr)_minmax(160px,220px)_minmax(160px,220px)]">
         <Input
           aria-label={t("timeline.search")}

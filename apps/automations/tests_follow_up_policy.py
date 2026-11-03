@@ -33,7 +33,7 @@ class FollowUpPolicyTests(TestCase):
 
     def test_inline_complete_reuses_builtin_and_keeps_explicit_task(self):
         self.rule(explicit=True)
-        response = self.f.api.post(f"/api/appointments/{self.appointment.pk}/complete/")
+        response = self.f.api.post(f"/api/appointments/{self.appointment.pk}/complete/", {"reason": "Finished early"})
         self.assertEqual(response.status_code, 200, response.data)
         tasks = Task.objects.filter(appointment=self.appointment)
         self.assertEqual(tasks.count(), 2)
@@ -54,7 +54,7 @@ class FollowUpPolicyTests(TestCase):
     @override_settings(AUTOMATIONS_RUN_INLINE=False)
     def test_delayed_rule_preserves_staff_edits_completed_status_and_effects(self):
         self.rule()
-        self.assertEqual(self.f.api.post(f"/api/appointments/{self.appointment.pk}/complete/").status_code, 200)
+        self.assertEqual(self.f.api.post(f"/api/appointments/{self.appointment.pk}/complete/", {"reason": "Finished early"}).status_code, 200)
         task = Task.objects.get(appointment=self.appointment)
         Task.objects.filter(pk=task.pk).update(title="Staff edited", status=Task.Statuses.DONE)
         before = (ActivityEvent.objects.filter(event_type=ActivityEvents.TASK_CREATED).count(), Notification.objects.count())

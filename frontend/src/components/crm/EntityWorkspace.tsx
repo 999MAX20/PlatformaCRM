@@ -127,7 +127,7 @@ export function EntityWorkspaceAside({ children }: { children: ReactNode }) {
 }
 
 export function EntityWorkspaceMain({ children }: { children: ReactNode }) {
-  return <main className="grid min-w-0 gap-4 lg:grid-cols-2">{children}</main>;
+  return <div className="grid min-w-0 gap-4 lg:grid-cols-2">{children}</div>;
 }
 
 export function EntityWorkspaceSection({

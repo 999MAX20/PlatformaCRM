@@ -103,7 +103,7 @@ export function useCalendarCommands({
       if (status === "confirmed") return appointmentsApi.confirm(id, expected_updated_at);
       if (status === "cancelled")
         return appointmentsApi.cancel(id, { reason: reason || "", expected_updated_at });
-      if (status === "completed") return appointmentsApi.complete(id, expected_updated_at);
+      if (status === "completed") return appointmentsApi.complete(id, expected_updated_at, reason);
       if (status === "no_show")
         return appointmentsApi.noShow(id, { reason: reason || "", expected_updated_at });
       return appointmentsApi.get(id);

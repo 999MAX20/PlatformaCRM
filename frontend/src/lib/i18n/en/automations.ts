@@ -35,7 +35,7 @@ export const automations: Record<string, string> = {
   "automations.rulesTitle": "Active and draft rules",
   "automations.emptyTitle": "No automations yet",
   "automations.emptyDescription":
-    "Start with one simple rule: new lead, manager task or booking reminder.",
+    "Start with one rule: prepare a visit, assign a staff task or reply to a message.",
   "automations.runsTitle": "Run log",
   "automations.entity": "entity",
   "automations.attempt": "attempt {current}/{max}",

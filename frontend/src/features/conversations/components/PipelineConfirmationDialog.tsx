@@ -28,7 +28,7 @@ export function PipelineConfirmationDialog({ review, allowedActions, pending, er
         <p className="whitespace-pre-wrap text-sm text-platforma-text">{review.summary}</p>
         <fieldset disabled={pending} className="space-y-3">
           <legend className="mb-3 text-sm font-semibold">{t("conversations.confirmPipelineActions")}</legend>
-          {(["create_lead", "create_task", "create_deal"] as const).map((action) => (
+          {allowedActions.map((action) => (
             <label key={action} className="flex items-center gap-3 text-sm">
               <input type="checkbox" checked={actions.includes(action)} disabled={!allowedActions.includes(action)}
                 onChange={(event) => setSelected((current) => event.target.checked ? [...current, action] : current.filter((item) => item !== action))} />

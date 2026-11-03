@@ -1,6 +1,7 @@
+import { useRecordSearch } from "../../hooks/useRecordSearch";
 import { useClientSearch } from "../../hooks/useClientSearch";
 import { ErrorState } from "../ui/StateViews";
-import { CalendarCheck, Inbox, KanbanSquare, ListChecks, MessageCircle, Search, User, X } from "lucide-react";
+import { CalendarCheck, ListChecks, MessageCircle, Search, User, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router";
 
@@ -9,7 +10,7 @@ import { cn } from "../../lib/cn";
 import { useEntityData } from "../../hooks/useEntityData";
 import { useI18n } from "../../lib/i18n";
 import { Button } from "../ui/Button";
-import type { Appointment, BotConversation, Client, Deal, Lead, Service, Task } from "../../types";
+import type { Appointment, BotConversation, Client, Service, Task } from "../../types";
 
 type SearchItem = {
   id: string;
@@ -23,17 +24,15 @@ type SearchItem = {
 
 type SearchScope = "page" | "global";
 type SearchContext = {
-  id: "clients" | "leads" | "deals" | "conversations" | "calendar" | "tasks" | "integrations" | "timeline" | "default";
+  id: "clients" | "conversations" | "calendar" | "tasks" | "integrations" | "timeline" | "default";
   types: string[];
   placeholderKey: string;
 };
 
 const contextByPath: Array<{ match: (path: string) => boolean; context: SearchContext }> = [
   { match: (path) => path.includes("/app/clients"), context: { id: "clients", types: ["client"], placeholderKey: "search.placeholder.clients" } },
-  { match: (path) => path.includes("/app/leads"), context: { id: "leads", types: ["lead"], placeholderKey: "search.placeholder.leads" } },
-  { match: (path) => path.includes("/app/deals"), context: { id: "deals", types: ["deal"], placeholderKey: "search.placeholder.deals" } },
   { match: (path) => path.includes("/app/conversations"), context: { id: "conversations", types: ["conversation"], placeholderKey: "search.placeholder.conversations" } },
-  { match: (path) => path.includes("/app/calendar"), context: { id: "calendar", types: ["appointment"], placeholderKey: "search.placeholder.calendar" } },
+  { match: (path) => (path.includes("/app/calendar") || path.includes("/app/appointments")), context: { id: "calendar", types: ["appointment"], placeholderKey: "search.placeholder.calendar" } },
   { match: (path) => path.includes("/app/tasks"), context: { id: "tasks", types: ["task"], placeholderKey: "search.placeholder.tasks" } },
   { match: (path) => path.includes("/app/integrations"), context: { id: "integrations", types: [], placeholderKey: "search.placeholder.integrations" } },
   { match: (path) => path.includes("/app/timeline"), context: { id: "timeline", types: [], placeholderKey: "search.placeholder.timeline" } },
@@ -53,7 +52,7 @@ function setSearchParam(searchParams: URLSearchParams, setSearchParams: ReturnTy
 }
 
 export function GlobalSearch() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -65,16 +64,19 @@ export function GlobalSearch() {
   const activeContext = useMemo(() => getSearchContext(location.pathname), [location.pathname]);
   const rendersPageSearchInline = scope === "page" && activeContext.id === "tasks";
   const shouldLoadSearchData = open || mobileExpanded;
-  const { leads, appointments, services, deals, tasks, botConversations } = useEntityData({
+  const { services, tasks, botConversations } = useEntityData({
     enabled: shouldLoadSearchData,
     clients: false,
-    leads: true,
-    appointments: true,
+    leads: false,
+    appointments: false,
     services: true,
-    deals: true,
+    deals: false,
     tasks: true,
     botConversations: true,
   });
+
+  const recordSearchEnabled = shouldLoadSearchData && (scope === "global" || activeContext.id === "calendar" || activeContext.id === "default");
+  const recordSearch = useRecordSearch(query, recordSearchEnabled);
 
   const clientSearchEnabled = shouldLoadSearchData && (scope === "global" || activeContext.id === "clients" || activeContext.id === "default");
   const clientSearch = useClientSearch(query, clientSearchEnabled);
@@ -96,32 +98,14 @@ export function GlobalSearch() {
         icon: User,
         haystack: [client.full_name, client.phone, client.email, client.notes, client.source].join(" "),
       })),
-      ...((leads.data || []) as Lead[]).map((lead) => ({
-        id: `lead-${lead.id}`,
-        title: clientName(lead.client) || `Lead #${lead.id}`,
-        subtitle: [serviceName(lead.service), lead.status, lead.source, lead.message].filter(Boolean).join(" · "),
-        type: "lead",
-        to: `/app/leads/${lead.id}`,
-        icon: Inbox,
-        haystack: [clientName(lead.client), serviceName(lead.service), lead.status, lead.source, lead.message].join(" "),
-      })),
-      ...((appointments.data || []) as Appointment[]).map((appointment) => ({
+      ...(recordSearch.records as Appointment[]).map((appointment) => ({
         id: `appointment-${appointment.id}`,
-        title: clientName(appointment.client) || `Appointment #${appointment.id}`,
-        subtitle: [serviceName(appointment.service), appointment.status, formatDateTime(appointment.start_at), appointment.notes].filter(Boolean).join(" · "),
+        title: appointment.client_name || t("records.fallback", { id: appointment.id }),
+        subtitle: [appointment.service_name || serviceName(appointment.service), ["created", "confirmed", "rescheduled"].includes(appointment.status) ? t("records.planned") : t(`status.${appointment.status}`), appointment.status === "confirmed" ? t("status.confirmed") : null, formatDateTime(appointment.start_at, undefined, true, language), appointment.notes].filter(Boolean).join(" · "),
         type: "appointment",
-        to: `/app/calendar?appointment=${appointment.id}`,
+        to: `/app/appointments/${appointment.id}`,
         icon: CalendarCheck,
         haystack: [clientName(appointment.client), serviceName(appointment.service), appointment.status, appointment.source, appointment.notes, appointment.start_at].join(" "),
-      })),
-      ...((deals.data || []) as Deal[]).map((deal) => ({
-        id: `deal-${deal.id}`,
-        title: deal.title,
-        subtitle: [clientName(deal.client), deal.status, `${deal.amount} ${deal.currency}`].filter(Boolean).join(" · "),
-        type: "deal",
-        to: `/app/deals/${deal.id}`,
-        icon: KanbanSquare,
-        haystack: [deal.title, clientName(deal.client), deal.status, deal.source, deal.notes, deal.amount].join(" "),
       })),
       ...((botConversations.data || []) as BotConversation[]).map((conversation) => ({
         id: `conversation-${conversation.id}`,
@@ -142,13 +126,13 @@ export function GlobalSearch() {
         haystack: [task.title, task.description, clientName(task.client), task.status, task.priority].join(" "),
       })),
     ];
-  }, [appointments.data, botConversations.data, clients.data, deals.data, leads.data, services.data, tasks.data]);
+  }, [recordSearch.records, botConversations.data, clients.data, services.data, tasks.data, t, language]);
 
   const results = useMemo(() => {
     const value = query.trim().toLowerCase();
     const scopedItems = scope === "page" && activeContext.id !== "default" ? items.filter((item) => activeContext.types.includes(item.type)) : items;
-    const clientResults = scopedItems.filter(item => item.type === "client");
-    const otherResults = scopedItems.filter(item => item.type !== "client" && (!value || item.haystack.toLowerCase().includes(value))).slice(0, value ? 12 : 8);
+    const clientResults = scopedItems.filter(item => item.type === "client" || item.type === "appointment");
+    const otherResults = scopedItems.filter(item => item.type !== "client" && item.type !== "appointment" && (!value || item.haystack.toLowerCase().includes(value))).slice(0, value ? 12 : 8);
     return [...clientResults, ...otherResults];
   }, [activeContext.types, items, query, scope]);
 
@@ -296,10 +280,13 @@ export function GlobalSearch() {
                 </Link>
               );
             })}
+            {recordSearchEnabled && recordSearch.loading ? <p role="status" className="p-3">{t("common.loading")}</p> : null}
+            {recordSearchEnabled && recordSearch.error ? <ErrorState error={recordSearch.error} action={<Button onClick={() => void recordSearch.refetch()}>{t("common.retry")}</Button>} /> : null}
+            {recordSearchEnabled && recordSearch.hasNextPage && !recordSearch.error ? <Button className="w-full" disabled={recordSearch.loading || recordSearch.isFetchingNextPage} onClick={() => void recordSearch.fetchNextPage()}>{t("appointments.title")} · {t("common.showMore")}</Button> : null}
             {clientSearchEnabled && clientSearch.loading ? <p role="status" className="p-3">{t("common.loading")}</p> : null}
             {clientSearchEnabled && clientSearch.error ? <ErrorState error={clientSearch.error} action={<Button onClick={() => void clientSearch.refetch()}>{t("common.retry")}</Button>} /> : null}
             {clientSearchEnabled && clientSearch.hasNextPage && !clientSearch.error ? <Button className="w-full" disabled={clientSearch.loading || clientSearch.isFetchingNextPage} onClick={() => void clientSearch.fetchNextPage()}>{t("common.showMore")}</Button> : null}
-            {!results.length && !clientSearch.loading && !clientSearch.error ? <p className="px-3 py-6 text-center text-sm text-platforma-faint">{t("search.empty")}</p> : null}
+            {!results.length && !clientSearch.loading && !clientSearch.error && !recordSearch.loading && !recordSearch.error ? <p className="px-3 py-6 text-center text-sm text-platforma-faint">{t("search.empty")}</p> : null}
           </div>
         </div>
       ) : null}

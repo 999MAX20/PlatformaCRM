@@ -4,6 +4,7 @@ import type { PaginatedResponse } from "./client";
 import type { Appointment, Deal, Id, Lead, LeadDuplicateCheckResponse, LeadSummary, Note, Task } from "../types";
 
 export type LeadListParams = {
+  business?: Id;
   page?: number;
   page_size?: number;
   search?: string;

@@ -92,7 +92,13 @@ def build_analytics_workspace(business, *, user, start_date, end_date, now=None)
         completed=Count("pk", distinct=True, filter=Q(status=Appointment.Statuses.COMPLETED)),
         no_show=Count("pk", distinct=True, filter=Q(status=Appointment.Statuses.NO_SHOW)),
     ).order_by("-total", "service_id"))
-    team = _team_rows(business, user, leads, won, lost, tasks, overdue, unanswered, availability)
+    record_sources = list(appointments.order_by().values("source").annotate(
+        total=Count("pk", distinct=True),
+        completed=Count("pk", distinct=True, filter=Q(status="completed")),
+        cancelled=Count("pk", distinct=True, filter=Q(status="cancelled")),
+        no_show=Count("pk", distinct=True, filter=Q(status="no_show")),
+    ).order_by("-total", "source"))
+    team = _team_rows(business, user, leads, won, lost, tasks, overdue, unanswered, availability, appointments)
     return {
         "business": business.pk,
         "period": {"start": start_date.isoformat(), "end": end_date.isoformat(), "timezone": business.timezone},
@@ -107,13 +113,16 @@ def build_analytics_workspace(business, *, user, start_date, end_date, now=None)
                   "open_now": current_deals.count() if availability[Resources.DEALS] else None},
         "appointments": {
             "total": appointment_total if availability[Resources.APPOINTMENTS] else None,
+            "completed": appointment_counts.get("completed", 0) if availability[Resources.APPOINTMENTS] else None,
+            "completion_rate": _rate(appointment_counts.get("completed", 0), appointment_total) if availability[Resources.APPOINTMENTS] else None,
             "by_status": appointment_counts if availability[Resources.APPOINTMENTS] else None,
             "no_show_rate": _rate(appointment_counts.get(Appointment.Statuses.NO_SHOW, 0), appointment_total)
                             if availability[Resources.APPOINTMENTS] else None,
         },
-        "sources": source_rows, "services": service_rows,
+        "sources": source_rows, "services": service_rows, "record_sources": record_sources,
         "team": team,
         "current": {
+            "pending_records": scoped[Resources.APPOINTMENTS].filter(is_archived=False, status__in=("created", "confirmed", "rescheduled"), end_at__lte=now).count() if availability[Resources.APPOINTMENTS] else None,
             "new_leads": scoped[Resources.LEADS].filter(is_archived=False, status=Lead.Statuses.NEW).count()
                          if availability[Resources.LEADS] else None,
             "overdue_tasks": overdue.count() if availability[Resources.TASKS] else None,
@@ -123,10 +132,12 @@ def build_analytics_workspace(business, *, user, start_date, end_date, now=None)
     }
 
 
-def _team_rows(business, user, leads, won, lost, tasks, overdue, unanswered, availability):
+def _team_rows(business, user, leads, won, lost, tasks, overdue, unanswered, availability, appointments):
     members = _visible_performance_members(business=business, user=user).select_related("user").order_by("user__full_name", "pk")
     # Apply record scope FIRST, then the established team-report member boundary.
     maps = {
+        "appointments": (Resources.APPOINTMENTS, _by(appointments, "responsible_user_id")),
+        "completed_appointments": (Resources.APPOINTMENTS, _by(appointments.filter(status="completed"), "responsible_user_id")),
         "leads": (Resources.LEADS, _by(leads, "responsible_user_id")),
         "converted": (Resources.DEALS, _by(leads.filter(has_deal=True), "responsible_user_id")),
         "won": (Resources.DEALS, _by(won, "owner_id")),

@@ -225,7 +225,7 @@ def _appointment_actions(appointment):
         return []
     actions = ["add_note"]
     if appointment.status in [Appointment.Statuses.CREATED, Appointment.Statuses.RESCHEDULED]:
-        actions.extend(["confirm", "cancel", "reschedule"])
+        actions.extend(["confirm", "complete", "cancel", "no_show", "reschedule"])
     if appointment.status == Appointment.Statuses.CONFIRMED:
         actions.extend(["complete", "cancel", "no_show", "reschedule"])
     if appointment.status in [Appointment.Statuses.CANCELLED, Appointment.Statuses.COMPLETED, Appointment.Statuses.NO_SHOW]:
@@ -481,6 +481,14 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
     tasks = tasks.filter(pk__in=visible_tasks.values("pk"))
     conversations = readable_queryset(conversations, actor=actor, business=business, resource=Resources.CONVERSATIONS)
 
+    if primary_type == "appointment":
+        leads = leads.filter(pk=lead.pk) if lead is not None else leads.none()
+        deals = deals.filter(lead=lead) if lead is not None else deals.none()
+        appointments = appointments.filter(pk=appointment.pk)
+        tasks = tasks.filter(appointment=appointment)
+        conversations = conversations.filter(pk=appointment.source_conversation_id)
+        entity_refs = [("Appointment", appointment.pk)]
+
     related_entity_query = _related_entity_query(
         entity_refs,
         [
@@ -492,7 +500,7 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
     )
 
     timeline_filters = []
-    if client is not None:
+    if client is not None and primary_type != "appointment":
         timeline_filters.append(Q(client=client))
     timeline_filters.append(related_entity_query)
 
@@ -591,4 +599,10 @@ def deal_crm_card(deal: Deal, *, actor=None):
 
 
 def appointment_crm_card(appointment: Appointment, *, actor=None):
-    return build_crm_card_payload(business=appointment.business, actor=actor, appointment=appointment)
+    payload = build_crm_card_payload(business=appointment.business, actor=actor, appointment=appointment)
+    from apps.scheduling.plan_selectors import readable_plans
+    plan_id = readable_plans(business=appointment.business, actor=actor).filter(
+        steps__appointment=appointment).values_list("pk", flat=True).first()
+    if payload.get("appointment") is not None:
+        payload["appointment"]["visit_plan"] = plan_id
+    return payload

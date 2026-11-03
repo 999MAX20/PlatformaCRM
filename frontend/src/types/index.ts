@@ -111,6 +111,7 @@ export type DealSummary = {
 };
 
 export type Appointment = {
+  visit_plan?: Id | null;
   responsible_user?: Id | null;
   responsible_user_name?: string;
   source_conversation?: Id | null;

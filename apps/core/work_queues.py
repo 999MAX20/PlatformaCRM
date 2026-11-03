@@ -37,7 +37,7 @@ def deal_risk(deal, *, next_task=None, now=None):
     return "low", 24 if deal.status == Deal.Statuses.OPEN else 12
 
 
-def build_work_queues(*, business, user=None, limit=10, now=None):
+def build_work_queues(*, business, user=None, limit=10, now=None, workflow="legacy"):
     now = now or timezone.now()
     limit = max(1, min(int(limit or 10), 50))
 
@@ -45,6 +45,9 @@ def build_work_queues(*, business, user=None, limit=10, now=None):
         business=business,
         user=user,
     )
+    record_first = workflow == "appointments"
+    if record_first:
+        lead_scope, deal_scope = lead_scope.none(), deal_scope.none()
     overdue_tasks = overdue_tasks_queryset(queryset=task_scope, now=now)
     stale_leads = stale_leads_queryset(queryset=lead_scope, now=now)
     open_deals = deal_scope.filter(status=Deal.Statuses.OPEN).select_related("client", "stage", "owner")
@@ -52,6 +55,12 @@ def build_work_queues(*, business, user=None, limit=10, now=None):
     no_next_action_deals = no_next_action_deals_queryset(open_deals)
     upcoming_appointments = upcoming_appointments_queryset(queryset=appointment_scope, now=now)
     appointment_confirmations = appointment_confirmations_queryset(queryset=appointment_scope, now=now)
+    pending_results = appointment_scope.none()
+    if record_first:
+        planned = appointment_scope.filter(status__in=("created", "confirmed", "rescheduled"))
+        upcoming_appointments = planned.filter(start_at__gte=now, start_at__lte=now + timezone.timedelta(hours=24)).order_by("start_at", "pk")
+        appointment_confirmations = planned.exclude(status="confirmed").filter(start_at__gte=now)
+        pending_results = planned.filter(end_at__lte=now).order_by("end_at", "pk")
     unread_conversations = unread_conversations_queryset(queryset=conversation_scope)
     handoff_conversations = handoff_conversations_queryset(queryset=conversation_scope)
     unread_sla_overdue_conversations = unread_sla_overdue_conversations_queryset(queryset=conversation_scope, now=now)
@@ -126,21 +135,28 @@ def build_work_queues(*, business, user=None, limit=10, now=None):
     operational = operational_summary(
         business=business, appointment_scope=appointment_scope,
         conversation_scope=conversation_scope, open_deals=open_deals,
-        sla_deals=sla_overdue_deals, no_action_deals=no_next_action_deals, now=now,
+        sla_deals=sla_overdue_deals, no_action_deals=no_next_action_deals, now=now, record_first=record_first,
     )
     summary.update(operational["summary"])
+    if record_first:
+        summary["upcoming_appointments"] = upcoming_appointments.count()
+        summary["appointment_confirmations"] = appointment_confirmations.count()
+        summary["pending_results"] = pending_results.count()
+        queues["pending_results"] = [{**_appointment_item(item), "reason": "pending_result"} for item in pending_results[:limit]]
     summary["total_attention"] = (
         summary["overdue_tasks"]
         + summary["stale_leads"]
         + summary["attention_deals"]
         + summary["appointment_confirmations"]
         + summary["waiting_conversations"]
+        + summary.get("pending_results", 0)
     )
     # Each category contributes its earliest limit rows before global ordering.
     # Duplicates across categories retain their most urgent reason.
     candidates = [
         *queues["overdue_tasks"], *queues["stale_leads"], *queues["sla_overdue_deals"],
         *queues["no_next_action_deals"], *queues["appointment_confirmations"],
+        *queues.get("pending_results", []),
         *[_conversation_item(item, reason="handoff_required" if item.handoff_required else "unread", now=now)
           for item in operational["waiting"].select_related("client").order_by("last_inbound_at", "pk")[:limit]],
     ]
@@ -151,7 +167,7 @@ def build_work_queues(*, business, user=None, limit=10, now=None):
         "day": operational["day"],
         "timezone": operational["timezone"],
         "available": {
-            resource: is_module_enabled(business, module) and (user is None or can(user, business, resource, Actions.VIEW).allowed)
+            resource: not (record_first and resource in {"leads", "deals"}) and is_module_enabled(business, module) and (user is None or can(user, business, resource, Actions.VIEW).allowed)
             for resource, module in [("tasks", "tasks"), ("leads", "leads"), ("deals", "deals"),
                                      ("appointments", "appointments"), ("conversations", "inbox")]
         },
@@ -544,7 +560,7 @@ def _appointment_item(appointment):
         "resource_name": appointment.resource.name if appointment.resource else "",
         "start_at": appointment.start_at.isoformat(),
         "end_at": appointment.end_at.isoformat(),
-        "href": f"/app/calendar?appointment={appointment.id}",
+        "href": f"/app/appointments/{appointment.id}",
     }
 
 

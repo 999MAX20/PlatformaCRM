@@ -277,7 +277,7 @@ export function AppointmentsList({
       {appointments.map((appointment) => (
         <Link
           key={appointment.id}
-          to={`/app/calendar/${appointment.id}`}
+          to={`/app/appointments/${appointment.id}`}
           className="block rounded-control border border-platforma-border bg-surface-muted px-3 py-2 transition hover:border-brand-200 hover:bg-brand-50"
         >
           <div className="flex items-start justify-between gap-3">
@@ -343,7 +343,7 @@ export function TimelineList({
 }) {
   const { t } = useI18n();
   if (!cardTimeline.length)
-    return <EmptyRelated title={t("clients.emptyHistory")} />;
+    return <EmptyRelated title={t("tasks.noHistory")} />;
   return (
     <div className="space-y-3">
       {cardTimeline.slice(0, 8).map((event) => (
@@ -358,9 +358,9 @@ export function TimelineList({
             <p className="truncate font-bold text-platforma-text">
               {formatTimelineEventText(event, t)}
             </p>
-            <p className="mt-0.5 text-xs font-semibold text-platforma-faint">
+            {event.event_type !== "visit_plan_changed" ? <p className="mt-0.5 text-xs font-semibold text-platforma-faint">
               {event.event_type}
-            </p>
+            </p> : null}
           </div>
         </div>
       ))}

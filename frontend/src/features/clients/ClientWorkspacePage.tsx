@@ -1,15 +1,16 @@
+import { useActiveBusiness } from "../../hooks/useBusiness";
+import { useAuth } from "../auth/AuthProvider";
+import { hasPermission } from "../../lib/permissions";
 import { useQuery } from "@tanstack/react-query";
 import { Phone } from "lucide-react";
 import { useMemo } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { EntityCustomFieldsPanel } from "../../components/crm/drawers/EntityCustomFieldsPanel";
 
 import { appointmentsApi } from "../../api/appointments";
 import { getApiErrorMessage } from "../../api/client";
 import { crmCardsApi } from "../../api/crmCards";
-import { dealsApi } from "../../api/deals";
 import { inboxApi } from "../../api/inbox";
-import { leadsApi } from "../../api/leads";
 import { tasksApi } from "../../api/tasks";
 import { ClientForm } from "../../components/forms/ClientForm";
 import {
@@ -39,8 +40,6 @@ import {
   ClientWorkspaceMetric,
   ClientWorkspaceSection,
   ConversationsList,
-  DealsList,
-  LeadsList,
   TasksList,
   TimelineList,
   clientWorkspaceIcons,
@@ -48,8 +47,6 @@ import {
 
 const RELATED_PAGE_SIZE = 8;
 const supportedClientActionIds = new Set([
-  "create_lead",
-  "create_deal",
   "create_appointment",
   "create_task",
 ]);
@@ -62,69 +59,51 @@ function asNumericId(value: string | undefined): number | null {
 export function ClientWorkspacePage() {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const { business } = useActiveBusiness();
+  const { user } = useAuth();
   const { id: routeId } = useParams();
   const clientId = asNumericId(routeId);
   const actions = useClientWorkspaceActions(clientId);
 
   const cardQuery = useQuery({
-    queryKey: ["crm-card", "client", clientId],
-    queryFn: () => crmCardsApi.get({ type: "client", id: clientId as number }),
-    enabled: Boolean(clientId),
-  });
-  const leadsQuery = useQuery({
-    queryKey: ["leads", "client-workspace", clientId],
-    queryFn: () =>
-      leadsApi.listPaginated({
-        client_ids: String(clientId),
-        page_size: RELATED_PAGE_SIZE,
-      }),
-    enabled: Boolean(clientId),
-  });
-  const dealsQuery = useQuery({
-    queryKey: ["deals", "client-workspace", clientId],
-    queryFn: () =>
-      dealsApi.listPaginated({
-        client_ids: String(clientId),
-        page_size: RELATED_PAGE_SIZE,
-      }),
-    enabled: Boolean(clientId),
+    queryKey: ["crm-card", "client", clientId, business?.id, user?.id],
+    queryFn: () => crmCardsApi.get({ type: "client", id: clientId as number, business: business?.id }),
+    enabled: Boolean(clientId && business),
   });
   const appointmentsQuery = useQuery({
-    queryKey: ["appointments", "client-workspace", clientId],
+    queryKey: ["appointments", "client-workspace", clientId, business?.id, user?.id],
     queryFn: () =>
       appointmentsApi.list({
+        business: business?.id,
         client_ids: String(clientId),
         page_size: RELATED_PAGE_SIZE,
       }),
-    enabled: Boolean(clientId),
+    enabled: Boolean(clientId && business && hasPermission(user, business.id, "appointments", "view")),
   });
   const tasksQuery = useQuery({
-    queryKey: ["tasks", "client-workspace", clientId],
+    queryKey: ["tasks", "client-workspace", clientId, business?.id, user?.id],
     queryFn: () =>
       tasksApi.listPage({
+        business: business?.id,
         client_ids: String(clientId),
         page_size: RELATED_PAGE_SIZE,
         status: "active",
       }),
-    enabled: Boolean(clientId),
+    enabled: Boolean(clientId && business && hasPermission(user, business.id, "tasks", "view")),
   });
   const conversationsQuery = useQuery({
-    queryKey: ["inbox-conversations", "client-workspace", clientId],
+    queryKey: ["inbox-conversations", "client-workspace", clientId, business?.id, user?.id],
     queryFn: () => inboxApi.listConversations({ client_ids: String(clientId) }),
-    enabled: Boolean(clientId),
+    enabled: Boolean(clientId && business && hasPermission(user, business.id, "conversations", "view")),
   });
 
   const pageError =
     cardQuery.error ||
-    leadsQuery.error ||
-    dealsQuery.error ||
     appointmentsQuery.error ||
     tasksQuery.error ||
     conversationsQuery.error;
   const isLoading =
     cardQuery.isLoading ||
-    leadsQuery.isLoading ||
-    dealsQuery.isLoading ||
     appointmentsQuery.isLoading ||
     tasksQuery.isLoading ||
     conversationsQuery.isLoading;
@@ -135,16 +114,12 @@ export function ClientWorkspacePage() {
       appointments: appointmentsQuery.data || card?.appointments || [],
       conversations:
         conversationsQuery.data?.results || card?.conversations || [],
-      deals: dealsQuery.data?.results || card?.deals || [],
-      leads: leadsQuery.data?.results || card?.leads || [],
       tasks: tasksQuery.data?.results || card?.tasks || [],
     }),
     [
       appointmentsQuery.data,
       card,
       conversationsQuery.data,
-      dealsQuery.data,
-      leadsQuery.data,
       tasksQuery.data,
     ],
   );
@@ -235,14 +210,6 @@ export function ClientWorkspacePage() {
 
         <EntityWorkspaceMetrics>
           <ClientWorkspaceMetric
-            label={t("clients.metricLeads")}
-            value={counts?.leads ?? related.leads.length}
-          />
-          <ClientWorkspaceMetric
-            label={t("clients.metricDeals")}
-            value={counts?.deals ?? related.deals.length}
-          />
-          <ClientWorkspaceMetric
             label={t("clients.metricBookings")}
             value={counts?.appointments ?? related.appointments.length}
           />
@@ -300,18 +267,14 @@ export function ClientWorkspacePage() {
                 <CrmActionBar
                   actions={executableActions}
                   onExecute={(action) => {
-                    if (action.id === "create_lead")
-                      navigate(`/app/leads?create=1&client=${client.id}`);
-                    if (action.id === "create_deal")
-                      navigate(`/app/deals?create=1&client=${client.id}`);
                     if (action.id === "create_appointment")
-                      navigate(`/app/calendar?create=1&client=${client.id}`);
+                      navigate(`/app/appointments?create=1&client=${client.id}`);
                     if (action.id === "create_task")
                       navigate(`/app/tasks?create=1&client=${client.id}`);
                   }}
                 />
               ) : (
-                <ActionPanel actions={card.available_action_details || []} />
+                <ActionPanel actions={executableActions} />
               )}
             </ClientWorkspaceSection>
           </EntityWorkspaceAside>
@@ -319,28 +282,18 @@ export function ClientWorkspacePage() {
           <EntityWorkspaceMain>
             {card?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={card} entity={{ type: "client", id: client.id }} /></div> : null}
             <ClientWorkspaceSection
-              title={t("nav.deals")}
-              icon={clientWorkspaceIcons.deals}
-            >
-              <DealsList deals={related.deals} />
-            </ClientWorkspaceSection>
-            <ClientWorkspaceSection
-              title={t("nav.leads")}
-              icon={clientWorkspaceIcons.leads}
-            >
-              <LeadsList leads={related.leads} />
-            </ClientWorkspaceSection>
-            <ClientWorkspaceSection
               title={t("nav.tasks")}
               icon={clientWorkspaceIcons.tasks}
             >
               <TasksList tasks={related.tasks} />
             </ClientWorkspaceSection>
             <ClientWorkspaceSection
-              title={t("nav.calendar")}
+              title={t("appointments.title")}
               icon={clientWorkspaceIcons.appointments}
             >
               <AppointmentsList appointments={related.appointments} />
+              {hasPermission(user, business?.id, "appointments", "view") ? <Link className="platforma-focus-ring inline-flex rounded py-2 text-brand-700" to={`/app/appointments?view=plans&client=${client.id}`}>{t("plans.title")}</Link> : null}
+                {counts && counts.appointments > related.appointments.length ? <Link className="platforma-focus-ring text-brand-700" to={`/app/appointments?client=${client.id}`}>{t("appointments.title")} ({counts.appointments})</Link> : null}
             </ClientWorkspaceSection>
             <ClientWorkspaceSection
               title={t("crmCard.messages")}

@@ -35,7 +35,8 @@ export function AppointmentRescheduleForm({
   const branch = useBranchBooking(businessId, appointment.branch);
   const locale = language === "en" ? "en-US" : language === "kk" ? "kk-KZ" : "ru-RU";
   const [date, setDate] = useState(dateInTimeZone(appointment.start_at, timeZone) || todayInTimeZone(timeZone));
-  const [expectedVersion] = useState(appointment.updated_at);
+  const [expectedVersion, setExpectedVersion] = useState(appointment.updated_at);
+  const [refreshing, setRefreshing] = useState(false);
   const [resource, setResource] = useState(appointment.resource ? String(appointment.resource) : "");
   const [slot, setSlot] = useState("");
   const [reason, setReason] = useState("");
@@ -134,13 +135,27 @@ export function AppointmentRescheduleForm({
       {submitError || slots.error ? (
         <ErrorState
           message={submitError || getRecoverableMessage(slots.error)}
+          action={<Button type="button" variant="secondary" isLoading={refreshing} onClick={async () => {
+            setRefreshing(true);
+            try {
+              const current = await appointmentsApi.get(appointment.id);
+              await slots.refetch({ throwOnError: true });
+              setExpectedVersion(current.updated_at);
+              setSlot("");
+              setSubmitError(null);
+            } catch (error) {
+              setSubmitError(getRecoverableMessage(error));
+            } finally {
+              setRefreshing(false);
+            }
+          }}>{t("common.refresh")}</Button>}
         />
       ) : null}
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="secondary" onClick={onCancel}>
+        <Button type="button" variant="secondary" disabled={isSubmitting} onClick={onCancel}>
           {t("common.cancel")}
         </Button>
-        <Button data-testid="appointment-reschedule-submit" type="submit" isLoading={isSubmitting} disabled={!branch.ready || !slot || !resource}>
+        <Button data-testid="appointment-reschedule-submit" type="submit" isLoading={isSubmitting} disabled={refreshing || !branch.ready || !slot || !resource}>
           {t("appointments.reschedule")}
         </Button>
       </div>

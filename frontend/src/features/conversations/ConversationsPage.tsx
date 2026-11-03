@@ -90,7 +90,6 @@ export function ConversationsPage() {
   const [inspectorOpen, setInspectorOpen] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
-  const [addLinkOpen, setAddLinkOpen] = useState(false);
   const [automationOpen, setAutomationOpen] = useState(false);
   const desktopInspector = useMediaQuery("(min-width: 1440px)");
   const desktopThread = useMediaQuery("(min-width: 1024px)");
@@ -214,7 +213,6 @@ export function ConversationsPage() {
     setMobileInspectorOpen(false);
     setCrmLinkModal(null);
     setClientLinkPreview(null);
-    setAddLinkOpen(false);
     setAutomationOpen(false);
     setPipelineReview(null);
     setTaskModalOpen(false);
@@ -657,32 +655,6 @@ export function ConversationsPage() {
 
   const {clientLinkPreview, setClientLinkPreview, clientLinkRefreshed, setClientLinkRefreshed, crmLinkModal, setCrmLinkModal, crmLinkSearch, setCrmLinkSearch, linkCandidates, linkClientMutation, linkLeadMutation, linkDealMutation, linkClientToConversation, linkLeadToConversation, linkDealToConversation} = useInboxLinking({user, selected, context, currentConversationRef, setPipelineReview, t, setNotice, invalidateInbox, notifyError});
 
-  const createLeadMutation = useMutation({
-    mutationFn: inboxApi.createLead,
-    onSuccess: async () => {
-      setAddLinkOpen(false);
-      setNotice(t("conversations.leadCreatedShort"));
-      await Promise.all([
-        invalidateInbox(),
-        queryClient.invalidateQueries({ queryKey: ["leads"] }),
-      ]);
-    },
-    onError: (error) => notifyError(error),
-  });
-
-  const createDealMutation = useMutation({
-    mutationFn: inboxApi.createDeal,
-    onSuccess: async () => {
-      setAddLinkOpen(false);
-      setNotice(t("conversations.dealCreatedShort"));
-      await Promise.all([
-        invalidateInbox(),
-        queryClient.invalidateQueries({ queryKey: ["deals"] }),
-      ]);
-    },
-    onError: (error) => notifyError(error),
-  });
-
   const createTaskMutation = useMutation({
     mutationFn: ({ timezone, ...payload }: Parameters<typeof inboxApi.createTask>[0] & { timezone: string }) =>
       inboxApi.createTask({ ...payload, due_at: taskDateISO(payload.due_at || "", timezone) }),
@@ -826,24 +798,6 @@ export function ConversationsPage() {
     window.requestAnimationFrame(() => composerRef.current?.focus());
   }
 
-  function createLinkedLead() {
-    if (!selected) return;
-    createLeadMutation.mutate({
-      conversationId: selected.id,
-      message: lastCustomerMessage?.text || undefined,
-    });
-  }
-
-  function createLinkedDeal() {
-    if (!selected) return;
-    createDealMutation.mutate({
-      conversationId: selected.id,
-      title: t("conversations.pipelineDealTitle", {
-        title: conversationTitle(selected, t),
-      }),
-    });
-  }
-
   function createLinkedTask() {
     if (!selected) return;
     taskIdempotencyRef.current = null;
@@ -918,9 +872,7 @@ export function ConversationsPage() {
   const canApplyPipeline = canRunAiPipeline && Boolean(selectedInsight);
   const pipelineAllowedActions: PipelineAction[] = (
     [
-      ["create_lead", "leads"],
       ["create_task", "tasks"],
-      ["create_deal", "deals"],
     ] as const
   )
     .filter(([, resource]) =>
@@ -1018,7 +970,7 @@ export function ConversationsPage() {
       contextTriggerRef.current?.focus();
     }
   }
-  const contextMenu: ActionMenuItem[] = (["client", "lead", "deal"] as const)
+  const contextMenu: ActionMenuItem[] = (["client"] as const)
     .filter(
       (kind) =>
         context.data?.[kind].state === "available" &&
@@ -1126,7 +1078,6 @@ export function ConversationsPage() {
         navigate(href);
       }}
       onLinkClient={() => openCrmLinkModal("client")}
-      onAddLink={() => setAddLinkOpen(true)}
     />
   );
 
@@ -1415,61 +1366,6 @@ export function ConversationsPage() {
           </Button>
         </div>
       </Dialog>
-      <Dialog
-        open={addLinkOpen}
-        onClose={() => setAddLinkOpen(false)}
-        title={t("conversations.addLink")}
-        size="sm"
-      >
-        {createLeadMutation.error || createDealMutation.error ? (
-          <ErrorState
-            error={createLeadMutation.error || createDealMutation.error}
-          />
-        ) : null}
-        <div className="space-y-3">
-          {(["lead", "deal"] as const)
-            .filter((kind) => context.data?.[kind].state === "empty")
-            .map((kind) => (
-              <div key={kind} className="flex flex-wrap gap-2">
-                {context.data?.actions[`link_${kind}`] ? (
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setAddLinkOpen(false);
-                      openCrmLinkModal(kind);
-                    }}
-                  >
-                    {t(
-                      kind === "lead"
-                        ? "conversations.linkLeadTitle"
-                        : "conversations.linkDealTitle",
-                    )}
-                  </Button>
-                ) : null}
-                {context.data?.actions[`create_${kind}`] ? (
-                  <Button
-                    variant="ghost"
-                    onClick={
-                      kind === "lead" ? createLinkedLead : createLinkedDeal
-                    }
-                    isLoading={
-                      kind === "lead"
-                        ? createLeadMutation.isPending
-                        : createDealMutation.isPending
-                    }
-                  >
-                    {t(
-                      kind === "lead"
-                        ? "conversations.createLead"
-                        : "conversations.createDeal",
-                    )}
-                  </Button>
-                ) : null}
-              </div>
-            ))}
-        </div>
-      </Dialog>
-
       {pipelineReview ? (
         <PipelineConfirmationDialog
           key={`${pipelineReview.conversationId}:${pipelineReview.previewId}`}

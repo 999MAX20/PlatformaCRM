@@ -722,7 +722,7 @@ def _entity_action_url(entity):
     if _entity_type(entity, "Deal"):
         return f"/app/deals?deal={entity.id}"
     if _entity_type(entity, "Appointment"):
-        return f"/app/calendar?appointment={entity.id}"
+        return f"/app/appointments/{entity.id}"
     if _entity_type(entity, "Task"):
         return f"/app/tasks?task={entity.id}"
     if _entity_type(entity, "BotConversation"):

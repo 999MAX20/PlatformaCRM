@@ -1,4 +1,5 @@
-﻿import { Archive, CalendarClock, CheckCircle2, ClipboardList, Mail, MessageCircle, Pencil, Phone, ShieldCheck, Tag, Tags, WalletCards } from "lucide-react";
+import { formatTimelineEventText } from "./timelineHelpers";
+import { Archive, CalendarClock, CheckCircle2, Mail, MessageCircle, Pencil, Phone, ShieldCheck, Tag, Tags } from "lucide-react";
 
 import { formatDateTime } from "../../../lib/format";
 import { useI18n } from "../../../lib/i18n";
@@ -62,7 +63,7 @@ export function ClientDrawerContent({ data, entity, actions }: { data: CrmCardPa
         <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(132px,1fr))] gap-2 border-t border-platforma-border pt-4">
           <PaymentsButton client={client} />
           {!client.is_archived && hasPermission(user, client.business, "appointments", "create") ? (
-            <Button variant="secondary" className="min-w-0 px-3" onClick={() => navigate(`/app/calendar?create=1&client=${client.id}`)}>
+            <Button variant="secondary" className="min-w-0 px-3" onClick={() => navigate(`/app/appointments?create=1&client=${client.id}`)}>
               <CalendarClock className="shrink-0" size={16} />
               <span className="truncate">{t("conversations.bookClient")}</span>
             </Button>
@@ -112,7 +113,7 @@ export function ClientDrawerContent({ data, entity, actions }: { data: CrmCardPa
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("crmCard.snapshotHistory")}</p>
             <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">
-              {latestEvent ? `${latestEvent.text || latestEvent.event_type} · ${formatDateTime(latestEvent.created_at)}` : t("crmCard.emptyTimelineText")}
+              {latestEvent ? `${latestEvent.event_type === "visit_plan_changed" ? formatTimelineEventText(latestEvent, t) : latestEvent.text || latestEvent.event_type} · ${formatDateTime(latestEvent.created_at)}` : t("crmCard.emptyTimelineText")}
             </p>
           </div>
           <div>
@@ -122,9 +123,7 @@ export function ClientDrawerContent({ data, entity, actions }: { data: CrmCardPa
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <SummaryItem icon={ClipboardList} label={t("nav.leads")} value={data.meta?.related_counts.leads ?? data.leads.length} />
-        <SummaryItem icon={WalletCards} label={t("nav.deals")} value={data.meta?.related_counts.deals ?? data.deals.length} />
+      <div className="grid gap-3 sm:grid-cols-2">
         <SummaryItem icon={CalendarClock} label={t("nav.appointments")} value={data.meta?.related_counts.appointments ?? data.appointments.length} />
         <SummaryItem icon={CheckCircle2} label={t("nav.tasks")} value={data.meta?.related_counts.tasks ?? data.tasks.length} />
       </div>
@@ -157,12 +156,7 @@ export function ClientDrawerContent({ data, entity, actions }: { data: CrmCardPa
         </div>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-3">
-        <div className={drawerSurfaceClass}>
-          <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><WalletCards size={14} /> {t("nav.deals")}</p>
-          <p className="font-bold text-platforma-ink">{data.deals[0]?.title || "-"}</p>
-          <p className="mt-1 text-sm text-platforma-muted">{data.deals[0] ? `${Number(data.deals[0].amount || 0).toLocaleString("ru-RU")} ${data.deals[0].currency}` : t("crmCard.snapshotNoTasks")}</p>
-        </div>
+      <div className="grid gap-3 lg:grid-cols-2">
         <div className={drawerSurfaceClass}>
           <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint"><CalendarClock size={14} /> {t("nav.appointments")}</p>
           <p className="font-bold text-platforma-ink">{data.appointments[0]?.service_name || data.appointments[0]?.service || "-"}</p>

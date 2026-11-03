@@ -11,7 +11,7 @@ import type { CrmCardTab, CrmDrawerEntity } from "./types";
 
 export function CrmEntityHeader({ data, entity, titleId, onClose }: { data?: CrmCardPayload; entity: CrmDrawerEntity; titleId: string; onClose: () => void }) {
   const { t } = useI18n();
-  const activeStatus = entity.type === "client" ? undefined : data?.deal?.status || data?.appointment?.status || data?.lead?.status;
+  const activeStatus = entity.type === "client" ? undefined : data?.[entity.type]?.status;
 
   return (
     <div className="sticky top-0 z-10 border-b border-platforma-border bg-surface-card/95 px-5 py-4 backdrop-blur-xl sm:px-7">

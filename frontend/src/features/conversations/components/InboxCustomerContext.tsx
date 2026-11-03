@@ -18,10 +18,9 @@ type Props = {
   onClose: () => void;
   onNavigate: (href: string) => void;
   onLinkClient: () => void;
-  onAddLink: () => void;
 };
 
-export function InboxCustomerContext({ data, loading, error, retrying, menuItems, inDrawer, onRetry, onClose, onNavigate, onLinkClient, onAddLink }: Props) {
+export function InboxCustomerContext({ data, loading, error, retrying, menuItems, inDrawer, onRetry, onClose, onNavigate, onLinkClient }: Props) {
   const { t, language } = useI18n();
   const client = data?.client.data;
   const appointments = data?.appointments;
@@ -46,7 +45,6 @@ export function InboxCustomerContext({ data, loading, error, retrying, menuItems
   function unavailable(section: string) {
     return <p className="text-xs text-platforma-muted" data-testid={`inbox-context-${section}-forbidden`}>{t(`conversations.contextDenied.${section}`)}</p>;
   }
-  const canAdd = data && (["lead", "deal"] as const).some(kind => data[kind].state === "empty" && (data.actions[`link_${kind}`] || data.actions[`create_${kind}`]));
   return <div className="flex min-h-0 flex-1 flex-col bg-surface-card" data-testid="inbox-customer-context">
     <header className="flex min-h-14 shrink-0 items-center gap-2 border-b border-platforma-border px-4">
       <h2 className="min-w-0 flex-1 text-base font-bold text-platforma-text">{t("conversations.aboutClient")}</h2>
@@ -80,7 +78,7 @@ export function InboxCustomerContext({ data, loading, error, retrying, menuItems
           </div>)}</div>
           {appointments.has_more && client ? <div className="mt-2">{entityLink(client.href, t("conversations.moreClientAppointments"))}</div> : null}
         </section> : null}
-        {data.actions.book && client ? <section className="border-t border-platforma-border py-4"><Button variant="secondary" size="sm" onClick={() => onNavigate(`/app/calendar?create=1&client=${client.id}&conversation=${data.conversation_id}`)}><CalendarPlus size={16} />{t("conversations.bookClient")}</Button></section> : null}
+        {data.actions.book && client ? <section className="border-t border-platforma-border py-4"><Button variant="secondary" size="sm" onClick={() => onNavigate(`/app/appointments?create=1&client=${client.id}&conversation=${data.conversation_id}`)}><CalendarPlus size={16} />{t("conversations.bookClient")}</Button></section> : null}
         {deal || lead || task || data.deal.state === "forbidden" || data.lead.state === "forbidden" ? <section aria-label={t("conversations.relatedWork")}>
           {deal ? <section className={sectionClass} aria-label={t("conversations.linkedDeal")}><h3 className={headingClass}><BriefcaseBusiness size={16} aria-hidden="true" />{t("conversations.linkedDeal")}</h3>
             {entityLink(deal.href, deal.title || t("conversations.dealFallback", { id: deal.id }))}
@@ -92,7 +90,6 @@ export function InboxCustomerContext({ data, loading, error, retrying, menuItems
           </section> : data.lead.state === "forbidden" ? <div className={sectionClass}>{unavailable("lead")}</div> : null}
           {task ? <section className={sectionClass} aria-label={t("conversations.nextTask")}><h3 className={headingClass}><CheckSquare size={16} aria-hidden="true" />{t("conversations.nextTask")}</h3>{entityLink(task.href, task.title)}{task.due_at ? <p className="text-xs tabular-nums text-platforma-muted">{dateLabel(task.due_at)}</p> : null}</section> : null}
         </section> : null}
-        {canAdd ? <div className="border-t border-platforma-border py-4"><Button variant="ghost" size="sm" onClick={onAddLink}><Link2 size={16} />{t("conversations.addLink")}</Button></div> : null}
       </> : null}
     </div>
   </div>;

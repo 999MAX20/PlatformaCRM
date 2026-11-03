@@ -10,12 +10,27 @@ from apps.core.csv_safety import safe_csv_cell
 
 WORKSPACE_REPORTS = {
     "workspace_overview", "workspace_sources", "workspace_services", "workspace_team", "workspace_finance",
+    "records_overview", "records_sources", "records_team",
 }
 
 
 def export_workspace_csv(business, report_key, *, user, start_date, end_date):
     data = build_analytics_workspace(business, user=user, start_date=start_date, end_date=end_date)
-    if report_key == "workspace_sources":
+    if report_key == "records_sources":
+        fields, rows = ["source", "total", "completed", "cancelled", "no_show"], data["record_sources"]
+    elif report_key == "records_team":
+        fields = ["id", "name", "role", "appointments", "completed_appointments", "open_tasks", "overdue_tasks", "unanswered"]
+        rows = data["team"]["rows"]
+    elif report_key == "records_overview":
+        fields = ["metric", "value", "basis"]
+        rows = [
+            {"metric": "appointments", "value": data["appointments"]["total"], "basis": "visit_start_in_period"},
+            {"metric": "completed", "value": data["appointments"]["completed"], "basis": "visit_start_in_period_current_status"},
+            {"metric": "completion_rate", "value": data["appointments"]["completion_rate"], "basis": "all_visits_in_period"},
+            {"metric": "no_show_rate", "value": data["appointments"]["no_show_rate"], "basis": "all_visits_in_period"},
+            *({"metric": key, "value": data["current"][key], "basis": "current"} for key in ("pending_records", "overdue_tasks", "unanswered")),
+        ]
+    elif report_key == "workspace_sources":
         fields, rows = ["source", "leads", "converted", "conversion_rate"], data["sources"]
     elif report_key == "workspace_services":
         fields, rows = ["service_id", "service__name", "total", "completed", "no_show"], data["services"]

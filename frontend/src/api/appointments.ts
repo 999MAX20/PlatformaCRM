@@ -1,6 +1,7 @@
 import { apiClient } from "./client";
+import type { PaginatedResponse } from "./client";
 import { createCrudApi } from "./crud";
-import type { Appointment, AppointmentMessageSetting, AvailableSlot, Id, Note } from "../types";
+import type { Appointment, AppointmentMessageSetting, AvailableSlot, CrmCardPayload, Id, Note } from "../types";
 
 export type AppointmentCreatePayload = Omit<
   Partial<Appointment>,
@@ -41,6 +42,18 @@ export type AppointmentListParams = {
 
 export const appointmentsApi = {
   ...createCrudApi<Appointment, AppointmentCreatePayload, AppointmentUpdatePayload>("/api/appointments/"),
+  legacyLinks: async (params: { business: number; kind: "lead" | "deal"; object_id: number; page: number }) => {
+    const { data } = await apiClient.get<PaginatedResponse<Appointment> & {
+      source: { kind: "lead" | "deal"; id: number; client: number | null; card: CrmCardPayload };
+    }>("/api/appointments/legacy-links/", { params });
+    return data;
+  },
+  workspace: async (params: Record<string, string | number | undefined>) => {
+    const { data } = await apiClient.get<PaginatedResponse<Appointment> & {
+      summary: Record<"planned" | "completed" | "cancelled" | "no_show", number>;
+    }>("/api/appointments/workspace/", { params });
+    return data;
+  },
   createRecord: async (payload: AppointmentCreatePayload, idempotencyKey: string) => {
     const { data } = await apiClient.post<Appointment | { read_restricted: true }>("/api/appointments/create-record/", payload, {
       headers: { "Idempotency-Key": idempotencyKey },
@@ -59,8 +72,8 @@ export const appointmentsApi = {
     const { data } = await apiClient.post<Appointment>(`/api/appointments/${id}/cancel/`, payload);
     return data;
   },
-  complete: async (id: Id, expected_updated_at?: string) => {
-    const { data } = await apiClient.post<Appointment>(`/api/appointments/${id}/complete/`, { expected_updated_at });
+  complete: async (id: Id, expected_updated_at?: string, reason?: string) => {
+    const { data } = await apiClient.post<Appointment>(`/api/appointments/${id}/complete/`, { expected_updated_at, reason });
     return data;
   },
   noShow: async (id: Id, payload: AppointmentStatusReasonPayload) => {

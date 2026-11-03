@@ -47,4 +47,7 @@ export const ru: Record<string, string> = {
   "botDetail.previewCreated":
     "Диалог {conversation} создан. Заявка: {lead}. Сообщение появится в разделе сообщений.",
 
+  "records.loadFailed": "Не удалось загрузить записи",
+  "records.loadFailedHint": "Список записей недоступен. Повторите загрузку.",
+  "records.invalidFilters": "Проверьте выбранные фильтры и повторите загрузку.",
 };

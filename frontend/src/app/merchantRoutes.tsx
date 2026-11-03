@@ -1,9 +1,12 @@
 import { routeMetadata, merchantRoutePermission } from "./routeMetadata";
 import { Navigate } from "react-router";
+import { RecordsPage, LegacyRecordsPage } from "./routeLoaders";
 
 import { PageLoader, UserStartRedirect, BusinessRouteRedirect } from "./routeGuards";
-import { DashboardPage, AccountPage, LeadsPage, LeadWorkspacePage, DealsPage, DealWorkspacePage, ClientsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, IntegrationsPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
+import { DashboardPage, AccountPage, ClientsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, IntegrationsPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
 export const merchantFeatureRoutes = [
+{ path: routeMetadata.appointments.segment, ...merchantRoutePermission("appointments"), element: <PageLoader><RecordsPage /></PageLoader> },
+{ path: "appointments/:id", resource: "appointments", element: <PageLoader><AppointmentWorkspacePage /></PageLoader> },
 { path: routeMetadata.support.segment, ...merchantRoutePermission("support"), element: <PageLoader><SupportListPage /></PageLoader> },
 { path: "support/:id", element: <PageLoader><SupportDetailPage /></PageLoader> },
 {
@@ -22,7 +25,7 @@ export const merchantFeatureRoutes = [
     ) },
 { path: routeMetadata.leads.segment, ...merchantRoutePermission("leads"), element: (
       <PageLoader>
-        <LeadsPage />
+        <LegacyRecordsPage kind="lead" />
       </PageLoader>
     ) },
 {
@@ -30,13 +33,13 @@ export const merchantFeatureRoutes = [
     resource: "leads",
     element: (
       <PageLoader>
-        <LeadWorkspacePage />
+        <LegacyRecordsPage kind="lead" />
       </PageLoader>
     ),
   },
 { path: routeMetadata.deals.segment, ...merchantRoutePermission("deals"), element: (
       <PageLoader>
-        <DealsPage />
+        <LegacyRecordsPage kind="deal" />
       </PageLoader>
     ) },
 {
@@ -44,7 +47,7 @@ export const merchantFeatureRoutes = [
     resource: "deals",
     element: (
       <PageLoader>
-        <DealWorkspacePage />
+        <LegacyRecordsPage kind="deal" />
       </PageLoader>
     ),
   },

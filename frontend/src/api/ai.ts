@@ -213,7 +213,7 @@ export const aiApi = {
   },
   ownerDailyBrief: async ({ business, limit = 8 }: { business: Id; limit?: number }) => {
     const { data } = await apiClient.get<AIOwnerDailyBriefResponse>("/api/ai/owner-brief/daily/", {
-      params: { business, limit },
+        params: { business, limit, workflow: "appointments" },
     });
     return data;
   },

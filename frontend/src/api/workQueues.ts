@@ -2,6 +2,7 @@ import { apiClient } from "./client";
 import type { Id } from "../types";
 
 export type WorkQueueKey =
+  | "pending_results"
   | "overdue_tasks"
   | "stale_leads"
   | "sla_overdue_deals"
@@ -126,7 +127,7 @@ export type WorkQueuesResponse = {
 };
 
 export const workQueuesApi = {
-  get: async (params: { business: Id; limit?: number }) => {
+  get: async (params: { business: Id; limit?: number; workflow?: "appointments" | "legacy" }) => {
     const { data } = await apiClient.get<WorkQueuesResponse>("/api/work-queues/", { params });
     return data;
   },

@@ -1,5 +1,14 @@
 # Задачи, напоминания и автоматизации
 
+Records workspace02.11: TaskEditor и общие карточки создают новые задачи на
+Appointment без подмены его последней Lead клиента. Full-list drilldown сохраняет
+appointment_ids в totals/list/create. Старые связи редактируемой задачи сохраняются.
+Новые automation формы default appointment_created; новые Lead/Deal triggers и
+шаблоны скрыты. Сохранённые правила/история и owner-run authority не изменены,
+перепривязки или автоматического выключения нет. Новые event links ведут к записи;
+follow-up/replay/lifecycle проверены. [Локальный evidence](../testing/evidence/records-publication-20261103.md)
+не означает live execution или publication.
+
 AUD-V01,31.10: по решению владельца конфигуратор owner-run действий должен иметь
 соответствующие права во всём Business и network grant на все филиалы. Own/team/
 branch недостаточно. Preview/save/замена состава/action CRUD/активация используют

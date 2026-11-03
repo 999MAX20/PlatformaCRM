@@ -8,6 +8,17 @@
 
 ## Назначение, источники и память
 
+Records workspace02.11, локальный первый цикл: подтверждённое создание Appointment
+использует create_record с обязательным специалистом, текущими slot/access guards
+и replay. Оно не создаёт Lead/Deal-посредник. Planner запрашивает причину раннего
+завершения; execution передаёт проверенную причину доменному сервису. Default
+suggestions не предлагают create_lead/qualify_lead как обязательный шаг визита.
+Контекст учитывает rescheduled и ожидающие результата записи; owner brief принимает
+workflow=appointments, возвращая scoped pending_records и канонические ссылки.
+Legacy tools/API сохранены для явных исторических сценариев с прежними guards.
+Approval binding/revocation и ordinary CRM fallback сохранены; live-model/D01
+целиком этим не закрыты. [Evidence](../testing/evidence/records-publication-20261103.md).
+
 Решение владельца 15.10.2026: общий шаблон и новый клиентский профиль используют
 нейтральную роль администратора бизнеса, независимо от сферы пилота. Применение
 шаблона остаётся явным действием; загрузка существующего профиля сохраняет его

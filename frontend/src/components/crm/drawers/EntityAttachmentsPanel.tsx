@@ -35,7 +35,7 @@ function attachmentTypeLabel(attachment: FileAttachment) {
   return attachment.content_type || "File";
 }
 
-export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload; entity: CrmDrawerEntity }) {
+export function EntityAttachmentsPanel({ data, entity, readOnly = false }: { data: CrmCardPayload; entity: CrmDrawerEntity; readOnly?: boolean }) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const awaitingScan = data.attachments.some((item) => !["clean", "infected"].includes(item.scan_status));
@@ -186,7 +186,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
           <p className="mt-1 text-sm font-semibold text-platforma-muted">{t("crmCard.attachmentsText")}</p>
         </div>
       </div>
-      {data.attachments.length || selectedFiles.length ? (
+      {!readOnly && (data.attachments.length || selectedFiles.length) ? (
         <div className="mb-4 flex flex-wrap justify-center gap-2">
           {data.attachments.length ? (
             <Button type="button" variant="secondary" onClick={() => setIsUploadOpen((current) => !current)}>
@@ -202,7 +202,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
           ) : null}
         </div>
       ) : null}
-      {!data.attachments.length || isUploadOpen || selectedFiles.length ? (
+      {!readOnly && (!data.attachments.length || isUploadOpen || selectedFiles.length) ? (
         <AttachmentFilePicker
           accept={attachmentAccept}
           onFiles={appendFiles}
@@ -279,7 +279,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                       <ExternalLink size={15} />
                       {t("crmCard.previewFile")}
                     </button>
-                    <button
+                    {!readOnly ? <button
                       type="button"
                       className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-platforma-text transition hover:bg-surface-hover"
                       onClick={() => {
@@ -291,7 +291,7 @@ export function EntityAttachmentsPanel({ data, entity }: { data: CrmCardPayload;
                     >
                       <FilePenLine size={15} />
                       {t("crmCard.renameFile")}
-                    </button>
+                    </button> : null}
                     <button
                       type="button"
                       disabled={attachment.scan_status !== "clean"}

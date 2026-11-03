@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, List, MessageSquare, Plus, SlidersHorizontal, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { tasksApi } from "../../api/tasks";
 import { taskWorkspaceParams, taskWorkspaceQuery } from "./taskWorkspaceQueries";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
@@ -64,12 +64,14 @@ function TaskQueue({ business, zone }: { business: Id; zone: string }) {
   }, [canCreate, inspectorBusy, openCreate, setPageHeader, t]);
   const tasks = list.data?.pages.flatMap(page => page.results) || [];
   const groups = ["overdue", "today", "later", "noDue", "done", "cancelled"];
-  const hasFilters = Boolean(search || params.get("priority") || params.get("assignee") || params.get("status") || bucket !== "active");
+  const appointmentId = Number(params.get("appointment_ids")) || undefined;
+  const hasFilters = Boolean(search || params.get("priority") || params.get("assignee") || params.get("status") || params.get("appointment_ids") || bucket !== "active");
   const reset = () => setParams({ tab: scope }, { replace: true, preventScrollReset: true });
   const close = () => { const id = selected; update("task", ""); requestAnimationFrame(() => document.getElementById(`task-row-${id}`)?.focus({ preventScroll: true })); };
   return <div data-testid="tasks-workspace-ready" className="mx-auto w-full max-w-[1760px] p-4 sm:p-6">
     <div className={`grid items-start gap-4 ${selected ? "xl:grid-cols-[minmax(0,1fr)_580px]" : "grid-cols-1"}`}>
       <main className="min-w-0 space-y-4">
+        {appointmentId ? <Link className="platforma-focus-ring inline-flex text-brand-700" to={`/app/appointments/${appointmentId}`}>{t("crmCard.appointmentNumber", { id: appointmentId })}</Link> : null}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap gap-1 rounded-control bg-surface-muted p-1" aria-label={t("tasks.title")}>{["my", "all"].map(value => <Button key={value} variant={scope === value ? "secondary" : "ghost"} className="min-h-11" aria-pressed={scope === value} onClick={() => update("tab", value)}>{t(`taskWorkspace.${value}`)}</Button>)}</div>
           {canTeam ? <div className="flex gap-1"><Button variant={view === "list" ? "secondary" : "ghost"} aria-label={t("taskWorkspace.list")} aria-pressed={view === "list"} onClick={() => update("view", "list")}><List size={17} /></Button><Button variant={view === "team" ? "secondary" : "ghost"} aria-label={t("taskWorkspace.team")} aria-pressed={view === "team"} onClick={() => update("view", "team")}><Users size={17} /></Button></div> : null}
@@ -110,6 +112,6 @@ function TaskQueue({ business, zone }: { business: Id; zone: string }) {
       </main>
       {selected ? <TaskInspector key={`${business}:${selected}`} id={selected} business={business} zone={zone} returnTo={`/app/tasks?${params}`} suspendGuard={creating} onBusyChange={setInspectorBusy} onClose={close} /> : null}
     </div>
-    {creating ? <TaskEditor business={business} zone={zone} initialClient={initialClient} onClose={() => setCreating(false)} onSaved={task => { setCreating(false); update("task", String(task.id)); void Promise.all(["tasks", "task-summary", "task-workload"].map(key => queryClient.invalidateQueries({ queryKey: [key] }))); }} /> : null}
+    {creating ? <TaskEditor business={business} zone={zone} initialClient={initialClient} initialAppointment={appointmentId} onClose={() => setCreating(false)} onSaved={task => { setCreating(false); update("task", String(task.id)); void Promise.all(["tasks", "task-summary", "task-workload"].map(key => queryClient.invalidateQueries({ queryKey: [key] }))); }} /> : null}
   </div>;
 }

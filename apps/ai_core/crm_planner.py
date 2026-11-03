@@ -26,6 +26,8 @@ PLAN_CONTRACT = (
     ' For crm_transition add action using an exact transitions value. For start/contact/close/lose/reopen/win/complete/cancel/no_show/confirm use values:{}; never put status or stage into values.'
     ' Only assign uses values:{"user_id":ID}; stage uses values:{"stage_id":ID}; reschedule uses values:{"start_at":"ISO8601","resource":ID}.'
     ' Add reason only when required or supplied; never copy schema descriptions as literal reasons or action values.'
+    ' Completing an appointment before its end time requires the employee-provided reason; ask when absent.'
+    ' A new appointment needs client, service, specialist resource and future start_at. Never create a lead or deal as a prerequisite.'
     ' For appointment dates use the supplied business timezone and current local reference including UTC offset, not a remembered historic offset.'
     ' question belongs only at the top level, never inside arguments or values.'
     ' A non-empty question and a proposed tool are mutually exclusive. Never submit empty required strings.'

@@ -49,4 +49,7 @@ export const en: Record<string, string> = {
   "botDetail.previewCreated":
     "Conversation {conversation} created. Lead: {lead}. The message will appear in Messages.",
 
+  "records.loadFailed": "Could not load records",
+  "records.loadFailedHint": "The records list is unavailable. Try loading it again.",
+  "records.invalidFilters": "Check the selected filters and try loading again.",
 };

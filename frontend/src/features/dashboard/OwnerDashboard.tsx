@@ -28,16 +28,17 @@ export function OwnerDashboard({ dashboard, metricsError, metricsLoading, retryM
     unanswered_conversations: "unansweredConversation", stalled_deals: "stalledDeal", failed_connectors: "failedConnector" };
   const financial = metricsError ? undefined : dashboard?.financial;
   const recommendations = ownerBriefError ? [] : (ownerBrief?.recommendations || []).filter((item) =>
-    item.source_ids.some((id) => ownerBrief?.sources.some((source) => source.id === id)),
+    !["stale_leads", "stalled_deals"].includes(item.category) && item.source_ids.some((id) => ownerBrief?.sources.some((source) => source.id === id)),
   ).slice(0, 3).map((item) => {
     const labels = item.source_ids.map((id) => ownerBrief?.sources.find((source) => source.id === id)?.label).filter(Boolean);
     const key = categoryKeys[item.category];
+    if (item.category === "pending_records") return { ...item, labels, label: t("records.pendingResult"), description: t("dashboard.reason.pending_result") };
     return { ...item, labels, label: key ? t(`dashboard.ownerBrief.${key}.title`, { source: labels[0] || t("dashboard.ownerBriefFallbackSource") }) : item.label,
       description: key ? t(`dashboard.ownerBrief.${key}.text`) : item.description };
   });
   const members = metricsError ? [] : (dashboard?.manager_performance?.rows || []).filter((member) =>
-    !["owner", "business_owner"].includes(member.role) && (member.assigned_leads > 0 || member.overdue_tasks > 0),
-  ).sort((a, b) => b.overdue_tasks - a.overdue_tasks || b.assigned_leads - a.assigned_leads).slice(0, 4);
+    !["owner", "business_owner"].includes(member.role) && member.overdue_tasks > 0,
+  ).sort((a, b) => b.overdue_tasks - a.overdue_tasks).slice(0, 4);
 
   return <>
     {canViewAnalytics ? <Surface as="section" padding="lg" data-testid="dashboard-finance">
@@ -69,7 +70,7 @@ export function OwnerDashboard({ dashboard, metricsError, metricsLoading, retryM
         <summary className="platforma-focus-ring cursor-pointer rounded-control text-sm font-semibold text-platforma-text">{t("dashboard.teamWorkload")}</summary>
         <ul className="mt-3 divide-y divide-platforma-border">{members.map((member) => <li key={member.user_id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
           <span className="font-medium text-platforma-text">{member.full_name || member.email}</span>
-          <span className="text-xs text-platforma-subtle">{t("analytics.assignedLeads")}: {member.assigned_leads} · {t("analytics.overdueTasks")}: {member.overdue_tasks}</span>
+          <span className="text-xs text-platforma-subtle">{t("analytics.overdueTasks")}: {member.overdue_tasks}</span>
         </li>)}</ul>
       </details>
     </Surface> : null}

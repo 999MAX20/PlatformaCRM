@@ -8,6 +8,7 @@ export function taskWorkspaceParams(business: Id, params: URLSearchParams, searc
   const base: TaskListParams = {
     business, tab: scope === "all" ? undefined : scope, search: search || undefined,
     priority: params.get("priority") || undefined, assignee: params.get("assignee") || undefined,
+    appointment_ids: params.get("appointment_ids") || undefined,
   };
   const list: TaskListParams = {
     ...base, status: bucket === "done" || bucket === "cancelled" ? bucket : params.get("status") || "active",

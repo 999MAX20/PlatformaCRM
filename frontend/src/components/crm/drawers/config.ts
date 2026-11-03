@@ -7,6 +7,6 @@ export const crmDrawerTabs: CrmDrawerTabConfig[] = [
   { id: "appointments", labelKey: "nav.appointments" },
   { id: "messages", labelKey: "crmCard.messages" },
   { id: "notes", labelKey: "crmCard.notes" },
-  { id: "deals", labelKey: "nav.deals" },
+  { id: "deals", labelKey: "records.legacyTitle" },
   { id: "files", labelKey: "crmCard.attachments" },
 ];

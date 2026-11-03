@@ -1,22 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarClock, Check, RotateCcw, X } from "lucide-react";
 import type { ReactNode } from "react";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useRef, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { EntityCustomFieldsPanel } from "../../components/crm/drawers/EntityCustomFieldsPanel";
+import { EntityAttachmentsPanel } from "../../components/crm/drawers/EntityAttachmentsPanel";
 
 import {
   appointmentsApi,
   type AppointmentReschedulePayload,
 } from "../../api/appointments";
-import { getApiErrorMessage } from "../../api/client";
 import { crmCardsApi } from "../../api/crmCards";
-import { branchesApi } from "../../api/branches";
+import { normalizeAppError } from "../../api/appError";
 import { useActionConfirm } from "../../components/actions/ActionConfirmProvider";
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import {
   EntityWorkspaceEmptyState,
-  EntityWorkspaceErrorState,
   EntityWorkspaceAside,
   EntityWorkspaceAvatar,
   EntityWorkspaceBody,
@@ -27,8 +26,11 @@ import {
   EntityWorkspaceRoot,
 } from "../../components/crm";
 import { AppointmentRescheduleForm } from "../../components/forms/AppointmentRescheduleForm";
+import { formatTimelineEventText } from "../../components/crm/drawers/timelineHelpers";
 import { Button } from "../../components/ui/Button";
 import { StatusBadge } from "../../components/ui/StatusBadge";
+import { Badge } from "../../components/ui/Badge";
+import { ErrorState } from "../../components/ui/StateViews";
 import { Modal } from "../../components/ui/Modal";
 import { formatDateTime } from "../../lib/format";
 import { refreshAppointmentQueries } from "../../lib/appointmentCache";
@@ -37,7 +39,9 @@ import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useEntityData } from "../../hooks/useEntityData";
 import type { ActivityEvent, Appointment, Task } from "../../types";
 import { useAuth } from "../auth/AuthProvider";
-import { canAccessAppointmentAction } from "./appointmentAccess";
+import { recordReturnPath } from "./recordFilters";
+import { hasPermission } from "../../lib/permissions";
+import { TaskEditor } from "../tasks/components/TaskEditor";
 
 function asNumericId(value: string | undefined): number | null {
   const id = Number(value);
@@ -46,31 +50,33 @@ function asNumericId(value: string | undefined): number | null {
 
 function getAllowedStatusActions(appointment: Appointment) {
   if (appointment.status === "created" || appointment.status === "rescheduled")
-    return ["confirmed", "cancelled"] as Appointment["status"][];
+    return ["confirmed", "completed", "cancelled", "no_show"] as Appointment["status"][];
   if (appointment.status === "confirmed")
     return ["completed", "cancelled", "no_show"] as Appointment["status"][];
   return [] as Appointment["status"][];
 }
 
 export function AppointmentWorkspacePage() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const navigate = useNavigate();
+  const location = useLocation();
   const confirmAction = useActionConfirm();
   const { notifyError, notifySuccess } = useActionFeedback();
   const queryClient = useQueryClient();
   const { business } = useActiveBusiness();
   const { user } = useAuth();
   const { resources } = useEntityData({ resources: true });
-  const branches = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
   const { id: routeId } = useParams();
   const appointmentId = asNumericId(routeId);
+  const reschedulePending = useRef(false);
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [taskOpen, setTaskOpen] = useState(false);
 
   const cardQuery = useQuery({
-    queryKey: ["crm-card", "appointment", appointmentId],
+    queryKey: ["crm-card", "appointment", appointmentId, business?.id, user?.id],
     queryFn: () =>
-      crmCardsApi.get({ type: "appointment", id: appointmentId as number }),
-    enabled: Boolean(appointmentId),
+      crmCardsApi.get({ type: "appointment", id: appointmentId as number, business: business?.id }),
+    enabled: Boolean(appointmentId && business),
   });
 
   const appointment = cardQuery.data?.appointment || null;
@@ -78,15 +84,9 @@ export function AppointmentWorkspacePage() {
   const lead = cardQuery.data?.lead || null;
   const tasks = cardQuery.data?.tasks || [];
   const timeline = cardQuery.data?.timeline || [];
-  const canUpdateAppointment = appointment
-    ? canAccessAppointmentAction({
-        appointment,
-        branches: branches.data,
-        resources: resources.data || [],
-        user,
-        businessId: business?.id,
-      })
-    : false;
+  const canUpdateAppointment = !!appointment && !appointment.is_archived &&
+    cardQuery.data?.available_action_details?.some(action =>
+      action.resource === "appointments" && action.action === "update" && action.allowed) === true;
   const statusActions =
     appointment && canUpdateAppointment
       ? getAllowedStatusActions(appointment)
@@ -111,7 +111,7 @@ export function AppointmentWorkspacePage() {
       if (status === "cancelled")
         return appointmentsApi.cancel(appointmentId, { reason: reason || "", expected_updated_at });
       if (status === "completed")
-        return appointmentsApi.complete(appointmentId, expected_updated_at);
+        return appointmentsApi.complete(appointmentId, expected_updated_at, reason);
       if (status === "no_show")
         return appointmentsApi.noShow(appointmentId, { reason: reason || "", expected_updated_at });
       return appointmentsApi.get(appointmentId);
@@ -130,8 +130,10 @@ export function AppointmentWorkspacePage() {
   >({
     mutationFn: (payload) => {
       if (!appointmentId) throw new Error(t("appointments.title"));
+      reschedulePending.current = true;
       return appointmentsApi.reschedule({ id: appointmentId, payload });
     },
+    onSettled: () => { reschedulePending.current = false; },
     onSuccess: async (updated) => {
       setRescheduleOpen(false);
       notifySuccess(t("appointments.rescheduledNotice"));
@@ -140,7 +142,7 @@ export function AppointmentWorkspacePage() {
     onError: (error) =>
       notifyError(error, {
         actionLabel: t("common.refresh"),
-        retry: () => { setRescheduleOpen(false); return invalidateAppointment(); },
+        retry: () => invalidateAppointment(),
       }),
   });
 
@@ -148,13 +150,13 @@ export function AppointmentWorkspacePage() {
     const expected_updated_at = appointment?.updated_at;
     if (!expected_updated_at) return;
     const result = await confirmAction({
-      title: t("appointments.statusReasonTitle"),
-      description: t("appointments.statusReasonPlaceholder"),
+      title: t(status === "completed" ? "records.earlyCompletion" : "appointments.statusReasonTitle"),
+      description: t(status === "completed" ? "records.earlyCompletionReason" : "appointments.statusReasonPlaceholder"),
       confirmLabel: getAppointmentActionLabel(status, t),
       tone: "warning",
       reason: {
         label: t("appointments.statusReason"),
-        placeholder: t("appointments.statusReasonPlaceholder"),
+        placeholder: t(status === "completed" ? "records.earlyCompletionReason" : "appointments.statusReasonPlaceholder"),
         required: true,
         minLength: 3,
       },
@@ -164,13 +166,15 @@ export function AppointmentWorkspacePage() {
   }
 
   if (!appointmentId)
-    return <EntityWorkspaceErrorState message={t("appointments.title")} />;
+    return <EntityWorkspaceEmptyState title={t("records.legacyUnavailable")} />;
   if (cardQuery.isLoading || resources.isLoading)
     return <EntityWorkspaceLoadingState />;
   const pageError = cardQuery.error || resources.error;
+  if (pageError && normalizeAppError(pageError).status === 404)
+    return <EntityWorkspaceEmptyState title={t("actions.errorUnavailable")} />;
   if (pageError)
     return (
-      <EntityWorkspaceErrorState message={getApiErrorMessage(pageError)} />
+      <EntityWorkspaceRoot><ErrorState error={pageError} action={<Button variant="secondary" onClick={() => { void cardQuery.refetch(); void resources.refetch(); }}>{t("common.retry")}</Button>} /></EntityWorkspaceRoot>
     );
   if (!appointment) {
     return (
@@ -183,9 +187,10 @@ export function AppointmentWorkspacePage() {
 
   const title =
     client?.full_name || appointment.client_name || t("common.client");
+  const isPlanned = ["created", "confirmed", "rescheduled"].includes(appointment.status);
   const subtitle = [
     appointment.service_name || t("common.service"),
-    formatDateTime(appointment.start_at),
+    formatDateTime(appointment.start_at, business?.timezone, true, language),
     appointment.resource_name || t("appointment.noResource"),
   ]
     .filter(Boolean)
@@ -196,7 +201,7 @@ export function AppointmentWorkspacePage() {
       <EntityWorkspaceRoot>
         <EntityWorkspaceHeader
           backLabel={t("common.back")}
-          onBack={() => navigate("/app/calendar")}
+          onBack={() => navigate(recordReturnPath(location.state?.recordReturnTo))}
           avatar={
             <EntityWorkspaceAvatar>
               {title.slice(0, 2).toUpperCase()}
@@ -204,7 +209,7 @@ export function AppointmentWorkspacePage() {
           }
           title={title}
           subtitle={subtitle}
-          status={appointment.status}
+          status={isPlanned ? undefined : appointment.status}
           actions={
             <>
               {client ? (
@@ -232,10 +237,10 @@ export function AppointmentWorkspacePage() {
         <EntityWorkspaceMetrics>
           <AppointmentMetric
             label={t("tasks.status")}
-            value={t(`status.${appointment.status}`)}
+            value={isPlanned ? t("records.planned") : t(`status.${appointment.status}`)}
           />
           <AppointmentMetric
-            label={t("common.service")}
+            label={t("records.service")}
             value={appointment.service_name || t("common.service")}
           />
           <AppointmentMetric
@@ -244,24 +249,24 @@ export function AppointmentWorkspacePage() {
           />
           <AppointmentMetric
             label={t("tasks.dueAt")}
-            value={formatDateTime(appointment.start_at)}
+            value={formatDateTime(appointment.start_at, business?.timezone, true, language)}
           />
-          <AppointmentMetric label={t("nav.tasks")} value={tasks.length} />
+          <AppointmentMetric label={t("nav.tasks")} value={cardQuery.data?.meta?.related_counts.tasks ?? tasks.length} />
         </EntityWorkspaceMetrics>
 
         <EntityWorkspaceBody>
           <EntityWorkspaceAside>
             <AppointmentSection title={t("calendar.visit")}>
               <div className="flex flex-wrap gap-2">
-                <StatusBadge status={appointment.status} />
-                <StatusBadge status={appointment.source} />
+                {isPlanned ? <Badge variant="info">{t("records.planned")}</Badge> : <StatusBadge status={appointment.status} />}
+                {appointment.status === "confirmed" ? <StatusBadge status="confirmed" /> : null}
               </div>
               <div className="mt-3 space-y-2 text-sm font-semibold text-platforma-subtle">
                 {appointment.responsible_user_name && <MetaRow label={t("appointment.responsible")} value={appointment.responsible_user_name} />}
                 {appointment.branch_name && <MetaRow label={t("branches.branch")} value={`${appointment.branch_name} · ${appointment.branch_address}`} />}
                 <MetaRow
                   label={t("tasks.dueAt")}
-                  value={formatDateTime(appointment.start_at)}
+                  value={formatDateTime(appointment.start_at, business?.timezone, true, language)}
                 />
                 <MetaRow
                   label={t("appointment.source")}
@@ -291,7 +296,7 @@ export function AppointmentWorkspacePage() {
                     }
                     isLoading={statusMutation.isPending}
                     onClick={() => {
-                      if (status === "cancelled" || status === "no_show")
+                      if (status === "cancelled" || status === "no_show" || (status === "completed" && Date.now() < new Date(appointment.end_at).getTime()))
                         void requestReasonAction(status);
                       else statusMutation.mutate({ status, expected_updated_at: appointment.updated_at });
                     }}
@@ -310,6 +315,10 @@ export function AppointmentWorkspacePage() {
                     <RotateCcw size={16} /> {t("appointments.reschedule")}
                   </Button>
                 ) : null}
+                {appointment.visit_plan ? <Button variant="secondary" onClick={() => navigate(`/app/appointments?view=plans&plan=${appointment.visit_plan}`)}>{t("plans.plan")}</Button> : null}
+                {hasPermission(user, business?.id, "appointments", "create") && client ? <Button variant="secondary" onClick={() => navigate(`/app/appointments?create=1&client=${client.id}&service=${appointment.service || ""}&resource=${appointment.resource || ""}&branch=${appointment.branch || ""}`)}>{t("appointments.repeatBooking")}</Button> : null}
+                {hasPermission(user, business?.id, "tasks", "create") ? <Button variant="secondary" onClick={() => setTaskOpen(true)}>{t("taskWorkspace.create")}</Button> : null}
+                <Button variant="secondary" onClick={() => navigate(`/app/calendar?appointment=${appointment.id}`)}>{t("nav.calendar")}</Button>
               </div>
             </AppointmentSection>
           </EntityWorkspaceAside>
@@ -330,6 +339,7 @@ export function AppointmentWorkspacePage() {
                     {t("crmCard.leadNumber", { id: lead.id })}
                   </EntityLink>
                 ) : null}
+                {appointment.source_conversation ? <EntityLink onClick={() => navigate(`/app/conversations/${appointment.source_conversation}`)}>{t("nav.conversations")}</EntityLink> : null}
                 {!client && !lead ? (
                   <p className="text-sm font-semibold text-platforma-subtle">
                     {t("tasks.noLinkedEntities")}
@@ -347,9 +357,10 @@ export function AppointmentWorkspacePage() {
                     onOpen={() => navigate(`/app/tasks/${task.id}`)}
                   />
                 ))}
+                {cardQuery.data?.meta?.has_more.tasks ? <Link className="platforma-focus-ring text-brand-700" to={`/app/tasks?tab=all&appointment_ids=${appointment.id}`}>{t("nav.tasks")}</Link> : null}
                 {!tasks.length ? (
                   <p className="text-sm font-semibold text-platforma-subtle">
-                    {t("tasks.emptyText")}
+                    {t("taskWorkspace.empty")}
                   </p>
                 ) : null}
               </div>
@@ -360,9 +371,10 @@ export function AppointmentWorkspacePage() {
               className="lg:col-span-2"
             >
               <div className="space-y-2">
-                {timeline.slice(0, 16).map((event) => (
+                {timeline.map((event) => (
                   <ActivityRow key={event.id} event={event} />
                 ))}
+                {cardQuery.data?.meta?.has_more.timeline ? <Link className="platforma-focus-ring text-brand-700" to={`/app/timeline?entity_type=Appointment&entity_id=${appointment.id}`}>{t("nav.timeline")}</Link> : null}
                 {!timeline.length ? (
                   <p className="text-sm font-semibold text-platforma-subtle">
                     {t("tasks.noHistory")}
@@ -370,6 +382,7 @@ export function AppointmentWorkspacePage() {
                 ) : null}
               </div>
             </AppointmentSection>
+            {cardQuery.data ? <EntityAttachmentsPanel data={cardQuery.data} entity={{ type: "appointment", id: appointment.id }} readOnly={!canUpdateAppointment} /> : null}
           </EntityWorkspaceMain>
         </EntityWorkspaceBody>
       </EntityWorkspaceRoot>
@@ -377,18 +390,19 @@ export function AppointmentWorkspacePage() {
       <Modal
         title={t("appointments.rescheduleTitle")}
         open={rescheduleOpen}
-        onClose={() => setRescheduleOpen(false)}
+        onClose={() => { if (!reschedulePending.current) setRescheduleOpen(false); }}
       >
         <AppointmentRescheduleForm
           appointment={appointment}
           businessId={appointment.business}
           resources={resources.data || []}
-          onCancel={() => setRescheduleOpen(false)}
+          onCancel={() => { if (!reschedulePending.current) setRescheduleOpen(false); }}
           onSubmit={(payload) => rescheduleMutation.mutateAsync(payload)}
           isSubmitting={rescheduleMutation.isPending}
           timeZone={business?.timezone || "Asia/Almaty"}
         />
       </Modal>
+      {taskOpen ? <TaskEditor business={appointment.business} zone={business?.timezone || "UTC"} initialClient={client?.id} initialAppointment={appointment.id} onClose={() => setTaskOpen(false)} onSaved={async () => { setTaskOpen(false); await invalidateAppointment(); }} /> : null}
     </>
   );
 }
@@ -473,7 +487,7 @@ function EntityLink({
 }
 
 function TaskRow({ task, onOpen }: { task: Task; onOpen: () => void }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   return (
     <button
       type="button"
@@ -486,7 +500,7 @@ function TaskRow({ task, onOpen }: { task: Task; onOpen: () => void }) {
             {task.title}
           </p>
           <p className="mt-1 text-xs font-semibold text-platforma-muted">
-            {task.due_at ? formatDateTime(task.due_at) : t("tasks.groupNoDue")}
+            {task.due_at ? formatDateTime(task.due_at, undefined, false, language) : t("tasks.groupNoDue")}
           </p>
         </div>
         <StatusBadge status={task.status} />
@@ -496,6 +510,14 @@ function TaskRow({ task, onOpen }: { task: Task; onOpen: () => void }) {
 }
 
 function ActivityRow({ event }: { event: ActivityEvent }) {
+  const { t, language } = useI18n();
+  const labels: Record<string, string> = {
+    appointment_confirmed: "status.confirmed", appointment_completed: "records.completed",
+    appointment_cancelled: "records.cancelled", appointment_no_show: "records.no_show",
+    appointment_rescheduled: "appointments.rescheduledNotice",
+  };
+  const previousTime = event.metadata?.previous_start_at;
+  const currentTime = event.metadata?.start_at;
   return (
     <div className="flex gap-3 rounded-card bg-surface-subtle p-3">
       <span className="grid h-8 w-8 shrink-0 place-items-center rounded-control bg-platforma-card text-brand-600">
@@ -503,10 +525,12 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
       </span>
       <div className="min-w-0">
         <p className="text-sm font-semibold text-platforma-text">
-          {event.text || event.event_type}
+          {labels[event.event_type] ? t(labels[event.event_type]) : formatTimelineEventText(event, t)}
         </p>
+        {typeof previousTime === "string" && typeof currentTime === "string" ? <p className="mt-1 text-sm text-platforma-subtle">{formatDateTime(previousTime, undefined, false, language)} → {formatDateTime(currentTime, undefined, false, language)}</p> : null}
+        {typeof event.metadata?.reason === "string" && event.metadata.reason ? <p className="mt-1 whitespace-pre-wrap break-words text-sm text-platforma-subtle">{t("crmCard.timelineFieldReason")}: {event.metadata.reason}</p> : null}
         <p className="mt-1 text-xs font-semibold text-platforma-muted">
-          {formatDateTime(event.created_at)}
+          {formatDateTime(event.created_at, undefined, false, language)}
         </p>
       </div>
     </div>

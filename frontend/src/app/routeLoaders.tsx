@@ -1,4 +1,6 @@
 import { lazy } from "react";
+export const LegacyRecordsPage = lazy(() => import("../features/calendar/LegacyRecordsPage").then(module => ({ default: module.LegacyRecordsPage })));
+export const RecordsPage = lazy(() => import("../features/calendar/RecordsPage").then(module => ({ default: module.RecordsPage })));
 export const AppLayout = lazy(() =>
   import("../components/layout/AppLayout").then((module) => ({
     default: module.AppLayout,

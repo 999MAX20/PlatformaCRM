@@ -1,3 +1,5 @@
+import { useRecordSearch } from "../../hooks/useRecordSearch";
+import { formatDateTime } from "../../lib/format";
 import { useClientSearch } from "../../hooks/useClientSearch";
 import { ErrorState } from "../ui/StateViews";
 import { Button } from "../ui/Button";
@@ -44,21 +46,21 @@ function commandScore(source: string, query: string) {
 }
 
 export function CommandPalette({ onClose }: { onClose: () => void }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const { user } = useAuth();
   const { business } = useActiveBusiness();
   const businessId = business?.id;
   const canViewClients = hasPermission(user, businessId, "clients");
-  const canViewLeads = hasPermission(user, businessId, "leads");
   const canViewServices = hasPermission(user, businessId, "settings");
-  const { leads, services } = useEntityData({
+  const { services } = useEntityData({
     clients: false,
-    leads: canViewLeads,
+    leads: false,
     services: canViewServices,
   });
 
+  const recordSearch = useRecordSearch(query);
   const clientSearch = useClientSearch(query);
   const clients = { data: clientSearch.clients };
 
@@ -73,28 +75,23 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
 
   const commands = useMemo(() => {
     const staticCommands: CommandDefinition[] = [
-      { id: "create-lead", label: t("command.createLead"), hint: t("nav.leads"), to: "/app/leads?create=1", icon: Plus, priority: 20, resource: "leads", action: "create" },
-      { id: "open-leads", label: t("command.openLeads"), hint: t("nav.leads"), to: "/app/leads", icon: Search, priority: 10, resource: "leads" },
+      { id: "create-record", label: t("appointments.create"), hint: t("appointments.title"), to: "/app/appointments?create=1", icon: Plus, priority: 20, resource: "appointments", action: "create" },
+      { id: "open-records", label: t("appointments.title"), hint: t("records.pipeline"), to: "/app/appointments", icon: Search, priority: 10, resource: "appointments" },
       { id: "open-clients", label: t("command.openClients"), hint: t("nav.clients"), to: "/app/clients", icon: Search, priority: 10, resource: "clients" },
-      { id: "open-deals", label: t("command.openDeals"), hint: t("nav.deals"), to: "/app/deals", icon: Search, priority: 10, resource: "deals" },
       { id: "open-messages", label: t("command.openMessages"), hint: t("nav.conversations"), to: "/app/conversations", icon: Search, priority: 10, resource: "conversations" },
       { id: "open-settings", label: t("command.openSettings"), hint: t("nav.settings"), to: "/app/settings", icon: Settings, priority: 10, resource: "settings", action: "update" },
       { id: "open-ai-agents", label: t("command.openAiAgents"), hint: t("nav.aiAgents"), to: "/app/ai-agents", icon: Search, priority: 10, resource: "ai_automation" },
     ].filter((command) => command.id === "open-ai-agents"
       ? ["ai_automation", "ai_assistant", "ai_analyst"].some(resource => hasPermission(user, businessId, resource, "view"))
       : !command.resource || hasPermission(user, businessId, command.resource, command.action));
-    const leadCommands = (canViewLeads ? leads.data || [] : []).map((lead) => {
-      const client = (clients.data || []).find((item) => item.id === lead.client);
-      const service = (services.data || []).find((item) => item.id === lead.service);
-      return {
-        id: `lead-${lead.id}`,
-        label: client?.full_name || t("leads.leadFallback", { id: lead.id }),
-        hint: [t("command.typeLead"), client?.phone, service?.name].filter(Boolean).join(" · "),
-        to: `/app/leads/${lead.id}`,
-        icon: Search,
-        priority: 5,
-      };
-    });
+    const recordCommands = recordSearch.records.map(record => ({
+      id: `record-${record.id}`,
+      label: record.client_name || t("records.fallback", { id: record.id }),
+      hint: [record.service_name, formatDateTime(record.start_at, business?.timezone, true, language)].filter(Boolean).join(" · "),
+      to: `/app/appointments/${record.id}`,
+      icon: Search,
+      priority: 5,
+    }));
     const clientCommands = (canViewClients ? clients.data || [] : []).map((client) => ({
       id: `client-${client.id}`,
       label: client.full_name,
@@ -111,15 +108,15 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       icon: Search,
       priority: 2,
     }));
-    return [...staticCommands, ...leadCommands, ...clientCommands, ...serviceCommands];
-  }, [businessId, canViewClients, canViewLeads, canViewServices, clients.data, leads.data, services.data, t, user]);
+    return [...staticCommands, ...recordCommands, ...clientCommands, ...serviceCommands];
+  }, [businessId, canViewClients, canViewServices, clients.data, recordSearch.records, business?.timezone, language, services.data, t, user]);
   const ranked = commands
-    .map((command) => ({ command, score: (command.id.startsWith("client-") ? (query.trim() ? 800 : 1) : commandScore(`${command.label} ${command.hint}`, query)) + command.priority }))
+    .map((command) => ({ command, score: ((command.id.startsWith("client-") || command.id.startsWith("record-")) ? (query.trim() ? 800 : 1) : commandScore(`${command.label} ${command.hint}`, query)) + command.priority }))
     .filter((item) => !query.trim() || item.score > item.command.priority)
     .sort((a, b) => b.score - a.score)
     .map((item) => item.command);
-  const otherCommands = new Set(ranked.filter(item => !item.id.startsWith("client-")).slice(0, 10));
-  const filtered = ranked.filter(item => item.id.startsWith("client-") || otherCommands.has(item));
+  const otherCommands = new Set(ranked.filter(item => !item.id.startsWith("client-") && !item.id.startsWith("record-")).slice(0, 10));
+  const filtered = ranked.filter(item => item.id.startsWith("client-") || item.id.startsWith("record-") || otherCommands.has(item));
 
   return (
     <div className="fixed inset-0 z-[80] bg-platforma-ink/[0.35] p-4 backdrop-blur-xs" onClick={onClose}>
@@ -162,9 +159,12 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                 <span className="shrink-0 rounded-control bg-surface-muted px-2 py-1 text-[11px] font-semibold text-platforma-faint">Cmd K</span>
               </button>
             );
-          }) : !clientSearch.loading && !clientSearch.error ? (
+          }) : !clientSearch.loading && !clientSearch.error && !recordSearch.loading && !recordSearch.error ? (
             <p className="px-3 py-8 text-center text-sm font-semibold text-platforma-faint">{t("command.empty")}</p>
           ) : null}
+          {recordSearch.loading ? <p role="status">{t("common.loading")}</p> : null}
+          {recordSearch.error ? <ErrorState error={recordSearch.error} action={<Button onClick={() => void recordSearch.refetch()}>{t("common.retry")}</Button>} /> : null}
+          {recordSearch.hasNextPage && !recordSearch.error ? <Button disabled={recordSearch.loading || recordSearch.isFetchingNextPage} onClick={() => void recordSearch.fetchNextPage()}>{t("appointments.title")} · {t("common.showMore")}</Button> : null}
           {clientSearch.loading ? <p role="status">{t("common.loading")}</p> : null}
           {clientSearch.error ? <ErrorState error={clientSearch.error} action={<Button onClick={() => void clientSearch.refetch()}>{t("common.retry")}</Button>} /> : null}
           {clientSearch.hasNextPage && !clientSearch.error ? <Button disabled={clientSearch.loading || clientSearch.isFetchingNextPage} onClick={() => void clientSearch.fetchNextPage()}>{t("common.showMore")}</Button> : null}

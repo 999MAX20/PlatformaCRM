@@ -38,6 +38,18 @@ test("task hover warms the actual infinite workspace contract and supports the n
   client.clear();
 });
 
+test("record task drilldown scopes both totals and paged results to the same appointment", async () => {
+  const h = setup();
+  const filters = h.taskWorkspaceParams(7, new URLSearchParams("tab=all&appointment_ids=42&bucket=done"));
+  assert.equal(filters.base.appointment_ids, "42");
+  assert.equal(filters.list.appointment_ids, "42");
+  assert.equal(filters.list.status, "done");
+  await h.taskWorkspaceQuery(filters.list).queryFn({ pageParam: 2 });
+  assert.equal(h.requests[0].params.appointment_ids, "42");
+  assert.equal(h.requests[0].params.page, 2);
+  assert.equal(h.taskWorkspaceParams(7, new URLSearchParams()).base.appointment_ids, undefined);
+});
+
 test("dashboard prefetch only loads its common queue query, not legacy lists or role-dependent AI", async () => {
   const h = setup(), pending = [];
   h.prefetchRouteData("/app/dashboard", { prefetchQuery: options => { pending.push(options.queryFn()); } }, 7);

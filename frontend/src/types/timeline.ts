@@ -6,6 +6,8 @@ export type TimelineEvent = ActivityEvent & {
   client_name: string;
 };
 export type TimelineFilters = {
+  entity_type?: string;
+  entity_id?: string;
   search: string;
   category: string;
   actor: string;

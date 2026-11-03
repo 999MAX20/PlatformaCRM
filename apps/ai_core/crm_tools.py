@@ -27,7 +27,7 @@ from apps.crm.serializers import DealSerializer
 from apps.leads.models import Lead
 from apps.leads.serializers import LeadSerializer
 from apps.scheduling.models import Appointment
-from apps.scheduling.serializers import AppointmentSerializer
+from apps.scheduling.serializers import AppointmentSerializer, RecordCreateSerializer
 from apps.tasks.models import Task
 from apps.tasks.serializers import TaskSerializer
 
@@ -50,7 +50,7 @@ ENTITIES = {
     "tasks": Entity(Task, TaskSerializer,
         ("title", "description", "client", "lead", "deal", "appointment", "conversation", "assignee", "priority", "due_at", "reminder_at"), ("title", "description")),
     "appointments": Entity(Appointment, AppointmentSerializer,
-        ("client", "lead", "service", "resource", "start_at", "notes", "source"), ("client__full_name", "service__name")),
+        ("client", "lead", "service", "resource", "branch", "responsible_user", "source_conversation", "start_at", "notes"), ("client__full_name", "service__name")),
 }
 MUTATIONS = {"crm_create", "crm_update", "crm_archive", "crm_restore", "crm_transition"}
 
@@ -166,7 +166,8 @@ def validated_details(*, business, user, spec, entity, tool, target, values):
             data.setdefault("responsible_user", user.pk)
         if entity == "tasks":
             data.setdefault("assignee", user.pk)
-    serializer = spec.serializer(target, data=data, partial=target is not None, context={"request": request_context(user)})
+    serializer_class = RecordCreateSerializer if entity == "appointments" and target is None else spec.serializer
+    serializer = serializer_class(target, data=data, partial=target is not None, context={"request": request_context(user)})
     serializer.is_valid(raise_exception=True)
     candidate = spec.model()
     for field in spec.model._meta.concrete_fields:

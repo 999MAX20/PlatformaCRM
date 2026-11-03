@@ -63,7 +63,7 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
       if (!appointment) throw new Error("Appointment is required.");
       if (action === "confirmed") return appointmentsApi.confirm(appointment.id, expected_updated_at);
       if (action === "cancelled") return appointmentsApi.cancel(appointment.id, { reason: reason || "", expected_updated_at });
-      if (action === "completed") return appointmentsApi.complete(appointment.id, expected_updated_at);
+      if (action === "completed") return appointmentsApi.complete(appointment.id, expected_updated_at, reason);
       return appointmentsApi.noShow(appointment.id, { reason: reason || "", expected_updated_at });
     },
     onSuccess: (updated, variables) => {
@@ -109,17 +109,17 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
                 {t("appointment.actionConfirm")}
               </Button>
             ) : null}
-            {appointment.status !== "completed" && appointment.status !== "cancelled" ? (
-              <Button size="sm" variant="secondary" isLoading={lifecycleMutation.isPending} onClick={() => lifecycleMutation.mutate({ action: "completed", expected_updated_at: appointment.updated_at })}>
+            {!isTerminal ? (
+              <Button size="sm" variant="secondary" isLoading={lifecycleMutation.isPending} onClick={() => { if (Date.now() < new Date(appointment.end_at).getTime()) { setStatusReasonAction("completed"); setStatusReasonVersion(appointment.updated_at); setStatusReason(""); } else lifecycleMutation.mutate({ action: "completed", expected_updated_at: appointment.updated_at }); }}>
                 {t("appointment.actionComplete")}
               </Button>
             ) : null}
-            {appointment.status !== "no_show" && appointment.status !== "cancelled" && appointment.status !== "completed" ? (
+            {appointment.status !== "no_show" && !isTerminal ? (
               <Button size="sm" variant="warning" isLoading={lifecycleMutation.isPending} onClick={() => { setStatusReasonAction("no_show"); setStatusReasonVersion(appointment.updated_at); setStatusReason(""); }}>
                 {t("appointment.actionNoShow")}
               </Button>
             ) : null}
-            {appointment.status !== "cancelled" && appointment.status !== "completed" ? (
+            {!isTerminal ? (
               <Button size="sm" variant="warning" isLoading={lifecycleMutation.isPending} onClick={() => { setStatusReasonAction("cancelled"); setStatusReasonVersion(appointment.updated_at); setStatusReason(""); }}>
                 {t("appointment.actionCancel")}
               </Button>
@@ -131,7 +131,8 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
             <Textarea
               value={statusReason}
               onChange={(event) => setStatusReason(event.target.value)}
-              placeholder={t("appointments.statusReasonPlaceholder")}
+              label={t(statusReasonAction === "completed" ? "records.earlyCompletion" : "appointments.statusReason")}
+              placeholder={t(statusReasonAction === "completed" ? "records.earlyCompletionReason" : "appointments.statusReasonPlaceholder")}
             />
             <div className="mt-3 flex justify-end gap-2">
               <Button type="button" size="sm" variant="secondary" onClick={() => { setStatusReasonAction(null); setStatusReason(""); }}>
@@ -145,7 +146,7 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
                 disabled={!statusReason.trim()}
                 onClick={() => lifecycleMutation.mutate({ action: statusReasonAction, reason: statusReason.trim(), expected_updated_at: statusReasonVersion })}
               >
-                {statusReasonAction === "cancelled" ? t("appointment.actionCancel") : t("appointment.actionNoShow")}
+                {statusReasonAction === "completed" ? t("appointment.actionComplete") : statusReasonAction === "cancelled" ? t("appointment.actionCancel") : t("appointment.actionNoShow")}
               </Button>
             </div>
           </div>

@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router";
+import { useActiveBusiness } from "../../hooks/useBusiness";
+import { useAuth } from "../../features/auth/AuthProvider";
 
 import { crmCardsApi } from "../../api/crmCards";
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
 import { AppointmentDrawerContent } from "./drawers/appointment";
 import { ClientDrawerContent } from "./drawers/client";
-import { DealDrawerContent } from "./drawers/deal";
 import { GenericDrawerContent } from "./drawers/fallback";
-import { LeadDrawerContent } from "./drawers/lead";
 import { EntityAttachmentsPanel } from "./drawers/EntityAttachmentsPanel";
 import { EntityAppointmentsPanel } from "./drawers/EntityAppointmentsPanel";
 import { EntityConversationsPanel } from "./drawers/EntityConversationsPanel";
@@ -41,13 +42,16 @@ export function CrmEntityDrawer({
   clientActions?: ClientDrawerActions;
 }) {
   const { t } = useI18n();
+  const { business } = useActiveBusiness();
+  const { user } = useAuth();
+  const historical = entity?.type === "lead" || entity?.type === "deal";
   const [activeTab, setActiveTab] = useState<TabId>(entity?.initialTab || "overview");
   const [isOpen, setIsOpen] = useState(false);
   const titleId = "crm-entity-drawer-title";
   const query = useQuery({
-    queryKey: ["crm-card", entity?.type, entity?.id],
-    queryFn: () => crmCardsApi.get({ type: entity!.type, id: entity!.id }),
-    enabled: Boolean(entity),
+    queryKey: ["crm-card", entity?.type, entity?.id, business?.id, user?.id],
+    queryFn: () => crmCardsApi.get({ type: entity!.type, id: entity!.id, business: business?.id }),
+    enabled: Boolean(entity && business),
   });
   const data = query.data;
   useEffect(() => {
@@ -67,19 +71,22 @@ export function CrmEntityDrawer({
   }, [entity?.id, entity?.type]);
   const tabContent = useMemo(() => {
     if (!data) return null;
+    if (historical) return <div className="space-y-4">
+      <Link className="platforma-focus-ring text-brand-700" to={`/app/${entity!.type === "lead" ? "leads" : "deals"}/${entity!.id}`} onClick={onClose}>{t("records.legacyTitle")}</Link>
+      <EntityTimeline data={data} />
+      <EntityAttachmentsPanel data={data} entity={entity!} readOnly />
+    </div>;
     if (activeTab === "timeline") return <EntityTimeline data={data} />;
-    if (activeTab === "tasks") return <EntityTasksPanel data={data} />;
+    if (activeTab === "tasks") return <EntityTasksPanel key={`${entity!.type}:${entity!.id}`} data={data} entity={entity!} />;
     if (activeTab === "appointments") return <EntityAppointmentsPanel data={data} />;
     if (activeTab === "deals") return <EntityDealsPanel data={data} />;
     if (activeTab === "files") return <EntityAttachmentsPanel data={data} entity={entity!} />;
     if (activeTab === "messages") return <EntityConversationsPanel data={data} />;
     if (activeTab === "notes") return <EntityNotesPanel data={data} entity={entity!} />;
     if (entity?.type === "appointment") return <AppointmentDrawerContent data={data} entity={entity} />;
-    if (entity?.type === "lead") return <LeadDrawerContent data={data} entity={entity} />;
-    if (entity?.type === "deal") return <DealDrawerContent data={data} entity={entity} onTabChange={setActiveTab} />;
     if (entity?.type === "client") return <ClientDrawerContent data={data} entity={entity} actions={clientActions} />;
     return <GenericDrawerContent data={data} entity={entity!} />;
-  }, [activeTab, clientActions, data, entity]);
+  }, [activeTab, clientActions, data, entity, historical, onClose, t]);
 
   if (!entity) return null;
 
@@ -95,7 +102,7 @@ export function CrmEntityDrawer({
       )}
     >
       <CrmEntityHeader data={data} entity={entity} titleId={titleId} onClose={onClose} />
-      <CrmEntityTabs active={activeTab} onChange={setActiveTab} data={data} />
+      {!historical ? <CrmEntityTabs active={activeTab} onChange={setActiveTab} data={data} /> : null}
       <div
         className="min-h-0 flex-1 overflow-y-auto px-5 pb-8 sm:px-7"
         data-testid="crm-entity-drawer-content"

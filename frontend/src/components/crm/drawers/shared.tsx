@@ -1,3 +1,4 @@
+import { formatTimelineEventText } from "./timelineHelpers";
 ﻿import { UserRound } from "lucide-react";
 
 import { formatDateTime } from "../../../lib/format";
@@ -15,6 +16,7 @@ export const drawerEmptySurfaceClass = "rounded-card border border-dashed border
 export function getDrawerTitle(data: CrmCardPayload | undefined, t: Translate, entity?: CrmDrawerEntity | null) {
   if (!data) return t("crmCard.title");
   if (entity?.type === "client") return data.client?.full_name || t("crmCard.title");
+  if (entity?.type === "appointment") return t("crmCard.appointmentNumber", { id: entity.id });
   if (data.deal) return data.deal.title;
   if (data.appointment) return t("crmCard.appointmentNumber", { id: data.appointment.id });
   if (data.lead) return t("crmCard.leadNumber", { id: data.lead.id });
@@ -76,7 +78,7 @@ export function EntityDecisionSnapshot({ data }: { data: CrmCardPayload }) {
       <div className={drawerSurfaceClass}>
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("crmCard.snapshotHistory")}</p>
         <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">
-          {latestEvent ? `${latestEvent.text || latestEvent.event_type} · ${formatDateTime(latestEvent.created_at)}` : t("crmCard.emptyTimelineText")}
+          {latestEvent ? `${latestEvent.event_type === "visit_plan_changed" ? formatTimelineEventText(latestEvent, t) : latestEvent.text || latestEvent.event_type} · ${formatDateTime(latestEvent.created_at)}` : t("crmCard.emptyTimelineText")}
         </p>
       </div>
       <div className={drawerSurfaceClass}>

@@ -815,7 +815,7 @@ class AutomationFoundationTests(TestCase):
         )
         self.api.force_authenticate(self.owner)
 
-        response = self.api.post(f"/api/appointments/{appointment.id}/complete/")
+        response = self.api.post(f"/api/appointments/{appointment.id}/complete/", {"reason": "Finished early"})
 
         self.assertEqual(response.status_code, 200)
         task = Task.objects.get(business=self.business, appointment=appointment)

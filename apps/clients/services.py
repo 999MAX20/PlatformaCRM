@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import F, Q
 from django.utils import timezone
 
 from apps.activities.models import ActivityEvent, Note, TaggedObject
@@ -16,7 +16,7 @@ from apps.leads.models import Lead
 from apps.notifications.models import Notification
 from apps.payments.models import Payment
 from apps.businesses.models import Business
-from apps.scheduling.models import Appointment
+from apps.scheduling.models import Appointment, VisitPlan
 from apps.tasks.models import Task
 
 
@@ -102,6 +102,7 @@ def merge_clients(*, target_client, duplicate_client, actor=None):
     list(Client.objects.select_for_update().filter(pk__in=[target_client.pk, duplicate_client.pk]).order_by("pk"))
     duplicate_snapshot = client_snapshot(duplicate_client)
     transferred = {
+        "visit_plans": VisitPlan.objects.filter(business=business, client=duplicate_client).update(client=target_client, revision=F("revision") + 1),
         "payments": Payment.objects.filter(business=business, client=duplicate_client).update(client=target_client),
         "leads": Lead.objects.filter(business=business, client=duplicate_client).update(client=target_client),
         "appointments": Appointment.objects.filter(business=business, client=duplicate_client).update(client=target_client),
@@ -175,6 +176,7 @@ def merge_clients_dry_run(*, target_client, duplicate_client):
             "payments": Payment.objects.filter(business=business, client=duplicate_client).count(),
             "leads": Lead.objects.filter(business=business, client=duplicate_client).count(),
             "appointments": Appointment.objects.filter(business=business, client=duplicate_client).count(),
+            "visit_plans": VisitPlan.objects.filter(business=business, client=duplicate_client).count(),
             "conversations": Conversation.objects.filter(business=business, client=duplicate_client).count(),
             "bot_conversations": BotConversation.objects.filter(business=business, client=duplicate_client).count(),
             "tasks": Task.objects.filter(business=business, client=duplicate_client).count(),

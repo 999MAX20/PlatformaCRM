@@ -1,7 +1,7 @@
 import hashlib
 import json
 import uuid
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import date, datetime
 from decimal import Decimal
 
@@ -36,6 +36,8 @@ class CRMCommandResult:
     status_code: int = 200
     resource: models.Model | None = None
     replayed: bool = False
+    resource_type: str = field(default="", compare=False, repr=False)
+    resource_id: str = field(default="", compare=False, repr=False)
 
 
 def canonical_request_hash(payload):
@@ -185,6 +187,8 @@ def run_idempotent_crm_command(
             data=claim.record.response_json,
             status_code=claim.record.response_status,
             replayed=True,
+            resource_type=claim.record.resource_type,
+            resource_id=claim.record.resource_id,
         )
     if claim.record is None:
         return operation()

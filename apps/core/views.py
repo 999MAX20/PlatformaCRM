@@ -72,4 +72,7 @@ def work_queues(request):
         limit = int(request.query_params.get("limit", 10))
     except (TypeError, ValueError):
         limit = 10
-    return Response(build_work_queues(business=business, user=request.user, limit=limit))
+    workflow = request.query_params.get("workflow", "legacy")
+    if workflow not in {"legacy", "appointments"}:
+        raise ValidationError({"workflow": "Select legacy or appointments."})
+    return Response(build_work_queues(business=business, user=request.user, limit=limit, workflow=workflow))

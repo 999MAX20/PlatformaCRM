@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.db import transaction
 from django.utils import timezone
+from rest_framework.exceptions import ValidationError
 
 from apps.analytics.models import AnalyticsEvent
 from apps.activities.models import ActivityEvent
@@ -222,7 +223,7 @@ def cancel_appointment(*, appointment, actor, reason, request=None, activity_met
     )
 
 
-def complete_appointment(*, appointment, actor, request=None, expected_updated_at=None):
+def complete_appointment(*, appointment, actor, request=None, expected_updated_at=None, reason=""):
     return apply_appointment_status(
         appointment=appointment,
         actor=actor,
@@ -231,6 +232,7 @@ def complete_appointment(*, appointment, actor, request=None, expected_updated_a
         text="Визит завершён",
         request=request,
         audit_metadata={},
+        reason=reason,
         expected_updated_at=expected_updated_at,
     )
 
@@ -286,6 +288,8 @@ def add_appointment_note(*, appointment, actor, text, request=None):
 @transaction.atomic
 def reschedule_appointment(*, appointment, actor, start_at, resource=None, branch=None, reason="", request=None, expected_updated_at=None):
     Business.objects.select_for_update().get(pk=appointment.business_id)
+    from apps.scheduling.plan_lifecycle import lock_appointment_plan, touch_appointment_plan
+    plan = lock_appointment_plan(appointment)
     appointment = Appointment.objects.select_related("business", "client", "lead", "service", "resource").get(pk=appointment.pk)
     if actor is not None:
         assert_can(actor, appointment.business, Resources.APPOINTMENTS, Actions.UPDATE, obj=appointment)
@@ -331,6 +335,7 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, branc
     for key, value in snapshot.items():
         setattr(appointment, key, value)
     appointment.save(update_fields=["start_at", "end_at", "resource", "status", "updated_at", *snapshot])
+    touch_appointment_plan(plan)
 
     schedule_appointment_followups(appointment)
     create_activity_event(
@@ -402,6 +407,8 @@ def apply_appointment_status(
     expected_updated_at=None,
 ):
     Business.objects.select_for_update().get(pk=appointment.business_id)
+    from apps.scheduling.plan_lifecycle import lock_appointment_plan, touch_appointment_plan
+    plan = lock_appointment_plan(appointment)
     appointment = (
         Appointment.objects.select_for_update(of=("self",))
         .select_related("business", "client", "lead", "lead__responsible_user", "service", "resource", "resource__linked_user")
@@ -424,8 +431,23 @@ def apply_appointment_status(
             errors={"status": "Create or restore the appropriate follow-up record instead."},
         )
 
+    if status_value == Appointment.Statuses.COMPLETED:
+        completed_at = timezone.now()
+        early = completed_at < appointment.end_at
+        reason = (reason or "").strip()
+        if early and (not reason or actor is None):
+            raise ValidationError({"reason": "An authorized actor and reason are required for early completion."})
+        if len(reason) > 500:
+            raise ValidationError({"reason": "Use at most 500 characters."})
+        completion_metadata = {"early_completion": early, "completed_at": completed_at.isoformat()}
+        if reason:
+            completion_metadata["reason"] = reason
+        activity_metadata = {**(activity_metadata or {}), **completion_metadata}
+        audit_metadata = {**(audit_metadata or {}), **completion_metadata}
+
     appointment.status = status_value
     appointment.save(update_fields=["status", "updated_at"])
+    touch_appointment_plan(plan)
 
     if status_value in TERMINAL_APPOINTMENT_STATUSES:
         cancel_appointment_followups(appointment)
@@ -628,7 +650,7 @@ def notify_appointment_responsible(appointment, text, *, actor=None, priority=No
         text=text,
         send_at=timezone.now(),
         status=Notification.Statuses.PENDING,
-        action_url=f"/app/calendar?appointment={appointment.id}",
+        action_url=f"/app/appointments/{appointment.id}",
         action_label="Open appointment",
     )
 
@@ -736,7 +758,7 @@ def queue_appointment_message(appointment, setting, *, responsible_user=None):
         channel=channel, category=Notification.Categories.SALES, priority=priority,
         text=render_appointment_message(appointment, setting.template_text),
         send_at=max(timezone.now() + timedelta(minutes=5), anchor + timedelta(minutes=setting.offset_minutes)),
-        status=Notification.Statuses.PENDING, action_url=f"/app/calendar?appointment={appointment.id}",
+        status=Notification.Statuses.PENDING, action_url=f"/app/appointments/{appointment.id}",
         action_label=APPOINTMENT_MESSAGE_DEFAULTS[setting.scenario]["label"],
     )
 

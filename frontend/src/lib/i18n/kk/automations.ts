@@ -36,7 +36,7 @@ export const automations: Record<string, string> = {
   "automations.rulesTitle": "Белсенді және черновик ережелер",
   "automations.emptyTitle": "Автоматтандыру әлі жоқ",
   "automations.emptyDescription":
-    "Бір қарапайым ережеден бастаңыз: жаңа өтінім, менеджерге тапсырма немесе жазба бойынша еске салу.",
+    "Бір ережеден бастаңыз: визитке дайындық, қызметкерге тапсырма немесе хабарламаға жауап.",
   "automations.runsTitle": "Іске қосу журналы",
   "automations.entity": "нысан",
   "automations.attempt": "әрекет {current}/{max}",

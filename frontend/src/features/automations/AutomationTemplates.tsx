@@ -32,7 +32,7 @@ export function AutomationTemplates({
         </h2>
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {(templates.data || []).map((template) => (
+        {(templates.data || []).filter(template => !/^(lead_|deal_|stage_changed)/.test(template.trigger_type)).map((template) => (
           <Card key={template.key}>
             <CardBody>
               <div className="mb-4 flex items-center justify-between gap-3">

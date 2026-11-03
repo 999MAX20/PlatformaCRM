@@ -39,7 +39,7 @@ export function DashboardPage() {
   return <div className="space-y-4 pb-8" data-testid="dashboard-workspace-ready">
     <OperationalDashboard data={workQueues.data} error={workQueues.error} loading={workQueues.isLoading}
       retry={() => void workQueues.refetch()} onMore={() => setLimit((value) => Math.min(50, value + 8))}
-      access={{ leads: permitted("leads"), deals: permitted("deals"), tasks: permitted("tasks"),
+      access={{ leads: false, deals: false, tasks: permitted("tasks"),
         appointments: permitted("appointments"), conversations: permitted("conversations") }} />
     {isOwnerView ? <OwnerDashboard dashboard={metrics.data} metricsError={metrics.error}
       metricsLoading={metrics.isLoading} retryMetrics={() => void metrics.refetch()} canViewAnalytics={canViewAnalytics}

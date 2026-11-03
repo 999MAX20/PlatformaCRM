@@ -11,17 +11,17 @@ from apps.scheduling.models import Appointment
 
 
 def operational_summary(*, business, appointment_scope, conversation_scope, open_deals,
-                        sla_deals, no_action_deals, now):
+                        sla_deals, no_action_deals, now, record_first=False):
     zone = business_zone(business)
     day = timezone.localtime(now, zone).date()
     start = datetime.combine(day, time.min, tzinfo=zone)
     end = datetime.combine(day + timedelta(days=1), time.min, tzinfo=zone)
     today = appointment_scope.filter(start_at__gte=start, start_at__lt=end).exclude(
-        status__in=[Appointment.Statuses.CANCELLED, Appointment.Statuses.RESCHEDULED],
+        status__in=[Appointment.Statuses.CANCELLED] if record_first else [Appointment.Statuses.CANCELLED, Appointment.Statuses.RESCHEDULED],
     )
     counts = today.aggregate(
         today_appointments=Count("pk", distinct=True),
-        today_confirmations=Count("pk", filter=Q(status=Appointment.Statuses.CREATED), distinct=True),
+        today_confirmations=Count("pk", filter=Q(status__in=["created", "rescheduled"] if record_first else ["created"]), distinct=True),
     )
     waiting = conversation_scope.filter(status=BotConversation.Statuses.OPEN).filter(
         Q(unread_count__gt=0) | Q(handoff_required=True),
@@ -40,7 +40,7 @@ def attention_preview(items, *, limit):
     for item in items:
         kind = item["type"]
         item["attention_reason"] = {
-            "task": "overdue_task", "lead": "stale_lead", "appointment": "confirmation",
+            "task": "overdue_task", "lead": "stale_lead", "appointment": item.get("reason", "confirmation"),
         }.get(kind, item.get("reason"))
         item["attention_at"] = (
             item.get("last_inbound_at") or item.get("last_message_at") if kind == "conversation"

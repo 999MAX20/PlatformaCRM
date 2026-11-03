@@ -16,6 +16,8 @@ test("URL filters retain search and normalize invalid pagination", () => {
     ),
   );
   assert.deepEqual(filters, {
+    entity_type: "",
+    entity_id: "",
     search: "Alice",
     category: "task",
     actor: "12",
@@ -28,6 +30,16 @@ test("URL filters retain search and normalize invalid pagination", () => {
     readTimelineFilters(new URLSearchParams("page=3&page_size=50")).page,
     3,
   );
+});
+
+test("historical drilldown retains entity scope and record events open the canonical card", () => {
+  const filters = readTimelineFilters(new URLSearchParams("entity_type=Lead&entity_id=42&page=2"));
+  assert.equal(filters.entity_type, "Lead");
+  assert.equal(filters.entity_id, "42");
+  assert.equal(filters.page, 2);
+  assert.equal(timelineEntityRoutes.appointment.path, "appointments");
+  assert.equal(timelineEntityRoutes.appointment.permission, "appointments");
+  assert.equal(timelineEntityRoutes.lead.path, "leads");
 });
 
 test("metadata allowlist drops raw payloads, IDs, free text and non-finite values", () => {

@@ -11,6 +11,7 @@ import type { Business, Id } from "../../types";
 const kinds = ["entity", "analytics_report"];
 const statuses = ["pending", "running", "succeeded", "failed"];
 const reports: Record<string, string> = {
+  records_overview: "appointments.title", records_sources: "records.sources", records_team: "appointment.responsible",
   clients: "clients.title", leads: "leads.title", deals: "deals.title",
   sales: "status.sales", catalog: "integrations.import.catalogShort",
   source_roi: "analytics.sourceRoi",

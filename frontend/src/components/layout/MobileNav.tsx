@@ -1,4 +1,4 @@
-import { Home, Inbox, MessageSquareText, MoreHorizontal, Users, X } from "lucide-react";
+import { Home, CalendarDays, MessageSquareText, MoreHorizontal, Users, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router";
 
@@ -17,7 +17,7 @@ export const mobileNavigationDrawerId = "mobile-navigation-drawer";
 
 const bottomItems = [
   { to: "/app/dashboard", label: "mobile.home", icon: Home },
-  { to: "/app/leads", label: "nav.leads", icon: Inbox, resource: "leads" },
+  { to: "/app/appointments", label: "appointments.title", icon: CalendarDays, resource: "appointments" },
   { to: "/app/clients", label: "nav.clients", icon: Users, resource: "clients" },
   { to: "/app/conversations", label: "nav.conversations", icon: MessageSquareText, resource: "conversations" },
 ];

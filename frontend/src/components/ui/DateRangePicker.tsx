@@ -20,13 +20,15 @@ function shift(value: string, days: number) {
 }
 
 /** Date-only control. API boundaries are resolved in the business timezone, not the browser's. */
-export function DateRangePicker({ label, value, onChange, today, range = true, inline = false }: {
+export function DateRangePicker({ label, value, onChange, today, range = true, inline = false, allowClear = true, compact = false }: {
   label: string;
   value: DateRangeValue;
   onChange: (value: DateRangeValue) => void;
   today: string;
   range?: boolean;
   inline?: boolean;
+  allowClear?: boolean;
+  compact?: boolean;
 }) {
   const { t, language } = useI18n();
   const locale = language === "kk" ? "kk-KZ" : language === "en" ? "en-GB" : "ru-RU";
@@ -48,7 +50,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
   const cells = Array.from({ length: Math.ceil((offset + days) / 7) * 7 }, (_, index) => shift(`${month}-01`, index - offset));
   const year = first.getUTCFullYear();
   const years = Array.from({ length: Math.max(2100, year + 1) - Math.min(1900, year) + 1 }, (_, index) => Math.min(1900, year) + index);
-  const months = Array.from({ length: 12 }, (_, index) => ({ value: String(index + 1).padStart(2, "0"), label: new Intl.DateTimeFormat(locale, { month: "long", timeZone: "UTC" }).format(new Date(Date.UTC(2026, index, 1))) }));
+  const months = Array.from({ length: 12 }, (_, index) => ({ value: String(index + 1).padStart(2, "0"), label: new Intl.DateTimeFormat(locale, { month: compact ? "short" : "long", timeZone: "UTC" }).format(new Date(Date.UTC(2026, index, 1))) }));
   function close() { setOpen(false); trigger.current?.focus(); }
   function moveMonth(delta: number) {
     const next = new Date(Date.UTC(year, first.getUTCMonth() + delta, 1));
@@ -78,11 +80,11 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
       }}>
       <span id={`${id}-value`} className="min-w-0 whitespace-normal text-sm">{display}</span><CalendarDays size={17} className="shrink-0 text-platforma-subtle" />
     </Button></>}
-    {inline || open ? <div id={id} role="group" aria-label={label} className={cn("rounded-card bg-platforma-card", !inline && "border border-platforma-border p-3 shadow-card")}>
+    {inline || open ? <div id={id} role="group" aria-label={label} className={cn("rounded-card", inline ? "bg-inherit" : "border border-platforma-border bg-surface-card p-3 shadow-card")}>
       <div className="mb-2 flex items-center gap-1">
         <Button type="button" size="icon" variant="ghost" className="h-11 w-11 shrink-0" aria-label={t("crmFilters.previousMonth")} onClick={() => moveMonth(-1)}><ChevronLeft size={17} /></Button>
-        <div className="min-w-0 flex-1"><Select aria-label={t("crmFilters.month")} value={month.slice(5)} options={months} onChange={event => { setMonth(`${year}-${event.target.value}`); setFocusDay(`${year}-${event.target.value}-01`); }} /></div>
-        <div className="w-24 shrink-0"><Select aria-label={t("crmFilters.year")} value={year} options={years.map(item => ({ value: item, label: String(item) }))} onChange={event => { setMonth(`${event.target.value}-${month.slice(5)}`); setFocusDay(`${event.target.value}-${month.slice(5)}-01`); }} /></div>
+        <div className="min-w-0 flex-1"><Select className={compact ? "gap-1! px-2!" : undefined} aria-label={t("crmFilters.month")} value={month.slice(5)} options={months} onChange={event => { setMonth(`${year}-${event.target.value}`); setFocusDay(`${year}-${event.target.value}-01`); }} /></div>
+        <div className={cn("shrink-0", compact ? "w-20" : "w-24")}><Select className={compact ? "gap-1! px-2!" : undefined} aria-label={t("crmFilters.year")} value={year} options={years.map(item => ({ value: item, label: String(item) }))} onChange={event => { setMonth(`${event.target.value}-${month.slice(5)}`); setFocusDay(`${event.target.value}-${month.slice(5)}-01`); }} /></div>
         <Button type="button" size="icon" variant="ghost" className="h-11 w-11 shrink-0" aria-label={t("crmFilters.nextMonth")} onClick={() => moveMonth(1)}><ChevronRight size={17} /></Button>
       </div>
       {range && <p role="status" className="mb-2 text-xs text-platforma-subtle">{t(choosingEnd ? "crmFilters.chooseEnd" : "crmFilters.chooseStart")}</p>}
@@ -92,7 +94,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
           const selected = day === value.from || day === value.to;
           const within = Boolean(value.from && value.to && day >= value.from && day <= value.to);
           return <button key={day} type="button" role="gridcell" data-date={day} tabIndex={day === focusDay ? 0 : -1} aria-label={format(day)} aria-selected={selected || within} aria-current={day === today ? "date" : undefined}
-            className={cn("platforma-focus-ring relative h-11 min-w-0 rounded-control text-sm tabular-nums transition hover:bg-surface-hover", day.slice(0, 7) !== month && "text-platforma-muted", within && "bg-brand-50", selected && "bg-brand-600 font-semibold text-white hover:bg-brand-700", !selected && day === today && "font-bold ring-1 ring-inset ring-brand-500")}
+            className={cn("platforma-focus-ring relative h-11 min-w-0 rounded-control text-sm tabular-nums transition", !selected && "hover:bg-surface-hover", day.slice(0, 7) !== month && "text-platforma-muted", within && "bg-brand-50", selected && "bg-brand-600 font-semibold text-white hover:bg-brand-700", !selected && day === today && "font-bold ring-1 ring-inset ring-brand-500")}
             onClick={() => { setFocusDay(day); select(day); }} onKeyDown={event => {
               const delta = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[event.key];
               if (delta !== undefined) { event.preventDefault(); focusDate(shift(day, delta)); }
@@ -103,7 +105,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-1 border-t border-platforma-border pt-2">
         {(range ? [1, 7, 30] : [1]).map(count => <Button key={count} type="button" size="sm" variant="ghost" onClick={() => { onChange({ from: shift(today, 1 - count), to: today }); close(); }}>{t(count === 1 ? "crmFilters.today" : count === 7 ? "crmFilters.last7" : "crmFilters.last30")}</Button>)}
-        {range && <Button type="button" size="sm" variant="ghost" onClick={() => { onChange({ from: "", to: "" }); setChoosingEnd(false); close(); }}><X size={14} />{t("common.clear")}</Button>}
+        {range && allowClear && <Button type="button" size="sm" variant="ghost" onClick={() => { onChange({ from: "", to: "" }); setChoosingEnd(false); close(); }}><X size={14} />{t("common.clear")}</Button>}
       </div>
     </div> : null}
   </div>;

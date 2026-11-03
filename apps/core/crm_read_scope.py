@@ -82,6 +82,8 @@ def scope_entity_records(queryset, *, actor, business, visible=None):
     ):
         messages = model.objects.filter(conversation__in=visible[parent])
         queryset = _filter_entity_type(queryset, messages, (model.__name__, *aliases))
+    from apps.scheduling.plan_selectors import readable_plans
+    queryset = _filter_entity_type(queryset, readable_plans(business=business, actor=actor), ("VisitPlan",))
     return queryset
 
 

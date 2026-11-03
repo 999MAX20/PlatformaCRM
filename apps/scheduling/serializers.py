@@ -299,6 +299,10 @@ class AppointmentVersionSerializer(serializers.Serializer):
     expected_updated_at = serializers.DateTimeField(required=False)
 
 
+class AppointmentCompleteSerializer(AppointmentVersionSerializer):
+    reason = serializers.CharField(required=False, allow_blank=True, max_length=500, trim_whitespace=True)
+
+
 class AppointmentRescheduleSerializer(AppointmentVersionSerializer):
     start_at = serializers.DateTimeField()
     resource = serializers.PrimaryKeyRelatedField(queryset=Resource.objects.all(), required=False, allow_null=True)

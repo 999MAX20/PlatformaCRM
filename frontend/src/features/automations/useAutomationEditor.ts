@@ -41,12 +41,12 @@ export function useAutomationEditor(
   }, [business?.id]);
   const [form, setForm] = useState({
     name: "",
-    trigger_type: "lead_created",
+    trigger_type: "appointment_created",
     description: "",
   });
   const [advancedForm, setAdvancedForm] = useState({
     name: "",
-    trigger_type: "lead_created",
+    trigger_type: "appointment_created",
     description: "",
     is_active: false,
     priority: 100,
@@ -83,7 +83,7 @@ export function useAutomationEditor(
     onSuccess: (rule) => {
       queryClient.invalidateQueries({ queryKey: ["automation-rules"] });
       setCreateOpen(false);
-      setForm({ name: "", trigger_type: "lead_created", description: "" });
+      setForm({ name: "", trigger_type: "appointment_created", description: "" });
       if (canUpdate) void openEditor(rule.id);
     },
   });
@@ -157,7 +157,7 @@ export function useAutomationEditor(
     if (id === null) {
       setAdvancedForm({
         name: "",
-        trigger_type: "lead_created",
+        trigger_type: "appointment_created",
         description: "",
         is_active: false,
         priority: 100,

@@ -4,6 +4,7 @@ import type { PaginatedResponse } from "./client";
 import type { Deal, DealBoard, DealSummary, Id, Pipeline, PipelineStage } from "../types";
 
 export type DealListParams = {
+  business?: Id;
   page?: number;
   page_size?: number;
   pipeline?: Id | string;

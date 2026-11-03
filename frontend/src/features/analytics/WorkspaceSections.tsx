@@ -38,13 +38,10 @@ function Breakdown({ title, rows, unavailable }: { title: string; rows: { label:
 
 export function SourcesTable({ data }: { data: AnalyticsWorkspace }) {
   const { t } = useI18n();
-  if (!data.availability.leads) return <ForbiddenState />;
-  return <ReportTable title={t("analytics.leadSources")}
-    columns={[t("analyticsWorkspace.source"), t("nav.leads"), t("analyticsWorkspace.converted"), t("dashboard.conversion")]}
-    rows={data.sources.map(row => {
-      const key = `analytics.source.${row.source}`;
-      return [t(key) === key ? row.source : t(key), <MetricValue value={row.leads} />, <MetricValue value={row.converted} />, <MetricValue value={row.conversion_rate} percent />];
-    })} />;
+  if (!data.availability.appointments) return <ForbiddenState />;
+  return <ReportTable title={t("records.sources")}
+    columns={[t("analyticsWorkspace.source"), t("appointments.title"), t("records.completed"), t("records.cancelled"), t("records.no_show")]}
+    rows={data.record_sources.map(row => [t(`appointment.source.${row.source}`), <MetricValue value={row.total} />, <MetricValue value={row.completed} />, <MetricValue value={row.cancelled} />, <MetricValue value={row.no_show} />])} />;
 }
 
 export function ServicesTable({ data }: { data: AnalyticsWorkspace }) {
@@ -59,8 +56,8 @@ export function TeamTable({ data }: { data: AnalyticsWorkspace }) {
   const { t } = useI18n();
   if (!data.team.available) return <ForbiddenState title={t("analytics.teamHidden")} />;
   return <div className="space-y-4"><ReportTable title={t("analytics.employees")}
-    columns={[t("analyticsWorkspace.employee"), t("nav.leads"), t("analyticsWorkspace.converted"), t("dashboard.conversion"), t("analyticsWorkspace.won"), t("analyticsWorkspace.lost")]}
-    rows={data.team.rows.map(row => [row.name, <MetricValue value={row.leads} />, <MetricValue value={row.converted} />, <MetricValue value={row.conversion_rate} percent />, <MetricValue value={row.won} />, <MetricValue value={row.lost} />])} />
+    columns={[t("appointment.responsible"), t("appointments.title"), t("records.completed")]}
+    rows={data.team.rows.map(row => [row.name, <MetricValue value={row.appointments} />, <MetricValue value={row.completed_appointments} />])} />
     <ReportTable title={t("analyticsWorkspace.workloadNow")}
       columns={[t("analyticsWorkspace.employee"), t("dashboard.openTasks"), t("analytics.overdueTasks"), t("analytics.unansweredConversations")]}
       rows={data.team.rows.map(row => [row.name, <MetricValue value={row.open_tasks} />, <MetricValue value={row.overdue_tasks} />, <MetricValue value={row.unanswered} />])} />
@@ -70,36 +67,31 @@ export function TeamTable({ data }: { data: AnalyticsWorkspace }) {
 export function Overview({ data }: { data: AnalyticsWorkspace }) {
   const { t } = useI18n();
   const stats = [
-    { label: t("nav.leads"), value: data.leads.total },
-    { label: t("analytics.leadToDeal"), value: data.leads.conversion_rate, percent: true },
-    { label: t("analyticsWorkspace.wonDeals"), value: data.deals.won },
+    { label: t("appointments.title"), value: data.appointments.total },
+    { label: t("records.completionRate"), value: data.appointments.completion_rate, percent: true },
+    { label: t("records.completed"), value: data.appointments.completed },
     { label: t("analytics.noShowRate"), value: data.appointments.no_show_rate, percent: true },
   ];
   const statuses = data.appointments.by_status || {};
   const appointmentRows = [
     { label: t("analyticsWorkspace.completed"), value: statuses.completed || 0 },
-    { label: t("analyticsWorkspace.planned"), value: (statuses.created || 0) + (statuses.confirmed || 0) },
+    { label: t("analyticsWorkspace.planned"), value: (statuses.created || 0) + (statuses.confirmed || 0) + (statuses.rescheduled || 0) },
     { label: t("analyticsWorkspace.cancelled"), value: statuses.cancelled || 0 },
     { label: t("analytics.noShow"), value: statuses.no_show || 0, danger: true },
-    { label: t("appointment.statusRescheduled"), value: statuses.rescheduled || 0 },
   ];
   const attention = [
     { label: t("analytics.overdueTasks"), value: data.current.overdue_tasks, href: "/app/tasks?tab=all&bucket=overdue" },
     { label: t("analytics.unansweredConversations"), value: data.current.unanswered, href: "/app/conversations?status=open" },
-    { label: t("dashboard.newLeads"), value: data.current.new_leads, href: "/app/leads?quick=new" },
+    { label: t("records.pendingResult"), value: data.current.pending_records, href: "/app/appointments?attention=pending_result" },
   ];
   return <div className="space-y-4">
     <Card><dl className="grid grid-cols-2 divide-platforma-border lg:grid-cols-4">{stats.map((stat, index) => <div key={stat.label} className={`px-4 py-4 ${index ? "lg:border-l" : ""}`}><dt className="text-xs font-semibold text-platforma-subtle">{stat.label}</dt><dd className="mt-2 text-[26px] font-bold leading-8 tabular-nums"><MetricValue value={stat.value} percent={stat.percent} /></dd></div>)}</dl></Card>
     <div className="grid gap-4 lg:grid-cols-2">
-      <Breakdown title={t("analyticsWorkspace.dealResults")} unavailable={!data.availability.deals} rows={[
-        { label: t("analyticsWorkspace.won"), value: data.deals.won || 0 }, { label: t("analyticsWorkspace.lost"), value: data.deals.lost || 0, danger: true },
-      ]} />
       <Breakdown title={t("nav.appointments")} unavailable={!data.availability.appointments} rows={appointmentRows} />
     </div>
     <SourcesTable data={data} />
     <Card><CardHeader><h2 className="text-base font-bold">{t("analyticsWorkspace.attentionNow")}</h2></CardHeader><ul className="divide-y divide-platforma-border">
       {attention.filter(item => item.value !== null).map(item => <li key={item.href}><Link to={item.href} className="flex min-h-12 items-center gap-3 px-4 py-3 text-sm hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500"><span className="flex-1">{item.label}</span><span className="font-semibold tabular-nums"><MetricValue value={item.value} /></span><ArrowUpRight size={16} aria-hidden="true" /></Link></li>)}
-      {data.deals.open_now !== null ? <li className="flex items-center justify-between px-4 py-3 text-sm"><span>{t("analyticsWorkspace.openNow")}</span><span className="font-semibold tabular-nums"><MetricValue value={data.deals.open_now} /></span></li> : null}
     </ul></Card>
   </div>;
 }

@@ -49,4 +49,7 @@ export const kk: Record<string, string> = {
   "botDetail.previewCreated":
     "Диалог {conversation} жасалды. Өтінім: {lead}. Хабар хабарламалар бөлімінде пайда болады.",
 
+  "records.loadFailed": "Жазбалар жүктелмеді",
+  "records.loadFailedHint": "Жазбалар тізімі қолжетімсіз. Қайта жүктеп көріңіз.",
+  "records.invalidFilters": "Таңдалған сүзгілерді тексеріп, қайта жүктеңіз.",
 };

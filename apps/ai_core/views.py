@@ -335,6 +335,7 @@ class AIOwnerDailyBriefView(APIView):
                 business=business,
                 user=request.user,
                 limit=serializer.validated_data["limit"],
+                workflow=serializer.validated_data["workflow"],
             )
         )
 

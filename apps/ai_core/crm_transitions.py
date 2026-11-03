@@ -63,5 +63,5 @@ def execute_transition(target, payload, actor, request):
     if action == "confirm":
         return services.confirm_appointment(appointment=target, actor=actor)
     functions = {"complete": services.complete_appointment, "cancel": services.cancel_appointment, "no_show": services.mark_appointment_no_show}
-    kwargs = {"reason": reason} if action in {"cancel", "no_show"} else {}
+    kwargs = {"reason": reason} if action in {"complete", "cancel", "no_show"} else {}
     return functions[action](appointment=target, actor=actor, request=request, **kwargs)

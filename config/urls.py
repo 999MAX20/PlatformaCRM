@@ -127,6 +127,7 @@ from apps.notifications.views import NotificationPreferenceViewSet, Notification
 from apps.onboarding.views import apply_onboarding_template, onboarding_demo_data, onboarding_first_message, onboarding_setup_channel, onboarding_status, onboarding_templates
 from apps.outreach.views import OutreachCampaignViewSet, OutreachConsentViewSet, OutreachRecipientViewSet, OutreachTemplateViewSet
 from apps.scheduling.views import AppointmentMessageSettingViewSet, AppointmentViewSet, ResourceViewSet, WorkingHoursViewSet
+from apps.scheduling.plan_views import VisitPlanViewSet
 from apps.scheduling.schedule_views import ScheduleExceptionViewSet
 from apps.services.views import ServiceViewSet
 from apps.tasks.views import TaskViewSet
@@ -145,6 +146,7 @@ router.register("team/role-permissions", RolePermissionViewSet, basename="team-r
 router.register("team/departments", TeamViewSet, basename="team-department")
 router.register("team/department-members", TeamMembershipViewSet, basename="team-department-member")
 router.register("clients", ClientViewSet, basename="client")
+router.register("visit-plans", VisitPlanViewSet, basename="visit-plan")
 router.register("client-payments", PaymentViewSet, basename="client-payment")
 router.register("pipelines", PipelineViewSet, basename="pipeline")
 router.register("pipeline-stages", PipelineStageViewSet, basename="pipeline-stage")

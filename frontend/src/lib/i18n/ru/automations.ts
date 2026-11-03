@@ -36,7 +36,7 @@ export const automations: Record<string, string> = {
   "automations.rulesTitle": "Активные и черновые правила",
   "automations.emptyTitle": "Автоматизаций пока нет",
   "automations.emptyDescription":
-    "Начните с одного простого правила: новая заявка, задача менеджеру или напоминание по записи.",
+    "Начните с одного правила: подготовка визита, задача сотруднику или ответ на сообщение.",
   "automations.runsTitle": "Журнал запусков",
   "automations.entity": "сущность",
   "automations.attempt": "попытка {current}/{max}",

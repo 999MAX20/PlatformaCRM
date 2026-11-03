@@ -92,6 +92,7 @@ export function AppointmentForm({
   prefill,
   onSubmit,
   recordFirst = false,
+  fixedContext = false,
   currency = "KZT",
   timeZone = "UTC",
 }: {
@@ -102,8 +103,10 @@ export function AppointmentForm({
   leads: Lead[];
   initial?: Appointment;
   recordFirst?: boolean;
+  fixedContext?: boolean;
   currency?: string;
   prefill?: {
+    responsible_user?: Id;
     source_conversation?: Id | null;
     branch?: Id | null;
     client?: Id | null;
@@ -140,7 +143,7 @@ export function AppointmentForm({
       service: initial?.service || prefill?.service || selectableServices[0]?.id || 0,
       resource: initial?.resource || prefill?.resource || undefined,
       lead: initial?.lead || prefill?.lead || undefined,
-      responsible_user: initial?.responsible_user || user?.id,
+      responsible_user: initial?.responsible_user || prefill?.responsible_user || user?.id,
       date: initial?.start_at ? dateInTimeZone(initial.start_at, timeZone) : prefill?.date || todayInTimeZone(timeZone),
       slot: initial?.start_at || prefill?.slot || "",
       source: initial?.source || prefill?.source || "manual",
@@ -154,6 +157,8 @@ export function AppointmentForm({
   const skipSlotResetRef = useRef(true);
   const queryClient = useQueryClient();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const canManageSchedule = hasPermission(user, businessId, "settings", "update");
+  const canReadSchedule = hasPermission(user, businessId, "settings", "view");
   const selectedService = selectableServices.find((service) => service.id === Number(serviceId));
   const hasClients = clients.length > 0;
   const hasServices = selectableServices.length > 0;
@@ -189,12 +194,12 @@ export function AppointmentForm({
   const workingHours = useQuery({
     queryKey: ["working-hours"],
     queryFn: workingHoursApi.list,
-    enabled: Boolean(noSlots && !branch.enabled),
+    enabled: Boolean(noSlots && !branch.enabled && canReadSchedule),
   });
   const dateExceptions = useQuery({
     queryKey: ["schedule-exceptions", businessId, resourceId, date],
     queryFn: () => scheduleExceptionsApi.list({ business: businessId, resource: resourceId, date }),
-    enabled: Boolean(noSlots && !branch.enabled && resourceId && date),
+    enabled: Boolean(noSlots && !branch.enabled && canReadSchedule && resourceId && date),
   });
   const exception = dateExceptions.data?.[0];
   const selectedHours = noSlots ? (exception ? { ...exception, weekday: selectedWeekday } : getSelectedWorkingHours(workingHours.data || [], selectedWeekday, resourceId ? Number(resourceId) : null)) : null;
@@ -290,14 +295,14 @@ export function AppointmentForm({
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
-        {recordFirst ? prefill?.source_conversation ? (
+        {recordFirst ? prefill?.source_conversation || fixedContext ? (
           <Input label={t("appointment.client")} value={clients.find(client => client.id === Number(form.watch("client")))?.full_name || t("common.client")} readOnly />
         ) : (
           <ClientPicker businessId={businessId} value={String(form.watch("client") || "")}
             onChange={value => form.setValue("client", Number(value), { shouldValidate: true })}
             error={form.formState.errors.client?.message} />
         ) : <Select label={t("appointment.client")} error={form.formState.errors.client?.message} options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: client.full_name }))]} {...form.register("client")} value={form.watch("client")} />}
-        <Select label={t("appointment.service")} error={form.formState.errors.service?.message} options={[{ value: 0, label: t("appointment.selectService") }, ...selectableServices.map((service) => ({ value: service.id, label: `${service.name} · ${service.duration_minutes} ${t("appointment.minutes")}${recordFirst ? ` · ${formatMoney(service.price_from, currency)}` : ""}` }))]} {...form.register("service")} value={form.watch("service")} />
+        <Select disabled={fixedContext} label={t("appointment.service")} error={form.formState.errors.service?.message} options={[{ value: 0, label: t("appointment.selectService") }, ...selectableServices.map((service) => ({ value: service.id, label: `${service.name} · ${service.duration_minutes} ${t("appointment.minutes")}${recordFirst ? ` · ${formatMoney(service.price_from, currency)}` : ""}` }))]} {...form.register("service")} value={form.watch("service")} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Select
@@ -310,7 +315,7 @@ export function AppointmentForm({
           {...form.register("resource")}
           value={form.watch("resource") || ""}
         />
-        {recordFirst ? <Select label={t("appointment.responsible")} value={form.watch("responsible_user")}
+        {recordFirst ? <Select disabled={fixedContext} label={t("appointment.responsible")} value={form.watch("responsible_user")}
           options={[{ value: user?.id || "", label: user?.full_name || user?.email || t("appointment.responsible") },
             ...(members.data || []).filter(member => member.is_active && member.user.id !== user?.id)
               .map(member => ({ value: member.user.id, label: member.user.full_name || member.user.email }))]}
@@ -350,7 +355,7 @@ export function AppointmentForm({
         <StatusNotice
           tone="warning"
           title={t("appointment.noSlotsForDate").replace("{date}", selectedDateLabel)}
-          description={t(noSlotsReasonKey)}
+          description={t(canManageSchedule && !workingHours.error && !dateExceptions.error ? noSlotsReasonKey : "appointment.chooseOtherSlot")}
           details={(
             <>
               {selectedHours && !selectedHours.is_day_off ? (
@@ -359,12 +364,12 @@ export function AppointmentForm({
                 </p>
               ) : null}
               <div className="mt-3 flex flex-wrap gap-2">
-                {!exception && !branch.enabled ? <Button type="button" variant="secondary" isLoading={quickHoursMutation.isPending} onClick={() => quickHoursMutation.mutate()}>
+                {!exception && !branch.enabled && canManageSchedule ? <Button type="button" variant="secondary" isLoading={quickHoursMutation.isPending} onClick={() => quickHoursMutation.mutate()}>
                   {t("appointment.applyQuickHours")}
                 </Button> : null}
-                <Link className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control px-4 py-2 font-semibold text-platforma-warning underline-offset-4 hover:underline" to={branch.enabled ? `/app/business/branches?branch=${branch.branchId}` : `/app/business/working-hours?view=resources&resource=${resourceId}&date=${date}`}>
+                {canReadSchedule && <Link className="platforma-focus-ring inline-flex min-h-10 items-center rounded-control px-4 py-2 font-semibold text-platforma-warning underline-offset-4 hover:underline" to={branch.enabled ? `/app/business/branches?branch=${branch.branchId}` : `/app/business/working-hours?view=resources&resource=${resourceId}&date=${date}`}>
                   {t("appointment.openHours")}
-                </Link>
+                </Link>}
               </div>
             </>
           )}

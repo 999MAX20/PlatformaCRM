@@ -7,8 +7,6 @@ import {
   ChevronDown,
   Clock3,
   Home,
-  Inbox,
-  KanbanSquare,
   ListChecks,
   LifeBuoy,
   MessageSquareText,
@@ -51,8 +49,7 @@ const desktopSections = [
     titleKey: "nav.workspace",
     items: [
       merchantNavigationItem("dashboard", Home),
-      merchantNavigationItem("leads", Inbox),
-      merchantNavigationItem("deals", KanbanSquare),
+      merchantNavigationItem("appointments", CalendarDays),
       merchantNavigationItem("clients", Users),
       merchantNavigationItem("tasks", ListChecks),
       merchantNavigationItem("calendar", CalendarDays),
@@ -74,8 +71,7 @@ const mobileDrawerSections = [
     titleKey: "nav.operations",
     items: [
       merchantNavigationItem("dashboard", Home),
-      merchantNavigationItem("leads", Inbox),
-      merchantNavigationItem("deals", KanbanSquare),
+      merchantNavigationItem("appointments", CalendarDays),
       merchantNavigationItem("clients", Users),
       merchantNavigationItem("tasks", ListChecks),
       merchantNavigationItem("calendar", CalendarDays),

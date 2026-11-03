@@ -43,11 +43,12 @@ export const importExportApi = {
     return data;
   },
   exportEntity: async ({ business, entity }: { business: Id; entity: "clients" | "leads" | "deals" | "sales" | "catalog" }) => {
-    const { data } = await apiClient.get<Blob>(`/api/export/${entity}/`, {
+    const response = await apiClient.get<Blob>(`/api/export/${entity}/`, {
       params: { business },
       responseType: "blob",
     });
-    const url = window.URL.createObjectURL(data);
+    if (response.status === 202) return JSON.parse(await response.data.text()) as { id: Id; status: string };
+    const url = window.URL.createObjectURL(response.data);
     const link = document.createElement("a");
     link.href = url;
     link.download = `${entity}.csv`;
@@ -55,6 +56,7 @@ export const importExportApi = {
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url);
+    return null;
   },
   downloadTemplate: async (entity: ImportEntity) => {
     const { data } = await apiClient.get<Blob>(`/api/import-templates/${entity}/`, {

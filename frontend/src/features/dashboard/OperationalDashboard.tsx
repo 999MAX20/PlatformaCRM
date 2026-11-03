@@ -40,8 +40,8 @@ export function OperationalDashboard({ data, error, loading, retry, access, onMo
   const conversation = data.attention.find((item) => item.type === "conversation")
     || data.queues.handoff_conversations[0] || data.queues.unread_conversations[0];
   const metrics = [
-    { key: "today_appointments", resource: "appointments", label: "dashboard.todayBookings", icon: CalendarCheck, href: calendarHref, hint: `${todayLabel} · ${scopeLabel("appointments")}` },
-    { key: "today_confirmations", resource: "appointments", label: "dashboard.todayConfirmations", icon: Clock, href: `${calendarHref}&status=created`, hint: `${todayLabel} · ${scopeLabel("appointments")}` },
+    { key: "today_appointments", resource: "appointments", label: "dashboard.todayBookings", icon: CalendarCheck, href: `/app/appointments?from=${data.day}`, hint: `${todayLabel} · ${scopeLabel("appointments")}` },
+    { key: "today_confirmations", resource: "appointments", label: "dashboard.todayConfirmations", icon: Clock, href: `/app/appointments?from=${data.day}&confirmed=false&workflow=planned`, hint: `${todayLabel} · ${scopeLabel("appointments")}` },
     { key: "waiting_conversations", resource: "conversations", label: "dashboard.waitingConversations", icon: MessageSquareText, href: conversation?.href || "/app/conversations?status=open&unread=true", hint: scopeLabel("conversations") },
     { key: "overdue_tasks", resource: "tasks", label: "dashboard.overdueTasks", icon: AlertTriangle, href: "/app/tasks?tab=overdue", hint: scopeLabel("tasks") },
   ] as const;

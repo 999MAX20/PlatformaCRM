@@ -34,8 +34,8 @@ FAILED_CONNECTOR_STATUSES = {
 }
 
 
-def build_owner_daily_brief(*, business, user, limit=8):
-    result = build_next_best_actions(business=business, user=user, limit=limit)
+def build_owner_daily_brief(*, business, user, limit=8, workflow="legacy"):
+    result = build_next_best_actions(business=business, user=user, limit=limit, workflow=workflow)
     no_data = not any(result["summary"]["categories"].values())
     return {
         "generated_at": result["generated_at"],
@@ -56,14 +56,20 @@ def build_owner_daily_brief(*, business, user, limit=8):
     }
 
 
-def build_next_best_actions(*, business, user, limit=8):
+def build_next_best_actions(*, business, user, limit=8, workflow="legacy"):
     now = timezone.now()
     limit = max(1, min(int(limit or 8), 20))
     sources_by_id = {}
     sections = _empty_sections()
+    if workflow == "appointments":
+        sections = [section for section in sections if section["id"] not in {"stale_leads", "stalled_deals"}]
+        sections.append({"id": "pending_records", "count": 0, "source_ids": []})
     recommendations = []
 
-    recommendations += _stale_lead_actions(business=business, user=user, limit=limit, now=now, sources_by_id=sources_by_id, sections=sections)
+    if workflow == "appointments":
+        recommendations += _pending_record_actions(business=business, user=user, limit=limit, now=now, sources_by_id=sources_by_id, sections=sections)
+    else:
+        recommendations += _stale_lead_actions(business=business, user=user, limit=limit, now=now, sources_by_id=sources_by_id, sections=sections)
     recommendations += _overdue_task_actions(business=business, user=user, limit=limit, now=now, sources_by_id=sources_by_id, sections=sections)
     recommendations += _unanswered_conversation_actions(
         business=business,
@@ -73,7 +79,8 @@ def build_next_best_actions(*, business, user, limit=8):
         sources_by_id=sources_by_id,
         sections=sections,
     )
-    recommendations += _stalled_deal_actions(business=business, user=user, limit=limit, now=now, sources_by_id=sources_by_id, sections=sections)
+    if workflow != "appointments":
+        recommendations += _stalled_deal_actions(business=business, user=user, limit=limit, now=now, sources_by_id=sources_by_id, sections=sections)
     recommendations += _failed_connector_actions(business=business, user=user, limit=limit, now=now, sources_by_id=sources_by_id, sections=sections)
 
     recommendations = sorted(recommendations, key=lambda item: (_priority_rank(item["priority"]), item["id"]))[:limit]
@@ -88,6 +95,27 @@ def build_next_best_actions(*, business, user, limit=8):
         "recommendations": recommendations,
         "sources": list(sources_by_id.values()),
     }
+
+
+def _pending_record_actions(*, business, user, limit, now, sources_by_id, sections):
+    from apps.core.crm_read_scope import readable_queryset
+    from apps.scheduling.models import Appointment
+    from apps.scheduling.record_workspace import PLANNED_STATUSES
+    queryset = readable_queryset(Appointment.objects.filter(business=business, is_archived=False,
+        status__in=PLANNED_STATUSES, end_at__lte=now).select_related("client").order_by("end_at", "pk"),
+        actor=user, business=business, resource=Resources.APPOINTMENTS)
+    items = list(queryset[:limit])
+    _set_section(sections, "pending_records", queryset.count(), [_source_id("APPOINTMENT", item.pk) for item in items])
+    actions = []
+    for item in items:
+        href = f"/app/appointments/{item.pk}"
+        source = _source(prefix="APPOINTMENT", entity_type="appointment", entity_id=item.pk,
+            label=f"#{item.pk}", summary="Scheduled end passed; appointment outcome is not recorded.",
+            href=href, occurred_at=item.end_at, metadata={"status": item.status})
+        sources_by_id[source["id"]] = source
+        actions.append(_recommendation(category="pending_records", priority="high", source=source,
+            label=f"Record appointment outcome #{item.pk}", description=source["summary"], href=href))
+    return actions
 
 
 def _stale_lead_actions(*, business, user, limit, now, sources_by_id, sections):

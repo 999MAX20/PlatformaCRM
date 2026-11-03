@@ -9,7 +9,7 @@ from apps.core.archive import archive_instance
 from apps.core.domain_errors import InvalidTransition
 from apps.crm.models import Deal
 from apps.leads.models import Lead
-from apps.scheduling.models import Appointment
+from apps.scheduling.models import Appointment, VisitPlan
 from apps.tasks.models import Task
 
 
@@ -17,6 +17,7 @@ def client_has_unfinished_work(client):
     """Check business state, including hidden children, without exposing their data."""
     related = {"business_id": client.business_id, "client_id": client.pk, "is_archived": False}
     queries = (
+        VisitPlan.objects.filter(**related, steps__isnull=False, steps__removed_at__isnull=True, steps__appointment__isnull=True),
         Lead.objects.filter(**related).exclude(status__in=(Lead.Statuses.CLOSED, Lead.Statuses.LOST)),
         Deal.objects.filter(**related).exclude(status__in=(Deal.Statuses.WON, Deal.Statuses.LOST)),
         Appointment.objects.filter(**related).exclude(status__in=(
@@ -52,6 +53,8 @@ def client_has_unfinished_work(client):
 
 @transaction.atomic
 def archive_client(*, request, client, reason=""):
+    from apps.businesses.models import Business
+    Business.objects.select_for_update().get(pk=client.business_id)
     client = Client.objects.select_for_update().get(pk=client.pk, business_id=client.business_id)
     assert_can(request.user, client.business, Resources.CLIENTS, Actions.DELETE, obj=client)
     if client.is_archived:

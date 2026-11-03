@@ -22,7 +22,7 @@ import { Overview, ServicesTable, SourcesTable, TeamTable } from "./WorkspaceSec
 const tabs = ["overview", "sources", "services", "team", "finance"] as const;
 type Tab = typeof tabs[number];
 const reports: Record<Tab, WorkspaceReport> = {
-  overview: "workspace_overview", sources: "workspace_sources", services: "workspace_services", team: "workspace_team", finance: "workspace_finance",
+  overview: "records_overview", sources: "records_sources", services: "workspace_services", team: "records_team", finance: "workspace_finance",
 };
 function recentPeriod(today: string, days: number) {
   const from = new Date(`${today}T12:00:00Z`);
@@ -117,7 +117,7 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
       </div>
     </Dialog>
     <Dialog title={t("analyticsWorkspace.method")} open={help} onClose={() => setHelp(false)} size="sm">
-      <dl className="space-y-4 text-sm">{["period", "conversion", "noShow", "history", "money"].map(key => <div key={key}><dt className="font-bold">{t(`analyticsWorkspace.method.${key}`)}</dt><dd className="mt-1 leading-6 text-platforma-subtle">{t(`analyticsWorkspace.method.${key}Text`)}</dd></div>)}</dl>
+      <dl className="space-y-4 text-sm">{["period", "recordCompletion", "noShow", "history", "money"].map(key => <div key={key}><dt className="font-bold">{t(`analyticsWorkspace.method.${key}`)}</dt><dd className="mt-1 leading-6 text-platforma-subtle">{t(`analyticsWorkspace.method.${key}Text`)}</dd></div>)}</dl>
     </Dialog>
   </div>;
 }

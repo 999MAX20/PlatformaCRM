@@ -12,7 +12,7 @@ import { SettingsQueryState } from "../components/SettingsQueryState";
 import type { SettingsModel } from "../useSettingsModel";
 
 const columns = "sm:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.6fr)_44px]";
-const entityLinks = { client: "/app/clients", lead: "/app/leads", deal: "/app/deals", appointment: "/app/calendar" };
+const entityLinks = { client: "/app/clients", lead: "/app/leads?history=1", deal: "/app/deals?history=1", appointment: "/app/appointments" };
 
 export function CustomFieldsSection({ model }: { model: SettingsModel }) {
   const { t, activeSettingsSection, business, customFields, updateCustomFieldMutation, removeCustomFieldMutation, confirmDelete } = model;
@@ -23,12 +23,12 @@ export function CustomFieldsSection({ model }: { model: SettingsModel }) {
   const rows = (customFields.data || []).filter(field => field.entity_type === entity);
   const pending = updateCustomFieldMutation.isPending || removeCustomFieldMutation.isPending;
   return <SettingsSection id="custom-fields" active={activeSettingsSection} title={t("settings.section.custom-fields")}
-    actions={<Button type="button" disabled={pending} onClick={() => setEditor("new")}><Plus size={16} />{t("settings.redesign.addField")}</Button>}>
+    actions={<Button type="button" disabled={pending || entity === "lead" || entity === "deal"} onClick={() => setEditor("new")}><Plus size={16} />{t("settings.redesign.addField")}</Button>}>
     <div className="space-y-4 p-4 sm:p-5">
-      <SettingsTabs value={entity} onChange={setEntity} label={t("settings.entity")} items={fieldEntities.map(value => ({ value, label: t(`settings.customFieldEntity.${value}`) }))} />
+      <SettingsTabs value={entity} onChange={setEntity} label={t("settings.entity")} items={fieldEntities.map(value => ({ value, label: `${t(`settings.customFieldEntity.${value}`)}${value === "lead" || value === "deal" ? ` · ${t("records.historical")}` : ""}` }))} />
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-platforma-subtle">
         <p className="max-w-2xl">{t(`settings.workflow.fieldPlacement.${entity}`)}</p>
-        {hasPermission(user, business?.id, entity === "appointment" ? "appointments" : entity + "s", "view") && <Link to={entityLinks[entity]} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control font-semibold text-brand-700 underline underline-offset-4">{t(`settings.workflow.openEntities.${entity}`)}</Link>}
+        {hasPermission(user, business?.id, entity === "appointment" ? "appointments" : entity + "s", "view") && <Link to={entityLinks[entity]} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control font-semibold text-brand-700 underline underline-offset-4">{t(entity === "lead" || entity === "deal" ? "records.legacyTitle" : `settings.workflow.openEntities.${entity}`)}</Link>}
       </div>
       <SettingsQueryState queries={[customFields]} />
       {customFields.isSuccess && <div>

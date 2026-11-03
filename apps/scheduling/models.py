@@ -136,6 +136,37 @@ class Appointment(TimeStampedModel):
         return f"{self.client} at {self.start_at}"
 
 
+class VisitPlan(TimeStampedModel):
+    business = models.ForeignKey(Business, on_delete=models.PROTECT, related_name="visit_plans")
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="visit_plans")
+    responsible_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="coordinated_visit_plans")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="created_visit_plans")
+    revision = models.PositiveIntegerField(default=1)
+    is_archived = models.BooleanField(default=False)
+    archived_at = models.DateTimeField(null=True, blank=True)
+    archived_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="archived_visit_plans")
+    archive_reason = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        indexes = [models.Index(fields=["business", "client", "is_archived"], name="visit_plan_client_idx")]
+
+
+class VisitPlanStep(TimeStampedModel):
+    plan = models.ForeignKey(VisitPlan, on_delete=models.PROTECT, related_name="steps")
+    position = models.PositiveIntegerField()
+    service = models.ForeignKey(Service, on_delete=models.PROTECT, related_name="visit_plan_steps")
+    branch = models.ForeignKey("branches.Branch", on_delete=models.PROTECT, null=True, blank=True, related_name="visit_plan_steps")
+    resource = models.ForeignKey(Resource, on_delete=models.PROTECT, null=True, blank=True, related_name="visit_plan_steps")
+    responsible_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True, related_name="visit_plan_step_overrides")
+    appointment = models.OneToOneField(Appointment, on_delete=models.PROTECT, null=True, blank=True, related_name="visit_plan_step")
+    removed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["position", "id"]
+        constraints = [models.UniqueConstraint(fields=["plan", "position"], name="visit_plan_step_position_uniq")]
+
+
 class AppointmentMessageSetting(TimeStampedModel):
     class Scenarios(models.TextChoices):
         CONFIRMATION = "confirmation", "Confirmation"

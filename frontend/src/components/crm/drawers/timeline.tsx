@@ -3,7 +3,7 @@ import { formatDateTime } from "../../../lib/format";
 import { useI18n } from "../../../lib/i18n";
 import type { ActivityEvent, CrmCardPayload } from "../../../types";
 import { drawerSurfaceClass, EmptyBlock } from "./shared";
-import { categoryConfig, formatToken, groupTimeline, timelineDetails } from "./timelineHelpers";
+import { categoryConfig, formatTimelineEventText, formatToken, groupTimeline, timelineDetails } from "./timelineHelpers";
 
 function EventBadge({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
@@ -30,10 +30,10 @@ function TimelineEventItem({ event }: { event: ActivityEvent }) {
           <div className="flex flex-wrap items-center gap-2">
             <EventBadge className={config.badgeClassName}>{t(config.labelKey)}</EventBadge>
             <EventBadge className="bg-surface-muted text-platforma-subtle">{source}</EventBadge>
-            <EventBadge className="bg-surface-muted text-platforma-subtle">{formatToken(event.event_type)}</EventBadge>
+            <EventBadge className="bg-surface-muted text-platforma-subtle">{event.event_type === "visit_plan_changed" ? formatTimelineEventText(event, t) : formatToken(event.event_type)}</EventBadge>
           </div>
           <p className="mt-2 break-words text-sm font-bold leading-6 text-platforma-ink">
-            {event.text || formatToken(event.event_type)}
+            {event.event_type === "visit_plan_changed" ? formatTimelineEventText(event, t) : event.text || formatToken(event.event_type)}
           </p>
           <p className="mt-1 text-xs font-semibold text-platforma-muted">{formatDateTime(event.created_at)}</p>
           {details.length ? (

@@ -197,7 +197,8 @@ class CRMCommandTests(TestCase):
         self.assertEqual(deal.status, "lost")
         self.assertIsNotNone(deal.lost_at)
 
-    def test_appointment_create_reschedule_cancel_and_busy_slot_recheck(self):
+    @patch("django.utils.timezone.now", return_value=timezone.datetime(2026, 10, 4, 10, tzinfo=timezone.timezone.utc))
+    def test_appointment_create_reschedule_cancel_and_busy_slot_recheck(self, _clock):
         from datetime import datetime, time
         from apps.services.models import Service
         from apps.scheduling.models import Resource, WorkingHours, Appointment

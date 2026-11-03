@@ -60,3 +60,16 @@ class RecordConcurrencyTests(TransactionTestCase):
             lambda api: api.post(url + "cancel/", {"expected_updated_at": version, "reason": "Changed plan"}, format="json"),
         ])
         self.assertEqual(sorted(code for code, _ in results), [200, 409], results)
+
+    def test_early_completion_and_cancel_cannot_both_apply(self):
+        created = self.api.post("/api/appointments/create-record/", self.payload, format="json")
+        self.assertEqual(created.status_code, 201, created.data)
+        url = f"/api/appointments/{created.data['id']}/"
+        version = created.data["updated_at"]
+        results = self.parallel([
+            lambda api: api.post(url + "complete/", {"expected_updated_at": version, "reason": "Finished early"}, format="json"),
+            lambda api: api.post(url + "cancel/", {"expected_updated_at": version, "reason": "Changed plan"}, format="json"),
+        ])
+        self.assertEqual(sorted(code for code, _ in results), [200, 409], results)
+        record = Appointment.objects.get(pk=created.data["id"])
+        self.assertIn(record.status, ("completed", "cancelled"))

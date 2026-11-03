@@ -134,6 +134,7 @@ class AIAnalystBriefSerializer(serializers.Serializer):
 class AIOwnerDailyBriefSerializer(serializers.Serializer):
     business = serializers.PrimaryKeyRelatedField(queryset=Business.objects.all())
     limit = serializers.IntegerField(required=False, min_value=1, max_value=20, default=8)
+    workflow = serializers.ChoiceField(choices=("legacy", "appointments"), default="legacy")
 
 
 class AIToolCallLogSerializer(serializers.ModelSerializer):

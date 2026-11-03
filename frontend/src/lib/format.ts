@@ -4,11 +4,11 @@ export function setActiveBusinessTimeZone(timeZone?: string | null) {
   activeBusinessTimeZone = timeZone || "UTC";
 }
 
-export function formatDateTime(value?: string | null, timeZone = activeBusinessTimeZone, includeYear = false) {
+export function formatDateTime(value?: string | null, timeZone = activeBusinessTimeZone, includeYear = false, locale = "ru-RU") {
   if (!value) return "-";
-  return new Intl.DateTimeFormat("ru-RU", {
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
-    month: "short",
+    month: locale.startsWith("kk") ? "2-digit" : "short",
     year: includeYear ? "numeric" : undefined,
     hour: "2-digit",
     minute: "2-digit",

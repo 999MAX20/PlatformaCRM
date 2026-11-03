@@ -9,8 +9,8 @@ const endpoints: Record<CrmEntityType, string> = {
 };
 
 export const crmCardsApi = {
-  get: async ({ type, id }: { type: CrmEntityType; id: Id }) => {
-    const { data } = await apiClient.get<CrmCardPayload>(`${endpoints[type]}${id}/crm-card/`);
+  get: async ({ type, id, business }: { type: CrmEntityType; id: Id; business?: Id }) => {
+    const { data } = await apiClient.get<CrmCardPayload>(`${endpoints[type]}${id}/crm-card/`, { params: business ? { business } : undefined });
     return data;
   },
 };

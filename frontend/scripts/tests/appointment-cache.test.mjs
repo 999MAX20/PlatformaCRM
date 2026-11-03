@@ -5,8 +5,8 @@ import { refreshAppointmentQueries } from "../../src/lib/appointmentCache.ts";
 
 test("one appointment mutation refreshes mounted surfaces and invalidates cached client/Inbox state", async () => {
   const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
-  const mounted = [["appointments", "calendar", 1], ["crm-card", "appointment", 7], ["available-slots", 1]];
-  const cached = [["appointments", "client-workspace", 3], ["crm-card", "client", 3], ["inbox-context", 1, 1, 4]];
+  const mounted = [["appointments", "calendar", 1], ["crm-card", "appointment", 7], ["available-slots", 1], ["visit-plans", "detail", 1, 1, 3]];
+  const cached = [["appointments", "client-workspace", 3], ["crm-card", "client", 3], ["inbox-context", 1, 1, 4], ["visit-plans", "list", 1, 1]];
   const cleanup = [];
   let state = "created";
   try {

@@ -93,7 +93,6 @@ def suggest_tool_calls(*, business, user, conversation=None, message="", tool_na
         assert_can(user, business, Resources.CONVERSATIONS, Actions.VIEW, obj=conversation)
     suggestions = [
         ("summarize_conversation", {"message": message}),
-        ("qualify_lead", {"message": message}),
         (
             "create_task",
             {
@@ -104,8 +103,6 @@ def suggest_tool_calls(*, business, user, conversation=None, message="", tool_na
             },
         ),
     ]
-    if conversation and not conversation.lead_id:
-        suggestions.append(("create_lead", {"message": message or _last_message_text(conversation)}))
 
     logs = [
         AIToolCallLog.objects.create(

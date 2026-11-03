@@ -30,7 +30,7 @@ export function SpecialistLifecycle({ resource, canManage }: { resource: Resourc
     await Promise.all([cache.invalidateQueries({ queryKey: ["resources"] }), cache.invalidateQueries({ queryKey: ["specialist-absences", resource.id] }), cache.invalidateQueries({ queryKey: ["specialist-retirement", resource.id] }), cache.invalidateQueries({ queryKey: ["available-slots"] }), cache.invalidateQueries({ queryKey: ["branch-catalog"] })]);
   } });
   const pendingLabels: Record<string, string> = { appointments: "pendingAppointments", tasks: "pendingTasks", leads: "pendingLeads", deals: "pendingDeals", conversations: "pendingConversations" };
-  const pendingLinks: Record<string, string> = { appointments: `/app/calendar?resource=${resource.id}`, tasks: `/app/tasks?assignee=${resource.linked_user || ""}`, leads: "/app/leads", deals: `/app/deals?owner=${resource.linked_user || ""}`, conversations: "/app/inbox" };
+  const pendingLinks: Record<string, string> = { appointments: `/app/appointments?resource=${resource.id}&workflow=planned`, tasks: `/app/tasks?assignee=${resource.linked_user || ""}`, leads: `/app/leads?history=1&responsible_user=${resource.linked_user || ""}`, deals: `/app/deals?history=1&owner=${resource.linked_user || ""}`, conversations: "/app/inbox" };
   if (resource.retired_at) return <p className="text-sm text-platforma-subtle">{t("branches.retired")}</p>;
   return <section className="space-y-4 rounded-card border border-platforma-border bg-surface-card p-4">
     <h3 className="text-sm font-semibold">{t("branches.absences")}</h3>

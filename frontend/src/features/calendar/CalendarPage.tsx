@@ -474,7 +474,7 @@ export function CalendarPage() {
       appointment.status === "created" ||
       appointment.status === "rescheduled"
     )
-      return ["confirmed", "cancelled"] as Appointment["status"][];
+      return ["confirmed", "completed", "cancelled", "no_show"] as Appointment["status"][];
     if (appointment.status === "confirmed")
       return ["completed", "cancelled", "no_show"] as Appointment["status"][];
     return [] as Appointment["status"][];
@@ -705,7 +705,7 @@ export function CalendarPage() {
             canArchiveAppointment={canArchiveAppointment}
             onRepeatBooking={openRepeatBooking}
             onStatusAction={(appointment, status) => {
-              if (status === "cancelled" || status === "no_show") {
+              if (status === "cancelled" || status === "no_show" || (status === "completed" && Date.now() < new Date(appointment.end_at).getTime())) {
                 setStatusReasonTarget({ appointment, status });
                 setStatusReason("");
                 return;

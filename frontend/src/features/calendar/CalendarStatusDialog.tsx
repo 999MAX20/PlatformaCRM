@@ -57,7 +57,7 @@ export function CalendarStatusDialog({
 }: Props) {
   return (
     <Modal
-      title={t("appointments.statusReasonTitle")}
+      title={t(statusReasonTarget?.status === "completed" ? "records.earlyCompletion" : "appointments.statusReasonTitle")}
       open={Boolean(statusReasonTarget)}
       onClose={() => {
         setStatusReasonTarget(null);
@@ -69,7 +69,7 @@ export function CalendarStatusDialog({
           label={t("appointments.statusReason")}
           value={statusReason}
           onChange={(event) => setStatusReason(event.target.value)}
-          placeholder={t("appointments.statusReasonPlaceholder")}
+          placeholder={t(statusReasonTarget?.status === "completed" ? "records.earlyCompletionReason" : "appointments.statusReasonPlaceholder")}
         />
         <div className="flex justify-end gap-2">
           <Button

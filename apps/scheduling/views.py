@@ -20,6 +20,7 @@ from apps.core.viewsets import TenantModelViewSet
 from apps.businesses.models import Business
 from apps.scheduling.models import Appointment, AppointmentMessageSetting, Resource, WorkingHours
 from apps.scheduling.serializers import (
+    AppointmentCompleteSerializer,
     AppointmentMessageSettingSerializer,
     AppointmentRescheduleSerializer,
     AppointmentSerializer,
@@ -322,6 +323,38 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
     queryset = Appointment.objects.select_related("business", "client", "lead", "lead__responsible_user", "service", "resource", "resource__linked_user", "responsible_user", "source_conversation")
     serializer_class = AppointmentSerializer
 
+    @action(detail=False, methods=["get"], url_path="legacy-links")
+    def legacy_links(self, request):
+        from apps.scheduling.legacy_record_links import LegacyRecordQuery, legacy_record_links
+        from apps.scheduling.record_workspace import RecordWorkspacePagination
+
+        query = LegacyRecordQuery(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        scoped = self.get_queryset()
+        business = Business.objects.get(pk=query.validated_data["business"])
+        linked, source = legacy_record_links(scoped, actor=request.user, business=business,
+            kind=query.validated_data["kind"], object_id=query.validated_data["object_id"])
+        paginator = RecordWorkspacePagination()
+        page = paginator.paginate_queryset(linked, request, view=self)
+        response = paginator.get_paginated_response(self.get_serializer(page, many=True).data)
+        response.data["source"] = source
+        return response
+
+    @action(detail=False, methods=["get"], url_path="workspace")
+    def workspace(self, request):
+        from apps.scheduling.record_workspace import (
+            RecordWorkspacePagination, RecordWorkspaceQuery, record_workspace,
+        )
+
+        query = RecordWorkspaceQuery(data={key: value for key, value in request.query_params.items() if value != ""})
+        query.is_valid(raise_exception=True)
+        queryset, summary = record_workspace(self.get_queryset(), actor=request.user, filters=query.validated_data)
+        paginator = RecordWorkspacePagination()
+        page = paginator.paginate_queryset(queryset, request, view=self)
+        response = paginator.get_paginated_response(self.get_serializer(page, many=True).data)
+        response.data["summary"] = summary
+        return response
+
     @action(detail=False, methods=["post"], url_path="create-record")
     def create_record(self, request):
         from apps.businesses.capabilities import assert_resource_enabled
@@ -474,7 +507,7 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
     def complete(self, request, pk=None):
         appointment = self.get_object()
         assert_can(request.user, appointment.business, Resources.APPOINTMENTS, Actions.UPDATE, obj=appointment)
-        serializer = AppointmentVersionSerializer(data=request.data)
+        serializer = AppointmentCompleteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
             appointment = complete_appointment(appointment=appointment, actor=request.user, request=request, **serializer.validated_data)

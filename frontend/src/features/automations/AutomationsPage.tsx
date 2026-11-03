@@ -88,7 +88,10 @@ export function AutomationsPage() {
     value: item.value,
     label: t(item.labelKey),
   }));
-  const actionOptions = actionOptionKeys.map((item) => ({
+  const legacyTrigger = (value: string) => /^(lead_|deal_|stage_changed)/.test(value);
+  const newTriggers = triggers.filter(item => !legacyTrigger(item.value));
+  const editorTriggers = triggers.filter(item => !legacyTrigger(item.value) || Boolean(editingRuleId && item.value === advancedForm.trigger_type));
+  const actionOptions = actionOptionKeys.filter(item => item.value !== "assign_user" || !advancedForm.trigger_type.startsWith("appointment_")).map((item) => ({
     value: item.value,
     label: t(item.labelKey),
   }));
@@ -212,6 +215,7 @@ export function AutomationsPage() {
                 {triggers.find((item) => item.value === rule.trigger_type)
                   ?.label || rule.trigger_type}
               </p>
+              {legacyTrigger(rule.trigger_type) ? <p className="mt-2 text-sm text-platforma-subtle">{t("records.historicalRules")}</p> : null}
               {rule.description ? (
                 <p className="mt-3 text-sm leading-6 text-platforma-subtle">
                   {rule.description}
@@ -295,7 +299,7 @@ export function AutomationsPage() {
         business={business}
         form={form}
         setForm={setForm}
-        triggers={triggers}
+        triggers={newTriggers}
       />
 
       <AutomationEditorDialog
@@ -314,7 +318,7 @@ export function AutomationsPage() {
         advancedError={advancedError}
         advancedForm={advancedForm}
         setAdvancedForm={setAdvancedForm}
-        triggers={triggers}
+        triggers={editorTriggers}
         setConditions={setConditions}
         conditions={conditions}
         members={members}

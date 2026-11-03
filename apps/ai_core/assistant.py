@@ -32,18 +32,19 @@ def build_crm_context(business, user=None):
         resource=Resources.LEADS,
     )
     appointments_queryset = _scoped_queryset(
-        Appointment.objects.select_related("client", "service", "resource").filter(business=business),
+        Appointment.objects.select_related("client", "service", "resource").filter(business=business, is_archived=False),
         user=user,
         business=business,
         resource=Resources.APPOINTMENTS,
     )
     leads = leads_queryset.order_by("-created_at")[:8]
-    appointments = appointments_queryset.filter(start_at__gte=timezone.now(), status__in=[Appointment.Statuses.CREATED, Appointment.Statuses.CONFIRMED]).order_by("start_at")[:8]
+    planned = [Appointment.Statuses.CREATED, Appointment.Statuses.CONFIRMED, Appointment.Statuses.RESCHEDULED]
+    appointments = appointments_queryset.filter(start_at__gte=now, status__in=planned).order_by("start_at")[:8]
     clients_count = clients_queryset.count()
     new_leads_count = leads_queryset.filter(status=Lead.Statuses.NEW).count()
     open_appointments_count = appointments_queryset.filter(
         business=business,
-        status__in=[Appointment.Statuses.CREATED, Appointment.Statuses.CONFIRMED],
+        status__in=planned,
     ).count()
 
     tasks_queryset = _scoped_queryset(Task.objects.filter(business=business, is_archived=False), user=user, business=business, resource=Resources.TASKS)
@@ -52,6 +53,7 @@ def build_crm_context(business, user=None):
         "local_date": today.isoformat(),
         "timezone": business.timezone,
         "coverage": "Permission-scoped summary and up to 8 records per category; not a complete history. Financial receipts/refunds are not supplied.",
+        "workflow": "New scheduled work uses Appointment. Lead/Deal samples are historical context, not required pipeline steps.",
         "services": list(_scoped_queryset(Service.objects.filter(business=business, is_active=True), user=user, business=business, resource=Resources.APPOINTMENTS).order_by("name").values("id", "name", "price_from")[:8]),
         "tasks": list(tasks_queryset.order_by("due_at").values("id", "title", "status", "due_at")[:8]),
         "deals": list(_scoped_queryset(Deal.objects.filter(business=business), user=user, business=business, resource=Resources.DEALS).order_by("-created_at").values("id", "title", "status")[:8]),
@@ -60,6 +62,7 @@ def build_crm_context(business, user=None):
             "clients_count": clients_count,
             "new_leads_count": new_leads_count,
             "open_appointments_count": open_appointments_count,
+            "pending_results_count": appointments_queryset.filter(status__in=planned, end_at__lte=now).count(),
             "overdue_tasks_count": tasks_queryset.filter(due_at__lt=now, status__in=[Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING]).count(),
         },
         "latest_leads": [
@@ -93,7 +96,7 @@ def build_crm_context(business, user=None):
     for source, keys, counters in (
         ("clients", (), ("clients_count",)),
         ("leads", ("latest_leads",), ("new_leads_count",)),
-        ("appointments", ("upcoming_appointments", "services"), ("open_appointments_count",)),
+        ("appointments", ("upcoming_appointments", "services"), ("open_appointments_count", "pending_results_count")),
         ("tasks", ("tasks",), ("overdue_tasks_count",)),
         ("deals", ("deals",), ()),
     ):

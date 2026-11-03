@@ -8605,3 +8605,23 @@ Roadmap updated without closing live/product gates; P19 mapping only.
 Evidence: [final audit](../evidence/refactor-20261030.md).
 Foreign working source and documentation preserved; only own docs added to index.
 No deployment, production DB change or foreign WIP publication.
+
+## RECORDS-PUBLICATION-20261103 — verified selected package
+
+Owner explicitly approved prior Records/VisitPlan implementation plus existing
+e02a28f5. Selected138 source files via Git-index overlays; no alternate checkout
+or working source overwrite. Related client_projection search helper/idempotency
+resource metadata/locale/error copy included after tests proved dependencies.
+Unrelated notification/security consumers remain WIP. Main index stayed empty.
+Report: ../evidence/records-publication-20261103.md; code blobs and precise suites
+in its manifest. Backend213/PG29/Node25/system/drift/build/types/i18n6616/bundle
+PASS.13 unique Chromium scenarios passed across applicable runs; earlier missing
+dependencies, copied-schema failure and fixture ID correction retained in report.
+Output scripts/patches/logs: output/records-publication-20261103. Fresh synthetic
+SQLite and disposable PostgreSQL only, outbound blocked/mockAI/eager. No working
+DB migration, live/provider/deploy. Full R01 money/D01/release acceptance remains open.
+Publication preflight corrected stale origin/main: configured fetch refspec excluded
+main, so fetch origin main only updated FETCH_HEAD. Explicit refspec fetch and
+ls-remote confirm e02a28f5; no existing outgoing commit now. Do not attribute its
+previous publication to this cycle. Branch codex/ui-testing-toolkit retained.
+Next: selected docs/diff/links/secrets review, commit/normal push/readback and actual CI.
