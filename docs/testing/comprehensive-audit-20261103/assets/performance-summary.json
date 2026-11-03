@@ -1,0 +1,198 @@
+{
+  "25": [
+    {
+      "surface": "clients",
+      "median_ms": 297.435,
+      "max_ms": 468.589,
+      "query_counts": [
+        20
+      ]
+    },
+    {
+      "surface": "records",
+      "median_ms": 19.255,
+      "max_ms": 21.845,
+      "query_counts": [
+        10
+      ]
+    },
+    {
+      "surface": "calendar",
+      "median_ms": 16.64,
+      "max_ms": 21.844,
+      "query_counts": [
+        9
+      ]
+    },
+    {
+      "surface": "inbox",
+      "median_ms": 24.218,
+      "max_ms": 24.825,
+      "query_counts": [
+        11
+      ]
+    },
+    {
+      "surface": "tasks",
+      "median_ms": 41.43,
+      "max_ms": 160.915,
+      "query_counts": [
+        9
+      ]
+    },
+    {
+      "surface": "work-queues-appointments-10",
+      "median_ms": 191.477,
+      "max_ms": 202.153,
+      "query_counts": [
+        381
+      ]
+    },
+    {
+      "surface": "work-queues-appointments-50",
+      "median_ms": 529.354,
+      "max_ms": 601.998,
+      "query_counts": [
+        761
+      ]
+    },
+    {
+      "surface": "work-queues-legacy-10",
+      "median_ms": 245.168,
+      "max_ms": 267.169,
+      "query_counts": [
+        482
+      ]
+    },
+    {
+      "surface": "work-queues-50",
+      "median_ms": 587.489,
+      "max_ms": 635.92,
+      "query_counts": [
+        1025
+      ]
+    },
+    {
+      "surface": "owner-dashboard",
+      "median_ms": 29.642,
+      "max_ms": 30.538,
+      "query_counts": [
+        65
+      ]
+    },
+    {
+      "surface": "analytics-report",
+      "median_ms": 39.45,
+      "max_ms": 41.385,
+      "query_counts": [
+        66
+      ]
+    },
+    {
+      "surface": "client-card",
+      "median_ms": 185.004,
+      "max_ms": 270.395,
+      "query_counts": [
+        184
+      ]
+    }
+  ],
+  "1000": [
+    {
+      "surface": "clients",
+      "median_ms": 18412.68,
+      "max_ms": 19227.5,
+      "query_counts": [
+        20
+      ]
+    },
+    {
+      "surface": "records",
+      "median_ms": 14.51,
+      "max_ms": 18.211,
+      "query_counts": [
+        10
+      ]
+    },
+    {
+      "surface": "calendar",
+      "median_ms": 17.239,
+      "max_ms": 19.418,
+      "query_counts": [
+        9
+      ]
+    },
+    {
+      "surface": "inbox",
+      "median_ms": 42.573,
+      "max_ms": 43.21,
+      "query_counts": [
+        11
+      ]
+    },
+    {
+      "surface": "tasks",
+      "median_ms": 93.371,
+      "max_ms": 100.44,
+      "query_counts": [
+        9
+      ]
+    },
+    {
+      "surface": "work-queues-appointments-10",
+      "median_ms": 205.262,
+      "max_ms": 219.887,
+      "query_counts": [
+        387
+      ]
+    },
+    {
+      "surface": "work-queues-appointments-50",
+      "median_ms": 964.014,
+      "max_ms": 1023.101,
+      "query_counts": [
+        1737
+      ]
+    },
+    {
+      "surface": "work-queues-legacy-10",
+      "median_ms": 427.536,
+      "max_ms": 454.889,
+      "query_counts": [
+        488
+      ]
+    },
+    {
+      "surface": "work-queues-50",
+      "median_ms": 1122.367,
+      "max_ms": 1621.875,
+      "query_counts": [
+        2234
+      ]
+    },
+    {
+      "surface": "owner-dashboard",
+      "median_ms": 50.281,
+      "max_ms": 52.66,
+      "query_counts": [
+        65
+      ]
+    },
+    {
+      "surface": "analytics-report",
+      "median_ms": 538.289,
+      "max_ms": 826.226,
+      "query_counts": [
+        66
+      ]
+    },
+    {
+      "surface": "client-card",
+      "median_ms": 466.303,
+      "max_ms": 822.888,
+      "query_counts": [
+        184
+      ]
+    }
+  ]
+}

@@ -4,8 +4,8 @@
 и сделок, обязательную причину потери и серверную историю; версия и checks —
 [AUD-20 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants). AUD-16 защищает ImportJob и сериализует
 preview/confirm; его локальные проверки завершены, подробности —
-[паспорт интеграций](integrations.md#importjob--aud-16). Полный UI mapping/errors/history
-(AUD-12) остаётся открытым. AUD-18 реализует повторную проверку fingerprint
+[паспорт интеграций](integrations.md#importjob--aud-16). UI mapping/errors/history (AUD-12a/b/c) реализован и локально проверен30–31.10;
+границы и evidence — в паспорте интеграций. Целевые worker/storage остаются отдельными. AUD-18 реализует повторную проверку fingerprint
 готового экспорта; legacy/изменённый контекст требует нового экспорта;
 concurrent rollback/recovery (AUD-21) проверен в PostgreSQL17; XLSX bounds
 (AUD-22) реализованы и локально проверены. Ограничения и evidence —

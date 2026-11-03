@@ -1,0 +1,5 @@
+{
+  "scope": "isolated app/widget build text and top-level owned audit logs; no working logs/env/history; pattern scan only",
+  "checked": 227,
+  "candidates": []
+}

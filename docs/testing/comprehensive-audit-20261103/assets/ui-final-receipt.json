@@ -1,0 +1,111 @@
+{
+  "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+  "compared_frontend_files": 706,
+  "changed": [],
+  "native_search": {
+    "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+    "excluded_directories": [
+      ".git",
+      ".venv",
+      "node_modules"
+    ],
+    "includes": [
+      "output",
+      "frontend/dist",
+      "archive_docs"
+    ],
+    "package_files": [],
+    "app_directories": []
+  },
+  "runtime_stopped": {
+    "verified_identity_pids": [
+      10104,
+      23500
+    ],
+    "ports_without_listeners": [
+      53907,
+      53908
+    ]
+  },
+  "continued_source_changed": [],
+  "continued_runtime": {
+    "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+    "backend": "http://127.0.0.1:53907",
+    "frontend": "http://127.0.0.1:53908",
+    "database": "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\comprehensive-audit-20261103\\ui-mobile\\audit.sqlite3",
+    "processes": [
+      {
+        "name": "backend",
+        "pid": 17680
+      },
+      {
+        "name": "frontend",
+        "pid": 22564
+      }
+    ]
+  },
+  "final_source_changed": [],
+  "final_runtime_stopped": {
+    "verified_identity_pids": [
+      17680,
+      11168,
+      22564
+    ],
+    "ports_without_listeners": [
+      53907,
+      53908
+    ]
+  },
+  "real_av_ui_import": {
+    "failedUploadFileRetained": true,
+    "previewStatus": 201,
+    "job": {
+      "id": 3,
+      "status": "previewed",
+      "errors": {
+        "rows": [],
+        "count": 0
+      }
+    },
+    "confirmed": {
+      "status": "imported",
+      "imported_count": 1
+    },
+    "exportStatus": 200,
+    "exportFilename": "leads.csv",
+    "exportContainsImported": true,
+    "outcome": "PASS"
+  },
+  "final_runtime": {
+    "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+    "backend": "http://127.0.0.1:53907",
+    "frontend": "http://127.0.0.1:53908",
+    "database": "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\comprehensive-audit-20261103\\ui-mobile\\audit.sqlite3",
+    "processes": [
+      {
+        "name": "backend",
+        "pid": 11168
+      },
+      {
+        "name": "frontend",
+        "pid": 22564
+      }
+    ],
+    "clamd_window": {
+      "host": "127.0.0.1",
+      "port": 59648
+    }
+  },
+  "d01_source_changed": [],
+  "d01_runtime_stopped": {
+    "verified_identity_pids": [
+      19852,
+      9488
+    ],
+    "ports_without_listeners": [
+      53907,
+      53908
+    ]
+  },
+  "d01_receipt": "d01-final-receipt.json"
+}

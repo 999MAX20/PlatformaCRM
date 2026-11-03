@@ -193,7 +193,8 @@ compression ratio, число записей, dimensions и фактически
 даёт400 без частичного импорта; после исправления файла возможен новый upload.
 Reader/iterator/workbook закрываются и при ошибке. Лимиты всех листов, включая
 пустые строки, и значения env — [operations](operations.md#лимиты-xlsx-импорта).
-Обычные роли/tenant/AV и доменные транзакции сохранены. Полный UI (AUD-12) открыт.
+Обычные роли/tenant/AV и доменные транзакции сохранены. UI mapping/errors/history
+AUD-12a/b/c локально проверен30–31.10; описание и evidence приведены выше.
 Версия и граница проверок — [AUD-16 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-16-20261019--import-job-write-boundaries).
 
 Public lead/widget ingress привязан к разрешённому business/form/channel,

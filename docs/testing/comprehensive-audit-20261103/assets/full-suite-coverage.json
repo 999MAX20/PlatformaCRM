@@ -1,0 +1,367 @@
+{
+  "scope": "Full SQLite verbose results, parsed count matches unittest footer; no implication of full acceptance",
+  "counts": {
+    "PASS": 2698,
+    "FAIL": 4,
+    "SKIP": 50
+  },
+  "by_app": {
+    "accounts": {
+      "PASS": 111,
+      "SKIP": 3
+    },
+    "activities": {
+      "PASS": 46
+    },
+    "ai_core": {
+      "PASS": 199,
+      "FAIL": 1
+    },
+    "analytics": {
+      "PASS": 62
+    },
+    "automations": {
+      "PASS": 86,
+      "SKIP": 3
+    },
+    "billing": {
+      "PASS": 44,
+      "SKIP": 3
+    },
+    "bots": {
+      "PASS": 196,
+      "SKIP": 2
+    },
+    "branches": {
+      "PASS": 27,
+      "SKIP": 1
+    },
+    "businesses": {
+      "PASS": 135,
+      "SKIP": 9
+    },
+    "clients": {
+      "PASS": 76
+    },
+    "conversations": {
+      "PASS": 91,
+      "SKIP": 1
+    },
+    "core": {
+      "PASS": 587,
+      "FAIL": 3,
+      "SKIP": 10
+    },
+    "crm": {
+      "PASS": 73
+    },
+    "integrations": {
+      "PASS": 262,
+      "SKIP": 3
+    },
+    "leads": {
+      "PASS": 141
+    },
+    "notifications": {
+      "PASS": 106,
+      "SKIP": 3
+    },
+    "onboarding": {
+      "PASS": 23
+    },
+    "outreach": {
+      "PASS": 119
+    },
+    "payments": {
+      "PASS": 21
+    },
+    "pricing": {
+      "PASS": 36
+    },
+    "scheduling": {
+      "PASS": 130,
+      "SKIP": 7
+    },
+    "services": {
+      "PASS": 16
+    },
+    "support": {
+      "PASS": 41,
+      "SKIP": 4
+    },
+    "tasks": {
+      "PASS": 70,
+      "SKIP": 1
+    }
+  },
+  "failures": [
+    {
+      "name": "apps.ai_core.tests.AICoreFoundationTests.test_ai_tool_suggest_logs_actions_without_execution",
+      "result": "FAIL"
+    },
+    {
+      "name": "apps.core.tests.ProductionReadinessTests.test_production_settings_check_warns_about_unsafe_baseline",
+      "result": "FAIL"
+    },
+    {
+      "name": "apps.core.tests_b301_performance.B301MeasuredPerformanceTests.test_representative_read_surfaces_have_bounded_queries_and_payloads",
+      "result": "FAIL"
+    },
+    {
+      "name": "apps.core.tests_mixed_membership_scope.MixedMembershipScopeTests.test_bell_combines_business_and_own_scope_and_counts_each_visible_notification_once",
+      "result": "FAIL"
+    }
+  ],
+  "skips": [
+    {
+      "name": "apps.accounts.tests_recovery.RecoveryConcurrencyTests.test_only_one_completion_wins",
+      "result": "SKIP",
+      "reason": "skipped 'Requires PostgreSQL row locks'"
+    },
+    {
+      "name": "apps.accounts.tests_recovery.RecoveryConcurrencyTests.test_only_one_global_request_across_businesses",
+      "result": "SKIP",
+      "reason": "skipped 'Requires PostgreSQL row locks'"
+    },
+    {
+      "name": "apps.accounts.tests_recovery.RecoveryConcurrencyTests.test_owner_revocation_before_completion_invalidates_consent",
+      "result": "SKIP",
+      "reason": "skipped 'Requires PostgreSQL row locks'"
+    },
+    {
+      "name": "apps.automations.tests_configuration_concurrency.AutomationConfigurationConcurrencyTests.test_activation_and_deletion_validate_the_locked_composition",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.automations.tests_configuration_concurrency.AutomationConfigurationConcurrencyTests.test_two_deletions_cannot_empty_an_active_rule",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.automations.tests_follow_up_concurrency.FollowUpConcurrencyTests.test_builtin_and_rule_create_one_task_under_race",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.billing.tests_commerce_concurrency.CommerceConcurrencyTests.test_bank_and_card_do_not_double_period",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locks require PostgreSQL'"
+    },
+    {
+      "name": "apps.billing.tests_commerce_concurrency.CommerceConcurrencyTests.test_duplicate_card_delivery_and_recovery_once",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locks require PostgreSQL'"
+    },
+    {
+      "name": "apps.billing.tests_commerce_concurrency.CommerceConcurrencyTests.test_two_confirmations_and_applications_once",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locks require PostgreSQL'"
+    },
+    {
+      "name": "apps.bots.tests_handoff_recovery.HandoffRecoveryConcurrencyTests.test_inbound_committed_while_timer_waits_keeps_human_control",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.bots.tests_handoff_recovery.HandoffRecoveryConcurrencyTests.test_two_workers_resume_once",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.branches.tests_concurrency.BranchConcurrentBookingTests.test_two_prevalidated_bookings_compete_for_one_specialist_slot",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.businesses.tests_employee_access_concurrency.EmployeeAccessConcurrencyTests.test_accept_waits_for_reissue_and_rejects_old_token",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locks require PostgreSQL'"
+    },
+    {
+      "name": "apps.businesses.tests_employee_access_concurrency.EmployeeAccessConcurrencyTests.test_concurrent_execute_has_one_effect_and_one_audit",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locks require PostgreSQL'"
+    },
+    {
+      "name": "apps.businesses.tests_employee_access_concurrency.EmployeeAccessConcurrencyTests.test_concurrent_member_change_invalidates_owner_consent",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locks require PostgreSQL'"
+    },
+    {
+      "name": "apps.businesses.tests_employee_access_concurrency.EmployeeAccessConcurrencyTests.test_cross_business_people_are_locked_in_stable_order",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locks require PostgreSQL'"
+    },
+    {
+      "name": "apps.businesses.tests_invitation_concurrency.InvitationConcurrencyTests.test_audit_failure_rolls_back_membership_and_token_consumption",
+      "result": "SKIP",
+      "reason": "skipped 'Requires real PostgreSQL row locks.'"
+    },
+    {
+      "name": "apps.businesses.tests_invitation_concurrency.InvitationConcurrencyTests.test_nullable_relations_and_concurrent_acceptance_have_one_winner",
+      "result": "SKIP",
+      "reason": "skipped 'Requires real PostgreSQL row locks.'"
+    },
+    {
+      "name": "apps.businesses.tests_ownership.OwnershipConcurrencyTests.test_concurrent_profile_repair_cannot_restore_previous_owner",
+      "result": "SKIP",
+      "reason": "skipped 'Real row-lock concurrency requires PostgreSQL'"
+    },
+    {
+      "name": "apps.businesses.tests_ownership.OwnershipConcurrencyTests.test_role_change_committing_during_transfer_invalidates_consent",
+      "result": "SKIP",
+      "reason": "skipped 'Real row-lock concurrency requires PostgreSQL'"
+    },
+    {
+      "name": "apps.businesses.tests_ownership.OwnershipConcurrencyTests.test_two_executions_have_one_winner",
+      "result": "SKIP",
+      "reason": "skipped 'Real row-lock concurrency requires PostgreSQL'"
+    },
+    {
+      "name": "apps.conversations.tests_message_history_concurrency.MessageIntakeConcurrencyTests.test_parallel_intake_preserves_both_messages_and_unread_count",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_crm_server_concurrency.CRMRefundConcurrencyTests.test_competing_refunds_cannot_exceed_received_money",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_crm_server_concurrency.CRMServerConcurrencyTests.test_detail_edit_and_stage_change_preserve_both_results",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_crm_server_concurrency.CRMServerConcurrencyTests.test_two_create_deal_commands_keep_one_linked_deal",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_crm_server_concurrency.CRMServerConcurrencyTests.test_two_lost_commands_preserve_single_transition",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_import_job_concurrency.ImportJobConcurrencyTests.test_preview_cannot_reopen_concurrent_confirmation",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_import_job_concurrency.ImportJobConcurrencyTests.test_two_confirmations_execute_one_import",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_import_job_concurrency.ImportJobConcurrencyTests.test_waiting_confirm_recovers_after_final_audit_failure",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_import_job_concurrency.ImportJobConcurrencyTests.test_waiting_confirm_recovers_after_row_failure",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.core.tests_platform_details.PlatformDetailsConcurrencyTests.test_two_corrections_with_same_revision_have_one_winner",
+      "result": "SKIP",
+      "reason": "skipped 'Row locking requires isolated PostgreSQL.'"
+    },
+    {
+      "name": "apps.core.tests_service_status.ServiceObservationConcurrencyTests.test_two_collectors_record_only_one_incident_start",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.integrations.tests_ycloud_concurrency.YCloudConcurrencyTests.test_confirmation_lock_rechecks_current_binding",
+      "result": "SKIP",
+      "reason": "skipped 'Requires isolated PostgreSQL'"
+    },
+    {
+      "name": "apps.integrations.tests_ycloud_concurrency.YCloudConcurrencyTests.test_event_processing_duplicate_workers_have_one_inbox_effect",
+      "result": "SKIP",
+      "reason": "skipped 'Requires isolated PostgreSQL'"
+    },
+    {
+      "name": "apps.integrations.tests_ycloud_concurrency.YCloudConcurrencyTests.test_two_delivery_workers_cannot_repeat_http_attempt",
+      "result": "SKIP",
+      "reason": "skipped 'Requires isolated PostgreSQL'"
+    },
+    {
+      "name": "apps.notifications.tests_personal_concurrency.PersonalNotificationConcurrencyTests.test_concurrent_acknowledgement_records_one_confirmation",
+      "result": "SKIP",
+      "reason": "skipped 'Requires PostgreSQL row locks and concurrent connections'"
+    },
+    {
+      "name": "apps.notifications.tests_personal_concurrency.PersonalNotificationConcurrencyTests.test_concurrent_publication_retry_has_one_audience_and_audit",
+      "result": "SKIP",
+      "reason": "skipped 'Requires PostgreSQL row locks and concurrent connections'"
+    },
+    {
+      "name": "apps.notifications.tests_personal_concurrency.PersonalNotificationConcurrencyTests.test_read_all_does_not_consume_concurrent_new_announcement",
+      "result": "SKIP",
+      "reason": "skipped 'Requires PostgreSQL row locks and concurrent connections'"
+    },
+    {
+      "name": "apps.scheduling.tests_plan_concurrency.PlanConcurrencyTests.test_last_slot_between_plans_has_one_winner",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.scheduling.tests_plan_concurrency.PlanConcurrencyTests.test_remove_and_schedule_cannot_both_apply",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.scheduling.tests_plan_concurrency.PlanConcurrencyTests.test_same_command_creates_one_appointment",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.scheduling.tests_record_concurrency.RecordConcurrencyTests.test_early_completion_and_cancel_cannot_both_apply",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.scheduling.tests_record_concurrency.RecordConcurrencyTests.test_last_slot_has_only_one_winner",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.scheduling.tests_record_concurrency.RecordConcurrencyTests.test_same_key_creates_once_and_can_be_replayed",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.scheduling.tests_record_concurrency.RecordConcurrencyTests.test_two_actions_on_same_version_do_not_both_apply",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    },
+    {
+      "name": "apps.support.tests_concurrency.SupportConcurrencyTests.test_competing_assignments_do_not_overwrite_the_winner",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locking requires the isolated PostgreSQL gate.'"
+    },
+    {
+      "name": "apps.support.tests_concurrency.SupportConcurrencyTests.test_concurrent_duplicate_message_then_retry_creates_one_message",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locking requires the isolated PostgreSQL gate.'"
+    },
+    {
+      "name": "apps.support.tests_concurrency.SupportConcurrencyTests.test_concurrent_incident_link_creates_one_snapshot_and_audit",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locking requires the isolated PostgreSQL gate.'"
+    },
+    {
+      "name": "apps.support.tests_concurrency.SupportConcurrencyTests.test_independent_messages_and_out_of_order_reads_are_not_lost",
+      "result": "SKIP",
+      "reason": "skipped 'Real row locking requires the isolated PostgreSQL gate.'"
+    },
+    {
+      "name": "apps.tasks.tests_concurrency.TaskConcurrentCommandsTests.test_same_version_allows_only_one_competing_change",
+      "result": "SKIP",
+      "reason": "skipped \"Database doesn't support feature(s): has_select_for_update\""
+    }
+  ]
+}

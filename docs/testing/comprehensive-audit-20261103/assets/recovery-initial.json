@@ -1,0 +1,7 @@
+{
+  "phase": "full",
+  "returncode": 1,
+  "failure_type": "CalledProcessError",
+  "duration_seconds": 111.86,
+  "environment": "Temporary native PostgreSQL17, Redis7.4.9, Celery solo, synthetic data/keys, .env disabled and outbound Python sockets blocked except loopback; no production profile proof"
+}

@@ -1,0 +1,339 @@
+--- a/docs/current/crm.md
++++ b/docs/current/crm.md
+@@ -205 +205,3 @@
+-Это имена будущего API, а не доступные сейчас endpoints. List пагинируется сервером,
++Неденежный API плана/этапов реализован02.11; его фактические payload и команды
++определяются текущими serializers/views. Денежные commands ниже остаются проектом.
++List пагинируется сервером,
+@@ -357 +359,3 @@
+-Публикация и целевая среда не подтверждены. Новая денежная логика — следующий цикл; D01 обязателен, Market после пилота, native — второй разработчик.
++Records/планы позднее опубликованы6349acdf; [квитанция03.11](../testing/evidence/records-publication-20261103.md)
++фиксирует точный scope. Целевая среда не принята. Новая денежная логика — следующий
++цикл; D01 обязателен, Market после пилота, native — второй разработчик.
+--- a/docs/current/frontend.md
++++ b/docs/current/frontend.md
+@@ -152 +152,3 @@
+-этого среза описаны в REFACTOR entry в PRIMARY-SESSION; публикация не выполнена.
++этого среза описаны в REFACTOR entry в PRIMARY-SESSION. Технический пакет
++позднее опубликован368a3fa4; [итоговая квитанция](../testing/evidence/refactor-20261030.md)
++не закрывает отдельные продуктовые/live критерии.
+--- a/docs/current/integrations.md
++++ b/docs/current/integrations.md
+@@ -262 +262,2 @@
+-Обычные роли/tenant/AV и доменные транзакции сохранены. Полный UI (AUD-12) открыт.
++Обычные роли/tenant/AV и доменные транзакции сохранены. UI mapping/errors/history
++AUD-12a/b/c локально проверен30–31.10; описание и evidence приведены выше.
+--- a/docs/current/operations.md
++++ b/docs/current/operations.md
+@@ -33,2 +33,6 @@
+-повторной доставки. Проверены только на одноразовых БД. Рабочая миграция/деплой
+-не выполнялись и требуют отдельно согласованной среды и обычной release-проверки.
++повторной доставки. Сначала проверены на одноразовых БД;29.10 по отдельному
++поручению применены к локальной рабочей БД после backup вместе с зависимостями
++core0012, support0002 и businesses0012/0013. Проверены integrity, legacy state,
++backfill и текущий UI; evidence — NOTIFICATIONS-PERSONAL-20261028 в PRIMARY.
++Это историческая локальная операция, не новая миграция в аудите04.11 и не deployment.
++Другие целевые среды требуют отдельной согласованной активации и release-проверки.
+@@ -42,4 +46,8 @@
+-Решение владельца 14.10: выбрать инфраструктуру на территории Казахстана,
+-Yandex Cloud больше не выбранное направление. Технический оператор — владелец;
+-провайдер, параметры среды и запуск ещё не назначены. Решения и исследование —
+-[CRM-R02](../testing/task-state/PRIMARY-SESSION.md#crm-r02-20261014--pilot-decisions-and-provider-research).
++Последнее поручение владельца на комплексный аудит03.11 задаёт целевое направление
++Yandex Cloud. Оно заменяет прежний выбор направления14.10; регион, состав сервисов,
++ресурсы, операционные роли и запуск ещё не согласованы. Размеры Hoster.kz не критерий.
++Ранее принятое требование размещения в Казахстане сохраняется как ограничение
++для сверки с выбранной конфигурацией; выбор Yandex Cloud сам по себе не выбирает
++регион и не отменяет требования к данным. Противоречие решает владелец до запуска;
++новая облачная среда этим решением не развёрнута и не допущена к production.
++Историческое исследование14.10 — [CRM-R02](../testing/task-state/PRIMARY-SESSION.md#crm-r02-20261014--pilot-decisions-and-provider-research).
+@@ -53 +61 @@
+-дублей; RPO=0 не обещается. Требуются target/provider в Казахстане, БД/PITR,
++дублей; RPO=0 не обещается. Требуются проверенная конфигурация Yandex Cloud, БД/PITR,
+@@ -310,2 +318,3 @@
+-Миграция core0012 проверена в изоляции; её применение в рабочей среде и запуск
+-целевого worker/beat требуют отдельного согласованного окружения.
++Миграция core0012 проверена в изоляции и29.10 применена к локальной рабочей БД
++как зависимость notifications0007 по отдельному поручению (см. выше). Запуск
++целевого worker/beat и применение в других средах требуют согласованного окружения.
+@@ -338,2 +347,3 @@
+-от `core0012`. Она проверяется в изолированных БД; к рабочей БД в этом scope
+-не применяется. Локальная активация support0001 не означает активацию связей.
++от `core0012`. Она проверена в изолированных БД и первоначально не применялась в scope15.10.
++Позднее29.10 support0002/core0012 применены локально как зависимости notifications0007
++после backup; это не подтверждение целевой облачной активации связей.
+--- a/docs/current/product.md
++++ b/docs/current/product.md
+@@ -27,4 +27,6 @@
+-Развитие внутреннего CRM-агента/аналитики приостановлено решением 07.10.
+-Пауза внутреннего AI не удаляет и не отключает его runtime. Отдельное новое
+-решение U2 временно скрывает Заявки/Сделки в пользовательском pilot workflow,
+-сохраняя их backend, данные, API и историю; этот новый UI ещё требует реализации.
++Расширенная внутренняя AI-аналитика остаётся отложенной. Решения30.10/02.11
++включают ограниченный помощник сотрудника CRM-D01 с текстом/голосом в обязательный
++пилот; его полная приёмка ещё открыта. Прежняя пауза не отключала runtime.
++Решение U2 скрывает рабочие Заявки/Сделки в pilot workflow с сохранением backend,
++данных, API и истории. Records UI и безопасный legacy-контекст реализованы в scoped
++пакете6349acdf; денежная часть плана и полная AC-CRM-PILOT-01–14 остаются открыты.
+@@ -239 +241 @@
+-| Задачи и автоматизации | Следующее действие, исполнитель, срок/ожидание; правила создания задач/уведомлений, назначения, заметки, follow-up и ожидания | Домен и редактор правил реализованы; история запусков AUD-07 и offline recovery AUD-10 не закрыты |
++| Задачи и автоматизации | Следующее действие, исполнитель, срок/ожидание; правила создания задач/уведомлений, назначения, заметки, follow-up и ожидания | Домен, редактор правил, история AUD-07 и ограниченное offline recovery AUD-10 локально проверены в своих scope; target worker и полный пилот остаются отдельными |
+@@ -260 +262 @@
+-Внутренний CRM AI и AI-аналитик сохранены в коде, но их развитие приостановлено.
++Внутренний CRM runtime сохранён; ограниченный D01 обязателен в пилоте, расширенная AI-аналитика отложена.
+@@ -265,2 +267,4 @@
+-наличие настроек и адаптеров не доказывает отправку. Размещение требуется в
+-Казахстане; PS Cloud обсуждался, конфигурация отложена. До реальных данных нужны
++наличие настроек и адаптеров не доказывает отправку. По поручению владельца03.11
++целевая платформа — Yandex Cloud; регион, ресурсы и сервисы ещё не выбраны.
++Совместимость с ранее принятым размещением в Казахстане остаётся условием
++выбора конфигурации, а не молчаливо отменённым требованием. До реальных данных нужны
+--- a/docs/current/roadmap.md
++++ b/docs/current/roadmap.md
+@@ -99 +99 @@
+-| PK3 Среда и legal | CRM-R02/R04, CG-03/04 | Kazakhstan target, все очереди/workers/beat/AV/private storage/почта, restore/rollback/alerts, тексты/основания; цели15мин/4ч, дежурство24/7 серьёзных сбоев; внешняя приёмка открыта |
++| PK3 Среда и legal | CRM-R02/R04, CG-03/04 | Yandex Cloud target (регион/ресурсы ещё не выбраны), все очереди/workers/beat/AV/private storage/почта, restore/rollback/alerts, тексты/основания; цели15мин/4ч, дежурство24/7 серьёзных сбоев; внешняя приёмка открыта |
+@@ -289 +289 @@
+-| CRM-C06 Календарь | CRM-R01/S01, OP-RECORD-06 | Историческое booking/overlap evidence сохраняется; новые видимые состояния/early completion/план и sync list/calendar не выполнены |
++| CRM-C06 Календарь | CRM-R01/S01, OP-RECORD-06 | Booking/overlap и новый Records/early completion/неденежный план реализованы в scoped пакетах; актуальная общая AC01–14, денежные эффекты и target-приёмка остаются открыты |
+@@ -297 +297 @@
+-| CRM-C14 Offline | AUD-01/10; AC-MOBILE-REUSE | Изоляция есть; durable keys/capacity/conflict/recovery остаются, не обещать полную offline CRM или replay денег |
++| CRM-C14 Offline | AUD-01/10; AC-MOBILE-REUSE | AUD-10 закрыт в scoped-границах30.10 (8d710f03): durable keys/capacity/conflict/recovery проверены; текущий аудит и исторический native рассматриваются отдельно. Полная offline CRM и replay денег не обещаны |
+@@ -378 +378 @@
+-| CG-04 | CRM-R02/R04; Никита/операции/Максим | Kazakhstan target, measured capacity2→5, схема/проверка15мин/4ч, БД/private files/keys/queues/PITR/rollback, наблюдаемость и 24/7 serious-incident duty; штатная поддержка по опубликованному графику, конкретные люди/стоимость открыты |
++| CG-04 | CRM-R02/R04; Никита/операции/Максим | Yandex Cloud target (регион/ресурсы ещё не выбраны), measured capacity2→5, схема/проверка15мин/4ч, БД/private files/keys/queues/PITR/rollback, наблюдаемость и 24/7 serious-incident duty; штатная поддержка по опубликованному графику, конкретные люди/стоимость открыты |
+@@ -403,2 +403,2 @@
+-| R01 / OP-RECORD | Проект технического контракта подготовлен02.11 в [CRM](crm.md#технический-контракт-оставшегося-r01--подготовка02112026) | План/шаги/API/locks/ledger/совместимость описаны; особый случай нулевых баз и конкретные новые terminal corrections не утверждены автоматически; код ещё не реализован |
+-| R01 / AC01–08/10–13 | Первый цикл: страница «Записи», Appointment pipeline и безопасная замена Lead/Deal входов/логики | Спецификация выше; одна сущность/состояние, матрица consumers, история/права и API/UI regression; реализация не начата |
++| R01 / OP-RECORD | Проект технического контракта подготовлен02.11 в [CRM](crm.md#технический-контракт-оставшегося-r01--подготовка02112026) | Неденежные VisitPlan/VisitPlanStep и API реализованы; денежные версии/зачёты остаются проектом. Особый случай нулевых баз и конкретные новые terminal corrections не утверждены автоматически |
++| R01 / AC01–08/10–13 | Первый цикл: страница «Записи», Appointment pipeline и безопасная замена Lead/Deal входов/логики | Scoped Records/pipeline/legacy-пакет реализован и опубликован6349acdf; consumer matrix и проверки — в evidence выше. Денежный цикл, автоматический AI-default и полная новая приёмка остаются открыты |
+@@ -439 +439 @@
+-| R04 / CG04 | Настройка и проверка выбранной целевой среды | Kazakhstan target, workers/beat/AV/storage/mail/health/secrets, конкретные операторы; разрешение на target |
++| R04 / CG04 | Настройка и проверка выбранной целевой среды | Yandex Cloud target (регион/ресурсы ещё не выбраны), workers/beat/AV/storage/mail/health/secrets, конкретные операторы; разрешение на target |
+@@ -858 +858,2 @@
+-в согласованных локальных границах. AUD-10 выполнен частично; остаток ниже. Это единственная очередь
++в согласованных локальных границах. AUD-10 закрыт позднее30.10; актуальные
++результаты остальных AUD приведены в строках ниже. Это единственная очередь
+@@ -1107 +1108 @@
+-| R02-AI-RETURN | Час тишины после ответа сотрудника, safety исключения; локальная активация bots0012 | Автозапуск после reboot и целевой worker/beat отдельно; R02 целиком открыт; официальный BSP→Meta принят, YCloud local slice отдельно; PS Cloud/target не настроены |
++| R02-AI-RETURN | Час тишины после ответа сотрудника, safety исключения; локальная активация bots0012 | Автозапуск после reboot и целевой worker/beat отдельно; R02 целиком открыт; официальный BSP→Meta принят, YCloud local slice отдельно; целевая среда Yandex Cloud не принята |
+@@ -1170 +1171 @@
+-| CRM-R02 | Две независимые клиники, подготовка до пяти, manifest/роли/каналы/Kazakhstan target/операторы | Принятые решения U0/29.10; CG-01–04 | ВЫПОЛНЕНО ЧАСТИЧНО: решения и локальный YCloud TP Lite есть; commercial/activation/live/target/legal остаются |
++| CRM-R02 | Две независимые клиники, подготовка до пяти, manifest/роли/каналы/Yandex Cloud target (регион/ресурсы ещё не выбраны)/операторы | Принятые решения U0/29.10; CG-01–04 | ВЫПОЛНЕНО ЧАСТИЧНО: решения и локальный YCloud TP Lite есть; commercial/activation/live/target/legal остаются |
+@@ -1234,2 +1235,2 @@
+-не выводятся из удобства пилота. Решение 14.10 заменяет прежнее направление Yandex:
+-выбрать инфраструктуру на территории Казахстана.
++не выводятся из удобства пилота. Последнее поручение владельца03.11 выбирает Yandex Cloud; прежнее направление14.10
++сохраняется как история. Регион, сервисы, ресурсы и пригодность среды ещё не приняты.
+--- a/docs/documentation-index.json
++++ b/docs/documentation-index.json
+@@ -5,0 +6,14 @@
++    {"path": "docs/testing/comprehensive-audit-20261103/backend.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/ui-mobile.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/tests.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/independent-performance.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/evidence-manifest.json", "role": "generated-evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/document-review-coverage.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/documentation.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/findings.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/independent-review.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/production-plan.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/requirements.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/security.md", "role": "evidence"},
++    {"path": "docs/testing/comprehensive-audit-20261103/README.md", "role": "evidence"},
++    {"path": "docs/testing/evidence/refactor-20261030.md", "role": "evidence"},
+--- a/docs/pre-production/capabilities.md
++++ b/docs/pre-production/capabilities.md
+@@ -315,3 +315,4 @@
+-AUD-10 выполнен частично: готова изоляция очереди; остаются capacity без потерь,
+-durable command keys, replay/конфликты и recovery UX. Остальные пункты аудита
+-не выполнены, кроме AUD-21: полный локальный критерий concurrent rollback/recovery
++На историческом срезе21.10 AUD-10 был частичным; позднее30.10 его локальный
++scope закрыт и опубликован8d710f03. Актуальные закрытия AUD-07/08/09/11/12/17/19
++и ограниченного AUD-V01 находятся в [roadmap](../current/roadmap.md#project-audit-20261017).
++Они не являются полной production-сертификацией. AUD-21: полный локальный критерий concurrent rollback/recovery
+@@ -324,2 +325,2 @@
+-Остальные исправления не закрыты; это не новая
+-общая сертификация проекта.
++Этот исторический перечень не заменяет актуальные строки roadmap;
++локальные закрытия не являются общей сертификацией проекта.
+@@ -362,2 +363,2 @@
+-| Клиентский AI | Настройки/знания/память, публичные источники, контролируемое создание, safety budget, handoff/recovery | [Подробный паспорт](customer-ai-agent.md); 28 live-сценариев 08.10 PASS; реальный канал ещё не принят |
+-| CRM AI / аналитик | Существующие настройки, инструменты, подтверждённые команды и аналитические запросы | [ai_core](../../apps/ai_core), [пауза](crm-ai-agent.md); развитие остановлено решением, runtime не объявлен выключенным |
++| Клиентский AI | Настройки/знания/память, публичные источники, контролируемое создание, safety budget, handoff/recovery | [Подробный паспорт](customer-ai-agent.md); 43 real-model сценария08.10 PASS (включая прежние28); реальный канал ещё не принят |
++| CRM AI / аналитик | Существующие настройки, инструменты, подтверждённые команды и аналитические запросы | [ai_core](../../apps/ai_core), [D01 и остаток](crm-ai-agent.md); ограниченный помощник обязателен в пилоте, расширенная аналитика отложена; полный text/voice PASS не получен |
+--- a/docs/pre-production/crm-ai-agent.md
++++ b/docs/pre-production/crm-ai-agent.md
+@@ -1 +1 @@
+-# Внутренний CRM-агент и аналитика — приостановленное направление
++# Помощник сотрудника D01 и отложенная AI-аналитика
+@@ -3,3 +3,6 @@
+-Срез: 07.10.2026, `6822ea1623e00fb57af682182cf594ad948fcc8b`.
+-Решение владельца: разработка и дальнейшая реализация CRM-аналитического агента
+-поставлены на паузу; текущий активный AI-этап сосредоточен на клиентском Inbox.
++Исторический срез07.10.2026: `6822ea1623e00fb57af682182cf594ad948fcc8b`.
++Решения30.10/02.11 включают ограниченный CRM-D01 в обязательный пилот: фактическая
++аналитика с источниками и подтверждаемые CRM-команды через текст/голос. Расширенная
++AI-аналитика остаётся отложенной. Текстовый runtime существует; полная актуальная
++приёмка D01 и голосовой сценарий не закрыты. Историческая пауза07.10 не текущий
++статус всего D01 и не свидетельство отключённого runtime.
+@@ -9,2 +12,2 @@
+-изменения в рамках документирования не выполнялись. Поэтому «в пилотном AI-этапе
+-только клиентский агент» описывает текущий фокус, а не физический состав кода.
++изменения в рамках документирования не выполнялись. Формулировка «только клиентский
++агент» относится к прежнему этапу и заменена принятым ограниченным D01.
+@@ -17,3 +20,3 @@
+-При возврате к направлению нужны новое поручение владельца, сверка изменения
+-исходников и требований, предметные проверки нужного сценария. Не следует
+-начинать реализацию заново или повторять неизменившиеся проверки только из-за паузы.
++Для закрытия принятого D01 нужны сверка текущих источников/прав, команд и фактической
++аналитики, голосовой сценарий и предметные проверки. Расширенная аналитика требует
++отдельного возобновления. Старые проверки не подтверждают изменившийся runtime.
+@@ -29 +32,2 @@
+-Развитие остаётся CRM-D01 (пауза), существующий runtime не удалён.
++Историческая пауза09.10 заменена решениями30.10/02.11 в ограниченном scope D01;
++расширенная аналитика отложена, существующий runtime не удалён.
+--- a/docs/pre-production/customer-ai-agent.md
++++ b/docs/pre-production/customer-ai-agent.md
+@@ -281 +281,3 @@
+-модельная приёмка, не версия всего текущего runtime. Пауза CRM AI сохраняется.
++модельная приёмка, не версия всего текущего runtime. Ограниченный CRM-D01
++с текстом/голосом обязателен в пилоте по решениям30.10/02.11; расширенная
++аналитика остаётся отложенной. Полная приёмка D01 открыта — [паспорт](crm-ai-agent.md).
+--- a/docs/pre-production/data-lifecycle.md
++++ b/docs/pre-production/data-lifecycle.md
+@@ -7,2 +7,2 @@
+-[паспорт интеграций](integrations.md#importjob--aud-16). Полный UI mapping/errors/history
+-(AUD-12) остаётся открытым. AUD-18 реализует повторную проверку fingerprint
++[паспорт интеграций](integrations.md#importjob--aud-16). UI mapping/errors/history (AUD-12a/b/c) реализован и локально проверен30–31.10;
++границы и evidence — в паспорте интеграций. Целевые worker/storage остаются отдельными. AUD-18 реализует повторную проверку fingerprint
+--- a/docs/pre-production/identity-access.md
++++ b/docs/pre-production/identity-access.md
+@@ -16,2 +16,4 @@
+-checkpoint AUD-14-20261017. Остальные проверки AUD-17/18 остаются открыты
+-в [roadmap](../current/roadmap.md#project-audit-20261017).
++checkpoint AUD-14-20261017. AUD-17 закрыт в прежнем shared-read scope,
++позднее заменён персональной моделью уведомлений; AUD-18 локально проверил
++повторную авторизацию экспорта. Версии и границы —
++[roadmap](../current/roadmap.md#project-audit-20261017).
+--- a/docs/pre-production/operations.md
++++ b/docs/pre-production/operations.md
+@@ -7,2 +7,5 @@
+-Решение 14.10 заменило Yandex Cloud требованием размещения в Казахстане;
+-конфигурация PS Cloud отложена. Конкретный production deployment не доказан.
++Последнее поручение владельца на аудит03.11 выбирает Yandex Cloud вместо прежнего
++направления14.10. Регион, сервисы и ресурсы ещё не определены; размеры Hoster.kz
++не критерий. Прежнее требование размещения данных в Казахстане сохраняется для
++сверки выбранной конфигурации. Конкретный production deployment и пригодность
++среды не доказаны.
+@@ -40,2 +43,4 @@
+-данные. RPO/RTO/retention и оператор выбираются для target, старые числовые предложения
+-не становятся нормой. Working/staging/prod migration/seed/reset требуют точного scope.
++данные. Принятые29.10 цели — RPO обычных данных≤15 минут и RTO основных операций≤4 часов;
++они ещё требуют измерения в целевой среде. Retention, оператор и способ достижения
++целей определяются для target; старые предложения не заменяют эти требования.
++Working/staging/prod migration/seed/reset требуют точного scope.
+--- a/docs/pre-production/project-state.md
++++ b/docs/pre-production/project-state.md
+@@ -3 +3 @@
+-Текущая документационная сверка **21.10.2026**, опубликованная основа `ce2c290d`.
++Историческая документационная сверка **21.10.2026**, опубликованная основа `ce2c290d`; текущий статус и поздние scoped closures — в [roadmap](../current/roadmap.md) и [STATUS](../../STATUS.md).
+@@ -40,3 +40,4 @@
+-Текущий активный AI-состав этапа — **клиентский агент Inbox**. Его функции,
+-допустимые CRM-действия и ограничения зафиксированы в [паспорте](customer-ai-agent.md).
+-Разработка и дальнейшая реализация внутреннего CRM-агента/аналитики **на паузе**.
++Клиентский агент Inbox сохраняется; его функции и ограничения — в
++[паспорте](customer-ai-agent.md). Решения30.10/02.11 также включают ограниченный
++помощник сотрудника D01 (текст/голос) в обязательный пилот. Расширенная внутренняя
++AI-аналитика отложена; полная текущая приёмка D01 остаётся открытой.
+@@ -45 +46 @@
+-[Отдельная запись о паузе](crm-ai-agent.md).
++[D01 и границы исторической паузы](crm-ai-agent.md).
+@@ -79 +80 @@
+-Telegram/WhatsApp включены в подготовку R02; подключение Meta/PS Cloud отложено.
++Telegram/WhatsApp включены в подготовку R02; целевой Yandex Cloud выбран03.11, но конфигурация, deployment и live-приёмка ещё открыты.
+--- a/docs/pre-production/README.md
++++ b/docs/pre-production/README.md
+@@ -29 +29 @@
+-| Внутренний CRM-агент / аналитика | [Зафиксированная пауза](crm-ai-agent.md) | [Предыдущая приёмка](../../archive_docs/2026-10-07/docs/testing/ai-agent-continuity-20261006.md) |
++| Внутренний CRM-агент / аналитика | [D01 и границы отложенной аналитики](crm-ai-agent.md) | [Предыдущая приёмка](../../archive_docs/2026-10-07/docs/testing/ai-agent-continuity-20261006.md) |
+--- a/docs/pre-production/tasks-automations.md
++++ b/docs/pre-production/tasks-automations.md
+@@ -38 +38,2 @@
+-Следующий AUD12 не начат; [roadmap](../current/roadmap.md#project-audit-20261017).
++AUD-12a/b/c завершены в своих локальных границах30–31.10;
++[roadmap](../current/roadmap.md#project-audit-20261017) сохраняет evidence и внешнюю приёмку.
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -11,0 +12 @@
++| Комплексный аудит 03–04.11 | [Аудит PlatformaCRM](testing/comprehensive-audit-20261103/README.md) — результаты, дефекты, границы проверок и план; production-готовность не подтверждена |
+--- a/docs/testing/task-state/PRIMARY-SESSION.md
++++ b/docs/testing/task-state/PRIMARY-SESSION.md
+@@ -0,0 +1,40 @@
++## COMPREHENSIVE-AUDIT-20261103 — executable audit complete; local documentation boundary
++
++Owner03.11 comprehensive audit,04.11 Continue: audit/isolated diagnostics/docs
++only; no product/config/dependency changes, workingDB writes, push/merge/deploy.
++Canonical root C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit;
++input0b3348e1 with233 pre-existing WIP entries and2463 source hashes. No foreign
++work staged. Market cross-contract read-only; no other-chat messages.
++
++Backend2752=2698PASS/4FAIL/50SQLite skips; all50 PostgreSQL concurrency cases PASS
++on repeat with audit-only cleanup correction; initial teardown FAIL retained.
++Real isolated PG/Redis/Celery/beat/AV recovery, dump/files/keys restore and actual
++import scanner-outage/retry PASS. Stock recovery helper fixture FAIL retained.
++HTTP profiles1/5threads each50attempts:40HTTP200/10Clients deadline failures;
++PG Clients warmup28.618s, SQLite1000heavy median18.413s; distributed17.260s single.
++Current queues387–1737SQL, client card184SQL. Build/types/i18n6680/bundle PASS;
++Node215PASS/7FAIL. UI45 route cases plus real CRUD/AI approval/error/recovery flows.
++Real LLM, Linux/container/target deployment, native OS/device acceptance unproven.
++Codex Security deep scan could not start with available permission profile;
++manual security scope and dependency14dev advisories/3packages are documented.
++
++All14pilotAC,22CRM-C,8CG,D01 mapped;101 document dispositions,64full active bodies.
++Confirmed stale delivered automatic-booking price/duration, creation-event/context
++gaps, expensive Clients, fallback crash, missing Compose consumers and UI defects.
++Plan money/D01voice remain missing; historical native73482a3 findings are separate.
++Independent checks/commands/raw receipts/failure classifications:
++[audit](../comprehensive-audit-20261103/README.md),
++[tests](../comprehensive-audit-20261103/tests.md),
++[findings](../comprehensive-audit-20261103/findings.md).
++
++20existing docs corrected; archival0 (no wholly obsolete active body justified).
++Own safe hunks/reports only local save. Four active files frontend/operations/
++product/roadmap depend on foreign uncommitted paragraphs: direct staging omitted;
++full own delta against captured WIP saved in report assets/own-doc-delta.patch.
++This limitation is not permission to commit foreign work or claim product readiness.
++Evidence manifest/docs check receipt and local-save details are in documentation.md.
++Source hashes prove no product changes; all owned runtimes stopped, working ones
++preserved. No further executable audit work remains; remediation is a separate plan.
++External target/device/provider/security-profile proof and four direct-document
++integration constraints remain explicit. No push-triggered CI or deployment.
++
+--- a/README.md
++++ b/README.md
+@@ -5,2 +5,4 @@
+-process; it was tested only in disposable databases. Plans/payments and live rollout
+-remain outside this package. [Checks and publication](docs/testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
++process. The original package tested it in disposable databases; on02.11 it was
++separately applied to the local dev database with backup (UI-REFRESH-20261102).
++The later nonmonetary Records/VisitPlan package was published as6349acdf; plan money
++and target/live rollout remain open. [Checks and publication](docs/testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
+@@ -30,2 +32,2 @@
+-На 07.10.2026 текущий фокус — клиентский агент Inbox. Обычная CRM сохраняется;
+-развитие внутреннего CRM-агента/аналитики приостановлено без удаления runtime.
++Клиентский агент Inbox сохраняется. По решениям30.10/02.11 обычная CRM и
++ограниченный помощник сотрудника D01 (текст/голос) обязателен в пилоте; расширенная AI-аналитика отложена, runtime сохранён.
+--- a/STATUS.md
++++ b/STATUS.md
+@@ -0,0 +1,10 @@
++COMPREHENSIVE-AUDIT-20261103: executable audit complete on0b3348e1+preservedWIP.
++Backend2752:2698PASS/4FAIL/50SKIP; PG50PASS on isolated repeat; original teardown
++FAIL retained. Real recovery/AV PASS; HTTP2x50 each40success/10Clients timeouts.
++Build/types PASS; Node215PASS/7FAIL; UI45+targeted flows. Findings include stale
++auto-booking terms, missing creation effects/context, Clients latency, fallback,
++Compose queues, money/D01 and historical native gaps. Report and ordered plan:
++docs/testing/comprehensive-audit-20261103/README.md. No product fixes/workingDB writes.
++Own docs/reports saved locally;4 active docs require foreignWIP context and are
++preserved as own patch, not directly staged. No push/merge/deploy or production PASS.
++

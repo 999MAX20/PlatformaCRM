@@ -1,0 +1,20 @@
+{
+  "failedUploadFileRetained": true,
+  "previewStatus": 201,
+  "job": {
+    "id": 3,
+    "status": "previewed",
+    "errors": {
+      "rows": [],
+      "count": 0
+    }
+  },
+  "confirmed": {
+    "status": "imported",
+    "imported_count": 1
+  },
+  "exportStatus": 200,
+  "exportFilename": "leads.csv",
+  "exportContainsImported": true,
+  "outcome": "PASS"
+}

@@ -1,0 +1,151 @@
+{
+  "returncode": 1,
+  "total_duration_seconds": 250.28,
+  "warmup": [
+    {
+      "surface": "clients",
+      "status": 200,
+      "payload_bytes": 19051,
+      "elapsed_ms": 28618.226
+    },
+    {
+      "surface": "records",
+      "status": 200,
+      "payload_bytes": 18549,
+      "elapsed_ms": 159.722
+    },
+    {
+      "surface": "inbox",
+      "status": 200,
+      "payload_bytes": 53166,
+      "elapsed_ms": 163.878
+    },
+    {
+      "surface": "work-queues-appointments",
+      "status": 200,
+      "payload_bytes": 45017,
+      "elapsed_ms": 467.206
+    },
+    {
+      "surface": "owner-dashboard",
+      "status": 200,
+      "payload_bytes": 8118,
+      "elapsed_ms": 264.722
+    }
+  ],
+  "profiles": [
+    {
+      "concurrency": 1,
+      "requests": 50,
+      "elapsed_seconds": 119.087,
+      "requests_per_second": 0.42,
+      "errors": 10,
+      "http_statuses": {
+        "None": 10,
+        "200": 40
+      },
+      "median_ms": 417.51250000000005,
+      "p95_ms": 10012.374,
+      "max_ms": 10034.059,
+      "resources": {
+        "owned_server_pids": [
+          12840,
+          13868,
+          18140
+        ],
+        "rss_start_bytes": 128462848,
+        "rss_peak_sampled_bytes": 138514432,
+        "cpu_seconds": 2.609375,
+        "sampling_seconds": 0.2
+      },
+      "successful_responses_per_second": 0.336,
+      "attempts_per_second": 0.42,
+      "per_surface": {
+        "clients": {
+          "ok": 0,
+          "errors": 10,
+          "types": {
+            "TimeoutError": 10
+          }
+        },
+        "records": {
+          "ok": 10,
+          "errors": 0,
+          "types": {}
+        },
+        "inbox": {
+          "ok": 10,
+          "errors": 0,
+          "types": {}
+        },
+        "work-queues-appointments": {
+          "ok": 10,
+          "errors": 0,
+          "types": {}
+        },
+        "owner-dashboard": {
+          "ok": 10,
+          "errors": 0,
+          "types": {}
+        }
+      }
+    },
+    {
+      "concurrency": 5,
+      "requests": 50,
+      "elapsed_seconds": 31.238,
+      "requests_per_second": 1.601,
+      "errors": 10,
+      "http_statuses": {
+        "None": 10,
+        "200": 40
+      },
+      "median_ms": 664.0025,
+      "p95_ms": 10014.014,
+      "max_ms": 10015.026,
+      "resources": {
+        "owned_server_pids": [
+          12840,
+          13868,
+          18140
+        ],
+        "rss_start_bytes": 138383360,
+        "rss_peak_sampled_bytes": 145842176,
+        "cpu_seconds": 10.015625,
+        "sampling_seconds": 0.2
+      },
+      "successful_responses_per_second": 1.28,
+      "attempts_per_second": 1.601,
+      "per_surface": {
+        "clients": {
+          "ok": 0,
+          "errors": 10,
+          "types": {
+            "TimeoutError": 10
+          }
+        },
+        "records": {
+          "ok": 10,
+          "errors": 0,
+          "types": {}
+        },
+        "inbox": {
+          "ok": 10,
+          "errors": 0,
+          "types": {}
+        },
+        "work-queues-appointments": {
+          "ok": 10,
+          "errors": 0,
+          "types": {}
+        },
+        "owner-dashboard": {
+          "ok": 10,
+          "errors": 0,
+          "types": {}
+        }
+      }
+    }
+  ],
+  "limits": "client thread concurrency;10s timeout censoring;developmentWSGIonWindows;Django process tree resources only,notPG;timedoutrequestscontinueonserver;synthetic1000/domainfixture;not sustained/cloud capacity"
+}

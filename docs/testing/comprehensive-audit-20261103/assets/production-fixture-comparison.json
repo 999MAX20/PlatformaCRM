@@ -1,0 +1,32 @@
+[
+  {
+    "synthetic_key_id": "audit",
+    "returncode": 1,
+    "elapsed_seconds": 38.78,
+    "command": [
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\comprehensive-audit-20261103\\backend\\manage_isolated.py",
+      "test",
+      "apps.core.tests.ProductionReadinessTests.test_production_settings_check_warns_about_unsafe_baseline",
+      "--noinput",
+      "-v",
+      "2"
+    ],
+    "changed_input": "synthetic active key identifier only; random AES256 key remains; no working key read"
+  },
+  {
+    "synthetic_key_id": "local-audit",
+    "returncode": 0,
+    "elapsed_seconds": 41.09,
+    "command": [
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\comprehensive-audit-20261103\\backend\\manage_isolated.py",
+      "test",
+      "apps.core.tests.ProductionReadinessTests.test_production_settings_check_warns_about_unsafe_baseline",
+      "--noinput",
+      "-v",
+      "2"
+    ],
+    "changed_input": "synthetic active key identifier only; random AES256 key remains; no working key read"
+  }
+]

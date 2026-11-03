@@ -1,0 +1,911 @@
+{
+  "snapshot": "HEAD0b3348e1 + preserved WIP and coordinator docs corrections04Nov",
+  "scope": "static body/disposition review; original89 inventory plus12 skill references; historical evidence not blanket reread",
+  "counts": {
+    "full body": 64,
+    "selected current checkpoint and exact historical receipts": 2,
+    "inventory/hash + selected citations only": 33,
+    "current sections + selected historical closure": 1,
+    "body header + full section15; selected historical sections": 1
+  },
+  "archive_moves": 0,
+  "documents": [
+    {
+      "path": ".agents/skills/zani-analyze-crm-product/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "823b820922abe1a67d5c9e660f8a5ac493315efcec36f13925ee166d8e21753a",
+      "reviewed_sha256": "823b820922abe1a67d5c9e660f8a5ac493315efcec36f13925ee166d8e21753a"
+    },
+    {
+      "path": ".agents/skills/zani-audit-ui-purpose/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "bfe6d5bf0d99f8c2a69c336ca0538fb94ca734bddb63bf9422d42ffbeef1d1ba",
+      "reviewed_sha256": "bfe6d5bf0d99f8c2a69c336ca0538fb94ca734bddb63bf9422d42ffbeef1d1ba"
+    },
+    {
+      "path": ".agents/skills/zani-build-integration-reliability/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "fb2971b0357fb13803e2f67df4ca8e2b3d73a438eb7b52d392a1ec412e3ba944",
+      "reviewed_sha256": "fb2971b0357fb13803e2f67df4ca8e2b3d73a438eb7b52d392a1ec412e3ba944"
+    },
+    {
+      "path": ".agents/skills/zani-change-crm-domain/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "88f7b6c510d8e56e90b6c28d70acfe673f0ef0fe531635c45dcbf67fc6b82f42",
+      "reviewed_sha256": "88f7b6c510d8e56e90b6c28d70acfe673f0ef0fe531635c45dcbf67fc6b82f42"
+    },
+    {
+      "path": ".agents/skills/zani-evaluate-ai-grounding/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "54b0ebea926a6a8cbbdb5ad5390e27bb81b112747806d4795b63b437c20531ae",
+      "reviewed_sha256": "54b0ebea926a6a8cbbdb5ad5390e27bb81b112747806d4795b63b437c20531ae"
+    },
+    {
+      "path": ".agents/skills/zani-handle-incident/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "718b25fbfe2fc0cba87ea1a8862368358c45c8fb8efd2f581808b66a52c7fb2c",
+      "reviewed_sha256": "718b25fbfe2fc0cba87ea1a8862368358c45c8fb8efd2f581808b66a52c7fb2c"
+    },
+    {
+      "path": ".agents/skills/zani-plan-observability/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "2df0cb105b9a13ce584076808d5936be25826008b8a717abd9859e6f63200297",
+      "reviewed_sha256": "2df0cb105b9a13ce584076808d5936be25826008b8a717abd9859e6f63200297"
+    },
+    {
+      "path": ".agents/skills/zani-review-access/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "970f60015a9f9147d03368f626a7490368152b413e3c52b361bf65680fe1e0a2",
+      "reviewed_sha256": "970f60015a9f9147d03368f626a7490368152b413e3c52b361bf65680fe1e0a2"
+    },
+    {
+      "path": ".agents/skills/zani-review-code/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "3af7fe8e97321a9864ca3a6eb98f25c910742e405e66e911c09fb76b42fcfd74",
+      "reviewed_sha256": "3af7fe8e97321a9864ca3a6eb98f25c910742e405e66e911c09fb76b42fcfd74"
+    },
+    {
+      "path": ".agents/skills/zani-review-frontend/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "a5f8b4156923aa5472864be5701c4519ee06d55bdff125a000350fe837aed159",
+      "reviewed_sha256": "a5f8b4156923aa5472864be5701c4519ee06d55bdff125a000350fe837aed159"
+    },
+    {
+      "path": ".agents/skills/zani-review-performance/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "0b3aedf4b66d9a0650b3a5f4484f6ce0bd05d646f8a7f550e7c52d77d2158453",
+      "reviewed_sha256": "0b3aedf4b66d9a0650b3a5f4484f6ce0bd05d646f8a7f550e7c52d77d2158453"
+    },
+    {
+      "path": ".agents/skills/zani-run-verification/SKILL.md",
+      "role": "agent-skill",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "fef9dce6683ab4db3eca3442ff81a642cc646a66b6c583829e906641f061d4ce",
+      "reviewed_sha256": "fef9dce6683ab4db3eca3442ff81a642cc646a66b6c583829e906641f061d4ce"
+    },
+    {
+      "path": "AGENTS.md",
+      "role": "procedure",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "704b1ee7d03bed4bd94ed19129594263d3bf2251d3d68cf5e4af4c1e8b793916",
+      "reviewed_sha256": "704b1ee7d03bed4bd94ed19129594263d3bf2251d3d68cf5e4af4c1e8b793916"
+    },
+    {
+      "path": "README.md",
+      "role": "navigation",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read setup/navigation and script references; package.json confirms engines/build composition. Corrected D01 and separate historical local scheduling migration; no setup execution.",
+      "inventory_sha256": "a0928bf61bb9a66567eb0ae9f38297160cdffe9705540cdfe81e1b5e38276737",
+      "reviewed_sha256": "490cde9e770e5c70d3c70469618b142790702d2ac8907ef0e324c4760f70d765"
+    },
+    {
+      "path": "STATUS.md",
+      "role": "status",
+      "review_depth": "selected current checkpoint and exact historical receipts",
+      "disposition": "retain status/evidence",
+      "review": "Current COMPREHENSIVE-AUDIT entry plus required R01/D01/AUD/migration/publication receipts inspected. Thousands of unrelated historical entries not reread; no fresh PASS inherited by age.",
+      "inventory_sha256": "982330620d50ecbd47deea9e5ed28a794b5bff83900e6777ec5921fcce351fd6",
+      "reviewed_sha256": "e643f777393cc48ecc01cf5a907d2fa537f6db2465f44932e13dec40841fa6c7"
+    },
+    {
+      "path": "actual_docs/DEFECT_KNOWLEDGE_BASE.md",
+      "role": "regression-rules",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read all ZR rules and dated stage6 precedent; consistent with proportional checks. No historical closed finding reopened by age.",
+      "inventory_sha256": "e604b6779a6aaa10e9829c684d2d505740998e4392ed82a28049ac2015673112",
+      "reviewed_sha256": "e604b6779a6aaa10e9829c684d2d505740998e4392ed82a28049ac2015673112"
+    },
+    {
+      "path": "actual_docs/PROJECT_HANDOFF.md",
+      "role": "status",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full body; explicit14Oct supersession makes old primary/writer and07Oct AI pause historical. No task authority or current implementation inferred from old generation entries.",
+      "inventory_sha256": "228490b103ed2e21ae9bf6f107dc671db1aafd630e87d06276192dd50fe9b7a2",
+      "reviewed_sha256": "228490b103ed2e21ae9bf6f107dc671db1aafd630e87d06276192dd50fe9b7a2"
+    },
+    {
+      "path": "actual_docs/README.md",
+      "role": "navigation",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "09c62b96e7edfded93157e10baddb0e0b2f0cd01ccab30bb3396f0303eb24993",
+      "reviewed_sha256": "09c62b96e7edfded93157e10baddb0e0b2f0cd01ccab30bb3396f0303eb24993"
+    },
+    {
+      "path": "actual_docs/UNIFIED_FALLBACK_INVENTORY.generated.md",
+      "role": "generated-evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "d1faacf7b153a2eb823b69f6f403c63d9703ba8db46fec7cbea0483e3c9b5201",
+      "reviewed_sha256": "d1faacf7b153a2eb823b69f6f403c63d9703ba8db46fec7cbea0483e3c9b5201"
+    },
+    {
+      "path": "anti-slop/audit-001-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "1d83d831d6515a491bde4f7407cdef5315ab8a387fd88601ce97a858eaeb9c34",
+      "reviewed_sha256": "1d83d831d6515a491bde4f7407cdef5315ab8a387fd88601ce97a858eaeb9c34"
+    },
+    {
+      "path": "apps/README.md",
+      "role": "navigation",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "a6e5b5e6ed91cdd89023a6818e71a5f26e674d88b578c8f440b2510182f30be3",
+      "reviewed_sha256": "a6e5b5e6ed91cdd89023a6818e71a5f26e674d88b578c8f440b2510182f30be3"
+    },
+    {
+      "path": "docs/README.md",
+      "role": "navigation",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read registry roles/authority boundaries and links. Root registers refactor evidence and current audit; historical reports remain evidence, not task authority.",
+      "inventory_sha256": "521b4d43b5856dddd85e06d359a5af49301e06c24f13c77b792c8fb333d5bf1d",
+      "reviewed_sha256": "99d916cf71b067cf2f3763f1696f7b91156c40b9ca2a5d8d4a13b1866a19997c"
+    },
+    {
+      "path": "docs/current/acceptance.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "All active FC/UX/FB/BE/D/V1-O and pilot requirements retained; compared current roadmap mappings. FB009 deferred, not passed; no IDs removed.",
+      "inventory_sha256": "be44c5af42edfa1d1b1d0258815c4e33d433acfdbf75e2c99ee778aec4cd82a4",
+      "reviewed_sha256": "be44c5af42edfa1d1b1d0258815c4e33d433acfdbf75e2c99ee778aec4cd82a4"
+    },
+    {
+      "path": "docs/current/access.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read all current policies and dated guard deltas; compared Business/Appointment/plan/client projections and backend evidence map. No new roles/implicit assignee grants inferred. Dated OFFICIAL snapshots are not current complete-security claims.",
+      "inventory_sha256": "50bde3864d4744d78122e3ef61f3748cc6b616f10d82503e5db6e08d1fd7d52b",
+      "reviewed_sha256": "50bde3864d4744d78122e3ef61f3748cc6b616f10d82503e5db6e08d1fd7d52b"
+    },
+    {
+      "path": "docs/current/ai.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full authority/safety/controlled-create/approval/recovery contract. Compared booking and staff text flow: REQ02/03. Historical43 real-model cases do not certify changed prompts or live channel.",
+      "inventory_sha256": "674e26e073fb59ac33320f7c28637a87badca6c232d97f6d60c41f0d9a4a6b38",
+      "reviewed_sha256": "674e26e073fb59ac33320f7c28637a87badca6c232d97f6d60c41f0d9a4a6b38"
+    },
+    {
+      "path": "docs/current/crm.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full body incl proposed plan terms/API/transactions and current legacy/lifecycle rules. Compared scheduling/payments/booking/plan commands and tests: REQ01/REQ03; distinguish implemented nonmonetary plan from future money commands.",
+      "inventory_sha256": "f762421525a159e2d3bc3b10bf74334cba3cf9c2328091b9f6de2060111f444b",
+      "reviewed_sha256": "f762421525a159e2d3bc3b10bf74334cba3cf9c2328091b9f6de2060111f444b"
+    },
+    {
+      "path": "docs/current/engineering.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read all rules, compared AGENTS/testing and current services/API layer shape. 10000+ tenants is design aspiration, not a capacity measurement; no rewrite authorized by size thresholds.",
+      "inventory_sha256": "02674828641c5722474e6ef9629092263d61f4b5f9ee1bc5c8767b8177e71a02",
+      "reviewed_sha256": "02674828641c5722474e6ef9629092263d61f4b5f9ee1bc5c8767b8177e71a02"
+    },
+    {
+      "path": "docs/current/frontend.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full body including Records, alerts, shared calendar, offline and administrative sections. Compared route/API/consumer map and delegated UI evidence; no screenshot-only backend assurance. Refactor publication correction proposed.",
+      "inventory_sha256": "a4fd04efaab381415a2c963c1dd9782d0c3767d2e8f00fb0d3d8c90d3cac646f",
+      "reviewed_sha256": "a4fd04efaab381415a2c963c1dd9782d0c3767d2e8f00fb0d3d8c90d3cac646f"
+    },
+    {
+      "path": "docs/current/integrations.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full body; compared adapters, registry, imports/exports and read-only Market schema. AUD12 stale sentence correction; future exchange has no implemented verified tenant binding, REQ04.",
+      "inventory_sha256": "d8c788098143245e3a0d4a1d9a015d3654b7d8fbc12df8cc2cff94cf0cf92157",
+      "reviewed_sha256": "cb8423d923790eff66e16a5e22f963c295c1734a5c846859a1042c7552fe03ef"
+    },
+    {
+      "path": "docs/current/operations.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full body, command examples and env names. Compare config/scripts plus dated local activation receipts. Yandex/KZ constraint needs target reconciliation; notifications migration wording correction; no target restore/live certification.",
+      "inventory_sha256": "a20bbef1aaf9188c5e13fc8f5fe64749c4678ede0f84815cc91b211a0bbce47f",
+      "reviewed_sha256": "b61b70532c0102000fd507af6a116b8d15dd80c86852270670d0642bc2f72977"
+    },
+    {
+      "path": "docs/current/product.md",
+      "role": "contract",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Compared accepted U0/U2–U4, D01, V1, pilot vs paid scope against roadmap and models. DOC01–03; supplemental AUD07/10 status correction. Money/voice/live gaps retained.",
+      "inventory_sha256": "f9141ee82a8954719e0fdf1138642c10d84b3a33d143256eabdd1e461e2ebddf",
+      "reviewed_sha256": "1fb20c2f7ba0e085e1e2afa530b810d8a6a0533c1376388c5e206ce38b8df5c6"
+    },
+    {
+      "path": "docs/current/roadmap.md",
+      "role": "roadmap",
+      "review_depth": "current sections + selected historical closure",
+      "disposition": "retain roadmap; correct stale summary only",
+      "review": "Read active requirements/consumer matrix/C01–22/AC01–14/CG01–08 and R/D acceptance, current AUD closure table and chronology boundaries. Dated OFFICIAL/FU/admin result appendices selected for provenance, not full repeated recertification; all active requirements mapped in requirements-matrix.md.",
+      "inventory_sha256": "a686b5a5de7e2867912963d8559b019c757df110bbdeabf409e6e7036a83f288",
+      "reviewed_sha256": "f13bc6c5d21f01da61a15ef8344afc09440383eabdd64816217c065f2b837ea8"
+    },
+    {
+      "path": "docs/pre-production/README.md",
+      "role": "navigation",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read passport directory and status boundaries; D01 row reconciled with accepted pilot; all links retained.",
+      "inventory_sha256": "dc2a28f2e912a00b86b1b6109b78f485e109fabf977a9b3130f13aa494698ac9",
+      "reviewed_sha256": "b36a8bcc7a3b5ac5a1619b20250f87e53b944671068505c225529951723150a4"
+    },
+    {
+      "path": "docs/pre-production/capabilities.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full cumulative body/map. Compare current passport/roadmap and representative code paths; stale AUD progress/28-case summary corrected. Dated security receipt counts not summed or rerun here.",
+      "inventory_sha256": "b0557c9a2778390fe74b403c35e133ccc0ca0ed3c807d8c8bd1b43c3e43c3668",
+      "reviewed_sha256": "f62c50c2454f24c39fbcdfd6ba0db203998df7e866098a7a0bde7f2ea53b4663"
+    },
+    {
+      "path": "docs/pre-production/clients.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full clients/merge/history/access map against domain/field-policy references and accepted closure. New plan/money compatibility separately required.",
+      "inventory_sha256": "2bbb961f03efe7311700538aa9d70cdffe6edec46f62c5a8ecc9a45d0c176127",
+      "reviewed_sha256": "2bbb961f03efe7311700538aa9d70cdffe6edec46f62c5a8ecc9a45d0c176127"
+    },
+    {
+      "path": "docs/pre-production/crm-ai-agent.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full text tools/history map; limited D01 required, broader analytics deferred. Audio absent; no claim all text functionality absent.",
+      "inventory_sha256": "3890e1d6d1d23621dcf0f22840db662214c47e1c1aa0c23e754ec980ee4744ac",
+      "reviewed_sha256": "e5af392b053bd20fd2c242992898b354e0c7650ff8b26ebf88d51287f87aa661"
+    },
+    {
+      "path": "docs/pre-production/customer-ai-agent.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read all behavior/settings/limits and historical43-case receipt, compared current AI/booking. Correct blanket CRM AI pause; preserve08Oct model result as dated evidence.",
+      "inventory_sha256": "4ca0e9614a3a8770fa53bcfcc9cddbb63e39ca6542bcedb1cdd5f3776b41e62b",
+      "reviewed_sha256": "48463777dc2522ff3ed3a63e6015939209fbcff394b632b0cdf3e3b53f58007d"
+    },
+    {
+      "path": "docs/pre-production/data-lifecycle.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full import/export/archive/merge map; compare import services and current AUD12/18/21/22 closure; stale AUD12-open corrected.",
+      "inventory_sha256": "328b638c464b8020d87c05fc8fa9f3471edf68b154005b423b74f15afde2b40b",
+      "reviewed_sha256": "cd6f793dc54de27b99411f3ee6fcdc18fb2395cf2837da7699587e832999b801"
+    },
+    {
+      "path": "docs/pre-production/files-antivirus.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full quarantine/private files/avatar/recovery map. Local AV/S04 not target storage/retention proof; no working scanner changes.",
+      "inventory_sha256": "a3303747444982228bfee84a6158683667d87e2c0d4edb2ae2c7555d4c30cef7",
+      "reviewed_sha256": "a3303747444982228bfee84a6158683667d87e2c0d4edb2ae2c7555d4c30cef7"
+    },
+    {
+      "path": "docs/pre-production/identity-access.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full identity/ADMIN map against access/spec; stale AUD17/18-open corrected; recovery/no-global-unlock/owner consent preserved.",
+      "inventory_sha256": "59ad60fa9f790c546c2f53e8f50ab008a7449b87673d14519b758c8a6e3c7066",
+      "reviewed_sha256": "80e5c192b601edff49416812731af3a0088d51f3f4ecb07049b6f82e18dfff37"
+    },
+    {
+      "path": "docs/pre-production/inbox.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full manual/AI/relink/delivery map; provenance new requirement vs automatic legacy helper is REQ03; live delivery separate.",
+      "inventory_sha256": "58d721254fdd103accf5356bdcf944460336dfb10172cdcc06848cf2468887d6",
+      "reviewed_sha256": "58d721254fdd103accf5356bdcf944460336dfb10172cdcc06848cf2468887d6"
+    },
+    {
+      "path": "docs/pre-production/integrations.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full provider/import/export map; target/live limits retained. Cross-Business first-provider UI selection remains a specific separately reported risk; no blanket tenant exploit inferred.",
+      "inventory_sha256": "ca8ea7e9b0b5fc29cf7cab73097926fcc3ea2eef152e5c0b4ba636e63ced999e",
+      "reviewed_sha256": "ca8ea7e9b0b5fc29cf7cab73097926fcc3ea2eef152e5c0b4ba636e63ced999e"
+    },
+    {
+      "path": "docs/pre-production/leads-deals.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full legacy lifecycle/route map; preserved backend and safe historical route do not mean new pilot uses Lead/Deal as mandatory work.",
+      "inventory_sha256": "1acbaa25c70c031798eb389d45b1ff842c973ecd3a8106be08cea2f0a42fe7d9",
+      "reviewed_sha256": "1acbaa25c70c031798eb389d45b1ff842c973ecd3a8106be08cea2f0a42fe7d9"
+    },
+    {
+      "path": "docs/pre-production/module-template.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full template; differentiates actual code/reachable flow/tests/remaining admission; not another backlog.",
+      "inventory_sha256": "2fb3248b425898d840dcc1eb3e78458b016832b78ed8e34844a2d4416af9f65d",
+      "reviewed_sha256": "2fb3248b425898d840dcc1eb3e78458b016832b78ed8e34844a2d4416af9f65d"
+    },
+    {
+      "path": "docs/pre-production/money-analytics.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full manual/external financial boundary; compare Payment/analytics registry. No external reader or plan-allocation implementation found.",
+      "inventory_sha256": "c792dafd55a3d50deb562228735409e9658f6b614b1bcacce497a30e91295fc2",
+      "reviewed_sha256": "c792dafd55a3d50deb562228735409e9658f6b614b1bcacce497a30e91295fc2"
+    },
+    {
+      "path": "docs/pre-production/operations.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full operating/restore readiness passport; replace old target with chosen Yandex and retain target/measurement/people gaps.",
+      "inventory_sha256": "e6cd5f65d20b7afc8fd58413c3eead02b6bb7a9f0c5aa7c208778b6d4bc750ed",
+      "reviewed_sha256": "c979b73e07e2e113d3d4c51bdf72b4a6438d60f6f49a74e73a787d128fc08141"
+    },
+    {
+      "path": "docs/pre-production/project-state.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full readiness/closure map; historical21Oct AUD snapshot labeled, current D01/target statements reconciled. Local/commit/live separated.",
+      "inventory_sha256": "c9ceb8f82beafcf0a55b1da3406d153024d4a8dffaf87ee40f24c9a86f66e9a3",
+      "reviewed_sha256": "e0a7f034f2160143bdb064860ae99a3f1afa7c958639ef31a6c28e20a6b48d98"
+    },
+    {
+      "path": "docs/pre-production/scheduling.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full scheduling/branch/Records/VisitPlan map; compare models/domain/route/tests. New financial plan criteria remain open despite nonmonetary closure.",
+      "inventory_sha256": "fb405bb959155ccae0c176cda4192c24e417aa68073ae4c2d1c90f387bb9a466",
+      "reviewed_sha256": "fb405bb959155ccae0c176cda4192c24e417aa68073ae4c2d1c90f387bb9a466"
+    },
+    {
+      "path": "docs/pre-production/settings-notifications.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full settings/personal/SSE map;29Oct local migration receipt corroborates operations correction. No live deployment inferred.",
+      "inventory_sha256": "41fb757458e7c3c3d627b28592ba9657662daf46b7c5ed29b109af6dfc6c564d",
+      "reviewed_sha256": "41fb757458e7c3c3d627b28592ba9657662daf46b7c5ed29b109af6dfc6c564d"
+    },
+    {
+      "path": "docs/pre-production/subscription-usage.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full billing/ADMIN05 foundation and open commercial policy. Offers/orders/receipts are not chosen acquirer or paid expiry enforcement; SaaS distinct from plan money.",
+      "inventory_sha256": "fbac585a8a6857d11244e2c7959559d6d1c969a9815e9b9715bd2b9c23a03c9d",
+      "reviewed_sha256": "fbac585a8a6857d11244e2c7959559d6d1c969a9815e9b9715bd2b9c23a03c9d"
+    },
+    {
+      "path": "docs/pre-production/tasks-automations.md",
+      "role": "passport",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full task/action/follow-up/runtime map; compare current AUD07/10/12/V01. Stale next-AUD12-not-started corrected.",
+      "inventory_sha256": "0a53fc7b3411ed820ea8f211b1b74a23c415998d686035d9c7ec62e1e5a4aed5",
+      "reviewed_sha256": "319328a47d6cf26a5d1f5415c872fe1db7854fc192c81273dfdd223c29221112"
+    },
+    {
+      "path": "docs/testing/CODEX_TASK_TEMPLATE.md",
+      "role": "procedure",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full template/continuity; consistent explicit-scope/proportional-check/no-push override. Examples do not authorize product tasks.",
+      "inventory_sha256": "bacb95b95748067fc092edec0ec5df0fedd245dd3be409deb669d605cd04a392",
+      "reviewed_sha256": "bacb95b95748067fc092edec0ec5df0fedd245dd3be409deb669d605cd04a392"
+    },
+    {
+      "path": "docs/testing/SESSION_ROLLOVER.md",
+      "role": "procedure",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full body; preserves explicit transfer and cancels automatic interchat ownership; consistent AGENTS.",
+      "inventory_sha256": "9a9251d1c20a21138005ff664fca96ddd9df6afa0c623d55392260547839ff58",
+      "reviewed_sha256": "9a9251d1c20a21138005ff664fca96ddd9df6afa0c623d55392260547839ff58"
+    },
+    {
+      "path": "docs/testing/admin05-payments-partner-brief-20261016.txt",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "0488eaf03db294c74cdd66eae7e71650b6a9d4320d6ce6e86ebf01c2f9bdccfc",
+      "reviewed_sha256": "0488eaf03db294c74cdd66eae7e71650b6a9d4320d6ce6e86ebf01c2f9bdccfc"
+    },
+    {
+      "path": "docs/testing/business-logic-questions-20261016.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "1f6c0c11e5587c6e35c8c3a452792c4b81735ba6c91c4c5299f4337c81ed5b8a",
+      "reviewed_sha256": "1f6c0c11e5587c6e35c8c3a452792c4b81735ba6c91c4c5299f4337c81ed5b8a"
+    },
+    {
+      "path": "docs/testing/docs-reconciliation-20261016.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "522b9402f8742c3e68d21da356a816deb3361de3571b5dcc3f2370d333394c87",
+      "reviewed_sha256": "522b9402f8742c3e68d21da356a816deb3361de3571b5dcc3f2370d333394c87"
+    },
+    {
+      "path": "docs/testing/evidence/alert-audit-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "8141dd913c26bb067e69418f11c005589f07ab1cbd885583f4448d9e42f33fd1",
+      "reviewed_sha256": "8141dd913c26bb067e69418f11c005589f07ab1cbd885583f4448d9e42f33fd1"
+    },
+    {
+      "path": "docs/testing/evidence/alert-components-20261102.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "133cea2d4674fb38724453ea0528ab3a26748d98e951805d968236209dada13c",
+      "reviewed_sha256": "133cea2d4674fb38724453ea0528ab3a26748d98e951805d968236209dada13c"
+    },
+    {
+      "path": "docs/testing/evidence/alert-remediation-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "23766b5995f908c6e6c934b590e0e06d686b1e196bb7bbe8e478e2417ecf52f6",
+      "reviewed_sha256": "23766b5995f908c6e6c934b590e0e06d686b1e196bb7bbe8e478e2417ecf52f6"
+    },
+    {
+      "path": "docs/testing/evidence/appointments-ui-audit-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "7e78a58f2dede82ebc8f7229f01068da1c2d35fc7cba4e4a541ee13d99a2d76f",
+      "reviewed_sha256": "7e78a58f2dede82ebc8f7229f01068da1c2d35fc7cba4e4a541ee13d99a2d76f"
+    },
+    {
+      "path": "docs/testing/evidence/calendar-shared-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "d4155a0462abf5d4a839c22704f2431d86fa3e6db62e4e37fdfee297bb748d46",
+      "reviewed_sha256": "d4155a0462abf5d4a839c22704f2431d86fa3e6db62e4e37fdfee297bb748d46"
+    },
+    {
+      "path": "docs/testing/evidence/records-bell-fix-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "98770985ace6f43452ed6d57fdd2d752a2557a18681c578bcf99230ea1b41cc2",
+      "reviewed_sha256": "98770985ace6f43452ed6d57fdd2d752a2557a18681c578bcf99230ea1b41cc2"
+    },
+    {
+      "path": "docs/testing/evidence/records-full-audit-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "579469b61464ad30afa2947a5725b59a39c43ad7b5115219c2350915c9763c95",
+      "reviewed_sha256": "579469b61464ad30afa2947a5725b59a39c43ad7b5115219c2350915c9763c95"
+    },
+    {
+      "path": "docs/testing/evidence/records-publication-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "17f1fce84ddea81b559374d2fb8da5b5a019ac0b2040bf7e61204b8ecc5f553a",
+      "reviewed_sha256": "17f1fce84ddea81b559374d2fb8da5b5a019ac0b2040bf7e61204b8ecc5f553a"
+    },
+    {
+      "path": "docs/testing/evidence/records-remediation-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "a6e0a88e9fcd95b6d1470528389b64c4d88efea13798c54702d79d271fcb26d0",
+      "reviewed_sha256": "a6e0a88e9fcd95b6d1470528389b64c4d88efea13798c54702d79d271fcb26d0"
+    },
+    {
+      "path": "docs/testing/evidence/records-single-row-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "d54d2f7f38a2ec518aac9d9587fe3d756178aaa7cd1ce58d413fe35e1dea21d3",
+      "reviewed_sha256": "d54d2f7f38a2ec518aac9d9587fe3d756178aaa7cd1ce58d413fe35e1dea21d3"
+    },
+    {
+      "path": "docs/testing/evidence/records-toolbar-20261103.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "4bee0d798b7a0b4f6caae4345640475c8c7a9552d3820318e09a9ed6b60f4aee",
+      "reviewed_sha256": "4bee0d798b7a0b4f6caae4345640475c8c7a9552d3820318e09a9ed6b60f4aee"
+    },
+    {
+      "path": "docs/testing/evidence/records-workspace-20261102.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "c24a851ac4fac936afc971fe6623fb7acddd4d96195f302cbb59c6bfe5a291a6",
+      "reviewed_sha256": "c24a851ac4fac936afc971fe6623fb7acddd4d96195f302cbb59c6bfe5a291a6"
+    },
+    {
+      "path": "docs/testing/evidence/refactor-20261030.md",
+      "role": "unregistered",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "1f5e0811480c02536b840c2281694edbc038f70209715550f60a8c495be19849",
+      "reviewed_sha256": "1f5e0811480c02536b840c2281694edbc038f70209715550f60a8c495be19849"
+    },
+    {
+      "path": "docs/testing/evidence/visit-plans-20261102.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "57f2d02ecb2f541e7f5c9e3d8c64e300c38fd45acff0f62fba340cb394ea94ca",
+      "reviewed_sha256": "57f2d02ecb2f541e7f5c9e3d8c64e300c38fd45acff0f62fba340cb394ea94ca"
+    },
+    {
+      "path": "docs/testing/inbox-live-acceptance-20261008.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "eaa4da8133cae4134a2f001ed348f0e148128f6f425c73b0bc140744aa6907d9",
+      "reviewed_sha256": "eaa4da8133cae4134a2f001ed348f0e148128f6f425c73b0bc140744aa6907d9"
+    },
+    {
+      "path": "docs/testing/inbox-local-pilot-20261008.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "b1e7a2a3b13af4e6c4c89cb72432f03cd40e0387ce5a1a5b6aae6c66e4e458d5",
+      "reviewed_sha256": "b1e7a2a3b13af4e6c4c89cb72432f03cd40e0387ce5a1a5b6aae6c66e4e458d5"
+    },
+    {
+      "path": "docs/testing/integrations-functional-review-20261008.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "864f13ce48d7363e9f35bc16d1467fa2c195890330d3d608eee029b9ad04aadf",
+      "reviewed_sha256": "864f13ce48d7363e9f35bc16d1467fa2c195890330d3d608eee029b9ad04aadf"
+    },
+    {
+      "path": "docs/testing/platform-rebuild-spec-20261014.md",
+      "role": "evidence",
+      "review_depth": "body header + full section15; selected historical sections",
+      "disposition": "retain mixed accepted spec and dated proposals",
+      "review": "Full15.1–15.11 read against access/CRM/operations/passports. Sections1–14 explicitly historical design/evidence, headings/context inspected; no wholesale archival because accepted ADMIN requirements and open05 remain. External payment research not revalidated and not adopted as current advice.",
+      "inventory_sha256": "7ce6578ba60c73b307c2bbef053dcd500b9ae735e307e964a7d3bb6a2c9aae4f",
+      "reviewed_sha256": "7ce6578ba60c73b307c2bbef053dcd500b9ae735e307e964a7d3bb6a2c9aae4f"
+    },
+    {
+      "path": "docs/testing/project-audit-20261017.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "5030f5ed61f5f370fa63d9903629075c9ee280e2e452b10ef039a5c2246c0129",
+      "reviewed_sha256": "5030f5ed61f5f370fa63d9903629075c9ee280e2e452b10ef039a5c2246c0129"
+    },
+    {
+      "path": "docs/testing/project-risk-register-20261019.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "a0bd1e160265ebbc139af3875223a6e54ea0206c1f6f0fbf5680cd955974c9fe",
+      "reviewed_sha256": "a0bd1e160265ebbc139af3875223a6e54ea0206c1f6f0fbf5680cd955974c9fe"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/README.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "c6681c90e4d1f846006eb593f95056645828fa068c0bfb2a197f4a46718ffbf0",
+      "reviewed_sha256": "c6681c90e4d1f846006eb593f95056645828fa068c0bfb2a197f4a46718ffbf0"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/report.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "e23ad41e6b849acbde87a3f985498d468ce82842b66725f6ad8f7b60cac3d8e4",
+      "reviewed_sha256": "e23ad41e6b849acbde87a3f985498d468ce82842b66725f6ad8f7b60cac3d8e4"
+    },
+    {
+      "path": "docs/testing/security-audit-20261019-partial/threatmodel.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "3f6767bd3b774df1964881d8791a7209f86dd6710a284b59989d35bdc93fdc50",
+      "reviewed_sha256": "3f6767bd3b774df1964881d8791a7209f86dd6710a284b59989d35bdc93fdc50"
+    },
+    {
+      "path": "docs/testing/settings-functional-20261008.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "dbe2187c9f2bdffbe35e0b17bc90afa81b50149142e28e3055a87cf290471173",
+      "reviewed_sha256": "dbe2187c9f2bdffbe35e0b17bc90afa81b50149142e28e3055a87cf290471173"
+    },
+    {
+      "path": "docs/testing/settings-redesign-20261009.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "cf9abee6329e37ad231ce7a3924c4f7666337c2f18ef282729ae580a9dbf30dc",
+      "reviewed_sha256": "cf9abee6329e37ad231ce7a3924c4f7666337c2f18ef282729ae580a9dbf30dc"
+    },
+    {
+      "path": "docs/testing/settings-workflow-20261009.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "0274976965958391160447e382702cb9a0e71aab4aba265942c96553e15de8dc",
+      "reviewed_sha256": "0274976965958391160447e382702cb9a0e71aab4aba265942c96553e15de8dc"
+    },
+    {
+      "path": "docs/testing/task-state/PRIMARY-SESSION.md",
+      "role": "status",
+      "review_depth": "selected current checkpoint and exact historical receipts",
+      "disposition": "retain status/evidence",
+      "review": "Current COMPREHENSIVE-AUDIT entry plus required R01/D01/AUD/migration/publication receipts inspected. Thousands of unrelated historical entries not reread; no fresh PASS inherited by age.",
+      "inventory_sha256": "a1f2ba83bdd2d6a48170dbe1d1929168502035d63254371894268100fbc2d465",
+      "reviewed_sha256": "5f3c05445f8af66d0df22d8a9987f13b871afc7d5921572132bdc8944574272a"
+    },
+    {
+      "path": "docs/testing/testing.md",
+      "role": "procedure",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full command/safety guide; compared codex_verify isolation/base/target composition and package.json. Command review only; execution/results belong to main audit agents.",
+      "inventory_sha256": "bd1741dc837163456bb07e2e0b6f579fe28fd558e47dad8ef9b535b3e5e9e271",
+      "reviewed_sha256": "bd1741dc837163456bb07e2e0b6f579fe28fd558e47dad8ef9b535b3e5e9e271"
+    },
+    {
+      "path": "docs/testing/ui-operations-20261008.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "6e5c1abc5441846c8d849b62b554b25e5db7b92687c2eb92e9b19b4559df1ba9",
+      "reviewed_sha256": "6e5c1abc5441846c8d849b62b554b25e5db7b92687c2eb92e9b19b4559df1ba9"
+    },
+    {
+      "path": "docs/testing/ui-purpose-audit-20261102.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "161ba075fd4c37ccf52a32adba75a9ed3af3697a5c192919b6eaebac8747874c",
+      "reviewed_sha256": "161ba075fd4c37ccf52a32adba75a9ed3af3697a5c192919b6eaebac8747874c"
+    },
+    {
+      "path": "docs/testing/ui-testing-toolkit.md",
+      "role": "procedure",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Read full synthetic Storybook/Chromatic boundaries; package scripts exist. No upload/build or WCAG certification from doc review.",
+      "inventory_sha256": "a04c030320699ad22fad6eeddb928ad725c54d2cdecb9d1e1048def9011e5cd6",
+      "reviewed_sha256": "a04c030320699ad22fad6eeddb928ad725c54d2cdecb9d1e1048def9011e5cd6"
+    },
+    {
+      "path": "docs/testing/uiux-full-20261102.md",
+      "role": "evidence",
+      "review_depth": "inventory/hash + selected citations only",
+      "disposition": "retain historical evidence; not current policy",
+      "review": "Dated evidence or generated inventory; exact snapshot/coverage boundary retained. No full-body or fresh runtime certification by this requirements subaudit. Main audit may inspect named receipts separately; archive not justified solely by age.",
+      "inventory_sha256": "596674b761652ea006e40e091bdff62dfc7a69948574bf4107edb5f96d5e1398",
+      "reviewed_sha256": "596674b761652ea006e40e091bdff62dfc7a69948574bf4107edb5f96d5e1398"
+    },
+    {
+      "path": "frontend/README.md",
+      "role": "navigation",
+      "review_depth": "full body",
+      "disposition": "retain active document",
+      "review": "Full body read for role, authority, references and consistency with AGENTS/current contracts; no material independent change required. This is static documentation review, not exhaustive runtime verification of every rule.",
+      "inventory_sha256": "48b1f068c1f780d940a897f101051479a5389d7f88be5ac010fe2f8cbacdbf20",
+      "reviewed_sha256": "48b1f068c1f780d940a897f101051479a5389d7f88be5ac010fe2f8cbacdbf20"
+    },
+    {
+      "path": ".agents/skills/zani-analyze-crm-product/references/crm-mechanics.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "b9a37ef4cf603c0d6d569d97b55a3a1b3e6f845c9dd76f27e9b16b00f86350a2"
+    },
+    {
+      "path": ".agents/skills/zani-audit-ui-purpose/references/provenance.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "771f8dad8e7a2a8e9abf663fe4104c0e926dd0587c5605dfd5949378b0a53160"
+    },
+    {
+      "path": ".agents/skills/zani-build-integration-reliability/references/integration-checklist.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "5d941172ac785be74af754a56cc0acc9ee6abf46e3d03eda92e2e2106eb23cee"
+    },
+    {
+      "path": ".agents/skills/zani-change-crm-domain/references/change-impact.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "488afac28ea3aa15e2429399b5ff00bd4b3dd0614d08ba318e06051168506e59"
+    },
+    {
+      "path": ".agents/skills/zani-evaluate-ai-grounding/references/ai-checklist.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "b94a650143daee7f990508d3af8f5ddd48e9129047df9c4ccc362d8a119f3663"
+    },
+    {
+      "path": ".agents/skills/zani-handle-incident/references/incident-runbook.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "73c3c064b5f914199d4426301c38aa94547917fccd4021ee141330f7148b1060"
+    },
+    {
+      "path": ".agents/skills/zani-plan-observability/references/observability-checklist.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "6fd9d84b8feee41bd72f9c1ee419549ea22fbc2b024f9dfbe52adcc009f75f97"
+    },
+    {
+      "path": ".agents/skills/zani-review-access/references/access-checklist.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "708c345fe518a87d4fb6f31a3393fc2ab3dba8786999ec1ca3da5f64b380a373"
+    },
+    {
+      "path": ".agents/skills/zani-review-code/references/review-checklist.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "92b680c95accddd5a2ee4a7d64961a0b2dd6af3af2b2c71a9d0e229b27e2132a"
+    },
+    {
+      "path": ".agents/skills/zani-review-frontend/references/frontend-checklist.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "7a79713492235e382ee3e21f5faa7efd6e20e7d239995009032415c85b9a87bc"
+    },
+    {
+      "path": ".agents/skills/zani-review-performance/references/performance-checklist.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "060e074ed8a9955499b1c646ed1bb4910c7cfa0915a6abae20049befccdd9e1f"
+    },
+    {
+      "path": ".agents/skills/zani-run-verification/references/verification-commands.md",
+      "role": "agent-skill-reference",
+      "review_depth": "full body",
+      "disposition": "retain supporting checklist",
+      "review": "Read full body and related skill; subordinate to current AGENTS and exact testing commands. Verification-commands contains generic linked-worktree wording: canonical-only rule takes precedence; no alternate source used. References were excluded from original89-file inventory, explicitly included here.",
+      "reviewed_sha256": "b7006a3b413f67a6acf7452c664f91932cce2991407545e8989292679b374f99"
+    }
+  ]
+}

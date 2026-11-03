@@ -30,7 +30,8 @@ Backend40 union/Node10/system/drift/build/types и RU/KK/EN browser503/multiple 
 roles PASS на отдельном кандидате base68cf93d7. В принятом scope код/доказательства/
 решение владельца: остатка нет. Публикация и команды — AUD-07-20261030 в
 [checkpoint](../testing/task-state/PRIMARY-SESSION.md); deployment/live отдельно.
-Следующий AUD12 не начат; [roadmap](../current/roadmap.md#project-audit-20261017).
+AUD-12a/b/c завершены в своих локальных границах30–31.10;
+[roadmap](../current/roadmap.md#project-audit-20261017) сохраняет evidence и внешнюю приёмку.
 Каталог правил не объявляется новым полным браузером правил. Logout/expiry удаляют pending queue.
 
 Исходная основа `768b2675`, 09.10.2026; актуальные дельты 16.10 описаны ниже.

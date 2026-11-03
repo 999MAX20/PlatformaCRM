@@ -1,0 +1,16 @@
+{
+  "ref": "73482a3bea7f168113c58d8cb928214c97f032d5",
+  "independent": true,
+  "result": "reproduced",
+  "captures": [
+    {
+      "url": "https://isolated.invalid/api/mobile/v1/tasks/19/complete/",
+      "authorization": "Bearer synthetic-actor-B",
+      "idempotency": "synthetic-A-command",
+      "body": {
+        "business": 17
+      }
+    }
+  ],
+  "scope": "Actual historical queue, session, replay and HTTP client; in-memory storage/fetch transport only. No network or server mutation. Not a current web tenant bypass."
+}

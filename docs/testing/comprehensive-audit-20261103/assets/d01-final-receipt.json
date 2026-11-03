@@ -1,0 +1,121 @@
+{
+  "boundary": "Real current UI and isolated suggest/approval/execute API; model plan output controlled; no live provider",
+  "creation_settings_work": "Existing creation scenario reached action completed; last assertion saw first task page only; exact DB count1 proven in d01-pagination-diagnostic.json",
+  "cancel_confirm": {
+    "cancelCount": 0,
+    "confirmedCount": 1,
+    "toolLog": 2,
+    "status": "executed",
+    "task": 139
+  },
+  "settings": {
+    "sources": [
+      "knowledge",
+      "tasks",
+      "clients"
+    ],
+    "tools": [
+      "crm_read",
+      "crm_create",
+      "crm_update"
+    ]
+  },
+  "searched_update": {
+    "client": 28,
+    "searchedRealRecord": true,
+    "failureDraftRetained": true,
+    "confirmedName": "Audit D01 client 1793736823989 reviewed"
+  },
+  "stale_rejection": {
+    "httpStatus": 400,
+    "response": {
+      "id": 4,
+      "tool_name": "crm_update",
+      "input_json": {
+        "entity": "clients",
+        "entity_id": 28,
+        "values": {
+          "full_name": "Obsolete proposal"
+        },
+        "requires_confirmation": true,
+        "expected_version": "1c27b0f6eed134fae7ec0e6003ebc32b2e5b9d17e808b99fc045210d284782bc",
+        "before": {
+          "full_name": "Audit D01 client 1793736823989 reviewed"
+        },
+        "_agent": {
+          "agent_id": 6,
+          "agent_fingerprint": "3001b3dc2b539cbae01ba362223a70b8bb6d920df886730e1ed4c2c0e2251bd9"
+        }
+      },
+      "output_json": {},
+      "status": "failed",
+      "error": "[ErrorDetail(string='CRM record changed. Prepare and confirm a new proposal.', code='invalid')]",
+      "attempts": 0,
+      "locked_at": null,
+      "executed_at": null,
+      "created_at": "2026-11-03T20:13:45.526503Z",
+      "business": 1,
+      "user": 2,
+      "conversation": null
+    },
+    "staffValuePreserved": true
+  },
+  "real_http": [
+    {
+      "method": "POST",
+      "path": "/api/ai/approval-requests/",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai/approval-requests/3/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/approval-requests/3/approve/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/tools/3/execute/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/approval-requests/",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai/approval-requests/4/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/approval-requests/4/approve/",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/tools/4/execute/",
+      "status": 400
+    }
+  ],
+  "analytics_reachable": true,
+  "staff": {
+    "role": "manager",
+    "agent": 6,
+    "directorySettingsHidden": true,
+    "configurationPutStatus": 404,
+    "legacyRouteRedirect": true,
+    "workTextboxVisible": true,
+    "profileTabAbsent": true
+  },
+  "outcome": "PASS_SCOPED",
+  "original_suites": "Not whole-suite PASS: quota and pagination/harness failures preserved",
+  "stopped_owned_pids": [
+    19852,
+    9488
+  ]
+}

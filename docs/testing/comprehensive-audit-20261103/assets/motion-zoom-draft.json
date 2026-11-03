@@ -1,0 +1,82 @@
+{
+  "zoom": [
+    {
+      "url": "http://127.0.0.1:53908/app/dashboard",
+      "zoom": 2
+    }
+  ],
+  "routes": [
+    {
+      "route": "clients",
+      "width": 720,
+      "dpr": 2,
+      "viewport": 720,
+      "overflow": 0,
+      "reduce": true,
+      "animations": [
+        {
+          "class": "animate-fade-in mx-auto w-full flex-1 pt-[var(--app-header-height)] max-w-none",
+          "animation": "platforma-fade-in",
+          "duration": "0.2s",
+          "iterations": "1"
+        }
+      ]
+    },
+    {
+      "route": "tasks",
+      "width": 720,
+      "dpr": 2,
+      "viewport": 720,
+      "overflow": 0,
+      "reduce": true,
+      "animations": [
+        {
+          "class": "animate-fade-in mx-auto w-full flex-1 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 pt-[calc(var(--app-header-height)+0.5rem)] max-w-[1440px]",
+          "animation": "platforma-fade-in",
+          "duration": "0.2s",
+          "iterations": "1"
+        }
+      ]
+    },
+    {
+      "route": "appointments",
+      "width": 720,
+      "dpr": 2,
+      "viewport": 720,
+      "overflow": 0,
+      "reduce": true,
+      "animations": [
+        {
+          "class": "animate-fade-in mx-auto w-full flex-1 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 pt-[calc(var(--app-header-height)+0.5rem)] max-w-[1440px]",
+          "animation": "platforma-fade-in",
+          "duration": "0.2s",
+          "iterations": "1"
+        }
+      ]
+    },
+    {
+      "route": "settings",
+      "width": 720,
+      "dpr": 2,
+      "viewport": 720,
+      "overflow": 0,
+      "reduce": true,
+      "animations": [
+        {
+          "class": "animate-fade-in mx-auto w-full flex-1 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 pt-[calc(var(--app-header-height)+0.5rem)] max-w-[1440px]",
+          "animation": "platforma-fade-in",
+          "duration": "0.2s",
+          "iterations": "1"
+        }
+      ]
+    }
+  ],
+  "botCreated": 201,
+  "profileCreated": 201,
+  "draft": {
+    "url": "http://127.0.0.1:53908/app/ai-agents/5/profile",
+    "text": "Audit saved inactive draft\nCustomer conversations\nDraft\nOpen messages\nProfile\nKnowledge\nActions\nChannels\nTest\nBranches served by the customer AI agent\nAll current and future branches\nGeneral settings\nName\nLanguage\nRussian\nKazakh\nEnglish\nRussian\nTone\nFriendly\nExpert\nFormal\nSales\nSupport\nFriendly\nAgent instruction\nTemplate: business administrator\nRole description\nMain instruction\n\nMain instruction for every reply. Avoid long technical prompts; use 2-4 clear rules.\n\nAdvanced settings\n\nThere are unsaved changes.\n\nCancel\nSave changes\nNext: Knowledge\nDelete agent",
+    "noUserInput": true
+  },
+  "outcome": "COMPLETED"
+}

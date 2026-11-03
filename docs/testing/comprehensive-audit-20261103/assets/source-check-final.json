@@ -1,0 +1,106 @@
+{
+  "checked": 2463,
+  "changed": [
+    {
+      "path": "README.md",
+      "sha256": "1366ddcf5830bc075ea98bbe1cec2841e53267a6bcf1f8c66b241412baa8eaa5",
+      "owned_document": true
+    },
+    {
+      "path": "STATUS.md",
+      "sha256": "6efb7f09e57e1c7edf8c5b09baff3f89cac8243898115d2e24b36fa2c559aa31",
+      "owned_document": true
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "09978b4ce14de56290eec859d749062b20145cd0193046e4c6a25743ec51cb2f",
+      "owned_document": true
+    },
+    {
+      "path": "docs/current/crm.md",
+      "sha256": "319dbb0ddb03f6e1659f18d488010ad58e4e71f3a9da0cd7ee79d394b98fc233",
+      "owned_document": true
+    },
+    {
+      "path": "docs/current/frontend.md",
+      "sha256": "6b0d79f971efe9d1c61259f75ea4e2bdcb7f228e0a05ea3478b84eaa7ebdd952",
+      "owned_document": true
+    },
+    {
+      "path": "docs/current/integrations.md",
+      "sha256": "cb8423d923790eff66e16a5e22f963c295c1734a5c846859a1042c7552fe03ef",
+      "owned_document": true
+    },
+    {
+      "path": "docs/current/operations.md",
+      "sha256": "b61b70532c0102000fd507af6a116b8d15dd80c86852270670d0642bc2f72977",
+      "owned_document": true
+    },
+    {
+      "path": "docs/current/product.md",
+      "sha256": "1fb20c2f7ba0e085e1e2afa530b810d8a6a0533c1376388c5e206ce38b8df5c6",
+      "owned_document": true
+    },
+    {
+      "path": "docs/current/roadmap.md",
+      "sha256": "cde6cf548ad19f8a3feeadf722eaf62d93add47fbc111066ea8cad5ad5f95ca9",
+      "owned_document": true
+    },
+    {
+      "path": "docs/documentation-index.json",
+      "sha256": "e63d4209874d9b44e9de59786a4df5849e8a9ea6731da48e4c3c6a4c1bd866a7",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/README.md",
+      "sha256": "b36a8bcc7a3b5ac5a1619b20250f87e53b944671068505c225529951723150a4",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/capabilities.md",
+      "sha256": "f62c50c2454f24c39fbcdfd6ba0db203998df7e866098a7a0bde7f2ea53b4663",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/crm-ai-agent.md",
+      "sha256": "e5af392b053bd20fd2c242992898b354e0c7650ff8b26ebf88d51287f87aa661",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/customer-ai-agent.md",
+      "sha256": "48463777dc2522ff3ed3a63e6015939209fbcff394b632b0cdf3e3b53f58007d",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/data-lifecycle.md",
+      "sha256": "cd6f793dc54de27b99411f3ee6fcdc18fb2395cf2837da7699587e832999b801",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/identity-access.md",
+      "sha256": "80e5c192b601edff49416812731af3a0088d51f3f4ecb07049b6f82e18dfff37",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/operations.md",
+      "sha256": "99761406e929a8636140f8a771632ae3d9e2b7da73e75309a2527776cb24478c",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/project-state.md",
+      "sha256": "e0a7f034f2160143bdb064860ae99a3f1afa7c958639ef31a6c28e20a6b48d98",
+      "owned_document": true
+    },
+    {
+      "path": "docs/pre-production/tasks-automations.md",
+      "sha256": "319328a47d6cf26a5d1f5415c872fe1db7854fc192c81273dfdd223c29221112",
+      "owned_document": true
+    },
+    {
+      "path": "docs/testing/task-state/PRIMARY-SESSION.md",
+      "sha256": "36f8065346dc780f66b246e049c08682f58ca6f563b795b34f8c0e81e56e614a",
+      "owned_document": true
+    }
+  ],
+  "outside_owned_documents": 0
+}

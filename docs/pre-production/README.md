@@ -26,7 +26,7 @@ evidence. Наличие паспорта не означает production-до�
 | Модуль | Документация в этом разделе | Предметный источник |
 | --- | --- | --- |
 | Клиентский AI-агент | [Паспорт текущей версии](customer-ai-agent.md) | [Правила AI](../current/ai.md) |
-| Внутренний CRM-агент / аналитика | [Зафиксированная пауза](crm-ai-agent.md) | [Предыдущая приёмка](../../archive_docs/2026-10-07/docs/testing/ai-agent-continuity-20261006.md) |
+| Внутренний CRM-агент / аналитика | [D01 и границы отложенной аналитики](crm-ai-agent.md) | [Предыдущая приёмка](../../archive_docs/2026-10-07/docs/testing/ai-agent-continuity-20261006.md) |
 | Inbox и ручная переписка | [Сценарии и связи](inbox.md) | [CRM](../current/crm.md) |
 | Клиенты | [Карточка и история](clients.md) | [CRM](../current/crm.md) |
 | Заявки, сделки и воронки | [Lifecycle и следующий шаг](leads-deals.md) | [CRM](../current/crm.md) |

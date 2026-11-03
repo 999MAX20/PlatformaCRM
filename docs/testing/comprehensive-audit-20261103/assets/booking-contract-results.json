@@ -1,0 +1,18 @@
+[
+  {
+    "stage": "booking-contract",
+    "command": [
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\comprehensive-audit-20261103\\backend\\manage_isolated.py",
+      "test",
+      "output.comprehensive-audit-20261103.backend.audit_booking",
+      "--noinput",
+      "-v",
+      "2"
+    ],
+    "returncode": 1,
+    "duration_seconds": 73.89,
+    "db": "temporary SQLite; no working database",
+    "environment": "isolated_runtime; env file disabled; synthetic credential key; outbound socket connections blocked except loopback"
+  }
+]

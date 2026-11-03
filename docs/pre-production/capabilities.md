@@ -57,17 +57,18 @@ preview/confirm используют row lock, повторную проверк
 AUD-20 выполнен полностью в локальном scope: доменное начальное состояние
 API/import заявок и сделок, причины потери, серверные metadata, атомарная история
 и фильтр активных открытых стадий UI/import/Inbox. Версия/проверки — AUD-20 checkpoint.
-AUD-10 выполнен частично: готова изоляция очереди; остаются capacity без потерь,
-durable command keys, replay/конфликты и recovery UX. Остальные пункты аудита
-не выполнены, кроме AUD-21: полный локальный критерий concurrent rollback/recovery
+На историческом срезе21.10 AUD-10 был частичным; позднее30.10 его локальный
+scope закрыт и опубликован8d710f03. Актуальные закрытия AUD-07/08/09/11/12/17/19
+и ограниченного AUD-V01 находятся в [roadmap](../current/roadmap.md#project-audit-20261017).
+Они не являются полной production-сертификацией. AUD-21: полный локальный критерий concurrent rollback/recovery
 проверен в PostgreSQL17, 48 import-проверок PASS без skip; код AUD-16 сохранён.
 Версия/evidence — AUD-21-20261021 checkpoint. AUD-22 также выполнен полностью
 локально: ZIP/XML bounds, потоковый XLSX reader и cleanup; focused10/affected68,
 bounded subprocess и system/drift PASS. Лимиты всех листов и env — operations,
 версия/evidence — AUD-22-20261021 checkpoint. Публикация и CI — отдельные
 состояния; deployment/live приёмка не заявлены локальным PASS.
-Остальные исправления не закрыты; это не новая
-общая сертификация проекта.
+Этот исторический перечень не заменяет актуальные строки roadmap;
+локальные закрытия не являются общей сертификацией проекта.
 
 Общая карта сверена 16.10.2026 на исходниках `dc1eedf`.
 [Покрытие сверки и исправления статусов](../testing/docs-reconciliation-20261016.md).
@@ -104,8 +105,8 @@ Settings завершён: [реестр UI/API/потребителей](../tes
 | Календарь/специалисты | Resource без обязательного аккаунта, график/исключения, проверки slot/overlap, изменение записи | [scheduling](../../apps/scheduling/services.py), [availability](../../apps/scheduling/availability.py); кресла/оборудование отложены |
 | Задачи/напоминания | Lifecycle, роли, назначение, due processing | [tasks](../../apps/tasks/services.py); target workers и follow-up policy отдельно |
 | Inbox | Диалоги/сообщения/связи, ручная работа и human handoff; компактный scoped-инспектор клиента/будущих записей/CRM, точные переходы, мобильная панель и сохранение черновика | [conversations](../../apps/conversations), [проверки инспектора](../testing/task-state/PRIMARY-SESSION.md#inbox-inspector-20261008--approved-customer-context-and-action-placement); внешняя доставка не доказана наличием UI |
-| Клиентский AI | Настройки/знания/память, публичные источники, контролируемое создание, safety budget, handoff/recovery | [Подробный паспорт](customer-ai-agent.md); 28 live-сценариев 08.10 PASS; реальный канал ещё не принят |
-| CRM AI / аналитик | Существующие настройки, инструменты, подтверждённые команды и аналитические запросы | [ai_core](../../apps/ai_core), [пауза](crm-ai-agent.md); развитие остановлено решением, runtime не объявлен выключенным |
+| Клиентский AI | Настройки/знания/память, публичные источники, контролируемое создание, safety budget, handoff/recovery | [Подробный паспорт](customer-ai-agent.md); 43 real-model сценария08.10 PASS (включая прежние28); реальный канал ещё не принят |
+| CRM AI / аналитик | Существующие настройки, инструменты, подтверждённые команды и аналитические запросы | [ai_core](../../apps/ai_core), [D01 и остаток](crm-ai-agent.md); ограниченный помощник обязателен в пилоте, расширенная аналитика отложена; полный text/voice PASS не получен |
 | Автоматизации | Conditions, 6 действий, WAIT/retry, leases/idempotency/cancel; редактор существующего состава, preview с UPDATE, атомарное сохранение | [engine](../../apps/automations/engine.py); реальная очередь/target recovery отдельно |
 | Поддержка, PLATFORM-SUPPORT-20261015 | Клиника создаёт обращения; платформа назначает, отвечает, решает; явное повторное открытие, приватные заметки, read cursor, поиск/пагинация и черновики; employee — свои, owner/admin — все своей клиники | [domain/API](../../apps/support), [UI](../../frontend/src/features/support); scoped evidence в checkpoint. Миграция support0001 применена в локальной рабочей БД после backup/restore и проверки сохранности; вложений, внешних уведомлений, SLA и AI нет |
 | Команда/безопасность | Business membership/roles, scoped APIs, сессии/MFA, support grant | [accounts](../../apps/accounts), [core](../../apps/core); target privileged MFA/операционные проверки обязательны |

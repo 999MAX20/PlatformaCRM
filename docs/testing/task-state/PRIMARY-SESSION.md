@@ -1,3 +1,43 @@
+## COMPREHENSIVE-AUDIT-20261103 — executable audit complete; local documentation boundary
+
+Owner03.11 comprehensive audit,04.11 Continue: audit/isolated diagnostics/docs
+only; no product/config/dependency changes, workingDB writes, push/merge/deploy.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit;
+input0b3348e1 with233 pre-existing WIP entries and2463 source hashes. No foreign
+work staged. Market cross-contract read-only; no other-chat messages.
+
+Backend2752=2698PASS/4FAIL/50SQLite skips; all50 PostgreSQL concurrency cases PASS
+on repeat with audit-only cleanup correction; initial teardown FAIL retained.
+Real isolated PG/Redis/Celery/beat/AV recovery, dump/files/keys restore and actual
+import scanner-outage/retry PASS. Stock recovery helper fixture FAIL retained.
+HTTP profiles1/5threads each50attempts:40HTTP200/10Clients deadline failures;
+PG Clients warmup28.618s, SQLite1000heavy median18.413s; distributed17.260s single.
+Current queues387–1737SQL, client card184SQL. Build/types/i18n6680/bundle PASS;
+Node215PASS/7FAIL. UI45 route cases plus real CRUD/AI approval/error/recovery flows.
+Real LLM, Linux/container/target deployment, native OS/device acceptance unproven.
+Codex Security deep scan could not start with available permission profile;
+manual security scope and dependency14dev advisories/3packages are documented.
+
+All14pilotAC,22CRM-C,8CG,D01 mapped;101 document dispositions,64full active bodies.
+Confirmed stale delivered automatic-booking price/duration, creation-event/context
+gaps, expensive Clients, fallback crash, missing Compose consumers and UI defects.
+Plan money/D01voice remain missing; historical native73482a3 findings are separate.
+Independent checks/commands/raw receipts/failure classifications:
+[audit](../comprehensive-audit-20261103/README.md),
+[tests](../comprehensive-audit-20261103/tests.md),
+[findings](../comprehensive-audit-20261103/findings.md).
+
+20existing docs corrected; archival0 (no wholly obsolete active body justified).
+Own safe hunks/reports only local save. Four active files frontend/operations/
+product/roadmap depend on foreign uncommitted paragraphs: direct staging omitted;
+full own delta against captured WIP saved in report assets/own-doc-delta.patch.
+This limitation is not permission to commit foreign work or claim product readiness.
+Evidence manifest/docs check receipt and local-save details are in documentation.md.
+Source hashes prove no product changes; all owned runtimes stopped, working ones
+preserved. No further executable audit work remains; remediation is a separate plan.
+External target/device/provider/security-profile proof and four direct-document
+integration constraints remain explicit. No push-triggered CI or deployment.
+
 ## UI-REFRESH-20261102 — dev schema and refresh inspection
 
 Owner reported /leads list blinking every5–10s and requested other-page inspection.

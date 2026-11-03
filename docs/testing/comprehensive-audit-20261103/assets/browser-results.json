@@ -1,0 +1,1310 @@
+[
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "dashboard",
+    "url": "http://127.0.0.1:53908/app/dashboard",
+    "elapsedMs": 2049,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 1,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "appointments",
+    "url": "http://127.0.0.1:53908/app/appointments",
+    "elapsedMs": 3423,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 7,
+    "axe": [
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".space-y-0\\.5"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "appointments?view=plans",
+    "url": "http://127.0.0.1:53908/app/appointments?view=plans",
+    "elapsedMs": 2076,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 3,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "clients",
+    "url": "http://127.0.0.1:53908/app/clients",
+    "elapsedMs": 3102,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 15,
+    "axe": [
+      {
+        "id": "empty-table-header",
+        "impact": "minor",
+        "description": "Ensure table headers have discernible text",
+        "nodes": [
+          {
+            "target": [
+              "thead > tr > .w-14.text-right"
+            ],
+            "summary": "Fix any of the following:\n  Element does not have text that is visible to screen readers"
+          }
+        ]
+      },
+      {
+        "id": "landmark-main-is-top-level",
+        "impact": "moderate",
+        "description": "Ensure the main landmark is at top level",
+        "nodes": [
+          {
+            "target": [
+              ".mx-auto.max-w-none.min-h-0 > main"
+            ],
+            "summary": "Fix any of the following:\n  The main landmark is contained in another landmark."
+          }
+        ]
+      },
+      {
+        "id": "landmark-no-duplicate-main",
+        "impact": "moderate",
+        "description": "Ensure the document has at most one main landmark",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  Document has more than one main landmark"
+          }
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "tasks",
+    "url": "http://127.0.0.1:53908/app/tasks",
+    "elapsedMs": 2768,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 14,
+    "axe": [
+      {
+        "id": "landmark-main-is-top-level",
+        "impact": "moderate",
+        "description": "Ensure the main landmark is at top level",
+        "nodes": [
+          {
+            "target": [
+              ".space-y-4"
+            ],
+            "summary": "Fix any of the following:\n  The main landmark is contained in another landmark."
+          }
+        ]
+      },
+      {
+        "id": "landmark-no-duplicate-main",
+        "impact": "moderate",
+        "description": "Ensure the document has at most one main landmark",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  Document has more than one main landmark"
+          }
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "calendar",
+    "url": "http://127.0.0.1:53908/app/calendar?date=2026-11-04&view=month",
+    "elapsedMs": 2054,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 39,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "conversations",
+    "url": "http://127.0.0.1:53908/app/conversations/1",
+    "elapsedMs": 1965,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 13,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "timeline",
+    "url": "http://127.0.0.1:53908/app/timeline",
+    "elapsedMs": 1990,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 8,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "notifications",
+    "url": "http://127.0.0.1:53908/app/notifications",
+    "elapsedMs": 1972,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 4,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "support",
+    "url": "http://127.0.0.1:53908/app/support",
+    "elapsedMs": 2035,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 4,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "bots",
+    "url": "http://127.0.0.1:53908/app/bots",
+    "elapsedMs": 2010,
+    "title": "PlatformaCRM",
+    "h1": [
+      "AI-боты"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 3,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "integrations",
+    "url": "http://127.0.0.1:53908/app/integrations",
+    "elapsedMs": 2196,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 3,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "pricing",
+    "url": "http://127.0.0.1:53908/app/pricing",
+    "elapsedMs": 2080,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Kaspi Pricing"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 11,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "ai-agents",
+    "url": "http://127.0.0.1:53908/app/ai-agents/1/profile",
+    "elapsedMs": 2234,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 19,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "automations",
+    "url": "http://127.0.0.1:53908/app/automations",
+    "elapsedMs": 2020,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Автоматизации"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 14,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "business/services",
+    "url": "http://127.0.0.1:53908/app/business/services",
+    "elapsedMs": 1998,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 10,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "business/branches",
+    "url": "http://127.0.0.1:53908/app/business/branches",
+    "elapsedMs": 1975,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 2,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "business/resources",
+    "url": "http://127.0.0.1:53908/app/business/resources",
+    "elapsedMs": 1925,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 14,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "business/working-hours",
+    "url": "http://127.0.0.1:53908/app/business/working-hours",
+    "elapsedMs": 1905,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 8,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "analytics",
+    "url": "http://127.0.0.1:53908/app/analytics",
+    "elapsedMs": 1953,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Аналитика"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 11,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "settings",
+    "url": "http://127.0.0.1:53908/app/settings",
+    "elapsedMs": 2014,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Компания",
+      "Сотрудники",
+      "Роли и доступ",
+      "Безопасность",
+      "Сообщения клиентам",
+      "Быстрые ответы",
+      "Дополнительные поля",
+      "Тариф",
+      "Лимиты"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 5,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "account",
+    "url": "http://127.0.0.1:53908/app/account",
+    "elapsedMs": 3054,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Профиль"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 18,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "leads",
+    "url": "http://127.0.0.1:53908/app/leads",
+    "elapsedMs": 1969,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Исторические связи"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 7,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "ru",
+    "width": 1440,
+    "route": "deals",
+    "url": "http://127.0.0.1:53908/app/deals",
+    "elapsedMs": 1959,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Исторические связи"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 6,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "en",
+    "width": 390,
+    "route": "appointments",
+    "url": "http://127.0.0.1:53908/app/appointments",
+    "elapsedMs": 2909,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 10,
+    "axe": [
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".inset-x-2"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "en",
+    "width": 390,
+    "route": "clients",
+    "url": "http://127.0.0.1:53908/app/clients",
+    "elapsedMs": 2818,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 16,
+    "axe": [
+      {
+        "id": "aria-allowed-attr",
+        "impact": "critical",
+        "description": "Ensure an element's role supports its ARIA attributes",
+        "nodes": [
+          {
+            "target": [
+              "article:nth-child(1)"
+            ],
+            "summary": "Fix all of the following:\n  ARIA attribute is not allowed: aria-selected=\"false\""
+          },
+          {
+            "target": [
+              "article:nth-child(2)"
+            ],
+            "summary": "Fix all of the following:\n  ARIA attribute is not allowed: aria-selected=\"false\""
+          }
+        ]
+      },
+      {
+        "id": "landmark-main-is-top-level",
+        "impact": "moderate",
+        "description": "Ensure the main landmark is at top level",
+        "nodes": [
+          {
+            "target": [
+              ".mx-auto.max-w-none.min-h-0 > main"
+            ],
+            "summary": "Fix any of the following:\n  The main landmark is contained in another landmark."
+          }
+        ]
+      },
+      {
+        "id": "landmark-no-duplicate-main",
+        "impact": "moderate",
+        "description": "Ensure the document has at most one main landmark",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  Document has more than one main landmark"
+          }
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "en",
+    "width": 390,
+    "route": "tasks",
+    "url": "http://127.0.0.1:53908/app/tasks",
+    "elapsedMs": 2640,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 17,
+    "axe": [
+      {
+        "id": "landmark-main-is-top-level",
+        "impact": "moderate",
+        "description": "Ensure the main landmark is at top level",
+        "nodes": [
+          {
+            "target": [
+              ".space-y-4"
+            ],
+            "summary": "Fix any of the following:\n  The main landmark is contained in another landmark."
+          }
+        ]
+      },
+      {
+        "id": "landmark-no-duplicate-main",
+        "impact": "moderate",
+        "description": "Ensure the document has at most one main landmark",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  Document has more than one main landmark"
+          }
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "en",
+    "width": 390,
+    "route": "calendar",
+    "url": "http://127.0.0.1:53908/app/calendar?date=2026-11-04&view=month",
+    "elapsedMs": 1995,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 42,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "en",
+    "width": 390,
+    "route": "account",
+    "url": "http://127.0.0.1:53908/app/account",
+    "elapsedMs": 3253,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Профиль"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 23,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "owner",
+    "locale": "en",
+    "width": 390,
+    "route": "settings",
+    "url": "http://127.0.0.1:53908/app/settings",
+    "elapsedMs": 2122,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Company",
+      "Employees",
+      "Roles and access",
+      "Security",
+      "Client messages",
+      "Quick replies",
+      "Custom fields",
+      "Plan",
+      "Limits"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 9,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "manager",
+    "locale": "kk",
+    "width": 390,
+    "route": "dashboard",
+    "url": "http://127.0.0.1:53908/app/dashboard",
+    "elapsedMs": 2040,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 4,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "manager",
+    "locale": "kk",
+    "width": 390,
+    "route": "appointments",
+    "url": "http://127.0.0.1:53908/app/appointments",
+    "elapsedMs": 2927,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 10,
+    "axe": [
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".inset-x-2"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "manager",
+    "locale": "kk",
+    "width": 390,
+    "route": "clients",
+    "url": "http://127.0.0.1:53908/app/clients",
+    "elapsedMs": 2869,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 16,
+    "axe": [
+      {
+        "id": "aria-allowed-attr",
+        "impact": "critical",
+        "description": "Ensure an element's role supports its ARIA attributes",
+        "nodes": [
+          {
+            "target": [
+              "article:nth-child(1)"
+            ],
+            "summary": "Fix all of the following:\n  ARIA attribute is not allowed: aria-selected=\"false\""
+          },
+          {
+            "target": [
+              "article:nth-child(2)"
+            ],
+            "summary": "Fix all of the following:\n  ARIA attribute is not allowed: aria-selected=\"false\""
+          }
+        ]
+      },
+      {
+        "id": "landmark-main-is-top-level",
+        "impact": "moderate",
+        "description": "Ensure the main landmark is at top level",
+        "nodes": [
+          {
+            "target": [
+              ".mx-auto.max-w-none.min-h-0 > main"
+            ],
+            "summary": "Fix any of the following:\n  The main landmark is contained in another landmark."
+          }
+        ]
+      },
+      {
+        "id": "landmark-no-duplicate-main",
+        "impact": "moderate",
+        "description": "Ensure the document has at most one main landmark",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  Document has more than one main landmark"
+          }
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "manager",
+    "locale": "kk",
+    "width": 390,
+    "route": "tasks",
+    "url": "http://127.0.0.1:53908/app/tasks",
+    "elapsedMs": 2725,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 14,
+    "axe": [
+      {
+        "id": "landmark-main-is-top-level",
+        "impact": "moderate",
+        "description": "Ensure the main landmark is at top level",
+        "nodes": [
+          {
+            "target": [
+              ".space-y-4"
+            ],
+            "summary": "Fix any of the following:\n  The main landmark is contained in another landmark."
+          }
+        ]
+      },
+      {
+        "id": "landmark-no-duplicate-main",
+        "impact": "moderate",
+        "description": "Ensure the document has at most one main landmark",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  Document has more than one main landmark"
+          }
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "manager",
+    "locale": "kk",
+    "width": 390,
+    "route": "calendar",
+    "url": "http://127.0.0.1:53908/app/calendar?date=2026-11-04&view=month",
+    "elapsedMs": 2179,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 42,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "manager",
+    "locale": "kk",
+    "width": 390,
+    "route": "conversations",
+    "url": "http://127.0.0.1:53908/app/conversations/1",
+    "elapsedMs": 2057,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 10,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "operator",
+    "locale": "en",
+    "width": 320,
+    "route": "dashboard",
+    "url": "http://127.0.0.1:53908/app/dashboard",
+    "elapsedMs": 2027,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 4,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "operator",
+    "locale": "en",
+    "width": 320,
+    "route": "appointments",
+    "url": "http://127.0.0.1:53908/app/appointments",
+    "elapsedMs": 3196,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 10,
+    "axe": [
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".inset-x-2"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "operator",
+    "locale": "en",
+    "width": 320,
+    "route": "clients",
+    "url": "http://127.0.0.1:53908/app/clients",
+    "elapsedMs": 3603,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 5,
+    "axe": [
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "operator",
+    "locale": "en",
+    "width": 320,
+    "route": "tasks",
+    "url": "http://127.0.0.1:53908/app/tasks",
+    "elapsedMs": 3124,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 2,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 14,
+    "axe": [
+      {
+        "id": "landmark-main-is-top-level",
+        "impact": "moderate",
+        "description": "Ensure the main landmark is at top level",
+        "nodes": [
+          {
+            "target": [
+              ".space-y-4"
+            ],
+            "summary": "Fix any of the following:\n  The main landmark is contained in another landmark."
+          }
+        ]
+      },
+      {
+        "id": "landmark-no-duplicate-main",
+        "impact": "moderate",
+        "description": "Ensure the document has at most one main landmark",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  Document has more than one main landmark"
+          }
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "description": "Ensure landmarks are unique",
+        "nodes": [
+          {
+            "target": [
+              ".animate-fade-in"
+            ],
+            "summary": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable"
+          }
+        ]
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+        "nodes": [
+          {
+            "target": [
+              "html"
+            ],
+            "summary": "Fix all of the following:\n  Page must have a level-one heading"
+          }
+        ]
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "role": "operator",
+    "locale": "en",
+    "width": 320,
+    "route": "settings",
+    "url": "http://127.0.0.1:53908/app/settings",
+    "elapsedMs": 2052,
+    "title": "PlatformaCRM",
+    "h1": [],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 4,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "platform",
+    "locale": "ru",
+    "width": 1440,
+    "route": "",
+    "url": "http://127.0.0.1:53908/platform",
+    "elapsedMs": 2916,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Обзор"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 2,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "platform",
+    "locale": "ru",
+    "width": 1440,
+    "route": "operations",
+    "url": "http://127.0.0.1:53908/platform/operations",
+    "elapsedMs": 2026,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Операции"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 8,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "platform",
+    "locale": "ru",
+    "width": 1440,
+    "route": "merchants",
+    "url": "http://127.0.0.1:53908/platform/merchants",
+    "elapsedMs": 2000,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Бизнесы"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 5,
+    "axe": [],
+    "pageErrors": []
+  },
+  {
+    "role": "platform",
+    "locale": "ru",
+    "width": 1440,
+    "route": "support",
+    "url": "http://127.0.0.1:53908/platform/support",
+    "elapsedMs": 1986,
+    "title": "PlatformaCRM",
+    "h1": [
+      "Поддержка"
+    ],
+    "mains": 1,
+    "overflow": 0,
+    "alerts": [],
+    "buttons": 9,
+    "axe": [],
+    "pageErrors": []
+  }
+]

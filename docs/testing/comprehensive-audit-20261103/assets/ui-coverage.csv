@@ -1,0 +1,29 @@
+Requirement,Source,Implementation,Verification,Result,Gap
+Route families and navigation,docs/current/frontend.md,frontend/src/app/*Routes.tsx,browser-results.json 45 cases,PARTIAL VERIFIED,Not every detail route or all role/locale combinations
+Role-aware UI,docs/current/access.md,routeGuards and permission controls,owner manager operator platform plus calendar view-only,PARTIAL VERIFIED,Backend permission coverage belongs backend audit
+Responsive lists and tables,docs/current/frontend.md,shared UI and feature lists,1440/390/320 no page overflow plus screenshots,VERIFIED SCOPED,No physical-device keyboard safe-area proof
+RU/KK/EN,docs/current/frontend.md,i18n dictionaries and formatters,6680keys build plus representative browser,FAIL,UI07 RU date leakage EN
+Recovery and empty states,frontend contract,AppErrorBoundary and ClientsPage,boundary repro and503browser,FAIL,UI01/UI03
+Global search pagination,existing AUD08 and frontend contract,GlobalSearch/useEntityData,58task fixture browser search,FAIL,UI02
+Keyboard and semantics,frontend contract,SearchableSelect/EntityWorkspace,actual task picker axe and ArrowDown/Escape,FAIL,UI04/UI05
+Records filters/read errors,frontend contract,RecordsPage/Toolbar,records bell6locale tests+remembered period,VERIFIED SCOPED,Toolbar3 stale nonmodal dialog assertion
+Calendar status and rescheduling,CRM lifecycle/frontend,CalendarPage command layer,calendar-workspace plus independent action diagnostic,VERIFIED SCOPED,Independent confirm/reschedule and required reason PASS; existing3tests stop at stale client-name assertion
+Session isolation,relevant access contract,AuthProvider/api client,session-cache-isolation suite,VERIFIED SCOPED,6uniquePASS including2retry after initial429
+Invalid invitation,access/frontend,InviteAcceptPage,browser invalid-token,FAIL,UI06 invalid form displayed disabled
+Build and bundles,testing guide,app/widget/types,build-results.json,PASS SCOPED,RU/KK chunk warning; not runtime load test
+Frontend regression evidence,testing guide,Node policy/inventory tests,222tests focused repeat,FAIL,7deterministic structural/registry failures
+Native existence/reuse,AC-MOBILE-REUSE,Git73482a3 mobile/apps.mobile,read-only Git inventory,CONFIRMED HISTORICAL,Absent current backend endpoints; no current adapted candidate
+Native token storage,AC-MOBILE-REUSE,mobile/src/storage/session.ts,static source only,UNVERIFIED DEVICE,SecureStore design not device proof
+Native account/offline queue,AC-MOBILE-REUSE,mobile/src/offline/actionQueue.ts,actual-source in-memory replay,FAIL HISTORICAL,MOB-H01 actor confusion andH03 silent eviction
+Native deep links,AC-MOBILE-REUSE,mobile/src/navigation/deepLinks.ts,actual-source URL tests,FAIL HISTORICAL,MOB-H02 HTTPS links become home
+Native build/install/release,AC-MOBILE-REUSE,mobile app/eas config,source config inventory,NOT VERIFIED,No current native source checkout or Android SDK/Xcode/device/account receipts
+Native push/files/camera/permissions,AC-MOBILE-REUSE,historical Expo modules,static inventory,NOT VERIFIED,Physical devices and sandbox transport required
+Native background/process recovery,AC-MOBILE-REUSE,historical shell/offline queue,static inventory,NOT VERIFIED,No OS runtime; cannot infer from mobile Chromium
+Zoom/reduced motion/screenreader,frontend contract,CSS/shared UI,actual Chromium zoom200 and reducedMotion computed CSS,PARTIAL FAIL,0overflow fourroutes; fade-in preference ignored; no400% or NVDA/VoiceOver
+Client lifecycle,frontend contract,client dialogs and workspace,client-save1PASS plus edit/tag/readback and archive/undoPASS,VERIFIED SCOPED,Linked task current UI201 and exact client backlink PASS
+Task completion/reopen,CRM lifecycle,TaskInspector,task-lifecycle-result.json,VERIFIED SCOPED,Other old task selectors stale
+Inbox recovery/manual safety,AI/frontend contract,Inbox workspace,inbox-wide1PASS + inspector2PASS,VERIFIED SCOPED,Compact1440 menu safety and wide branch both verified
+Import/export,integrations contract,ImportPanel and Historical links,real scanner preview201 confirm1 CSV200 plus503file recovery,VERIFIED SCOPED,Operator upload/export403 and history empty; specialist own export header-only/upload403; full role matrix and UI duplicate-resolution cases not exercised
+Automation waiting/cancel,CRM automation contract,current run list and details,continued-retry-result.json,VERIFIED SCOPED,Unique event waiting/details/cancel and persisted cancelled PASS
+D01 work and confirmation,AI contract,CRM agent work/settings/tool approvals,d01-final-receipt.json,VERIFIED SCOPED,Cancel0 Confirm1 stale400 preserves staff; model plan controlled not live provider
+D01 staff configuration boundary,access and AI contract,staff agent directory/work/config,d01-staff-rights-result.json,VERIFIED SCOPED,Manager redacted directory + config404; not all roles

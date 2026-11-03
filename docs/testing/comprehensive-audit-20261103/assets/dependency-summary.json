@@ -1,0 +1,144 @@
+[
+  {
+    "name": "filelock",
+    "version": "3.32.0",
+    "advisories": [
+      {
+        "id": "CVE-2026-112940",
+        "aliases": [
+          "GHSA-v4x8-3wr5-3wq8"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112913",
+        "aliases": [
+          "GHSA-9vhv-jxww-xfm5"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112907",
+        "aliases": [
+          "GHSA-567q-5qvw-pf92"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112938",
+        "aliases": [
+          "GHSA-m462-7rxw-wvpg"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112936",
+        "aliases": [
+          "GHSA-j8f7-rjxc-mr56"
+        ],
+        "fix_versions": [
+          "4.0.9"
+        ]
+      },
+      {
+        "id": "CVE-2026-112910",
+        "aliases": [
+          "GHSA-8mx5-7m5m-r77g"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112909",
+        "aliases": [
+          "GHSA-69hj-f68j-2879"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112911",
+        "aliases": [
+          "GHSA-9c4x-gm8v-wgc4"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112939",
+        "aliases": [
+          "GHSA-rfpc-qcw5-3pc4"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112915",
+        "aliases": [
+          "GHSA-cwqr-hh33-gh44"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112935",
+        "aliases": [
+          "GHSA-fq56-3cx3-fjxp"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      },
+      {
+        "id": "CVE-2026-112908",
+        "aliases": [
+          "GHSA-6627-m3xw-93mp"
+        ],
+        "fix_versions": [
+          "4.2.1"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "msgpack",
+    "version": "1.2.1",
+    "advisories": [
+      {
+        "id": "CVE-2026-114613",
+        "aliases": [
+          "GHSA-j586-36cw-2gc2"
+        ],
+        "fix_versions": [
+          "1.2.3"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "setuptools",
+    "version": "83.0.0",
+    "advisories": [
+      {
+        "id": "GHSA-xmj3-9gf7-h52w",
+        "aliases": [],
+        "fix_versions": [
+          "84.1.0"
+        ]
+      }
+    ]
+  }
+]

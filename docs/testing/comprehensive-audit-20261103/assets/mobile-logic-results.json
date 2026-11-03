@@ -1,0 +1,54 @@
+{
+  "ref": "73482a3bea7f168113c58d8cb928214c97f032d5",
+  "results": [
+    {
+      "id": "MOB-H02",
+      "url": "zani://tasks/42",
+      "actual": {
+        "tab": "tasks",
+        "id": 42
+      }
+    },
+    {
+      "id": "MOB-H02",
+      "url": "https://app.zani.kz/mobile/tasks/42",
+      "actual": {
+        "tab": "home"
+      }
+    },
+    {
+      "id": "MOB-H02",
+      "url": "https://app.zani.kz/mobile/appointments/8",
+      "actual": {
+        "tab": "home"
+      }
+    },
+    {
+      "id": "MOB-H03",
+      "enqueued": 51,
+      "retained": 50,
+      "oldestPreserved": false
+    },
+    {
+      "id": "MOB-H01",
+      "scenario": "A enqueues, logout clears session, B logs in, actual API replay helper",
+      "sent": [
+        {
+          "actor": "B",
+          "endpoint": "/api/mobile/v1/tasks/7/complete/",
+          "options": {
+            "method": "POST",
+            "headers": {
+              "Idempotency-Key": "actor-A-command"
+            },
+            "body": {
+              "business": 1
+            }
+          }
+        }
+      ],
+      "remaining": 0,
+      "limitation": "Request capture only; historical server execution not exercised"
+    }
+  ]
+}

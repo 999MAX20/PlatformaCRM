@@ -1,0 +1,21 @@
+[
+  {
+    "stage": "focused-failures",
+    "command": [
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\comprehensive-audit-20261103\\backend\\manage_isolated.py",
+      "test",
+      "apps.ai_core.tests.AICoreFoundationTests.test_ai_tool_suggest_logs_actions_without_execution",
+      "apps.core.tests_b301_performance.B301MeasuredPerformanceTests.test_representative_read_surfaces_have_bounded_queries_and_payloads",
+      "apps.core.tests_mixed_membership_scope.MixedMembershipScopeTests.test_bell_combines_business_and_own_scope_and_counts_each_visible_notification_once",
+      "output.comprehensive-audit-20261103.backend.audit_ai_suggestions.AISuggestionObservation",
+      "--noinput",
+      "-v",
+      "2"
+    ],
+    "returncode": 1,
+    "duration_seconds": 43.38,
+    "db": "temporary SQLite; no working database",
+    "environment": "isolated_runtime; env file disabled; synthetic credential key; outbound socket connections blocked except loopback"
+  }
+]

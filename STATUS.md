@@ -1,3 +1,13 @@
+COMPREHENSIVE-AUDIT-20261103: executable audit complete on0b3348e1+preservedWIP.
+Backend2752:2698PASS/4FAIL/50SKIP; PG50PASS on isolated repeat; original teardown
+FAIL retained. Real recovery/AV PASS; HTTP2x50 each40success/10Clients timeouts.
+Build/types PASS; Node215PASS/7FAIL; UI45+targeted flows. Findings include stale
+auto-booking terms, missing creation effects/context, Clients latency, fallback,
+Compose queues, money/D01 and historical native gaps. Report and ordered plan:
+docs/testing/comprehensive-audit-20261103/README.md. No product fixes/workingDB writes.
+Own docs/reports saved locally;4 active docs require foreignWIP context and are
+preserved as own patch, not directly staged. No push/merge/deploy or production PASS.
+
 CALENDAR-SHARED-20261103: approved picker reused across7 consumer areas and all26
 Input date/datetime fields. Shared15/consumer8/browser/build/types/i18n6680/bundle PASS.
 Antislop cursor finding fixed with owner approval. Published44a9c92e to origin/main;

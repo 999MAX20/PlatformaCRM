@@ -2,8 +2,10 @@ Manual booking from Client or Inbox uses one Appointment and a separate booking
 coordinator; closed Lead/Deal history is preserved. The UI checks current slots and
 terms, supports safe retry, and refreshes calendar/client/Inbox views. Additive
 scheduling0010 must be applied through the separately authorized target migration
-process; it was tested only in disposable databases. Plans/payments and live rollout
-remain outside this package. [Checks and publication](docs/testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
+process. The original package tested it in disposable databases; on02.11 it was
+separately applied to the local dev database with backup (UI-REFRESH-20261102).
+The later nonmonetary Records/VisitPlan package was published as6349acdf; plan money
+and target/live rollout remain open. [Checks and publication](docs/testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
 
 # PlatformaCRM
 
@@ -27,8 +29,8 @@ CRM для малого бизнеса с AI-слоем. Первый целев
 специалистам и переписку; клиентский AI помогает обрабатывать обращения поверх
 обычной CRM. Медицинские карты и клинические решения в продукт не входят.
 
-На 07.10.2026 текущий фокус — клиентский агент Inbox. Обычная CRM сохраняется;
-развитие внутреннего CRM-агента/аналитики приостановлено без удаления runtime.
+Клиентский агент Inbox сохраняется. По решениям30.10/02.11 обычная CRM и
+ограниченный помощник сотрудника D01 (текст/голос) обязателен в пилоте; расширенная AI-аналитика отложена, runtime сохранён.
 Telegram/WhatsApp включены в подготовку пилота R02 решением 14.10; реальная
 доставка не принята. Для WhatsApp локально добавлен первый этап YCloud TP Lite:
 подключение и текстовый обмен в существующем Inbox; провайдер выключен по умолчанию.

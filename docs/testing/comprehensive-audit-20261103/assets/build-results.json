@@ -1,0 +1,128 @@
+[
+  {
+    "name": "i18n",
+    "command": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/check-i18n.mjs"
+    ],
+    "exit": 0,
+    "seconds": 1.39
+  },
+  {
+    "name": "types-app",
+    "command": [
+      "C:/Program Files/nodejs/node.exe",
+      "node_modules/typescript/bin/tsc",
+      "--project",
+      "tsconfig.app.json",
+      "--noEmit"
+    ],
+    "exit": 0,
+    "seconds": 24.67
+  },
+  {
+    "name": "types-node",
+    "command": [
+      "C:/Program Files/nodejs/node.exe",
+      "node_modules/typescript/bin/tsc",
+      "--project",
+      "tsconfig.node.json",
+      "--noEmit"
+    ],
+    "exit": 0,
+    "seconds": 1.64
+  },
+  {
+    "name": "app-build",
+    "command": [
+      "C:/Program Files/nodejs/node.exe",
+      "node_modules/vite/bin/vite.js",
+      "build",
+      "--outDir",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\comprehensive-audit-20261103\\ui-mobile\\dist"
+    ],
+    "exit": 0,
+    "seconds": 4.24
+  },
+  {
+    "name": "widget-build",
+    "command": [
+      "C:/Program Files/nodejs/node.exe",
+      "node_modules/vite/bin/vite.js",
+      "build",
+      "--config",
+      "widget/vite.config.ts",
+      "--outDir",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\comprehensive-audit-20261103\\ui-mobile\\widget"
+    ],
+    "exit": 0,
+    "seconds": 1.25
+  },
+  {
+    "name": "bundle",
+    "command": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/check-bundle.mjs"
+    ],
+    "exit": 0,
+    "seconds": 0.47
+  },
+  {
+    "name": "node-tests",
+    "command": [
+      "C:/Program Files/nodejs/node.exe",
+      "--test",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\action-color-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\action-feedback-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\announcement-events.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\app-error-normalization.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\appointment-cache.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\auth-request.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\auth-return-path.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\automation-editor.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\automation-history.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\automation-models.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\bundle-budget.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\calendar-period.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\capture-field-options.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\chromatic-runtime.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\client-search.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\daily-workspaces-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\dashboard-appointment-dedupe.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\error-boundary-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\export-history.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\failure-certification-registry.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\fallback-inventory.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\fallback-surface-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\form-resolver-compatibility.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\functional-certification-registry.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\gate-environment-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\i18n-dictionary-source.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\import-history.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\import-review.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\inbox-delivery-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\inbox-sending-model.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\industry-terms.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\lead-csv-safety.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\lead-offline-commands.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\lead-offline-storage.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\login-page-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\merchant-journey-certification.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\notification-cache.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\notification-dedupe.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\notification-header-model.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\record-filters.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\record-legacy-export.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\route-prefetch.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\settings-section-models.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\sidebar-navigation-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\task-workspace.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\timeline-presentation.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\token-csrf.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\ui-toolkit-policy.test.mjs",
+      "C:\\Users\\user\\Desktop\\PlatformaCRM\\frontend\\scripts\\tests\\vite-cache-isolation.test.mjs"
+    ],
+    "exit": 1,
+    "seconds": 12.89
+  }
+]
