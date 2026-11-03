@@ -287,8 +287,8 @@
     },
     {
       "path": "documentation.md",
-      "bytes": 11136,
-      "sha256": "8d66f133418e4ea4ffcfaa36fc358c3718f663c92b788579da096453be68c7a5"
+      "bytes": 11842,
+      "sha256": "9c9034f7593ad417a00aaadc05272b8bff97e4439e9848b21e4dc3ad9a4a246f"
     },
     {
       "path": "findings.md",
@@ -312,8 +312,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 12080,
-      "sha256": "e8e93245fbdd578aa3fbd910a465d08574fdedc91b338c4f2b75f4dd0bad1520"
+      "bytes": 12111,
+      "sha256": "3e7d3ced3da979003cea3e988a933b3b3b738c3123e8fff87f1ebe724fa966c4"
     },
     {
       "path": "requirements.md",
