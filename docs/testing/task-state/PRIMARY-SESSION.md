@@ -8718,3 +8718,21 @@ Working/index/committed-range hygiene and owned diff/link/secret review PASS.
 No remainder in requested scope; no deployment or working DB writes. Dev retained.
 Stale empty index.lock18:29 removed after two no-Git-process inspections and
 exclusive-open/index-hash checks. Foreign WIP preserved; own source paths clean.
+
+## CALENDAR-MONTH-NAMES-20261103
+
+Owner requests unabridged calendar month names. Base4ff02b42, canonical checkout,
+branch codex/ui-testing-toolkit. DateRangePicker source clean; unrelated WIP retained.
+Intl month:long now also used by compact picker; existing tokens/sizes retained.
+Plan/logs: output/calendar-month-names-20261103. Browser dev5173/backend8000 roots
+unchanged: full November label and all12 RU options inspected; mobile390 September
+text65px fits167px control without clipping; cancel restores original filter; viewport
+reset. Intl12-month output checked for ru-RU/kk-KZ/en-GB (not full translated UI audit).
+`.venv/Scripts/python.exe output/calendar-month-names-20261103/build.py`: exit0,
+safe_environment npm build (types/i18n6667/app/widget) PASS. No reinstall, backend
+or full E2E: local copy/format change. No new CSS-mirroring tests. Default noncompact
+consumer already used long names, unchanged. Frontend contract updated; scheduling
+passport/roadmap/README/domain contracts need no change for label formatting.
+No API/permission/notification/BusinessEvent/AI/schema/data/deployment effects.
+Stale empty index.lock removed after two no-Git-process checks, exclusive-open and
+unchanged-index-hash verification. Own diff/new content reviewed, no secrets.

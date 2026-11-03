@@ -52,7 +52,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
   const cells = Array.from({ length: Math.ceil((offset + days) / 7) * 7 }, (_, index) => shift(`${month}-01`, index - offset));
   const year = first.getUTCFullYear();
   const years = Array.from({ length: Math.max(2100, year + 1) - Math.min(1900, year) + 1 }, (_, index) => Math.min(1900, year) + index);
-  const months = Array.from({ length: 12 }, (_, index) => ({ value: String(index + 1).padStart(2, "0"), label: new Intl.DateTimeFormat(locale, { month: compact ? "short" : "long", timeZone: "UTC" }).format(new Date(Date.UTC(2026, index, 1))) }));
+  const months = Array.from({ length: 12 }, (_, index) => ({ value: String(index + 1).padStart(2, "0"), label: new Intl.DateTimeFormat(locale, { month: "long", timeZone: "UTC" }).format(new Date(Date.UTC(2026, index, 1))) }));
   function close() { setOpen(false); trigger.current?.focus(); }
   function moveMonth(delta: number) {
     const next = new Date(Date.UTC(year, first.getUTCMonth() + delta, 1));

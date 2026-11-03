@@ -819,3 +819,7 @@ Working/index/committed-range hygiene and owned diff/link/secret review PASS.
 No remainder in requested scope; no deployment or working DB writes. Dev retained.
 Stale empty index.lock18:29 removed after two no-Git-process inspections and
 exclusive-open/index-hash checks. Foreign WIP preserved; own source paths clean.
+
+CALENDAR-MONTH-NAMES-20261103: full month labels in compact picker implemented;
+RU desktop/mobile390 and Intl RU/KK/EN12-month output checked; isolated build/types/
+i18n PASS. No API/data change. Evidence in PRIMARY.
