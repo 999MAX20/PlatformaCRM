@@ -8624,4 +8624,9 @@ Publication preflight corrected stale origin/main: configured fetch refspec excl
 main, so fetch origin main only updated FETCH_HEAD. Explicit refspec fetch and
 ls-remote confirm e02a28f5; no existing outgoing commit now. Do not attribute its
 previous publication to this cycle. Branch codex/ui-testing-toolkit retained.
-Next: selected docs/diff/links/secrets review, commit/normal push/readback and actual CI.
+Selected docs/new links/secret patterns/diff/index/committed-range checks PASS.
+Published6349acdf48172014da8a2832d94bff5815c3d7f7 via normal push to main;
+ls-remote SHA equals local. CI41620011747 frontend success/backend in progress.
+Owned test runtimes10904/6032 stopped after command/root checks. Ordinary dev and
+foreign WIP retained. No scope remainder in code/local verification/publication;
+actual CI completion remains pending, not green or deployed.

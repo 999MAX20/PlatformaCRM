@@ -4,7 +4,8 @@ CRM-R01, первый пакет31.10: ручной Клиент/Inbox → од�
 новой R01-дельты. Первый Records workspace02.11 добавляет list/detail/pipeline,
 замену merchant Lead/Deal входов и consumers, early completion, scoped задачи,
 метрики и AI/automation defaults. [Текущий локальный evidence](../testing/evidence/records-publication-20261103.md)
-фиксирует проверки и заблокированную публикацию; план/деньги/полная D01/live открыты.
+фиксирует проверки выделенного состава и публикацию `6349acdf`; планы реализованы,
+деньги/полная D01/live открыты.
 
 # Карта реализации и оставшихся границ
 

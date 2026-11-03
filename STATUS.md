@@ -1,8 +1,8 @@
 RECORDS-PUBLICATION-20261103: selected Records/VisitPlan/RF01–09 candidate verified.
 Backend213/PG29/Node25/build/types/i18n6616/bundle and13 unique browser cases PASS
 within evidence boundary. Report: docs/testing/evidence/records-publication-20261103.md.
-Unrelated WIP excluded; index.lock removed, explicit fetch confirms origin/main=HEAD
-e02a28f5. Preparing normal publication; no working DB migration/deployment.
+Published6349acdf to origin/main; remote SHA confirmed. CI41620011747: frontend
+success/backend in progress. Foreign WIP preserved; no working DB migration/deploy.
 
 UI-REFRESH-20261102: six owner-approved dev migrations applied with backups;
 data/integrity checks PASS. Tariff500 resolved; leads idle/selection/draft stable
