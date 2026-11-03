@@ -827,3 +827,7 @@ i18n PASS. No API/data change. Evidence in PRIMARY.
 CALENDAR-MONTH-NAMES publication:40a807ba normal-pushed and remote SHA confirmed.
 Scoped working/index/committed-range hygiene PASS; CI41645911586 in progress.
 Requested scope complete; no deployment. Own source clean, unrelated WIP retained.
+
+CALENDAR-INVENTORY-20261103: approved Records period picker recorded in frontend
+contract;5 direct calls/7 areas, separate calendar grid and26 native date fields mapped.
+Docs/static review only; no product changes or migration to other screens.

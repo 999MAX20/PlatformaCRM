@@ -579,3 +579,81 @@ retry/cancel видны при MANAGE. RU/KK/EN, desktop/mobile, клавиат�
 
 Названия месяцев в списке выбора месяца DateRangePicker выводятся полностью на
 RU/KK/EN, включая compact-вариант календаря периода.
+
+## Календарь выбора даты: принятый вариант и карта использования — 03.11.2026
+
+Владелец подтвердил текущую реализацию выбора периода на странице «Записи».
+Зафиксированный вариант: исходный код `cf110590` (изменения `835a5985`, `40a807ba`),
+цепочка RecordsToolbar → RecordsPeriodPanel → DateRangePicker.
+
+- Панель открывается у кнопки периода поверх контента через portal/PopoverSurface,
+  без сдвига списка, затемнения и модального окна; ограничена размером viewport.
+- Названия месяцев полные на RU/KK/EN, включая компактный вариант.
+- Видимой подсказки «Выберите начало/конец периода» и кнопок Сегодня/7/30 нет;
+  подсказка остаётся доступной screen reader.
+- Выбор двух дат ведётся в черновике; «Применить» применяет диапазон атомарно,
+  «Отмена» сохраняет прежний период. Неполный диапазон нельзя применить.
+- Escape/отмена возвращают фокус на кнопку. Клик или переход фокуса снаружи
+  закрывает панель без перехвата фокуса. Вложенный список месяцев обрабатывает Escape первым.
+- Сохранены общие цвета/типографика/размеры контролов, клавиатурный выбор дат,
+  горизонтальная мобильная панель фильтров и хранение выбранного периода в текущей вкладке.
+
+Это фиксация принятого варианта «Записей», а не выполненное распространение на другие
+экраны. Всплывающая оболочка RecordsPeriodPanel используется только в RecordsToolbar.
+
+### Все прямые подключения общего DateRangePicker
+
+| Раздел / сценарий | Место подключения | Текущая оболочка |
+| --- | --- | --- |
+| Записи: период списка | [RecordsPeriodPanel](../../frontend/src/features/calendar/RecordsPeriodPanel.tsx) | Принятый всплывающий вариант, черновик/отмена/применение |
+| Календарь: переход к дню | [CalendarPicker](../../frontend/src/features/calendar/components/CalendarPicker.tsx) → CalendarToolbar → CalendarPage | Modal, одна дата; выбор сразу закрывает окно |
+| Клиенты: дата создания; Заявки: дата создания; Сделки: дата создания и ожидаемого закрытия | [CrmFilterFields](../../frontend/src/components/crm/CrmFilterFields.tsx) → CrmFilterControls → ClientsFilters / LeadsToolbar / DealsFilters | Календарь раскрывается внутри формы CRM-фильтров; стандартные подсказка/пресеты |
+| Аналитика: период отчётов | [AnalyticsPage](../../frontend/src/features/analytics/AnalyticsPage.tsx) | Стандартный DateRangePicker, черновик периода |
+| Администрирование: операции, вкладки incidents/connectors/history | [OperationsWorklist](../../frontend/src/features/platform/OperationsWorklist.tsx) → PlatformOperationsPage | Стандартный DateRangePicker; вкладка infrastructure использует другую панель |
+
+Итого5 прямых JSX-подключений,7 разделов с учётом трёх потребителей CrmFilterFields.
+В текущем дереве старые LeadsPage/DealsPage сохранены в legacyRoutes на `/leads`
+и `/deals`; `/app/leads` и `/app/deals` используют LegacyRecordsPage. Наличие
+старых компонентов не означает их присутствия в обычном меню «Записей».
+Импорт isCalendarDate в CrmFilterControls — валидация, не дополнительный календарь.
+
+### Другие календарные реализации
+
+- [CalendarBoard](../../frontend/src/features/calendar/components/CalendarBoard.tsx)
+  используется в CalendarPage: сетка недели/месяца с записями и задачами. Это
+  рабочее расписание, не DateRangePicker. CalendarDayInspector и карточки — его потребители данных.
+- [SimpleCalendar](../../frontend/src/components/calendar/SimpleCalendar.tsx):
+  отдельная почасовая сетка. В актуальном исходном frontend найдена только декларация;
+  импортов/JSX-подключений не найдено. Компонент не удалён в рамках инвентаризации.
+- Стандартные HTML-поля `date`/`datetime-local` используют системный календарь
+  браузера и не наследуют оформление DateRangePicker:26 полей в19 файлах ниже.
+  Иконки CalendarDays/CalendarClock/CalendarPlus не считаются компонентами выбора даты.
+
+| Файл стандартного поля даты/времени | Число полей | Строки среза |
+| --- | --- | --- |
+| [AppointmentForm.tsx](../../frontend/src/components/forms/AppointmentForm.tsx) | 1 | 326 |
+| [AppointmentRescheduleForm.tsx](../../frontend/src/components/forms/AppointmentRescheduleForm.tsx) | 1 | 106 |
+| [AgentConversationPanel.tsx](../../frontend/src/features/assistant/components/AgentConversationPanel.tsx) | 2 | 133, 134 |
+| [AIHistoryPanel.tsx](../../frontend/src/features/assistant/components/AIHistoryPanel.tsx) | 2 | 29, 30 |
+| [AutomationActionFields.tsx](../../frontend/src/features/automations/AutomationActionFields.tsx) | 1 | 40 |
+| [BranchScheduleEditor.tsx](../../frontend/src/features/business/components/BranchScheduleEditor.tsx) | 1 | 37 |
+| [InboxTaskDialog.tsx](../../frontend/src/features/conversations/InboxTaskDialog.tsx) | 1 | 93 |
+| [DealModals.tsx](../../frontend/src/features/deals/components/DealModals.tsx) | 1 | 256 |
+| [LeadNextActionModal.tsx](../../frontend/src/features/leads/components/LeadNextActionModal.tsx) | 1 | 56 |
+| [OutreachPage.tsx](../../frontend/src/features/outreach/OutreachPage.tsx) | 1 | 714 |
+| [PaymentForm.tsx](../../frontend/src/features/payments/PaymentForm.tsx) | 1 | 126 |
+| [BusinessBillingPanel.tsx](../../frontend/src/features/platform/BusinessBillingPanel.tsx) | 1 | 75 |
+| [SpecialistLifecycle.tsx](../../frontend/src/features/resources/components/SpecialistLifecycle.tsx) | 2 | 47 |
+| [ScheduleExceptionsPanel.tsx](../../frontend/src/features/settings/components/ScheduleExceptionsPanel.tsx) | 1 | 82 |
+| [TaskEditor.tsx](../../frontend/src/features/tasks/components/TaskEditor.tsx) | 2 | 82, 91 |
+| [TaskFormModal.tsx](../../frontend/src/features/tasks/components/TaskFormModal.tsx) | 2 | 250, 251 |
+| [TaskHeaderFilters.tsx](../../frontend/src/features/tasks/components/TaskHeaderFilters.tsx) | 2 | 176, 183 |
+| [TaskInspector.tsx](../../frontend/src/features/tasks/components/TaskInspector.tsx) | 1 | 149 |
+| [TimelineToolbar.tsx](../../frontend/src/features/timeline/TimelineToolbar.tsx) | 2 | 69, 79 |
+
+Граница: статический поиск по frontend/src, widget, Storybook/e2e и зависимостям
+текущего checkout03.11.2026; проверены родители и маршруты. В widget/Storybook
+дополнительных подключений этих календарей не найдено. Архив, generated/dist,
+node_modules и временные output-сценарии не являются продуктовыми потребителями.
+Это карта кода, не повторная runtime-приёмка каждого экрана. В checkout есть
+несвязанный WIP; он не включается в публикацию этой документации.

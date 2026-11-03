@@ -8740,3 +8740,15 @@ unchanged-index-hash verification. Own diff/new content reviewed, no secrets.
 CALENDAR-MONTH-NAMES publication:40a807ba normal-pushed and remote SHA confirmed.
 Scoped working/index/committed-range hygiene PASS; CI41645911586 in progress.
 Requested scope complete; no deployment. Own source clean, unrelated WIP retained.
+
+## CALENDAR-INVENTORY-20261103 — approved baseline and consumers
+
+Owner requested to record current Records calendar and find every use. Basecf110590,
+canonical checkout/current codex/ui-testing-toolkit;3 picker source files clean.
+Docs-only/static review: approved behavior and complete5 direct DateRangePicker calls,
+7 consumer areas, separate CalendarBoard, unreferenced SimpleCalendar,26 native fields
+in19 files recorded in current frontend contract. Legacy routes checked, no UI migration.
+Plan: output/calendar-inventory-20261103/PLAN.md. Source links verified; no secrets or
+unrelated source staged. Source/app acceptance unchanged; no build/install/DB/browser
+tests for Markdown. Frontend contract owns this map; no new document/registry entry,
+roadmap or passport change needed. Prior browser evidence remains scoped to Records.
