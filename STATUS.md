@@ -823,3 +823,7 @@ exclusive-open/index-hash checks. Foreign WIP preserved; own source paths clean.
 CALENDAR-MONTH-NAMES-20261103: full month labels in compact picker implemented;
 RU desktop/mobile390 and Intl RU/KK/EN12-month output checked; isolated build/types/
 i18n PASS. No API/data change. Evidence in PRIMARY.
+
+CALENDAR-MONTH-NAMES publication:40a807ba normal-pushed and remote SHA confirmed.
+Scoped working/index/committed-range hygiene PASS; CI41645911586 in progress.
+Requested scope complete; no deployment. Own source clean, unrelated WIP retained.

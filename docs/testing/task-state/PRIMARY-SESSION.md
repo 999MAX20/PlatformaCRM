@@ -8736,3 +8736,7 @@ passport/roadmap/README/domain contracts need no change for label formatting.
 No API/permission/notification/BusinessEvent/AI/schema/data/deployment effects.
 Stale empty index.lock removed after two no-Git-process checks, exclusive-open and
 unchanged-index-hash verification. Own diff/new content reviewed, no secrets.
+
+CALENDAR-MONTH-NAMES publication:40a807ba normal-pushed and remote SHA confirmed.
+Scoped working/index/committed-range hygiene PASS; CI41645911586 in progress.
+Requested scope complete; no deployment. Own source clean, unrelated WIP retained.
