@@ -91,3 +91,8 @@ XLSX импорт ограничен числом строк/столбцов и
 
 ### STAND-ACCESS-20261029
 Закрытый сетевой стенд: [пароль доступа и Compose overlay](docs/current/operations.md#stand-access-20261029--пароль-доступа-к-сетевому-стенду). Защита не активируется обычным локальным запуском.
+
+Local frontend servers use separate Vite dependency caches per port/mode;
+parallel test servers must use distinct explicit ports. Builds no longer emit a
+JavaScript config beside `vite.config.ts`. Existing-checkout cleanup and restart:
+[development cache isolation](docs/current/operations.md#vite-development-cache-isolation-03112026).

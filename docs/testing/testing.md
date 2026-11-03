@@ -467,3 +467,11 @@ If a future test needs a provider integration, mock the provider/client explicit
 5. Run the affected/dependent gate after the fix; run the full required gate for
    candidate integration. Preserve unrelated failure evidence instead of
    expanding into another feature stage or repeating the same hanging command.
+
+## Concurrent Vite regression check
+
+From `frontend`, run `node --test scripts/tests/vite-cache-isolation.test.mjs`.
+It verifies default TypeScript config selection, independent port/build caches,
+unchanged React optimizer files after another cache is forcibly rebuilt, and
+failure on an occupied port. Run the normal isolated frontend build at completion
+and confirm it does not emit `vite.config.js` or `vite.config.d.ts`.

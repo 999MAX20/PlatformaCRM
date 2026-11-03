@@ -1,3 +1,9 @@
+VITE-CACHE-FIX-20261103: shared dev-page crash cause addressed by isolated
+Vite caches/strict ports and noEmit for config. Node3, isolated build/types/i18n6667,
+bundle and browser login/Dashboard/Clients/Calendar/Records PASS. Concurrent test
+optimizer leaves working dev cache unchanged. Dev5173 restarted; working DB untouched.
+Details and publication boundary in PRIMARY; unrelated WIP retained.
+
 RECORDS-PUBLICATION-20261103: selected Records/VisitPlan/RF01–09 candidate verified.
 Backend213/PG29/Node25/build/types/i18n6616/bundle and13 unique browser cases PASS
 within evidence boundary. Report: docs/testing/evidence/records-publication-20261103.md.

@@ -8630,3 +8630,45 @@ ls-remote SHA equals local. CI41620011747 frontend success/backend in progress.
 Owned test runtimes10904/6032 stopped after command/root checks. Ordinary dev and
 foreign WIP retained. No scope remainder in code/local verification/publication;
 actual CI completion remains pending, not green or deployed.
+
+## VITE-CACHE-FIX-20261103 — shared development page crash
+
+Owner asked to fix intermittent errors across all app pages. Base c8418ef0,
+canonical PlatformaCRM root, branch codex/ui-testing-toolkit. Compact contract and
+starting dirty snapshot: output/vite-cache-fix-20261103/PLAN.md and starting-status.txt.
+Observed AppLayout Invalid hook call/null useState with mixed React optimizer hashes
+and lost HMR connection. Full reload recovered. Shared node_modules/.vite allowed
+test optimization to replace working-dev dependencies. Also tsc emitted ignored
+vite.config.js, chosen before .ts; its rewrite restarted dev in recorded logs.
+
+Changed only cache config/plugin, tsconfig.node noEmit and regression test.
+Cache key uses merged CLI port/command/mode; port0 gets a unique ID; strictPort
+prevents fallback collisions. Preserved unrelated SSE proxy/config and all WIP.
+No API/domain/permission/notification/BusinessEvent/AI changes or source copies.
+Saved and removed exactly the two ignored generated config artifacts; restarted
+verified frontend5173 only (now PID16916). Backend8000 untouched.
+
+Checks on current working source with owned config delta:
+- `node --test scripts/tests/vite-cache-isolation.test.mjs`:3 PASS, node.log.
+  Real Vite optimizeDeps(force) on two caches preserves first React file hashes;
+  createServer rejects occupied port; default config selects TypeScript.
+- `.venv/Scripts/python.exe output/vite-cache-fix-20261103/build.py`: exit0;
+  safe_environment, npm run build including types/i18n6667/app/widget PASS.
+  Explicit postbuild assertions: no generated config .js/.d.ts. No reinstall.
+- `npm.cmd run check:bundle --prefix frontend`: PASS app-shell342.1kB <400kB;
+  existing RU/KK >500kB warnings retained, not failures.
+- Browser Chrome: isolated synthetic SQLite copy, migrated only that copy,
+  outbound network blocked/mock providers, backend49949/frontend49950.
+  Real login, Dashboard, Clients table, Calendar month and Records empty state
+  rendered through shared AppLayout; reload checked. No error/warn console entries.
+  Concurrent forced optimizer on49950 left dev5173 metadata SHA256 unchanged:
+  CFB7107790DF347CE6746627B23C90FCC301BB8306CD784423663B9C9AAA3546.
+  Ordinary dev login rendered without new errors; its expired user session prevented
+  authenticated working-data navigation, so that evidence comes from isolated DB.
+
+No full backend/E2E/release gate: runtime config only; no domain/schema change.
+No working DB migration, deployment or provider calls. README/operations/testing
+updated. Roadmap, product/CRM contracts and passports need no change: this fixes
+development infrastructure and adds no product capability or acceptance closure.
+Publish only owned hunks; source gate covers working snapshot (unrelated WIP present),
+not certification of that WIP. Scoped config checks are independent of its SSE proxy.

@@ -372,3 +372,16 @@ with its exact HTTPS origin and WEB_DOMAIN with the real host, and use the
 compose.stand.yaml activation commands above. Local HTTP URLs are not production
 configuration. Test credentials are not committed; choose a private server password
 before real user data. Public HTTPS/container acceptance remains unperformed.
+
+## Vite development cache isolation (03.11.2026)
+
+The application Vite config isolates optimized dependencies by resolved server
+port and mode; production builds use a separate cache. Ports are strict: an
+occupied port fails instead of silently selecting another port. Use a distinct
+explicit `--port` for each concurrent test server. The default dev port is 5173.
+`frontend/tsconfig.node.json` uses `noEmit` so `tsc -b` cannot generate a stale
+`vite.config.js` that shadows `vite.config.ts` and restarts an active dev server.
+For an existing checkout, stop its own frontend, inspect/remove only ignored
+generated `frontend/vite.config.js` and `frontend/vite.config.d.ts` if present,
+then restart frontend and reload the browser. Do not delete source configs or
+stop unrelated servers. Backend and working database changes are not required.

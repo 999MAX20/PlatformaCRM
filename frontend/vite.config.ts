@@ -1,11 +1,26 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { randomUUID } from "node:crypto";
 
 const apiProxyTarget =
   process.env.E2E_API_BASE_URL || "http://localhost:8000";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    {
+      name: "app-cache-isolation",
+      config(config, { command, mode }) {
+        const port = config.server?.port ?? 5173;
+        const scope = command === "serve" ? `serve-${port || randomUUID()}` : "build";
+        // Concurrent dev/test servers must never replace each other's React optimizer files.
+        return {
+          cacheDir: `node_modules/.vite/app-${scope}-${encodeURIComponent(mode)}`,
+          server: { strictPort: true },
+        };
+      },
+    },
+    react(),
+  ],
   build: {
     rollupOptions: {
       output: {
