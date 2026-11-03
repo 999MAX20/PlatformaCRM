@@ -8711,3 +8711,10 @@ before publication. No new CSS-mirroring tests or full backend/E2E for bounded U
 Frontend contract and scheduling passport updated in main text; roadmap/business
 contracts/README unchanged because no capability, setup or acceptance-stage change.
 Evidence covers current working snapshot with unrelated WIP; publish only owned delta.
+
+RECORDS-PERIOD-POPOVER publication:835a5985 normal-pushed to origin/main; remote
+SHA835a598522dd686382ef90c1794074ae91511490 confirmed. CI41645297715 in progress.
+Working/index/committed-range hygiene and owned diff/link/secret review PASS.
+No remainder in requested scope; no deployment or working DB writes. Dev retained.
+Stale empty index.lock18:29 removed after two no-Git-process inspections and
+exclusive-open/index-hash checks. Foreign WIP preserved; own source paths clean.

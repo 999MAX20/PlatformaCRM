@@ -812,3 +812,10 @@ Chrome gate-to-app verified. Public deployment remains separate; details PRIMARY
 
 VITE-CACHE-FIX publication:764277c6 pushed/remote confirmed; CI41642801467
 in progress. Owned isolated runtimes stopped; working dev retained.
+
+RECORDS-PERIOD-POPOVER publication:835a5985 normal-pushed to origin/main; remote
+SHA835a598522dd686382ef90c1794074ae91511490 confirmed. CI41645297715 in progress.
+Working/index/committed-range hygiene and owned diff/link/secret review PASS.
+No remainder in requested scope; no deployment or working DB writes. Dev retained.
+Stale empty index.lock18:29 removed after two no-Git-process inspections and
+exclusive-open/index-hash checks. Foreign WIP preserved; own source paths clean.
