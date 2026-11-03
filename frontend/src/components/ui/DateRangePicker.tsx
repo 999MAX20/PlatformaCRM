@@ -20,7 +20,7 @@ function shift(value: string, days: number) {
 }
 
 /** Date-only control. API boundaries are resolved in the business timezone, not the browser's. */
-export function DateRangePicker({ label, value, onChange, today, range = true, inline = false, allowClear = true, compact = false }: {
+export function DateRangePicker({ label, value, onChange, today, range = true, inline = false, allowClear = true, compact = false, showHint = true, showPresets = true }: {
   label: string;
   value: DateRangeValue;
   onChange: (value: DateRangeValue) => void;
@@ -29,6 +29,8 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
   inline?: boolean;
   allowClear?: boolean;
   compact?: boolean;
+  showHint?: boolean;
+  showPresets?: boolean;
 }) {
   const { t, language } = useI18n();
   const locale = language === "kk" ? "kk-KZ" : language === "en" ? "en-GB" : "ru-RU";
@@ -87,7 +89,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
         <div className={cn("shrink-0", compact ? "w-20" : "w-24")}><Select className={compact ? "gap-1! px-2!" : undefined} aria-label={t("crmFilters.year")} value={year} options={years.map(item => ({ value: item, label: String(item) }))} onChange={event => { setMonth(`${event.target.value}-${month.slice(5)}`); setFocusDay(`${event.target.value}-${month.slice(5)}-01`); }} /></div>
         <Button type="button" size="icon" variant="ghost" className="h-11 w-11 shrink-0" aria-label={t("crmFilters.nextMonth")} onClick={() => moveMonth(1)}><ChevronRight size={17} /></Button>
       </div>
-      {range && <p role="status" className="mb-2 text-xs text-platforma-subtle">{t(choosingEnd ? "crmFilters.chooseEnd" : "crmFilters.chooseStart")}</p>}
+      {range && <p role="status" className={showHint ? "mb-2 text-xs text-platforma-subtle" : "sr-only"}>{t(choosingEnd ? "crmFilters.chooseEnd" : "crmFilters.chooseStart")}</p>}
       <div className="grid grid-cols-7 text-center text-xs text-platforma-muted">{Array.from({ length: 7 }, (_, index) => <span key={index} className="py-2">{new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" }).format(asDate(shift("2026-10-12", index)))}</span>)}</div>
       <div ref={grid} role="grid" aria-label={label} className="space-y-1">
         {Array.from({ length: cells.length / 7 }, (_, row) => <div key={row} role="row" className="grid grid-cols-7">{cells.slice(row * 7, row * 7 + 7).map(day => {
@@ -103,10 +105,10 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
             }}>{asDate(day).getUTCDate()}</button>;
         })}</div>)}
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-1 border-t border-platforma-border pt-2">
-        {(range ? [1, 7, 30] : [1]).map(count => <Button key={count} type="button" size="sm" variant="ghost" onClick={() => { onChange({ from: shift(today, 1 - count), to: today }); close(); }}>{t(count === 1 ? "crmFilters.today" : count === 7 ? "crmFilters.last7" : "crmFilters.last30")}</Button>)}
+      {(showPresets || (range && allowClear)) && <div className="mt-3 flex flex-wrap items-center gap-1 border-t border-platforma-border pt-2">
+        {showPresets && (range ? [1, 7, 30] : [1]).map(count => <Button key={count} type="button" size="sm" variant="ghost" onClick={() => { onChange({ from: shift(today, 1 - count), to: today }); close(); }}>{t(count === 1 ? "crmFilters.today" : count === 7 ? "crmFilters.last7" : "crmFilters.last30")}</Button>)}
         {range && allowClear && <Button type="button" size="sm" variant="ghost" onClick={() => { onChange({ from: "", to: "" }); setChoosingEnd(false); close(); }}><X size={14} />{t("common.clear")}</Button>}
-      </div>
+      </div>}
     </div> : null}
   </div>;
 }

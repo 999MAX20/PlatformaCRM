@@ -1,3 +1,8 @@
+RECORDS-PERIOD-POPOVER-20261103: period calendar floats above content without
+layout shift; visible guidance/presets removed for this picker. Desktop/mobile390,
+range/apply/cancel/Escape/outside/nested Select PASS; safe build/types/i18n/bundle PASS.
+No API/data change. Full evidence and publication boundary in PRIMARY.
+
 VITE-CACHE-FIX-20261103: shared dev-page crash cause addressed by isolated
 Vite caches/strict ports and noEmit for config. Node3, isolated build/types/i18n6667,
 bundle and browser login/Dashboard/Clients/Calendar/Records PASS. Concurrent test

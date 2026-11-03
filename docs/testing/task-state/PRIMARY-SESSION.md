@@ -8680,3 +8680,34 @@ links/new-file/secret checks PASS. No code/local verification/publication remain
 Owned isolated PIDs16640/21440 stopped; ordinary dev retained. Before staging,
 stale empty index.lock from17:57 removed after two no-Git-process inspections,
 exclusive-open check and unchanged index hash. No unrelated hunks staged.
+
+## RECORDS-PERIOD-POPOVER-20261103 — overlay date range
+
+Owner requested floating period calendar without shifting page and removal of
+visible choose-start guidance and Today/7/30 presets. Base cba29506, canonical
+PlatformaCRM, branch codex/ui-testing-toolkit;3 affected source files clean at start.
+Plan/snapshot/logs: output/records-period-popover-20261103. Existing tokens and
+PopoverSurface reused via portal; anchor follows resize/scroll, bounded width/height.
+Draft/apply unchanged; Escape/cancel restore focus; outside pointer/focus dismisses
+without stealing focus. Optional DateRangePicker flags retain other callers' defaults;
+range guidance stays screen-reader-only here. No new copy, permission/API, DB,
+notification/BusinessEvent/AI changes. Unrelated WIP preserved.
+
+Manual Chrome against canonical dev5173/backend8000 (existing synthetic demo rows,
+no data mutation): desktop table top121.800003px and height532px identical open/closed.
+Panel overlays rows at trigger. No visible guidance or preset buttons; date selection
+4–5Nov applied in URL and returned focus; original4Nov filter then restored.
+Incomplete range disables Apply. Month-select Escape closes only nested list;
+panel Escape and Cancel close/return focus. At390x844 panel left8/top119/width374.4/
+height458.4 stays within viewport. Outside click focuses search and dismisses panel.
+Viewport restored; desktop/mobile screenshot inspected. Shared picker callers inspected;
+defaults preserve their controls, no unrelated calendar redesign.
+
+`.venv/Scripts/python.exe output/records-period-popover-20261103/build.py`: exit0;
+safe_environment build/types/i18n6667/app/widget PASS, no dependency reinstall.
+`npm.cmd run check:bundle --prefix frontend`: PASS app-shell342.1kB under400kB;
+existing RU/KK>500kB warnings retained. Scoped diff/index/links/new-file review required
+before publication. No new CSS-mirroring tests or full backend/E2E for bounded UI change.
+Frontend contract and scheduling passport updated in main text; roadmap/business
+contracts/README unchanged because no capability, setup or acceptance-stage change.
+Evidence covers current working snapshot with unrelated WIP; publish only owned delta.

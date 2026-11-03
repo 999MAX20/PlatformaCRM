@@ -26,7 +26,7 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
   const [dialog, setDialog] = useState<"filters" | null>(null);
   const [periodOpen, setPeriodOpen] = useState(false);
   const periodTrigger = useRef<HTMLButtonElement>(null);
-  const closePeriod = () => { setPeriodOpen(false); periodTrigger.current?.focus(); };
+  const closePeriod = (restoreFocus = true) => { setPeriodOpen(false); if (restoreFocus) periodTrigger.current?.focus({ preventScroll: true }); };
   const [draft, setDraft] = useState<Record<string, string>>({});
   const update = (patch: Record<string, string>) => setParams(current => patchRecordFilters(current, patch));
   const reset = () => setParams(current => resetRecordFilters(current, today));
@@ -68,7 +68,7 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
         <Link className="platforma-focus-ring rounded px-3 py-2 text-sm text-brand-700" to="/app/appointments?view=plans">{t("plans.title")}</Link>
       </nav>
     </div>
-    {periodOpen && <RecordsPeriodPanel from={from} to={to} today={today} onClose={closePeriod} onApply={range => { update(range); closePeriod(); }} />}
+    {periodOpen && <RecordsPeriodPanel anchor={periodTrigger} from={from} to={to} today={today} onClose={closePeriod} onApply={range => { update(range); closePeriod(); }} />}
     <Modal open={dialog !== null} title={t("crmFilters.filters")} onClose={() => setDialog(null)} size="sm" focusReturnId={`records-${dialog}`}>
       <form className="space-y-4" onSubmit={event => { event.preventDefault(); update(draft); setDialog(null); }}>
         {dialog === "filters" ? chips.filter(chip => ["client", "attention"].includes(chip.key) && draft[chip.key]).map(chip => <Button key={chip.key} type="button" variant="secondary" aria-label={`${t("crmFilters.remove")}: ${chip.label}`} onClick={() => setDraft(current => ({ ...current, [chip.key]: "" }))}>{chip.label} {chip.value}<X size={14} /></Button>) : null}
