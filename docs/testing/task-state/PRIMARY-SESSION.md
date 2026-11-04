@@ -1,3 +1,28 @@
+## FULL-AUDIT-20261104 — file/static audit complete; dynamic limits explicit
+
+Owner-expanded19-section audit completed all feasible local reading/reconciliation
+and ordinary diagnostics on d27044b1 + preserved starting WIP, canonical folder,
+branch codex/ui-testing-toolkit. Census127843;5734 own-text;941 backend modules,
+413 process modules;976 API operations;17 jobs;95 routes;3014 action/state instances.
+1557 source statement traces are not unique atomic requirements;126 named CRM IDs
+and14 pilot AC remain separately mapped.87 findings retain29 prior +58 new.
+
+Report and exact coverage: output/full-audit-20261104/report/README.md,
+completion-check.md and coverage-gaps.md; all-registry validator PASS/errors0.
+Backend2698PASS/4FAIL/50SKIP; PG50PASS with original teardown failure retained;
+Node215PASS/7FAIL; unchanged build/types PASS. New named probes preserve their
+own outcomes, controls, failures and exact source hashes; no blanket runtime PASS.
+99 protected/external UI commands,3 protected migration-failure cases and6 external
+security/Linux/target/provider/LLM/native boundaries remain explicit, not complete.
+All owned runtime processes stopped; working DB and other processes preserved.
+
+Four documentation inaccuracies corrected in roadmap/capabilities over preserved
+foreign WIP. Own patch and bounded local audit package described in documentation.md;
+whole foreign document bodies are not staged. No product/config/dependency fixes,
+workingDB migrations, external effects, push/merge/deploy or newCI. Remediation is
+a proposed ordered plan requiring a separate implementation task; no further
+ordinary executable audit work remains. External acceptance is not silently closed.
+
 ## COMPREHENSIVE-AUDIT-20261103 — executable audit complete; local documentation boundary
 
 Owner03.11 comprehensive audit,04.11 Continue: audit/isolated diagnostics/docs
