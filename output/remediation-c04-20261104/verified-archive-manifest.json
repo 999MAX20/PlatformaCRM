@@ -1,0 +1,16 @@
+{
+  "members": [
+    "zani/.env.example",
+    "zani/README.md",
+    "zani/apps/example.py",
+    "zani/docs/notes with spaces.md",
+    "zani/frontend/.env.production.example",
+    "zani/frontend/package-lock.json",
+    "zani/frontend/src/\u041f\u0440\u0438\u043c\u0435\u0440.ts",
+    "zani/scripts/make_clean_archive.sh",
+    "zani/tools/.env.local.example"
+  ],
+  "crc": "PASS",
+  "content_bytes_match": true,
+  "synthetic_only": true
+}

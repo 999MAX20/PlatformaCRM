@@ -1,3 +1,29 @@
+## REMEDIATION-C04-20261104 — source archive locally verified
+
+Owner explicitly starts C04 only. Canonical PlatformaCRM/current codex/ui-testing-toolkit,
+base6a0dab4cce85b839c0a2a4a44c0f87a98c10c306;233 foreign WIP entries retained. Helper clean at start,
+hash matches retained audit's unsafe selection reproduction. Pre-edit contract:
+output/remediation-c04-20261104/CONTRACT.md. No actual sensitive archive/read/distribution.
+
+Rsync exclusions now cover nested runtime/env/DB/browser/session artifacts; declared
+env examples/source/docs retained. No symlinks/devices/specials. Python3 stdlib ZIP
+replaces absent zip binary; Bash/rsync still required. Destination flat.zip validation
+and no prior archive deletion before build; .gitattributes pins only helper to LF.
+Actual WSL Bash/rsync3.4.1/Python3.14.4 fixture tests7 PASS: manifest9 files/bytes/CRC,
+private negatives, Unicode/spaces, symlinks/FIFO, destination refusal, compression
+failure/cleanup/prior archive preservation, repeat, syntax/LF. Initial CRLF5failures
+preserved; fixed in canonical helper, final input rerun. Exact command/logs/limits:
+docs/testing/evidence/remediation-c04-20261104.md.
+
+Source packaging is not backup or arbitrary-secret scanning; excluded output evidence
+may leave docs references outside package. Temporary synthetic trees cleaned, DB hash
+unchanged, dev off. No product/schema/API/permissions/notification/BusinessEvent/AI
+changes; no backend/UI/build/install/live checks for tooling-only boundary. Other
+historical findings remain open. Operations/passport/README/testing/plan/evidence/
+registry updated; other contracts unchanged. No C04 code/evidence/environment/owner
+decision remainder. Own local save only, no push/merge/deploy/newCI. Final receipt:
+output/remediation-c04-20261104/final-validation.json. C05 not started.
+
 ## REMEDIATION-C03-20261104 — configured console/readiness locally verified
 
 Owner explicitly starts C03 only. Canonical C:/Users/user/Desktop/PlatformaCRM,

@@ -1,3 +1,13 @@
+C04,04.11.2026: source archive uses `bash scripts/make_clean_archive.sh [name.zip]`
+on Linux/WSL with rsync and Python3; standard `python3 -m zipfile` replaces Info-ZIP.
+Flat filename only, default zani-clean.zip; archive prefix zani/ retained. Private
+runtime/output/backup/browser/auth paths, env/DB artifacts and symlinks/special files
+are excluded; declared env examples and intended sources/docs remain. Build failure
+does not remove the prior archive. This is not a working-data backup or a scanner
+for arbitrary secrets embedded in source/templates. Review intended inputs before
+distribution; excluded runtime evidence can leave docs links outside the package.
+[Synthetic archive evidence](../testing/evidence/remediation-c04-20261104.md).
+
 C03,04.11.2026: paid-beta readiness reports broker configured/TLS/inline state,
 never the configured URL. The configured JSON console normalizes and sanitizes
 message arguments, exception chains and allowlisted context with the shared

@@ -1,3 +1,10 @@
+REMEDIATION-C04-20261104: clean source archive boundary closed locally.
+Nested runtime/env/DB/browser artifacts excluded; links/special files skipped;
+real Python ZIP, guarded destination and LF entrypoint.7 synthetic tests PASS,
+exact manifest/bytes/CRC + failure cleanup. WorkingDB unchanged, dev off.
+Evidence: docs/testing/evidence/remediation-c04-20261104.md. No real checkout
+archive/distribution; own local commit only, no push/newCI/deploy. C05 not started.
+
 REMEDIATION-C03-20261104: broker/exception console leaks closed locally.
 Readiness uses configured/TLS metadata; JSON console masks recognized credentials
 in args/chains/context and preserves diagnostics. Focused11/completion105 PASS,

@@ -1,3 +1,11 @@
+Archive helper regression (C04): run `python3 scripts/tests/test_clean_archive.py -v`
+in Linux/WSL with Bash, rsync and Python3. From Windows use
+`wsl.exe --exec python3 /mnt/c/Users/user/Desktop/PlatformaCRM/scripts/tests/test_clean_archive.py -v`.
+It executes the real helper only in disposable synthetic trees, validates ZIP CRC,
+exact manifest/content, private-path exclusions, links, failure cleanup and names.
+Do not run the helper on the actual checkout merely to test archive safety.
+[Evidence](evidence/remediation-c04-20261104.md).
+
 # PlatformaCRM Testing Guide
 
 For isolated shared-component development, RU/KK/EN accessibility/interaction

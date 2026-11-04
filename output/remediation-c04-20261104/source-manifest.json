@@ -1,0 +1,25 @@
+{
+  "base": "6a0dab4cce85b839c0a2a4a44c0f87a98c10c306",
+  "source_sha256": {
+    ".gitattributes": "e1dc57b83bafd524ffc8b7d4b198bae7d70b2e530a4f722af0dafa73a3bc282a",
+    "scripts/make_clean_archive.sh": "3464b5122ffef0c11c97055cde05030cf062233b5ee35577d1498ff726f5f207",
+    "scripts/tests/test_clean_archive.py": "e8786a2cf065ce3c9bc0c0461c1a3914683a560332840d1abef3244cfaed10f5"
+  },
+  "raw_log_sha256": {
+    "initial-crlf-failure.log.gz": "b36e04a2426b7b9cf99b245542ef5ae139c9acd38fa8582559d1ac32b5385f9a",
+    "focused.log.gz": "d2d31b284fa7a48e3a46691c0cfd3d867514dd14aadd9c27994c9b4350ddee43",
+    "completion.log.gz": "33b197886bb30855392da92752be94afbfe12d395d91963903d623d4bcf23365"
+  },
+  "foreign_source_hashes": {
+    "apps/core/production_audit.py": "53cf0508eed34b619fc41f6ddd670b46b25d5f82a3dfbb12cfd715a329491197",
+    "apps/core/production_rules.py": "e778ddf3bf49aa2817298f821831d4850bb212e7707f7a881a2837dc302728b3",
+    "config/settings.py": "1f9c76ae329799f763589e9389740827c43fc0c20c775dbdda33ce553ab5d3fc"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "completion_tests": 7,
+  "focused_tests": 7,
+  "prior_selection_baseline": "exact helper hash matches full-audit archive-probe.json",
+  "initial_crlf_failures": 5,
+  "links_checked": 12
+}

@@ -1,3 +1,9 @@
+Source archive (Linux/WSL): `bash scripts/make_clean_archive.sh [name.zip]`.
+Requires rsync and Python3; no separate zip executable. It packages source/docs
+and declared env templates under zani/, excluding runtime/private artifacts and
+symlinks. It is not a working-data backup or an arbitrary-secret scanner.
+[Packaging rules and checks](docs/testing/evidence/remediation-c04-20261104.md).
+
 Manual booking from Client or Inbox uses one Appointment and a separate booking
 coordinator; closed Lead/Deal history is preserved. The UI checks current slots and
 terms, supports safe retry, and refreshes calendar/client/Inbox views. Additive
