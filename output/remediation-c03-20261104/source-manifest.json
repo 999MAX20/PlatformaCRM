@@ -1,0 +1,32 @@
+{
+  "base": "121d5e53b9b2f39bf9b1f42ef8026e613a2e6a81",
+  "source_sha256": {
+    "apps/core/logging.py": "89e33e17bf8ae52c108066750005832c3420498eb250fe6ef0c0298ca6653778",
+    "apps/core/sanitization.py": "0a29f7f183aae970a24946006b6af5298fc04f6764ce6ae4f37a87b3a66bed72",
+    "apps/core/paid_beta_gate.py": "bd028a821bb70ccf308a44da8595547fd0b67236a1bd1493a224032b83651e87",
+    "apps/core/tests_log_redaction.py": "fba40ec8d394c0ec8ed70860903e45dd51ecb0014769e0cf99b09a40a528f8ae",
+    "apps/integrations/tests_connectors.py": "044b181b92dd68e40e1ea455950cf3327fbb9dac3d561fe36a243b04ff35b352"
+  },
+  "raw_log_sha256": {
+    "baseline.log.gz": "5495fa0a857dcb4b038a572eb6d5d90c0ffe77865c226bb2155430d8af8ab8dc",
+    "focused.log.gz": "6e1dac3bbccbe6614095f2d5d7a2d54131a14db237684e35e834585547b6396c",
+    "focused-final.log.gz": "b10171c47c1d0e1e473c4432d58ce4d3abb057bf7ec4f99e6ba94557f45d4772",
+    "completion.log.gz": "6d5d678b98031e40099398802b4cafa34fa1ab9f3fa74114720610c4f3416904"
+  },
+  "foreign_source_hashes": {
+    "apps/core/production_audit.py": "53cf0508eed34b619fc41f6ddd670b46b25d5f82a3dfbb12cfd715a329491197",
+    "apps/core/production_rules.py": "e778ddf3bf49aa2817298f821831d4850bb212e7707f7a881a2837dc302728b3",
+    "config/settings.py": "1f9c76ae329799f763589e9389740827c43fc0c20c775dbdda33ce553ab5d3fc"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "completion_tests": 105,
+  "focused_tests": 11,
+  "baseline_tests": {
+    "total": 8,
+    "pass": 1,
+    "failing_methods": 7,
+    "failing_assertions": 8
+  },
+  "links_checked": 11
+}

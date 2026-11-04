@@ -1,3 +1,35 @@
+## REMEDIATION-C03-20261104 — configured console/readiness locally verified
+
+Owner explicitly starts C03 only. Canonical C:/Users/user/Desktop/PlatformaCRM,
+codex/ui-testing-toolkit, base121d5e53b9b2f39bf9b1f42ef8026e613a2e6a81;233 foreign WIP entries preserved.
+Targets logging/sanitization/paid_beta_gate/provider test clean at start. No changes
+to foreign production audit/rules/settings. Pre-edit contract/start snapshot:
+output/remediation-c03-20261104/CONTRACT.md and starting-status.txt.
+
+Paid-beta CLI JSON/text no longer emit broker URL; configured/TLS metadata and
+pass/fail retained. JSON console uses shared sanitizer on normalized args/context/
+exception chains without traceback truncation. Quoted values with spaces/escapes/
+newlines are fully masked. Provider regression checks formatted confidentiality,
+generic public reason and useful stack/type. Actual configured root handler tested.
+
+Baseline8 tests:7 failing methods/8 assertions,1 safe control PASS. Focused9 PASS,
+final-focused11 PASS; dependent completion105 PASS plus system/migration drift.
+Exact commands/labels and initial failures: docs/testing/evidence/remediation-c03-20261104.md.
+Includes provider/persistence/API sanitization, paid-beta/production readiness,
+observability and existing correlation tests. All isolated SQLite/safe bootstrap,
+dotenv/external sockets blocked. WorkingDB unchanged, dev off, test runtime cleaned.
+
+Sentry inspected separately: send_default_pii=False, no before_send redaction hook;
+console proof does not cover it, other handlers or remote pipelines. No live calls.
+Unlabeled arbitrary strings are not inferable secrets; raw payload logging remains
+forbidden. No product permissions/schema/lifecycle/notification/BusinessEvent/AI
+change. No build/full-E2E/full-backend/PG/live for formatting/readiness boundary.
+Other historical failures stay open. Operations contract/passport, plan/evidence/
+registry updated; other contracts/README unchanged for unchanged setup/workflows.
+Code/evidence/environment/owner decisions C03 complete; own local save only,
+no push/merge/deploy/newCI. Receipt output/remediation-c03-20261104/final-validation.json.
+Next C04 remains unstarted.
+
 ## REMEDIATION-C02-20261104 — Lead source visibility locally verified
 
 Owner «Продолжай» authorizes next C02 after C01, not all cycles. Canonical folder

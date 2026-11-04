@@ -4,6 +4,10 @@ import re
 SENSITIVE_TEXT_KEY_PATTERN = re.compile(
     r"(?i)(password|secret|token|api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|authorization)"
 )
+QUOTED_SECRET_PATTERN = re.compile(
+    r"(?i)(?P<prefix>['\"]?(?:password|secret|token|api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|authorization)['\"]?\s*[=:]\s*)"
+    r"(?P<quote>['\"])(?:\\.|(?!(?P=quote))[^\\])*(?P=quote)"
+)
 SENSITIVE_QUERY_PATTERN = re.compile(
     r"(?i)([?&](?:password|secret|token|api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|authorization)=)[^&\s]+"
 )
@@ -36,6 +40,9 @@ def sanitize_error_text(value, *, max_length=1000):
     if not text:
         return ""
     text = USERINFO_PATTERN.sub("://[redacted]@", text)
+    text = QUOTED_SECRET_PATTERN.sub(
+        lambda match: f"{match['prefix']}{match['quote']}[redacted]{match['quote']}", text
+    )
     text = SENSITIVE_QUERY_PATTERN.sub(lambda match: f"{match.group(1)}[redacted]", text)
     text = JSON_SECRET_PATTERN.sub(lambda match: f"{match.group(1)}[redacted]{match.group(2)}", text)
     text = HEADER_SECRET_PATTERN.sub(lambda match: f"{match.group(1)} [redacted]", text)

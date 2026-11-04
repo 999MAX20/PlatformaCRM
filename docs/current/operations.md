@@ -1,3 +1,13 @@
+C03,04.11.2026: paid-beta readiness reports broker configured/TLS/inline state,
+never the configured URL. The configured JSON console normalizes and sanitizes
+message arguments, exception chains and allowlisted context with the shared
+credential-pattern sanitizer; error type/frames/request correlation remain.
+Quoted multiword/escaped/newline credential assignments are fully masked.
+Do not log raw sensitive payloads: arbitrary unlabeled values cannot be inferred
+as secrets. Sentry/other handlers/external pipelines are separate, unverified sinks;
+send_default_pii=False alone is not a redaction proof. No live telemetry sent.
+[Local C03 evidence](../testing/evidence/remediation-c03-20261104.md).
+
 # Среда, эксплуатация и файлы
 
 AUD-V01,31.10: cookie-auth требует GET /api/auth/csrf/ и последующий POST с

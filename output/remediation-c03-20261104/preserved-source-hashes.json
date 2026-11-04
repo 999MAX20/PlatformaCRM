@@ -1,0 +1,5 @@
+{
+  "apps/core/production_audit.py": "53cf0508eed34b619fc41f6ddd670b46b25d5f82a3dfbb12cfd715a329491197",
+  "apps/core/production_rules.py": "e778ddf3bf49aa2817298f821831d4850bb212e7707f7a881a2837dc302728b3",
+  "config/settings.py": "1f9c76ae329799f763589e9389740827c43fc0c20c775dbdda33ce553ab5d3fc"
+}

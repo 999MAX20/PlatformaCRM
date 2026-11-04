@@ -1,3 +1,10 @@
+REMEDIATION-C03-20261104: broker/exception console leaks closed locally.
+Readiness uses configured/TLS metadata; JSON console masks recognized credentials
+in args/chains/context and preserves diagnostics. Focused11/completion105 PASS,
+system/drift PASS. Evidence: docs/testing/evidence/remediation-c03-20261104.md.
+Sentry/other sinks unverified; no blanket telemetry PASS. WorkingDB unchanged,
+dev off; own local commit only, no push/newCI/deploy. Next C04 not started.
+
 REMEDIATION-C02-20261104: TEAM-ANALYTICS Lead source boundary closed locally.
 Team performance applies current LEADS VIEW scope/capability before aggregation.
 BEFORE10:4 FAIL/6 PASS; AFTER10 PASS; completion54 PASS + system/drift.

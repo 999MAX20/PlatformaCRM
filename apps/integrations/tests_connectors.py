@@ -182,7 +182,11 @@ class BusinessConnectorFoundationTests(TestCase):
         self.assertFalse(result["ok"])
         self.assertEqual(result["reason"], "The external provider could not complete the request.")
         self.assertNotIn("raw-kaspi-token", str(result))
-        self.assertIn("raw-kaspi-token", "\n".join(captured.output))
+        from apps.core.logging import JsonLogFormatter
+        formatted = "\n".join(JsonLogFormatter().format(record) for record in captured.records)
+        self.assertNotIn("raw-kaspi-token", formatted)
+        self.assertIn("RuntimeError", formatted)
+        self.assertIn("Traceback", formatted)
 
     def test_event_payload_secrets_are_masked_in_api_responses(self):
         connector = BusinessConnector.objects.create(

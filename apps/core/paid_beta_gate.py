@@ -109,7 +109,7 @@ def run_paid_beta_gate_check():
             "TLS Redis/Celery runtime is enabled",
             not settings.AUTOMATIONS_RUN_INLINE
             and str(settings.CELERY_BROKER_URL).startswith("rediss://"),
-            f"broker={settings.CELERY_BROKER_URL}; AUTOMATIONS_RUN_INLINE={settings.AUTOMATIONS_RUN_INLINE}",
+            f"broker configured={bool(settings.CELERY_BROKER_URL)}; tls={str(settings.CELERY_BROKER_URL).startswith('rediss://')}; AUTOMATIONS_RUN_INLINE={settings.AUTOMATIONS_RUN_INLINE}",
             "Use managed Redis over TLS and running Celery workers before paid beta.",
         ),
         _item(

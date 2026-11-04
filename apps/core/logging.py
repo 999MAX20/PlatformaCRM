@@ -4,6 +4,7 @@ import logging
 from datetime import datetime, timezone
 
 from django.conf import settings
+from apps.core.sanitization import sanitize_error_payload
 
 
 request_id_context = contextvars.ContextVar("request_id", default="")
@@ -34,4 +35,7 @@ class JsonLogFormatter(logging.Formatter):
                 payload[key] = value
         if record.exc_info:
             payload["exception"] = self.formatException(record.exc_info)
-        return json.dumps(payload, ensure_ascii=True, default=str)
+        # Normalize custom context values before redaction; retain complete tracebacks.
+        serialized = json.dumps(payload, ensure_ascii=True, default=str)
+        safe_payload = sanitize_error_payload(json.loads(serialized), max_string_length=len(serialized))
+        return json.dumps(safe_payload, ensure_ascii=True)

@@ -1,9 +1,9 @@
 # Исправления по полному аудиту: рабочие циклы
 
-Статус: **C01–C02 закрыты локально; остальные циклы не начаты**. Дата: 04.11.2026.
+Статус: **C01–C03 закрыты локально; остальные циклы не начаты**. Дата: 04.11.2026.
 C01 исправляет изоляцию helpers, predicates и recovery fixture; проверки и границы
 записаны в [evidence](../testing/evidence/remediation-c01-20261104.md).
-Следующий исполняемый цикл — **C03**. Один последующий
+Следующий исполняемый цикл — **C04**. Один последующий
 «приступай/продолжай» означает один следующий цикл, а не автоматическое выполнение
 всего списка. Это детализация существующих находок, не новый независимый backlog.
 
@@ -78,7 +78,7 @@ scope; таблица не запускает все циклы автомати
 | --- | --- | --- | --- | --- |
 | **C01 — Безопасный запуск проверок**; закрыт локально: [evidence](../testing/evidence/remediation-c01-20261104.md), base61554598 + C01 delta | UI31, VERIFY02 | Guards до migrate/seed, safe bootstrap, action/503 FAIL и валидные recovery faults реализованы. Dev остановлен. Код/доказательства C01 закрыты; среда: оставлена одна disposable папка после запрета ручной очистки; push/deploy не разрешены. | **T PASS**: Node7, Python23, общий prepare/serve/CSRF/login, system/drift, неизменность рабочей DB; реальный PG/Redis kill/rollback/retry/exactly-once/denial/replay. Новая тестовая среда очищена. Не full/live S04. | — |
 | **C02 — Права исходных данных в аналитике**; закрыт локально: [evidence](../testing/evidence/remediation-c02-20261104.md), base704d4663 + C02 delta | TEAM-ANALYTICS | Team performance не раскрывает данные Leads при запрете чтения ресурса или выключенном модуле. | **B PASS**:10 focused/54 completion, allowed/denied/module-off/own/team/foreign/recovery, query-count/system/drift. Код/доказательства/среда/решения C02 без остатка; только local save, без push/live. | C01 |
-| **C03 — Секреты в логах и readiness**; не начат | PAID-BETA-BROKER, EXCEPTION-SECRET-LOGGING | Broker URL и текст исключений проходят маскирование; остаются stack/type/correlation без чувствительных значений. | **B**: Синтетические credentials в URL, exception chains/args/context; проверить фактически настроенный console formatter. | C01 |
+| **C03 — Секреты в логах и readiness**; закрыт локально: [evidence](../testing/evidence/remediation-c03-20261104.md), base121d5e53 + C03 delta | PAID-BETA-BROKER, EXCEPTION-SECRET-LOGGING | Broker URL и текст исключений проходят маскирование; остаются stack/type/correlation без чувствительных значений. | **B PASS**:11 focused/105 completion, configured console/CLI JSON+text, quote/chain/args/context, persistence/API, system/drift. C03 без остатка; Sentry/иные sinks не сертифицированы; local save без push/live. | C01 |
 | **C04 — Безопасный состав архива**; не начат | ARCHIVE-SENSITIVE-ARTIFACTS | Архиватор исключает вложенные env, backup DB и browser/session state, сохраняя нужные исходники. | **T**: Синтетическое дерево, действительный поддерживаемый архиватор, открыть архив и сверить manifest; приватные реальные файлы не использовать. | C01 |
 | **C05 — Честное завершение сессии**; не начат | UI13 | Ошибка logout не показывается как успешный выход; повтор и reload согласованы с серверной сессией. | **U**: Успех, 503/network loss, reload/retry, очистка доступного клиенту состояния; не подменять logout очисткой только UI. | C01 |
 | **C06 — Происхождение старых черновиков Inbox**; не начат | FU-FE-01 | Legacy draft без владельца не присваивается текущему пользователю автоматически. | **U**: Синтетический старый формат, смена пользователя и текущие namespaced drafts; не потерять корректные собственные черновики. | — |
