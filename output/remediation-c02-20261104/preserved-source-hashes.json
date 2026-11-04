@@ -1,0 +1,6 @@
+{
+  "apps/analytics/views.py": "d5da203ed4852f15a1c2f083607aa7737dc1128e202f8df9e08b5144047af1e9",
+  "apps/analytics/crm_metrics.py": "d8d70ff5dd68e94f17af96aac875d983aac4b289aa73d23988269d104294e198",
+  "apps/analytics/reports.py": "0968cf801550a8943563413a886cea9b983f8d03b56a73a0a6a2e14c0f04fb6f",
+  "apps/analytics/tests_resource_visibility.py": "3dcf9e2ab098f96f3a18e99a8a49994c852b89cc87e1a99e3a248dffc1141ac2"
+}

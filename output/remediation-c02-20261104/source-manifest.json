@@ -1,0 +1,27 @@
+{
+  "base": "704d4663729e288be6c3c8c3ee4897f15031e18a",
+  "source_sha256": {
+    "apps/businesses/views.py": "34959e757e5e84823a4a241a5f1d3bb83f8e28e3947a01d09d79684b06a5445a",
+    "apps/businesses/tests_team_source_visibility.py": "46b67fcf38e6a2cb262e5781a0f5bf763e51a44af687cfc27d3516a6b08955c4"
+  },
+  "raw_log_sha256": {
+    "baseline.log.gz": "c61027da90fbf561f5404f5594b159e28008cd3347e2207ef999b45ba1ac5779",
+    "focused.log.gz": "418439d271eab5d1341d25048d5af40931f888351f9e447bcc31e10928f16242",
+    "completion.log.gz": "f2027bf22c0380d94375af92435fb76df6275135c79b3b673a487a0eec893c48"
+  },
+  "foreign_source_hashes": {
+    "apps/analytics/views.py": "d5da203ed4852f15a1c2f083607aa7737dc1128e202f8df9e08b5144047af1e9",
+    "apps/analytics/crm_metrics.py": "d8d70ff5dd68e94f17af96aac875d983aac4b289aa73d23988269d104294e198",
+    "apps/analytics/reports.py": "0968cf801550a8943563413a886cea9b983f8d03b56a73a0a6a2e14c0f04fb6f",
+    "apps/analytics/tests_resource_visibility.py": "3dcf9e2ab098f96f3a18e99a8a49994c852b89cc87e1a99e3a248dffc1141ac2"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "completion_tests": 54,
+  "focused_tests": 10,
+  "baseline_tests": {
+    "pass": 6,
+    "fail": 4
+  },
+  "links_checked": 10
+}

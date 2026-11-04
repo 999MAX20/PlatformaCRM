@@ -1,3 +1,10 @@
+C02 / TEAM-ANALYTICS, 04.11.2026: `/api/team/performance/` intersects Lead
+selection with current LEADS VIEW scope and enabled capability before counts,
+loss reasons, rates and team summaries. Existing report membership and source/date
+filters remain; denied/disabled Leads yield zero/empty fields. Other independently
+readable source metrics are unchanged and not certified by this Lead-only fix.
+Local evidence: [C02](../testing/evidence/remediation-c02-20261104.md).
+
 # Доступ, приватность и границы аккаунта
 
 PILOT-ACCESS-20261031: integrated access candidate preserves existing role grants

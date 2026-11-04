@@ -11,8 +11,8 @@ from rest_framework.viewsets import ModelViewSet
 
 from apps.accounts.models import User
 from apps.billing.entitlements import EntitlementMetrics, assert_entitlement_allows
-from apps.businesses.access import Actions, Resources, assert_can, can, ensure_default_roles
-from apps.businesses.capabilities import assert_resource_enabled, ensure_business_capabilities
+from apps.businesses.access import Actions, Resources, assert_can, can, ensure_default_roles, scope_queryset
+from apps.businesses.capabilities import assert_resource_enabled, ensure_business_capabilities, resource_is_enabled
 from apps.businesses.models import Business, BusinessCapability, BusinessInvitation, BusinessMember, BusinessRole, RolePermission, RoutingPolicy, Team, TeamMember
 from apps.businesses.member_writes import assert_member_deletable, lock_member
 from apps.businesses.serializers import (
@@ -509,6 +509,10 @@ def team_performance(request):
     now = timezone.now()
 
     leads = Lead.objects.filter(business=business, responsible_user_id__in=visible_user_ids)
+    if resource_is_enabled(business, Resources.LEADS):
+        leads = scope_queryset(leads, request.user, business, Resources.LEADS, Actions.VIEW)
+    else:
+        leads = leads.none()
     leads = _date_filter(leads, "created_at", start_date, end_date)
     if source:
         leads = leads.filter(source=source)

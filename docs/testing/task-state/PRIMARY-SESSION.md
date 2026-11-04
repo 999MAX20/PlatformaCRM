@@ -1,3 +1,30 @@
+## REMEDIATION-C02-20261104 — Lead source visibility locally verified
+
+Owner «Продолжай» authorizes next C02 after C01, not all cycles. Canonical folder
+C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit; base704d4663729e288be6c3c8c3ee4897f15031e18a.
+233 pre-existing dirty entries retained. apps/businesses/views.py clean at start;
+foreign analytics and source-visibility WIP preserved. Contract and start snapshot:
+output/remediation-c02-20261104/CONTRACT.md and starting-status.txt.
+
+LEADS VIEW current scope/capability now intersects team/performance source before
+Lead counts/status/rates/loss reasons/team aggregates; report membership, allowed
+positive data and source/date filters retained. Existing permission helpers reused.
+Other resource metrics and product permissions/lifecycle/money/AI remain unchanged.
+No schema, notification/BusinessEvent, external-send or workingDB effects.
+
+Baseline10 tests:4 FAIL/6 PASS; focused10 PASS. Completion54 PASS includes
+businesses access suite, query-count threshold and cross-tenant performance tests;
+system/migration-drift PASS. Exact labels/commands, logs and limits:
+docs/testing/evidence/remediation-c02-20261104.md. All isolated SQLite/safe bootstrap,
+dotenv/external sockets disabled. No app build/full-browser/full-backend/PG/live:
+read-only source-query fix, no UI/schema/concurrency behavior. Old general failures
+remain open. WorkingDB hash unchanged; dev stays off; owned runtime cleaned.
+
+Plan/access/capabilities/evidence/registry updated. Other contracts and README need
+no change for unchanged workflow/API shape/setup. Code/evidence/environment/owner
+decisions have no C02 remainder. Own local commit only; no push/merge/deploy/newCI.
+Final receipt: output/remediation-c02-20261104/final-validation.json. C03 not started.
+
 ## REMEDIATION-C01-20261104 — locally verified; dev stopped
 
 Owner instructed «Приступай. Останови dev, если он поднят» after the63-cycle plan.
