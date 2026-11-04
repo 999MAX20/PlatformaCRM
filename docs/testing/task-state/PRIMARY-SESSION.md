@@ -1,3 +1,26 @@
+## REMEDIATION-C06-20261104 — draft provenance locally verified
+
+Owner continued C06, stopped during read-only preparation, then explicitly resumed.
+Canonical PlatformaCRM/current codex/ui-testing-toolkit/base13862c6d68eb315dca2fff5a1c86fd9532ff65f3;
+starting/resumed233 WIP entries match. Target hook/browser test clean at start;
+foreign ConversationsPage/API/notifications work untouched. Pre-edit contract:
+output/remediation-c06-20261104/CONTRACT.md. Read-only investigation and independent
+candidate review found no actionable remaining bypass/regression. Only scoped keys
+restore; ownerless keys ignored without deletion or invented attribution. Existing
+scoped state including earlier migrations preserved; historical authorship unknown.
+
+BEFORE8:2FAIL/6PASS; final Node14PASS; isolated browser4PASS,0SKIP on desktop/mobile;
+real owner/admin login/reload/return and existing late-send/switch test. Safe final
+build/types/i18n6682/app/widget PASS. No backend/schema/API/rights/notification/
+BusinessEvent/AI change; no workingDB writes/full-project/PG/live/native certification.
+Commands/versions/limits: docs/testing/evidence/remediation-c06-20261104.md.
+Own successful runtime cleaned, dev off. C05's2 retained temp folders not retried.
+
+Plan/frontend/Inbox passport/evidence/registry consistent; other contracts/README
+unchanged for unchanged server/setup/API. No C06 code/evidence/environment/owner
+remainder. Own local commit only, no push/merge/deploy/newCI. Final receipt:
+output/remediation-c06-20261104/final-validation.json. C07 remains unstarted.
+
 ## REMEDIATION-C05-20261104 — logout locally verified
 
 Owner «Приступаем к с05», UI13 only. Canonical PlatformaCRM/current

@@ -350,7 +350,8 @@ test("switching conversations preserves each draft and a late send cannot clear 
     if (info.project.name === "mobile-chromium") await page.getByRole("button", { name: ru["common.close"], exact: true }).first().click();
     await page.getByRole("button").filter({ has: page.getByText(name, { exact: true }) }).click();
   }
-  await expect(composer).toHaveValue("Legacy unsent draft");
+  await expect(composer).toHaveValue("");
+  expect(await page.evaluate(({ user, business, conversation }) => sessionStorage.getItem(`zani_inbox_draft:${user}:${business}:${conversation}`), { user: session.userId, business: original.business, conversation: original.id })).toBeNull();
   await composer.fill("Alpha draft");
   await select("Draft Beta");
   await expect(composer).toHaveValue("");

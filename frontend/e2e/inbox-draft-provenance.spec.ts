@@ -1,0 +1,33 @@
+import { expect, test, type Page } from "@playwright/test";
+import { crmSession } from "./support/crm-workspace";
+import type { InboxConversation } from "../src/api/inbox";
+
+test("draft provenance survives reload and account switches without adopting legacy text", async ({ page }, info) => {
+  test.skip(process.env.ZANI_QUALITY_GATE !== "1", "Disposable fixtures only");
+  test.setTimeout(120_000);
+  const owner = await crmSession(page);
+  const conversation = (await owner.list<InboxConversation>("inbox/conversations"))[0];
+  const legacy = `zani_inbox_draft:${conversation.business}:${conversation.id}`;
+  const ownerKey = `zani_inbox_draft:${owner.userId}:${conversation.business}:${conversation.id}`;
+  await page.evaluate(({ legacy, ownerKey }) => { sessionStorage.setItem(legacy,"Unknown author's legacy draft"); sessionStorage.setItem(ownerKey,"Owner's current draft"); }, { legacy, ownerKey });
+  const composer = page.getByTestId("inbox-action-composer");
+  const open = async () => { await page.goto(`/app/conversations/${conversation.id}`); await expect(composer).toBeVisible(); };
+  const logout = async () => { await page.goto("/app/account"); await page.getByTestId("merchant-logout").click(); await expect(page).toHaveURL(/\/login/); };
+  await open(); await expect(composer).toHaveValue("Owner's current draft");
+  await composer.fill(""); await page.reload(); await expect(composer).toHaveValue("");
+  expect(await page.evaluate(key => sessionStorage.getItem(key),ownerKey)).toBeNull();
+  expect(await page.evaluate(key => sessionStorage.getItem(key),legacy)).toBe("Unknown author's legacy draft");
+  await composer.fill("Owner's new draft");
+  await logout(); const admin = await crmSession(page,"business_administrator@example.com");
+  await open(); await expect(composer).toHaveValue("");
+  const adminKey = `zani_inbox_draft:${admin.userId}:${conversation.business}:${conversation.id}`;
+  expect(await page.evaluate(key => sessionStorage.getItem(key),adminKey)).toBeNull();
+  expect(await page.evaluate(key => sessionStorage.getItem(key),ownerKey)).toBe("Owner's new draft");
+  await composer.fill("Administrator's own draft"); await page.reload();
+  await expect(composer).toHaveValue("Administrator's own draft");
+  await page.screenshot({ path: info.outputPath("scoped-draft.png") });
+  await logout(); await crmSession(page); await open();
+  await expect(composer).toHaveValue("Owner's new draft");
+  expect(await page.evaluate(key => sessionStorage.getItem(key),adminKey)).toBe("Administrator's own draft");
+  expect(await page.evaluate(key => sessionStorage.getItem(key),legacy)).toBe("Unknown author's legacy draft");
+});

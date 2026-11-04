@@ -1,3 +1,10 @@
+REMEDIATION-C06-20261104: ownerless Inbox draft adoption closed locally.
+Only user/business/conversation drafts restore; legacy values remain unread/unchanged.
+BEFORE8:2FAIL/6PASS; AFTER14PASS; browser4PASS; safe build/types/i18n6682 PASS.
+WorkingDB unchanged, dev off, foreignWIP preserved. Evidence:
+docs/testing/evidence/remediation-c06-20261104.md. Own local commit only;
+no push/newCI/deploy. C07 not started; earlier C05 temp cleanup limitation remains.
+
 REMEDIATION-C05-20261104: logout failure/retry boundary closed locally.
 UI waits for server revocation; persistent RU/KK/EN failure/retry, queued refresh
 and stale logout guards, sibling-tab completion. Node31/browser43 PASS(11 planned

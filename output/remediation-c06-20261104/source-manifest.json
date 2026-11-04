@@ -1,0 +1,26 @@
+{
+  "base": "13862c6d68eb315dca2fff5a1c86fd9532ff65f3",
+  "source_sha256": {
+    "frontend/src/features/conversations/hooks/useInboxDraft.ts": "7cd120b826211530825f035e122e281cd07108bbb714197b7e4c62fbb4e24df1",
+    "frontend/scripts/tests/inbox-draft.test.mjs": "bcc230bdd9810a27d91589c91d2331e31b2624edb700dcaa5543f42752e7a2d9",
+    "frontend/e2e/inbox-inspector.spec.ts": "5dcc48adccf230712c82e932e11a30f0168e9465ed5d9f46675dad9a740d1574",
+    "frontend/e2e/inbox-draft-provenance.spec.ts": "0da54860ff6b30f0e54b594fb3a9e37cf2d703863780b9907c919bb934452897"
+  },
+  "raw_log_sha256": {
+    "node-baseline.log.gz": "1939fccbcb1607848b4fb0a7671fe31b8d7d9f9cc191aad9baabe6a21b04312c",
+    "node-completion.log.gz": "211e9f9dbb95d0f7155ccb342dc22ec598f550230a22e609a44551c7710c3424",
+    "browser.log.gz": "ff741d45d50299b0c5168983ef07ad68d15c8eb42ce3dd444692e9ee28cd00e0",
+    "build.log.gz": "fe739062550c4b78bfef7560ed54d7b047c9dd5dc4a210d466ac50e274503d88"
+  },
+  "screenshots": {
+    "screenshots\\inbox-draft-provenance-dra-9bcc8-ithout-adopting-legacy-text-desktop-chromium.png": "f57a1cba0564a1715813e2ec846483d458080474808f1425749c85a7338bc95e",
+    "screenshots\\inbox-draft-provenance-dra-9bcc8-ithout-adopting-legacy-text-mobile-chromium.png": "52fd1309e5c014c4e182801b68c9ea69710e2162d28e451756d9df6ea2e39fc4"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "node_tests": 14,
+  "browser_tests": 4,
+  "browser_skips": 0,
+  "i18n_keys": 6682,
+  "foreign_source_paths_preserved": 186
+}

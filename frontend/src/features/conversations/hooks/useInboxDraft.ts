@@ -19,19 +19,8 @@ export function useInboxDraft(userId?: Id, businessId?: Id, conversationId?: Id)
     if (!draftKey) return "";
     if (drafts.current.has(draftKey)) return drafts.current.get(draftKey)!;
     try {
-      const stored = sessionStorage.getItem(draftKey);
-      if (stored !== null) return stored;
-      // Consume the previous business/conversation key once on upgrade, so an
-      // already written draft survives and is not imported again by another user.
-      const [, , storedBusiness, storedConversation] = draftKey.split(":");
-      const legacyKey = `zani_inbox_draft:${storedBusiness}:${storedConversation}`;
-      const legacy = sessionStorage.getItem(legacyKey);
-      if (legacy !== null) {
-        sessionStorage.setItem(draftKey, legacy);
-        sessionStorage.removeItem(legacyKey);
-        drafts.current.set(draftKey, legacy);
-      }
-      return legacy || "";
+      // Ownerless legacy keys cannot establish who wrote the draft.
+      return sessionStorage.getItem(draftKey) ?? "";
     } catch { return ""; }
   }
   function write(draftKey: string, value: string) {
