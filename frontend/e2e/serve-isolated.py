@@ -7,17 +7,12 @@ import struct
 import sys
 import threading
 import time
-import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-database = os.environ.get("DATABASE_URL", "")
-assert os.environ.get("ZANI_QUALITY_GATE") == "1"
-assert "zani-quality-gate-" in database and database.endswith("gate.sqlite3")
-assert database.startswith("sqlite:///")
-database_path = Path(database.removeprefix("sqlite:///")).resolve()
-assert database_path.is_relative_to(Path(tempfile.gettempdir()).resolve())
-assert database_path.parent.name.startswith("zani-quality-gate-")
+from scripts.browser_test_runtime import configure_browser_runtime
+
+configure_browser_runtime()
 
 
 def receive(sock, length):

@@ -1,0 +1,22 @@
+{
+  "base": "615545987df2e7b6da11aeba3d7d3a3ab81524f7",
+  "source_sha256": {
+    "frontend/e2e/django-e2e.mjs": "cdd873b744439485c703faf35db060aeb3741f6d8a217fc53f9d395b7f7fe2b7",
+    "frontend/e2e/serve-isolated.py": "3e66bfd6dc666d8909a98a93a7abf4aed16c2b947eb8608e008eb9db819198f8",
+    "frontend/e2e/isolated-environment.mjs": "07223ba1f68b996f77cc0f841119741359deb5738b0e36d80d00c96efb03646d",
+    "frontend/scripts/interaction-audit.mjs": "42436d8dbf38f2c8e81f85f28b77c355a6e88251fc352eb1bfda02cef39e9193",
+    "frontend/scripts/visual-audit.mjs": "4c2403bfb298100456d099699b13ec4c49e6252ceef8248b51151f9788e7e4c8",
+    "frontend/scripts/audit-gates.mjs": "8cd9edce8dc475a791eeb8e4e8cdfec3bb3a162c212119c1f6f17d782e89ba07",
+    "frontend/scripts/tests/audit-runtime.test.mjs": "28ac1c2f1861984296a6115413d3df382f18b0e28d765cc473d51f180e2a9893",
+    "scripts/browser_test_runtime.py": "3bcdb8c9a561700de643b1d70890b44cd7509d12ab287da9488081fcbd35ba05",
+    "scripts/recovery_faults.py": "c2aa275116c8a20b820d029863701a6a00aad145fd59185f21c7b6e11ebb0092",
+    "scripts/recovery_scenarios.py": "41121fb4de7997417d0e79d2ffa3e8a88b248374bc5a5e388713a3d5356e9b23",
+    "scripts/verify_recovery_s04.py": "6698b78db1be2c697b57038e9150deb558497100aa39dce8f85b3ee383afaa76",
+    "scripts/tests/test_browser_test_runtime.py": "412ac1f142f940b25c9e1fd636b4ea37abb26a2dddb9a46bbb45e62ea1c04da7",
+    "scripts/tests/test_recovery_faults.py": "e3546967933a11d8a2f22b6b2419bbdde4612bdaae4eb66e3fb389ffa2b742f9"
+  },
+  "working_db_unchanged": true,
+  "links_checked": 12,
+  "canonical_findings": 87,
+  "cycles": 63
+}

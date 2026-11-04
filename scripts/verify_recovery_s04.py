@@ -74,14 +74,8 @@ def wait_until(predicate, label, timeout=45):
 
 def install_failure_boundary(directory):
     from apps.automations import engine
-    original = engine._execute_action
-    def action_with_crash_window(action, **kwargs):
-        result = original(action, **kwargs)
-        if action.config.get("_s04_hold") and not (directory / "release").exists():
-            (directory / "held").touch()
-            wait_until(lambda: (directory / "release").exists(), "parent stops the owned worker", timeout=60)
-        return result
-    engine._execute_action = action_with_crash_window
+    from scripts.recovery_faults import failure_boundary
+    engine._execute_action = failure_boundary(engine._execute_action, directory, wait_until)
 
 
 def dispatch(app, name, *, queue, args=None):

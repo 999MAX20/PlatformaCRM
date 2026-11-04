@@ -24,8 +24,10 @@ def automation_recovery(app, directory, worker, business, owner, dispatch, wait_
 
     crashed = create_run("crash", [
         {"action_type": "create_task", "config": {"title": "Committed before crash"}},
-        {"action_type": "create_task", "config": {"title": "Rolled back crash window", "_s04_hold": True}},
+        {"action_type": "create_task", "config": {"title": "Rolled back crash window"}},
     ])
+    crash_action = AutomationAction.objects.get(rule=crashed.rule, order=1)
+    (directory / "fault-actions.json").write_text(json.dumps({"crash": crash_action.pk}), encoding="utf-8")
     app.send_task("automations.process_automation_run", args=[crashed.pk], queue="automations")
     wait_until(lambda: (directory / "held").exists(), "worker enters transaction crash window")
     crashed.refresh_from_db()
@@ -77,12 +79,15 @@ def automation_recovery(app, directory, worker, business, owner, dispatch, wait_
     task = Task.objects.get(business=business, title="S04 before restart")
     retried = create_run("retry", [
         {"action_type": "create_task", "config": {"title": "Before failed action"}},
-        {"action_type": "assign_user", "config": {"user_id": 999999}},
+        {"action_type": "assign_user", "config": {"user_id": owner.pk}},
     ], entity=task)
+    retry_action = AutomationAction.objects.get(rule=retried.rule, order=1)
+    (directory / "fault-actions.json").write_text(json.dumps({"transient": retry_action.pk}), encoding="utf-8")
     dispatch(app, "automations.process_automation_run", args=[retried.pk], queue="automations")
     retried.refresh_from_db()
     assert retried.status == "retry_scheduled" and retried.current_action_index == 1
-    AutomationAction.objects.filter(rule=retried.rule, action_type="assign_user").update(config={"user_id": owner.pk})
+    assert (directory / "transient-raised").exists()
+    (directory / "retry-release").touch()
     assert api.post(f"/api/automation-runs/{retried.pk}/retry/").status_code == 200
     dispatch(app, "automations.process_automation_run", args=[retried.pk], queue="automations")
     retried.refresh_from_db()

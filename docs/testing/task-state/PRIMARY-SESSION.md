@@ -1,3 +1,39 @@
+## REMEDIATION-C01-20261104 — locally verified; dev stopped
+
+Owner instructed «Приступай. Останови dev, если он поднят» after the63-cycle plan.
+Scope ONLY C01(UI31/VERIFY02), not C02 or a new audit. Canonical root
+C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit; base615545987df2e7b6da11aeba3d7d3a3ab81524f7.
+233 foreign WIP entries preserved; target helper sources clean at start.
+Contract before edits: output/remediation-c01-20261104/CONTRACT.md.
+
+Explicit isolated DB/port guard precedes migrate/seed; Python safe environment
+blocks dotenv/external network; synthetic key/media confined to disposable root.
+Audit setup refuses occupied ports and cleans owned processes on startup failure.
+Predicates fail missing/disabled/failed required actions and API5xx. S04 action-ID
+fault manifests replace invalid business config; production validation unchanged.
+
+Node7/Python4 focused browser runtime +4 fault tests PASS, dependent Python23 and
+gate-env assertions PASS. Actual common Node/Python prepare/serve/health/CSRF/login,
+system/migration-drift and final cleanup PASS. Real PG17/Redis7.4.9/Celery solo
+queue drill exit0: kill/rollback/stale claim/retry/cancel/role+tenant/exactly-once/
+notification replay. Exact commands, failed harness attempts and scope limits:
+docs/testing/evidence/remediation-c01-20261104.md. WorkingDB hash unchanged.
+
+User-authorized dev5 processes stopped after root verification, ports8000/5173
+closed; no restart. Owned final runtime stopped/removed. Initial harness failures:
+missing CSRF bootstrap403 and unclosed SQLite connection on cleanup; both fixed
+in harness, logs retained. Manual removal of old disposable zani-quality-gate-4ffdi273
+rejected by automatic tool policy; folder retained as explicit environment residue.
+No workingDB migrations, external effects, dependency install, product permissions/
+notifications/BusinessEvent/AI changes. No build/full-browser/full-S04/Linux/live:
+tooling-only scope. Prior general audit/CI failures remain open.
+
+Testing contract, C01 plan status, evidence and registry updated. Other product
+contracts/passports/README unchanged: no product API/workflow/setup/release change.
+Code/scoped evidence done; only old disposable folder cleanup remains. Own local
+save only, no push/merge/deploy/newCI. Next C02 remains unstarted. Source hashes,
+ownership and local commit receipt: output/remediation-c01-20261104/final-validation.json.
+
 ## AUDIT-REMEDIATION-PLAN-20261104 — cycle list prepared
 
 Owner requested grouping findings into one-cycle changes in a new file before

@@ -1,3 +1,11 @@
+REMEDIATION-C01-20261104: UI31/VERIFY02 closed locally; dev stopped.
+Guarded isolated helpers, missing-action/5xx failure predicates, valid recovery
+fault fixtures implemented. Node7/Python23, isolated prepare/serve/CSRF/login,
+system/drift, real PG/Redis crash/rollback/retry/exactly-once PASS; workingDB unchanged.
+Evidence: docs/testing/evidence/remediation-c01-20261104.md. One old disposable
+folder remains after cleanup policy rejection; final test runtime cleaned.
+Own local commit only, no push/CI/deploy. Next C02 not started.
+
 AUDIT-REMEDIATION-PLAN-20261104: owner-requested cycle list prepared.
 87 findings mapped without omissions:50 current CRM cycles +13 conditional cycles.
 Plan: docs/current/audit-remediation-cycles.md. First C01 protects isolated verification;

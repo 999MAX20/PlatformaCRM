@@ -1,0 +1,12 @@
+[
+  {
+    "source": "output/crm-s04-20261014/runtime-1793771216725887700.log",
+    "copy": "recovery-runtime.log.gz",
+    "sha256": "d367bcdaf95d3b3e717934a21816c71d48fe7634296f0617e277e54b2ccccff7"
+  },
+  {
+    "source": "output/crm-s04-20261014/runtime-1793771216725887700.worker.log",
+    "copy": "recovery-worker.log.gz",
+    "sha256": "ee14422a4a8e9afad2204961eea0c94ba7794a79a3ae0f2effe58f57e0ab463c"
+  }
+]

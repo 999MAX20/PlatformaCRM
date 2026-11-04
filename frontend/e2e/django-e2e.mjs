@@ -2,26 +2,14 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
+
+requireIsolatedEnvironment();
 
 const e2eDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(e2eDir, "../..");
 
 const pythonPath = process.env.E2E_PYTHON || defaultPythonPath();
-const djangoPort = process.env.E2E_DJANGO_PORT || "8000";
-const password = process.env.E2E_PASSWORD || "ZaniTest123!";
-const businessSlug = process.env.E2E_BUSINESS_SLUG || "zani-e2e-demo";
-const businessName = process.env.E2E_BUSINESS_NAME || "PlatformaCRM E2E Demo";
-const djangoEnv = {
-  ...process.env,
-  DATABASE_URL: process.env.DATABASE_URL || "sqlite:///db.sqlite3",
-  ALLOWED_HOSTS: process.env.ALLOWED_HOSTS || "localhost,127.0.0.1",
-  SECURE_SSL_REDIRECT: process.env.SECURE_SSL_REDIRECT || "False",
-  SESSION_COOKIE_SECURE: process.env.SESSION_COOKIE_SECURE || "False",
-  CSRF_COOKIE_SECURE: process.env.CSRF_COOKIE_SECURE || "False",
-  AUTH_LOGIN_RATE: process.env.AUTH_LOGIN_RATE || "1000/min",
-  AUTH_REFRESH_RATE: process.env.AUTH_REFRESH_RATE || "1000/min",
-};
-
 function defaultPythonPath() {
   const relativePath =
     process.platform === "win32"
@@ -31,11 +19,12 @@ function defaultPythonPath() {
   return fs.existsSync(candidate) ? candidate : "python";
 }
 
-function runManage(args) {
-  const result = spawnSync(pythonPath, ["manage.py", ...args], {
+function runPython(args) {
+  const result = spawnSync(pythonPath, args, {
     cwd: rootDir,
-    env: djangoEnv,
+    env: process.env,
     stdio: "inherit",
+    windowsHide: true,
   });
   if (result.error) {
     throw result.error;
@@ -46,16 +35,7 @@ function runManage(args) {
 }
 
 function prepare() {
-  runManage(["migrate"]);
-  runManage([
-    "prepare_e2e_smoke_data",
-    "--password",
-    password,
-    "--business-slug",
-    businessSlug,
-    "--business-name",
-    businessName,
-  ]);
+  runPython([path.join(rootDir, "scripts", "browser_test_runtime.py"), "prepare"]);
 }
 
 const mode = process.argv[2] || "prepare";
@@ -64,15 +44,7 @@ if (mode === "prepare") {
   prepare();
 } else if (mode === "serve") {
   prepare();
-  if (djangoEnv.ZANI_QUALITY_GATE === "1") {
-    const result = spawnSync(pythonPath, [path.join(e2eDir, "serve-isolated.py")], {
-      cwd: rootDir, env: djangoEnv, stdio: "inherit",
-    });
-    if (result.error) throw result.error;
-    process.exit(result.status ?? 1);
-  } else {
-    runManage(["runserver", `127.0.0.1:${djangoPort}`, "--noreload"]);
-  }
+  runPython([path.join(e2eDir, "serve-isolated.py")]);
 } else {
   console.error(`Unknown django-e2e mode: ${mode}`);
   process.exit(2);

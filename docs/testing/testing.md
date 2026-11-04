@@ -341,6 +341,33 @@ DB, safe provider settings and dedicated ports. Only then set
 `E2E_SKIP_LOCAL_SETUP=true`, `E2E_BASE_URL` and `E2E_API_BASE_URL`. Do not let
 Playwright migrate/seed an ordinary working database through inherited settings.
 
+`django-e2e.mjs`, `serve-isolated.py`, `interaction-audit.mjs` and `visual-audit.mjs`
+reject setup unless `scripts.codex_verify.isolated_runtime` supplies an absolute
+`gate.sqlite3` directly inside its temporary `zani-quality-gate-*` directory,
+`ZANI_QUALITY_GATE=1`, and distinct dedicated loopback ports/origins (not8000/5173).
+Validation precedes migrate/seed; ordinary DB defaults are no longer accepted.
+The Python browser bootstrap rebuilds safe provider/media settings, suppresses
+working `.env` loading and blocks external socket connections. Its synthetic
+connector key lives only inside the disposable directory. The two audit helpers
+also refuse occupied ports and clean up owned processes after startup failure.
+They remain scoped diagnostics: their route/action lists are not release acceptance.
+Missing/disabled/failed required actions and API5xx fail their predicates; an
+explicitly skipped submit is not counted as an executed action.
+
+Helper regression commands (Node gate-env additionally needs the isolated environment):
+
+```powershell
+node --test frontend/scripts/tests/audit-runtime.test.mjs
+.venv/Scripts/python.exe -m unittest scripts.tests.test_browser_test_runtime scripts.tests.test_recovery_faults scripts.tests.test_codex_verify
+```
+
+The S04 worker's crash/transient faults use fixture action IDs in its disposable
+`fault-actions.json`, outside business action config. The crash hook runs after
+the valid action effect but before transaction commit; transient retry uses a
+valid assignee and a controlled worker exception. Production validators remain
+enabled. [C01 evidence](evidence/remediation-c01-20261104.md) records the scoped
+PostgreSQL/Redis queue drill and its limits; this is not full/live S04 certification.
+
 ## Controlled Pilot QA
 
 Use this gate before claiming a local/dev merchant journey is ready for a controlled pilot without production credentials or live provider traffic.

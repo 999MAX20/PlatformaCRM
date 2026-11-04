@@ -1,0 +1,15 @@
+✔ guard accepts disposable runtime and rejects unsafe profiles before creating files (7.2593ms)
+✔ occupied port refuses setup even without an HTTP health response (852.6719ms)
+✔ e2e/django-e2e.mjs refuses unsafe DB before starting Python or browser (58.7394ms)
+✔ scripts/interaction-audit.mjs refuses unsafe DB before starting Python or browser (356.3383ms)
+✔ scripts/visual-audit.mjs refuses unsafe DB before starting Python or browser (403.0442ms)
+✔ interaction gate rejects missing required actions and server failures (0.6558ms)
+✔ visual gate rejects non-auth 5xx while retaining existing checks (0.4053ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1784.1618

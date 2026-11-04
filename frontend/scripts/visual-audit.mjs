@@ -3,11 +3,14 @@ import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { requireIsolatedEnvironment, requireAvailableAuditPorts } from "../e2e/isolated-environment.mjs";
+import { visualHasBlockingIssue } from "./audit-gates.mjs";
+
+requireIsolatedEnvironment();
 
 const baseURL = process.env.E2E_BASE_URL || "http://127.0.0.1:5173";
 const apiBaseURL = process.env.E2E_API_BASE_URL || "http://127.0.0.1:8000";
 const frontendPort = new URL(baseURL).port || "5173";
-const djangoPort = new URL(apiBaseURL).port || "8000";
 const email = process.env.E2E_OWNER_EMAIL || "business_owner@example.com";
 const password = process.env.E2E_PASSWORD || "ZaniTest123!";
 const dateStamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
@@ -33,15 +36,6 @@ const routes = [
 
 function safeFileName(value) {
   return value.replace(/[^a-z0-9-]+/gi, "-").toLowerCase();
-}
-
-function isLocalUrl(value) {
-  try {
-    const { hostname } = new URL(value);
-    return hostname === "127.0.0.1" || hostname === "localhost";
-  } catch {
-    return false;
-  }
 }
 
 async function isReachable(url) {
@@ -102,46 +96,20 @@ async function waitForUrl(url, timeoutMs) {
   throw new Error(`Timed out waiting for ${url}`);
 }
 
-async function ensureLocalServers() {
-  const started = [];
-  if (!isLocalUrl(baseURL)) {
-    await waitForUrl(baseURL, 30_000);
-    return started;
-  }
-
+async function ensureLocalServers(started) {
+  await requireAvailableAuditPorts();
   const healthUrl = `${apiBaseURL.replace(/\/$/, "")}/health/`;
-  if (!(await isReachable(healthUrl))) {
-    started.push(startManagedProcess("django", "node", ["e2e/django-e2e.mjs", "serve"]));
-    await waitForUrl(healthUrl, 240_000).catch((error) => {
-      for (const processInfo of started) {
-        console.error(processInfo.logs.join("\n"));
-      }
-      throw error;
-    });
-  }
-
-  if (!(await isReachable(baseURL))) {
-    const viteCommand = npmCommand([
-      "run",
-      "dev",
-      "--",
-      "--host",
-      "127.0.0.1",
-      "--port",
-      frontendPort,
-      "--strictPort",
-    ]);
-    started.push(
-      startManagedProcess("vite", viteCommand.command, viteCommand.args),
-    );
-    await waitForUrl(baseURL, 240_000).catch((error) => {
-      for (const processInfo of started) {
-        console.error(processInfo.logs.join("\n"));
-      }
-      throw error;
-    });
-  }
-
+  started.push(startManagedProcess("django", process.execPath, ["e2e/django-e2e.mjs", "serve"]));
+  await waitForUrl(healthUrl, 240_000).catch((error) => {
+    for (const processInfo of started) console.error(processInfo.logs.join("\n"));
+    throw error;
+  });
+  const viteCommand = npmCommand(["run", "dev", "--", "--host", "127.0.0.1", "--port", frontendPort, "--strictPort"]);
+  started.push(startManagedProcess("vite", viteCommand.command, viteCommand.args));
+  await waitForUrl(baseURL, 240_000).catch((error) => {
+    for (const processInfo of started) console.error(processInfo.logs.join("\n"));
+    throw error;
+  });
   return started;
 }
 
@@ -332,6 +300,7 @@ async function auditRoute(browser, name, url) {
       transparentSurfaceIssues: routeAudit.transparentSurfaceIssues.length,
       apiIssues: routeAudit.apiIssues.length,
       authApiIssues: routeAudit.apiIssues.filter((issue) => issue.status === 401).length,
+      serverApiIssues: routeAudit.apiIssues.filter((issue) => issue.status >= 500).length,
       authMeServerErrors: routeAudit.apiIssues.filter(
         (issue) => issue.status >= 500 && issue.url.includes("/api/auth/me/"),
       ).length,
@@ -351,11 +320,13 @@ function shouldRetryRouteAudit(record) {
 
 async function run() {
   fs.mkdirSync(outDir, { recursive: true });
-  const managedProcesses = await ensureLocalServers();
-  const browser = await chromium.launch({ headless: true });
+  const managedProcesses = [];
+  let browser;
   const summary = [];
 
   try {
+    await ensureLocalServers(managedProcesses);
+    browser = await chromium.launch({ headless: true });
     for (const [name, url] of routes) {
       let record = null;
       for (let attempt = 1; attempt <= 2; attempt += 1) {
@@ -366,8 +337,11 @@ async function run() {
       summary.push(record);
     }
   } finally {
-    await browser.close();
-    stopManagedProcesses(managedProcesses);
+    try {
+      await browser?.close();
+    } finally {
+      stopManagedProcesses(managedProcesses);
+    }
   }
 
   const summaryPath = path.join(outDir, "summary.json");
@@ -376,13 +350,7 @@ async function run() {
   console.log(`Visual audit written to ${outDir}`);
   console.log(JSON.stringify(summary, null, 2));
 
-  const blockingIssues = summary.filter(
-    (item) =>
-      item.authRedirected ||
-      item.authApiIssues > 0 ||
-      item.horizontalOverflow > 2 ||
-      item.transparentSurfaceIssues > 0,
-  );
+  const blockingIssues = summary.filter(visualHasBlockingIssue);
   if (blockingIssues.length) {
     for (const processInfo of managedProcesses) {
       if (processInfo.logs.length) {

@@ -1,0 +1,9 @@
+{
+  "node": 0,
+  "python": 0,
+  "isolated_launcher_health_login_fixture": "PASS",
+  "system_migration_drift": "PASS",
+  "working_db_unchanged": true,
+  "owned_processes_stopped": true,
+  "disposable_directory_removed": true
+}
