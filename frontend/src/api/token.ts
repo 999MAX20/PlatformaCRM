@@ -228,7 +228,15 @@ export function refreshToken({ activity = false }: { activity?: boolean } = {}):
 }
 
 export async function clearRefreshCookie() {
-  await sessionCookieRequest(undefined, async () => axios.post(`${baseURL}/api/auth/logout/`, {}, await csrfCookieOptions()));
+  const generation = tokenStorage.getGeneration();
+  await sessionCookieRequest(undefined, async () => {
+    assertCurrentSession(generation);
+    await axios.post(`${baseURL}/api/auth/logout/`, {}, await csrfCookieOptions(generation));
+    assertCurrentSession(generation);
+    // Invalidate queued refreshes before releasing the cookie-operation lock.
+    tokenStorage.broadcastLogout();
+    tokenStorage.clear();
+  });
 }
 
 export function isMfaPendingResponse(value: unknown): value is MfaPendingResponse {

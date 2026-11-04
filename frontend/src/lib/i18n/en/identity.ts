@@ -1,4 +1,6 @@
 export const identity: Record<string, string> = {
+  "auth.logoutFailed": "Sign-out could not be completed. Your session may still be active. Please retry.",
+  "auth.loggingOut": "Signing out…",
   "employeeAccess.title": "Employee access",
   "employeeAccess.records": "Records",
   "employeeAccess.members": "Employees",

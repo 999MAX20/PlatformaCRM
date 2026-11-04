@@ -1,3 +1,28 @@
+## REMEDIATION-C05-20261104 — logout locally verified
+
+Owner «Приступаем к с05», UI13 only. Canonical PlatformaCRM/current
+codex/ui-testing-toolkit, base112358d77dae0c0d148e9d9bc87e2cc782d90f91;233 foreign WIP entries preserved.
+Pre-edit contract/start snapshot: output/remediation-c05-20261104/CONTRACT.md.
+API/token/provider/platform and identity dictionaries clean at start; foreign
+AccountPage/root dictionaries unchanged. Shared cookie queue/CSRF/generation and
+StatusNotice reused. Success now precedes cleanup/UI transition; failure is visible
+with retry. Queued refresh/stale logout cancellation and cross-tab behavior tested.
+
+Node8 focused/31 completion PASS; browser43 PASS +11 intentional desktop-only
+skips; safe build/types/i18n6682/app/widget PASS. Initial language fixture/rate429
+failures retained; test-only wrapper rate1000/min, real profile language preparation.
+Exact commands/coverage/limits: docs/testing/evidence/remediation-c05-20261104.md.
+Final build repeated after expiration-error cleanup change, not unrelated docs.
+No backend/domain/API shape/schema/rights/notification/BusinessEvent/AI changes.
+No full suite/PG/live/native/deploy claims. WorkingDB unchanged; dev off; own test
+servers stopped. Two interrupted temporary test folders remain after policy-blocked cleanup;
+old test processes stopped. See runtime-cleanup.json.
+
+Plan/frontend/passport/evidence/registry updated; other contracts/README unchanged
+for unchanged setup/server policies. C05 has no product code/evidence/owner remainder; temporary-folder cleanup
+remains blocked as recorded above. Own local commit only, no push/merge/newCI/deploy. Final receipt:
+output/remediation-c05-20261104/final-validation.json. Next C06 unstarted.
+
 ## REMEDIATION-C04-20261104 — source archive locally verified
 
 Owner explicitly starts C04 only. Canonical PlatformaCRM/current codex/ui-testing-toolkit,

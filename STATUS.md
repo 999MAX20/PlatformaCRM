@@ -1,3 +1,11 @@
+REMEDIATION-C05-20261104: logout failure/retry boundary closed locally.
+UI waits for server revocation; persistent RU/KK/EN failure/retry, queued refresh
+and stale logout guards, sibling-tab completion. Node31/browser43 PASS(11 planned
+SKIP); safe build/types/i18n PASS. WorkingDB unchanged, dev off, foreign WIP retained.
+Evidence: docs/testing/evidence/remediation-c05-20261104.md. Own local commit only,
+no push/newCI/deploy. C06 not started.
+Two interrupted test folders retained after policy-blocked cleanup.
+
 REMEDIATION-C04-20261104: clean source archive boundary closed locally.
 Nested runtime/env/DB/browser artifacts excluded; links/special files skipped;
 real Python ZIP, guarded destination and LF entrypoint.7 synthetic tests PASS,

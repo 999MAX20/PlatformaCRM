@@ -71,7 +71,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isRecovering, setRecovering] = useState(false);
   const restoring = useRef<Promise<void> | null>(null);
   const recoveryAttempts = useRef(0);
+  const [logoutError, setLogoutError] = useState(false);
+  const [isLoggingOut, setLoggingOut] = useState(false);
+  const logoutPending = useRef(false);
   const sessionGeneration = tokenStorage.getGeneration();
+  const logout = useCallback(() => {
+    if (logoutPending.current) return;
+    logoutPending.current = true;
+    const generation = tokenStorage.getGeneration();
+    setLoggingOut(true);
+    setLogoutError(false);
+    void apiLogout().then(() => {
+      if (!mountedRef.current) return;
+      setAuthenticated(false);
+      setUser(null);
+      setLoading(false);
+      setRecoveryError(null);
+      recoveryAttempts.current = 0;
+    }).catch(error => {
+      if (mountedRef.current && generation === tokenStorage.getGeneration() && !axios.isCancel(error)) setLogoutError(true);
+    }).finally(() => {
+      logoutPending.current = false;
+      if (mountedRef.current) setLoggingOut(false);
+    });
+  }, []);
   const acceptUser = useCallback((currentUser: CurrentUser, generation: number) => {
     assertCurrentSession(generation);
     if (!mountedRef.current) throw new Error("Authentication provider unmounted");
@@ -126,6 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     function handleAuthExpired() {
       if (!mountedRef.current) return;
+      setLogoutError(false);
       setUser(null);
       setAuthenticated(false);
       setLoading(false);
@@ -222,16 +246,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       completeMfaSession: async () => {
         return loadCurrentUser();
       },
-      logout: () => {
-        apiLogout();
-        setAuthenticated(false);
-        setUser(null);
-        setLoading(false);
-        setRecoveryError(null);
-        recoveryAttempts.current = 0;
-      },
+      logout,
     }),
-    [acceptUser, isAuthenticated, isLoading, loadCurrentUser, sessionGeneration, user],
+    [acceptUser, isAuthenticated, isLoading, loadCurrentUser, logout, sessionGeneration, user],
   );
 
   const recoveryAppError = useMemo(() => recoveryError ? normalizeAppError(recoveryError) : undefined, [recoveryError]);
@@ -240,7 +257,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const retry = <Button type="button" disabled={recoveryDelay > 0} isLoading={isRecovering} onClick={() => void restoreCurrentSession()}>{recoveryDelay > 0 ? t("fallback.retryAfter", { seconds: recoveryDelay }) : t("common.retry")}</Button>;
   return <AuthContext.Provider value={value}>
     {recoveryError && !isAuthenticated ? <div data-testid="session-recovery" className="mx-auto max-w-xl p-6"><ErrorState error={recoveryError} action={retry} /></div> : children}
-    {recoveryError && isAuthenticated ? <div data-testid="session-recovery" className="fixed inset-x-3 bottom-24 z-[90] mx-auto max-w-xl lg:bottom-4">
+    {(logoutError || isLoggingOut) ? <div data-testid="logout-status" className="fixed inset-x-3 bottom-24 z-[90] mx-auto max-w-xl lg:bottom-4">
+      <StatusNotice tone={logoutError ? "danger" : "info"} title={t(logoutError ? "auth.logoutFailed" : "auth.loggingOut")}
+        action={logoutError ? <Button type="button" onClick={logout}>{t("common.retry")}</Button> : undefined} />
+    </div> : null}
+    {recoveryError && isAuthenticated && !logoutError && !isLoggingOut ? <div data-testid="session-recovery" className="fixed inset-x-3 bottom-24 z-[90] mx-auto max-w-xl lg:bottom-4">
       <StatusNotice tone="warning" title={message} action={retry} details={recoveryAppError ? <RecoveryDetails error={recoveryAppError} /> : undefined} />
     </div> : null}
   </AuthContext.Provider>;

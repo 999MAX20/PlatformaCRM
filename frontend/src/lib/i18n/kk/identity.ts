@@ -1,4 +1,6 @@
 export const identity: Record<string, string> = {
+  "auth.logoutFailed": "Шығу аяқталмады. Сеанс әлі белсенді болуы мүмкін. Қайталап көріңіз.",
+  "auth.loggingOut": "Шығу аяқталуда…",
   "employeeAccess.title": "Қызметкерлердің қолжетімділігі",
   "employeeAccess.records": "Жазбалар",
   "employeeAccess.members": "Қызметкерлер",

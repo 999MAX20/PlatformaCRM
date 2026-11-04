@@ -7,19 +7,21 @@ import ts from "typescript";
 function fixture() {
   let generation = 0, access = null, get = async () => ({ data: { csrf_token: "masked-token" } });
   const calls = [], exports = {};
+  let post = async () => ({ data: { access: "new-access" } }), broadcasts = 0;
   const axios = {
     CanceledError: class extends Error {},
     get: async (...args) => { calls.push(["GET", ...args]); return get(); },
-    post: async (...args) => { calls.push(["POST", ...args]); return { data: { access: "new-access" } }; },
+    post: async (...args) => { calls.push(["POST", ...args]); return post(); },
   };
   const tokenStorage = { getGeneration: () => generation, getAccess: () => access, getUserId: () => null,
+    broadcastLogout() { broadcasts++; },
     clear() { generation++; access = null; }, setAccess(value) { access = value; }, setEmail() {} };
   const imports = { axios: { default: axios }, "../lib/storage": { tokenStorage },
     "./sessionIdentity": { readSessionIdentity: () => null, SessionIdentityChangedError: class extends Error {} } };
   const source = fs.readFileSync(new URL("../../src/api/token.ts", import.meta.url), "utf8").replace("import.meta.env.VITE_API_URL", '""');
   vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText,
     { exports, navigator: {}, require: name => { assert.ok(name in imports, name); return imports[name]; } });
-  return { api: exports, calls, tokenStorage, get: fn => { get = fn; } };
+  return { api: exports, calls, tokenStorage, get: fn => { get = fn; }, post: fn => { post = fn; }, broadcasts: () => broadcasts };
 }
 
 test("each public cookie operation obtains a token and sends it with credentials", async () => {
@@ -67,4 +69,40 @@ test("cookie operations refresh the CSRF token instead of reusing a deleted cook
   await f.api.clearRefreshCookie();
   assert.equal(f.calls.at(-1)[3].headers["X-CSRFToken"], "replacement-token");
   assert.equal(f.calls.filter(call => call[0] === "GET").length, 2);
+});
+
+for (const failure of ["503", "network"]) test(`logout ${failure} preserves local session and permits retry`, async () => {
+  const f = fixture(); f.tokenStorage.setAccess("current-access");
+  f.post(async () => { throw new Error(failure); });
+  await assert.rejects(f.api.clearRefreshCookie(), new RegExp(failure));
+  assert.equal(f.tokenStorage.getAccess(), "current-access");
+  assert.equal(f.tokenStorage.getGeneration(), 0); assert.equal(f.broadcasts(), 0);
+  f.post(async () => ({ data: {} })); await f.api.clearRefreshCookie();
+  assert.equal(f.tokenStorage.getAccess(), null);
+  assert.equal(f.tokenStorage.getGeneration(), 1); assert.equal(f.broadcasts(), 1);
+});
+
+test("pending logout retains identity; success invalidates a queued refresh before it sends", async () => {
+  const f = fixture(); f.tokenStorage.setAccess("current-access");
+  let release, started;
+  const ready = new Promise(resolve => { started = resolve; });
+  f.post(() => new Promise(resolve => { release = resolve; started(); }));
+  const logout = f.api.clearRefreshCookie(); await ready;
+  assert.equal(f.tokenStorage.getAccess(), "current-access"); assert.equal(f.broadcasts(), 0);
+  const refresh = f.api.refreshToken();
+  const rejected = assert.rejects(refresh, /Authentication session changed/);
+  release({ data: {} }); await logout; await rejected;
+  assert.equal(f.calls.filter(c => c[0] === "POST").length, 1);
+  assert.equal(f.tokenStorage.getAccess(), null);
+});
+
+test("logout queued for an old generation never revokes a new session", async () => {
+  const f = fixture(); let release;
+  const held = f.api.sessionCookieRequest(undefined, () => new Promise(resolve => { release = resolve; }));
+  await new Promise(resolve => setImmediate(resolve));
+  const logout = f.api.clearRefreshCookie();
+  f.tokenStorage.clear(); f.tokenStorage.setAccess("new-account");
+  release(); await held;
+  await assert.rejects(logout, /Authentication session changed/);
+  assert.equal(f.calls.length, 0); assert.equal(f.tokenStorage.getAccess(), "new-account");
 });

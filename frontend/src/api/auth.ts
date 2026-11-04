@@ -203,10 +203,8 @@ export async function revokeMfaSessions(code: string) {
   return data;
 }
 
-export function logout() {
-  tokenStorage.broadcastLogout();
-  tokenStorage.clear();
-  void clearRefreshCookie().catch(() => undefined);
+export async function logout() {
+  await clearRefreshCookie();
 }
 
 

@@ -61,7 +61,7 @@ export function PlatformLayout() {
               { key: "profile", label: t("account.profileEyebrow"), icon: UserRound, onSelect: () => navigate("/platform/account#profile") },
               { key: "security", label: t("account.loginHistoryEyebrow"), icon: ShieldCheck, onSelect: () => navigate("/platform/account#security") },
               { key: "interface", label: t("account.interfaceTitle"), icon: Settings2, onSelect: () => navigate("/platform/account#interface") },
-              { key: "logout", label: t("header.logout"), icon: LogOut, separatorBefore: true, onSelect: () => { logout(); navigate("/login"); } },
+              { key: "logout", label: t("header.logout"), icon: LogOut, separatorBefore: true, onSelect: logout },
             ]} />
         </header>
         <nav aria-label={t("platform.title")} className="flex gap-1 overflow-x-auto border-b border-platforma-border bg-surface-card p-2 lg:hidden">{navigation(true)}</nav>

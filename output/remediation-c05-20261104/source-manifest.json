@@ -1,0 +1,49 @@
+{
+  "base": "112358d77dae0c0d148e9d9bc87e2cc782d90f91",
+  "source_sha256": {
+    "frontend/src/api/auth.ts": "0b0da010048c5c5ac1622c75cb60512c49d4307d53e2f1c6e26fa71ac1708b78",
+    "frontend/src/api/token.ts": "b1dd260bdf4883436da818562dec8f7358d9716e7f47ba74f132c354925d9986",
+    "frontend/src/features/auth/AuthProvider.tsx": "9540774fc73dca3eca96897d57ec460286f04b0c6faa961c73ef2cb755211e4c",
+    "frontend/src/components/layout/PlatformLayout.tsx": "e05af6b86966c109c05ed90504492e068f49923b8dc77c9a3b62c89073d257c9",
+    "frontend/src/lib/i18n/ru/identity.ts": "40905c226aaa843d697850ec694ea60c454eb9607655542a1edf5b2ac25e8808",
+    "frontend/src/lib/i18n/kk/identity.ts": "898e615dc28edf3872465ce49999ac6b40abbb93a1e48e2e2e86aa1c82662f3d",
+    "frontend/src/lib/i18n/en/identity.ts": "5d09db06e57c520452c25515ff269bf732f9ade05c3d7468dd0ce0099d77e67f",
+    "frontend/scripts/tests/token-csrf.test.mjs": "4e8b4aabf7d635aa8790e5cb320224b02f4346e4752f920f20bbcac1a6800475",
+    "frontend/e2e/logout-recovery.spec.ts": "0896c607261fdc0c8b442f9b40eee7c2e611cbd3790052faca092b764d84d7dd",
+    "frontend/e2e/logout-callers.spec.ts": "c8d3a6e5a051c7a24fcbe5ade9909680ab1c9f450f328156ba77f165587969a7",
+    "frontend/e2e/logout-cross-tab.spec.ts": "9c5292730814a3bf3735fe513927e804c6fba79eda8e7c0fb3e8992e4eb37ced",
+    "frontend/e2e/session-cache-isolation.spec.ts": "32be4c5e0464da7d8c4d23d600c22d3a6026edd342754b75a966907ca4a0400f",
+    "frontend/playwright.logout.config.ts": "3cb148b4520ab8290c89da43f7e9318af46f02829e38a782279f00a62fc69071"
+  },
+  "raw_log_sha256": {
+    "node-focused.log.gz": "0bd64f617f0babef36231963271938490320c669fbf26f0daf45b04f4590b46b",
+    "node-completion.log.gz": "23ec6710af6bc62f7c2b4cec8aa28473d1fe834b74a3f8b56f93b26f4dcfd261",
+    "browser-initial-fixture-failures.log.gz": "30140de5f2689c2d0fe9b873da017e3992855a54787973dc5fdbe8c834e69fcf",
+    "browser-language-order-failures.log.gz": "e52a5b9e21bac1d1dd75c9e0138b6ec4a961260441a81b1e017c2fdcb4d901c9",
+    "browser.log.gz": "556ed8eb1d5134696ac34b94ba8e71d8e0752a84de1714fff66f77a01b4126fc",
+    "browser-cross-tab.log.gz": "1cc42cd1b31f19fcc08da11634475dc7c5adb9ff2438557818da50dde5adf3d4",
+    "build-initial.log.gz": "718ca574cd178ed6f093d61721fbc6ab4b55bfbc625e21001a1c313adba31f1f",
+    "build.log.gz": "46fbe77a02c918b00fe95ebde63aa2a53d9a27299b116f6c77435224b497fcf8"
+  },
+  "screenshots": {
+    "screenshots\\logout-recovery-logout-503-44a1c-e-reload-and-explicit-retry-desktop-chromium.png": "b9697096897f0ab31a0ed280497fd83f4b01da74d24ef55dd56a8edb8d8f1626",
+    "screenshots\\logout-recovery-logout-503-44a1c-e-reload-and-explicit-retry-mobile-chromium.png": "d7b4e3b8dabfae874c58e0e762f06f36f6adcdefab2519acccc2277fdf2ee1df",
+    "screenshots\\logout-recovery-logout-503-6950e-e-reload-and-explicit-retry-desktop-chromium.png": "6c3bc6627d51af7c60f6757666806e3217c6f2d827cbeaec3bd3154ed4835b02",
+    "screenshots\\logout-recovery-logout-503-6950e-e-reload-and-explicit-retry-mobile-chromium.png": "bb25b585c0f7251e7653f8b4ac2e138e98deb6407445753eab35313cd0f5a2bd",
+    "screenshots\\logout-recovery-logout-503-d3aef-e-reload-and-explicit-retry-desktop-chromium.png": "89601d02919ba9c3cbcadbd15f4aa061ee4f07e081a4436f25f47a4e1fe3c8db",
+    "screenshots\\logout-recovery-logout-503-d3aef-e-reload-and-explicit-retry-mobile-chromium.png": "4e35a4e20d867a9191ce3c1b0607fcfb8057c06d786111733d1028727a7c5b1f",
+    "screenshots\\logout-recovery-logout-net-2867f-e-reload-and-explicit-retry-desktop-chromium.png": "6c3bc6627d51af7c60f6757666806e3217c6f2d827cbeaec3bd3154ed4835b02",
+    "screenshots\\logout-recovery-logout-net-2867f-e-reload-and-explicit-retry-mobile-chromium.png": "bb25b585c0f7251e7653f8b4ac2e138e98deb6407445753eab35313cd0f5a2bd",
+    "screenshots\\logout-recovery-logout-net-448f5-e-reload-and-explicit-retry-desktop-chromium.png": "b9697096897f0ab31a0ed280497fd83f4b01da74d24ef55dd56a8edb8d8f1626",
+    "screenshots\\logout-recovery-logout-net-448f5-e-reload-and-explicit-retry-mobile-chromium.png": "d7b4e3b8dabfae874c58e0e762f06f36f6adcdefab2519acccc2277fdf2ee1df",
+    "screenshots\\logout-recovery-logout-net-67d9f-e-reload-and-explicit-retry-desktop-chromium.png": "89601d02919ba9c3cbcadbd15f4aa061ee4f07e081a4436f25f47a4e1fe3c8db",
+    "screenshots\\logout-recovery-logout-net-67d9f-e-reload-and-explicit-retry-mobile-chromium.png": "4e35a4e20d867a9191ce3c1b0607fcfb8057c06d786111733d1028727a7c5b1f"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "node_tests": 31,
+  "browser_tests": 43,
+  "browser_skips": 11,
+  "i18n_keys": 6682,
+  "foreign_source_paths_preserved": 186
+}
