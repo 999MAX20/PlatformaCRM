@@ -29,7 +29,7 @@ class AutomaticBookingTermsTests(TestCase):
         return fixtures.AutomaticBookingTests.book(self)
 
     def assert_rejected(self):
-        with patch("apps.conversations.booking.schedule_appointment_followups") as followups, \
+        with patch("apps.conversations.booking.handle_appointment_created") as followups, \
              patch("apps.conversations.booking.create_activity_event") as activity, \
              patch("apps.conversations.booking.write_actor_audit_log") as audit, \
              patch("apps.bots.inbox_service.send_outbound_message") as send:

@@ -18,7 +18,7 @@ from apps.core.audit import write_actor_audit_log
 from apps.core.models import AuditLog
 from apps.leads.services import can_mark_lead_appointment_created, mark_lead_appointment_created
 from apps.scheduling.models import Appointment, Resource
-from apps.scheduling.services import schedule_appointment_followups, validate_appointment_availability
+from apps.scheduling.services import handle_appointment_created, validate_appointment_availability
 from apps.scheduling.availability import business_zone
 from apps.services.models import Service
 
@@ -73,9 +73,14 @@ def maybe_create_appointment_from_reply(*, conversation: BotConversation, messag
 @transaction.atomic
 def create_appointment_from_conversation(*, conversation: BotConversation, service_id: int, start_at, actor=None, resource_id: int | None = None, branch_id: int | None = None, notes: str = "", update_lead_status: bool = True, expected_terms: dict[str, Any] | None = None) -> Appointment:
     assert_resource_enabled(conversation.business, Resources.APPOINTMENTS)
-    Business.objects.select_for_update().get(pk=conversation.business_id)
+    business = Business.objects.select_for_update().get(pk=conversation.business_id)
     if not conversation.client_id:
         raise ValueError("Conversation must be linked to a client before booking an appointment.")
+    if conversation.client.business_id != business.pk:
+        raise ValueError("Client must belong to the conversation business.")
+    from apps.scheduling.record_commands import validate_responsible
+    responsible = business.ai_booking_responsible_user if expected_terms is not None else actor
+    validate_responsible(business=business, actor=actor, user=responsible)
 
     services = Service.objects.filter(id=service_id, business=conversation.business, is_active=True)
     if expected_terms is not None:
@@ -103,6 +108,7 @@ def create_appointment_from_conversation(*, conversation: BotConversation, servi
     snapshot = appointment_snapshot(conversation.business, service, resource, branch)
     if snapshot["branch"]:
         assert_branch_access(actor, conversation.business, snapshot["branch"], active=True)
+        assert_branch_access(responsible, business, snapshot["branch"], active=True)
     if expected_terms is not None:
         price = snapshot["booked_price"]
         if (not {"price_from", "duration_minutes"}.issubset(expected_terms)
@@ -121,6 +127,8 @@ def create_appointment_from_conversation(*, conversation: BotConversation, servi
         lead=conversation.lead,
         service=service,
         resource=resource,
+        responsible_user=responsible,
+        source_conversation=conversation,
         start_at=start_at,
         end_at=end_at,
         status=Appointment.Statuses.CREATED,
@@ -150,10 +158,6 @@ def create_appointment_from_conversation(*, conversation: BotConversation, servi
             source="inbox",
             activity_metadata={"conversation_id": conversation.id},
         )
-    schedule_appointment_followups(
-        appointment,
-        responsible_user=conversation.lead.responsible_user if conversation.lead_id and conversation.lead.responsible_user_id else conversation.assigned_to,
-    )
     create_activity_event(
         business=conversation.business,
         client=conversation.client,
@@ -170,6 +174,7 @@ def create_appointment_from_conversation(*, conversation: BotConversation, servi
             "resource_id": resource.id if resource else None,
         },
     )
+    handle_appointment_created(appointment)
     return appointment
 
 

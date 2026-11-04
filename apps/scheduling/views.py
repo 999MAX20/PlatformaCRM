@@ -456,7 +456,7 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
             except ValueError as exc:
                 raise ScheduleConflict(errors={"start_at": "Choose another available time."}) from exc
             super().perform_create(serializer)
-        handle_appointment_created(serializer.instance)
+            handle_appointment_created(serializer.instance)
 
     def perform_update(self, serializer):
         previous_status = serializer.instance.status

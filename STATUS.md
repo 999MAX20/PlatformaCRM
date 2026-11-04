@@ -1,3 +1,12 @@
+REMEDIATION-C09-20261104: context and creation effects closed locally.
+Explicit Business AI assignee setting/UI, current validation, source conversation;
+one transactional BusinessEvent/followups/notification/automation, replay/rollback.
+SQLite145 affected (144PASS + corrected legacy expectation recheck1PASS), settings12,
+PG21, migration/OWN/branch checks, browser6 and build/types/i18n6685 PASS.
+WorkingDB unchanged; migration0014 isolated only. Dev off, foreign WIP retained.
+Evidence: docs/testing/evidence/remediation-c09-20261104.md. Own local commit only;
+no push/newCI/deploy/live. C10 not started; C05 retained-temp limitation unchanged.
+
 REMEDIATION-C08-20261104: stale automatic-booking terms closed locally.
 Offers bind price/duration; final creation rechecks, legacy incomplete offers refuse;
 zero price preserved. Catalog lock + PG nullable-join locks verified.

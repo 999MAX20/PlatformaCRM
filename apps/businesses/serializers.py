@@ -20,6 +20,10 @@ from apps.businesses.models import (
 
 
 class BusinessSerializer(serializers.ModelSerializer):
+    ai_booking_responsible_user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), required=False, allow_null=True,
+        error_messages={"does_not_exist": "Select an available member of this business.",
+                        "incorrect_type": "Select an available member of this business."})
     class Meta:
         model = Business
         fields = "__all__"
@@ -34,6 +38,9 @@ class BusinessSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        if "ai_booking_responsible_user" in attrs:
+            from .booking_settings import validate_booking_responsible
+            attrs["ai_booking_responsible_user"] = validate_booking_responsible(self.instance, attrs["ai_booking_responsible_user"])
         connector = attrs.get("financial_connector", getattr(self.instance, "financial_connector", None))
         mode = attrs.get("financial_source_mode", getattr(self.instance, "financial_source_mode", "external"))
         if connector and (self.instance is None or connector.business_id != self.instance.pk):
@@ -43,6 +50,12 @@ class BusinessSerializer(serializers.ModelSerializer):
         if mode == "manual":
             attrs["financial_connector"] = None
         return attrs
+
+    def update(self, instance, validated_data):
+        if "ai_booking_responsible_user" in validated_data:
+            from .booking_settings import validate_booking_responsible
+            validated_data["ai_booking_responsible_user"] = validate_booking_responsible(instance, validated_data["ai_booking_responsible_user"])
+        return super().update(instance, validated_data)
 
 
 class BusinessCapabilitySerializer(serializers.ModelSerializer):

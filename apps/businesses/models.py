@@ -53,6 +53,8 @@ class Business(TimeStampedModel):
     prepayment_policy = models.TextField(blank=True)
     sla_minutes = models.PositiveIntegerField(default=120)
     booking_buffer_minutes = models.PositiveIntegerField(default=0)
+    ai_booking_responsible_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="ai_booking_businesses")
     status = models.CharField(max_length=32, choices=Statuses.choices, default=Statuses.TRIAL)
     landing_id = models.CharField(max_length=128, blank=True, db_index=True)
     landing_domain = models.CharField(max_length=255, blank=True)

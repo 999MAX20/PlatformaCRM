@@ -1,3 +1,23 @@
+## C09 — контекст и эффекты создания записи, 04.11.2026
+
+Автоматическая запись сохраняет source_conversation и ответственного из явной
+настройки Business.ai_booking_responsible_user. Авторизующий actor и ответственный
+различаются; текущие членство, активность, доступность, scope и филиал проверяются
+при создании. Пустая/невалидная настройка передаёт запись сотруднику без fallback.
+Успешный replay возвращает исходную запись без переназначения и повторных эффектов.
+Общий транзакционный обработчик создания пишет один BusinessEvent appointment.created
+(source=crm, ключ appointment:{id}:created), планирует followups, уведомляет
+ответственного и запускает действующую автоматизацию. Повторный вызов не дублирует
+эффекты. Manual/plan/legacy callers используют тот же обработчик; API rollback проверен.
+Настройка доступна в «Настройки → Компания», RU/KK/EN, по SETTINGS UPDATE; GET
+businesses/{id}/booking-responsible-options/ отдаёт только допустимых сотрудников
+этого бизнеса, PATCH businesses/{id}/ принимает nullable user ID и перепроверяет его.
+Миграция businesses0014 добавляет nullable FK без backfill. Рабочая БД не изменялась:
+применение миграции к ней/серверу требует отдельного разрешённого target. После
+миграции существующий бизнес явно выбирает ответственного; до этого AI handoff.
+Локальная приёмка C09 завершена; push/live model/channel/deployment не выполнялись.
+[Проверки и границы C09](../testing/evidence/remediation-c09-20261104.md).
+
 # Настройки и уведомления
 
 PILOT-ACCESS-20261031: signup/auth/MFA/session/reset, complete invitation lifecycle,

@@ -26,6 +26,7 @@ export type Business = {
   prepayment_policy: string;
   sla_minutes: number;
   booking_buffer_minutes: number;
+  ai_booking_responsible_user?: Id | null;
   landing_id?: string;
   landing_domain?: string;
   landing_preview_url?: string;

@@ -1,3 +1,11 @@
+## C09 — миграция настройки автоматической записи
+
+businesses0014 добавляет nullable ai_booking_responsible_user без backfill. Проверена
+только в одноразовых SQLite/PostgreSQL и при обратной/прямой миграции; рабочая БД
+не мигрирована. После разрешённого применения требуется явный выбор в профиле
+компании; null/недоступный сотрудник оставляет безопасный handoff. Новых env нет.
+[C09 evidence](../testing/evidence/remediation-c09-20261104.md).
+
 ## C07 — конфиденциальность URL телеметрии, 04.11.2026
 
 Frontend Sentry/PostHog/Plausible заменяют reset-password, invite и invitation-preview

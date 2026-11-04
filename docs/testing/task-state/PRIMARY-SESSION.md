@@ -1,3 +1,31 @@
+## REMEDIATION-C09-20261104 — context and creation effects locally verified
+
+Owner «продолжаем» authorized C09 REQ03/CRM-EVENT01 only. Base1838722ac12ca08c01c6cfda23bcb2224371dd29, canonical
+PlatformaCRM/current codex/ui-testing-toolkit;233 foreign WIP entries preserved.
+Explicit antislop during session choice; domain/verification/frontend skills used.
+Contract/output/remediation-c09-20261104 has exact logs, commands and manifests.
+New Business nullable setting + guarded API/UI; automatic responsible/source, shared
+idempotent creation handler and transaction rollback. Source actor remains separate.
+No arbitrary AI owner fallback. Migration0014 no backfill, workingDB not migrated.
+
+Settings BEFORE5FAIL (initial fixture-error run retained), AFTER5PASS; creation
+BEFORE3FAIL, focused29PASS, expanded12PASS. Dependent145:144PASS/1 old notification
+expectation FAIL; updated assertion proves2 previous followups+1new responsible
+notice+BusinessEvent; targeted1PASS. No production change after dependent run.
+PG21PASS includes real automatic/handler duplication and manual/plan races.
+Migration+OWN pass; branch fixture initially retained first-branch grant, fixed to
+revoke it; targeted branch1PASS. System/migration drift PASS. Browser initial4PASS,
+final6PASS, final safe build/types/i18n6685 PASS. No full-project/live acceptance.
+Evidence: docs/testing/evidence/remediation-c09-20261104.md. All original failures
+retained. UI screenshots inspected; no redesign of unrelated surfaces. No reinstall.
+
+Plan/contracts/passports/README/evidence consistent. Product/integrations/roadmap
+not changed: C09 closes audited implementation gap within existing requirements;
+broader CRM-R01/money/D01 remain open. No C09 scoped code/evidence remainder.
+WorkingDB hash unchanged, dev off, owned runtimes cleaned, old C05 folders retained.
+Own local commit only, no push/merge/newCI/deploy. C10 unstarted. Final receipt:
+output/remediation-c09-20261104/final-validation.json.
+
 ## REMEDIATION-C08-20261104 — current automatic booking terms locally verified
 
 Owner «продолжпем» authorized C08 only, CRM-TERMS01/BOT-ZERO-PRICE.

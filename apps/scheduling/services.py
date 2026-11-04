@@ -100,11 +100,17 @@ def create_appointment_from_lead(
     if snapshot["branch"] and actor:
         assert_branch_access(actor, lead.business, snapshot["branch"], active=True)
     end_at = validate_appointment_availability(lead.business, service, start_at, resource=resource, branch=snapshot["branch"])
+    from apps.scheduling.record_commands import validate_responsible
+    responsible = lead.responsible_user or actor or lead.business.owner
+    validate_responsible(business=lead.business, actor=actor or lead.business.owner, user=responsible)
+    if snapshot["branch"]:
+        assert_branch_access(responsible, lead.business, snapshot["branch"], active=True)
 
     appointment = Appointment.objects.create(
         business=lead.business,
         client=lead.client,
         lead=lead,
+        responsible_user=responsible,
         service=service,
         resource=resource,
         start_at=start_at,
@@ -133,12 +139,28 @@ def create_appointment_from_lead(
         source=appointment.source,
         metadata={"appointment_id": appointment.id, "lead_id": lead.id},
     )
-    schedule_appointment_followups(appointment, responsible_user=lead.responsible_user)
+    handle_appointment_created(appointment)
 
     return appointment
 
 
+@transaction.atomic
 def handle_appointment_created(appointment):
+    from apps.integrations.models import BusinessEvent
+
+    Business.objects.select_for_update().get(pk=appointment.business_id)
+    event, created = BusinessEvent.objects.get_or_create(
+        business=appointment.business, source="crm",
+        deduplication_key=f"appointment:{appointment.pk}:created",
+        defaults={"event_type": "appointment.created", "external_id": str(appointment.pk),
+                  "occurred_at": appointment.created_at, "processed_at": timezone.now(),
+                  "status": BusinessEvent.Statuses.PROCESSED,
+                  "payload_json": {"appointment_id": appointment.pk, "client_id": appointment.client_id,
+                                   "source_conversation_id": appointment.source_conversation_id,
+                                   "responsible_user_id": appointment.responsible_user_id}},
+    )
+    if not created:
+        return event
     schedule_appointment_followups(appointment)
     notify_appointment_responsible(appointment, "New appointment created")
     run_automations_for_event(
@@ -147,6 +169,7 @@ def handle_appointment_created(appointment):
         entity=appointment,
         payload={"trigger_type": AutomationRule.TriggerTypes.APPOINTMENT_CREATED, "appointment_id": appointment.id},
     )
+    return event
 
 
 def sync_appointment_after_update(

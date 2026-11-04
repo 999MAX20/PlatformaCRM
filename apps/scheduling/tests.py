@@ -184,7 +184,15 @@ class CorePlatformTests(TestCase):
                 event_type=AnalyticsEvent.EventTypes.APPOINTMENT_CREATED,
             ).exists()
         )
-        self.assertEqual(Notification.objects.filter(appointment=appointment, status=Notification.Statuses.PENDING).count(), 2)
+        notices = Notification.objects.filter(appointment=appointment, status=Notification.Statuses.PENDING)
+        self.assertEqual(notices.count(), 3)
+        self.assertEqual(notices.filter(action_label=APPOINTMENT_CONFIRMATION_LABEL).count(), 1)
+        self.assertEqual(notices.filter(action_label=APPOINTMENT_REMINDER_LABEL).count(), 1)
+        self.assertEqual(notices.filter(text="New appointment created", recipient=self.owner).count(), 1)
+        self.assertEqual(appointment.responsible_user_id, self.owner.pk)
+        from apps.integrations.models import BusinessEvent
+        self.assertEqual(BusinessEvent.objects.filter(business=self.business,
+            event_type="appointment.created", deduplication_key=f"appointment:{appointment.pk}:created").count(), 1)
 
     def test_create_appointment_from_closed_lead_is_rejected_without_side_effects(self):
         booking_resource = Resource.objects.create(business=self.business, name="Booking specialist")

@@ -17,6 +17,8 @@ from apps.services.models import Service
 class AutomaticBookingTests(TestCase):
     def setUp(self):
         fixtures.RuntimeConfigurationTests.setUp(self)
+        self.business.ai_booking_responsible_user = self.business.owner
+        self.business.save(update_fields=["ai_booking_responsible_user"])
         self.bot.settings_json = {"_automatic_actor_id": self.business.owner_id, "auto_crm_pipeline": {
             "mode": "lead_task", "enabled": True, "creation_policy": "automatic", "create_appointment": True}}
         self.bot.save()

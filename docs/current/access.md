@@ -1,3 +1,11 @@
+## C09 — настройка ответственного AI-записи
+
+GET businesses/{id}/booking-responsible-options/ и PATCH ai_booking_responsible_user
+требуют существующего SETTINGS UPDATE. Кандидаты — активные доступные участники
+того же Business/owner. Назначение не предоставляет права; при записи отдельно
+проверяются authorizing actor, scope CREATE, текущий ответственный и его филиал.
+Политика ролей не менялась. [C09 evidence](../testing/evidence/remediation-c09-20261104.md).
+
 C02 / TEAM-ANALYTICS, 04.11.2026: `/api/team/performance/` intersects Lead
 selection with current LEADS VIEW scope and enabled capability before counts,
 loss reasons, rates and team summaries. Existing report membership and source/date

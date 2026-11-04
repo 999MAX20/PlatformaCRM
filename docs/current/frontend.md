@@ -1,3 +1,10 @@
+## C09 — ответственный за AI-записи
+
+Профиль компании содержит nullable выбор ответственного из permission-checked API.
+Shared Select/save/cancel/feedback, RU/KK/EN; loading/503 retry и stale-candidate
+400 с фокусом на видимом поле проверены desktop/mobile. Нет нового общего UI pattern.
+[C09 evidence](../testing/evidence/remediation-c09-20261104.md).
+
 ## C07 — конфиденциальность URL телеметрии, 04.11.2026
 
 Frontend Sentry/PostHog/Plausible заменяют reset-password, invite и invitation-preview

@@ -53,6 +53,13 @@ class BusinessViewSet(ModelViewSet):
     def get_queryset(self):
         return Business.objects.all() if platform_admin_has_global_access(self.request.user) else accessible_businesses(self.request.user)
 
+    @action(detail=True, methods=["get"], url_path="booking-responsible-options")
+    def booking_responsible_options(self, request, pk=None):
+        from .booking_settings import booking_responsible_options
+        business = self.get_object()
+        assert_can(request.user, business, Resources.SETTINGS, Actions.UPDATE)
+        return Response(booking_responsible_options(business))
+
     def perform_create(self, serializer):
         owner = serializer.validated_data.get("owner") or self.request.user
         business = serializer.save(owner=owner)

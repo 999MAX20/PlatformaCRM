@@ -1,8 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { getApiFieldErrors } from "../../api/client";
+import { getBookingResponsibleOptions } from "../../api/businesses";
 import { SettingsFeedback, SettingsSaveBar } from "../../features/settings/components/SettingsLayout";
 import { useI18n } from "../../lib/i18n";
 import type { Business } from "../../types";
@@ -18,6 +20,7 @@ function createSchema(t: (key: string) => string) {
     timezone: z.string().min(1, t("settings.redesign.required")),
     currency: z.string().min(1, t("settings.redesign.required")),
     legal_name: z.string().optional(), tax_id: z.string().optional(),
+    ai_booking_responsible_user: z.string().optional(),
     invoice_email: z.string().email(t("settings.redesign.invalidEmail")).or(z.literal("")).optional(),
   });
 }
@@ -26,6 +29,8 @@ export function BusinessSettingsForm({ initial, onSubmit }: { initial?: Business
   const { t } = useI18n();
   const [saveError, setSaveError] = useState<unknown>(null);
   const [saved, setSaved] = useState(false);
+  const responsibleOptions = useQuery({ queryKey: ["booking-responsible-options", initial?.id],
+    queryFn: () => getBookingResponsibleOptions(initial!.id), enabled: Boolean(initial?.id) });
   const form = useForm<Values>({
     resolver: zodResolver(createSchema(t)), shouldFocusError: false,
     defaultValues: {
@@ -34,6 +39,7 @@ export function BusinessSettingsForm({ initial, onSubmit }: { initial?: Business
       whatsapp: initial?.whatsapp || "", telegram: initial?.telegram || "", instagram: initial?.instagram || "",
       timezone: initial?.timezone || "Asia/Almaty", currency: initial?.currency || "KZT",
       legal_name: initial?.legal_name || "", tax_id: initial?.tax_id || "", invoice_email: initial?.invoice_email || "",
+      ai_booking_responsible_user: initial?.ai_booking_responsible_user ? String(initial.ai_booking_responsible_user) : "",
     },
   });
   function focusField(field: keyof Values) {
@@ -42,7 +48,8 @@ export function BusinessSettingsForm({ initial, onSubmit }: { initial?: Business
   async function submit(values: Values) {
     setSaveError(null); setSaved(false);
     try {
-      await onSubmit(values);
+      const { ai_booking_responsible_user, ...profile } = values;
+      await onSubmit({ ...profile, ...(initial?.id ? { ai_booking_responsible_user: ai_booking_responsible_user ? Number(ai_booking_responsible_user) : null } : {}) });
       form.reset(values); setSaved(true);
     } catch (error) {
       const fields = Object.entries(getApiFieldErrors(error)).filter(([key]) => key in values);
@@ -67,6 +74,20 @@ export function BusinessSettingsForm({ initial, onSubmit }: { initial?: Business
           <Select label={t("businessForm.currency")} {...field("currency")} value={form.watch("currency")} options={["KZT", "USD", "EUR", "RUB"].map(value => ({ value, label: value }))} />
         </div>
       </div>
+      {initial?.id ? <div className="space-y-3 border-t border-platforma-border pt-5" aria-busy={responsibleOptions.isPending}>
+        <Select label={t("businessForm.aiBookingResponsible")} {...field("ai_booking_responsible_user")}
+          onFocus={event => { const trigger = event.currentTarget.nextElementSibling; if (trigger instanceof HTMLButtonElement) trigger.focus(); }}
+          value={form.watch("ai_booking_responsible_user") || ""}
+          disabled={responsibleOptions.isPending || responsibleOptions.isError}
+          options={[
+            { value: "", label: responsibleOptions.isPending ? t("common.loading") : t("businessForm.aiBookingUnassigned") },
+            ...(initial.ai_booking_responsible_user && !responsibleOptions.data?.some(item => String(item.id) === String(initial.ai_booking_responsible_user))
+              ? [{ value: String(initial.ai_booking_responsible_user), label: t("businessForm.aiBookingUnavailable") }] : []),
+            ...(responsibleOptions.data ?? []).map(item => ({ value: String(item.id), label: item.label })),
+          ]} />
+        {responsibleOptions.isError ? <div className="space-y-2"><SettingsFeedback error={responsibleOptions.error} />
+          <Button type="button" variant="secondary" onClick={() => void responsibleOptions.refetch()}>{t("common.retry")}</Button></div> : null}
+      </div> : null}
       <div className="space-y-3 border-t border-platforma-border pt-5">
         <h2 className="text-base font-bold">{t("settings.redesign.contacts")}</h2>
         <div className="grid gap-3 sm:grid-cols-2">

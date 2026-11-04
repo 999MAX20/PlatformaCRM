@@ -1,0 +1,48 @@
+{
+  "python": ".venv/Scripts/python.exe",
+  "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+  "runner": "run_checks.py <phase> <labels>",
+  "settings": [
+    "apps.businesses.tests_booking_settings"
+  ],
+  "creation-focused": [
+    "apps.bots.tests_booking_creation",
+    "apps.bots.tests_automatic_booking",
+    "apps.bots.tests_booking_terms",
+    "apps.branches.tests_bot"
+  ],
+  "expanded": [
+    "apps.bots.tests_booking_creation",
+    "apps.businesses.tests_booking_settings"
+  ],
+  "completion": [
+    "apps.bots.tests_booking_creation",
+    "apps.businesses.tests_booking_settings",
+    "apps.scheduling.tests",
+    "apps.scheduling.tests_record_commands",
+    "apps.scheduling.tests_visit_plans",
+    "apps.scheduling.tests_settings_delivery",
+    "apps.bots.tests_automatic_booking",
+    "apps.bots.tests_booking_terms",
+    "apps.branches.tests_bot",
+    "apps.bots.tests_controlled_creation"
+  ],
+  "migration-and-boundaries": [
+    "apps.businesses.tests_booking_settings_migration",
+    "apps.bots.tests_booking_creation.BookingCreationTests.test_assignee_branch_grant_is_required",
+    "apps.bots.tests_booking_creation.BookingCreationTests.test_authorizing_actor_own_scope_cannot_assign_default_to_another_user"
+  ],
+  "legacy-recheck": [
+    "apps.scheduling.tests.CorePlatformTests.test_create_appointment_from_lead_updates_lead"
+  ],
+  "branch-recheck": [
+    "apps.bots.tests_booking_creation.BookingCreationTests.test_assignee_branch_grant_is_required"
+  ],
+  "postgres": "run_pg.py apps.bots.tests_booking_creation_concurrency apps.bots.tests_booking_creation apps.businesses.tests_booking_settings apps.scheduling.tests_record_concurrency apps.scheduling.tests_plan_concurrency",
+  "browser": "run_browser.py; e2e/booking-responsible-settings.spec.ts desktop/mobile-chromium",
+  "build": "run_build.py; npm run build in isolated_runtime",
+  "system": [
+    "check",
+    "makemigrations --check --dry-run"
+  ]
+}

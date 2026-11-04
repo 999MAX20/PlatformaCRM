@@ -1,3 +1,9 @@
+C09: для автоматической записи добавлена настройка ответственного в профиле
+компании (SETTINGS UPDATE). Миграция businesses0014 оставляет существующим бизнесам
+null; пока сотрудник не выбран, запись передаётся сотруднику для ручной обработки.
+Миграция проверена только в изоляции, к рабочей БД не применялась.
+[Граница локальной проверки](docs/testing/evidence/remediation-c09-20261104.md).
+
 Source archive (Linux/WSL): `bash scripts/make_clean_archive.sh [name.zip]`.
 Requires rsync and Python3; no separate zip executable. It packages source/docs
 and declared env templates under zani/, excluding runtime/private artifacts and
