@@ -1,0 +1,36 @@
+{
+  "completion": [
+    ".venv/Scripts/python.exe",
+    "output/remediation-c08-20261104/run_checks.py",
+    "completion",
+    "apps.bots.tests_booking_terms",
+    "apps.bots.tests_automatic_booking",
+    "apps.bots.tests_runtime_configuration",
+    "apps.branches.tests_bot",
+    "apps.conversations.tests_inbox_tasks",
+    "apps.bots.tests.BotsFoundationTests.test_auto_sales_reply_receives_playbook_prices_resources_and_slots",
+    "apps.bots.tests.BotsFoundationTests.test_client_selected_slot_requires_staff_booking",
+    "apps.bots.tests.BotsFoundationTests.test_staff_booking_runs_appointment_message_delivery_and_confirmation_reply",
+    "apps.bots.tests.InboxBackendTests.test_inbox_can_create_appointment_from_conversation_when_data_is_complete",
+    "apps.bots.tests.InboxBackendTests.test_inbox_rejects_appointment_when_linked_lead_transition_is_invalid",
+    "apps.bots.tests.InboxBackendTests.test_inbox_create_appointment_replays_idempotency_key"
+  ],
+  "postgres": [
+    "C:\\Users\\user\\Desktop\\PlatformaCRM\\.venv\\Scripts\\python.exe",
+    "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\remediation-c08-20261104\\manage_isolated.py",
+    "test",
+    "apps.bots.tests_booking_terms_concurrency",
+    "apps.bots.tests_booking_terms",
+    "apps.bots.tests_automatic_booking",
+    "apps.branches.tests_bot",
+    "apps.bots.tests_controlled_creation",
+    "--noinput",
+    "--keepdb",
+    "-v",
+    "2"
+  ],
+  "system": [
+    "check",
+    "makemigrations --check --dry-run"
+  ]
+}

@@ -3,6 +3,7 @@
   "asOf": "2026-10-21",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
+    {"path": "docs/testing/evidence/remediation-c08-20261104.md", "role": "evidence"},
     {"path": "docs/testing/evidence/remediation-c07-20261104.md", "role": "evidence"},
     {"path": "docs/testing/evidence/remediation-c06-20261104.md", "role": "evidence"},
     {"path": "docs/testing/evidence/remediation-c05-20261104.md", "role": "evidence"},

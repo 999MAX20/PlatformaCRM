@@ -1,3 +1,16 @@
+## C08 — актуальные условия автоматической записи, 04.11.2026
+
+Серверный вариант без филиала, как и филиальный, содержит цену и длительность.
+Автоматическое подтверждение сверяет их с текущим snapshot в точке создания;
+изменение или неполные старые условия ведут в существующий requires_staff/handoff
+до Appointment и эффектов создания. Нулевая цена сохраняется в AI context и
+отличается от отсутствующей. Успешный replay возвращает исходную запись после
+повторной авторизации. Legacy ручные callers без expected_terms совместимы.
+Service row lock удерживает согласованную версию до commit; PostgreSQL conversation
+lock ограничен строкой беседы. Проверены SQLite/API и реальные PG locks/pipeline;
+live model/channel/deploy не заявлены. C09 creation effects остаются отдельной задачей.
+[Доказательства и границы C08](../testing/evidence/remediation-c08-20261104.md).
+
 ## Первый Records workspace — локальная реализация02.11.2026
 
 `GET /api/appointments/workspace/` применяет существующий readable Appointment

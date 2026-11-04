@@ -71,19 +71,26 @@ def maybe_create_appointment_from_reply(*, conversation: BotConversation, messag
 
 
 @transaction.atomic
-def create_appointment_from_conversation(*, conversation: BotConversation, service_id: int, start_at, actor=None, resource_id: int | None = None, branch_id: int | None = None, notes: str = "", update_lead_status: bool = True) -> Appointment:
+def create_appointment_from_conversation(*, conversation: BotConversation, service_id: int, start_at, actor=None, resource_id: int | None = None, branch_id: int | None = None, notes: str = "", update_lead_status: bool = True, expected_terms: dict[str, Any] | None = None) -> Appointment:
     assert_resource_enabled(conversation.business, Resources.APPOINTMENTS)
     Business.objects.select_for_update().get(pk=conversation.business_id)
     if not conversation.client_id:
         raise ValueError("Conversation must be linked to a client before booking an appointment.")
 
-    service = Service.objects.filter(id=service_id, business=conversation.business, is_active=True).first()
+    services = Service.objects.filter(id=service_id, business=conversation.business, is_active=True)
+    if expected_terms is not None:
+        # Catalog writes also take this row lock, keeping validation and creation on one version.
+        services = services.select_for_update().filter(is_archived=False)
+    service = services.first()
     if service is None:
         raise ValueError("Service was not found in this business.")
 
     resource = None
     if resource_id:
-        resource = Resource.objects.filter(id=resource_id, business=conversation.business, is_active=True).first()
+        resources = Resource.objects.filter(id=resource_id, business=conversation.business, is_active=True)
+        if expected_terms is not None:
+            resources = resources.filter(retired_at__isnull=True)
+        resource = resources.first()
         if resource is None:
             raise ValueError("Resource was not found in this business.")
 
@@ -96,6 +103,12 @@ def create_appointment_from_conversation(*, conversation: BotConversation, servi
     snapshot = appointment_snapshot(conversation.business, service, resource, branch)
     if snapshot["branch"]:
         assert_branch_access(actor, conversation.business, snapshot["branch"], active=True)
+    if expected_terms is not None:
+        price = snapshot["booked_price"]
+        if (not {"price_from", "duration_minutes"}.issubset(expected_terms)
+                or snapshot["booked_duration_minutes"] != expected_terms["duration_minutes"]
+                or (str(price) if price is not None else None) != expected_terms["price_from"]):
+            raise ValueError("Appointment terms changed. Review a fresh offer.")
     end_at = validate_appointment_availability(conversation.business, service, start_at, resource=resource, branch=snapshot["branch"])
     if conversation.lead_id:
         if conversation.lead.business_id != conversation.business_id:
@@ -182,7 +195,7 @@ def _commit_selected_slot(*, conversation, message, slot):
 
     # Same business lock/order as availability writes; the conversation serializes replay.
     Business.objects.select_for_update().get(pk=conversation.business_id)
-    conversation = BotConversation.objects.select_for_update().select_related("business", "bot", "client", "lead").get(pk=conversation.pk)
+    conversation = BotConversation.objects.select_for_update(of=("self",)).select_related("business", "bot", "client", "lead").get(pk=conversation.pk)
     meta = (conversation.metadata_json or {}).get(BOOKING_META_KEY) or {}
     fingerprint = meta.get("runtime_fingerprint")
     if not fingerprint or slot not in (meta.get("offered_slots") or []):
@@ -203,22 +216,15 @@ def _commit_selected_slot(*, conversation, message, slot):
         from apps.branches.models import Branch
         if Branch.objects.filter(business=conversation.business).exists():
             from apps.branches.bot_context import public_branches, selected_branch
-            from apps.branches.schedule import booking_terms
             branches = list(public_branches(conversation))
             choice = selected_branch(conversation, branches, [])
             branch = next((item for item in branches if item.pk == slot.get("branch_id")), None)
             if branch is None or choice not in ("any", branch.pk):
                 raise ValueError("Review the selected branch before booking.")
-            service = Service.objects.filter(pk=slot["service_id"], business=conversation.business, is_active=True, is_archived=False).first()
-            resource = Resource.objects.filter(pk=slot["resource_id"], business=conversation.business, is_active=True, retired_at__isnull=True).first()
-            if service is None or resource is None:
-                raise ValueError("The service or specialist is no longer available.")
-            _, duration, price = booking_terms(conversation.business, service, resource, branch)
-            if duration != slot.get("duration_minutes") or (str(price) if price is not None else None) != slot.get("price_from"):
-                raise ValueError("The branch's appointment terms changed. Review a fresh offer.")
         appointment = create_appointment_from_conversation(
             conversation=conversation, service_id=slot["service_id"], resource_id=slot["resource_id"], start_at=start,
             branch_id=slot.get("branch_id"),
+            expected_terms=slot,
             actor=actor, update_lead_status=False, notes=f"Customer selected option in Inbox message #{message.id}",
         )
     except (ValueError, APIException) as exc:

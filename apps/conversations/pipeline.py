@@ -110,7 +110,7 @@ def run_conversation_pipeline(
         if automatic_creation:
             Business.objects.select_for_update().get(pk=conversation.business_id)
         conversation = (
-            BotConversation.objects.select_for_update()
+            BotConversation.objects.select_for_update(of=("self",))
             .select_related("business", "client", "lead", "deal", "assigned_to")
             .get(pk=conversation.pk)
         )

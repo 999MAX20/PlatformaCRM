@@ -1,3 +1,11 @@
+REMEDIATION-C08-20261104: stale automatic-booking terms closed locally.
+Offers bind price/duration; final creation rechecks, legacy incomplete offers refuse;
+zero price preserved. Catalog lock + PG nullable-join locks verified.
+SQLite focused26/dependent48 + system/drift PASS; final PG36 PASS.
+WorkingDB unchanged, dev off, foreign WIP preserved. Evidence:
+docs/testing/evidence/remediation-c08-20261104.md. Own local commit only;
+no push/newCI/deploy/live model/channel. C09 not started; C05 temp limitation unchanged.
+
 REMEDIATION-C07-20261104: frontend telemetry bearer URL leak closed locally.
 Sentry final hooks/PostHog enriched events/Plausible manual URLs sanitized;
 PostHog flags/replay disabled; sensitive Plausible referrer suppresses tracking.

@@ -1,0 +1,29 @@
+{
+  "base": "64e9f2ce8147001c3c99c1f87fab84d80e065531",
+  "source_sha256": {
+    "apps/bots/scheduling_context.py": "308d413bc64ce8fcc8f638f2eff773acd4dfeef965f77bcc560153ea32dc90be",
+    "apps/conversations/booking.py": "dfa20c801b396739202f2973a1ca02903cc6b3fcdcadeba4d3b59ed3f4b38e90",
+    "apps/conversations/pipeline.py": "6494bb7daf90b04fc313ea07078786bca7bf52598602e51c6a114dd8094ab6d0",
+    "apps/bots/tests_automatic_booking.py": "6dd7bf29ecfa67df0aebdd3171784d6faea87ab6e8e1a83b8ead422715966afb",
+    "apps/bots/tests_booking_terms.py": "00a53e8c9f721e0051bfb99009c6e1ff7721430115342e2d0a96dac3516751ca",
+    "apps/bots/tests_booking_terms_concurrency.py": "a7443eebc6916deb70a4f147124c1234a34411dc73ff5087ba5f0bc7bd81aac1"
+  },
+  "raw_log_sha256": {
+    "baseline.log.gz": "08caf306c69ba81f000659adeb0ebb13e84b3855d8352223400571899a7fe381",
+    "focused.log.gz": "ffe682e4ba0589d1cf832590d92e61bfc1d15b62f0e3dac24b3ac4595ac182c3",
+    "expanded.log.gz": "0777bb678620a7382a6033f230faa7391ac0803be58e94b4aa35611a53613596",
+    "completion.log.gz": "9d9b6d1f5817c4c65931c9a46c69fc55cf3f52712e39388bd0c4de22c8853629",
+    "final-focused.log.gz": "be559d381324e57c0d18b821faa5cea89799e9020cc638b1e0726ff488c42800",
+    "postgres-initial.log.gz": "2ba320d05f6ff6bf98087fa8bdaae572a429831454fb5a3de5d94b1dce2c0fbf",
+    "postgres-second.log.gz": "8c59aa37107a2e9cd6444bcfaba3bde7b816ed9c8794258519c3103226ca81fb",
+    "postgres-concurrency.log.gz": "639d1b4aead87bee7242876ac480480702402f8fb7736f6f0996023f0f24984e"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "sqlite_focused": 26,
+  "sqlite_dependent": 48,
+  "postgres_final": 36,
+  "system_check": "PASS",
+  "migration_drift": "PASS",
+  "foreign_source_paths_preserved": 186
+}

@@ -1,0 +1,28 @@
+{
+  "command": [
+    "C:\\Users\\user\\Desktop\\PlatformaCRM\\.venv\\Scripts\\python.exe",
+    "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\remediation-c08-20261104\\manage_isolated.py",
+    "test",
+    "apps.bots.tests_booking_terms_concurrency",
+    "apps.bots.tests_booking_terms",
+    "apps.bots.tests_automatic_booking",
+    "apps.branches.tests_bot",
+    "apps.bots.tests_controlled_creation",
+    "--noinput",
+    "--keepdb",
+    "-v",
+    "2"
+  ],
+  "returncode": 0,
+  "duration_seconds": 53.96,
+  "engine": "isolated native PostgreSQL17; loopback ephemeral cluster",
+  "labels": [
+    "apps.bots.tests_booking_terms_concurrency",
+    "apps.bots.tests_booking_terms",
+    "apps.bots.tests_automatic_booking",
+    "apps.branches.tests_bot",
+    "apps.bots.tests_controlled_creation"
+  ],
+  "teardown_sessions": [],
+  "teardown": "PASS; own loopback port and absolute temporary data_directory verified; explicitly closed test_audit sessions and dropped disposable database"
+}

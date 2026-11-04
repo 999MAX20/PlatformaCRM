@@ -1,9 +1,9 @@
 # Исправления по полному аудиту: рабочие циклы
 
-Статус: **C01–C07 закрыты локально; остальные циклы не начаты**. Дата: 04.11.2026.
+Статус: **C01–C08 закрыты локально; остальные циклы не начаты**. Дата: 04.11.2026.
 C01 исправляет изоляцию helpers, predicates и recovery fixture; проверки и границы
 записаны в [evidence](../testing/evidence/remediation-c01-20261104.md).
-Следующий исполняемый цикл — **C08**. Один последующий
+Следующий исполняемый цикл — **C09**. Один последующий
 «приступай/продолжай» означает один следующий цикл, а не автоматическое выполнение
 всего списка. Это детализация существующих находок, не новый независимый backlog.
 
@@ -83,7 +83,7 @@ scope; таблица не запускает все циклы автомати
 | **C05 — Честное завершение сессии**; закрыт локально: [evidence](../testing/evidence/remediation-c05-20261104.md), base112358d7 + C05 delta | UI13 | Ошибка logout не показывается как успешный выход; повтор и reload согласованы с серверной сессией. | **U PASS**: Node31/browser43,11 planned SKIP; RU/KK/EN desktop/mobile,503/network/reload/retry, single-flight/queued refresh/sibling tabs; safe build/types/i18n. C05 продуктово закрыт;2 temporary folders retained after cleanup policy block; local save без push/live. | C01 |
 | **C06 — Происхождение старых черновиков Inbox**; закрыт локально: [evidence](../testing/evidence/remediation-c06-20261104.md), base13862c6d + C06 delta | FU-FE-01 | Legacy draft без владельца не присваивается текущему пользователю автоматически. | **U PASS**: BEFORE8:2FAIL/6PASS → Node14PASS, browser4PASS; legacy negative, scoped preservation, account/reload/conversation/late-send/storage recovery. Safe build/types/i18n. C06 без остатка; ранее мигрированные scoped данные сохранены; no push/live. | — |
 | **C07 — Чувствительные URL в мониторинге**; закрыт локально: [evidence](../testing/evidence/remediation-c07-20261104.md), basef928d0f1 + C07 delta | FU-FE-02 | Optional monitoring очищает bearer-части URL до формирования отправляемого события. | **U PASS**: Node/actual SDK browser20PASS, actual Plausible2 scenarios; safe build/types/i18n. Final payload sanitization; PostHog flags/replay disabled; sensitive Plausible referrer suppresses tracker. C07 без scoped остатка; no push/live. | — |
-| **C08 — Актуальные условия автоматической записи**; не начат | CRM-TERMS01, BOT-ZERO-PRICE | Изменившиеся цена/длительность отклоняются до создания записи; нулевая цена отличается от отсутствующей. | **B**: Подтверждение→смена условий→booking: без Appointment/effects при mismatch; unchanged/branch/replay/availability/rights; zero/null/positive. | C01 |
+| **C08 — Актуальные условия автоматической записи**; закрыт локально: [evidence](../testing/evidence/remediation-c08-20261104.md), base64e9f2ce + C08 delta | CRM-TERMS01, BOT-ZERO-PRICE | Изменившиеся цена/длительность отклоняются до создания записи; нулевая цена отличается от отсутствующей. | **B PASS**: BEFORE8:6failed methods/2PASS; SQLite26 focused/48 dependent + system/drift, PG36 final. No-branch/branch terms, missing/changed/null/zero, replay, rights/tenant/handoff, real catalog lock. C08 без scoped остатка; no push/live; C09 effects отдельно. | C01 |
 | **C09 — Контекст и эффекты создания записи**; не начат | REQ03, CRM-EVENT01 | Автоматическая запись сохраняет принятые source/assignee defaults и запускает эффекты создания ровно один раз. | **B**: Manual/automatic/plan/legacy callers; authorizing actor отдельно от assignee; tenant/revoked/default/replay/rollback; один BusinessEvent/automation effect. | C08 |
 | **C10 — Очистка idempotency receipts**; не начат | IDEMPOTENCY-PRUNE | Prune не удаляет receipt, обновлённый после выборки просроченных строк. | **B**: Детерминированное interleave select→renew→delete; unchanged expired control; PostgreSQL race. | C01 |
 | **C11 — Владение задачей экспорта**; не начат | EXPORT-STALE-FINISH | Старый worker не перезаписывает завершение новой попытки и не публикует устаревший файл. | **B**: Claim/reclaim/new success/old finish, retry и безопасная очистка старого output; PostgreSQL concurrency. | C10 |

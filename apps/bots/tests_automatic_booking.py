@@ -30,6 +30,7 @@ class AutomaticBookingTests(TestCase):
         WorkingHours.objects.create(business=self.business, resource=self.resource, weekday=tomorrow.weekday(), start_time=time(9), end_time=time(18))
         self.start = timezone.make_aware(datetime.combine(tomorrow, time(10)), business_zone(self.business))
         self.slot = {"service_id": self.service.id, "service_name": "Cleaning", "resource_id": self.resource.id,
+                     "price_from": None, "duration_minutes": 30,
                      "resource_name": "Doctor", "start_at": self.start.isoformat(), "end_at": (self.start + timedelta(minutes=30)).isoformat()}
         self.offer = BotMessage.objects.create(conversation=self.conversation, direction="outbound", sender_type="bot", text="1. Cleaning Doctor tomorrow 10:00", status="sent")
         store_offered_slots(conversation=self.conversation, scheduling_context={"next_available_slots": [self.slot]},

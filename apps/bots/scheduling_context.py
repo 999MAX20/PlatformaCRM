@@ -82,6 +82,8 @@ def build_bot_scheduling_context(conversation, *, qualification=None, days=5, sl
                         "service_name": matched_service.name,
                         "resource_id": resource.id if resource else None,
                         "resource_name": resource.name if resource else "",
+                        "duration_minutes": matched_service.duration_minutes,
+                        "price_from": str(matched_service.price_from) if matched_service.price_from is not None else None,
                         "start_at": slot.isoformat(),
                         "end_at": (slot + timedelta(minutes=matched_service.duration_minutes)).isoformat(),
                     }
@@ -155,7 +157,7 @@ def _service_payload(service):
         "id": service.id,
         "name": service.name,
         "duration_minutes": service.duration_minutes,
-        "price_from": str(service.price_from or ""),
+        "price_from": str(service.price_from) if service.price_from is not None else "",
     }
 
 

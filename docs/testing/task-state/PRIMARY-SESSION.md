@@ -1,3 +1,27 @@
+## REMEDIATION-C08-20261104 — current automatic booking terms locally verified
+
+Owner «продолжпем» authorized C08 only, CRM-TERMS01/BOT-ZERO-PRICE.
+Canonical PlatformaCRM/codex/ui-testing-toolkit/base64e9f2ce8147001c3c99c1f87fab84d80e065531;233 WIP entries retained.
+Booking/context/automatic fixture and later pipeline target clean initially.
+Contract: output/remediation-c08-20261104/CONTRACT.md. Terms persisted in no-branch
+offers and checked at creation snapshot. Missing/changed terms require fresh agreement;
+zero/null distinct. Existing successful replay/manual compatibility and rights remain.
+Service lock closes catalog interleave; PG nullable JOIN failures in booking/pipeline
+fixed with conversation-only lock. C09 effects not implemented here.
+
+Baseline8:6failed methods/7assertions,2PASS. Focused21/expanded13/final-focused26,
+dependent48 + system/drift PASS. PG initial14:13errors; second14:1error;
+final36PASS on final source, real catalog race + booking/handoff/controlled consumers.
+Evidence/commands/versions/limits: docs/testing/evidence/remediation-c08-20261104.md.
+No workingDB writes, dev off; own runtimes/PG cleaned, old C05 folders untouched.
+No UI/schema/migration/env/permission-policy changes, no full-project/build/browser/
+live/native certification. AI/provider doubles only; actual domain/API/DB exercised.
+
+Plan/CRM/AI/customer-AI/scheduling passports/evidence/registry updated; other contracts
+and README unchanged for unchanged interface/setup/API/policy. No C08 scoped remainder.
+Own local commit only, no push/merge/newCI/deploy. Receipt:
+output/remediation-c08-20261104/final-validation.json. C09 unstarted.
+
 ## REMEDIATION-C07-20261104 — telemetry URL confidentiality locally verified
 
 Owner «далее» authorizes C07 FU-FE-02 only. Canonical PlatformaCRM/current
