@@ -1,3 +1,11 @@
+REMEDIATION-C07-20261104: frontend telemetry bearer URL leak closed locally.
+Sentry final hooks/PostHog enriched events/Plausible manual URLs sanitized;
+PostHog flags/replay disabled; sensitive Plausible referrer suppresses tracking.
+Node+actual SDK Chromium20 PASS; actual Plausible2 scenarios PASS;
+safe build/types/i18n6682 PASS. WorkingDB unchanged, dev off, foreign WIP retained.
+Evidence: docs/testing/evidence/remediation-c07-20261104.md. Own local commit only;
+no push/newCI/deploy/live ingestion. C08 not started; C05 cleanup limitation unchanged.
+
 REMEDIATION-C06-20261104: ownerless Inbox draft adoption closed locally.
 Only user/business/conversation drafts restore; legacy values remain unread/unchanged.
 BEFORE8:2FAIL/6PASS; AFTER14PASS; browser4PASS; safe build/types/i18n6682 PASS.

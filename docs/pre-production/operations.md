@@ -1,3 +1,15 @@
+## C07 — конфиденциальность URL телеметрии, 04.11.2026
+
+Frontend Sentry/PostHog/Plausible заменяют reset-password, invite и invitation-preview
+bearer URLs шаблонами в проверенных payload, включая вложенные/кодированные значения
+и автоматически добавленные metadata. Обычные события и URL сохранены. PostHog
+replay и неиспользуемые flags/remote-config отключены: эти каналы обходят before_send.
+Plausible manual получает явный безопасный URL; при чувствительном referrer tracker
+не запускается весь срок жизни документа, поскольку legacy SDK сам читает referrer.
+Включение дополнительных SDK-каналов требует отдельной проверки этого ограничения.
+Это локальная проверка frontend payload, не backend Sentry/live ingestion или
+универсальный PII filter. [Проверки и границы C07](../testing/evidence/remediation-c07-20261104.md).
+
 C04,04.11.2026: source archive uses `bash scripts/make_clean_archive.sh [name.zip]`
 on Linux/WSL with rsync and Python3; standard `python3 -m zipfile` replaces Info-ZIP.
 Flat filename only, default zani-clean.zip; archive prefix zani/ retained. Private
@@ -14,7 +26,7 @@ message arguments, exception chains and allowlisted context with the shared
 credential-pattern sanitizer; error type/frames/request correlation remain.
 Quoted multiword/escaped/newline credential assignments are fully masked.
 Do not log raw sensitive payloads: arbitrary unlabeled values cannot be inferred
-as secrets. Sentry/other handlers/external pipelines are separate, unverified sinks;
+as secrets. Backend Sentry/other handlers/external pipelines remain unverified sinks;
 send_default_pii=False alone is not a redaction proof. No live telemetry sent.
 [Local C03 evidence](../testing/evidence/remediation-c03-20261104.md).
 

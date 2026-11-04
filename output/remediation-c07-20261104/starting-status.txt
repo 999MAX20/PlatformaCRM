@@ -1,0 +1,233 @@
+ M .env.example
+ M README.md
+ M STATUS.md
+ M apps/activities/serializers.py
+ M apps/activities/tests_write_boundaries.py
+ M apps/activities/timeline_queries.py
+ M apps/activities/views.py
+ M apps/ai_core/assistant.py
+ M apps/ai_core/recommendations.py
+ M apps/ai_core/serializers.py
+ M apps/analytics/crm_metrics.py
+ M apps/analytics/reports.py
+ M apps/analytics/views.py
+ M apps/clients/serializers.py
+ M apps/conversations/inbox_context.py
+ M apps/conversations/inbox_serializers.py
+ M apps/conversations/inbox_views.py
+ M apps/core/crm_cards.py
+ M apps/core/export_access.py
+ M apps/core/import_export.py
+ M apps/core/production_audit.py
+ M apps/core/production_rules.py
+ M apps/core/serializers.py
+ M apps/core/tests_import_job_boundaries.py
+ M apps/core/work_queues.py
+ M apps/crm/selectors.py
+ M apps/crm/serializers.py
+ M apps/crm/views.py
+ M apps/crm/workspace.py
+ M apps/integrations/provider_rollout.py
+ M apps/leads/serializers.py
+ M apps/leads/tests_assignment_patch.py
+ M apps/leads/views.py
+ M apps/leads/workspace.py
+ M apps/notifications/delivery.py
+ M apps/notifications/models.py
+ M apps/notifications/serializers.py
+ M apps/notifications/tests.py
+ M apps/notifications/tests_bell.py
+ M apps/notifications/views.py
+ M apps/outreach/imports.py
+ M apps/outreach/serializers.py
+ M apps/outreach/services.py
+ M apps/outreach/tests.py
+ M apps/outreach/views.py
+ M apps/pricing/serializers.py
+ M apps/pricing/services.py
+ M apps/pricing/views.py
+ M apps/scheduling/serializers.py
+ M apps/scheduling/views.py
+ M apps/services/services.py
+ M apps/tasks/serializers.py
+ M apps/tasks/tests.py
+ M apps/tasks/views.py
+ M config/settings.py
+ M docs/current/acceptance.md
+ M docs/current/access.md
+ M docs/current/ai.md
+ M docs/current/crm.md
+ M docs/current/frontend.md
+ M docs/current/integrations.md
+ M docs/current/operations.md
+ M docs/current/product.md
+ M docs/current/roadmap.md
+ M docs/documentation-index.json
+ M docs/pre-production/capabilities.md
+ M docs/pre-production/clients.md
+ M docs/pre-production/inbox.md
+ M docs/pre-production/integrations.md
+ M docs/pre-production/leads-deals.md
+ M docs/pre-production/scheduling.md
+ M docs/pre-production/settings-notifications.md
+ M docs/pre-production/tasks-automations.md
+ M docs/testing/evidence/calendar-shared-20261103.md
+ M docs/testing/task-state/PRIMARY-SESSION.md
+ M frontend/e2e/calendar-workspace.spec.ts
+ M frontend/e2e/service-s03.spec.ts
+ M frontend/e2e/state-behavior.spec.ts
+ M frontend/scripts/tests/fallback-surface-policy.test.mjs
+ M frontend/scripts/tests/notification-dedupe.test.mjs
+ M frontend/scripts/tests/notification-header-model.test.mjs
+ M frontend/scripts/tests/route-prefetch.test.mjs
+ M frontend/src/api/bots.ts
+ M frontend/src/api/inbox.ts
+ M frontend/src/api/notifications.ts
+ M frontend/src/api/outreach.ts
+ M frontend/src/api/workQueues.ts
+ M frontend/src/app/providers.tsx
+ M frontend/src/app/router.tsx
+ M frontend/src/components/actions/UndoToastProvider.tsx
+ M frontend/src/components/forms/ClientForm.tsx
+ M frontend/src/components/forms/LeadForm.tsx
+ M frontend/src/components/layout/AppLayout.tsx
+ M frontend/src/components/layout/Header.tsx
+ M frontend/src/components/layout/InboxNotificationEffects.tsx
+ M frontend/src/components/layout/NotificationBell.tsx
+ M frontend/src/components/layout/useNotificationBell.ts
+ M frontend/src/components/notifications/NotificationProvider.tsx
+ M frontend/src/components/notifications/ServiceStatusNotice.tsx
+ M frontend/src/components/notifications/UnreadMessagesNotice.tsx
+ M frontend/src/components/notifications/notificationPolicy.ts
+ M frontend/src/components/ui/ConnectivityBanner.tsx
+ M frontend/src/components/ui/ConnectivityStatus.tsx
+ M frontend/src/components/ui/FallbackSurfaces.tsx
+ M frontend/src/components/ui/FieldErrorSummary.tsx
+ M frontend/src/components/ui/StatusNotice.tsx
+ M frontend/src/features/account/AccountPage.tsx
+ M frontend/src/features/analytics/FinancialSummary.tsx
+ M frontend/src/features/bots/BotDetailPage.tsx
+ M frontend/src/features/calendar/CalendarPage.tsx
+ M frontend/src/features/calendar/components/AppointmentDrawerPanel.tsx
+ M frontend/src/features/calendar/components/CalendarAppointmentCards.tsx
+ M frontend/src/features/clients/ClientsPage.tsx
+ M frontend/src/features/clients/components/ClientsModals.tsx
+ M frontend/src/features/clients/utils.ts
+ M frontend/src/features/conversations/ConversationsPage.tsx
+ M frontend/src/features/dashboard/OperationalDashboard.tsx
+ M frontend/src/features/deals/components/DealDetailPanel.tsx
+ M frontend/src/features/deals/hooks/useDealMetrics.ts
+ M frontend/src/features/deals/utils/dealHelpers.ts
+ M frontend/src/features/leads/hooks/useLeadSelectionContext.ts
+ M frontend/src/features/leads/hooks/useLeadsPageHeader.ts
+ M frontend/src/features/leads/utils/leadFormat.tsx
+ M frontend/src/features/outreach/OutreachPage.tsx
+ M frontend/src/features/resources/ResourcesPage.tsx
+ M frontend/src/features/resources/components/ResourceCreateForm.tsx
+ M frontend/src/features/resources/components/ResourceEditModal.tsx
+ M frontend/src/features/tasks/components/TaskFormModal.tsx
+ M frontend/src/hooks/useEntityData.ts
+ M frontend/src/lib/i18n/en.ts
+ M frontend/src/lib/i18n/en/support.ts
+ M frontend/src/lib/i18n/kk.ts
+ M frontend/src/lib/i18n/kk/support.ts
+ M frontend/src/lib/i18n/ru.ts
+ M frontend/src/lib/i18n/ru/support.ts
+ M frontend/src/lib/prefetch.ts
+ M frontend/src/styles.css
+ M frontend/src/types/index.ts
+ M frontend/vite.config.ts
+ M requirements.in
+ M requirements.txt
+?? .agents/skills/zani-audit-ui-purpose/
+?? apps/activities/tests_note_read_scope.py
+?? apps/ai_core/tests_approval_binding.py
+?? apps/analytics/tests_resource_visibility.py
+?? apps/clients/duplicate_visibility.py
+?? apps/clients/field_policy.py
+?? apps/clients/tests_duplicate_visibility.py
+?? apps/conversations/read_results.py
+?? apps/conversations/tests_create_read_visibility.py
+?? apps/core/tests_catalog_permissions.py
+?? apps/core/tests_client_import_permissions.py
+?? apps/core/tests_client_pii_projections.py
+?? apps/core/tests_readiness_redaction.py
+?? apps/core/tests_task_preview_context.py
+?? apps/crm/field_policy.py
+?? apps/crm/tests_amount_projections.py
+?? apps/leads/tests_duplicate_visibility.py
+?? apps/notifications/announcement_api.py
+?? apps/notifications/announcements.py
+?? apps/notifications/event_stream.py
+?? apps/notifications/migrations/0006_personal_recipients.py
+?? apps/notifications/migrations/0007_backfill_personal_recipients.py
+?? apps/notifications/personal_selectors.py
+?? apps/notifications/personal_services.py
+?? apps/notifications/read_state.py
+?? apps/notifications/realtime.py
+?? apps/notifications/recipients.py
+?? apps/notifications/service_messages.py
+?? apps/notifications/tests_event_stream.py
+?? apps/notifications/tests_mark_all_access.py
+?? apps/notifications/tests_personal_api.py
+?? apps/notifications/tests_personal_concurrency.py
+?? apps/notifications/tests_personal_migration.py
+?? apps/notifications/tests_personal_recipients.py
+?? apps/notifications/tests_personal_services.py
+?? apps/notifications/tests_realtime.py
+?? apps/notifications/tests_service_messages.py
+?? apps/outreach/tests_automation_status_access.py
+?? apps/outreach/tests_consent_xlsx_limits.py
+?? apps/outreach/tests_mutation_permissions.py
+?? apps/outreach/tests_public_intake_optout.py
+?? apps/outreach/tests_template_safety.py
+?? apps/pricing/tests_business_validation.py
+?? config/notification_asgi.py
+?? docs/testing/evidence/alert-audit-20261103-assets/
+?? docs/testing/evidence/alert-audit-20261103.md
+?? docs/testing/evidence/alert-components-20261102-assets/
+?? docs/testing/evidence/alert-components-20261102-manifest.json
+?? docs/testing/evidence/alert-components-20261102.md
+?? docs/testing/evidence/alert-remediation-20261103-assets/
+?? docs/testing/evidence/alert-remediation-20261103-manifest.json
+?? docs/testing/evidence/alert-remediation-20261103.md
+?? docs/testing/evidence/appointments-ui-audit-20261103-assets/
+?? docs/testing/evidence/appointments-ui-audit-20261103.md
+?? docs/testing/evidence/records-bell-fix-20261103-assets/
+?? docs/testing/evidence/records-bell-fix-20261103-manifest.json
+?? docs/testing/evidence/records-bell-fix-20261103.md
+?? docs/testing/evidence/records-full-audit-20261103-assets/
+?? docs/testing/evidence/records-full-audit-20261103.md
+?? docs/testing/evidence/records-remediation-20261103-assets/
+?? docs/testing/evidence/records-remediation-20261103.md
+?? docs/testing/evidence/records-single-row-20261103-assets/
+?? docs/testing/evidence/records-single-row-20261103.md
+?? docs/testing/evidence/records-toolbar-20261103-assets/
+?? docs/testing/evidence/records-toolbar-20261103.md
+?? docs/testing/evidence/records-workspace-20261102-manifest.json
+?? docs/testing/evidence/records-workspace-20261102.md
+?? docs/testing/evidence/visit-plans-20261102-manifest.json
+?? docs/testing/evidence/visit-plans-20261102.md
+?? docs/testing/ui-purpose-audit-20261102-manifest.json
+?? docs/testing/ui-purpose-audit-20261102.md
+?? docs/testing/uiux-full-20261102-assets/
+?? docs/testing/uiux-full-20261102-manifest.json
+?? docs/testing/uiux-full-20261102.md
+?? frontend/e2e/alert-application.spec.ts
+?? frontend/e2e/alert-components.spec.ts
+?? frontend/e2e/alert-remediation.spec.ts
+?? frontend/e2e/fixtures/alert-components.html
+?? frontend/e2e/fixtures/alert-components.tsx
+?? frontend/e2e/notification-refactor.spec.ts
+?? frontend/e2e/records-bell-recovery.spec.ts
+?? frontend/playwright.alert-app.config.ts
+?? frontend/playwright.alert-remediation.config.ts
+?? frontend/playwright.alerts.config.ts
+?? frontend/playwright.records-bell.config.ts
+?? frontend/scripts/tests/announcement-events.test.mjs
+?? frontend/scripts/tests/notification-cache.test.mjs
+?? frontend/src/api/announcementEventStream.ts
+?? frontend/src/api/announcementEvents.ts
+?? frontend/src/components/notifications/NotificationHost.tsx
+?? frontend/src/features/notifications/
+?? frontend/src/lib/notificationCache.ts

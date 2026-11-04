@@ -1,0 +1,24 @@
+{
+  "base": "f928d0f1424ed86842d0f36f28a7256bdb3dba99",
+  "source_sha256": {
+    "frontend/src/lib/monitoring.ts": "f1951e7addaeb4372e8efd4efb48510fc6ecf602390b3eac9587093aef89648b",
+    "frontend/src/lib/telemetryPrivacy.ts": "f61a6d87db490e2bf2b66ad1afc40160b92879aefdce5ae0cb2b7fd5cc1a0aeb",
+    "frontend/src/lib/plausibleMonitoring.ts": "91cb676f23497ca042e56e802d5fd135355900b0843762c7dab0976182279128",
+    "frontend/scripts/tests/telemetry-privacy.test.mjs": "c53b82e272c4f0c8da3d4e5ce144f670b2c67c4dd046320797580262436748cd",
+    "frontend/scripts/tests/telemetry-sdk-browser.test.mjs": "0bfb44fa19eb1709059657ad6de92e01c803d6a202ee988e2617e40442cf5f69"
+  },
+  "raw_log_sha256": {
+    "sdk-baseline.log.gz": "a10edf8bec372828f330ae8c2d7fe15b99266acbdb84b37ba9f098149254406c",
+    "node-completion.log.gz": "2fd2334908617e113c41051b3c4dcc1f8225a02115e3f247e679b7318d2349dc",
+    "build.log.gz": "7517442d4efb5f058f9c8178cb11ea2f02de859ff6eb3d7e02e673a59f824ff1"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "node_and_actual_sdk_browser_tests": 20,
+  "plausible_actual_script_scenarios": 2,
+  "i18n_keys": 6682,
+  "foreign_source_paths_preserved": 186,
+  "sentry_version": "10.56.0",
+  "posthog_version": "1.379.3",
+  "plausible_script_sha256": "83b7338c1ef8e609c5a530233fa3fafffaf4cd9387da7d56c5a3c9b3e0e991df"
+}

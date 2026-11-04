@@ -1,3 +1,15 @@
+## C07 — конфиденциальность URL телеметрии, 04.11.2026
+
+Frontend Sentry/PostHog/Plausible заменяют reset-password, invite и invitation-preview
+bearer URLs шаблонами в проверенных payload, включая вложенные/кодированные значения
+и автоматически добавленные metadata. Обычные события и URL сохранены. PostHog
+replay и неиспользуемые flags/remote-config отключены: эти каналы обходят before_send.
+Plausible manual получает явный безопасный URL; при чувствительном referrer tracker
+не запускается весь срок жизни документа, поскольку legacy SDK сам читает referrer.
+Включение дополнительных SDK-каналов требует отдельной проверки этого ограничения.
+Это локальная проверка frontend payload, не backend Sentry/live ingestion или
+универсальный PII filter. [Проверки и границы C07](../testing/evidence/remediation-c07-20261104.md).
+
 ## C06 — авторство черновиков Inbox, 04.11.2026
 
 Редактор восстанавливает только черновик с ключом user/business/conversation.

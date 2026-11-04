@@ -1,10 +1,9 @@
+import { sanitizeTelemetry, redactTelemetryUrls } from "./telemetryPrivacy";
+import { initPlausibleMonitoring, trackPlausibleEvent } from "./plausibleMonitoring";
+
 type MonitoringContext = Record<string, unknown>;
 type SentryModule = typeof import("@sentry/react");
 type PosthogModule = typeof import("posthog-js");
-
-type MonitoringWindow = Window & {
-  plausible?: (event: string, options?: { props?: MonitoringContext }) => void;
-};
 
 let sentryEnabled = false;
 let posthogEnabled = false;
@@ -19,6 +18,10 @@ export function initFrontendMonitoring() {
     sentryPromise = import("@sentry/react").then((module) => {
       module.init({
         dsn: sentryDsn,
+        beforeSend: event => sanitizeTelemetry(event),
+        beforeSendTransaction: event => sanitizeTelemetry(event),
+        beforeSendSpan: span => sanitizeTelemetry(span),
+        beforeBreadcrumb: breadcrumb => sanitizeTelemetry(breadcrumb),
         environment: import.meta.env.MODE,
         tracesSampleRate: Number(import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE || 0),
       });
@@ -34,6 +37,11 @@ export function initFrontendMonitoring() {
       module.default.init(posthogKey, {
         api_host: import.meta.env.VITE_POSTHOG_HOST || "https://app.posthog.com",
         capture_pageview: false,
+        disable_session_recording: true,
+        // Flags transmit initial URL/referrer properties outside before_send.
+        advanced_disable_flags: true,
+        advanced_disable_feature_flags: true,
+        before_send: event => sanitizeTelemetry(event),
       });
       posthogModule = module;
       posthogEnabled = true;
@@ -41,15 +49,7 @@ export function initFrontendMonitoring() {
     });
   }
 
-  const plausibleDomain = import.meta.env.VITE_PLAUSIBLE_DOMAIN;
-  const monitoringWindow = window as MonitoringWindow;
-  if (plausibleDomain && !monitoringWindow.plausible && !document.querySelector("script[data-domain][src*='plausible']")) {
-    const script = document.createElement("script");
-    script.defer = true;
-    script.dataset.domain = plausibleDomain;
-    script.src = "https://plausible.io/js/script.js";
-    document.head.appendChild(script);
-  }
+  initPlausibleMonitoring(import.meta.env.VITE_PLAUSIBLE_DOMAIN);
 }
 
 export function captureFrontendError(error: unknown, context?: MonitoringContext) {
@@ -65,8 +65,9 @@ export function captureFrontendError(error: unknown, context?: MonitoringContext
 }
 
 export function trackFrontendEvent(event: string, properties?: MonitoringContext) {
-  const monitoringWindow = window as MonitoringWindow;
-  if (posthogEnabled && posthogModule) posthogModule.default.capture(event, properties);
-  else if (posthogPromise) void posthogPromise.then((module) => module.default.capture(event, properties));
-  monitoringWindow.plausible?.(event, properties ? { props: properties } : undefined);
+  const safeEvent = redactTelemetryUrls(event);
+  const safeProperties = sanitizeTelemetry(properties);
+  if (posthogEnabled && posthogModule) posthogModule.default.capture(safeEvent, safeProperties);
+  else if (posthogPromise) void posthogPromise.then((module) => module.default.capture(safeEvent, safeProperties));
+  trackPlausibleEvent(safeEvent, safeProperties);
 }

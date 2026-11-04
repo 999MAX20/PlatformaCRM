@@ -1,3 +1,28 @@
+## REMEDIATION-C07-20261104 — telemetry URL confidentiality locally verified
+
+Owner «далее» authorizes C07 FU-FE-02 only. Canonical PlatformaCRM/current
+codex/ui-testing-toolkit/basef928d0f1424ed86842d0f36f28a7256bdb3dba99;233 foreign WIP entries preserved.
+Monitoring clean at start; only three telemetry production files/two tests changed.
+Pre-edit contract/start snapshot: output/remediation-c07-20261104/CONTRACT.md.
+Independent boundary investigation and one candidate review. Review found flags
+bypass; actual SDK browser reproduced and fixed by disabling unused flags channels.
+
+BEFORE installed Sentry retained synthetic token; AFTER Node/actual Chromium SDK20PASS,
+Plausible actual legacy v37 two scenarios PASS; safe build/types/i18n6682 PASS.
+No external ingestion; actual SDK transports intercepted, synthetic credentials only.
+Plausible sensitive referrer suppresses tracking for document lifetime; ordinary
+events preserved. Replay/flags disabled. Evidence, exact commands/initial harness
+failures/limits: docs/testing/evidence/remediation-c07-20261104.md.
+No backend/API/schema/permissions/notification/BusinessEvent/AI change. WorkingDB
+unchanged, dev off, browsers closed; no full-project/PG/live/native certification.
+Previous C05 retained-temp cleanup limitation not retried.
+
+Plan/frontend/operations/passport/evidence/registry consistent. Other contracts/README
+unchanged for unchanged server/setup/API/business workflow. C07 has no code/evidence/
+environment/owner-decision remainder in scope. Own local commit only; no push/merge/
+deploy/newCI. Receipt output/remediation-c07-20261104/final-validation.json.
+Next C08 remains unstarted.
+
 ## REMEDIATION-C06-20261104 — draft provenance locally verified
 
 Owner continued C06, stopped during read-only preparation, then explicitly resumed.
