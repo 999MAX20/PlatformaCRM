@@ -1,3 +1,23 @@
+## AUDIT-REMEDIATION-PLAN-20261104 — cycle list prepared
+
+Owner requested grouping findings into one-cycle changes in a new file before
+implementation. Scope this step: documentation only, no product fixes. New active
+detail plan: docs/current/audit-remediation-cycles.md, subordinate to existing
+roadmap and immutable audit87finding registry.63 cycles=50current+13conditional;
+REQ01/02/04 deliberately split, UI14 aliases ATTACHMENT-RETRY;6environment gates
+remain separate. Each cycle has observable result, focused/closure checks and
+dependencies; no arbitrary time guarantee or automatic multi-cycle execution.
+
+Canonical root C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit;
+base58935fa05469f077e1a4c45867cac02692ab64b5;233pre-existing dirty entries retained.
+Verification plan: docs diff/index/committed-range hygiene, links, all87IDs and
+alias/duplicate/dependency consistency, preserve foreign WIP. No installs/build/
+DB/browser needed for this docs-only step. Result receipts and exact own-index
+save: output/remediation-plan-20261104. Local commit only; previous explicit
+no-push/merge/deploy boundary retained. No new business/permission/API/AI policy,
+migration, notification or BusinessEvent behavior; other contracts/passports
+need no changes. Next implementation: C01(UI31/VERIFY02), not started by this plan.
+
 ## FULL-AUDIT-20261104 — file/static audit complete; dynamic limits explicit
 
 Owner-expanded19-section audit completed all feasible local reading/reconciliation

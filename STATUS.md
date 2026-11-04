@@ -1,3 +1,9 @@
+AUDIT-REMEDIATION-PLAN-20261104: owner-requested cycle list prepared.
+87 findings mapped without omissions:50 current CRM cycles +13 conditional cycles.
+Plan: docs/current/audit-remediation-cycles.md. First C01 protects isolated verification;
+next C02 fixes analytics source permissions. No implementation started in this step.
+Docs-only checks; own local save only, prior no-push/deploy boundary preserved.
+
 FULL-AUDIT-20261104: file/static audit complete on d27044b1 + preserved WIP.
 127843 paths;5734 own-text;941 backend modules/413 process modules;976 API operations,
 17jobs;95routes/3014UI instances;1557 requirement traces. Registry checks PASS.
