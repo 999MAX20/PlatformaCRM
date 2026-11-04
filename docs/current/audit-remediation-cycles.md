@@ -1,9 +1,9 @@
 # Исправления по полному аудиту: рабочие циклы
 
-Статус: **C01–C09 закрыты локально; остальные циклы не начаты**. Дата: 04.11.2026.
+Статус: **C01–C10 закрыты локально; остальные циклы не начаты**. Дата: 04.11.2026.
 C01 исправляет изоляцию helpers, predicates и recovery fixture; проверки и границы
 записаны в [evidence](../testing/evidence/remediation-c01-20261104.md).
-Следующий исполняемый цикл — **C10**. Один последующий
+Следующий исполняемый цикл — **C11**. Один последующий
 «приступай/продолжай» означает один следующий цикл, а не автоматическое выполнение
 всего списка. Это детализация существующих находок, не новый независимый backlog.
 
@@ -85,7 +85,7 @@ scope; таблица не запускает все циклы автомати
 | **C07 — Чувствительные URL в мониторинге**; закрыт локально: [evidence](../testing/evidence/remediation-c07-20261104.md), basef928d0f1 + C07 delta | FU-FE-02 | Optional monitoring очищает bearer-части URL до формирования отправляемого события. | **U PASS**: Node/actual SDK browser20PASS, actual Plausible2 scenarios; safe build/types/i18n. Final payload sanitization; PostHog flags/replay disabled; sensitive Plausible referrer suppresses tracker. C07 без scoped остатка; no push/live. | — |
 | **C08 — Актуальные условия автоматической записи**; закрыт локально: [evidence](../testing/evidence/remediation-c08-20261104.md), base64e9f2ce + C08 delta | CRM-TERMS01, BOT-ZERO-PRICE | Изменившиеся цена/длительность отклоняются до создания записи; нулевая цена отличается от отсутствующей. | **B PASS**: BEFORE8:6failed methods/2PASS; SQLite26 focused/48 dependent + system/drift, PG36 final. No-branch/branch terms, missing/changed/null/zero, replay, rights/tenant/handoff, real catalog lock. C08 без scoped остатка; no push/live; C09 effects отдельно. | C01 |
 | **C09 — Контекст и эффекты создания записи**; закрыт локально: [evidence](../testing/evidence/remediation-c09-20261104.md), base1838722a + C09 delta | REQ03, CRM-EVENT01 | Автоматическая запись сохраняет принятые source/assignee defaults и запускает эффекты создания ровно один раз. | **BU PASS**: explicit setting/API/UI; SQLite145 affected with corrected legacy assertion recheck; PG21 real races; migration, role/tenant/default/replay/rollback; browser6/build/types/i18n6685. No scoped remainder; working migration/push/live excluded. | C08 |
-| **C10 — Очистка idempotency receipts**; не начат | IDEMPOTENCY-PRUNE | Prune не удаляет receipt, обновлённый после выборки просроченных строк. | **B**: Детерминированное interleave select→renew→delete; unchanged expired control; PostgreSQL race. | C01 |
+| **C10 — Очистка idempotency receipts**; закрыт локально: [evidence](../testing/evidence/remediation-c10-20261104.md), basefa8a12b2 + C10 delta | IDEMPOTENCY-PRUNE | Prune не удаляет receipt, обновлённый после выборки просроченных строк. | **B PASS**: BEFORE3:2FAIL/1PASS; focused3/dependent23/system/drift; PG8 real connections, renewal/result/replay, one Task effect and expired control. No scoped remainder; no push/live. | C01 |
 | **C11 — Владение задачей экспорта**; не начат | EXPORT-STALE-FINISH | Старый worker не перезаписывает завершение новой попытки и не публикует устаревший файл. | **B**: Claim/reclaim/new success/old finish, retry и безопасная очистка старого output; PostgreSQL concurrency. | C10 |
 | **C12 — Владение исходящей отправкой**; не начат | OUTBOUND-STALE-FINISH | Generic outbound completion учитывает текущую попытку; существующее fencing Ycloud сохраняется. | **B**: Старое/актуальное completion, reclaim/retry/unknown outcome; без реальной доставки. | C10 |
 | **C13 — Откат при отказе аудита**; не начат | ATTACHMENT-AUDIT-ROLLBACK, CONNECTOR-AUDIT | Неуспешный audit не оставляет частично изменённые attachment/config/credential данные. | **B**: Fault injection перед commit, прежние значения/связи сохранены, happy path пишет audit один раз; отдельный tenant control каждого сервиса. | C01 |

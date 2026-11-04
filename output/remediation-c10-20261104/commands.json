@@ -1,0 +1,20 @@
+{
+  "python": ".venv/Scripts/python.exe",
+  "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+  "runner": "run_checks.py <phase> <labels>",
+  "baseline_and_focused": [
+    "apps.core.tests_idempotency_prune.IdempotencyPruneTests"
+  ],
+  "completion": [
+    "apps.core.tests_idempotency_prune.IdempotencyPruneTests",
+    "apps.core.tests_business_flows_e2e.CrmBusinessFlowE2ETests.test_command_claim_rejects_concurrent_processing_and_reclaims_stale_lock",
+    "apps.core.tests_business_flows_e2e.CrmBusinessFlowE2ETests.test_command_keys_are_isolated_by_business_and_actor",
+    "apps.core.tests_business_flows_e2e.CrmBusinessFlowE2ETests.test_failed_command_can_retry_and_expired_results_are_pruned",
+    "apps.scheduling.tests_record_commands"
+  ],
+  "system": [
+    "check",
+    "makemigrations --check --dry-run"
+  ],
+  "postgres": "run_pg.py apps.core.tests_idempotency_prune apps.scheduling.tests_record_concurrency"
+}

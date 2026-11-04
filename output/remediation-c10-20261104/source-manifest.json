@@ -1,0 +1,21 @@
+{
+  "base": "fa8a12b2c964cec98078dba77dfc9a8f10e4ac0d",
+  "source_sha256": {
+    "apps/core/idempotency.py": "d0d0df0d46ff9df53b5979206095f1292f321a32052291471a3003c726e050cb",
+    "apps/core/tests_idempotency_prune.py": "a1657294c28f4e2d77869e7c7f7e8576bbeca614be8530f8e2007523212f0ea7"
+  },
+  "raw_log_sha256": {
+    "baseline.log.gz": "6b4f644c2210fa537fc7bee16a50c078c93c382843379b3651ab752b62879db4",
+    "focused.log.gz": "a0b96cdab078cf38fb61a252f882b5841f5a53cc0dc07aba84693d4b85d3c531",
+    "completion.log.gz": "c06830c1a4121ef10ed9ca3851e40cd7c9a1d54f8a85621f792cc5df02d23c92",
+    "postgres-concurrency.log.gz": "dbabb22309278656ff7d8cdb89baf05934b833e9b11a85397e3985ddf545f17f"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "foreign_source_paths_preserved": 186,
+  "focused": 3,
+  "dependent": 23,
+  "postgres": 8,
+  "system_check": "PASS",
+  "migration_drift": "PASS"
+}

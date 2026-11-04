@@ -243,7 +243,7 @@ def prune_expired_crm_commands(*, limit=1000, now=None):
     )
     if not ids:
         return 0
-    deleted, _ = CRMCommandIdempotency.objects.filter(id__in=ids).delete()
+    deleted, _ = CRMCommandIdempotency.objects.filter(id__in=ids, expires_at__lte=now).delete()
     return deleted
 
 

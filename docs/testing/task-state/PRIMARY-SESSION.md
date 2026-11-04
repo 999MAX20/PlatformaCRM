@@ -1,3 +1,24 @@
+## REMEDIATION-C10-20261104 — renewal-safe cleanup locally verified
+
+Owner «продолжаем» authorized C10 IDEMPOTENCY-PRUNE only. Canonical PlatformaCRM,
+codex/ui-testing-toolkit/basefa8a12b2c964cec98078dba77dfc9a8f10e4ac0d;233 foreign WIP entries retained. Target
+core/idempotency.py clean initially. Contract/start snapshot/logs in
+output/remediation-c10-20261104. One-line expiry predicate at DELETE closes reproduced
+select→renew→delete loss; existing model, pruning order/limits/retention reused.
+No new API/schema/env/UI/rights/notification/BusinessEvent/AI behavior.
+
+BEFORE3:2FAIL/1PASS; focused3PASS; completion23PASS including current replay
+permissions/tenant/rollback and isolated command keys; system/drift PASS.
+PG8PASS: real independent connections and real Task effect/replay plus record
+concurrency. Evidence: docs/testing/evidence/remediation-c10-20261104.md.
+No browser/build/full-project/live: only bounded cleanup semantics changed.
+Own isolated runtimes/PG cleaned; workingDB hash unchanged, dev off; C05 retained
+folders untouched. No dependency reinstall. Plan/operations/CRM/passport/registry
+consistent; other contracts/README/roadmap unchanged because workflow/setup/rights
+and broad release acceptance did not change. No scoped C10 remainder.
+Own local commit only, no push/merge/newCI/deploy. C11 not started. Receipt:
+output/remediation-c10-20261104/final-validation.json.
+
 ## REMEDIATION-C09-20261104 — context and creation effects locally verified
 
 Owner «продолжаем» authorized C09 REQ03/CRM-EVENT01 only. Base1838722ac12ca08c01c6cfda23bcb2224371dd29, canonical

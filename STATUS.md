@@ -1,3 +1,10 @@
+REMEDIATION-C10-20261104: idempotency pruning race closed locally.
+DELETE rechecks original expiry cutoff; renewed claim/result and replay survive.
+BEFORE3:2FAIL/1PASS; focused3/dependent23/PG8 PASS; system/drift PASS.
+WorkingDB unchanged, dev off, foreign WIP preserved. Evidence:
+docs/testing/evidence/remediation-c10-20261104.md. Own local commit only;
+no push/newCI/deploy/live. C11 not started; C05 retained-temp limitation unchanged.
+
 REMEDIATION-C09-20261104: context and creation effects closed locally.
 Explicit Business AI assignee setting/UI, current validation, source conversation;
 one transactional BusinessEvent/followups/notification/automation, replay/rollback.

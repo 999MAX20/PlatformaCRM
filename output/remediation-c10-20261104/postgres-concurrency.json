@@ -1,0 +1,22 @@
+{
+  "command": [
+    "C:\\Users\\user\\Desktop\\PlatformaCRM\\.venv\\Scripts\\python.exe",
+    "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\remediation-c10-20261104\\manage_isolated.py",
+    "test",
+    "apps.core.tests_idempotency_prune",
+    "apps.scheduling.tests_record_concurrency",
+    "--noinput",
+    "--keepdb",
+    "-v",
+    "2"
+  ],
+  "returncode": 0,
+  "duration_seconds": 72.97,
+  "engine": "isolated native PostgreSQL17; loopback ephemeral cluster",
+  "labels": [
+    "apps.core.tests_idempotency_prune",
+    "apps.scheduling.tests_record_concurrency"
+  ],
+  "teardown_sessions": [],
+  "teardown": "PASS; own loopback port and absolute temporary data_directory verified; explicitly closed test_audit sessions and dropped disposable database"
+}

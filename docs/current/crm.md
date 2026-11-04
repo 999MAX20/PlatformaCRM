@@ -1,3 +1,14 @@
+## C10 — очистка записей повторных команд, 04.11.2026
+
+prune_expired_crm_commands повторно проверяет expires_at по исходному cutoff
+непосредственно в DELETE. Запись, продлённая после выборки ID посредством
+begin/run_idempotent_crm_command, сохраняет claim/успешный результат и replay;
+неизменённые просроченные записи удаляются. Порядок, лимит и retention прежние.
+SQLite BEFORE3:2FAIL/1PASS; AFTER3 и dependent23 PASS; PostgreSQL8 PASS, включая
+разные соединения select→renew/commit→delete и реальный Task без повторного создания.
+System/migration drift PASS. No migration/env/UI/workingDB/push/live changes.
+[C10 evidence](../testing/evidence/remediation-c10-20261104.md).
+
 ## C09 — контекст и эффекты создания записи, 04.11.2026
 
 Автоматическая запись сохраняет source_conversation и ответственного из явной
