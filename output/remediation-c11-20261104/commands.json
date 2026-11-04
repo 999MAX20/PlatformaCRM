@@ -1,0 +1,36 @@
+{
+  "python": ".venv/Scripts/python.exe",
+  "root": "C:/Users/user/Desktop/PlatformaCRM",
+  "runner": "run_checks.py <phase> <labels>",
+  "baseline": [
+    "apps.core.tests_export_attempts"
+  ],
+  "focused": [
+    "apps.core.tests_export_attempts",
+    "apps.core.tests_export_access",
+    "apps.core.tests_export_history"
+  ],
+  "expanded": [
+    "apps.core.tests_export_attempts.ExportAttemptTests",
+    "apps.core.tests_export_attempts.ExportAttemptMigrationTests"
+  ],
+  "completion": [
+    "apps.core.tests_export_attempts.ExportAttemptTests",
+    "apps.core.tests_export_access",
+    "apps.core.tests_export_history",
+    "apps.core.tests_import_export.ImportExportTests.test_export_clients_requires_permission_and_writes_audit",
+    "apps.core.tests_import_export.ImportExportTests.test_export_clients_escapes_formula_like_cells",
+    "apps.core.tests_import_export.ImportExportTests.test_staff_cannot_export_deals_without_deal_permission",
+    "apps.core.tests_b5_performance.BackendPerformanceRegressionTests.test_large_entity_export_uses_background_job_and_private_download",
+    "apps.core.tests_b5_performance.BackendPerformanceRegressionTests.test_large_report_export_uses_background_job",
+    "apps.analytics.tests_workspace.AnalyticsWorkspaceTests.test_queued_export_preserves_period_and_uses_workspace",
+    "apps.crm.tests_amount_projections.DealAmountProjectionTests.test_queued_export_renders_redacted_content",
+    "apps.crm.tests_amount_projections.DealAmountProjectionTests.test_allowed_stored_export_cannot_be_downloaded_after_field_revocation",
+    "apps.core.tests_client_pii_projections.LinkedClientProjectionTests.test_stored_parent_export_client_scope_revocation_requires_new_file"
+  ],
+  "system": [
+    "check",
+    "makemigrations --check --dry-run"
+  ],
+  "postgres": "run_pg.py apps.core.tests_export_attempts"
+}

@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -100,6 +101,7 @@ def _create_job(*, business, actor, kind, export_key, parameters, row_count=0):
 
 
 def process_export_job(job_id):
+    claim_token = uuid.uuid4()
     stale_before = timezone.now() - timezone.timedelta(seconds=settings.EXPORT_STALE_SECONDS)
     claimed = ExportJob.objects.filter(id=job_id).filter(
         Q(status=ExportJob.Statuses.PENDING)
@@ -107,11 +109,17 @@ def process_export_job(job_id):
     ).update(
         status=ExportJob.Statuses.RUNNING,
         started_at=timezone.now(),
+        claim_token=claim_token,
         error="",
     )
     if not claimed:
         return ExportJob.objects.filter(id=job_id).first()
-    job = ExportJob.objects.select_related("business", "actor").get(id=job_id)
+    owned = ExportJob.objects.filter(id=job_id, status=ExportJob.Statuses.RUNNING, claim_token=claim_token)
+    job = owned.select_related("business", "actor").first()
+    if job is None:
+        return ExportJob.objects.filter(id=job_id).first()
+    output_name = None
+    published = False
     try:
         from apps.core.export_access import export_access_fingerprint
 
@@ -142,20 +150,23 @@ def process_export_job(job_id):
         if export_access_fingerprint(job, job.actor) != fingerprint:
             raise PermissionDenied("Export access changed during generation. Request a new export.")
         job.parameters_json = {**job.parameters_json, "access_fingerprint_v1": fingerprint}
-        filename = f"{job.export_key}-{job.id}.csv"
+        filename = f"{job.export_key}-{job.id}-{claim_token.hex}.csv"
         job.result_file.save(filename, ContentFile(content), save=False)
-        job.row_count = max(content.count(b"\n") - 1, 0)
-        job.status = ExportJob.Statuses.SUCCEEDED
-        job.completed_at = timezone.now()
-        job.error = ""
-        job.save(update_fields=["result_file", "parameters_json", "row_count", "status", "completed_at", "error", "updated_at"])
+        output_name = job.result_file.name
+        published = owned.update(result_file=output_name, parameters_json=job.parameters_json,
+            row_count=max(content.count(b"\n") - 1, 0), status=ExportJob.Statuses.SUCCEEDED,
+            completed_at=timezone.now(), error="", updated_at=timezone.now()) == 1
     except Exception as exc:
         logger.exception("exports.job_failed", extra={"export_job_id": job.id})
-        job.status = ExportJob.Statuses.FAILED
-        job.completed_at = timezone.now()
-        job.error = sanitize_error_text(str(exc), max_length=1000)
-        job.save(update_fields=["status", "completed_at", "error", "updated_at"])
-    return job
+        owned.update(status=ExportJob.Statuses.FAILED, completed_at=timezone.now(),
+            error=sanitize_error_text(str(exc), max_length=1000), updated_at=timezone.now())
+    finally:
+        if output_name and not published:
+            try:
+                job.result_file.storage.delete(output_name)
+            except Exception:
+                logger.exception("exports.output_cleanup_failed", extra={"export_job_id": job.id})
+    return ExportJob.objects.filter(id=job_id).first()
 
 
 def process_due_export_jobs(limit=50):

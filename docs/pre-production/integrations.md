@@ -1,3 +1,19 @@
+## C11 — владение попыткой экспорта, 04.11.2026
+
+Каждый claim/reclaim ExportJob получает новый внутренний UUID claim_token.
+Успех и ошибка записываются только при совпадении token и текущем status=running.
+Старый worker возвращает актуальную строку и не меняет результат новой попытки.
+Имя CSV включает token; неопубликованный файл проигравшей попытки удаляется по
+собственному storage name, без удаления победившего файла. Ошибка удаления логируется;
+гарантия очистки при аварии процесса/недоступном remote storage здесь не заявляется.
+Existing permissions/fingerprint/download, retry eligibility и ограничения прежние.
+core0013 добавляет nullable token без backfill; история и прежние файлы сохранены,
+token не включён в API. Миграция применена только к disposable DB, рабочая БД прежняя.
+При отдельном rollout необходимо завершить/остановить workers старой версии перед
+работой новой: старый код не проверяет token. Live worker/storage/deploy не проверены.
+SQLite focused20/expanded7/dependent32 и PG9 PASS; system/drift PASS.
+[C11 evidence](../testing/evidence/remediation-c11-20261104.md).
+
 # Внешние каналы и интеграции
 
 ## YCloud TP Lite — локальный первый этап, 29.10.2026

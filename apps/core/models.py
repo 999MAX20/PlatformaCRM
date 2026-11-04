@@ -343,6 +343,7 @@ class ExportJob(SanitizedErrorFieldsMixin, models.Model):
     row_count = models.PositiveIntegerField(default=0)
     result_file = models.FileField(upload_to="exports/%Y/%m/%d/", blank=True)
     error = models.TextField(blank=True)
+    claim_token = models.UUIDField(null=True, blank=True, editable=False)
     started_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

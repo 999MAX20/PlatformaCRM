@@ -1,3 +1,10 @@
+REMEDIATION-C11-20261104: stale export completion closed locally.
+Per-attempt token fences success/failure; unique file names and losing-output cleanup.
+BEFORE3:2FAIL/1PASS; focused20/expanded7/dependent32/PG9 + system/drift PASS.
+Migration core0013 isolated only; workingDB unchanged, dev off, foreign WIP retained.
+Evidence: docs/testing/evidence/remediation-c11-20261104.md. Own local commit only;
+no push/newCI/deploy/live storage. C12 not started; C26 limits/rows unchanged.
+
 REMEDIATION-C10-20261104: idempotency pruning race closed locally.
 DELETE rechecks original expiry cutoff; renewed claim/result and replay survive.
 BEFORE3:2FAIL/1PASS; focused3/dependent23/PG8 PASS; system/drift PASS.

@@ -1,3 +1,31 @@
+## REMEDIATION-C11-20261104 — export attempt ownership locally verified
+
+Owner «продолжаем» authorized C11 EXPORT-STALE-FINISH only. Canonical PlatformaCRM,
+codex/ui-testing-toolkit/base080da13450c91113f2ed292af48f21ffc383d0a9;233 foreign WIP entries retained. Production
+export_jobs/models initially clean. Contract/start snapshot/logs in
+output/remediation-c11-20261104. Explicit UUID per claim; conditional RUNNING/token
+success/failure; unique attempt filename and cleanup of losing/unpublished output.
+Existing row count/limits (C26), queues, retry policy, rights and UI unchanged.
+core0013 nullable internal token; no backfill or working DB migration.
+
+BEFORE3:2FAIL/1PASS; focused20PASS immediately after slice; expanded7PASS includes
+save→reclaim→old finalize, DB failure cleanup, duplicate claim, migration history and
+actual API download of winner. PG9PASS includes two independent workers, old success/
+failure after new commit and migration. Completion32PASS, system/drift PASS; covers
+entity/report/workspace exports, access/history and sensitive field/Client revocation.
+Evidence: docs/testing/evidence/remediation-c11-20261104.md. Controlled CSV generation
+in race tests; real private local files/DB/API. No external provider/storage calls.
+No build/browser/full-project/live gate: existing reachable API flow checked directly.
+
+Integrations/operations/passport/plan/evidence consistent. README/product/CRM/access/
+AI/frontend/roadmap unchanged for unchanged setup/rights/business workflow; C26 and
+broader release acceptance remain open. No scoped C11 code/evidence remainder.
+Actual deployment requires separate migration target and draining old-version workers;
+process crashes/storage deletion outages can leave private orphan outputs (logged).
+WorkingDB hash unchanged, dev off; own runtimes/PG cleaned, old C05 folders retained.
+Own local commit only, no push/merge/newCI/deploy. C12 not started. Receipt:
+output/remediation-c11-20261104/final-validation.json.
+
 ## REMEDIATION-C10-20261104 — renewal-safe cleanup locally verified
 
 Owner «продолжаем» authorized C10 IDEMPOTENCY-PRUNE only. Canonical PlatformaCRM,

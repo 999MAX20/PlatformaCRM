@@ -1,0 +1,25 @@
+{
+  "base": "080da13450c91113f2ed292af48f21ffc383d0a9",
+  "source_sha256": {
+    "apps/core/export_jobs.py": "7f3cad236a83e90a0ee30bebeb60c7c6825fca0e557274b99e4e684f86cce358",
+    "apps/core/models.py": "7a95bace4a2952c9faab25e53b74ad779eaa8b7ac3cd452edcf96343031de19f",
+    "apps/core/migrations/0013_exportjob_claim_token.py": "438bf775344db6bcb3408b3b29e5a238d35356171dd595cc03645879f4c07ebc",
+    "apps/core/tests_export_attempts.py": "42a6fc1286419beee085909d205b391b1058b6887970c76b8d6b22aa25884e74"
+  },
+  "raw_log_sha256": {
+    "baseline.log.gz": "0e2a475017e1a1782eff9d9f324bf360ced7850d8df8ba7e27016e8d612b8b85",
+    "focused.log.gz": "bbdf71f3d28682fa7045f4e0a9c26a22677714ac70d7033c0d33f382eefb420b",
+    "expanded.log.gz": "f33f7e9a4ce8847ff3ddcd43b026856a51d3cd5ed03a71b2ec18bae7146cf4e7",
+    "completion.log.gz": "ca948ecd23b048166d079406307cb088fdb7696fe48c26c1b3aa200ded9ad4ef",
+    "postgres-concurrency.log.gz": "2adf40331483ea5f80d9befa2bfccbfb4a8e9f39765d877f0149a79e269b8fef"
+  },
+  "working_db_unchanged": true,
+  "dev_ports_closed": true,
+  "foreign_source_paths_preserved": 186,
+  "focused": 20,
+  "expanded": 7,
+  "dependent": 32,
+  "postgres": 9,
+  "system_check": "PASS",
+  "migration_drift": "PASS"
+}
