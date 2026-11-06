@@ -4,6 +4,7 @@ from urllib.parse import quote
 import json
 
 import environ
+from django.core.exceptions import ImproperlyConfigured
 
 from config.local_connector_keys import LOCAL_KEY_ID, load_or_create_local_connector_keyring
 
@@ -99,7 +100,7 @@ def build_database_url():
     )
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    "apps.accounts.admin_config.MfaAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -277,10 +278,12 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_THROTTLE_RATES": {
         "auth_login": env("AUTH_LOGIN_RATE", default="10/min"),
+        "auth_admin_login": env("AUTH_ADMIN_LOGIN_RATE", default="5/min"),
         "auth_refresh": env("AUTH_REFRESH_RATE", default="30/min"),
         "auth_social": env("AUTH_SOCIAL_RATE", default="20/min"),
         "auth_signup": env("AUTH_SIGNUP_RATE", default="10/hour"),
         "auth_password_reset": env("AUTH_PASSWORD_RESET_RATE", default="5/hour"),
+        "auth_password_change": env("AUTH_PASSWORD_CHANGE_RATE", default="5/min"),
         "auth_profile": "10/min",
         "auth_email_change": "5/hour",
         "auth_mfa": env("AUTH_MFA_RATE", default="10/min"),
@@ -318,6 +321,14 @@ SOCIAL_AUTH_AUTO_CREATE_MERCHANT = env.bool("SOCIAL_AUTH_AUTO_CREATE_MERCHANT", 
 
 CELERY_BROKER_URL = env("REDIS_URL", default="redis://redis:6379/0")
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CACHES = {
+    "default": env.cache_url_config(env("DJANGO_CACHE_URL", default=CELERY_BROKER_URL)),
+}
+CACHES["default"]["KEY_PREFIX"] = "platforma"
+if CACHES["default"]["BACKEND"] == "django.core.cache.backends.redis.RedisCache":
+    CACHES["default"].setdefault("OPTIONS", {}).update(socket_connect_timeout=2, socket_timeout=2)
+if IS_PRODUCTION_LIKE_ENVIRONMENT and CACHES["default"]["BACKEND"] != "django.core.cache.backends.redis.RedisCache":
+    raise ImproperlyConfigured("Staging and production require a shared Redis DJANGO_CACHE_URL.")
 CELERY_TASK_DEFAULT_QUEUE = env("CELERY_TASK_DEFAULT_QUEUE")
 CELERY_TASK_ROUTES = {
     "apps.integrations.*": {"queue": "integrations"},

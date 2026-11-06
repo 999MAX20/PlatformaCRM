@@ -67,6 +67,7 @@ SAFE_ENV = {
     "SESSION_COOKIE_SECURE": "False",
     "CSRF_COOKIE_SECURE": "False",
     "REDIS_URL": "memory://",
+    "DJANGO_CACHE_URL": "locmemcache://isolated-quality-gate",
     "CELERY_TASK_ALWAYS_EAGER": "True",
     "CELERY_TASK_STORE_EAGER_RESULT": "False",
     "AUTOMATIONS_RUN_INLINE": "True",

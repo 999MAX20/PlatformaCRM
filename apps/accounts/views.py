@@ -53,6 +53,8 @@ class CurrentUserView(APIView):
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth_password_change"
 
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data, context={"request": request})

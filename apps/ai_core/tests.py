@@ -551,9 +551,14 @@ class AICoreFoundationTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 201)
-        self.assertGreaterEqual(len(response.data["suggested_actions"]), 3)
+        self.assertCountEqual(
+            [action["tool_name"] for action in response.data["suggested_actions"]],
+            ["summarize_conversation", "create_task"],
+        )
         self.assertEqual(Task.objects.count(), 0)
-        self.assertTrue(AIToolCallLog.objects.filter(business=self.business, status="suggested").exists())
+        logs = AIToolCallLog.objects.filter(business=self.business, conversation=conversation)
+        self.assertEqual(logs.count(), 2)
+        self.assertTrue(all(log.status == "suggested" and not log.output_json for log in logs))
 
     def test_ai_tool_execute_creates_task_after_confirmation(self):
         bot = Bot.objects.create(business=self.business, name="Task tool bot")

@@ -231,6 +231,17 @@ Support-note требует platform_admin (с существующей superuse
 Primary factor выдаёт одноразовый challenge, не JWT-сессию до проверки фактора.
 TOTP replay отсекается счётчиком, recovery codes одноразовые и хранятся хешами;
 TOTP secrets зашифрованы keyring. Секреты/коды/refresh/challenge не логируются.
+Вход Django admin применяет ту же политику MFA: TOTP или одноразовый recovery code
+проверяется до создания административной сессии. Требуемый enrollment выполняется
+через существующий вход CRM. Каждый admin route проверяет proof пользователя,
+auth epoch и устройства; прежняя password-only сессия не обходит включённую MFA.
+Вход admin ограничен по IP и идентификатору (`AUTH_ADMIN_LOGIN_RATE`, 5/min),
+смена пароля — по пользователю (`AUTH_PASSWORD_CHANGE_RATE`, 5/min) до проверки
+пароля/фактора. Общий Django Redis cache хранит квоты всех web workers;
+`DJANGO_CACHE_URL` по умолчанию использует `REDIS_URL`. Недоступный cache не
+разрешает попытку. DRF read/write throttling остаётся базовым abuse-контролем,
+не атомарным пределом для одновременных запросов. Изолированные проверки явно
+используют отдельный locmem cache; staging/production такой backend отвергают.
 Password/security/MFA reset проверяют текущий пароль/фактор по своему контракту,
 отзывают сессии и audit. Reset обязательной MFA требует повторного enrollment,
 не выдаёт MFA-free privileged session. Step-up привязан к user/auth epoch.

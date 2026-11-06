@@ -1,0 +1,28 @@
+{% extends "admin/login.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'accounts/admin_login.css' %}">{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+<p class="errornote" role="alert">{% translate "Please correct the errors below." %}</p>
+{% endif %}
+{% for error in form.non_field_errors %}
+<p class="errornote" role="alert">{{ error }}</p>
+{% endfor %}
+<div id="content-main">
+  <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+    {% for field in form %}
+    <div class="form-row">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}<p class="help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% url 'admin_password_reset' as password_reset_url %}
+    {% if password_reset_url %}<div class="password-reset-link"><a href="{{ password_reset_url }}">{% translate 'Forgotten your login credentials?' %}</a></div>{% endif %}
+    <div class="submit-row"><input type="submit" value="{% translate 'Log in' %}"></div>
+  </form>
+</div>
+{% endblock %}
