@@ -30,6 +30,7 @@ def process_due_notifications(*, limit=100):
             Q(status=Notification.Statuses.PENDING, send_at__lte=now)
             | Q(status=Notification.Statuses.RETRY_SCHEDULED, next_retry_at__lte=now)
         )
+        .exclude(channel=Notification.Channels.SYSTEM)
         .order_by("send_at", "id")
         .values_list("id", flat=True)[:limit]
     )
@@ -44,7 +45,7 @@ def process_due_notifications(*, limit=100):
 def claim_notification(notification_id, *, now=None):
     now = now or timezone.now()
     claimed = (
-        Notification.objects.filter(id=notification_id)
+        Notification.objects.filter(id=notification_id).exclude(channel=Notification.Channels.SYSTEM)
         .filter(
             Q(status=Notification.Statuses.PENDING, send_at__lte=now)
             | Q(status=Notification.Statuses.RETRY_SCHEDULED, next_retry_at__lte=now)
@@ -65,6 +66,8 @@ def claim_notification(notification_id, *, now=None):
 
 
 def deliver_notification(notification, *, claimed=False):
+    if notification.channel == Notification.Channels.SYSTEM:
+        return {"notification_id": notification.id, "status": "skipped", "reason": "Internal notifications are published through the personal feed."}
     if not claimed:
         notification_id = notification.id
         notification = claim_notification(notification_id)

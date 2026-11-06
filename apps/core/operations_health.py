@@ -108,9 +108,14 @@ def _queue_summary():
     pending_runs = AutomationRun.objects.filter(status=AutomationRun.Statuses.PENDING).count()
     running_runs = AutomationRun.objects.filter(status=AutomationRun.Statuses.RUNNING).count()
     retry_runs = AutomationRun.objects.filter(status=AutomationRun.Statuses.RETRY_SCHEDULED).count()
-    failed_notifications = Notification.objects.filter(status=Notification.Statuses.FAILED).count()
-    retry_notifications = Notification.objects.filter(status=Notification.Statuses.RETRY_SCHEDULED).count()
-    due_notifications = Notification.objects.filter(
+    external_notifications = Notification.objects.exclude(channel=Notification.Channels.SYSTEM)
+    internal_notifications = Notification.objects.filter(channel=Notification.Channels.SYSTEM,
+        send_at__lte=timezone.now(), revoked_at__isnull=True).exclude(status=Notification.Statuses.CANCELLED)
+    internal_missing = internal_notifications.filter(recipient_states__isnull=True).count()
+    internal_failed = internal_notifications.filter(status=Notification.Statuses.FAILED).count()
+    failed_notifications = external_notifications.filter(status=Notification.Statuses.FAILED).count()
+    retry_notifications = external_notifications.filter(status=Notification.Statuses.RETRY_SCHEDULED).count()
+    due_notifications = external_notifications.filter(
         status=Notification.Statuses.PENDING,
         send_at__lte=timezone.now(),
     ).count()
@@ -158,6 +163,8 @@ def _queue_summary():
             "stale": stale_export_jobs,
             "failed": failed_export_jobs,
         },
+        "internal_notifications": {"published": internal_notifications.filter(recipient_states__isnull=False).distinct().count(),
+                                   "missing_recipients": internal_missing, "failed": internal_failed},
         "failed_connector_syncs": failed_syncs,
         "failed_webhook_deliveries": failed_webhooks,
         "outbound_messages": outbound_messages,
@@ -165,6 +172,8 @@ def _queue_summary():
         "status": _status_from_failures(
             failed_runs
             + failed_notifications
+            + internal_missing
+            + internal_failed
             + failed_ai_jobs
             + failed_export_jobs
             + stale_export_jobs
@@ -211,6 +220,7 @@ def _unavailable_queue_summary():
         "notifications": {"due": None, "retry_scheduled": None, "failed": None},
         "ai_jobs": {"retry_scheduled": None, "failed": None},
         "export_jobs": {"pending": None, "running": None, "stale": None, "failed": None},
+        "internal_notifications": {"published": None, "missing_recipients": None, "failed": None},
         "failed_connector_syncs": None,
         "failed_webhook_deliveries": None,
         "outbound_messages": {
