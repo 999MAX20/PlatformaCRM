@@ -30,7 +30,7 @@ def ensure_connector_for_source(business, provider, *, name=""):
 
 
 def touch_connector_activity(connector, *, occurred_at=None):
-    if connector is None:
+    if connector is None or connector.status == BusinessConnector.Statuses.DEFERRED:
         return
     update_fields = ["status", "last_error", "last_sync_at", "updated_at"]
     if connector.status != BusinessConnector.Statuses.DISABLED:

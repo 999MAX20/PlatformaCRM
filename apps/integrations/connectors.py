@@ -490,6 +490,9 @@ def _safe_positive_int(value):
 
 
 def run_connector_healthcheck(connector):
+    if connector.status == BusinessConnector.Statuses.DEFERRED:
+        from rest_framework.exceptions import ValidationError
+        raise ValidationError("Deferred connectors must be explicitly resumed before checking.")
     now = timezone.now()
     run = ConnectorSyncRun.objects.create(
         business=connector.business,

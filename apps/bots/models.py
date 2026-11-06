@@ -155,6 +155,7 @@ class BotMessage(SanitizedErrorFieldsMixin, models.Model):
         DELIVERY_UNKNOWN = "delivery_unknown", "Delivery outcome unknown"
         RETRY_SCHEDULED = "retry_scheduled", "Retry scheduled"
         SENT = "sent", "Sent"
+        CANCELLED = "cancelled", "Cancelled"
         FAILED = "failed", "Failed"
 
     class SenderTypes(models.TextChoices):

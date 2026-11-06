@@ -83,6 +83,7 @@ class BusinessConnector(SanitizedErrorFieldsMixin, models.Model):
         NEEDS_ATTENTION = "needs_attention", "Needs attention"
         SYNCING = "syncing", "Syncing"
         FAILED = "failed", "Failed"
+        DEFERRED = "deferred", "Deferred"
         DISABLED = "disabled", "Disabled"
         EXPIRED_CREDENTIALS = "expired_credentials", "Expired credentials"
 
@@ -196,6 +197,7 @@ class ConnectorSyncRun(SanitizedErrorFieldsMixin, models.Model):
         QUEUED = "queued", "Queued"
         RUNNING = "running", "Running"
         SUCCEEDED = "succeeded", "Succeeded"
+        DEFERRED = "deferred", "Deferred"
         FAILED = "failed", "Failed"
 
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="connector_sync_runs")

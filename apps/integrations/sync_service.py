@@ -42,6 +42,8 @@ SYNC_HANDLERS = {
 
 
 def execute_connector_sync(connector):
+    if connector.status == BusinessConnector.Statuses.DEFERRED:
+        raise ValidationError("Deferred connectors must be explicitly resumed before syncing.")
     config = SYNC_HANDLERS.get(connector.provider)
     if config is None:
         raise ValidationError("This connector does not support safe pull sync retry.")
