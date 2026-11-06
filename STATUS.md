@@ -1,3 +1,10 @@
+DEV-MIGRATION-CHECK-20261106: fresh local SQLite backup verified; dev exits0/no warnings.
+branches0003 was already applied by DB-MAINTENANCE; independently confirmed,
+no rollback/reapply. Original pre-migration backup hash/integrity verified too.
+Fresh backup integrity/FK/restore153tables PASS; all six dev services ready/reused.
+No product/schema/data mutation or deployment. Checkpoint/backups (Git-ignored):
+output/dev-migration-check-20261106/CHECKPOINT.md. Prior dev exit2 warning superseded.
+
 DB-MAINTENANCE-20261106: verified backup; local branches0003+scheduling0012 applied.
 All16 businesses have a branch; general-hours duplicate constraint/API recovery.
 Expired tokens3552+blacklist2987 removed; live tokens/revocations unchanged.
