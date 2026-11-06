@@ -10,6 +10,7 @@ from apps.scheduling.models import Appointment, AppointmentMessageSetting, Resou
 from apps.scheduling.services import validate_appointment_availability
 from apps.scheduling.resource_services import create_resource, validate_week, validate_staff_account
 from apps.scheduling.schedule_serializers import WeeklyDaySerializer
+from apps.scheduling.working_hours import working_hours_write
 from apps.branches.models import Branch
 from apps.branches.schedule import appointment_snapshot, resolve_branch
 from apps.branches.access import assert_branch_access
@@ -108,6 +109,14 @@ class ResourceSerializer(serializers.ModelSerializer):
 
 
 class WorkingHoursSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        with working_hours_write(validated_data):
+            return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        with working_hours_write(validated_data, instance):
+            return super().update(instance, validated_data)
+
     class Meta:
         model = WorkingHours
         fields = [

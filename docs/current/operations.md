@@ -1,3 +1,20 @@
+## Локальная БД и очистка токенов, 06.11.2026
+
+По поручению владельца создана и проверена SQLite-копия, применены branches0003
+и scheduling0012 к локальной db.sqlite3. После миграций данные вне филиалов/журнала
+миграций сохранились; затем удалены только просроченные JWT и связанные blacklist.
+[Backup, SHA256, восстановление и проверки](../testing/evidence/db-maintenance-20261106.md).
+
+Celery Beat вызывает accounts.flush_expired_tokens раз в86400 секунд на default
+через штатную flushexpiredtokens. Нужны Beat и worker. Локально отдельное задание
+Windows PlatformaCRM-Local-ExpiredTokens выполняется ежедневно12:00 по времени
+Windows, с ограниченными правами текущего пользователя и StartWhenAvailable.
+Компьютер должен быть включён, пользователь должен войти в Windows. Задание
+запускает pythonw.exe scripts/cleanup_local_tokens.py из канонического checkout;
+скрипт допускает только существующую db.sqlite3 в local/development. Лог без
+токенов: output/local-db-maintenance/tokens.log. Два запуска завершились с кодом0.
+Это обслуживание БД, не автозапуск dev-сервисов. Production не менялся.
+
 ## Единая команда local dev — 06.11.2026
 
 `./dev.ps1` из корня канонической папки запускает в скрытых окнах:

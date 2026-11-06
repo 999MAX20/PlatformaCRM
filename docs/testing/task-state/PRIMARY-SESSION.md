@@ -1,3 +1,12 @@
+DB-MAINTENANCE-20261106: owner-authorized local DB work complete.
+Backup/restore verified; branches0003+scheduling0012 applied; general schedule
+uniqueness/API race recovery; expired-only token cleanup and daily Windows task.
+SQLite101/PG12/system/drift/integrity/FK and retained-row comparisons PASS.
+No local code/evidence remainder; production not touched; divergent foreign range
+blocks publication. Existing branch implementation reused, not authored here.
+Evidence: docs/testing/evidence/db-maintenance-20261106.md.
+Detailed checkpoint: output/db-maintenance-20261106/CHECKPOINT.md.
+
 DEV-COMMAND-20261106: one Windows command ./dev.ps1 starts/reuses local stack.
 Redis/ClamAV/updater/import worker/Django/Vite; serialized start, source/PID checks,
 health/logs and explicit failures. No installs/env edits/migrations/Windows autostart.

@@ -1,3 +1,11 @@
+DB-MAINTENANCE-20261106: verified backup; local branches0003+scheduling0012 applied.
+All16 businesses have a branch; general-hours duplicate constraint/API recovery.
+Expired tokens3552+blacklist2987 removed; live tokens/revocations unchanged.
+Daily Windows task12:00/current-user login; two runs exit0. SQLite101/PG12,
+system/drift/integrity/FK PASS. No local remainder; production unchanged.
+Publication blocked by divergent foreign range. Evidence:
+docs/testing/evidence/db-maintenance-20261106.md.
+
 DEV-COMMAND-20261106: one Windows command ./dev.ps1 starts/reuses local stack.
 Redis/ClamAV/updater/import worker/Django/Vite; serialized start, source/PID checks,
 health/logs and explicit failures. No installs/env edits/migrations/Windows autostart.

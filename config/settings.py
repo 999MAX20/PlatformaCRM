@@ -417,6 +417,11 @@ YCLOUD_WEBHOOK_SECRET = env("YCLOUD_WEBHOOK_SECRET", default="")
 
 CELERY_BEAT_SCHEDULE = {
     "ycloud-events": {"task": "integrations.process_ycloud_events", "schedule": 30.0},
+    "expired-auth-tokens": {
+        "task": "accounts.flush_expired_tokens",
+        "schedule": 86400.0,
+        "options": {"queue": "default"},
+    },
 }
 CELERY_BEAT_SCHEDULE.update(
     {

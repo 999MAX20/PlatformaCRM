@@ -54,6 +54,11 @@ class WorkingHours(models.Model):
         ordering = ["weekday", "start_time"]
         constraints = [
             models.UniqueConstraint(fields=["business", "resource", "weekday"], name="unique_working_hours_per_resource_day"),
+            models.UniqueConstraint(
+                fields=["business", "weekday"],
+                condition=models.Q(resource__isnull=True),
+                name="unique_business_working_hours_day",
+            ),
         ]
 
     def __str__(self):
