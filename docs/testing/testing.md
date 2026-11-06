@@ -1,3 +1,12 @@
+## Windows local-dev launcher
+
+`.venv/Scripts/python.exe scripts/tests/test_dev_local.py -v` checks foreign-port
+rejection, source ancestry, PID reuse, sibling roots, bounded readiness, exited
+children and concurrent launcher locking without app/database mutations.
+Live `./dev.ps1` exercises the configured working runtime; it starts services,
+never migrates/seeds. Exit2 explicitly reports pending migrations. A frontend
+build or full application suite is not required for launcher-only changes.
+
 Archive helper regression (C04): run `python3 scripts/tests/test_clean_archive.py -v`
 in Linux/WSL with Bash, rsync and Python3. From Windows use
 `wsl.exe --exec python3 /mnt/c/Users/user/Desktop/PlatformaCRM/scripts/tests/test_clean_archive.py -v`.

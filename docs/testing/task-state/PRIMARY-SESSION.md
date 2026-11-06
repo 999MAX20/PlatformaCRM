@@ -1,3 +1,12 @@
+DEV-COMMAND-20261106: one Windows command ./dev.ps1 starts/reuses local stack.
+Redis/ClamAV/updater/import worker/Django/Vite; serialized start, source/PID checks,
+health/logs and explicit failures. No installs/env edits/migrations/Windows autostart.
+Ten focused tests PASS; live frontend start and repeated six-service reuse/health PASS.
+Current run exits2 honestly: branches0003 remains pending from another task.
+Dev services retained; launcher scope complete, database migration requires separate approval.
+Canonical branch codex/ui-testing-toolkit; publication blocked by foreign outgoing range.
+Checkpoint: output/dev-command-20261106/CHECKPOINT.md.
+
 ## REMEDIATION-C11-20261104 — export attempt ownership locally verified
 
 Owner «продолжаем» authorized C11 EXPORT-STALE-FINISH only. Canonical PlatformaCRM,
