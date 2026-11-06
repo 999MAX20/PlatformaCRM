@@ -6,8 +6,9 @@ Owner-authorized local integration of the supplied CRM landing is complete in
 `C:/Users/user/Desktop/PlatformaCRM`, branch `codex/ui-testing-toolkit`, dirty snapshot
 based on `d6cf5829`. The landing is served at `/`; sign-in remains `/login`.
 The normal frontend build contains all pages, assets and draft legal downloads.
-Digital and Market source, cloud, DNS and working databases were not changed.
-No deployment or production-readiness claim is made.
+Digital and Market source, DNS and working databases were not changed.
+The owner subsequently authorized scoped deployment; the deployment result below
+supersedes the initial local-only boundary. Overall production readiness is not claimed.
 
 Reused the supplied HTML/CSS/JS and existing React authentication. Adjusted local
 asset/page URLs, sign-in locale handoff, actual browser-storage disclosure and
@@ -64,8 +65,9 @@ No local implementation remainder in this scope. The owner subsequently authoriz
 is based directly on origin/main, excluding all18 unrelated local commits and
 preserving the remote security commit. Local branch/index/files remain intact.
 Existing local checks describe the working snapshot; exact candidate CI is tracked
-separately after push and is not predeclared green. Deployment, public access,
-final domains and live acceptance are separate work. Legal drafts require their own
+separately after push and is not predeclared green. Main and stand CI subsequently
+completed successfully. The scoped deployment is recorded below; public access,
+other-product domains and full-release acceptance remain separate work. Legal drafts require their own
 approval before use as final documents. No roadmap phase was opened or closed;
 CRM/API/access/AI contracts need no behavior changes.
 
@@ -88,9 +90,23 @@ Imported HTML/CSS line endings and licence trailing whitespace normalized for
 committed diff hygiene, with no visible content change; legal DOCX/TXT/ZIP unchanged.
 Candidate diff reviewed for unrelated work; no workflow, backend, dependency,
 credential or production configuration values included. Existing main workflows
-run CI/stand-boundary tests and contain no deployment job. No deployment requested.
+run CI/stand-boundary tests and contain no deployment job. Deployment was excluded
+from publication and later authorized separately as recorded below.
 
 Preparation failures were tooling-only and corrected before commit: Windows path
 separators in Git index input; text-encoding mismatch in the helper; overbroad
 capability-prefix extraction caught by diff review; raw CRLF/trailing whitespace;
 virtual TypeScript node_modules-directory recognition and binary-asset passthrough.
+
+## Owner-authorized deployment follow-up
+
+2026-11-06:112 published landing files and exact Caddy root/static handlers deployed
+to protected platformacrm.kz. All1342 existing release files, CRM SPA bundle,
+password/env and SSE handler retained; Caddy validated and gracefully reloaded.
+Live HTTPS checks and Chromium RU/KK/EN/mobile home-to-login flows PASS;
+encrypted files backup and backup health PASS. Existing CRM form renders normally.
+Successful account authentication/MFA was not exercised; no credentials were changed.
+The deployed runtime is a composed release: existing CRM bundle retained, source-only
+LandingHome helper not rebuilt into it. Direct landing/login routing is supplied
+by Caddy. No full-release acceptance or unrelated deployment is claimed.
+Full manifests, rollback and evidence: `output/crm-landing-deploy-20261106/RESULT.md`.

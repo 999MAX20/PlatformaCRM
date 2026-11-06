@@ -1,10 +1,9 @@
-CRM-LANDING-INTEGRATION-20261106: LOCAL integration complete, not deployed.
-Supplied landing at root, existing /login + locale handoff, normal build includes assets/legal drafts.
-Node19/build-types-i18n/bundle, browser9 locale/viewport + auth recovery/denial,
-real Caddy gate/routing/fail-closed and640 static references PASS. Canonical5173 ready.
-Digital/Market source unchanged; one-VM separate-domain proposal recorded.
-Landing-only publication candidate on origin/main; deployment excluded.
-Local verification passed; exact published SHA/CI tracked in task completion record.
+CRM-LANDING-INTEGRATION-20261106: scoped landing deployed to protected platformacrm.kz.
+Published1dc5a6c8 main/fullCI+standCI PASS;112 static files and exact Caddy routes activated.
+Existing1342 release files/SPA, password/env and SSE preserved; HTTPS and live browser RU/KK/EN/mobile PASS.
+Home opens landing; login opens existing CRM form. Real account authentication not exercised.
+Encrypted backup/health PASS. No backend/DB changes or whole-release certification.
+Deployment: output/crm-landing-deploy-20261106/RESULT.md.
 Evidence: docs/testing/evidence/crm-landing-integration-20261106.md.
 
 CALENDAR-SHARED-20261103: approved picker reused across7 consumer areas and all26
