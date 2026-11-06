@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { crmLanding } from "./landing/plugin";
 import { randomUUID } from "node:crypto";
 
 const apiProxyTarget =
@@ -7,6 +8,7 @@ const apiProxyTarget =
 
 export default defineConfig({
   plugins: [
+    crmLanding(),
     {
       name: "app-cache-isolation",
       config(config, { command, mode }) {

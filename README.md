@@ -1,3 +1,11 @@
+## Локальный лендинг CRM
+
+Главная `/` показывает встроенный лендинг, «Войти» открывает существующий `/login`.
+Обычная frontend-сборка включает страницы и файлы лендинга; отдельная папка-источник
+не нужна. Для production требуется маршрутизация из `deploy/stand-access/Caddyfile`.
+[Обслуживание исходников](frontend/landing/README.md) ·
+[Проверки и схема одной VM](docs/testing/evidence/crm-landing-integration-20261106.md).
+
 Manual booking from Client or Inbox uses one Appointment and a separate booking
 coordinator; closed Lead/Deal history is preserved. The UI checks current slots and
 terms, supports safe retry, and refreshes calendar/client/Inbox views. Additive

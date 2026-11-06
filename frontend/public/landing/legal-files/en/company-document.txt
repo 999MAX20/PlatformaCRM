@@ -1,0 +1,23 @@
+Platforma Digital company details and contacts
+DRAFT FOR REVIEW
+Version 0.1 · 16 October 2026
+This document is not operative until approved and the marked fields are completed. Changes require a new version, an effective date and any necessary notice or agreement. Russian is proposed as the prevailing text to the extent permitted by law.
+
+1 Company information
+Full legal name: Товарищество с ограниченной ответственностью «Platforma Digital». English rendering: Platforma Digital Limited Liability Partnership (LLP). BIN: 260940027670.
+State registration: 22 September 2026, Almaty. Registering authority in the certificate: Legal Entity Registration Department of the Almaty branch of the Government for Citizens State Corporation.
+Registered address: apartment 77, building 140, Prokofyev Street, Almaly District, Almaty, 050006, Republic of Kazakhstan.
+The company operates under a model charter. Head according to the registration certificate: Захарова Елена Александровна (Elena Aleksandrovna Zakharova). Verify current authority and signing basis before each agreement.
+2 Bank details
+Beneficiary: Platforma Digital LLP. BIN 260940027670.
+IBAN: KZ81551A600021448130. Account currency: KZT.
+Bank: АО «Фридом Банк Казахстан» (Freedom Bank Kazakhstan JSC). BIC / SWIFT: KSNVKZKA.
+Details are supported by the bank certificate dated 28 September 2026. Confirm bank changes through a previously agreed contact; an unverified message stating a new account is insufficient for payment.
+3 Contacts
+Agreements and personal data enquiries: office@platformadigital.kz.
+General enquiries: info@platformadigital.kz. Telephone: +7 706 446 82 41.
+Written enquiries may be sent to the registered address. Each clinic identifies its own patient-data contact; Platforma's corporate contact does not replace it.
+4 Use
+The public page may include the company name, BIN, registration, address and contacts. Bank details are used in contracts and invoices; website publication is a company decision. Personal identification numbers, identity documents, signatures, electronic-signature credentials and participant documents are excluded from the public block.
+VAT registration and price tax treatment: {{TAX_TREATMENT}}. Neither is established by having a bank account. Company registration does not establish a medical licence, security certification or registered CRM intellectual property rights.
+Version 0.1 dated 16 October 2026 is a draft for approval. Verification sources: state registration certificate dated 22 September 2026 and bank certificate dated 28 September 2026. Check for changes before publication or invoicing.

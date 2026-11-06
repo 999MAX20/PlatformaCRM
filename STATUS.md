@@ -1,3 +1,12 @@
+CRM-LANDING-INTEGRATION-20261106: LOCAL integration complete, not deployed.
+Supplied landing at root, existing /login + locale handoff, normal build includes assets/legal drafts.
+Node19/build-types-i18n/bundle, browser9 locale/viewport + auth recovery/denial,
+real Caddy gate/routing/fail-closed and640 static references PASS. Canonical5173 ready.
+Digital/Market source unchanged; one-VM separate-domain proposal recorded.
+Landing-only publication candidate on origin/main; deployment excluded.
+Local verification passed; exact published SHA/CI tracked in task completion record.
+Evidence: docs/testing/evidence/crm-landing-integration-20261106.md.
+
 CALENDAR-SHARED-20261103: approved picker reused across7 consumer areas and all26
 Input date/datetime fields. Shared15/consumer8/browser/build/types/i18n6680/bundle PASS.
 Antislop cursor finding fixed with owner approval. Published44a9c92e to origin/main;

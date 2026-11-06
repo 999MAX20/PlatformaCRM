@@ -58,6 +58,7 @@ __MACOSX/
 
 # Archives
 *.zip
+!frontend/public/landing/legal-files/platforma-crm-drafts-0.1.zip
 
 # Local scratch/artifacts
 output/

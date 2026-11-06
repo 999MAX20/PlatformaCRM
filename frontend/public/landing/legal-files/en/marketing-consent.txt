@@ -1,0 +1,16 @@
+Marketing communications consent
+DRAFT FOR REVIEW
+Version 0.1 · 16 October 2026
+This document is not operative until approved and the marked fields are completed. Changes require a new version, an effective date and any necessary notice or agreement. Russian is proposed as the prevailing text to the extent permitted by law.
+
+1 Full consent
+I, {{SUBJECT_FULL_NAME}}, voluntarily authorise Platforma Digital LLP, BIN 260940027670, address: 77, 140 Prokofyev Street, Almaty, 050006, Kazakhstan, to send product news, demonstration and event invitations, offers and promotions through the channels I separately select: {{SELECTED_MARKETING_CHANNELS_AND_CONTACTS}}.
+For this purpose I authorise processing of my name, chosen contact and channel, subscription preferences, dispatch, consent and unsubscribe records. I do not authorise profiling based on patient or sensitive data. Additional open or click tracking requires separate assessment, disclosure and any necessary basis; it is not implied here.
+Operations: collection, storage, updating, use for the selected campaign, disclosure to an approved dispatch provider, blocking and deletion. Recipients: {{MARKETING_RECIPIENTS}}. Cross-border transfer: {{MARKETING_CROSS_BORDER_DETAILS_OR_NONE}}. Public dissemination is not permitted. The completed recipient and country list is displayed before choice.
+Consent lasts until withdrawal but no longer than {{MARKETING_MAX_PERIOD}} from {{MARKETING_START_EVENT}}, within the purpose. After unsubscribe, advertising stops; minimum suppression and consent evidence is retained under {{MARKETING_PROOF_RETENTION}} on an established basis and is not used for new advertising.
+Unsubscribe through the email link, reply “Stop” in the selected channel, or email office@platformadigital.kz. Respect the specified scope; an unqualified “Stop” stops all Platforma marketing across known linked channels after necessary verification. Refusal does not end the agreement or prevent service. Appointment and security notifications have their own basis and contain no advertising inserts.
+Confirmation: {{AFFIRMATIVE_ACTION_AND_TIMESTAMP}}. Version 0.1 dated 16 October 2026. This is separate optional consent; demonstration consent, a contract or appointment processing consent does not replace it.
+2 Interface and evidence
+Unticked checkbox: “I would like Platforma news and offers through my selected channels. I give separate consent to marketing communications and can unsubscribe at any time.”
+Select channels separately: email, SMS and named messenger. Do not preselect all channels or make marketing a condition of the main enquiry. Before sending, record full name, contact and verification, chosen channels, text and version, recipients, timestamp with timezone, affirmative action and source.
+Unsubscribe register fields: person or contact, date and channel, scope, operator, time all affected dispatches were blocked, notified suppliers and verification. Recheck queued messages against suppression records before dispatch. This template does not authorise Platforma marketing to a clinic's patients.

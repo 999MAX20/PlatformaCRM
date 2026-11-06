@@ -3,6 +3,7 @@
   "asOf": "2026-10-21",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
+    {"path": "docs/testing/evidence/crm-landing-integration-20261106.md", "role": "evidence"},
     {"path": "docs/testing/evidence/calendar-shared-20261103.md", "role": "evidence"},
     {"path": "docs/testing/evidence/calendar-shared-20261103-manifest.json", "role": "generated-evidence"},
     {"path": "anti-slop/audit-001-20261103.md", "role": "evidence"},
