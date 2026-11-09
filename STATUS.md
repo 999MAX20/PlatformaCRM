@@ -1,12 +1,12 @@
-PUSH-FIXES-20261109: all original findings fixed; applicable local checks PASS.
-Numeric/multiselect filters, task history, frontend harness/registries corrected.
+PUSH-FIXES-20261109: fixes verified, owner-approved local integration complete; NO PUSH.
+Candidate commit6648e297; mergeff312e69 preserves both histories and verified source tree.
+All9conflicts resolved as approved; duplicate Vite import avoided; stale lock archived.
 Backend3106:3038PASS/68PG-only skips/0FAIL; PG35actual+62dependentPASS.
-Card fixture148383/150000bytes,maxSQL12181/15000; relations and limits retained.
 Node288+focused6/build-types-i18n/bundle/filter12browser/cardbrowserPASS.
-Candidate842paths and9conflict+Vite-import resolution prepared in temporary indexes;
-merged preview equals tested tree. Mainindex/lock/branch preserved pending owner decision.
-No commit/push/newCI/workingDB/deploy. Evidence: docs/testing/evidence/push-fixes-20261109.md.
-Details/plan: output/push-fixes-20261109/CHECKPOINT.md and PUBLICATION-PLAN.md.
+Card fixture148383/150000bytes,maxSQL12181/15000; relations/limits/foreign work retained.
+origin/main is ancestor; no new CI, workingDB/migration/provider/deployment changes.
+Evidence: docs/testing/evidence/push-fixes-20261109.md.
+Details: output/push-fixes-20261109/integration-result.json and CHECKPOINT.md.
 
 PUSH-PREPARATION-20261109: all-change review and verification completed with blockers.
 1184-path reviewed snapshot; explicit829-path staging proposal; source unchanged.

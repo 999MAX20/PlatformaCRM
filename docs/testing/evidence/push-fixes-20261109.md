@@ -3,7 +3,8 @@
 Поручение: исправить все находки PUSH-PREPARATION, проверить и подготовить изменения
 к push, сохранив чужую работу и исходные тестовые гарантии/лимиты. Канонический
 checkout `C:/Users/user/Desktop/PlatformaCRM`, ветка `codex/ui-testing-toolkit`,
-HEAD `6a8af190`; проверяется dirty snapshot. Исходные patch/index/status сохранены
+Исходный HEAD `6a8af190`; проверенный snapshot закоммичен как `6648e297`,
+затем объединён с origin/main в `ff312e69`. Исходные patch/index/status сохранены
 в `output/push-fixes-20261109`. Push/deployment и рабочая БД не затрагиваются.
 
 ## Изменения
@@ -69,8 +70,9 @@ HEAD `6a8af190`; проверяется dirty snapshot. Исходные patch/i
 
 ## Git и границы
 
-20 локальных и3 remote-only коммита; origin —999MAX20/PlatformaCRM.
-Пустой index.lock существует с06.11; основной index не изменён. В отдельном
+До интеграции:20локальных и3remote-only коммита; origin —999MAX20/PlatformaCRM.
+На этапе подготовки основной index не менялся. Пустой index.lock с06.11
+после проверки отсутствия Git writer архивирован по разрешению владельца. В отдельном
 временном index собран кандидат842явных путей. Staged diff-check обнаружил
 лишнюю пустую строку EOF в ранее untracked notification-refactor.spec.ts;
 исправлена только эта whitespace-строка, повторный staged diff-check PASS.
@@ -82,7 +84,8 @@ pre-production/capabilities, PRIMARY-SESSION, landing/styles.css. Автомат
 разрешение сохраняет текущие проверенные версии этих10файлов. Все добавленные
 remote строки документов присутствуют; remote safeguards и landing CSS сохранены.
 После разрешения proposed merged tree точно совпадает с candidate tree.
-Это предложение через временные индексы, не merge/commit рабочей ветки.
+Первоначальное предложение проверялось через временные индексы. Владелец затем
+явно разрешил merge и локальные коммиты без push; этот вариант применён.
 
 План и точные hashes: `output/push-fixes-20261109/PUBLICATION-PLAN.md`,
 `merge-resolution-preview.json`, `proposed-stage-paths.txt`. Из1184ранее проверенных
@@ -102,8 +105,13 @@ settings-notifications; остальные CRM/domain/AI/notification contracts 
 
 Все исходные продуктовые находки и обязательные красные проверки исправлены в
 согласованном объёме. Новые regression assertions добавлены, лимиты сохранены.
-Остатка по коду и применимым локальным проверкам нет. Подготовлен конкретный
-candidate и разрешение Git-конфликтов без потери обеих сторон. Реальное объединение
-истории требует решения владельца по правилу AGENTS о concrete affected-path
-conflicts; до него основной index/branch/lock не изменяются. Commit, push, новый CI
-и deployment не выполнены. Этот scoped результат не закрывает другие acceptance IDs.
+Остатка по коду, применимым локальным проверкам и разрешённой Git-интеграции нет.
+Владелец одобрил подготовленный вариант без push. Candidate commit `6648e297`
+сохраняет842пути; merge commit `ff312e69` имеет родителей `6648e297` и remote
+`1cec6af1`. Его полное дерево `8f4561b4ccfd7786c366c92980d500d870c794e8`
+точно равно проверенному кандидату. Все9конфликтов и автоматический duplicate
+Vite import разрешены по плану; повторять неизменные application suites не нужно.
+После merge отдельно обновлены только эти evidence/status записи с docs-only checks.
+`origin/main` является предком локальной ветки; обе истории сохранены.
+Push явно запрещён в этом продолжении и не выполнялся, новый CI/deployment отсутствуют.
+Этот scoped результат не закрывает другие acceptance IDs.
